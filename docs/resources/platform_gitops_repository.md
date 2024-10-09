@@ -230,7 +230,7 @@ Enum: "UNSET" "AWS_ECR" "GOOGLE_GCR"
 
 Required:
 
-- `connection_type` (String) Identifies the authentication method used to connect to the repository. Possible values: "HTTPS" "SSH" "GITHUB" "HTTPS_ANONYMOUS_CONNECTION_TYPE"
+- `connection_type` (String) Identifies the authentication method used to connect to the repository. Possible values: "HTTPS" "SSH" "GITHUB" "HTTPS_ANONYMOUS", "GITHUB_ENTERPRISE".
 - `repo` (String) URL to the remote repository.
 
 Optional:
@@ -240,19 +240,22 @@ Optional:
 - `github_app_enterprise_base_url` (String) Base URL of GitHub Enterprise installation. If left empty, this defaults to https://api.github.com.
 - `github_app_id` (String) Id of the GitHub app used to access the repo.
 - `github_app_installation_id` (String) Installation id of the GitHub app used to access the repo.
-- `github_app_private_key` (String) GitHub app private key PEM data.
-- `inherited_creds` (Boolean) Indicates if the credentials were inherited from a repository credential.
+- `github_app_private_key` (String, Sensitive) GitHub app private key PEM data.
 - `insecure` (Boolean) Indicates if the connection to the repository ignores any errors when verifying TLS certificates or SSH host keys.
 - `insecure_ignore_host_key` (Boolean) Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.
 - `name` (String) Name to be used for this repo. Only used with Helm repos.
-- `password` (String) Password or PAT to be used for authenticating the remote repository.
+- `password` (String, Sensitive) Password or PAT to be used for authenticating the remote repository.
 - `project` (String) The ArgoCD project name corresponding to this GitOps repository. An empty string means that the GitOps repository belongs to the default project created by Harness.
 - `proxy` (String) The HTTP/HTTPS proxy used to access the repo.
-- `ssh_private_key` (String) SSH Key in PEM format for authenticating the repository. Used only for Git repository.
-- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
-- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
+- `ssh_private_key` (String, Sensitive) SSH Key in PEM format for authenticating the repository. Used only for Git repository.
+- `tls_client_cert_data` (String, Sensitive) Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
+- `tls_client_cert_key` (String, Sensitive) Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
 - `type_` (String) Type specifies the type of the repo. Can be either "git" or "helm. "git" is assumed if empty or absent.
 - `username` (String) Username to be used for authenticating the remote repository.
+
+Read-Only:
+
+- `inherited_creds` (Boolean) Indicates if the credentials were inherited from a repository credential.
 
 
 <a id="nestedblock--ecr_gen"></a>
@@ -280,8 +283,8 @@ Optional:
 Optional:
 
 - `aws_access_key_id` (String) AWS access key id.
-- `aws_secret_access_key` (String) AWS secret access key.
-- `aws_session_token` (String) AWS session token.
+- `aws_secret_access_key` (String, Sensitive) AWS secret access key.
+- `aws_session_token` (String, Sensitive) AWS session token.
 
 
 
@@ -290,7 +293,7 @@ Optional:
 
 Optional:
 
-- `access_key` (String) GCP access key.
+- `access_key` (String, Sensitive) GCP access key.
 - `project_id` (String) GCP project id.
 - `workload_identity` (Block List, Max: 1) GCP workload identity. (see [below for nested schema](#nestedblock--gcr_gen--workload_identity))
 

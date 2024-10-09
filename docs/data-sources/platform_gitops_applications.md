@@ -36,7 +36,7 @@ data "harness_platform_gitops_applications" "example" {
 
 ### Optional
 
-- `identifier` (String) Identifier of the GitOps application.
+- `identifier` (String, Deprecated) Identifier of the GitOps application.
 
 ### Read-Only
 

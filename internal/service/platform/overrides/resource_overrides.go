@@ -180,7 +180,7 @@ func resourceOverridesRead(ctx context.Context, d *schema.ResourceData, meta int
 	identifier := d.Id()
 	svcGetParams := getOverrideParams(d)
 
-	resp, httpResp, err := c.ServiceOverridesApi.GetServiceOverrides(ctx, identifier, c.AccountId, svcGetParams)
+	resp, httpResp, err := c.OverridesApi.GetOverrides(ctx, identifier, c.AccountId, svcGetParams)
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
@@ -213,14 +213,14 @@ func resourceOverridesCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		if d.Get("import_from_git").(bool) {
 			importReq := buildOverrideImportRequest(d)
 			svcImportParam := getOverrideImportParams(importReq, d)
-			importResp, httpResp, err = c.ServiceOverridesApi.ImportServiceOverrides(ctx, c.AccountId, svcImportParam)
+			importResp, httpResp, err = c.OverridesApi.ImportOverrides(ctx, c.AccountId, svcImportParam)
 		} else {
 			createParam := overrideCreateParam(env, d)
-			resp, httpResp, err = c.ServiceOverridesApi.CreateServiceOverrideV2(ctx, c.AccountId, createParam)
+			resp, httpResp, err = c.OverridesApi.CreateOverride(ctx, c.AccountId, createParam)
 		}
 	} else {
 		updateParam := overrideUpdateParam(env, d)
-		resp, httpResp, err = c.ServiceOverridesApi.UpdateServiceOverrideV2(ctx, c.AccountId, updateParam)
+		resp, httpResp, err = c.OverridesApi.UpdateOverride(ctx, c.AccountId, updateParam)
 	}
 
 	if err != nil {
@@ -247,7 +247,7 @@ func resourceOverridesCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 func resourceOverridesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, httpResp, err := c.ServiceOverridesApi.DeleteServiceOverrideV2(ctx, d.Id(), c.AccountId, &nextgen.ServiceOverridesApiDeleteServiceOverrideV2Opts{
+	_, httpResp, err := c.OverridesApi.DeleteOverride(ctx, d.Id(), c.AccountId, &nextgen.ServiceOverridesApiDeleteServiceOverrideV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})

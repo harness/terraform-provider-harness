@@ -24,21 +24,25 @@ func ResourceProject() *schema.Resource {
 				Description: "Agent identifier of the GitOps project, this must include scope prefix (eg. account.agentId)",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"account_id": {
 				Description: "Account identifier of the GitOps Agent where argo project is to be created.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Org identifier of the GitOps Agent where argo project is to be created.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the Gitops Agent where argo project is to be created.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"query_name": {
 				Description: "Identifier for the GitOps Argo project.",
@@ -480,8 +484,11 @@ func ResourceProject() *schema.Resource {
 
 func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var orgIdentifier, projectIdentifier, agentIdentifier string
+	var orgIdentifier, projectIdentifier, agentIdentifier, accountIdentifier string
 	var upsert bool
+
+	accountIdentifier = c.AccountId
+
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -499,7 +506,7 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, meta int
 	projectData := createRequestBody(d)
 	projectData.Upsert = upsert
 
-	resp, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceCreate(ctx, projectData, c.AccountId, agentIdentifier, &nextgen.ProjectsApiAgentProjectServiceCreateOpts{
+	resp, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceCreate(ctx, projectData, accountIdentifier, agentIdentifier, &nextgen.ProjectsApiAgentProjectServiceCreateOpts{
 		OrgIdentifier:     optional.NewString(orgIdentifier),
 		ProjectIdentifier: optional.NewString(projectIdentifier),
 	})
@@ -514,14 +521,17 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, meta int
 		d.MarkNewResource()
 		return nil
 	}
-	setProjectDetails(d, &resp)
+	setProjectDetails(d, accountIdentifier, &resp)
 
 	return nil
 }
 
 func resourceProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var orgIdentifier, projectIdentifier, agentIdentifier, query_name string
+	var orgIdentifier, projectIdentifier, agentIdentifier, query_name, accountIdentifier string
+
+	accountIdentifier = c.AccountId
+
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -547,29 +557,34 @@ func resourceProjectRead(ctx context.Context, d *schema.ResourceData, meta inter
 		}
 	}
 
-	resp, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceGet(ctx, agentIdentifier, query_name, c.AccountId, &nextgen.ProjectsApiAgentProjectServiceGetOpts{
+	resp, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceGet(ctx, agentIdentifier, query_name, accountIdentifier, &nextgen.ProjectsApiAgentProjectServiceGetOpts{
 		OrgIdentifier:     optional.NewString(orgIdentifier),
 		ProjectIdentifier: optional.NewString(projectIdentifier),
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if resp.Metadata == nil {
+
+	if &resp == nil {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
 	}
-	setProjectDetails(d, &resp)
+	setProjectDetails(d, accountIdentifier, &resp)
 
 	return nil
 }
 
 func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var orgIdentifier, projectIdentifier, agentIdentifier string
+	var orgIdentifier, projectIdentifier, agentIdentifier, accountIdentifier string
+
+	accountIdentifier = c.AccountId
+
+	if attr, ok := d.GetOk("account_id"); ok {
+		accountIdentifier = attr.(string)
+	}
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -582,13 +597,13 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, meta int
 
 	projectData := updateRequestBody(d)
 
-	resp, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceUpdate(ctx, projectData, c.AccountId, agentIdentifier, projectData.Project.Metadata.Name, &nextgen.ProjectsApiAgentProjectServiceUpdateOpts{
+	resp, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceUpdate(ctx, projectData, accountIdentifier, agentIdentifier, projectData.Project.Metadata.Name, &nextgen.ProjectsApiAgentProjectServiceUpdateOpts{
 		OrgIdentifier:     optional.NewString(orgIdentifier),
 		ProjectIdentifier: optional.NewString(projectIdentifier),
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
@@ -597,14 +612,17 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, meta int
 		d.MarkNewResource()
 		return nil
 	}
-	setProjectDetails(d, &resp)
+	setProjectDetails(d, accountIdentifier, &resp)
 
 	return nil
 }
 
 func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var orgIdentifier, projectIdentifier, agentIdentifier, query_name string
+	var orgIdentifier, projectIdentifier, agentIdentifier, query_name, accountIdentifier string
+
+	accountIdentifier = c.AccountId
+
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -626,7 +644,7 @@ func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, meta int
 		}
 	}
 
-	_, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceDelete(ctx, agentIdentifier, query_name, c.AccountId, orgIdentifier, &nextgen.ProjectsApiAgentProjectServiceDeleteOpts{
+	_, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceDelete(ctx, agentIdentifier, query_name, accountIdentifier, orgIdentifier, &nextgen.ProjectsApiAgentProjectServiceDeleteOpts{
 		ProjectIdentifier: optional.NewString(projectIdentifier),
 	})
 
@@ -1343,9 +1361,9 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 	return projectsProjectCreateRequest
 }
 
-func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppProject) {
+func setProjectDetails(d *schema.ResourceData, account_id string, projects *nextgen.AppprojectsAppProject) {
 	d.SetId(projects.Metadata.Name)
-	d.Set("account_id", "1bvyLackQK-Hapk25-Ry4w")
+	d.Set("account_id", account_id)
 	projectList := []interface{}{}
 	project := map[string]interface{}{}
 	if projects.Metadata != nil {
@@ -1407,11 +1425,20 @@ func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppP
 
 		destinationList := []interface{}{}
 		destination := map[string]interface{}{}
-		destination["namespace"] = projects.Spec.Destinations[0].Namespace
-		destination["server"] = projects.Spec.Destinations[0].Server
-		destination["name"] = projects.Spec.Destinations[0].Name
-		destinationList = append(destinationList, destination)
-		spec["destinations"] = destinationList
+		if len(projects.Spec.Destinations) > 0 {
+			destination["namespace"] = projects.Spec.Destinations[0].Namespace
+			destination["server"] = projects.Spec.Destinations[0].Server
+			destination["name"] = projects.Spec.Destinations[0].Name
+		}
+
+		if len(destination) > 0 {
+			destinationList = append(destinationList, destination)
+		}
+
+		if len(destinationList) > 0 {
+			spec["destinations"] = destinationList
+		}
+
 		orphanList := []interface{}{}
 		orphan := map[string]interface{}{}
 		orphan["warn"] = projects.Spec.OrphanedResources.Warn

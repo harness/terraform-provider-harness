@@ -610,3 +610,13 @@ var GitWebhookResourceImporter = &schema.ResourceImporter{
 		return []*schema.ResourceData{d}, nil
 	},
 }
+
+var AccountLevelResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		if d.Id() != "" {
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}

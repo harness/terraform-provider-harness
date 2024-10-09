@@ -2,6 +2,7 @@ package applications
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -20,6 +21,41 @@ func ResourceGitopsApplication() *schema.Resource {
 		UpdateContext: resourceGitopsApplicationUpdate,
 		DeleteContext: resourceGitopsApplicationDelete,
 		Importer:      helpers.GitopsAgentResourceImporter,
+		CustomizeDiff: func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+			var e error
+			if diff.HasChange("project_id") && diff.Id() != "" {
+				e = fmt.Errorf("field 'project_id' cannot be changed after the resource is created")
+			}
+			if diff.HasChange("org_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("account_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("agent_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'agent_id' cannot be changed after the resource is created:%v", e)
+				} else {
+					e = fmt.Errorf("field 'agent_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("name") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'name' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'name' cannot be changed after the resource is created")
+				}
+			}
+			return e
+		},
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -41,6 +77,11 @@ func ResourceGitopsApplication() *schema.Resource {
 				Description: "Identifier of the GitOps application.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					// Implement logic to suppress the diff here
+					return true
+				},
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps application.",
@@ -229,6 +270,12 @@ func ResourceGitopsApplication() *schema.Resource {
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"project": {
+										Description: "The ArgoCD project name corresponding to this GitOps application. Value must match mappings of ArgoCD projects to harness project.",
+										Type:        schema.TypeString,
+										Optional:    true,
+										Computed:    true,
+									},
 									"source": {
 										Description: "Contains all information about the source of the GitOps application.",
 										Type:        schema.TypeList,
@@ -730,9 +777,12 @@ func resourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData, 
 	if attr, ok := d.GetOk("project_id"); ok {
 		projectIdentifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("identifier"); ok {
+
+	// name is required, so must exist
+	if attr, ok := d.GetOk("name"); ok {
 		queryName = attr.(string)
 	}
+
 	if attr, ok := d.GetOk("repo_id"); ok {
 		repoIdentifier = attr.(string)
 	}
@@ -740,7 +790,7 @@ func resourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData, 
 		QueryRepo: optional.NewString(repoIdentifier),
 	})
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
@@ -760,10 +810,66 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 	updateApplicationRequest := buildUpdateApplicationRequest(d)
 	var agentIdentifier, orgIdentifier, projectIdentifier, clusterIdentifier, repoIdentifier, appMetaDataName string
 	var skipRepoValidation bool
+
+	var e diag.Diagnostics
+	if d.HasChange("name") {
+		oldValue, newValue := d.GetChange("name")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'name' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("name", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("account_id") {
+		oldValue, newValue := d.GetChange("account_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'account_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("account_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("org_id") {
+		oldValue, newValue := d.GetChange("org_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'org_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("org_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("project_id") {
+		oldValue, newValue := d.GetChange("project_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'project_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("project_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("agent_id") {
+		oldValue, newValue := d.GetChange("agent_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'agent_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("agent_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if len(e) > 0 {
+		return e
+	}
+
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("identifier"); ok {
+	if attr, ok := d.GetOk("name"); ok {
 		appMetaDataName = attr.(string)
 	}
 	if attr, ok := d.GetOk("org_id"); ok {
@@ -824,7 +930,7 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 	if attr, ok := d.GetOk("options_remove_existing_finalizers"); ok {
 		optionsRemoveExistingFinalizers = attr.(bool)
 	}
-	if attr, ok := d.GetOk("identifier"); ok {
+	if attr, ok := d.GetOk("name"); ok {
 		requestName = attr.(string)
 	}
 
@@ -845,7 +951,6 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 
 func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 	d.SetId(app.Name)
-	d.Set("identifier", app.Name)
 	d.Set("org_id", app.OrgIdentifier)
 	d.Set("project_id", app.ProjectIdentifier)
 	d.Set("agent_id", app.AgentIdentifier)
@@ -875,9 +980,13 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 			metadataList = append(metadataList, metadata)
 			application["metadata"] = metadataList
 		}
+
 		if app.App.Spec != nil {
 			var specList = []interface{}{}
 			var spec = map[string]interface{}{}
+			if app.App.Spec.Project != "" {
+				spec["project"] = app.App.Spec.Project
+			}
 			if app.App.Spec.Source != nil {
 				var sourceList = []interface{}{}
 				var source = map[string]interface{}{}
@@ -1163,6 +1272,8 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 				var specData map[string]interface{}
 				specData = application["spec"].([]interface{})[0].(map[string]interface{})
 				//Spec Source
+				project := specData["project"].(string)
+				spec.Project = project
 				if specData["source"] != nil && len(specData["source"].([]interface{})) > 0 {
 					var specSource nextgen.ApplicationsApplicationSource
 					var source = specData["source"].([]interface{})[0].(map[string]interface{})

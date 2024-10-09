@@ -160,6 +160,7 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
+	// Migrate to GetUserGroupv2 once it is available in all environments including SMP customers
 	resp, httpResp, err := c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
@@ -169,15 +170,17 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	if attr, ok := d.GetOk("user_emails"); ok {
-		d.Set("user_emails", attr)
+	emails, emails_present := d.GetOk("user_emails")
+	if emails_present {
+		d.Set("user_emails", emails)
 	}
 
-	attr1 := resp.Data.SsoLinked
+	isSsoLinked := resp.Data.SsoLinked
 
-	if attr, ok := d.GetOk("users"); ok && !attr1 {
-		d.Set("users", attr)
-	} else if attr1 {
+	users := resp.Data.Users
+	if users != nil && !isSsoLinked && !emails_present {
+		d.Set("users", users)
+	} else if isSsoLinked {
 		d.Set("users", []string{})
 	}
 	readUserGroup(d, resp.Data)

@@ -26,6 +26,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Description: "Account identifier of the GitOps agent's Application Project.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps agent's Application Project.",
@@ -41,6 +42,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Description: "Agent identifier for which the ArgoCD and Harness project mapping is to be created.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"identifier": {
 				Description: "Identifier of the GitOps Application Project.",
@@ -51,6 +53,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 		},
 	}
@@ -60,12 +63,12 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 func resourceGitopsAppProjectMappingCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	createAppProjectMappingRequest := buildCreateAppProjectMappingRequest(d)
+	createAppProjectMappingRequest := buildCreateAppProjectMappingRequest(c.AccountId, d)
 	agentIdentifier := d.Get("agent_id").(string)
 	resp, httpResp, err := c.ProjectMappingsApi.AppProjectMappingServiceCreateV2(ctx, *createAppProjectMappingRequest, agentIdentifier)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	if &resp == nil {
@@ -97,7 +100,7 @@ func resourceGitopsAppProjectMappingRead(ctx context.Context, d *schema.Resource
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	if &resp == nil {
@@ -112,7 +115,7 @@ func resourceGitopsAppProjectMappingRead(ctx context.Context, d *schema.Resource
 func resourceGitopsAppProjectMappingUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	updateAppProjectMappingRequest := buildUpdateAppProjectMappingRequest(d)
+	updateAppProjectMappingRequest := buildUpdateAppProjectMappingRequest(c.AccountId, d)
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	resp, httpResp, err := c.ProjectMappingsApi.AppProjectMappingServiceUpdateV2(ctx, *updateAppProjectMappingRequest, agentIdentifier, identifier)
@@ -147,12 +150,10 @@ func resourceGitopsAppProjectMappingDelete(ctx context.Context, d *schema.Resour
 	return nil
 }
 
-func buildCreateAppProjectMappingRequest(d *schema.ResourceData) *nextgen.V1AppProjectMappingCreateRequestV2 {
+func buildCreateAppProjectMappingRequest(accountId string, d *schema.ResourceData) *nextgen.V1AppProjectMappingCreateRequestV2 {
 	var appProjectMappingRequest nextgen.V1AppProjectMappingCreateRequestV2
 
-	if attr, ok := d.GetOk("account_id"); ok {
-		appProjectMappingRequest.AccountIdentifier = attr.(string)
-	}
+	appProjectMappingRequest.AccountIdentifier = accountId
 
 	if attr, ok := d.GetOk("org_id"); ok {
 		appProjectMappingRequest.OrgIdentifier = attr.(string)
@@ -173,12 +174,10 @@ func buildCreateAppProjectMappingRequest(d *schema.ResourceData) *nextgen.V1AppP
 	return &appProjectMappingRequest
 }
 
-func buildUpdateAppProjectMappingRequest(d *schema.ResourceData) *nextgen.V1AppProjectMappingQueryV2 {
+func buildUpdateAppProjectMappingRequest(accountId string, d *schema.ResourceData) *nextgen.V1AppProjectMappingQueryV2 {
 	var appProjectMappingRequest nextgen.V1AppProjectMappingQueryV2
 
-	if attr, ok := d.GetOk("account_id"); ok {
-		appProjectMappingRequest.AccountIdentifier = attr.(string)
-	}
+	appProjectMappingRequest.AccountIdentifier = accountId
 
 	if attr, ok := d.GetOk("org_id"); ok {
 		appProjectMappingRequest.OrgIdentifier = attr.(string)

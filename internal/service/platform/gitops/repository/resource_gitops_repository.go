@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
@@ -26,26 +28,31 @@ func ResourceGitopsRepositories() *schema.Resource {
 				Description: "Account identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"identifier": {
 				Description: "Identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"repo": {
 				Description: "Repo details holding application configurations.",
@@ -57,6 +64,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "URL to the remote repository.",
 							Type:        schema.TypeString,
 							Required:    true,
+							ForceNew:    true,
 						},
 						"username": {
 							Description: "Username to be used for authenticating the remote repository.",
@@ -67,11 +75,14 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "Password or PAT to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"ssh_private_key": {
 							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
+							Sensitive:   true,
 						},
 						"insecure_ignore_host_key": {
 							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.",
@@ -87,22 +98,26 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "Indicates if git-lfs support must be enabled for this repo. This is valid only for Git repositories.",
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Default:     false,
 						},
 						"tls_client_cert_data": {
 							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"tls_client_cert_key": {
 							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"type_": {
-							Description: "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Computed:    true,
+							Description:  "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
+							Type:         schema.TypeString,
+							Optional:     true,
+							Computed:     true,
+							ValidateFunc: validation.StringInSlice([]string{"git", "helm"}, false),
 						},
 						"name": {
 							Description: "Name to be used for this repo. Only used with Helm repos.",
@@ -112,7 +127,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 						"inherited_creds": {
 							Description: "Indicates if the credentials were inherited from a repository credential.",
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 						},
 						"enable_oci": {
 							Description: "Indicates if helm-oci support must be enabled for this repo.",
@@ -123,6 +138,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "GitHub app private key PEM data.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"github_app_id": {
 							Description: "Id of the GitHub app used to access the repo.",
@@ -151,9 +167,10 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Computed:    true,
 						},
 						"connection_type": {
-							Description: "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS_CONNECTION_TYPE\"",
-							Type:        schema.TypeString,
-							Required:    true,
+							Description:  "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS\", \"GITHUB_ENTERPRISE\".",
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"HTTPS", "SSH", "GITHUB", "HTTPS_ANONYMOUS", "GITHUB_ENTERPRISE"}, false),
 						},
 					},
 				},
@@ -206,11 +223,13 @@ func ResourceGitopsRepositories() *schema.Resource {
 										Description: "AWS secret access key.",
 										Type:        schema.TypeString,
 										Optional:    true,
+										Sensitive:   true,
 									},
 									"aws_session_token": {
 										Description: "AWS session token.",
 										Type:        schema.TypeString,
 										Optional:    true,
+										Sensitive:   true,
 									},
 								},
 							},
@@ -262,6 +281,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "GCP access key.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"workload_identity": {
 							Description: "GCP workload identity.",
@@ -360,6 +380,10 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	createRepoRequest := buildCreateRepoRequest(d)
+	if projectIdentifier == "" && createRepoRequest.Repo.Project != "" {
+		return diag.FromErr(fmt.Errorf("project_id is required when creating repo in project, cannot set argocd project for account level repo"))
+	}
+
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceCreateRepository(ctx, createRepoRequest, agentIdentifier, &nextgen.RepositoriesApiAgentRepositoryServiceCreateRepositoryOpts{
 		AccountIdentifier: optional.NewString(accountIdentifier),
 		OrgIdentifier:     optional.NewString(orgIdentifier),
@@ -402,7 +426,7 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
@@ -419,6 +443,7 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
+
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -431,7 +456,11 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
 	}
+
 	updateRepoRequest := buildUpdateRepoRequest(d)
+	if projectIdentifier == "" && updateRepoRequest.Repo.Project != "" {
+		return diag.FromErr(fmt.Errorf("project_id is required when creating repo in project, cannot set argocd project for account level repo"))
+	}
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceUpdateRepository(ctx, updateRepoRequest, agentIdentifier, identifier, &nextgen.RepositoriesApiAgentRepositoryServiceUpdateRepositoryOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(orgIdentifier),
@@ -520,8 +549,9 @@ func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpda
 		}
 	}
 
+	r := buildRepo(d)
 	request := nextgen.RepositoriesRepoUpdateRequest{
-		Repo:            buildRepo(d),
+		Repo:            r,
 		RefreshInterval: refreshInterval,
 		UpdateMask: &nextgen.ProtobufFieldMask{
 			Paths: updateMaskPath,
@@ -536,6 +566,7 @@ func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpda
 }
 
 func buildCreateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoCreateRequest {
+
 	var upsert, credsOnly bool
 	if attr, ok := d.GetOk("upsert"); ok {
 		upsert = attr.(bool)
@@ -698,6 +729,7 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 			if repo["enable_lfs"] != nil {
 				repoObj.EnableLfs = repo["enable_lfs"].(bool)
 			}
+
 			if repo["tls_client_cert_data"] != nil {
 				repoObj.TlsClientCertData = repo["tls_client_cert_data"].(string)
 			}

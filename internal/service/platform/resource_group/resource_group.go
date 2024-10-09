@@ -108,13 +108,13 @@ func ResourceResourceGroup() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"attribute_name": {
-													Description:  "Name of the attribute. Valid values are `category` or `type`.",
+													Description:  "Name of the attribute. Valid values are `category`, `type`, `labels`, `tag` or `tags`.",
 													Type:         schema.TypeString,
 													Optional:     true,
-													ValidateFunc: validation.StringInSlice([]string{"category", "type"}, false),
+													ValidateFunc: validation.StringInSlice([]string{"category", "type", "labels", "tag", "tags"}, false),
 												},
 												"attribute_values": {
-													Description: "Value of the attributes.Valid values for `category` are [ARTIFACTORY,CLOUD_COST,CLOUD_PROVIDER,CODE_REPO,MONITORING,SECRET_MANAGER,TICKETING] and for `type` are [Production,PreProduction]",
+													Description: "Value of the attributes.Valid values for `category` are [ARTIFACTORY,CLOUD_COST,CLOUD_PROVIDER,CODE_REPO,MONITORING,SECRET_MANAGER,TICKETING], for `type` are [Production,PreProduction], for `labels`, it can be using the syntax 'label:value', for `tag` or `tags` it can be any string.",
 													Type:        schema.TypeSet,
 													Optional:    true,
 													Elem: &schema.Schema{

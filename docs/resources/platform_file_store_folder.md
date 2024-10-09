@@ -32,7 +32,7 @@ resource "harness_platform_file_store_folder" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `parent_identifier` (String) Folder parent identifier on Harness File Store
+- `parent_identifier` (String) Folder parent identifier on Harness File Store. If the file is at the root level, the parent_identifier will be `Root`.
 
 ### Optional
 
@@ -75,8 +75,8 @@ Import is supported using the following syntax:
 terraform import harness_platform_file_store_folder.example <identifier>
 
 # Import org level folder
-terraform import harness_platform_file_store_folder.example <org_id><identifier>
+terraform import harness_platform_file_store_folder.example <org_id>/<identifier>
 
 # Import org level folder
-terraform import harness_platform_file_store_folder.example <org_id><project_id><identifier>
+terraform import harness_platform_file_store_folder.example <org_id>/<project_id>/<identifier>
 ```
