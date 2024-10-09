@@ -23,6 +23,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 		UpdateContext: resourceGitOpsRepositoryUpdate,
 		DeleteContext: resourceGitOpsRepositoryDelete,
 		Importer:      helpers.GitopsAgentResourceImporter,
+
 		Schema: map[string]*schema.Schema{
 			"account_id": {
 				Description: "Account identifier of the GitOps repository.",
@@ -58,6 +59,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 				Description: "Repo details holding application configurations.",
 				Type:        schema.TypeList,
 				Required:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"repo": {
@@ -75,14 +77,16 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "Password or PAT to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 							Sensitive:   true,
 						},
 						"ssh_private_key": {
-							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Computed:    true,
-							Sensitive:   true,
+							Description:   "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Computed:      true,
+							Sensitive:     true,
+							ConflictsWith: []string{"repo.0.password", "repo.0.github_app_private_key", "repo.0.github_app_id", "repo.0.github_app_installation_id", "repo.0.github_app_enterprise_base_url", "repo.0.tls_client_cert_data", "repo.0.tls_client_cert_key"},
 						},
 						"insecure_ignore_host_key": {
 							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.",
@@ -101,16 +105,20 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Default:     false,
 						},
 						"tls_client_cert_data": {
-							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
+							Description:   "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Sensitive:     true,
+							Computed:      true,
+							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.github_app_private_key", "repo.0.github_app_id", "repo.0.github_app_installation_id", "repo.0.github_app_enterprise_base_url"},
 						},
 						"tls_client_cert_key": {
-							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
+							Description:   "Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Sensitive:     true,
+							Computed:      true,
+							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.github_app_private_key", "repo.0.github_app_id", "repo.0.github_app_installation_id", "repo.0.github_app_enterprise_base_url"},
 						},
 						"type_": {
 							Description:  "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
@@ -135,25 +143,34 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 						},
 						"github_app_private_key": {
-							Description: "GitHub app private key PEM data.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
+							Description:   "GitHub app private key PEM data.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Sensitive:     true,
+							Computed:      true,
+							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.tls_client_cert_data", "repo.0.tls_client_cert_key"},
 						},
 						"github_app_id": {
-							Description: "Id of the GitHub app used to access the repo.",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:   "Id of the GitHub app used to access the repo.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Sensitive:     true,
+							Computed:      true,
+							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.tls_client_cert_data", "repo.0.tls_client_cert_key"},
 						},
 						"github_app_installation_id": {
-							Description: "Installation id of the GitHub app used to access the repo.",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:   "Installation id of the GitHub app used to access the repo.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Sensitive:     true,
+							Computed:      true,
+							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.tls_client_cert_data", "repo.0.tls_client_cert_key"},
 						},
 						"github_app_enterprise_base_url": {
-							Description: "Base URL of GitHub Enterprise installation. If left empty, this defaults to https://api.github.com.",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:   "Base URL of GitHub Enterprise installation. If left empty, this defaults to https://api.github.com.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.tls_client_cert_data", "repo.0.tls_client_cert_key"},
 						},
 						"proxy": {
 							Description: "The HTTP/HTTPS proxy used to access the repo.",
@@ -339,23 +356,23 @@ func ResourceGitopsRepositories() *schema.Resource {
 					},
 				},
 			},
-			"update_mask": {
-				Description: "Update mask of the repository.",
-				Type:        schema.TypeList,
-				Optional:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"paths": {
-							Description: "The set of field mask paths.",
-							Optional:    true,
-							Type:        schema.TypeList,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-						},
-					},
-				},
-			},
+			//"update_mask": {
+			//	Description: "Update mask of the repository.",
+			//	Type:        schema.TypeList,
+			//	Optional:    true,
+			//	Elem: &schema.Resource{
+			//		Schema: map[string]*schema.Schema{
+			//			"paths": {
+			//				Description: "The set of field mask paths.",
+			//				Optional:    true,
+			//				Type:        schema.TypeList,
+			//				Elem: &schema.Schema{
+			//					Type: schema.TypeString,
+			//				},
+			//			},
+			//		},
+			//	},
+			//},
 		},
 	}
 	return resource
@@ -401,6 +418,29 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 		d.MarkNewResource()
 		return nil
 	}
+
+	if attr, ok := d.GetOk("repo.0.password"); ok {
+		resp.Repository.Password = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.ssh_private_key"); ok {
+		resp.Repository.SshPrivateKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.tls_client_cert_data"); ok {
+		resp.Repository.TlsClientCertData = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.tls_client_cert_key"); ok {
+		resp.Repository.TlsClientCertKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.github_app_private_key"); ok {
+		resp.Repository.GithubAppPrivateKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.github_app_id"); ok {
+		resp.Repository.GithubAppID = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.github_app_installation_id"); ok {
+		resp.Repository.GithubAppInstallationID = attr.(string)
+	}
+
 	setRepositoryDetails(d, &resp)
 	return nil
 }
@@ -435,6 +475,42 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 		d.MarkNewResource()
 		return nil
 	}
+	if attr, ok := d.GetOk("repo.0.password"); ok {
+		if len(resp.Repository.Password) != 0 {
+			resp.Repository.Password = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("repo.0.ssh_private_key"); ok {
+		if len(resp.Repository.SshPrivateKey) != 0 {
+			resp.Repository.SshPrivateKey = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("repo.0.tls_client_cert_data"); ok {
+		if len(resp.Repository.TlsClientCertData) != 0 {
+			resp.Repository.TlsClientCertData = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("repo.0.tls_client_cert_key"); ok {
+		if len(resp.Repository.TlsClientCertKey) != 0 {
+			resp.Repository.TlsClientCertKey = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("repo.0.github_app_private_key"); ok {
+		if len(resp.Repository.GithubAppPrivateKey) != 0 {
+			resp.Repository.GithubAppPrivateKey = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("repo.0.github_app_id"); ok {
+		if len(resp.Repository.GithubAppID) != 0 {
+			resp.Repository.GithubAppID = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("repo.0.github_app_installation_id"); ok {
+		if len(resp.Repository.GithubAppInstallationID) != 0 {
+			resp.Repository.GithubAppInstallationID = attr.(string)
+		}
+	}
+
 	setRepositoryDetails(d, &resp)
 	return nil
 
@@ -477,6 +553,29 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 		d.MarkNewResource()
 		return nil
 	}
+
+	if attr, ok := d.GetOk("repo.0.password"); ok {
+		resp.Repository.Password = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.ssh_private_key"); ok {
+		resp.Repository.SshPrivateKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.tls_client_cert_data"); ok {
+		resp.Repository.TlsClientCertData = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.tls_client_cert_key"); ok {
+		resp.Repository.TlsClientCertKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.github_app_private_key"); ok {
+		resp.Repository.GithubAppPrivateKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.github_app_id"); ok {
+		resp.Repository.GithubAppID = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.github_app_installation_id"); ok {
+		resp.Repository.GithubAppInstallationID = attr.(string)
+	}
+
 	setRepositoryDetails(d, &resp)
 	return nil
 }
@@ -511,11 +610,11 @@ func resourceGitOpsRepositoryDelete(ctx context.Context, d *schema.ResourceData,
 
 func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpdateRequest {
 	var updateMask map[string]interface{}
-	if attr, ok := d.GetOk("update_mask"); ok {
-		if len(attr.([]interface{})) > 0 {
-			updateMask = attr.([]interface{})[0].(map[string]interface{})
-		}
-	}
+	//if attr, ok := d.GetOk("update_mask"); ok {
+	//	if len(attr.([]interface{})) > 0 {
+	//		updateMask = attr.([]interface{})[0].(map[string]interface{})
+	//	}
+	//}
 	var updateMaskPath []string
 	if updateMask != nil && updateMask["paths"] != nil && len(updateMask["paths"].([]interface{})) > 0 {
 		for _, v := range updateMask["paths"].([]interface{}) {
@@ -553,9 +652,10 @@ func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpda
 	request := nextgen.RepositoriesRepoUpdateRequest{
 		Repo:            r,
 		RefreshInterval: refreshInterval,
-		UpdateMask: &nextgen.ProtobufFieldMask{
-			Paths: updateMaskPath,
-		},
+		// Update mask is not needed, it is built on BE
+		//UpdateMask: &nextgen.ProtobufFieldMask{
+		//	Paths: updateMaskPath,
+		//},
 	}
 	if genType != "" {
 		request.GenType = &genType
@@ -781,26 +881,43 @@ func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Reposit
 	d.Set("project_id", repo.ProjectIdentifier)
 	d.Set("agent_id", repo.AgentIdentifier)
 	d.Set("identifier", repo.Identifier)
+
 	if repo.Repository != nil {
 		repoList := []interface{}{}
 		repoO := map[string]interface{}{}
 		repoO["repo"] = repo.Repository.Repo
-		repoO["username"] = repo.Repository.Username
-		repoO["password"] = repo.Repository.Password
+		if len(repo.Repository.Username) > 0 {
+			repoO["username"] = repo.Repository.Username
+		}
+		if len(repo.Repository.Password) > 0 {
+			repoO["password"] = repo.Repository.Password
+		}
 		repoO["ssh_private_key"] = repo.Repository.SshPrivateKey
 		repoO["insecure_ignore_host_key"] = repo.Repository.InsecureIgnoreHostKey
 		repoO["insecure"] = repo.Repository.Insecure
 		repoO["enable_lfs"] = repo.Repository.EnableLfs
-		repoO["tls_client_cert_data"] = repo.Repository.TlsClientCertData
-		repoO["tls_client_cert_key"] = repo.Repository.TlsClientCertKey
+		if len(repo.Repository.TlsClientCertData) > 0 {
+			repoO["tls_client_cert_data"] = repo.Repository.TlsClientCertData
+		}
+		if len(repo.Repository.TlsClientCertKey) > 0 {
+			repoO["tls_client_cert_key"] = repo.Repository.TlsClientCertKey
+		}
 		repoO["type_"] = repo.Repository.Type_
 		repoO["name"] = repo.Repository.Name
 		repoO["inherited_creds"] = repo.Repository.InheritedCreds
 		repoO["enable_oci"] = repo.Repository.EnableOCI
-		repoO["github_app_private_key"] = repo.Repository.GithubAppPrivateKey
-		repoO["github_app_id"] = repo.Repository.GithubAppID
-		repoO["github_app_installation_id"] = repo.Repository.GithubAppInstallationID
-		repoO["github_app_enterprise_base_url"] = repo.Repository.GithubAppEnterpriseBaseUrl
+		if len(repo.Repository.GithubAppPrivateKey) > 0 {
+			repoO["github_app_private_key"] = repo.Repository.GithubAppPrivateKey
+		}
+		if len(repo.Repository.GithubAppID) > 0 {
+			repoO["github_app_id"] = repo.Repository.GithubAppID
+		}
+		if len(repo.Repository.GithubAppInstallationID) > 0 {
+			repoO["github_app_installation_id"] = repo.Repository.GithubAppInstallationID
+		}
+		if len(repo.Repository.GithubAppEnterpriseBaseUrl) > 0 {
+			repoO["github_app_enterprise_base_url"] = repo.Repository.GithubAppEnterpriseBaseUrl
+		}
 		repoO["proxy"] = repo.Repository.Proxy
 		repoO["project"] = repo.Repository.Project
 		repoO["connection_type"] = repo.Repository.ConnectionType
