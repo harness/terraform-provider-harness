@@ -197,16 +197,16 @@ resource "harness_platform_gitops_app_project" "test" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps project.
-- `agent_id` (String) Agent identifier of the GitOps project.
+- `account_id` (String) Account identifier of the GitOps Agent where argo project is to be created.
+- `agent_id` (String) Agent identifier of the GitOps project, this must include scope prefix (eg. account.agentId)
 - `project` (Block List, Min: 1) GitOps project configuration. (see [below for nested schema](#nestedblock--project))
 
 ### Optional
 
-- `org_id` (String) Org identifier of the GitOps project.
-- `project_id` (String) Project identifier of the GitOps repository.
-- `query_name` (String) Identifier for the GitOps project.
-- `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
+- `org_id` (String) Org identifier of the GitOps Agent where argo project is to be created.
+- `project_id` (String) Project identifier of the Gitops Agent where argo project is to be created.
+- `query_name` (String) Identifier for the GitOps Argo project.
+- `upsert` (Boolean) Indicates if the argo project should be updated if existing and inserted if not.
 
 ### Read-Only
 
@@ -231,7 +231,7 @@ Optional:
 - `labels` (Map of String) Labels associated with the GitOps project.
 - `managed_fields` (Block List) Managed fields associated with the GitOps project. (see [below for nested schema](#nestedblock--project--metadata--managed_fields))
 - `name` (String) Name of the GitOps project.
-- `namespace` (String) Namespace of the GitOps project.
+- `namespace` (String) Namespace of the GitOps project. This must be the same as the namespace where the agent is installed
 - `resource_version` (String) Resource Version for the GitOps project
 
 <a id="nestedblock--project--metadata--managed_fields"></a>

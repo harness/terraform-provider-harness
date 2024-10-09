@@ -26,22 +26,22 @@ func ResourceProject() *schema.Resource {
 				Required:    true,
 			},
 			"account_id": {
-				Description: "Account identifier of the GitOps agent where argo project is to be created.",
+				Description: "Account identifier of the GitOps Agent where argo project is to be created.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "Org identifier of the GitOps project where argo project is to be created.",
+				Description: "Org identifier of the GitOps Agent where argo project is to be created.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the project where argo project is to be created.",
+				Description: "Project identifier of the Gitops Agent where argo project is to be created.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"query_name": {
-				Description: "Identifier for the GitOps project.",
+				Description: "Identifier for the GitOps Argo project.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
