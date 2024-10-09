@@ -2,9 +2,9 @@ package cluster
 
 import (
 	"context"
-  "fmt"
+	"fmt"
 	"strings"
-  
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -468,7 +468,7 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 		})
 
 	if err != nil {
-		return helpers.HandleGitopsError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
