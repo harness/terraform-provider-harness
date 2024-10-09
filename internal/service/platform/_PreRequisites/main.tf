@@ -1,50 +1,52 @@
 # main.tf
 
-/*provider "harness" {
-  account_id = "your_harness_account_id"
-  endpoint   = "https://app.harness.io/gateway"
-  api_key    = "your_harness_api_key"
-}*/
+terraform {
+  required_providers {
+    harness = {
+      source = "harness/harness"
+    }
+  }
+}
 
 resource "harness_platform_secret_text" "my_secret_text" {
-  identifier = "my_secret_text_id"
-  name       = "My Secret Text"
-  description = "This is a test secret text"
-  tags        = ["foo:bar"]
+  identifier                = "my_secret_text_id"
+  name                      = "My Secret Text"
+  description               = "This is a test secret text"
+  tags                      = ["foo:bar"]
   secret_manager_identifier = "harnessSecretManager"
-  value_type  = "Inline"
-  value       = "my_secret_value"
+  value_type                = "Inline"
+  value                     = "my_secret_value"
 }
 
 resource "harness_platform_connector_vault" "my_vault_connector" {
-  identifier = "my_vault_connector_id"
-  name       = "My Vault Connector"
+  identifier  = "my_vault_connector_id"
+  name        = "My Vault Connector"
   description = "Vault Connector example"
   tags        = ["foo:bar"]
 
-  app_role_id                     = "570acf09-ef2a-144b-2fb0-14a42e06ffe3"
-  base_path                       = "vikas-test/"
-  access_type                     = "APP_ROLE"
-  default                         = false
-  secret_id                       = "account.${harness_platform_secret_text.my_secret_text.id}"
-  read_only                       = true
-  renewal_interval_minutes        = 60
+  app_role_id                       = "570acf09-ef2a-144b-2fb0-14a42e06ffe3"
+  base_path                         = "vikas-test/"
+  access_type                       = "APP_ROLE"
+  default                           = false
+  secret_id                         = "account.${harness_platform_secret_text.my_secret_text.id}"
+  read_only                         = true
+  renewal_interval_minutes          = 60
   secret_engine_manually_configured = true
-  secret_engine_name              = "harness-test"
-  secret_engine_version           = 2
-  use_aws_iam                     = false
-  use_k8s_auth                    = false
-  use_vault_agent                 = false
-  delegate_selectors              = ["harness-delegate"]
-  vault_url                       = "https://vaultqa.harness.io"
+  secret_engine_name                = "harness-test"
+  secret_engine_version             = 2
+  use_aws_iam                       = false
+  use_k8s_auth                      = false
+  use_vault_agent                   = false
+  delegate_selectors                = ["harness-delegate"]
+  vault_url                         = "https://vaultqa.harness.io"
 
   depends_on = [time_sleep.wait_8_seconds]
 }
 
 resource "harness_platform_service_account" "my_service_account" {
-  identifier = "my_service_account_id"
-  name       = "My Service Account"
-  email      = "email@service.harness.io"
+  identifier  = "my_service_account_id"
+  name        = "My Service Account"
+  email       = "email@service.harness.io"
   description = "This is a test service account"
   tags        = ["foo:bar"]
   account_id  = "your_harness_account_id"
@@ -54,9 +56,9 @@ resource "harness_platform_usergroup" "my_user_group" {
   identifier = "my_user_group_id"
   name       = "My User Group"
 
-  linked_sso_id = "linked_sso_id"
+  linked_sso_id      = "linked_sso_id"
   externally_managed = false
-  users = []
+  users              = []
 
   notification_configs {
     type              = "SLACK"
@@ -64,18 +66,18 @@ resource "harness_platform_usergroup" "my_user_group" {
   }
 
   notification_configs {
-    type               = "EMAIL"
-    group_email        = "email@domain.com"
+    type                    = "EMAIL"
+    group_email             = "email@domain.com"
     send_email_to_all_users = true
   }
 
   notification_configs {
-    type                    = "MSTEAMS"
+    type                        = "MSTEAMS"
     microsoft_teams_webhook_url = "https://msteams.webhook.url"
   }
 
   notification_configs {
-    type        = "PAGERDUTY"
+    type           = "PAGERDUTY"
     pager_duty_key = "pagerDutyKey"
   }
 
