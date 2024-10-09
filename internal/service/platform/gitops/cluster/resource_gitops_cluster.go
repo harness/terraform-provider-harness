@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"context"
+	"strings"
 
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
@@ -47,6 +48,7 @@ func ResourceGitopsCluster() *schema.Resource {
 				Description: "Identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"request": {
 				Description: "Cluster create or update request.",
@@ -58,6 +60,10 @@ func ResourceGitopsCluster() *schema.Resource {
 							Description: "Indicates if the GitOps cluster should be updated if existing and inserted if not.",
 							Type:        schema.TypeBool,
 							Optional:    true,
+							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+								// Suppress diffs if cluster resource already exists, only relevant during creation
+								return d.Id() != ""
+							},
 						},
 						"updated_fields": {
 							Description: "Fields which are updated.",
@@ -449,7 +455,7 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 		})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleGitopsError(err, d, httpResp)
 	}
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
@@ -605,13 +611,38 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 	if attr, ok := d.GetOk("request"); ok {
 		request = attr.([]interface{})[0].(map[string]interface{})
 	}
+	if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
+		tags = helpers.ExpandTags(tag)
+	}
+
 	var updatedFields []string
+	// keep backward compatible, this logic assumes that user sets all fields to be udpated on each update inside the tf resource file itself
 	if request["updated_fields"] != nil && len(request["updated_fields"].([]interface{})) > 0 {
 		for _, v := range request["updated_fields"].([]interface{}) {
 			updatedFields = append(updatedFields, v.(string))
 		}
-		if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
-			tags = helpers.ExpandTags(tag)
+	}
+
+	// we will also compute changed fields without them being added explicitly in updated_fields block, since argo cluster update request
+	// requires this to be set.
+
+	// only the following fields hold meaning in updatedFields section
+	fieldsToCheckForDiff := []string{
+		"request.0.tags",
+		"request.0.cluster.0.server",
+		"request.0.cluster.0.name",
+		"request.0.cluster.0.namespaces",
+		"request.0.cluster.0.config",
+		"request.0.cluster.0.shard",
+		"request.0.cluster.0.annotations",
+		"request.0.cluster.0.cluster_resources",
+		"request.0.cluster.0.labels",
+		"request.0.cluster.0.project",
+	}
+	for _, key := range fieldsToCheckForDiff {
+		if d.HasChange(key) {
+			updatedFieldKeyForArgo := getUpdateFieldFromPath(key)
+			updatedFields = append(updatedFields, updatedFieldKeyForArgo)
 		}
 	}
 
@@ -781,4 +812,8 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 		}
 	}
 	return &clusterDetails
+}
+
+func getUpdateFieldFromPath(path string) string {
+	return strings.Split(path, ".")[len(strings.Split(path, "."))-1]
 }
