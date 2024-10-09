@@ -64,7 +64,7 @@ func ResourceProject() *schema.Resource {
 						"metadata": {
 							Type:        schema.TypeList,
 							Required:    true,
-							Description: "K8s object metadata for the GitOps project.",
+							Description: "K8s object metadata for the Argo project.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {

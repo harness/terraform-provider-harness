@@ -163,7 +163,7 @@ Read-Only:
 Optional:
 
 - `aws_cluster_name` (String) AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster.
-- `bearer_token` (String) Bearer authentication token the cluster.
+- `bearer_token` (String, Sensitive) Bearer authentication token the cluster.
 - `cluster_connection_type` (String) Identifies the authentication method used to connect to the cluster.
 - `exec_provider_config` (Block List) Configuration for an exec provider. (see [below for nested schema](#nestedblock--request--cluster--config--exec_provider_config))
 - `password` (String) Password of the server of the cluster.
