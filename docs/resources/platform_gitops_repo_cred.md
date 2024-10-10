@@ -60,8 +60,8 @@ Optional:
 
 - `enable_oci` (Boolean) Specifies whether helm-oci support should be enabled for this repo.
 - `github_app_enterprise_base_url` (String) Specifies the GitHub API URL for GitHub app authentication.
-- `github_app_id` (String) Specifies the Github App ID of the app used to access the repo for GitHub app authentication.
-- `github_app_installation_id` (String) Specifies the ID of the installed GitHub App for GitHub app authentication.
+- `github_app_id` (String, Sensitive) Specifies the Github App ID of the app used to access the repo for GitHub app authentication.
+- `github_app_installation_id` (String, Sensitive) Specifies the ID of the installed GitHub App for GitHub app authentication.
 - `github_app_private_key` (String, Sensitive) github_app_private_key specifies the private key PEM data for authentication via GitHub app.
 - `password` (String, Sensitive) Password or PAT to be used for authenticating the remote repository.
 - `ssh_private_key` (String, Sensitive) SSH Key in PEM format for authenticating the repository. Used only for Git repository.

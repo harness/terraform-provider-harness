@@ -2,6 +2,7 @@ package repository_credentials
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -74,54 +75,72 @@ func ResourceGitopsRepoCred() *schema.Resource {
 							ForceNew:    true,
 						},
 						"username": {
-							Description: "Username to be used for authenticating the remote repository.",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:   "Username to be used for authenticating the remote repository.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							ConflictsWith: []string{"creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
 						},
 						"password": {
-							Description: "Password or PAT to be used for authenticating the remote repository.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
+							Description:   "Password or PAT to be used for authenticating the remote repository.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Computed:      true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
 						},
 						"ssh_private_key": {
-							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
+							Description:   "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Computed:      true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
 						},
 						"tls_client_cert_data": {
-							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
+							Description:   "Certificate in PEM format for authenticating at the repo server. This is used for mTLS.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Computed:      true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
 						},
 						"tls_client_cert_key": {
-							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
+							Description:   "Private key in PEM format for authenticating at the repo server. This is used for mTLS.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Computed:      true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
 						},
 						"github_app_private_key": {
-							Description: "github_app_private_key specifies the private key PEM data for authentication via GitHub app.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
+							Description:   "github_app_private_key specifies the private key PEM data for authentication via GitHub app.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Computed:      true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key"},
 						},
 						"github_app_id": {
-							Description: "Specifies the Github App ID of the app used to access the repo for GitHub app authentication.",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:   "Specifies the Github App ID of the app used to access the repo for GitHub app authentication.",
+							Type:          schema.TypeString,
+							Sensitive:     true,
+							Computed:      true,
+							Optional:      true,
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key"},
 						},
 						"github_app_installation_id": {
-							Description: "Specifies the ID of the installed GitHub App for GitHub app authentication.",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:   "Specifies the ID of the installed GitHub App for GitHub app authentication.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Sensitive:     true,
+							Computed:      true,
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key"},
 						},
 						"github_app_enterprise_base_url": {
-							Description: "Specifies the GitHub API URL for GitHub app authentication.",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:   "Specifies the GitHub API URL for GitHub app authentication.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key"},
 						},
 						"enable_oci": {
 							Description: "Specifies whether helm-oci support should be enabled for this repo.",
@@ -129,9 +148,10 @@ func ResourceGitopsRepoCred() *schema.Resource {
 							Optional:    true,
 						},
 						"type": {
-							Description: "Type specifies the type of the repoCreds.Can be either 'git' or 'helm. 'git' is assumed if empty or absent",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:  "Type specifies the type of the repoCreds.Can be either 'git' or 'helm. 'git' is assumed if empty or absent",
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"git", "helm"}, false),
 						},
 					},
 				},
@@ -184,6 +204,25 @@ func resourceGitopsRepoCredCreate(ctx context.Context, d *schema.ResourceData, m
 		d.MarkNewResource()
 		return nil
 	}
+	if attr, ok := d.GetOk("creds.0.password"); ok {
+		resp.RepoCreds.Password = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
+		resp.RepoCreds.SshPrivateKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
+		resp.RepoCreds.TlsClientCertData = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
+		resp.RepoCreds.TlsClientCertKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
+		resp.RepoCreds.GithubAppPrivateKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.github_app_installation_id"); ok {
+		resp.RepoCreds.GithubAppInstallationID = attr.(string)
+	}
+
 	setGitopsRepositoriesCredential(d, &resp)
 	return nil
 }
@@ -230,6 +269,26 @@ func resourceGitopsRepoCredUpdate(ctx context.Context, d *schema.ResourceData, m
 		d.MarkNewResource()
 		return nil
 	}
+
+	if attr, ok := d.GetOk("creds.0.password"); ok {
+		resp.RepoCreds.Password = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
+		resp.RepoCreds.SshPrivateKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
+		resp.RepoCreds.TlsClientCertData = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
+		resp.RepoCreds.TlsClientCertKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
+		resp.RepoCreds.GithubAppPrivateKey = attr.(string)
+	}
+	if attr, ok := d.GetOk("creds.0.github_app_installation_id"); ok {
+		resp.RepoCreds.GithubAppInstallationID = attr.(string)
+	}
+
 	setGitopsRepositoriesCredential(d, &resp)
 	return nil
 }
@@ -257,6 +316,38 @@ func resourceGitopsRepoCredRead(ctx context.Context, d *schema.ResourceData, met
 		d.MarkNewResource()
 		return nil
 	}
+
+	if attr, ok := d.GetOk("creds.0.password"); ok {
+		if len(resp.RepoCreds.Password) != 0 {
+			resp.RepoCreds.Password = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
+		if len(resp.RepoCreds.SshPrivateKey) != 0 {
+			resp.RepoCreds.SshPrivateKey = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
+		if len(resp.RepoCreds.TlsClientCertData) != 0 {
+			resp.RepoCreds.TlsClientCertData = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
+		if len(resp.RepoCreds.TlsClientCertKey) != 0 {
+			resp.RepoCreds.TlsClientCertKey = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
+		if len(resp.RepoCreds.GithubAppPrivateKey) != 0 {
+			resp.RepoCreds.GithubAppPrivateKey = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("creds.0.github_app_installation_id"); ok {
+		if len(resp.RepoCreds.GithubAppInstallationID) != 0 {
+			resp.RepoCreds.GithubAppInstallationID = attr.(string)
+		}
+	}
+
 	setGitopsRepositoriesCredential(d, &resp)
 	return nil
 }
