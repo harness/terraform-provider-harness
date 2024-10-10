@@ -83,6 +83,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
+	pl_provider "github.com/harness/terraform-provider-harness/internal/service/platform/provider"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
@@ -203,6 +204,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
 				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.DataSourceServiceOverrides(),
+				"harness_platform_provider":                        pl_provider.DataSourceProvider(),
 				"harness_platform_overrides":                       pl_overrides.DataSourceOverrides(),
 				"harness_platform_gitops_agent":                    gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
@@ -338,6 +340,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_feature_flag_target_group":       feature_flag_target_group.ResourceFeatureFlagTargetGroup(),
 				"harness_platform_feature_flag_target":             feature_flag_target.ResourceFeatureFlagTarget(),
 				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
+				"harness_platform_provider":                        pl_provider.ResourceProvider(),
 				"harness_platform_overrides":                       pl_overrides.ResourceOverrides(),
 				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
