@@ -357,23 +357,24 @@ func ResourceGitopsRepositories() *schema.Resource {
 					},
 				},
 			},
-			//"update_mask": {
-			//	Description: "Update mask of the repository.",
-			//	Type:        schema.TypeList,
-			//	Optional:    true,
-			//	Elem: &schema.Resource{
-			//		Schema: map[string]*schema.Schema{
-			//			"paths": {
-			//				Description: "The set of field mask paths.",
-			//				Optional:    true,
-			//				Type:        schema.TypeList,
-			//				Elem: &schema.Schema{
-			//					Type: schema.TypeString,
-			//				},
-			//			},
-			//		},
-			//	},
-			//},
+			"update_mask": {
+				Description: "Update mask of the repository.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"paths": {
+							Description: "The set of field mask paths.",
+							Optional:    true,
+							Type:        schema.TypeList,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 	return resource
@@ -610,18 +611,6 @@ func resourceGitOpsRepositoryDelete(ctx context.Context, d *schema.ResourceData,
 }
 
 func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpdateRequest {
-	var updateMask map[string]interface{}
-	//if attr, ok := d.GetOk("update_mask"); ok {
-	//	if len(attr.([]interface{})) > 0 {
-	//		updateMask = attr.([]interface{})[0].(map[string]interface{})
-	//	}
-	//}
-	var updateMaskPath []string
-	if updateMask != nil && updateMask["paths"] != nil && len(updateMask["paths"].([]interface{})) > 0 {
-		for _, v := range updateMask["paths"].([]interface{}) {
-			updateMaskPath = append(updateMaskPath, v.(string))
-		}
-	}
 	var genType nextgen.RepositoriesEsoGeneratorType
 	if attr, ok := d.GetOk("gen_type"); ok {
 		genType = nextgen.RepositoriesEsoGeneratorType(attr.(string))
@@ -653,10 +642,6 @@ func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpda
 	request := nextgen.RepositoriesRepoUpdateRequest{
 		Repo:            r,
 		RefreshInterval: refreshInterval,
-		// Update mask is not needed, it is built on BE
-		//UpdateMask: &nextgen.ProtobufFieldMask{
-		//	Paths: updateMaskPath,
-		//},
 	}
 	if genType != "" {
 		request.GenType = &genType
