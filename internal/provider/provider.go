@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
 	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
 	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitx/webhook"
 	governance_enforcement "github.com/harness/terraform-provider-harness/internal/service/platform/governance/enforcement"
 	governance_rule "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule"
+	governance_rule_set "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_rule"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
@@ -284,6 +286,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitx_webhook":                    webhook.DataSourceWebhook(),
 				"harness_governance_rule_enforcement":              governance_enforcement.DatasourceRuleEnforcement(),
 				"harness_governance_rule":                          governance_rule.DatasourceRule(),
+				"harness_governance_rule_set":                      governance_rule_set.DatasourceRuleSet(),
+				"harness_cluster_orchestrator":                     cluster_orchestrator.DataSourceClusterOrchestrator(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -428,6 +432,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitx_webhook":                    webhook.ResourceWebhook(),
 				"harness_governance_rule_enforcement":              governance_enforcement.ResourceRuleEnforcement(),
 				"harness_governance_rule":                          governance_rule.ResourceRule(),
+				"harness_governance_rule_set":                      governance_rule_set.ResourceRuleSet(),
+				"harness_cluster_orchestrator":                     cluster_orchestrator.ResourceClusterOrchestrator(),
 			},
 		}
 

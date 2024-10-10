@@ -2,6 +2,7 @@ package applications
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -20,6 +21,41 @@ func ResourceGitopsApplication() *schema.Resource {
 		UpdateContext: resourceGitopsApplicationUpdate,
 		DeleteContext: resourceGitopsApplicationDelete,
 		Importer:      helpers.GitopsAgentResourceImporter,
+		CustomizeDiff: func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+			var e error
+			if diff.HasChange("project_id") && diff.Id() != "" {
+				e = fmt.Errorf("field 'project_id' cannot be changed after the resource is created")
+			}
+			if diff.HasChange("org_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("account_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("agent_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'agent_id' cannot be changed after the resource is created:%v", e)
+				} else {
+					e = fmt.Errorf("field 'agent_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("name") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'name' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'name' cannot be changed after the resource is created")
+				}
+			}
+			return e
+		},
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -241,6 +277,7 @@ func ResourceGitopsApplication() *schema.Resource {
 										Description: "The ArgoCD project name corresponding to this GitOps application. Value must match mappings of ArgoCD projects to harness project.",
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 									},
 									"source": {
 										Description: "Contains all information about the source of the GitOps application.",

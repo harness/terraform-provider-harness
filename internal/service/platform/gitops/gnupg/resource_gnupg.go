@@ -27,21 +27,25 @@ func ResourceGitopsGnupg() *schema.Resource {
 				Description: "Account Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"identifier": {
 				Description: "Identifier for the GnuPG Key.",

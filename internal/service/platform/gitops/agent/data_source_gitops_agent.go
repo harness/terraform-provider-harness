@@ -111,7 +111,7 @@ func dataSourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
 
-	if err != nil && httpResp.StatusCode != 404 {
+	if err != nil && (httpResp == nil || httpResp.StatusCode != 404) {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
