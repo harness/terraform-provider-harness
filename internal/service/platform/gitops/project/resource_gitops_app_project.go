@@ -21,7 +21,7 @@ func ResourceProject() *schema.Resource {
 		Importer:      helpers.GitopsAgentProjectImporter,
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "Agent identifier of the agent where argo project will exist, this must include scope prefix (eg. account.agentId)",
+				Description: "Agent identifier of the agent where argo project will exist (include scope prefix)",
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
@@ -329,10 +329,7 @@ func ResourceProject() *schema.Resource {
 											if d.HasChange("project.0.spec.0.orphaned_resources.0.ignore") {
 												return false
 											}
-											if oldWarnValue == newWarnValue {
-												return true
-											}
-											return false
+											return oldWarnValue == newWarnValue
 										},
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{

@@ -16,22 +16,22 @@ func DataSourceGitOpsProject() *schema.Resource {
 		ReadContext: dataSourceProjectRead,
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "Agent identifier of the agent where argo project will exist, this must include scope prefix (eg. account.agentId)",
+				Description: "Agent identifier of the agent where argo project resides(include scope prefix)",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"account_id": {
-				Description: "Account identifier of the GitOps Agent where argo project will exist.",
+				Description: "Account identifier of the GitOps Agent where argo project resides.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "Org identifier of the GitOps Agent where argo project is to be created.",
+				Description: "Org identifier of the GitOps Agent where argo project resides.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the Gitops Agent where argo project is to be created.",
+				Description: "Project identifier of the Gitops Agent where argo project resides.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},

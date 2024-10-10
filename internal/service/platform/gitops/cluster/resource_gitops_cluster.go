@@ -44,7 +44,7 @@ func ResourceGitopsCluster() *schema.Resource {
 				ForceNew:    true,
 			},
 			"agent_id": {
-				Description: "Agent identifier of the GitOps cluster.",
+				Description: "Agent identifier of the GitOps cluster. (include scope prefix) ",
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
