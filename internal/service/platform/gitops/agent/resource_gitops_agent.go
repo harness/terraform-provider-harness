@@ -99,6 +99,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				Description: "Metadata of the agent.",
 				Type:        schema.TypeList,
 				Optional:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {

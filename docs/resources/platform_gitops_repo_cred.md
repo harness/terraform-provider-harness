@@ -44,7 +44,7 @@ resource "harness_platform_gitops_repo_cred" "test" {
 
 ### Optional
 
-- `creds` (Block List) credential details. (see [below for nested schema](#nestedblock--creds))
+- `creds` (Block List, Max: 1) credential details. (see [below for nested schema](#nestedblock--creds))
 - `org_id` (String) Organization identifier of the Repository Credentials.
 - `project_id` (String) Project identifier of the Repository Credentials.
 - `upsert` (Boolean) Indicates if the GitOps repository credential should be updated if existing and inserted if not.

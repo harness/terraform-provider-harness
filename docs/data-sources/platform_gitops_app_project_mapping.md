@@ -14,10 +14,10 @@ Resource for managing the Harness GitOps Application Project Mappings.
 
 ```terraform
 data "harness_platform_gitops_app_project_mapping" "example" {
-  account_id = "account_id"
-  org_id     = "organization_id"
-  project_id = "project_id"
-  agent_id   = "agent_id"
+  account_id     = "account_id"
+  org_id         = "organization_id"
+  project_id     = "project_id"
+  agent_id       = "agent_id"
   argo_proj_name = "argo_proj_name"
 }
 ```
@@ -29,11 +29,11 @@ data "harness_platform_gitops_app_project_mapping" "example" {
 
 - `account_id` (String) Account identifier of the GitOps agent's Application Project.
 - `agent_id` (String) Agent identifier for which the ArgoCD and Harness project mapping is to be created.
-- `identifier` (String) Identifier of the GitOps Application Project.
+- `argo_project_name` (String) ArgoCD Project name which is to be mapped to the Harness project.
 - `org_id` (String) Organization identifier of the GitOps agent's Application Project.
 - `project_id` (String) Project identifier of the GitOps agent's Application Project.
 
 ### Read-Only
 
-- `argo_project_name` (String) ArgoCD Project name which is to be mapped to the Harness project.
 - `id` (String) The ID of this resource.
+- `identifier` (String) Identifier of the GitOps Application Project.

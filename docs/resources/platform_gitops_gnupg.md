@@ -38,7 +38,7 @@ resource "harness_platform_gitops_gnupg" "example" {
 
 - `account_id` (String) Account Identifier for the GnuPG Key.
 - `agent_id` (String) Agent identifier for the GnuPG Key.
-- `request` (Block List, Min: 1) GnuPGPublicKey is a representation of a GnuPG public key (see [below for nested schema](#nestedblock--request))
+- `request` (Block List, Min: 1, Max: 1) GnuPGPublicKey is a representation of a GnuPG public key (see [below for nested schema](#nestedblock--request))
 
 ### Optional
 

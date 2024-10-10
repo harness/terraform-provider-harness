@@ -58,12 +58,14 @@ func ResourceProject() *schema.Resource {
 			"project": {
 				Type:        schema.TypeList,
 				Required:    true,
+				MaxItems:    1,
 				Description: "GitOps project configuration.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {
 							Type:        schema.TypeList,
 							Required:    true,
+							MaxItems:    1,
 							Description: "K8s object metadata for the Argo project.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -177,6 +179,7 @@ func ResourceProject() *schema.Resource {
 						"spec": {
 							Type:        schema.TypeList,
 							Required:    true,
+							MaxItems:    1,
 							Description: "Specification details for the Argo project.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{

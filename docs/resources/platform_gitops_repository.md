@@ -206,7 +206,7 @@ resource "harness_platform_gitops_repository" "example" {
 - `account_id` (String) Account identifier of the GitOps repository.
 - `agent_id` (String) Agent identifier of the GitOps repository.
 - `identifier` (String) Identifier of the GitOps repository.
-- `repo` (Block List, Min: 1) Repo details holding application configurations. (see [below for nested schema](#nestedblock--repo))
+- `repo` (Block List, Min: 1, Max: 1) Repo details holding application configurations. (see [below for nested schema](#nestedblock--repo))
 
 ### Optional
 
