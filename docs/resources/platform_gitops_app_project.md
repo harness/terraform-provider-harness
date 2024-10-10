@@ -21,7 +21,7 @@ resource "harness_platform_gitops_app_project" "test" {
   project {
     metadata {
       name       = "name"
-      namespace  = "rollouts"   //Namespace where agent is installed
+      namespace  = "rollouts" //Namespace where agent is installed
       finalizers = ["resources-finalizer.argocd.argoproj.io"]
       labels = {
         v1 = "k1"
@@ -111,7 +111,7 @@ resource "harness_platform_gitops_app_project" "test" {
   project {
     metadata {
       name       = "name"
-      namespace  = "rollouts"   //Namespace where agent is installed
+      namespace  = "rollouts" //Namespace where agent is installed
       finalizers = ["resources-finalizer.argocd.argoproj.io"]
       labels = {
         v1 = "k1"
@@ -197,16 +197,16 @@ resource "harness_platform_gitops_app_project" "test" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps project.
-- `agent_id` (String) Agent identifier of the GitOps project.
+- `account_id` (String) Account identifier of the GitOps Agent where argo project will exist.
+- `agent_id` (String) Agent identifier of the agent where argo project will exist (include scope prefix)
 - `project` (Block List, Min: 1) GitOps project configuration. (see [below for nested schema](#nestedblock--project))
 
 ### Optional
 
-- `org_id` (String) Org identifier of the GitOps project.
-- `project_id` (String) Project identifier of the GitOps repository.
-- `query_name` (String) Identifier for the GitOps project.
-- `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
+- `org_id` (String) Org identifier of the GitOps Agent where argo project is to be created.
+- `project_id` (String) Project identifier of the Gitops Agent where argo project is to be created.
+- `query_name` (String) Identifier for the GitOps Argo project.
+- `upsert` (Boolean) Indicates if the argo project should be updated if existing and inserted if not.
 
 ### Read-Only
 
@@ -217,8 +217,8 @@ resource "harness_platform_gitops_app_project" "test" {
 
 Required:
 
-- `metadata` (Block List, Min: 1) Metadata details for the GitOps project. (see [below for nested schema](#nestedblock--project--metadata))
-- `spec` (Block List, Min: 1) Specification details for the GitOps project. (see [below for nested schema](#nestedblock--project--spec))
+- `metadata` (Block List, Min: 1) K8s object metadata for the Argo project. (see [below for nested schema](#nestedblock--project--metadata))
+- `spec` (Block List, Min: 1) Specification details for the Argo project. (see [below for nested schema](#nestedblock--project--spec))
 
 <a id="nestedblock--project--metadata"></a>
 ### Nested Schema for `project.metadata`
@@ -231,7 +231,7 @@ Optional:
 - `labels` (Map of String) Labels associated with the GitOps project.
 - `managed_fields` (Block List) Managed fields associated with the GitOps project. (see [below for nested schema](#nestedblock--project--metadata--managed_fields))
 - `name` (String) Name of the GitOps project.
-- `namespace` (String) Namespace of the GitOps project.
+- `namespace` (String) Namespace of the GitOps project. This must be the same as the namespace where the agent is installed
 - `resource_version` (String) Resource Version for the GitOps project
 
 <a id="nestedblock--project--metadata--managed_fields"></a>
@@ -255,15 +255,15 @@ Optional:
 Optional:
 
 - `cluster_resource_blacklist` (Block List) Cluster resource blacklist for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--cluster_resource_blacklist))
-- `cluster_resource_whitelist` (Block List) Cluster resource whitelist for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--cluster_resource_whitelist))
-- `description` (String) Description of the GitOps project.
-- `destinations` (Block List) Destinations for deployment of the GitOps project. (see [below for nested schema](#nestedblock--project--spec--destinations))
-- `namespace_resource_blacklist` (Block List) Namespace resource blacklist for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--namespace_resource_blacklist))
+- `cluster_resource_whitelist` (Block List) Cluster resource whitelist for the Argo project. (see [below for nested schema](#nestedblock--project--spec--cluster_resource_whitelist))
+- `description` (String) Description of the Argo project.
+- `destinations` (Block List) Allowed destinations for applications in this Argo project. (see [below for nested schema](#nestedblock--project--spec--destinations))
+- `namespace_resource_blacklist` (Block List) Namespace resource blacklist for the Argo project. (see [below for nested schema](#nestedblock--project--spec--namespace_resource_blacklist))
 - `namespace_resource_whitelist` (Block List) Namespace resource whitelist for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--namespace_resource_whitelist))
-- `orphaned_resources` (Block List) Orphaned resources configuration for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--orphaned_resources))
-- `roles` (Block List) Roles associated with the GitOps project. (see [below for nested schema](#nestedblock--project--spec--roles))
+- `orphaned_resources` (Block List) OrphanedResources specifies if agent should monitor orphaned resources of apps in this project (see [below for nested schema](#nestedblock--project--spec--orphaned_resources))
+- `roles` (Block List) Roles associated with the Argo project. (see [below for nested schema](#nestedblock--project--spec--roles))
 - `signature_keys` (Block List) Signature keys for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--signature_keys))
-- `source_repos` (List of String) Source repositories for the GitOps project.
+- `source_repos` (List of String) Allowed Source repositories for the Argo project.
 - `sync_windows` (Block List) Synchronization windows for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--sync_windows))
 
 <a id="nestedblock--project--spec--cluster_resource_blacklist"></a>
@@ -289,9 +289,9 @@ Optional:
 
 Optional:
 
-- `name` (String) Name of the destination.
-- `namespace` (String) Namespace of the destination.
-- `server` (String) Server URL of the destination.
+- `name` (String) Name of the destination cluster.
+- `namespace` (String) Permitted Namespaces for deployment in the destination cluster.
+- `server` (String) Server URL of the destination cluster.
 
 
 <a id="nestedblock--project--spec--namespace_resource_blacklist"></a>
@@ -343,7 +343,7 @@ Optional:
 
 - `groups` (List of String) Groups associated with the role.
 - `jwt_tokens` (Block List) JWT tokens associated with the role. (see [below for nested schema](#nestedblock--project--spec--roles--jwt_tokens))
-- `policies` (List of String) Policies associated with the role.
+- `policies` (List of String) Policies associated with the role. These are argo RBAC policies and may not necessarily reflect in harness.
 
 <a id="nestedblock--project--spec--roles--jwt_tokens"></a>
 ### Nested Schema for `project.spec.roles.jwt_tokens`

@@ -1,4 +1,4 @@
-# Clusters without Optional tags
+# Cluster without Optional tags
 resource "harness_platform_gitops_cluster" "example" {
   identifier = "identifier"
   account_id = "account_id"
@@ -27,13 +27,12 @@ resource "harness_platform_gitops_cluster" "example" {
   }
 }
 
-# Clusters with Optional tags
+# Cluster with Optional tags. Cluster at org scope with an account level agent.
 resource "harness_platform_gitops_cluster" "example" {
   identifier = "identifier"
   account_id = "account_id"
-  project_id = "project_id"
   org_id     = "org_id"
-  agent_id   = "agent_id"
+  agent_id   = "account.agent_id"
 
   request {
     upsert = false
@@ -60,7 +59,7 @@ resource "harness_platform_gitops_cluster" "example" {
 }
 
 
-# Clusters with self signed certificate
+# Cluster with self signed certificate
 resource "harness_platform_gitops_cluster" "example" {
   identifier = "identifier"
   account_id = "account_id"
@@ -75,9 +74,9 @@ resource "harness_platform_gitops_cluster" "example" {
       name   = "name"
       config {
         tls_client_config {
-          bearer_token = "ey......X"
           ca_data      = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWApYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFgKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
         }
+        bearer_token = "ey......X"
         cluster_connection_type = "SERVICE_ACCOUNT"
       }
 
