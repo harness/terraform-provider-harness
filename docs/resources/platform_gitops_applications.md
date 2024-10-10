@@ -66,7 +66,7 @@ resource "harness_platform_gitops_applications" "example" {
 
 - `account_id` (String) Account identifier of the GitOps application.
 - `agent_id` (String) Agent identifier of the GitOps application.
-- `application` (Block List, Min: 1) Definition of the GitOps application resource. (see [below for nested schema](#nestedblock--application))
+- `application` (Block List, Min: 1, Max: 1) Definition of the GitOps application resource. (see [below for nested schema](#nestedblock--application))
 - `cluster_id` (String) Cluster identifier of the GitOps application.
 - `name` (String) Name of the GitOps application.
 - `org_id` (String) Organization identifier of the GitOps application.
@@ -94,11 +94,11 @@ resource "harness_platform_gitops_applications" "example" {
 
 Required:
 
-- `metadata` (Block List, Min: 1) Metadata corresponding to the resources. This includes all the objects a user must create. (see [below for nested schema](#nestedblock--application--metadata))
+- `metadata` (Block List, Min: 1, Max: 1) Metadata corresponding to the resources. This includes all the objects a user must create. (see [below for nested schema](#nestedblock--application--metadata))
 
 Optional:
 
-- `spec` (Block List) Specifications of the GitOps application. This includes the repository URL, application definition, source, destination and sync policy. (see [below for nested schema](#nestedblock--application--spec))
+- `spec` (Block List, Max: 1) Specifications of the GitOps application. This includes the repository URL, application definition, source, destination and sync policy. (see [below for nested schema](#nestedblock--application--spec))
 
 <a id="nestedblock--application--metadata"></a>
 ### Nested Schema for `application.metadata`
@@ -141,7 +141,7 @@ Optional:
 - `destination` (Block List) Information about the GitOps application's destination. (see [below for nested schema](#nestedblock--application--spec--destination))
 - `project` (String) The ArgoCD project name corresponding to this GitOps application. Value must match mappings of ArgoCD projects to harness project.
 - `source` (Block List) Contains all information about the source of the GitOps application. (see [below for nested schema](#nestedblock--application--spec--source))
-- `sync_policy` (Block List) Controls when a sync will be performed in response to updates in git. (see [below for nested schema](#nestedblock--application--spec--sync_policy))
+- `sync_policy` (Block List, Max: 1) Controls when a sync will be performed in response to updates in git. (see [below for nested schema](#nestedblock--application--spec--sync_policy))
 
 <a id="nestedblock--application--spec--destination"></a>
 ### Nested Schema for `application.spec.destination`
@@ -303,8 +303,8 @@ Optional:
 
 Optional:
 
-- `automated` (Block List) Controls the behavior of an automated sync. (see [below for nested schema](#nestedblock--application--spec--sync_policy--automated))
-- `retry` (Block List) Contains information about the strategy to apply when a sync failed. (see [below for nested schema](#nestedblock--application--spec--sync_policy--retry))
+- `automated` (Block List, Max: 1) Controls the behavior of an automated sync. (see [below for nested schema](#nestedblock--application--spec--sync_policy--automated))
+- `retry` (Block List, Max: 1) Contains information about the strategy to apply when a sync failed. (see [below for nested schema](#nestedblock--application--spec--sync_policy--retry))
 - `sync_options` (List of String) Options allow you to specify whole app sync-options.
 
 <a id="nestedblock--application--spec--sync_policy--automated"></a>
@@ -322,7 +322,7 @@ Optional:
 
 Optional:
 
-- `backoff` (Block List) Backoff strategy to use on subsequent retries for failing syncs. (see [below for nested schema](#nestedblock--application--spec--sync_policy--retry--backoff))
+- `backoff` (Block List, Max: 1) Backoff strategy to use on subsequent retries for failing syncs. (see [below for nested schema](#nestedblock--application--spec--sync_policy--retry--backoff))
 - `limit` (String) Limit is the maximum number of attempts for retrying a failed sync. If set to 0, no retries will be performed.
 
 <a id="nestedblock--application--spec--sync_policy--retry--backoff"></a>

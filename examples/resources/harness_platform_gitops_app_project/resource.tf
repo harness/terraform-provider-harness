@@ -1,12 +1,12 @@
 // Create gitOps project with account level agent
 resource "harness_platform_gitops_app_project" "test" {
   account_id = "account_id"
-  agent_id   = "agent_id"
+  agent_id   = "account.agent_id"
   upsert     = true
   project {
     metadata {
       name       = "name"
-      namespace  = "rollouts"
+      namespace  = "rollouts" //Namespace where agent is installed
       finalizers = ["resources-finalizer.argocd.argoproj.io"]
       labels = {
         v1 = "k1"
@@ -96,7 +96,7 @@ resource "harness_platform_gitops_app_project" "test" {
   project {
     metadata {
       name       = "name"
-      namespace  = "rollouts"
+      namespace  = "rollouts" //Namespace where agent is installed
       finalizers = ["resources-finalizer.argocd.argoproj.io"]
       labels = {
         v1 = "k1"

@@ -107,6 +107,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 							Description: "Metadata corresponding to the resources. This includes all the objects a user must create.",
 							Type:        schema.TypeList,
 							Optional:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -266,6 +267,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 													Description: "Holds helm specific options.",
 													Type:        schema.TypeList,
 													Optional:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"value_files": {
