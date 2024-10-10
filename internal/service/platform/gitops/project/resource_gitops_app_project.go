@@ -21,37 +21,37 @@ func ResourceProject() *schema.Resource {
 		Importer:      helpers.GitopsAgentProjectImporter,
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "Agent identifier of the GitOps project. Project is created on agent scope.",
+				Description: "Agent identifier of the agent where argo project will exist (include scope prefix)",
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 			},
 			"account_id": {
-				Description: "Account identifier of the GitOps project/agent.",
+				Description: "Account identifier of the GitOps Agent where argo project will exist.",
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 			},
 			"org_id": {
-				Description: "Org identifier of the GitOps agent for which project is created.",
+				Description: "Org identifier of the GitOps Agent where argo project is to be created.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the GitOps agent for which project is created.",
+				Description: "Project identifier of the Gitops Agent where argo project is to be created.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
 			},
 			"query_name": {
-				Description: "Identifier for the GitOps project.",
+				Description: "Identifier for the GitOps Argo project.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
 			"upsert": {
-				Description: "Indicates if the GitOps project should be updated if existing and inserted if not.",
+				Description: "Indicates if the argo project should be updated if existing and inserted if not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
@@ -64,7 +64,7 @@ func ResourceProject() *schema.Resource {
 						"metadata": {
 							Type:        schema.TypeList,
 							Required:    true,
-							Description: "Metadata details for the GitOps project.",
+							Description: "K8s object metadata for the Argo project.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -75,7 +75,7 @@ func ResourceProject() *schema.Resource {
 									"namespace": {
 										Type:        schema.TypeString,
 										Optional:    true,
-										Description: "Namespace of the GitOps project. This must match agent namespace.",
+										Description: "Namespace of the GitOps project. This must be the same as the namespace where the agent is installed",
 									},
 									"resource_version": {
 										Type:        schema.TypeString,
@@ -177,13 +177,13 @@ func ResourceProject() *schema.Resource {
 						"spec": {
 							Type:        schema.TypeList,
 							Required:    true,
-							Description: "Specification details for the GitOps project.",
+							Description: "Specification details for the Argo project.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"source_repos": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "Source repositories for the GitOps project.",
+										Description: "Allowed Source repositories for the Argo project.",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -191,23 +191,23 @@ func ResourceProject() *schema.Resource {
 									"destinations": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "Destinations for deployment of the GitOps project.",
+										Description: "Allowed destinations for applications in this Argo project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"server": {
 													Type:        schema.TypeString,
 													Optional:    true,
-													Description: "Server URL of the destination.",
+													Description: "Server URL of the destination cluster.",
 												},
 												"namespace": {
 													Type:        schema.TypeString,
 													Optional:    true,
-													Description: "Namespace of the destination.",
+													Description: "Permitted Namespaces for deployment in the destination cluster.",
 												},
 												"name": {
 													Type:        schema.TypeString,
 													Optional:    true,
-													Description: "Name of the destination.",
+													Description: "Name of the destination cluster.",
 												},
 											},
 										},
@@ -215,12 +215,12 @@ func ResourceProject() *schema.Resource {
 									"description": {
 										Type:        schema.TypeString,
 										Optional:    true,
-										Description: "Description of the GitOps project.",
+										Description: "Description of the Argo project.",
 									},
 									"roles": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "Roles associated with the GitOps project.",
+										Description: "Roles associated with the Argo project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"name": {
@@ -236,7 +236,7 @@ func ResourceProject() *schema.Resource {
 												"policies": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "Policies associated with the role.",
+													Description: "Policies associated with the role. These are argo RBAC policies and may not necessarily reflect in harness.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -280,7 +280,7 @@ func ResourceProject() *schema.Resource {
 									"cluster_resource_whitelist": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "Cluster resource whitelist for the GitOps project.",
+										Description: "Cluster resource whitelist for the Argo project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"group": {
@@ -299,7 +299,7 @@ func ResourceProject() *schema.Resource {
 									"namespace_resource_blacklist": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "Namespace resource blacklist for the GitOps project.",
+										Description: "Namespace resource blacklist for the Argo project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"group": {
@@ -318,7 +318,19 @@ func ResourceProject() *schema.Resource {
 									"orphaned_resources": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "Orphaned resources configuration for the GitOps project.",
+										Description: "OrphanedResources specifies if agent should monitor orphaned resources of apps in this project",
+										DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+											// from API we always get warn = false, even if this is not set in the resource.tf file
+											// getchange will compare and deserialize this into a map where null will be converted to false
+											oldWarn, newWarn := d.GetChange("project.0.spec.0.orphaned_resources.0.warn")
+											oldWarnValue := oldWarn.(bool)
+											newWarnValue := newWarn.(bool)
+											// short circuit to not suppress diff if ignorevalues are diferent
+											if d.HasChange("project.0.spec.0.orphaned_resources.0.ignore") {
+												return false
+											}
+											return oldWarnValue == newWarnValue
+										},
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"warn": {
@@ -879,26 +891,31 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 			}
 
 			var orphanedResources *nextgen.AppprojectsOrphanedResourcesMonitorSettings
-			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
+			if sr, specGetOk := projectData["spec"].([]interface{}); specGetOk && len(sr) > 0 {
 				resourceData := sr[0].(map[string]interface{})
-				var appprojectsOrphanedResourceKey []nextgen.AppprojectsOrphanedResourceKey
-				if i, ok := resourceData["ignore"].([]interface{}); ok {
-					for _, r := range i {
-						s := r.(map[string]interface{})
-						appprojectsOrphanedResourceKey = append(appprojectsOrphanedResourceKey, nextgen.AppprojectsOrphanedResourceKey{
-							Group: s["group"].(string),
-							Kind:  s["kind"].(string),
-							Name:  s["name"].(string),
-						})
+				if ord, ordGetOk := resourceData["orphaned_resources"].([]interface{}); ordGetOk && len(ord) > 0 {
+					orphanedResourcesData := ord[0].(map[string]interface{})
+					var warn bool
+					if attr := orphanedResourcesData["warn"]; ok {
+						warn = attr.(bool)
 					}
-				}
-				var warn bool
-				if attr, ok := d.GetOk("warn"); ok {
-					warn = attr.(bool)
-				}
-				orphanedResources = &nextgen.AppprojectsOrphanedResourcesMonitorSettings{
-					Warn:   warn,
-					Ignore: appprojectsOrphanedResourceKey,
+
+					var appprojectsOrphanedResourceKey []nextgen.AppprojectsOrphanedResourceKey
+					if i, getOrphanedResourceOk := orphanedResourcesData["ignore"].([]interface{}); getOrphanedResourceOk {
+						for _, r := range i {
+							s := r.(map[string]interface{})
+							appprojectsOrphanedResourceKey = append(appprojectsOrphanedResourceKey, nextgen.AppprojectsOrphanedResourceKey{
+								Group: s["group"].(string),
+								Kind:  s["kind"].(string),
+								Name:  s["name"].(string),
+							})
+						}
+					}
+
+					orphanedResources = &nextgen.AppprojectsOrphanedResourcesMonitorSettings{
+						Warn:   warn,
+						Ignore: appprojectsOrphanedResourceKey,
+					}
 				}
 
 			}
@@ -1407,18 +1424,25 @@ func setProjectDetails(d *schema.ResourceData, account_id string, projects *next
 		spec := map[string]interface{}{}
 		var sourceRepoList = projects.Spec.SourceRepos
 		spec["source_repos"] = sourceRepoList
+
 		clusterResourceWhitelist := []interface{}{}
-		clusterResourceWhite := map[string]interface{}{}
-		if len(projects.Spec.ClusterResourceWhitelist) > 0 {
-			clusterResourceWhite["group"] = projects.Spec.ClusterResourceWhitelist[0].Group
-			clusterResourceWhite["kind"] = projects.Spec.ClusterResourceWhitelist[0].Kind
-		}
-		if len(clusterResourceWhite) > 0 {
+		for _, groupKind := range projects.Spec.ClusterResourceWhitelist {
+			clusterResourceWhite := map[string]interface{}{}
+			clusterResourceWhite["group"] = groupKind.Group
+			clusterResourceWhite["kind"] = groupKind.Kind
 			clusterResourceWhitelist = append(clusterResourceWhitelist, clusterResourceWhite)
 		}
-		if len(clusterResourceWhitelist) > 0 {
-			spec["cluster_resource_whitelist"] = clusterResourceWhitelist
+
+		clusterResourceBlackList := []interface{}{}
+		for _, groupKind := range projects.Spec.ClusterResourceBlacklist {
+			clusterResourceBlack := map[string]interface{}{}
+			clusterResourceBlack["group"] = groupKind.Group
+			clusterResourceBlack["kind"] = groupKind.Kind
+			clusterResourceBlackList = append(clusterResourceBlackList, clusterResourceBlack)
 		}
+
+		spec["cluster_resource_whitelist"] = clusterResourceWhitelist
+		spec["cluster_resource_blacklist"] = clusterResourceBlackList
 
 		destinationList := []interface{}{}
 		destination := map[string]interface{}{}
