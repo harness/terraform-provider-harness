@@ -15,27 +15,27 @@ terraform {
 #}
 
 # Define variables for Harness provider
-variable "harness_endpoint" {
-  description = "Harness API endpoint"
-  type        = string
-}
-
-variable "harness_account_id" {
-  description = "Harness account ID"
-  type        = string
-}
-
-variable "harness_platform_api_key" {
-  description = "Harness Platform API Key (PAT)"
-  type        = string
-  sensitive   = true
-}
-
-provider "harness" {
-  endpoint         = var.harness_endpoint
-  account_id       = var.harness_account_id
-  platform_api_key = var.harness_platform_api_key
-}
+#variable "harness_endpoint" {
+#  description = "Harness API endpoint"
+#  type        = string
+#}
+#
+#variable "harness_account_id" {
+#  description = "Harness account ID"
+#  type        = string
+#}
+#
+#variable "harness_platform_api_key" {
+#  description = "Harness Platform API Key (PAT)"
+#  type        = string
+#  sensitive   = true
+#}
+#
+#provider "harness" {
+#  endpoint         = var.harness_endpoint
+#  account_id       = var.harness_account_id
+#  platform_api_key = var.harness_platform_api_key
+#}
 
 resource "harness_platform_secret_text" "my_secret_text" {
   identifier                = "my_secret_text_id"
