@@ -46,8 +46,7 @@ func ResourceProvider() *schema.Resource {
 			"type": {
 				Description: "The type of the provider entity.",
 				Type:        schema.TypeString,
-				Optional:    true,
-				Required:    false,
+				Optional:    false,
 				Computed:    true,
 			},
 			"last_modified_at": {
