@@ -192,6 +192,7 @@ type APIClient struct {
 
 	ServiceOverridesApi *ServiceOverridesApiService
 	OverridesApi        *OverridesApiService
+	ProviderApi         *ProviderApiService
 
 	SettingsApi *SettingsApiService
 
@@ -318,6 +319,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.ServicesApi = (*ServicesApiService)(&c.common)
 	c.ServiceOverridesApi = (*ServiceOverridesApiService)(&c.common)
 	c.OverridesApi = (*OverridesApiService)(&c.common)
+	c.ProviderApi = (*ProviderApiService)(&c.common)
 	c.SettingsApi = (*SettingsApiService)(&c.common)
 	c.SloApi = (*SloApiService)(&c.common)
 	c.SrmNotificationApiService = (*SrmNotificationApiService)(&c.common)
