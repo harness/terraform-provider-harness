@@ -19,7 +19,6 @@ func DataSourceProvider() *schema.Resource {
 			"identifier": {
 				Description: "The identifier of the provider entity.",
 				Type:        schema.TypeString,
-				ForceNew:    true,
 				Required:    true,
 			},
 		},
