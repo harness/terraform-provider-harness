@@ -52,8 +52,7 @@ func ResourceProvider() *schema.Resource {
 			"last_modified_at": {
 				Description: "The last modified time of the provider entity.",
 				Type:        schema.TypeInt,
-				Optional:    true,
-				Required:    false,
+				Optional:    false,
 				Computed:    true,
 			},
 			"spec": {
