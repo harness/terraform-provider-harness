@@ -28,7 +28,7 @@ resource "harness_platform_connector_vault" "my_vault_connector" {
   base_path                         = "vikas-test/"
   access_type                       = "APP_ROLE"
   default                           = false
-  secret_id                         = "account.${harness_platform_secret_text.my_secret_text.id}"
+  secret_id                         = "account.${harness_platform_secret_text.azuretest.id}"
   read_only                         = true
   renewal_interval_minutes          = 60
   secret_engine_manually_configured = true
