@@ -8,9 +8,9 @@ terraform {
   }
 }
 
-resource "harness_platform_secret_text" "my_secret_text" {
-  identifier                = "testazure"
-  name                      = "testazure"
+resource "harness_platform_secret_text" "azuretest" {
+  identifier                = "azuretest"
+  name                      = "azuretest"
   description               = "This is a test secret text"
   tags                      = ["foo:bar"]
   secret_manager_identifier = "harnessSecretManager"
