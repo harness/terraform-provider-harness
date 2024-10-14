@@ -18,6 +18,16 @@ resource "harness_platform_secret_text" "azuretest" {
   value                     = "my_secret_value"
 }
 
+resource "harness_platform_secret_text" "doNotDeleteHSM" {
+  identifier                = "doNotDeleteHSM"
+  name                      = "doNotDeleteHSM"
+  description               = "This is a test secret text"
+  tags                      = ["foo:bar"]
+  secret_manager_identifier = "harnessSecretManager"
+  value_type                = "Inline"
+  value                     = "Harness@123"
+}
+
 resource "harness_platform_connector_vault" "my_vault_connector" {
   identifier  = "my_vault_connector_id"
   name        = "My Vault Connector"
