@@ -13,6 +13,7 @@ func TestAccDataSourceCurrentAccount(t *testing.T) {
 	var (
 		resourceName = "data.harness_current_account.test"
 		accountId    = os.Getenv("HARNESS_ACCOUNT_ID")
+		endpoint     = os.Getenv("HARNESS_ENDPOINT")
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -23,7 +24,7 @@ func TestAccDataSourceCurrentAccount(t *testing.T) {
 				Config: testAccDataSourceCurrentAccount(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
-					resource.TestCheckResourceAttr(resourceName, "endpoint", "https://app.harness.io/gateway"),
+					resource.TestCheckResourceAttr(resourceName, "endpoint", endpoint),
 				),
 			},
 		},
