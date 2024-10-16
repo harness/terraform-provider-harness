@@ -106,7 +106,7 @@ func testAccAddUserToGroupDestroy(resourceName string) resource.TestCheckFunc {
 func testAccResourceAddUserToGroup(groupName string, groupResourceName string) string {
 	return fmt.Sprintf(`
 		data "harness_user" "test" {
-			email = "micahlmartin+testing@gmail.com"
+			email = "ritek.rounak@harness.io"
 		}
 
 		resource "harness_user_group" "first" {
