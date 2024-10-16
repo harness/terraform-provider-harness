@@ -11,8 +11,8 @@ import (
 func TestAccDataSourceUser_Email(t *testing.T) {
 
 	var (
-		email        = "micahlmartin+testing@gmail.com"
-		id           = "XyhrLMYeSXClAhsLUcyyyw"
+		email        = "ritek.rounak@harness.io"
+		id           = "dEtNS5MpRRmUN3lT5YWhVw"
 		resourceName = "data.harness_user.test"
 	)
 
@@ -39,8 +39,8 @@ func TestAccDataSourceUser_Email(t *testing.T) {
 func TestAccDataSourceUser_Id(t *testing.T) {
 
 	var (
-		email        = "micahlmartin+testing@gmail.com"
-		id           = "XyhrLMYeSXClAhsLUcyyyw"
+		email        = "ritek.rounak@harness.io"
+		id           = "dEtNS5MpRRmUN3lT5YWhVw"
 		resourceName = "data.harness_user.test"
 	)
 
