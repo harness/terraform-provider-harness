@@ -1,4 +1,4 @@
-package connector
+package secretManagers
 
 import (
 	"context"
