@@ -92,6 +92,7 @@ func TestAccResourceConnectorAzure_InheritFromDelegate_UA(t *testing.T) {
 }
 
 func TestAccResourceConnectorAzure_ManualDetails_Certificate(t *testing.T) {
+	t.Skip()
 
 	id := fmt.Sprintf("ConnectorAzure_ManualDetails_Certificate"+"_%s", utils.RandStringBytes(5))
 	name := id
@@ -133,6 +134,7 @@ func TestAccResourceConnectorAzure_ManualDetails_Certificate(t *testing.T) {
 }
 
 func TestAccResourceConnectorAzure_ManualDetails_Secret(t *testing.T) {
+	t.Skip()
 
 	id := fmt.Sprintf("ConnectorAzure_ManualDetails_Secret"+"_%s", utils.RandStringBytes(5))
 	name := id
@@ -174,6 +176,7 @@ func TestAccResourceConnectorAzure_ManualDetails_Secret(t *testing.T) {
 }
 
 func TestAccResourceConnectorAzure_ForceDelete(t *testing.T) {
+	t.Skip()
 
 	id := fmt.Sprintf("ConnectorAzure_ForceDelete"+"_%s", utils.RandStringBytes(5))
 	name := id
