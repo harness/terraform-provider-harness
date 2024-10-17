@@ -1,0 +1,9 @@
+```release-note:fix
+harness_platform_gitops_cluster: removed irrelevant fields during diff detection between state and real object.
+harness_platform_gitops_cluster: fixed update method which was completely dependent on updated_fields now will work normally as well.
+
+harness_platform_gitops_appproject: fixed orphaned_resources field not getting updated and reporting constant diff.
+harness_platform_gitops_appproject: fixed cluster_resource_blacklist field not being taken into account throughout resource lifecycle.
+
+Fixed examples and explanations across Gitops Approject and Gitops Cluster resources and data sources.
+```

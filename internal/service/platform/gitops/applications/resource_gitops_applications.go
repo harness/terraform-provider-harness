@@ -2,6 +2,7 @@ package applications
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -20,6 +21,41 @@ func ResourceGitopsApplication() *schema.Resource {
 		UpdateContext: resourceGitopsApplicationUpdate,
 		DeleteContext: resourceGitopsApplicationDelete,
 		Importer:      helpers.GitopsAgentResourceImporter,
+		CustomizeDiff: func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+			var e error
+			if diff.HasChange("project_id") && diff.Id() != "" {
+				e = fmt.Errorf("field 'project_id' cannot be changed after the resource is created")
+			}
+			if diff.HasChange("org_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("account_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("agent_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'agent_id' cannot be changed after the resource is created:%v", e)
+				} else {
+					e = fmt.Errorf("field 'agent_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("name") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'name' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'name' cannot be changed after the resource is created")
+				}
+			}
+			return e
+		},
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -111,12 +147,14 @@ func ResourceGitopsApplication() *schema.Resource {
 				Description: "Definition of the GitOps application resource.",
 				Type:        schema.TypeList,
 				Required:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {
 							Description: "Metadata corresponding to the resources. This includes all the objects a user must create.",
 							Type:        schema.TypeList,
 							Required:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -232,12 +270,14 @@ func ResourceGitopsApplication() *schema.Resource {
 							Description: "Specifications of the GitOps application. This includes the repository URL, application definition, source, destination and sync policy.",
 							Type:        schema.TypeList,
 							Optional:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"project": {
 										Description: "The ArgoCD project name corresponding to this GitOps application. Value must match mappings of ArgoCD projects to harness project.",
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 									},
 									"source": {
 										Description: "Contains all information about the source of the GitOps application.",
@@ -594,6 +634,7 @@ func ResourceGitopsApplication() *schema.Resource {
 										Description: "Controls when a sync will be performed in response to updates in git.",
 										Type:        schema.TypeList,
 										Optional:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"sync_options": {
@@ -608,6 +649,7 @@ func ResourceGitopsApplication() *schema.Resource {
 													Description: "Controls the behavior of an automated sync.",
 													Type:        schema.TypeList,
 													Optional:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"prune": {
@@ -632,6 +674,7 @@ func ResourceGitopsApplication() *schema.Resource {
 													Description: "Contains information about the strategy to apply when a sync failed.",
 													Type:        schema.TypeList,
 													Optional:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"limit": {
@@ -643,6 +686,7 @@ func ResourceGitopsApplication() *schema.Resource {
 																Description: "Backoff strategy to use on subsequent retries for failing syncs.",
 																Type:        schema.TypeList,
 																Optional:    true,
+																MaxItems:    1,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"duration": {

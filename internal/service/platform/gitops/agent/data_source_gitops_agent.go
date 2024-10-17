@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -110,7 +111,7 @@ func dataSourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
 
-	if err != nil && httpResp.StatusCode != 404 {
+	if err != nil && (httpResp == nil || httpResp.StatusCode != 404) {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 

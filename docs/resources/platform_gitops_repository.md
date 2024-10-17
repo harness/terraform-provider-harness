@@ -206,7 +206,7 @@ resource "harness_platform_gitops_repository" "example" {
 - `account_id` (String) Account identifier of the GitOps repository.
 - `agent_id` (String) Agent identifier of the GitOps repository.
 - `identifier` (String) Identifier of the GitOps repository.
-- `repo` (Block List, Min: 1) Repo details holding application configurations. (see [below for nested schema](#nestedblock--repo))
+- `repo` (Block List, Min: 1, Max: 1) Repo details holding application configurations. (see [below for nested schema](#nestedblock--repo))
 
 ### Optional
 
@@ -218,7 +218,6 @@ Enum: "UNSET" "AWS_ECR" "GOOGLE_GCR"
 - `org_id` (String) Organization identifier of the GitOps repository.
 - `project_id` (String) Project identifier of the GitOps repository.
 - `refresh_interval` (String) For OCI repos, this is the interval to refresh the token to access the registry.
-- `update_mask` (Block List) Update mask of the repository. (see [below for nested schema](#nestedblock--update_mask))
 - `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
 
 ### Read-Only
@@ -238,8 +237,8 @@ Optional:
 - `enable_lfs` (Boolean) Indicates if git-lfs support must be enabled for this repo. This is valid only for Git repositories.
 - `enable_oci` (Boolean) Indicates if helm-oci support must be enabled for this repo.
 - `github_app_enterprise_base_url` (String) Base URL of GitHub Enterprise installation. If left empty, this defaults to https://api.github.com.
-- `github_app_id` (String) Id of the GitHub app used to access the repo.
-- `github_app_installation_id` (String) Installation id of the GitHub app used to access the repo.
+- `github_app_id` (String, Sensitive) Id of the GitHub app used to access the repo.
+- `github_app_installation_id` (String, Sensitive) Installation id of the GitHub app used to access the repo.
 - `github_app_private_key` (String, Sensitive) GitHub app private key PEM data.
 - `insecure` (Boolean) Indicates if the connection to the repository ignores any errors when verifying TLS certificates or SSH host keys.
 - `insecure_ignore_host_key` (Boolean) Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.
@@ -315,16 +314,6 @@ Optional:
 - `audiences` (List of String) Audience specifies the `aud` claim for the service account token If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity then this audiences will be appended to the list
 - `name` (String) The name of the ServiceAccount resource being referred to.
 - `namespace` (String) Namespace of the resource being referred to. Ignored if referent is not cluster-scoped. cluster-scoped defaults to the namespace of the referent.
-
-
-
-
-<a id="nestedblock--update_mask"></a>
-### Nested Schema for `update_mask`
-
-Optional:
-
-- `paths` (List of String) The set of field mask paths.
 
 ## Import
 
