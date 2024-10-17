@@ -1,3 +1,18 @@
+# 0.34.1 (October 11,2024) 
+
+# 0.34.0 (October 09,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_cluster_orchestrator - Added Cluster Orchestrator resource in Harness terraform provider` ([#1084](https://github.com/harness/terraform-provider-harness/issues/1084))
+* **New Resource:** `harness_governance_rule_set - Added Governance Rule Set resource in Harness terraform provider` ([#1075](https://github.com/harness/terraform-provider-harness/issues/1075))
+
+# 0.33.4 (October 01,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_governance_rule - Added Governance Rule resource in Harness terraform provider` ([#1068](https://github.com/harness/terraform-provider-harness/issues/1068))
+
 # 0.33.3 (September 13,2024) 
 
 # 0.33.2 (September 12,2024) 

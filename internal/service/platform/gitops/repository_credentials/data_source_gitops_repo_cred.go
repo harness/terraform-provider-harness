@@ -48,6 +48,7 @@ func DataSourceGitOpsRepoCred() *schema.Resource {
 				Description: "credential details.",
 				Type:        schema.TypeList,
 				Computed:    true,
+				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"url": {

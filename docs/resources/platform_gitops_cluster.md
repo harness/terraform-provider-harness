@@ -13,7 +13,7 @@ Resource for managing a Harness Gitops Cluster.
 ## Example Usage
 
 ```terraform
-# Clusters without Optional tags
+# Cluster without Optional tags
 resource "harness_platform_gitops_cluster" "example" {
   identifier = "identifier"
   account_id = "account_id"
@@ -42,13 +42,12 @@ resource "harness_platform_gitops_cluster" "example" {
   }
 }
 
-# Clusters with Optional tags
+# Cluster with Optional tags. Cluster at org scope with an account level agent.
 resource "harness_platform_gitops_cluster" "example" {
   identifier = "identifier"
   account_id = "account_id"
-  project_id = "project_id"
   org_id     = "org_id"
-  agent_id   = "agent_id"
+  agent_id   = "account.agent_id"
 
   request {
     upsert = false
@@ -75,7 +74,7 @@ resource "harness_platform_gitops_cluster" "example" {
 }
 
 
-# Clusters with self signed certificate
+# Cluster with self signed certificate
 resource "harness_platform_gitops_cluster" "example" {
   identifier = "identifier"
   account_id = "account_id"
@@ -90,9 +89,9 @@ resource "harness_platform_gitops_cluster" "example" {
       name   = "name"
       config {
         tls_client_config {
-          bearer_token = "ey......X"
-          ca_data      = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWApYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFgKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
+          ca_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWApYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFgKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
         }
+        bearer_token            = "ey......X"
         cluster_connection_type = "SERVICE_ACCOUNT"
       }
 
@@ -112,14 +111,14 @@ resource "harness_platform_gitops_cluster" "example" {
 ### Required
 
 - `account_id` (String) Account identifier of the GitOps cluster.
-- `agent_id` (String) Agent identifier of the GitOps cluster.
+- `agent_id` (String) Agent identifier of the GitOps cluster. (include scope prefix)
 - `identifier` (String) Identifier of the GitOps cluster.
 
 ### Optional
 
 - `org_id` (String) Organization identifier of the cluster.
 - `project_id` (String) Project identifier of the GitOps cluster.
-- `request` (Block List) Cluster create or update request. (see [below for nested schema](#nestedblock--request))
+- `request` (Block List, Max: 1) Cluster create or update request. (see [below for nested schema](#nestedblock--request))
 
 ### Read-Only
 
@@ -130,7 +129,7 @@ resource "harness_platform_gitops_cluster" "example" {
 
 Optional:
 
-- `cluster` (Block List) GitOps cluster details. (see [below for nested schema](#nestedblock--request--cluster))
+- `cluster` (Block List, Max: 1) GitOps cluster details. (see [below for nested schema](#nestedblock--request--cluster))
 - `tags` (Set of String) Tags for the GitOps cluster. These can be used to search or filter the GitOps agents.
 - `updated_fields` (List of String) Fields which are updated.
 - `upsert` (Boolean) Indicates if the GitOps cluster should be updated if existing and inserted if not.
@@ -140,7 +139,7 @@ Optional:
 
 Required:
 
-- `config` (Block List, Min: 1) GitOps cluster config. (see [below for nested schema](#nestedblock--request--cluster--config))
+- `config` (Block List, Min: 1, Max: 1) GitOps cluster config. (see [below for nested schema](#nestedblock--request--cluster--config))
 - `server` (String) API server URL of the kubernetes cluster.
 
 Optional:
@@ -151,7 +150,7 @@ Optional:
 - `name` (String) Name of the cluster. If omitted, the server address will be used.
 - `namespaces` (List of String) List of namespaces which are accessible in that cluster. Cluster level resources will be ignored if namespace list is not empty.
 - `project` (String) The ArgoCD project name corresponding to this GitOps cluster. An empty string means that the GitOps cluster belongs to the default project created by Harness.
-- `refresh_requested_at` (Block List) Time when cluster cache refresh has been requested. (see [below for nested schema](#nestedblock--request--cluster--refresh_requested_at))
+- `refresh_requested_at` (Block List, Max: 1) Time when cluster cache refresh has been requested. (see [below for nested schema](#nestedblock--request--cluster--refresh_requested_at))
 - `shard` (String) Shard number to be managed by a specific application controller pod. Calculated on the fly by the application controller if not specified.
 
 Read-Only:
@@ -164,12 +163,12 @@ Read-Only:
 Optional:
 
 - `aws_cluster_name` (String) AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster.
-- `bearer_token` (String) Bearer authentication token the cluster.
+- `bearer_token` (String, Sensitive) Bearer authentication token the cluster.
 - `cluster_connection_type` (String) Identifies the authentication method used to connect to the cluster.
-- `exec_provider_config` (Block List) Configuration for an exec provider. (see [below for nested schema](#nestedblock--request--cluster--config--exec_provider_config))
+- `exec_provider_config` (Block List, Max: 1) Configuration for an exec provider. (see [below for nested schema](#nestedblock--request--cluster--config--exec_provider_config))
 - `password` (String) Password of the server of the cluster.
 - `role_a_r_n` (String) Optional role ARN. If set then used for AWS IAM Authenticator.
-- `tls_client_config` (Block List) Settings to enable transport layer security. (see [below for nested schema](#nestedblock--request--cluster--config--tls_client_config))
+- `tls_client_config` (Block List, Max: 1) Settings to enable transport layer security. (see [below for nested schema](#nestedblock--request--cluster--config--tls_client_config))
 - `username` (String) Username of the server of the cluster.
 
 <a id="nestedblock--request--cluster--config--exec_provider_config"></a>
@@ -237,7 +236,7 @@ Read-Only:
 - `status` (String)
 
 <a id="nestedobjatt--request--cluster--info--connection_state--attempted_at"></a>
-### Nested Schema for `request.cluster.info.connection_state.status`
+### Nested Schema for `request.cluster.info.connection_state.attempted_at`
 
 Read-Only:
 

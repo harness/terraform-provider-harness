@@ -27,26 +27,31 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 				Description: "Agent identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"account_id": {
 				Description: "Account identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"request": {
 				Description: "Repository Certificate create/update request.",
 				Type:        schema.TypeList,
 				Required:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
@@ -65,6 +70,7 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 										Description: "metadata details",
 										Type:        schema.TypeList,
 										Optional:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"self_link": {

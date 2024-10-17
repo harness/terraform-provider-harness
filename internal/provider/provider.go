@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
 	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
 	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitx/webhook"
 	governance_enforcement "github.com/harness/terraform-provider-harness/internal/service/platform/governance/enforcement"
 	governance_rule "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule"
+	governance_rule_set "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_rule"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
@@ -82,6 +84,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
+	pl_provider "github.com/harness/terraform-provider-harness/internal/service/platform/provider"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
@@ -202,6 +205,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
 				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.DataSourceServiceOverrides(),
+				"harness_platform_provider":                        pl_provider.DataSourceProvider(),
 				"harness_platform_overrides":                       pl_overrides.DataSourceOverrides(),
 				"harness_platform_gitops_agent":                    gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
@@ -285,6 +289,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitx_webhook":                    webhook.DataSourceWebhook(),
 				"harness_governance_rule_enforcement":              governance_enforcement.DatasourceRuleEnforcement(),
 				"harness_governance_rule":                          governance_rule.DatasourceRule(),
+				"harness_governance_rule_set":                      governance_rule_set.DatasourceRuleSet(),
+				"harness_cluster_orchestrator":                     cluster_orchestrator.DataSourceClusterOrchestrator(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -335,6 +341,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_feature_flag_target_group":       feature_flag_target_group.ResourceFeatureFlagTargetGroup(),
 				"harness_platform_feature_flag_target":             feature_flag_target.ResourceFeatureFlagTarget(),
 				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
+				"harness_platform_provider":                        pl_provider.ResourceProvider(),
 				"harness_platform_overrides":                       pl_overrides.ResourceOverrides(),
 				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
@@ -429,6 +436,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitx_webhook":                    webhook.ResourceWebhook(),
 				"harness_governance_rule_enforcement":              governance_enforcement.ResourceRuleEnforcement(),
 				"harness_governance_rule":                          governance_rule.ResourceRule(),
+				"harness_governance_rule_set":                      governance_rule_set.ResourceRuleSet(),
+				"harness_cluster_orchestrator":                     cluster_orchestrator.ResourceClusterOrchestrator(),
 			},
 		}
 

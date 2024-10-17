@@ -1,0 +1,4 @@
+```release-note:fix
+harness_platform_gitops_repository: Fix reporting diff on credentials on rerun, add some validation.
+harness_platform_gitops_repo_cred: Fix reporting diff on credentials on rerun, add some validation.
+```
