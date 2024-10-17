@@ -1,18 +1,18 @@
-package connector
+package secretManagers
 
 import (
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DatasourceConnectorAwsKms() *schema.Resource {
+func DatasourceConnectorAwsSM() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for looking up an AWS KMS connector.",
-		ReadContext: resourceConnectorAwsKmsRead,
+		Description: "Datasource for looking up an AWS Secret Manager connector.",
+		ReadContext: resourceConnectorAwsSMRead,
 
 		Schema: map[string]*schema.Schema{
-			"arn_ref": {
-				Description: "A reference to the Harness secret containing the ARN of the AWS KMS." + secret_ref_text,
+			"secret_name_prefix": {
+				Description: "A prefix to be added to all secrets.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},

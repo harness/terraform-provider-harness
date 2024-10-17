@@ -1,4 +1,4 @@
-package connector
+package secretManagers
 
 import (
 	"github.com/harness/terraform-provider-harness/helpers"

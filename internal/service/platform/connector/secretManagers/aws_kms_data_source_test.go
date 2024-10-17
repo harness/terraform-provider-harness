@@ -1,4 +1,4 @@
-package connector_test
+package secretManagers_test
 
 import (
 	"fmt"
