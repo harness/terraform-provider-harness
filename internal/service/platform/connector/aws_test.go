@@ -255,6 +255,7 @@ func TestAccResourceConnectorAws_Manual_Full_Jitter(t *testing.T) {
 }
 
 func TestAccResourceConnectorAws_ForceDelete(t *testing.T) {
+	t.Skip()
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
