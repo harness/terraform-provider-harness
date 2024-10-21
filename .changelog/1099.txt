@@ -1,0 +1,4 @@
+```release-note:new-resource
+  harness_platform_infra_module - added a new resource for iacm module registry
+  harness_platform_infra_module - added a new data source for iacm module registry
+```
