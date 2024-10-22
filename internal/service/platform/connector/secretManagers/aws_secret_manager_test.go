@@ -123,7 +123,7 @@ func TestOrgResourceConnectorAwsSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "true"),
+					resource.TestCheckResourceAttr(resourceName, "default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -137,7 +137,7 @@ func TestOrgResourceConnectorAwsSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "true"),
+					resource.TestCheckResourceAttr(resourceName, "default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -512,7 +512,7 @@ func testOrgResourceConnectorAwsSM_inherit(id string, name string) string {
 			secret_name_prefix = "test"
 			region = "us-east-1"
 			delegate_selectors = ["harness-delegate"]
-			default = true
+			default = false
 			credentials {
 				inherit_from_delegate = true
 			}

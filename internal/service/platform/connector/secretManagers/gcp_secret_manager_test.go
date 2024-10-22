@@ -2,12 +2,35 @@ package secretManagers_test
 
 import (
 	"fmt"
+	"log"
+	"net/url"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
+
+func FetchEnvironmentFromEndpoint(endpoint string) (string, error) {
+
+	parsedURL, err := url.Parse(endpoint)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse endpoint URL: %w", err)
+	}
+
+	hostParts := strings.Split(parsedURL.Hostname(), ".")
+	if len(hostParts) < 2 {
+		return "", fmt.Errorf("unexpected URL format: %s", parsedURL.Hostname())
+	}
+
+	env := hostParts[0]
+
+	log.Printf("Fetched environment: %s", env)
+
+	return env, nil
+}
 
 func TestAccResourceConnectorGcpSM(t *testing.T) {
 	t.Skip()
@@ -110,6 +133,23 @@ func TestProjectResourceConnectorGcpSM(t *testing.T) {
 }
 
 func TestOrgResourceConnectorGcpSM(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := FetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	connectorName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(10))
