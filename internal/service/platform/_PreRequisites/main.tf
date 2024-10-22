@@ -18,22 +18,6 @@ resource "harness_platform_secret_text" "azuretest" {
   value                     = "my_secret_value"
 }
 
-#resource "harness_platform_connector_azure_key_vault" "azureSecretManager" {
-#  identifier  = "azureSecretManager"
-#  name        = "azureSecretManager"
-#  description = "example"
-#  tags        = ["foo:bar"]
-#
-#  client_id    = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
-#  secret_key   = "account.azuretest"
-#  tenant_id    = "b229b2bb-5f33-4d22-bce0-730f6474e906"
-#  vault_name   = "azureSecretManager"
-#  subscription = "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"
-#  is_default   = false
-#
-#  azure_environment_type = "AZURE"
-#}
-
 resource "harness_platform_secret_text" "doNotDeleteHSM" {
   identifier                = "doNotDeleteHSM"
   name                      = "doNotDeleteHSM"
