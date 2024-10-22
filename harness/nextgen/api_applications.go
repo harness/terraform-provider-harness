@@ -90,7 +90,11 @@ func (a *ApplicationsApiService) AgentApplicationServiceCreate(ctx context.Conte
 		localVarQueryParams.Add("skipRepoValidation", parameterToString(localVarOptionals.SkipRepoValidation.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.RepoIdentifiers.IsSet() {
-		localVarQueryParams.Add("repoIdentifiers", parameterToString(localVarOptionals.RepoIdentifiers.Value(), "multi"))
+		// cast RepoIdentifiers to array of string
+		ids := localVarOptionals.RepoIdentifiers.Value().([]string)
+		for _, id := range ids {
+			localVarQueryParams.Add("repoIdentifiers", parameterToString(id, ""))
+		}
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
@@ -3124,7 +3128,11 @@ func (a *ApplicationsApiService) AgentApplicationServiceUpdate(ctx context.Conte
 		localVarQueryParams.Add("skipRepoValidation", parameterToString(localVarOptionals.SkipRepoValidation.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.RepoIdentifiers.IsSet() {
-		localVarQueryParams.Add("repoIdentifiers", parameterToString(localVarOptionals.RepoIdentifiers.Value(), "multi"))
+		// cast RepoIdentifiers to array of string
+		ids := localVarOptionals.RepoIdentifiers.Value().([]string)
+		for _, id := range ids {
+			localVarQueryParams.Add("repoIdentifiers", parameterToString(id, ""))
+		}
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
