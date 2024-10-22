@@ -3,6 +3,8 @@ package applications
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"sort"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -105,6 +107,23 @@ func ResourceGitopsApplication() *schema.Resource {
 				Optional:    true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
+				},
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					// Convert old and new string lists into slices
+					oldIF, newIF := d.GetChange("repo_ids")
+					oldSlice := oldIF.([]interface{})
+					newSlice := newIF.([]interface{})
+
+					// Sort the slices to ignore order differences
+					sort.Slice(oldSlice, func(i, j int) bool {
+						return oldSlice[i].(string) < oldSlice[j].(string)
+					})
+					sort.Slice(newSlice, func(i, j int) bool {
+						return newSlice[i].(string) < newSlice[j].(string)
+					})
+
+					// Compare sorted slices
+					return reflect.DeepEqual(oldSlice, newSlice)
 				},
 			},
 			"upsert": {
@@ -1076,7 +1095,7 @@ func resourceGitopsApplicationCreate(ctx context.Context, d *schema.ResourceData
 	createApplicationRequest := buildCreateApplicationRequest(d)
 	var agentIdentifier, orgIdentifier, projectIdentifier, clusterIdentifier, repoIdentifier string
 	var skipRepoValidation bool
-	var repoIdentifiersList []interface{}
+	var repoIdentifiersList []string
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
@@ -1096,13 +1115,11 @@ func resourceGitopsApplicationCreate(ctx context.Context, d *schema.ResourceData
 		skipRepoValidation = attr.(bool)
 	}
 	if attr, ok := d.GetOk("repo_ids"); ok {
-		fmt.Println("IDENTIFIERS:", attr)
 		repoIdentifiers := attr.([]interface{})
-		repoIdentifiersList = make([]interface{}, len(repoIdentifiers))
+		repoIdentifiersList = make([]string, len(repoIdentifiers))
 		for i, repo := range repoIdentifiers {
-			repoIdentifiersList[i] = repo
+			repoIdentifiersList[i] = repo.(string)
 		}
-		fmt.Println("IDENTIFIERS:", repoIdentifiersList)
 	}
 
 	resp, httpResp, err := c.ApplicationsApiService.AgentApplicationServiceCreate(ctx, createApplicationRequest, agentIdentifier, &nextgen.ApplicationsApiAgentApplicationServiceCreateOpts{
@@ -1174,7 +1191,7 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 	updateApplicationRequest := buildUpdateApplicationRequest(d)
 	var agentIdentifier, orgIdentifier, projectIdentifier, clusterIdentifier, repoIdentifier, appMetaDataName string
 	var skipRepoValidation bool
-	var repoIdentifiersList []interface{}
+	var repoIdentifiersList []string
 
 	var e diag.Diagnostics
 	if d.HasChange("name") {
@@ -1254,9 +1271,9 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 	}
 	if attr, ok := d.GetOk("repo_ids"); ok {
 		repoIdentifiers := attr.([]interface{})
-		repoIdentifiersList = make([]interface{}, len(repoIdentifiers))
+		repoIdentifiersList = make([]string, len(repoIdentifiers))
 		for i, repo := range repoIdentifiers {
-			repoIdentifiersList[i] = repo
+			repoIdentifiersList[i] = repo.(string)
 		}
 	}
 
