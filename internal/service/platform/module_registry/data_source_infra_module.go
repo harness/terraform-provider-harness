@@ -16,6 +16,7 @@ func DataSourceInfraModule() *schema.Resource {
 				Description: "Description of the module",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"name": {
 				Description: "Name of the module",
@@ -31,26 +32,31 @@ func DataSourceInfraModule() *schema.Resource {
 				Description: "For account connectors, the repository where the module is stored",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"repository_branch": {
 				Description: "Repository Branch in which the module should be accessed",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"repository_commit": {
 				Description: "Repository Commit in which the module should be accessed",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"repository_connector": {
 				Description: "Repository Connector is the reference to the connector for the repository",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"repository_path": {
 				Description: "Repository Path is the path in which the module resides",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"created": {
 				Description: "Timestamp when the module was created",
