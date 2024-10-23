@@ -3,14 +3,13 @@ package secretManagers
 import (
 	"context"
 	"fmt"
-	"net/http"
-
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"net/http"
 )
 
 type ReadConnectorData func(*schema.ResourceData, *nextgen.ConnectorInfo) error

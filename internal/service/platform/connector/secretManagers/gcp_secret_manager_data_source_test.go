@@ -10,7 +10,6 @@ import (
 )
 
 func TestAccDataSourceConnectorGcpSm(t *testing.T) {
-	t.Skip()
 	var (
 		name = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
@@ -39,7 +38,6 @@ func TestAccDataSourceConnectorGcpSm(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmProjectLevel(t *testing.T) {
-	t.Skip()
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		gcpName      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -68,7 +66,6 @@ func TestAccDataSourceConnectorGcpSmProjectLevel(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmOrgLevel(t *testing.T) {
-	t.Skip()
 	var (
 		name          = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		connectorName = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -126,7 +123,6 @@ func TestAccDataSourceConnectorGcpSmDefault(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmDefaultProjectLevel(t *testing.T) {
-	t.Skip()
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		gcpName      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -191,7 +187,7 @@ func testAccDataSourceConnectorGcpSM(id string, name string) string {
 			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
-			secret_manager_identifier = "azureSecretManager"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 		}
@@ -259,7 +255,7 @@ func testAccDataSourceConnectorGcpSMProjectLevel(id string, name string, gcpName
 			org_id= harness_platform_organization.test.id
 			project_id=harness_platform_project.test.id
 			tags = ["foo:bar"]
-			secret_manager_identifier = "%[1]s"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 			depends_on = [time_sleep.wait_5_seconds]
@@ -328,7 +324,7 @@ func testAccDataSourceConnectorGcpSMOrgLevel(id string, name string) string {
 			description = "test"
 			org_id= harness_platform_organization.test.id
 			tags = ["foo:bar"]
-			secret_manager_identifier = "%[1]s"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 			depends_on = [time_sleep.wait_5_seconds]
@@ -369,7 +365,7 @@ func testAccDataSourceConnectorGcpSMDefault(id string, name string) string {
 			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
-			secret_manager_identifier = "azureSecretManager"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 		}
@@ -438,7 +434,7 @@ func testAccDataSourceConnectorGcpSMDefaultProjectLevel(id string, gcpname strin
 			org_id= harness_platform_organization.test.id
 			project_id=harness_platform_project.test.id
 			tags = ["foo:bar"]
-			secret_manager_identifier = "%[1]s"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 			depends_on = [time_sleep.wait_5_seconds]
@@ -507,7 +503,7 @@ func testAccDataSourceConnectorGcpSMDefaultOrgLevel(id string, gcpname string) s
 			description = "test"
 			org_id= harness_platform_organization.test.id
 			tags = ["foo:bar"]
-			secret_manager_identifier = "%[1]s"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 			depends_on = [time_sleep.wait_5_seconds]
