@@ -2,6 +2,8 @@ package user_test
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"strings"
 	"testing"
 
@@ -15,6 +17,24 @@ import (
 )
 
 func TestAccResourceUserProjectLevel(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
@@ -44,6 +64,24 @@ func TestAccResourceUserProjectLevel(t *testing.T) {
 }
 
 func TestAccResourceUserAccountLevel(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
@@ -72,6 +110,24 @@ func TestAccResourceUserAccountLevel(t *testing.T) {
 }
 
 func TestAccResourceUserOrgLevel(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
@@ -100,6 +156,24 @@ func TestAccResourceUserOrgLevel(t *testing.T) {
 }
 
 func TestAccResourceUser_DeleteUnderlyingResourceProjectLevel(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
@@ -136,6 +210,24 @@ func TestAccResourceUser_DeleteUnderlyingResourceProjectLevel(t *testing.T) {
 }
 
 func TestAccResourceUser_DeleteUnderlyingResourceAccountLevel(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
@@ -168,6 +260,24 @@ func TestAccResourceUser_DeleteUnderlyingResourceAccountLevel(t *testing.T) {
 }
 
 func TestAccResourceUser_DeleteUnderlyingResourceOrgLevel(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
@@ -203,6 +313,24 @@ func TestAccResourceUser_DeleteUnderlyingResourceOrgLevel(t *testing.T) {
 
 // New test case for user group updates
 func TestAccResourceUser_UpdateUserGroups(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
