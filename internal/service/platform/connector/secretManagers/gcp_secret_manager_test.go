@@ -10,7 +10,6 @@ import (
 )
 
 func TestAccResourceConnectorGcpSM(t *testing.T) {
-	t.Skip()
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -59,7 +58,6 @@ func TestAccResourceConnectorGcpSM(t *testing.T) {
 }
 
 func TestProjectResourceConnectorGcpSM(t *testing.T) {
-	t.Skip()
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	connectorName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(10))
@@ -312,7 +310,7 @@ func testAccResourceConnectorGcpSM(id string, name string) string {
 			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
-			secret_manager_identifier = "azureSecretManager"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 		}
@@ -378,7 +376,7 @@ func testProjectResourceConnectorGcpSM(id string, name string, connectorName str
 			org_id= harness_platform_organization.test.id
 			project_id=harness_platform_project.test.id
 			tags = ["foo:bar"]
-			secret_manager_identifier = "%[3]s"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 			depends_on = [time_sleep.wait_5_seconds]
@@ -442,7 +440,7 @@ func testOrgResourceConnectorGcpSM(id string, name string, connectorName string)
 			description = "test"
 			org_id= harness_platform_organization.test.id
 			tags = ["foo:bar"]
-			secret_manager_identifier = "%[3]s"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 			depends_on = [time_sleep.wait_5_seconds]
@@ -478,7 +476,7 @@ func testAccResourceConnectorGcpSMDefault(id string, name string) string {
 			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
-			secret_manager_identifier = "azureSecretManager"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 		}
@@ -544,7 +542,7 @@ func testProjectResourceConnectorGcpSMDefault(id string, name string, connectorN
 			org_id= harness_platform_organization.test.id
 			project_id=harness_platform_project.test.id
 			tags = ["foo:bar"]
-			secret_manager_identifier = "%[3]s"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 			depends_on = [time_sleep.wait_5_seconds]
@@ -607,7 +605,7 @@ func testOrgResourceConnectorGcpSMDefault(id string, name string, connectorName 
 			description = "test"
 			org_id= harness_platform_organization.test.id
 			tags = ["foo:bar"]
-			secret_manager_identifier = "%[3]s"
+			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Reference"
 			value = "secret"
 			depends_on = [time_sleep.wait_5_seconds]

@@ -584,7 +584,7 @@ func TestProjectResourceConnectorVault_AppRole(t *testing.T) {
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_connector_vault.test"
-	vault_sercet := os.Getenv("HARNESS_TEST_VAULT_SECRET")
+	vaultSecret := os.Getenv("HARNESS_TEST_VAULT_SECRET")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -595,7 +595,7 @@ func TestProjectResourceConnectorVault_AppRole(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjectResourceConnectorVault_app_role(id, name, vault_sercet),
+				Config: testProjectResourceConnectorVault_app_role(id, name, vaultSecret),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -611,7 +611,7 @@ func TestProjectResourceConnectorVault_AppRole(t *testing.T) {
 				),
 			},
 			{
-				Config: testProjectResourceConnectorVault_app_role(id, updatedName, vault_sercet),
+				Config: testProjectResourceConnectorVault_app_role(id, updatedName, vaultSecret),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -1060,6 +1060,12 @@ func testAccResourceConnectorVault_app_role(id string, name string, vault_secret
 		value_type = "Inline"
 		value = "%[3]s"
 	}
+	
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
+	}
+
 
 	resource "harness_platform_connector_vault" "test" {
 		identifier = "%[1]s"
@@ -1083,15 +1089,11 @@ func testAccResourceConnectorVault_app_role(id string, name string, vault_secret
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_8_seconds]
-	}
-
-	resource "time_sleep" "wait_8_seconds" {
-		depends_on = [harness_platform_secret_text.test]
-		create_duration = "8s"
+		depends_on = [time_sleep.wait_4_seconds]
 	}
 	`, id, name, vault_secret)
 }
+
 func testProjectResourceConnectorVault_app_role(id string, name string, vault_secret string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
@@ -1230,7 +1232,7 @@ func testAccResourceConnectorVault_k8s_auth(id string, name string) string {
 		description = "test"
 		tags = ["foo:bar"]
 
-		secret_manager_identifier = "azureSecretManager"
+		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Reference"
 		value = "secret"
 	}
@@ -1314,7 +1316,7 @@ func testProjectResourceConnectorVault_k8s_auth(id string, name string, connecto
 		tags = ["foo:bar"]
 		org_id= harness_platform_organization.test.id
 		project_id=harness_platform_project.test.id
-		secret_manager_identifier = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Reference"
 		value = "secret"
 		depends_on = [time_sleep.wait_8_seconds_2]
@@ -1394,7 +1396,7 @@ func testOrgResourceConnectorVault_k8s_auth(id string, name string, connectorNam
 		description = "test"
 		tags = ["foo:bar"]
 		org_id= harness_platform_organization.test.id
-		secret_manager_identifier = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Reference"
 		value = "secret"
 		depends_on = [time_sleep.wait_8_seconds_2]
@@ -1449,7 +1451,7 @@ func testAccResourceConnectorVault_vault_agent(id string, name string) string {
 		description = "test"
 		tags = ["foo:bar"]
 
-		secret_manager_identifier = "azureSecretManager"
+		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Reference"
 		value = "secret"
 	}
@@ -1531,7 +1533,7 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string, conne
 		tags = ["foo:bar"]
 		org_id= harness_platform_organization.test.id
 		project_id=harness_platform_project.test.id
-		secret_manager_identifier = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Reference"
 		value = "secret"
 		depends_on = [time_sleep.wait_8_seconds_2]
@@ -1609,7 +1611,7 @@ func testOrgResourceConnectorVault_vault_agent(id string, name string, connector
 		description = "test"
 		tags = ["foo:bar"]
 		org_id = harness_platform_organization.test.id
-		secret_manager_identifier = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Reference"
 		value = "secret"
 		depends_on = [time_sleep.wait_8_seconds_2]

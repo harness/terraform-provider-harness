@@ -2,6 +2,9 @@ package user_test
 
 import (
 	"fmt"
+	"log"
+	"net/url"
+	"os"
 	"strings"
 	"testing"
 
@@ -10,7 +13,44 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+func fetchEnvironmentFromEndpoint(endpoint string) (string, error) {
+
+	parsedURL, err := url.Parse(endpoint)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse endpoint URL: %w", err)
+	}
+
+	hostParts := strings.Split(parsedURL.Hostname(), ".")
+	if len(hostParts) < 2 {
+		return "", fmt.Errorf("unexpected URL format: %s", parsedURL.Hostname())
+	}
+
+	env := hostParts[0]
+
+	log.Printf("Fetched environment: %s", env)
+
+	return env, nil
+}
+
 func TestAccDataSourceUserProjectLevel(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
@@ -34,6 +74,24 @@ func TestAccDataSourceUserProjectLevel(t *testing.T) {
 }
 
 func TestAccDataSourceUserAccountLevel(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
@@ -57,6 +115,24 @@ func TestAccDataSourceUserAccountLevel(t *testing.T) {
 }
 
 func TestAccDataSourceUserOrgLevel(t *testing.T) {
+	endpoint := os.Getenv("HARNESS_ENDPOINT")
+
+	if endpoint == "" {
+		t.Fatal("HARNESS_ENDPOINT environment variable is not set")
+	}
+
+	env, err := fetchEnvironmentFromEndpoint(endpoint)
+	if err != nil {
+		t.Fatalf("Error fetching environment: %v", err)
+	}
+
+	log.Printf("Environment fetched from endpoint: %s", env)
+
+	if !strings.EqualFold(env, "QA") {
+		log.Printf("Skipping test as the environment is not QA (found: %s)", env)
+		t.Skip("Skipping test because environment is not QA")
+	}
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	email := strings.ToLower(id) + "@harness.io"
