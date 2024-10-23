@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/antihax/optional"
@@ -23,6 +24,7 @@ func ResourceFileStoreNodeFile() *schema.Resource {
 		UpdateContext: resourceFileStoreNodeFileCreateOrUpdate,
 		CreateContext: resourceFileStoreNodeFileCreateOrUpdate,
 		DeleteContext: resourceFileStoreNodeFileDelete,
+		CustomizeDiff: resourceFileStoreNodeFileCustomizeDiff,
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
@@ -35,6 +37,7 @@ func ResourceFileStoreNodeFile() *schema.Resource {
 				Description: "File content path to be upladed on Harness File Store",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"mime_type": {
 				Description: "File mime type",
@@ -52,6 +55,7 @@ func ResourceFileStoreNodeFile() *schema.Resource {
 				Description: "File content stored on Harness File Store",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"path": {
 				Description: "Harness File Store file path",
@@ -115,6 +119,28 @@ func ResourceFileStoreNodeFile() *schema.Resource {
 	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
+}
+
+func resourceFileStoreNodeFileCustomizeDiff(_ context.Context, diff *schema.ResourceDiff, _ interface{}) error {
+	if contentFilePath, ok := diff.GetOk(fileContentPath); ok {
+		fileContent, err := os.ReadFile(contentFilePath.(string))
+		if err != nil {
+			return fmt.Errorf("error reading content file at path '%s': %w", contentFilePath, err)
+		}
+
+		if diff.Id() != "" {
+			remoteContent := diff.Get("content").(string)
+
+			if string(fileContent) != remoteContent {
+				err = diff.SetNew("content", string(fileContent))
+				if err != nil {
+					return fmt.Errorf("error setting content: %w", err)
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 func resourceFileStoreNodeFileRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
