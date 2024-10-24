@@ -18,4 +18,14 @@ resource "harness_platform_secret_text" "TEST_spot_account_id" {
   value                     = "my_secret_value"
 }
 
+resource "harness_platform_secret_text" "doNotDeleteHSM" {
+  identifier                = "doNotDeleteHSM"
+  name                      = "doNotDeleteHSM"
+  description               = "This is a test secret text"
+  tags                      = ["foo:bar"]
+  secret_manager_identifier = "harnessSecretManager"
+  value_type                = "Inline"
+  value                     = "my_secret_value"
+}
+
 # Additional resources can be added as needed
