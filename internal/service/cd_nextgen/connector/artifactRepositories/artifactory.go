@@ -1,9 +1,8 @@
-package connector
+package artifactRepositories
 
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -12,18 +11,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceConnectorNexus() *schema.Resource {
+func ResourceConnectorArtifactory() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating a Nexus connector.",
-		ReadContext:   resourceConnectorNexusRead,
-		CreateContext: resourceConnectorNexusCreateOrUpdate,
-		UpdateContext: resourceConnectorNexusCreateOrUpdate,
+		Description:   "Resource for creating an Artifactory connector.",
+		ReadContext:   resourceConnectorArtifactoryRead,
+		CreateContext: resourceConnectorArtifactoryCreateOrUpdate,
+		UpdateContext: resourceConnectorArtifactoryCreateOrUpdate,
 		DeleteContext: resourceConnectorDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
-
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "URL of the Nexus server.",
+				Description: "URL of the Artifactory server.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -32,11 +30,6 @@ func ResourceConnectorNexus() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-			},
-			"version": {
-				Description: fmt.Sprintf("Version of the Nexus server. Valid values are %s", strings.Join(nextgen.NexusVersionSlice, ", ")),
-				Type:        schema.TypeString,
-				Required:    true,
 			},
 			"credentials": {
 				Description: "Credentials to use for authentication.",
@@ -75,8 +68,8 @@ func ResourceConnectorNexus() *schema.Resource {
 	return resource
 }
 
-func resourceConnectorNexusRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.Nexus)
+func resourceConnectorArtifactoryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.Artifactory)
 	if err != nil {
 		return err
 	}
@@ -85,89 +78,84 @@ func resourceConnectorNexusRead(ctx context.Context, d *schema.ResourceData, met
 		return nil
 	}
 
-	if err := readConnectorNexus(d, conn); err != nil {
+	if err := readConnectorArtifactory(d, conn); err != nil {
 		return diag.FromErr(err)
 	}
 
 	return nil
 }
 
-func resourceConnectorNexusCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn := buildConnectorNexus(d)
+func resourceConnectorArtifactoryCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	conn := buildConnectorArtifactory(d)
 
 	newConn, err := resourceConnectorCreateOrUpdateBase(ctx, d, meta, conn)
 	if err != nil {
 		return err
 	}
 
-	if err := readConnectorNexus(d, newConn); err != nil {
+	if err := readConnectorArtifactory(d, newConn); err != nil {
 		return diag.FromErr(err)
 	}
 
 	return nil
 }
 
-func buildConnectorNexus(d *schema.ResourceData) *nextgen.ConnectorInfo {
+func buildConnectorArtifactory(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	connector := &nextgen.ConnectorInfo{
-		Type_: nextgen.ConnectorTypes.Nexus,
-		Nexus: &nextgen.NexusConnector{
-			Auth: &nextgen.NexusAuthentication{
-				Type_: nextgen.NexusAuthTypes.Anonymous,
+		Type_: nextgen.ConnectorTypes.Artifactory,
+		Artifactory: &nextgen.ArtifactoryConnector{
+			Auth: &nextgen.ArtifactoryAuthentication{
+				Type_: nextgen.ArtifactoryAuthTypes.Anonymous,
 			},
 		},
 	}
 
 	if attr, ok := d.GetOk("url"); ok {
-		connector.Nexus.NexusServerUrl = attr.(string)
-	}
-
-	if attr, ok := d.GetOk("version"); ok {
-		connector.Nexus.Version = attr.(string)
+		connector.Artifactory.ArtifactoryServerUrl = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("delegate_selectors"); ok {
-		connector.Nexus.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+		connector.Artifactory.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
 	if attr, ok := d.GetOk("credentials"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-		connector.Nexus.Auth.Type_ = nextgen.NexusAuthTypes.UsernamePassword
-		connector.Nexus.Auth.UsernamePassword = &nextgen.NexusUsernamePasswordAuth{}
+		connector.Artifactory.Auth.Type_ = nextgen.ArtifactoryAuthTypes.UsernamePassword
+		connector.Artifactory.Auth.UsernamePassword = &nextgen.ArtifactoryUsernamePasswordAuth{}
 
-		if attr := config["username"].(string); attr != "" {
-			connector.Nexus.Auth.UsernamePassword.Username = attr
+		if attr, ok := config["username"]; ok {
+			connector.Artifactory.Auth.UsernamePassword.Username = attr.(string)
 		}
 
-		if attr := config["username_ref"].(string); attr != "" {
-			connector.Nexus.Auth.UsernamePassword.UsernameRef = attr
+		if attr, ok := config["username_ref"]; ok {
+			connector.Artifactory.Auth.UsernamePassword.UsernameRef = attr.(string)
 		}
 
-		if attr := config["password_ref"].(string); attr != "" {
-			connector.Nexus.Auth.UsernamePassword.PasswordRef = attr
+		if attr, ok := config["password_ref"]; ok {
+			connector.Artifactory.Auth.UsernamePassword.PasswordRef = attr.(string)
 		}
 	}
 
 	return connector
 }
 
-func readConnectorNexus(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
-	d.Set("url", connector.Nexus.NexusServerUrl)
-	d.Set("delegate_selectors", connector.Nexus.DelegateSelectors)
-	d.Set("version", connector.Nexus.Version)
+func readConnectorArtifactory(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	d.Set("url", connector.Artifactory.ArtifactoryServerUrl)
+	d.Set("delegate_selectors", connector.Artifactory.DelegateSelectors)
 
-	switch connector.Nexus.Auth.Type_ {
-	case nextgen.NexusAuthTypes.UsernamePassword:
+	switch connector.Artifactory.Auth.Type_ {
+	case nextgen.ArtifactoryAuthTypes.UsernamePassword:
 		d.Set("credentials", []map[string]interface{}{
 			{
-				"username":     connector.Nexus.Auth.UsernamePassword.Username,
-				"username_ref": connector.Nexus.Auth.UsernamePassword.UsernameRef,
-				"password_ref": connector.Nexus.Auth.UsernamePassword.PasswordRef,
+				"username":     connector.Artifactory.Auth.UsernamePassword.Username,
+				"username_ref": connector.Artifactory.Auth.UsernamePassword.UsernameRef,
+				"password_ref": connector.Artifactory.Auth.UsernamePassword.PasswordRef,
 			},
 		})
-	case nextgen.NexusAuthTypes.Anonymous:
+	case nextgen.ArtifactoryAuthTypes.Anonymous:
 		// noop
 	default:
-		return fmt.Errorf("unsupported nexus auth type: %s", connector.Nexus.Auth.Type_)
+		return fmt.Errorf("unsupported artifactory auth type: %s", connector.Artifactory.Auth.Type_)
 	}
 
 	return nil

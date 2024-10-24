@@ -1,21 +1,20 @@
-package connector_test
+package artifactRepositories_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/stretchr/testify/require"
 )
 
-func TestAccConnectorJenkins_usernamepassword(t *testing.T) {
+func TestAccResourceConnectorDocker_DockerHub(t *testing.T) {
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_jenkins.test"
+	resourceName := "harness_platform_connector_docker.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -26,29 +25,33 @@ func TestAccConnectorJenkins_usernamepassword(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnector_jenkins_usernamepassword(id, name),
+				Config: testAccResourceConnectorDocker_DockerHub(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
-					resource.TestCheckResourceAttr(resourceName, "auth.0.jenkins_user_name_password.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "type", "DockerHub"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://hub.docker.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
 				),
 			},
 			{
-				Config: testAccResourceConnector_jenkins_usernamepassword(id, updatedName),
+				Config: testAccResourceConnectorDocker_DockerHub(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
-					resource.TestCheckResourceAttr(resourceName, "auth.0.jenkins_user_name_password.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "type", "DockerHub"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://hub.docker.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
 				),
 			},
 			{
@@ -60,11 +63,12 @@ func TestAccConnectorJenkins_usernamepassword(t *testing.T) {
 	})
 }
 
-func TestAccConnectorJenkins_bearerToekn(t *testing.T) {
+func TestAccResourceConnectorDocker_DockerHubExecuteOnDelegateFalse(t *testing.T) {
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_jenkins.test"
+	resourceName := "harness_platform_connector_docker.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -75,43 +79,105 @@ func TestAccConnectorJenkins_bearerToekn(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnector_jenkins_bearerToken(id, name),
+				Config: testAccResourceConnectorDocker_DockerHubExecuteOnDelegateFalse(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
+					resource.TestCheckResourceAttr(resourceName, "type", "DockerHub"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://hub.docker.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 				),
 			},
 			{
-				Config: testAccResourceConnector_jenkins_bearerToken(id, updatedName),
+				Config: testAccResourceConnectorDocker_DockerHubExecuteOnDelegateFalse(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
+					resource.TestCheckResourceAttr(resourceName, "type", "DockerHub"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://hub.docker.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"execute_on_delegate"},
 			},
 		},
 	})
 }
 
-func TestAccConnectorJenkins_anonymus(t *testing.T) {
+func TestAccResourceConnectorDocker_DockerHubExecuteOnDelegateTrue(t *testing.T) {
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_jenkins.test"
+	resourceName := "harness_platform_connector_docker.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorDocker_DockerHubExecuteOnDelegateTrue(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "type", "DockerHub"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://hub.docker.com"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorDocker_DockerHubExecuteOnDelegateTrue(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "type", "DockerHub"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://hub.docker.com"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"execute_on_delegate"},
+			},
+		},
+	})
+}
+
+func TestAccResourceConnectorDocker_DockerHub_Anonymous(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_docker.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -119,26 +185,15 @@ func TestAccConnectorJenkins_anonymus(t *testing.T) {
 		CheckDestroy:      testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnector_jenkins_anonymus(id, name),
+				Config: testAccResourceConnectorDocker_anonymous(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-				),
-			},
-			{
-				Config: testAccResourceConnector_jenkins_anonymus(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
+					resource.TestCheckResourceAttr(resourceName, "type", "DockerHub"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://hub.docker.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -151,38 +206,7 @@ func TestAccConnectorJenkins_anonymus(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnectorJenkins_DeleteUnderlyingResource(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	resourceName := "harness_platform_connector_jenkins.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceConnector_jenkins_anonymus(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-				),
-			},
-			{
-				PreConfig: func() {
-					acctest.TestAccConfigureProvider()
-					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					_, _, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, id, &nextgen.ConnectorsApiDeleteConnectorOpts{})
-					require.NoError(t, err)
-				},
-				Config:             testAccResourceConnector_jenkins_anonymus(id, name),
-				PlanOnly:           true,
-				ExpectNonEmptyPlan: true,
-			},
-		},
-	})
-}
-
-func testAccResourceConnector_jenkins_bearerToken(id string, name string) string {
+func testAccResourceConnectorDocker_DockerHub(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -195,19 +219,18 @@ func testAccResourceConnector_jenkins_bearerToken(id string, name string) string
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_jenkins" "test" {
+		resource "harness_platform_connector_docker" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			jenkins_url = "https://jenkinss.com/"
+			type = "DockerHub"
+			url = "https://hub.docker.com"
 			delegate_selectors = ["harness-delegate"]
-			auth {
-				type = "Bearer Token(HTTP Header)"
-				jenkins_bearer_token {
-					token_ref = "account.${harness_platform_secret_text.test.id}"
-				}
+			credentials {
+				username = "admin"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
@@ -219,24 +242,7 @@ func testAccResourceConnector_jenkins_bearerToken(id string, name string) string
 `, id, name)
 }
 
-func testAccResourceConnector_jenkins_anonymus(id string, name string) string {
-	return fmt.Sprintf(`
-		resource "harness_platform_connector_jenkins" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			description = "test"
-			tags = ["foo:bar"]
-
-			jenkins_url = "https://jenkinss.com/"
-			delegate_selectors = ["harness-delegate"]
-			auth {
-				type = "Anonymous"
-			}
-		}
-`, id, name)
-}
-
-func testAccResourceConnector_jenkins_usernamepassword(id string, name string) string {
+func testAccResourceConnectorDocker_DockerHubExecuteOnDelegateFalse(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -249,20 +255,18 @@ func testAccResourceConnector_jenkins_usernamepassword(id string, name string) s
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_jenkins" "test" {
+		resource "harness_platform_connector_docker" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
-
-			jenkins_url = "https://jenkinss.com/"
+			execute_on_delegate = false
+			type = "DockerHub"
+			url = "https://hub.docker.com"
 			delegate_selectors = ["harness-delegate"]
-			auth {
-				type = "UsernamePassword"
-				jenkins_user_name_password {
-					username = "admin"
-					password_ref = "account.${harness_platform_secret_text.test.id}"
-				}
+			credentials {
+				username = "admin"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
@@ -270,6 +274,57 @@ func testAccResourceConnector_jenkins_usernamepassword(id string, name string) s
 		resource "time_sleep" "wait_4_seconds" {
 			depends_on = [harness_platform_secret_text.test]
 			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorDocker_DockerHubExecuteOnDelegateTrue(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+		resource "harness_platform_connector_docker" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+			execute_on_delegate = true
+			type = "DockerHub"
+			url = "https://hub.docker.com"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				username = "admin"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorDocker_anonymous(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_docker" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			type = "DockerHub"
+			url = "https://hub.docker.com"
+			delegate_selectors = ["harness-delegate"]
 		}
 `, id, name)
 }

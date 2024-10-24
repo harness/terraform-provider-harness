@@ -1,22 +1,18 @@
-package connector
+package artifactRepositories
 
 import (
-	"fmt"
-	"strings"
-
-	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DatasourceConnectorNexus() *schema.Resource {
+func DatasourceConnectorHelm() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for looking up a Nexus connector.",
-		ReadContext: resourceConnectorNexusRead,
+		Description: "Datasource for looking up a HTTP Helm connector.",
+		ReadContext: resourceConnectorHelmRead,
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "URL of the Nexus server.",
+				Description: "URL of the helm server.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -25,11 +21,6 @@ func DatasourceConnectorNexus() *schema.Resource {
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-			},
-			"version": {
-				Description: fmt.Sprintf("Version of the Nexus server. Valid values are %s", strings.Join(nextgen.NexusVersionSlice, ", ")),
-				Type:        schema.TypeString,
-				Computed:    true,
 			},
 			"credentials": {
 				Description: "Credentials to use for authentication.",

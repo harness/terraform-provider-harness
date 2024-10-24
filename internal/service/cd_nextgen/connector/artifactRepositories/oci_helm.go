@@ -1,4 +1,4 @@
-package connector
+package artifactRepositories
 
 import (
 	"context"
@@ -11,17 +11,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceConnectorArtifactory() *schema.Resource {
+func ResourceConnectorOciHelm() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating an Artifactory connector.",
-		ReadContext:   resourceConnectorArtifactoryRead,
-		CreateContext: resourceConnectorArtifactoryCreateOrUpdate,
-		UpdateContext: resourceConnectorArtifactoryCreateOrUpdate,
+		Description:   "Resource for creating a OCI Helm connector.",
+		ReadContext:   resourceConnectorOciHelmRead,
+		CreateContext: resourceConnectorOciHelmCreateOrUpdate,
+		UpdateContext: resourceConnectorOciHelmCreateOrUpdate,
 		DeleteContext: resourceConnectorDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
+
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "URL of the Artifactory server.",
+				Description: "URL of the helm server.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -60,6 +61,12 @@ func ResourceConnectorArtifactory() *schema.Resource {
 					},
 				},
 			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of connector",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -68,8 +75,8 @@ func ResourceConnectorArtifactory() *schema.Resource {
 	return resource
 }
 
-func resourceConnectorArtifactoryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.Artifactory)
+func resourceConnectorOciHelmRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.OciHelmRepo)
 	if err != nil {
 		return err
 	}
@@ -78,84 +85,84 @@ func resourceConnectorArtifactoryRead(ctx context.Context, d *schema.ResourceDat
 		return nil
 	}
 
-	if err := readConnectorArtifactory(d, conn); err != nil {
+	if err := readConnectorOciHelm(d, conn); err != nil {
 		return diag.FromErr(err)
 	}
 
 	return nil
 }
 
-func resourceConnectorArtifactoryCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn := buildConnectorArtifactory(d)
+func resourceConnectorOciHelmCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	conn := buildConnectorOciHelm(d)
 
 	newConn, err := resourceConnectorCreateOrUpdateBase(ctx, d, meta, conn)
 	if err != nil {
 		return err
 	}
 
-	if err := readConnectorArtifactory(d, newConn); err != nil {
+	if err := readConnectorOciHelm(d, newConn); err != nil {
 		return diag.FromErr(err)
 	}
 
 	return nil
 }
 
-func buildConnectorArtifactory(d *schema.ResourceData) *nextgen.ConnectorInfo {
+func buildConnectorOciHelm(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	connector := &nextgen.ConnectorInfo{
-		Type_: nextgen.ConnectorTypes.Artifactory,
-		Artifactory: &nextgen.ArtifactoryConnector{
-			Auth: &nextgen.ArtifactoryAuthentication{
-				Type_: nextgen.ArtifactoryAuthTypes.Anonymous,
-			},
-		},
+		Type_:   nextgen.ConnectorTypes.OciHelmRepo,
+		OciHelm: &nextgen.OciHelmConnector{},
 	}
 
 	if attr, ok := d.GetOk("url"); ok {
-		connector.Artifactory.ArtifactoryServerUrl = attr.(string)
+		connector.OciHelm.HelmRepoUrl = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("delegate_selectors"); ok {
-		connector.Artifactory.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+		connector.OciHelm.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+	}
+
+	connector.OciHelm.Auth = &nextgen.OciHelmAuthentication{
+		Type_: nextgen.OciHelmAuthTypes.Anonymous,
 	}
 
 	if attr, ok := d.GetOk("credentials"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-		connector.Artifactory.Auth.Type_ = nextgen.ArtifactoryAuthTypes.UsernamePassword
-		connector.Artifactory.Auth.UsernamePassword = &nextgen.ArtifactoryUsernamePasswordAuth{}
+		connector.OciHelm.Auth.Type_ = nextgen.OciHelmAuthTypes.UsernamePassword
+		connector.OciHelm.Auth.UsernamePassword = &nextgen.OciHelmUsernamePassword{}
 
-		if attr, ok := config["username"]; ok {
-			connector.Artifactory.Auth.UsernamePassword.Username = attr.(string)
+		if attr, ok := d.GetOk("credentials.0.username"); ok {
+			connector.OciHelm.Auth.UsernamePassword.Username = attr.(string)
 		}
 
-		if attr, ok := config["username_ref"]; ok {
-			connector.Artifactory.Auth.UsernamePassword.UsernameRef = attr.(string)
+		if attr, ok := config["credentials.0.username_ref"]; ok {
+			connector.OciHelm.Auth.UsernamePassword.UsernameRef = attr.(string)
 		}
 
-		if attr, ok := config["password_ref"]; ok {
-			connector.Artifactory.Auth.UsernamePassword.PasswordRef = attr.(string)
+		if attr, ok := d.GetOk("credentials.0.password_ref"); ok {
+			connector.OciHelm.Auth.UsernamePassword.PasswordRef = attr.(string)
 		}
 	}
 
 	return connector
 }
 
-func readConnectorArtifactory(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
-	d.Set("url", connector.Artifactory.ArtifactoryServerUrl)
-	d.Set("delegate_selectors", connector.Artifactory.DelegateSelectors)
+func readConnectorOciHelm(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	d.Set("url", connector.OciHelm.HelmRepoUrl)
+	d.Set("delegate_selectors", connector.OciHelm.DelegateSelectors)
 
-	switch connector.Artifactory.Auth.Type_ {
-	case nextgen.ArtifactoryAuthTypes.UsernamePassword:
+	switch connector.OciHelm.Auth.Type_ {
+	case nextgen.OciHelmAuthTypes.UsernamePassword:
 		d.Set("credentials", []map[string]interface{}{
 			{
-				"username":     connector.Artifactory.Auth.UsernamePassword.Username,
-				"username_ref": connector.Artifactory.Auth.UsernamePassword.UsernameRef,
-				"password_ref": connector.Artifactory.Auth.UsernamePassword.PasswordRef,
+				"username":     connector.OciHelm.Auth.UsernamePassword.Username,
+				"username_ref": connector.OciHelm.Auth.UsernamePassword.UsernameRef,
+				"password_ref": connector.OciHelm.Auth.UsernamePassword.PasswordRef,
 			},
 		})
-	case nextgen.ArtifactoryAuthTypes.Anonymous:
+	case nextgen.OciHelmAuthTypes.Anonymous:
 		// noop
 	default:
-		return fmt.Errorf("unsupported artifactory auth type: %s", connector.Artifactory.Auth.Type_)
+		return fmt.Errorf("unsupported oci helm auth type: %s", connector.OciHelm.Auth.Type_)
 	}
 
 	return nil

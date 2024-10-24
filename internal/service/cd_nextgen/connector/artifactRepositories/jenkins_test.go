@@ -1,111 +1,21 @@
-package connector_test
+package artifactRepositories_test
 
 import (
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/stretchr/testify/require"
 )
 
-func TestAccResourceConnectorArtifactoryAnonymous(t *testing.T) {
-
+func TestAccConnectorJenkins_usernamepassword(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_artifactory.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceConnectorArtifactoryanonymous(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-				),
-			},
-			{
-				Config: testAccResourceConnectorArtifactoryanonymous(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestAccResourceConnectorArtifactoryAnonymous_ProjectScope(t *testing.T) {
-
-	id := fmt.Sprintf("%s_%s", "ArtifactoryAnonymous", utils.RandStringBytes(5))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_artifactory.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceConnectorArtifactoryanonymousProjectScope(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-				),
-			},
-			{
-				Config: testAccResourceConnectorArtifactoryanonymousProjectScope(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
-			},
-		},
-	})
-}
-
-func TestAccResourceConnectorArtifactoryUserNamePassWord_ProjectScope(t *testing.T) {
-
-	id := fmt.Sprintf("%s_%s", "ArtifactoryAnonymous", utils.RandStringBytes(5))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_artifactory.test"
+	resourceName := "harness_platform_connector_jenkins.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -116,46 +26,92 @@ func TestAccResourceConnectorArtifactoryUserNamePassWord_ProjectScope(t *testing
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorArtifactoryUserNamePasswordProjectScope(id, name),
+				Config: testAccResourceConnector_jenkins_usernamepassword(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.jenkins_user_name_password.0.username", "admin"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
 				),
 			},
 			{
-				Config: testAccResourceConnectorArtifactoryUserNamePasswordProjectScope(id, updatedName),
+				Config: testAccResourceConnector_jenkins_usernamepassword(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.jenkins_user_name_password.0.username", "admin"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
 				),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
-func TestAccResourceConnectorArtifactoryUsernamePassword(t *testing.T) {
-
+func TestAccConnectorJenkins_bearerToekn(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_connector_artifactory.test"
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_jenkins.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnector_jenkins_bearerToken(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				Config: testAccResourceConnector_jenkins_bearerToken(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccConnectorJenkins_anonymus(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_jenkins.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -163,16 +119,27 @@ func TestAccResourceConnectorArtifactoryUsernamePassword(t *testing.T) {
 		CheckDestroy:      testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorArtifactoryusernamepassword(id, name),
+				Config: testAccResourceConnector_jenkins_anonymus(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
+				),
+			},
+			{
+				Config: testAccResourceConnector_jenkins_anonymus(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
@@ -184,7 +151,38 @@ func TestAccResourceConnectorArtifactoryUsernamePassword(t *testing.T) {
 	})
 }
 
-func testAccResourceConnectorArtifactoryusernamepassword(id string, name string) string {
+func TestAccResourceConnectorJenkins_DeleteUnderlyingResource(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_jenkins.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnector_jenkins_anonymus(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					_, _, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, id, &nextgen.ConnectorsApiDeleteConnectorOpts{})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceConnector_jenkins_anonymus(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+func testAccResourceConnector_jenkins_bearerToken(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -197,65 +195,48 @@ func testAccResourceConnectorArtifactoryusernamepassword(id string, name string)
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_artifactory" "test" {
+		resource "harness_platform_connector_jenkins" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://artifactory.example.com"
+			jenkins_url = "https://jenkinss.com/"
 			delegate_selectors = ["harness-delegate"]
-			credentials {
-				username = "admin"
-				password_ref = "account.${harness_platform_secret_text.test.id}"
+			auth {
+				type = "Bearer Token(HTTP Header)"
+				jenkins_bearer_token {
+					token_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnector_jenkins_anonymus(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_jenkins" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			jenkins_url = "https://jenkinss.com/"
+			delegate_selectors = ["harness-delegate"]
+			auth {
+				type = "Anonymous"
 			}
 		}
 `, id, name)
 }
 
-func testAccResourceConnectorArtifactoryanonymous(id string, name string) string {
-	return fmt.Sprintf(`
-		resource "harness_platform_connector_artifactory" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			description = "test"
-			tags = ["foo:bar"]
-
-			url = "https://artifactory.example.com"
-			delegate_selectors = ["harness-delegate"]
-		}
-`, id, name)
-}
-
-func testAccResourceConnectorArtifactoryanonymousProjectScope(id string, name string) string {
-	return fmt.Sprintf(`
-	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-	}
-
-	resource "harness_platform_project" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		color = "#0063F7"
-		org_id = harness_platform_organization.test.identifier
-	}
-
-		resource "harness_platform_connector_artifactory" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			description = "test"
-			tags = ["foo:bar"]
-			org_id = harness_platform_project.test.org_id
-			project_id = harness_platform_project.test.id
-
-			url = "https://artifactory.example.com"
-			delegate_selectors = ["harness-delegate"]
-		}
-`, id, name)
-}
-
-func testAccResourceConnectorArtifactoryUserNamePasswordProjectScope(id string, name string) string {
+func testAccResourceConnector_jenkins_usernamepassword(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -268,38 +249,27 @@ func testAccResourceConnectorArtifactoryUserNamePasswordProjectScope(id string, 
 		value = "secret"
 	}
 
-	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-	}
+		resource "harness_platform_connector_jenkins" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
 
-	resource "harness_platform_project" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		color = "#0063F7"
-		org_id = harness_platform_organization.test.identifier
-	}
-
-	resource "harness_platform_connector_artifactory" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		description = "test"
-		tags = ["foo:bar"]
-		org_id = harness_platform_project.test.org_id
-		project_id = harness_platform_project.test.id
-
-		url = "https://artifactory.example.com"
-		delegate_selectors = ["harness-delegate"]
-		credentials {
-			username = "admin"
-			password_ref = "account.${harness_platform_secret_text.test.id}"
+			jenkins_url = "https://jenkinss.com/"
+			delegate_selectors = ["harness-delegate"]
+			auth {
+				type = "UsernamePassword"
+				jenkins_user_name_password {
+					username = "admin"
+					password_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+			depends_on = [time_sleep.wait_4_seconds]
 		}
-		depends_on = [time_sleep.wait_4_seconds]
-	}
 
-	resource "time_sleep" "wait_4_seconds" {
-		depends_on = [harness_platform_secret_text.test]
-		destroy_duration = "4s"
-	}
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
 `, id, name)
 }

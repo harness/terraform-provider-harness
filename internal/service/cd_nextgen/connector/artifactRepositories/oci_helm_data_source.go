@@ -1,18 +1,18 @@
-package connector
+package artifactRepositories
 
 import (
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DatasourceConnectorArtifactory() *schema.Resource {
+func DatasourceConnectorOciHelm() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for looking up an App Dynamics connector.",
-		ReadContext: resourceConnectorArtifactoryRead,
+		Description: "Datasource for looking up a OCI Helm connector.",
+		ReadContext: resourceConnectorOciHelmRead,
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "URL of the Artifactory server.",
+				Description: "URL of the helm server.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -49,7 +49,7 @@ func DatasourceConnectorArtifactory() *schema.Resource {
 		},
 	}
 
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }

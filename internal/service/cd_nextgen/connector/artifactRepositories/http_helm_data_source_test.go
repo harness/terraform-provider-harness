@@ -1,4 +1,4 @@
-package connector_test
+package artifactRepositories_test
 
 import (
 	"fmt"
