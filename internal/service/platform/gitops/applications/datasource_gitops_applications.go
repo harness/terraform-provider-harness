@@ -611,6 +611,338 @@ func DataSourceGitopsApplications() *schema.Resource {
 											},
 										},
 									},
+									"sources": {
+										Description: "List of sources for the GitOps application. Multi Source support",
+										Type:        schema.TypeList,
+										Computed:    true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"repo_url": {
+													Description: "URL to the repository (git or helm) that contains the GitOps application manifests.",
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+												"path": {
+													Description: "Directory path within the git repository, and is only valid for the GitOps applications sourced from git.",
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+												"target_revision": {
+													Description: "Revision of the source to sync the GitOps application to. In case of git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag of the chart's version.",
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+												"chart": {
+													Description: "Helm chart name, and must be specified for the GitOps applications sourced from a helm repo.",
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+												"ref": {
+													Description: "Reference name to be used in other source spec, used for multi-source applications.",
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+												"helm": {
+													Description: "Holds helm specific options.",
+													Type:        schema.TypeList,
+													Computed:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"value_files": {
+																Description: "List of helm value files to use when generating a template.",
+																Type:        schema.TypeList,
+																Optional:    true,
+																Elem: &schema.Schema{
+																	Type: schema.TypeString,
+																},
+															},
+															"release_name": {
+																Description: "Helm release name to use. If omitted it will use the GitOps application name.",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"values": {
+																Description: "Helm values to be passed to helm template, typically defined as a block.",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"version": {
+																Description: "Helm version to use for templating (either \"2\" or \"3\")",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"pass_credentials": {
+																Description: "Indicates if to pass credentials to all domains (helm's --pass-credentials)",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"parameters": {
+																Description: "List of helm parameters which are passed to the helm template command upon manifest generation.",
+																Type:        schema.TypeList,
+																Optional:    true,
+																Elem: &schema.Resource{
+																	Schema: map[string]*schema.Schema{
+																		"name": {
+																			Description: "Name of the helm parameter.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																		"value": {
+																			Description: "Value of the Helm parameter.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																		"force_string": {
+																			Description: "Indicates if helm should interpret booleans and numbers as strings.",
+																			Type:        schema.TypeBool,
+																			Optional:    true,
+																		},
+																	},
+																},
+															},
+															"file_parameters": {
+																Description: "File parameters to the helm template.",
+																Type:        schema.TypeList,
+																Optional:    true,
+																Elem: &schema.Resource{
+																	Schema: map[string]*schema.Schema{
+																		"name": {
+																			Description: "Name of the helm parameter.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																		"path": {
+																			Description: "Path to the file containing the values of the helm parameter.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+												"kustomize": {
+													Description: "Options specific to a GitOps application source specific to Kustomize.",
+													Type:        schema.TypeList,
+													Computed:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"name_prefix": {
+																Description: "Prefix prepended to resources for kustomize apps.",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"name_suffix": {
+																Description: "Suffix appended to resources for kustomize apps.",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"images": {
+																Description: "List of kustomize image override specifications.",
+																Type:        schema.TypeList,
+																Optional:    true,
+																Elem: &schema.Schema{
+																	Type: schema.TypeString,
+																},
+															},
+															"common_labels": {
+																Description: "List of additional labels to add to rendered manifests.",
+																Type:        schema.TypeMap,
+																Optional:    true,
+																Elem: &schema.Schema{
+																	Type: schema.TypeString,
+																},
+															},
+															"version": {
+																Description: "Version of kustomize to use for rendering manifests.",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"common_annotations": {
+																Description: "List of additional annotations to add to rendered manifests.",
+																Type:        schema.TypeMap,
+																Optional:    true,
+																Elem: &schema.Schema{
+																	Type: schema.TypeString,
+																},
+															},
+															"force_common_labels": {
+																Description: "Indicates if to force apply common labels to resources for kustomize apps.",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"force_common_annotations": {
+																Description: "Indicates if to force applying common annotations to resources for kustomize apps.",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+														},
+													},
+												},
+												"ksonnet": {
+													Description: "Ksonnet specific options.",
+													Type:        schema.TypeList,
+													Computed:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"environment": {
+																Description: "Ksonnet application environment name.",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"parameters": {
+																Description: "List of ksonnet component parameter override values.",
+																Type:        schema.TypeList,
+																Optional:    true,
+																Elem: &schema.Resource{
+																	Schema: map[string]*schema.Schema{
+																		"component": {
+																			Description: "Component of the parameter of the ksonnet application.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																		"name": {
+																			Description: "Name of the parameter of the ksonnet application.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																		"value": {
+																			Description: "Value of the parameter of the ksonnet application.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+												"directory": {
+													Description: "Options for applications of type plain YAML or Jsonnet.",
+													Type:        schema.TypeList,
+													Computed:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"recurse": {
+																Description: "Indicates to scan a directory recursively for manifests.",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"exclude": {
+																Description: "Glob pattern to match paths against that should be explicitly excluded from being used during manifest generation.",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"include": {
+																Description: "Glob pattern to match paths against that should be explicitly included during manifest generation.",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"jsonnet": {
+																Description: "Options specific to applications of type Jsonnet.",
+																Type:        schema.TypeList,
+																Optional:    true,
+																Elem: &schema.Resource{
+																	Schema: map[string]*schema.Schema{
+																		"libs": {
+																			Description: "Additional library search dirs.",
+																			Type:        schema.TypeList,
+																			Optional:    true,
+																			Elem: &schema.Schema{
+																				Type: schema.TypeString,
+																			},
+																		},
+																		"ext_vars": {
+																			Description: "List of jsonnet external variables.",
+																			Type:        schema.TypeList,
+																			Optional:    true,
+																			Elem: &schema.Resource{
+																				Schema: map[string]*schema.Schema{
+																					"name": {
+																						Description: "Name of the external variables of jsonnet application.",
+																						Type:        schema.TypeString,
+																						Optional:    true,
+																					},
+																					"value": {
+																						Description: "Value of the external variables of jsonnet application.",
+																						Type:        schema.TypeString,
+																						Optional:    true,
+																					},
+																					"code": {
+																						Description: "Code of the external variables of jsonnet application.",
+																						Type:        schema.TypeBool,
+																						Optional:    true,
+																					},
+																				},
+																			},
+																		},
+																		"tlas": {
+																			Description: "List of jsonnet top-level arguments(TLAS).",
+																			Type:        schema.TypeList,
+																			Optional:    true,
+																			Elem: &schema.Resource{
+																				Schema: map[string]*schema.Schema{
+																					"name": {
+																						Description: "Name of the TLAS of the jsonnet application.",
+																						Type:        schema.TypeString,
+																						Optional:    true,
+																					},
+																					"value": {
+																						Description: "Value of the TLAS of the jsonnet application.",
+																						Type:        schema.TypeString,
+																						Optional:    true,
+																					},
+																					"code": {
+																						Description: "Code of the TLAS of the jsonnet application.",
+																						Type:        schema.TypeBool,
+																						Optional:    true,
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+												"plugin": {
+													Description: "Options specific to config management plugins.",
+													Type:        schema.TypeList,
+													Computed:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"name": {
+																Description: "Name of the plugin.",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"env": {
+																Description: "Entry in the GitOps application's environment.",
+																Type:        schema.TypeList,
+																Optional:    true,
+																Elem: &schema.Resource{
+																	Schema: map[string]*schema.Schema{
+																		"name": {
+																			Description: "Name of the variable, usually expressed in uppercase.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																		"value": {
+																			Description: "Value of the variable.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
 									"destination": {
 										Description: "Information about the GitOps application's destination.",
 										Type:        schema.TypeList,

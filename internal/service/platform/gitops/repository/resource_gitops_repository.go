@@ -357,6 +357,11 @@ func ResourceGitopsRepositories() *schema.Resource {
 					},
 				},
 			},
+			"force_delete": {
+				Description: "Indicates if the repository should be deleted forcefully, regardless of existing applications using that repo.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"update_mask": {
 				Description: "Update mask of the repository.",
 				Type:        schema.TypeList,
@@ -585,6 +590,7 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 func resourceGitOpsRepositoryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
+	var force_delete bool
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -597,10 +603,14 @@ func resourceGitOpsRepositoryDelete(ctx context.Context, d *schema.ResourceData,
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
 	}
+	if attr, ok := d.GetOk("force_delete"); ok {
+		force_delete = attr.(bool)
+	}
 	_, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceDeleteRepository(ctx, agentIdentifier, identifier, &nextgen.RepositoriesApiAgentRepositoryServiceDeleteRepositoryOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(orgIdentifier),
 		ProjectIdentifier: optional.NewString(projectIdentifier),
+		ForceDelete:       optional.NewBool(force_delete),
 	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)

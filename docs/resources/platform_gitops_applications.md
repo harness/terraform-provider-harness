@@ -78,7 +78,8 @@ resource "harness_platform_gitops_applications" "example" {
 - `kind` (String) Kind of the GitOps application.
 - `options_remove_existing_finalizers` (Boolean) Options to remove existing finalizers to delete the GitOps application.
 - `project` (String) The ArgoCD project name corresponding to this GitOps application. An empty string means that the GitOps application belongs to the default project created by Harness.
-- `repo_id` (String) Repository identifier of the GitOps application.
+- `repo_id` (String) Repository identifier of the GitOps application. When using skipRepoValidation, this field is not required.
+- `repo_ids` (List of String) List of repository identifiers of the GitOps for Multi-Source application. Not required if skipRepoValidation is set to true.
 - `request_cascade` (Boolean) Request cascade to delete the GitOps application.
 - `request_propagation_policy` (String) Request propagation policy to delete the GitOps application.
 - `skip_repo_validation` (Boolean) Indicates if the GitOps application should skip validate repository definition exists.
@@ -140,7 +141,8 @@ Optional:
 
 - `destination` (Block List) Information about the GitOps application's destination. (see [below for nested schema](#nestedblock--application--spec--destination))
 - `project` (String) The ArgoCD project name corresponding to this GitOps application. Value must match mappings of ArgoCD projects to harness project.
-- `source` (Block List) Contains all information about the source of the GitOps application. (see [below for nested schema](#nestedblock--application--spec--source))
+- `source` (Block List, Max: 1) Contains all information about the source of the GitOps application. (see [below for nested schema](#nestedblock--application--spec--source))
+- `sources` (Block List) List of sources for the GitOps application. Multi Source support (see [below for nested schema](#nestedblock--application--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when a sync will be performed in response to updates in git. (see [below for nested schema](#nestedblock--application--spec--sync_policy))
 
 <a id="nestedblock--application--spec--destination"></a>
@@ -289,6 +291,152 @@ Optional:
 
 <a id="nestedblock--application--spec--source--plugin--env"></a>
 ### Nested Schema for `application.spec.source.plugin.env`
+
+Optional:
+
+- `name` (String) Name of the variable, usually expressed in uppercase.
+- `value` (String) Value of the variable.
+
+
+
+
+<a id="nestedblock--application--spec--sources"></a>
+### Nested Schema for `application.spec.sources`
+
+Required:
+
+- `repo_url` (String) URL to the repository (git or helm) that contains the GitOps application manifests.
+- `target_revision` (String) Revision of the source to sync the GitOps application to. In case of git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag of the chart's version.
+
+Optional:
+
+- `chart` (String) Helm chart name, and must be specified for the GitOps applications sourced from a helm repo.
+- `directory` (Block List) Options for applications of type plain YAML or Jsonnet. (see [below for nested schema](#nestedblock--application--spec--sources--directory))
+- `helm` (Block List) Holds helm specific options. (see [below for nested schema](#nestedblock--application--spec--sources--helm))
+- `ksonnet` (Block List) Ksonnet specific options. (see [below for nested schema](#nestedblock--application--spec--sources--ksonnet))
+- `kustomize` (Block List) Options specific to a GitOps application source specific to Kustomize. (see [below for nested schema](#nestedblock--application--spec--sources--kustomize))
+- `path` (String) Directory path within the git repository, and is only valid for the GitOps applications sourced from git.
+- `plugin` (Block List) Options specific to config management plugins. (see [below for nested schema](#nestedblock--application--spec--sources--plugin))
+- `ref` (String) Reference name to be used in other source spec, used for multi-source applications.
+
+<a id="nestedblock--application--spec--sources--directory"></a>
+### Nested Schema for `application.spec.sources.directory`
+
+Optional:
+
+- `exclude` (String) Glob pattern to match paths against that should be explicitly excluded from being used during manifest generation.
+- `include` (String) Glob pattern to match paths against that should be explicitly included during manifest generation.
+- `jsonnet` (Block List) Options specific to applications of type Jsonnet. (see [below for nested schema](#nestedblock--application--spec--sources--directory--jsonnet))
+- `recurse` (Boolean) Indicates to scan a directory recursively for manifests.
+
+<a id="nestedblock--application--spec--sources--directory--jsonnet"></a>
+### Nested Schema for `application.spec.sources.directory.jsonnet`
+
+Optional:
+
+- `ext_vars` (Block List) List of jsonnet external variables. (see [below for nested schema](#nestedblock--application--spec--sources--directory--jsonnet--ext_vars))
+- `libs` (List of String) Additional library search dirs.
+- `tlas` (Block List) List of jsonnet top-level arguments(TLAS). (see [below for nested schema](#nestedblock--application--spec--sources--directory--jsonnet--tlas))
+
+<a id="nestedblock--application--spec--sources--directory--jsonnet--ext_vars"></a>
+### Nested Schema for `application.spec.sources.directory.jsonnet.ext_vars`
+
+Optional:
+
+- `code` (Boolean) Code of the external variables of jsonnet application.
+- `name` (String) Name of the external variables of jsonnet application.
+- `value` (String) Value of the external variables of jsonnet application.
+
+
+<a id="nestedblock--application--spec--sources--directory--jsonnet--tlas"></a>
+### Nested Schema for `application.spec.sources.directory.jsonnet.tlas`
+
+Optional:
+
+- `code` (Boolean) Code of the TLAS of the jsonnet application.
+- `name` (String) Name of the TLAS of the jsonnet application.
+- `value` (String) Value of the TLAS of the jsonnet application.
+
+
+
+
+<a id="nestedblock--application--spec--sources--helm"></a>
+### Nested Schema for `application.spec.sources.helm`
+
+Optional:
+
+- `file_parameters` (Block List) File parameters to the helm template. (see [below for nested schema](#nestedblock--application--spec--sources--helm--file_parameters))
+- `parameters` (Block List) List of helm parameters which are passed to the helm template command upon manifest generation. (see [below for nested schema](#nestedblock--application--spec--sources--helm--parameters))
+- `pass_credentials` (Boolean) Indicates if to pass credentials to all domains (helm's --pass-credentials)
+- `release_name` (String) Helm release name to use. If omitted it will use the GitOps application name.
+- `value_files` (List of String) List of helm value files to use when generating a template.
+- `values` (String) Helm values to be passed to helm template, typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3")
+
+<a id="nestedblock--application--spec--sources--helm--file_parameters"></a>
+### Nested Schema for `application.spec.sources.helm.file_parameters`
+
+Optional:
+
+- `name` (String) Name of the helm parameter.
+- `path` (String) Path to the file containing the values of the helm parameter.
+
+
+<a id="nestedblock--application--spec--sources--helm--parameters"></a>
+### Nested Schema for `application.spec.sources.helm.parameters`
+
+Optional:
+
+- `force_string` (Boolean) Indicates if helm should interpret booleans and numbers as strings.
+- `name` (String) Name of the helm parameter.
+- `value` (String) Value of the Helm parameter.
+
+
+
+<a id="nestedblock--application--spec--sources--ksonnet"></a>
+### Nested Schema for `application.spec.sources.ksonnet`
+
+Optional:
+
+- `environment` (String) Ksonnet application environment name.
+- `parameters` (Block List) List of ksonnet component parameter override values. (see [below for nested schema](#nestedblock--application--spec--sources--ksonnet--parameters))
+
+<a id="nestedblock--application--spec--sources--ksonnet--parameters"></a>
+### Nested Schema for `application.spec.sources.ksonnet.parameters`
+
+Optional:
+
+- `component` (String) Component of the parameter of the ksonnet application.
+- `name` (String) Name of the parameter of the ksonnet application.
+- `value` (String) Value of the parameter of the ksonnet application.
+
+
+
+<a id="nestedblock--application--spec--sources--kustomize"></a>
+### Nested Schema for `application.spec.sources.kustomize`
+
+Optional:
+
+- `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
+- `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
+- `images` (List of String) List of kustomize image override specifications.
+- `name_prefix` (String) Prefix prepended to resources for kustomize apps.
+- `name_suffix` (String) Suffix appended to resources for kustomize apps.
+- `version` (String) Version of kustomize to use for rendering manifests.
+
+
+<a id="nestedblock--application--spec--sources--plugin"></a>
+### Nested Schema for `application.spec.sources.plugin`
+
+Optional:
+
+- `env` (Block List) Entry in the GitOps application's environment. (see [below for nested schema](#nestedblock--application--spec--sources--plugin--env))
+- `name` (String) Name of the plugin.
+
+<a id="nestedblock--application--spec--sources--plugin--env"></a>
+### Nested Schema for `application.spec.sources.plugin.env`
 
 Optional:
 
