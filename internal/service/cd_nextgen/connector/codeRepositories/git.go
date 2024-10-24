@@ -1,4 +1,4 @@
-package connector
+package codeRepositories
 
 import (
 	"context"
@@ -48,7 +48,7 @@ func ResourceConnectorGit() *schema.Resource {
 			"execute_on_delegate": {
 				Description: "Execute on delegate or not.",
 				Type:        schema.TypeBool,
-				Optional:    true,				
+				Optional:    true,
 			},
 			"credentials": {
 				Description: "Credentials to use for the connection.",
@@ -74,14 +74,14 @@ func ResourceConnectorGit() *schema.Resource {
 										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref"},
 									},
 									"username_ref": {
-										Description:   "Reference to a secret containing the username to use for authentication." + secret_ref_text,
+										Description:   "Reference to a secret containing the username to use for authentication." + secretRefText,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.username"},
 										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref"},
 									},
 									"password_ref": {
-										Description: "Reference to a secret containing the password to use for authentication." + secret_ref_text,
+										Description: "Reference to a secret containing the password to use for authentication." + secretRefText,
 										Type:        schema.TypeString,
 										Required:    true,
 									},
@@ -98,7 +98,7 @@ func ResourceConnectorGit() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"ssh_key_ref": {
-										Description: "Reference to the Harness secret containing the ssh key." + secret_ref_text,
+										Description: "Reference to the Harness secret containing the ssh key." + secretRefText,
 										Type:        schema.TypeString,
 										Required:    true,
 									},

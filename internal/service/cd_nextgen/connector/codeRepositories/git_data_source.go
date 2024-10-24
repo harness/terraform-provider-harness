@@ -1,4 +1,4 @@
-package connector
+package codeRepositories
 
 import (
 	"fmt"
@@ -9,19 +9,19 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DatasourceConnectorBitbucket() *schema.Resource {
+func DatasourceConnectorGit() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for looking up a Bitbucket connector.",
-		ReadContext: resourceConnectorBitbucketRead,
+		Description: "Datasource for looking up a Git connector.",
+		ReadContext: resourceConnectorGitRead,
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "URL of the BitBucket repository or account.",
+				Description: "URL of the git repository or account.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"connection_type": {
-				Description: fmt.Sprintf("Whether the connection we're making is to a BitBucket repository or a BitBucket account. Valid values are %s.", strings.Join(nextgen.GitConnectorTypeValues, ", ")),
+				Description: fmt.Sprintf("Whether the connection we're making is to a git repository or a git account. Valid values are %s.", strings.Join(nextgen.GitConnectorTypeValues, ", ")),
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -35,30 +35,6 @@ func DatasourceConnectorBitbucket() *schema.Resource {
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-			},
-			"api_authentication": {
-				Description: "Configuration for using the BitBucket api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
-				Type:        schema.TypeList,
-				Computed:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"username": {
-							Description: "The username used for connecting to the api.",
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
-						"username_ref": {
-							Description: "The name of the Harness secret containing the username." + secret_ref_text,
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
-						"token_ref": {
-							Description: "Personal access token for interacting with the BitBucket api." + secret_ref_text,
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
-					},
-				},
 			},
 			"credentials": {
 				Description: "Credentials to use for the connection.",
@@ -78,12 +54,12 @@ func DatasourceConnectorBitbucket() *schema.Resource {
 										Computed:    true,
 									},
 									"username_ref": {
-										Description: "Reference to a secret containing the username to use for authentication." + secret_ref_text,
+										Description: "Reference to a secret containing the username to use for authentication." + secretRefText,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
 									"password_ref": {
-										Description: "Reference to a secret containing the password to use for authentication." + secret_ref_text,
+										Description: "Reference to a secret containing the password to use for authentication." + secretRefText,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
@@ -97,7 +73,7 @@ func DatasourceConnectorBitbucket() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"ssh_key_ref": {
-										Description: "Reference to the Harness secret containing the ssh key." + secret_ref_text,
+										Description: "Reference to the Harness secret containing the ssh key." + secretRefText,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},

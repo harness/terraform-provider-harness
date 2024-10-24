@@ -1,4 +1,4 @@
-package connector
+package codeRepositories
 
 import (
 	"context"
@@ -82,21 +82,21 @@ func ResourceConnectorGithub() *schema.Resource {
 										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.application_id", "api_authentication.0.github_app.0.application_id_ref"},
 									},
 									"application_id_ref": {
-										Description:   "Reference to the secret containing application id" + secret_ref_text,
+										Description:   "Reference to the secret containing application id" + secretRefText,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"api_authentication.0.github_app.0.application_id"},
 										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.application_id", "api_authentication.0.github_app.0.application_id_ref"},
 									},
 									"installation_id_ref": {
-										Description:   "Reference to the secret containing installation id." + secret_ref_text,
+										Description:   "Reference to the secret containing installation id." + secretRefText,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"api_authentication.0.github_app.0.installation_id"},
 										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.installation_id", "api_authentication.0.github_app.0.installation_id_ref"},
 									},
 									"private_key_ref": {
-										Description: "Reference to the secret containing the private key." + secret_ref_text,
+										Description: "Reference to the secret containing the private key." + secretRefText,
 										Type:        schema.TypeString,
 										Required:    true,
 									},
@@ -104,7 +104,7 @@ func ResourceConnectorGithub() *schema.Resource {
 							},
 						},
 						"token_ref": {
-							Description:   "Personal access token for interacting with the github api." + secret_ref_text,
+							Description:   "Personal access token for interacting with the github api." + secretRefText,
 							Type:          schema.TypeString,
 							Optional:      true,
 							AtLeastOneOf:  []string{"api_authentication.0.token_ref", "api_authentication.0.github_app"},
@@ -137,14 +137,14 @@ func ResourceConnectorGithub() *schema.Resource {
 										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
 									},
 									"username_ref": {
-										Description:   "Reference to a secret containing the username to use for authentication." + secret_ref_text,
+										Description:   "Reference to a secret containing the username to use for authentication." + secretRefText,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.username"},
 										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
 									},
 									"token_ref": {
-										Description: "Reference to a secret containing the personal access to use for authentication." + secret_ref_text,
+										Description: "Reference to a secret containing the personal access to use for authentication." + secretRefText,
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -171,21 +171,21 @@ func ResourceConnectorGithub() *schema.Resource {
 													ExactlyOneOf:  []string{"credentials.0.http.0.github_app.0.application_id", "credentials.0.http.0.github_app.0.application_id_ref"},
 												},
 												"application_id_ref": {
-													Description:   "Reference to the secret containing application id" + secret_ref_text,
+													Description:   "Reference to the secret containing application id" + secretRefText,
 													Type:          schema.TypeString,
 													Optional:      true,
 													ConflictsWith: []string{"credentials.0.http.0.github_app.0.application_id"},
 													ExactlyOneOf:  []string{"credentials.0.http.0.github_app.0.application_id", "credentials.0.http.0.github_app.0.application_id_ref"},
 												},
 												"installation_id_ref": {
-													Description:   "Reference to the secret containing installation id." + secret_ref_text,
+													Description:   "Reference to the secret containing installation id." + secretRefText,
 													Type:          schema.TypeString,
 													Optional:      true,
 													ConflictsWith: []string{"credentials.0.http.0.github_app.0.installation_id"},
 													ExactlyOneOf:  []string{"credentials.0.http.0.github_app.0.installation_id", "credentials.0.http.0.github_app.0.installation_id_ref"},
 												},
 												"private_key_ref": {
-													Description: "Reference to the secret containing the private key." + secret_ref_text,
+													Description: "Reference to the secret containing the private key." + secretRefText,
 													Type:        schema.TypeString,
 													Required:    true,
 												},
@@ -214,7 +214,7 @@ func ResourceConnectorGithub() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"ssh_key_ref": {
-										Description: "Reference to the Harness secret containing the ssh key." + secret_ref_text,
+										Description: "Reference to the Harness secret containing the ssh key." + secretRefText,
 										Type:        schema.TypeString,
 										Required:    true,
 									},

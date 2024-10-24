@@ -1,4 +1,4 @@
-package connector_test
+package codeRepositories_test
 
 import (
 	"fmt"

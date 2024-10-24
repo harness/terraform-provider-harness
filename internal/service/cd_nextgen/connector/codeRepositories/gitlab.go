@@ -1,4 +1,4 @@
-package connector
+package codeRepositories
 
 import (
 	"context"
@@ -53,7 +53,7 @@ func ResourceConnectorGitlab() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"token_ref": {
-							Description: "Personal access token for interacting with the gitlab api." + secret_ref_text,
+							Description: "Personal access token for interacting with the gitlab api." + secretRefText,
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -84,21 +84,21 @@ func ResourceConnectorGitlab() *schema.Resource {
 										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref"},
 									},
 									"username_ref": {
-										Description:   "Reference to a secret containing the username to use for authentication." + secret_ref_text,
+										Description:   "Reference to a secret containing the username to use for authentication." + secretRefText,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.username"},
 										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref"},
 									},
 									"token_ref": {
-										Description:   "Reference to a secret containing the personal access to use for authentication." + secret_ref_text,
+										Description:   "Reference to a secret containing the personal access to use for authentication." + secretRefText,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.password_ref"},
 										AtLeastOneOf:  []string{"credentials.0.http.0.token_ref", "credentials.0.http.0.password_ref"},
 									},
 									"password_ref": {
-										Description:   "Reference to a secret containing the password to use for authentication." + secret_ref_text,
+										Description:   "Reference to a secret containing the password to use for authentication." + secretRefText,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.token_ref"},
@@ -117,7 +117,7 @@ func ResourceConnectorGitlab() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"ssh_key_ref": {
-										Description: "Reference to the Harness secret containing the ssh key." + secret_ref_text,
+										Description: "Reference to the Harness secret containing the ssh key." + secretRefText,
 										Type:        schema.TypeString,
 										Required:    true,
 									},

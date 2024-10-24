@@ -1,4 +1,4 @@
-package connector_test
+package codeRepositories_test
 
 import (
 	"fmt"
@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceConnectorBitbucket_Http(t *testing.T) {
+func TestAccResourceConnectorGitlab_Http_token(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_bitbucket.test"
+	resourceName := "harness_platform_connector_gitlab.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -25,14 +25,14 @@ func TestAccResourceConnectorBitbucket_Http(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorBitbucket_http(id, name),
+				Config: testAccResourceConnectorGitlab_http_token(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://bitbucket.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
@@ -40,7 +40,7 @@ func TestAccResourceConnectorBitbucket_Http(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceConnectorBitbucket_http(id, updatedName),
+				Config: testAccResourceConnectorGitlab_http_token(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -59,49 +59,11 @@ func TestAccResourceConnectorBitbucket_Http(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnectorBitbucket_Ssh(t *testing.T) {
+func TestAccResourceConnectorGitlab_Ssh(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_connector_bitbucket.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceConnectorBitbucket_ssh(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://bitbucket.com/account"),
-					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
-					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestAccResourceConnectorBitbucket_api_token(t *testing.T) {
-
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_bitbucket.test"
+	resourceName := "harness_platform_connector_gitlab.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -112,31 +74,17 @@ func TestAccResourceConnectorBitbucket_api_token(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorBitbucket_api_token(id, name),
+				Config: testAccResourceConnectorGitlab_ssh(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://bitbucket.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.username", "admin"),
-				),
-			},
-			{
-				Config: testAccResourceConnectorBitbucket_api_token(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.username", "admin"),
 				),
 			},
 			{
@@ -148,7 +96,57 @@ func TestAccResourceConnectorBitbucket_api_token(t *testing.T) {
 	})
 }
 
-func testAccResourceConnectorBitbucket_http(id string, name string) string {
+func TestAccResourceConnectorGitlab_token(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_gitlab.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorGitlab_token(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
+					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorGitlab_token(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccResourceConnectorGitlab_http_token(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -161,20 +159,20 @@ func testAccResourceConnectorBitbucket_http(id string, name string) string {
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_bitbucket" "test" {
+		resource "harness_platform_connector_gitlab" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://bitbucket.com/account"
+			url = "https://gitlab.com/account"
 			connection_type = "Account"
 			validation_repo = "some_repo"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				http {
 					username = "admin"
-					password_ref = "account.${harness_platform_secret_text.test.id}"
+					token_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 			depends_on = [time_sleep.wait_4_seconds]
@@ -187,7 +185,7 @@ func testAccResourceConnectorBitbucket_http(id string, name string) string {
 `, id, name)
 }
 
-func testAccResourceConnectorBitbucket_api_token(id string, name string) string {
+func testAccResourceConnectorGitlab_token(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -200,25 +198,23 @@ func testAccResourceConnectorBitbucket_api_token(id string, name string) string 
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_bitbucket" "test" {
+		resource "harness_platform_connector_gitlab" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://bitbucket.com/account"
+			url = "https://gitlab.com/account"
 			connection_type = "Account"
 			validation_repo = "some_repo"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				http {
 					username = "admin"
-					password_ref = "account.${harness_platform_secret_text.test.id}"
+					token_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
-
 			api_authentication {
-				username = "admin"
 				token_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
@@ -231,7 +227,7 @@ func testAccResourceConnectorBitbucket_api_token(id string, name string) string 
 `, id, name)
 }
 
-func testAccResourceConnectorBitbucket_ssh(id string, name string) string {
+func testAccResourceConnectorGitlab_ssh(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -244,13 +240,13 @@ func testAccResourceConnectorBitbucket_ssh(id string, name string) string {
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_bitbucket" "test" {
+		resource "harness_platform_connector_gitlab" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://bitbucket.com/account"
+			url = "https://gitlab.com/account"
 			connection_type = "Account"
 			validation_repo = "some_repo"
 			delegate_selectors = ["harness-delegate"]
@@ -259,7 +255,6 @@ func testAccResourceConnectorBitbucket_ssh(id string, name string) string {
 					ssh_key_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
-
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 

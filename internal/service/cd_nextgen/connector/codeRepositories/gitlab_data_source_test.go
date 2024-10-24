@@ -1,4 +1,4 @@
-package connector_test
+package codeRepositories_test
 
 import (
 	"fmt"
@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceConnectorGit(t *testing.T) {
+func TestAccDataSourceConnectorGitlab(t *testing.T) {
 
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		resourceName = "data.harness_platform_connector_git.test"
+		resourceName = "data.harness_platform_connector_gitlab.test"
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -24,14 +24,14 @@ func TestAccDataSourceConnectorGit(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceConnectorGit(name),
+				Config: testAccDataSourceConnectorGitlab(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://git.example.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
@@ -42,7 +42,7 @@ func TestAccDataSourceConnectorGit(t *testing.T) {
 	})
 }
 
-func testAccDataSourceConnectorGit(name string) string {
+func testAccDataSourceConnectorGitlab(name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -55,20 +55,20 @@ func testAccDataSourceConnectorGit(name string) string {
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_git" "test" {
+		resource "harness_platform_connector_gitlab" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://git.example.com/account"
+			url = "https://gitlab.com/account"
 			connection_type = "Account"
 			validation_repo = "some_repo"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				http {
 					username = "admin"
-					password_ref = "account.${harness_platform_secret_text.test.id}"
+					token_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 			depends_on = [time_sleep.wait_4_seconds]
@@ -79,8 +79,8 @@ func testAccDataSourceConnectorGit(name string) string {
 			destroy_duration = "4s"
 		}
 
-		data "harness_platform_connector_git" "test" {
-			identifier = harness_platform_connector_git.test.identifier
+		data "harness_platform_connector_gitlab" "test" {
+			identifier = harness_platform_connector_gitlab.test.identifier
 		}
 	`, name)
 }

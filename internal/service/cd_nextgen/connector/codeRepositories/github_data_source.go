@@ -1,4 +1,4 @@
-package connector
+package codeRepositories
 
 import (
 	"fmt"
@@ -64,17 +64,17 @@ func DatasourceConnectorGithub() *schema.Resource {
 										Computed:    true,
 									},
 									"application_id_ref": {
-										Description: "Reference to the secret containing application id" + secret_ref_text,
+										Description: "Reference to the secret containing application id" + secretRefText,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
 									"installation_id_ref": {
-										Description: "Reference to the secret containing installation id." + secret_ref_text,
+										Description: "Reference to the secret containing installation id." + secretRefText,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
 									"private_key_ref": {
-										Description: "Reference to the secret containing the private key." + secret_ref_text,
+										Description: "Reference to the secret containing the private key." + secretRefText,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
@@ -82,7 +82,7 @@ func DatasourceConnectorGithub() *schema.Resource {
 							},
 						},
 						"token_ref": {
-							Description: "Personal access token for interacting with the github api." + secret_ref_text,
+							Description: "Personal access token for interacting with the github api." + secretRefText,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -107,12 +107,12 @@ func DatasourceConnectorGithub() *schema.Resource {
 										Computed:    true,
 									},
 									"username_ref": {
-										Description: "Reference to a secret containing the username to use for authentication." + secret_ref_text,
+										Description: "Reference to a secret containing the username to use for authentication." + secretRefText,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
 									"token_ref": {
-										Description: "Reference to a secret containing the personal access to use for authentication." + secret_ref_text,
+										Description: "Reference to a secret containing the personal access to use for authentication." + secretRefText,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
@@ -133,17 +133,17 @@ func DatasourceConnectorGithub() *schema.Resource {
 													Computed:    true,
 												},
 												"application_id_ref": {
-													Description: "Reference to the secret containing application id" + secret_ref_text,
+													Description: "Reference to the secret containing application id" + secretRefText,
 													Type:        schema.TypeString,
 													Computed:    true,
 												},
 												"installation_id_ref": {
-													Description: "Reference to the secret containing installation id." + secret_ref_text,
+													Description: "Reference to the secret containing installation id." + secretRefText,
 													Type:        schema.TypeString,
 													Computed:    true,
 												},
 												"private_key_ref": {
-													Description: "Reference to the secret containing the private key." + secret_ref_text,
+													Description: "Reference to the secret containing the private key." + secretRefText,
 													Type:        schema.TypeString,
 													Computed:    true,
 												},
@@ -168,7 +168,7 @@ func DatasourceConnectorGithub() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"ssh_key_ref": {
-										Description: "Reference to the Harness secret containing the ssh key." + secret_ref_text,
+										Description: "Reference to the Harness secret containing the ssh key." + secretRefText,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},

@@ -1,4 +1,4 @@
-package connector_test
+package codeRepositories_test
 
 import (
 	"fmt"
@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceConnectorGitlab_Http_token(t *testing.T) {
+func TestAccResourceConnectorGit_Http(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_gitlab.test"
+	resourceName := "harness_platform_connector_git.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -25,14 +25,14 @@ func TestAccResourceConnectorGitlab_Http_token(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorGitlab_http_token(id, name),
+				Config: testAccResourceConnectorGit_http(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://git.example.com/account"),
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
@@ -40,7 +40,7 @@ func TestAccResourceConnectorGitlab_Http_token(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceConnectorGitlab_http_token(id, updatedName),
+				Config: testAccResourceConnectorGit_http(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -59,11 +59,11 @@ func TestAccResourceConnectorGitlab_Http_token(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnectorGitlab_Ssh(t *testing.T) {
+func TestAccResourceConnectorGit_Ssh(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_connector_gitlab.test"
+	resourceName := "harness_platform_connector_git.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -74,14 +74,14 @@ func TestAccResourceConnectorGitlab_Ssh(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorGitlab_ssh(id, name),
+				Config: testAccResourceConnectorGit_ssh(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://git.example.com/account"),
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
@@ -96,57 +96,7 @@ func TestAccResourceConnectorGitlab_Ssh(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnectorGitlab_token(t *testing.T) {
-
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_gitlab.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		CheckDestroy: testAccConnectorDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceConnectorGitlab_token(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
-					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
-					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-				),
-			},
-			{
-				Config: testAccResourceConnectorGitlab_token(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func testAccResourceConnectorGitlab_http_token(id string, name string) string {
+func testAccResourceConnectorGit_http(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -159,20 +109,20 @@ func testAccResourceConnectorGitlab_http_token(id string, name string) string {
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_gitlab" "test" {
+		resource "harness_platform_connector_git" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://gitlab.com/account"
+			url = "https://git.example.com/account"
 			connection_type = "Account"
 			validation_repo = "some_repo"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				http {
 					username = "admin"
-					token_ref = "account.${harness_platform_secret_text.test.id}"
+					password_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 			depends_on = [time_sleep.wait_4_seconds]
@@ -185,7 +135,7 @@ func testAccResourceConnectorGitlab_http_token(id string, name string) string {
 `, id, name)
 }
 
-func testAccResourceConnectorGitlab_token(id string, name string) string {
+func testAccResourceConnectorGit_ssh(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -198,55 +148,13 @@ func testAccResourceConnectorGitlab_token(id string, name string) string {
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_gitlab" "test" {
+		resource "harness_platform_connector_git" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://gitlab.com/account"
-			connection_type = "Account"
-			validation_repo = "some_repo"
-			delegate_selectors = ["harness-delegate"]
-			credentials {
-				http {
-					username = "admin"
-					token_ref = "account.${harness_platform_secret_text.test.id}"
-				}
-			}
-			api_authentication {
-				token_ref = "account.${harness_platform_secret_text.test.id}"
-			}
-			depends_on = [time_sleep.wait_4_seconds]
-		}
-
-		resource "time_sleep" "wait_4_seconds" {
-			depends_on = [harness_platform_secret_text.test]
-			destroy_duration = "4s"
-		}
-`, id, name)
-}
-
-func testAccResourceConnectorGitlab_ssh(id string, name string) string {
-	return fmt.Sprintf(`
-	resource "harness_platform_secret_text" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		description = "test"
-		tags = ["foo:bar"]
-
-		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Inline"
-		value = "secret"
-	}
-
-		resource "harness_platform_connector_gitlab" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			description = "test"
-			tags = ["foo:bar"]
-
-			url = "https://gitlab.com/account"
+			url = "https://git.example.com/account"
 			connection_type = "Account"
 			validation_repo = "some_repo"
 			delegate_selectors = ["harness-delegate"]
