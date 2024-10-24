@@ -219,7 +219,7 @@ func testAccResourceConnector_httphelm_usernameRefpassword(id string, name strin
 			url = "https://helm.example.com"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
-				username_ref = "account.TestAccResourceConnector_httphelm_UsernamePassword__a8NH"
+				username_ref = "account.${harness_platform_secret_text.test.id}"
 				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
