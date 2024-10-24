@@ -1,0 +1,5 @@
+```release-note:fix
+harness_platform_pipeline_filters: added service_identifiers to fix service level filtering for pipeline execution filters. lifecycle.
+
+Added example for execution pipeline filter with service_identifiers.
+```

@@ -206,6 +206,15 @@ func DataSourcePipelineFilters() *schema.Resource {
 														Type: schema.TypeString,
 													},
 												},
+												"service_identifiers": {
+													Description: "Service identifiers of the CD pipeline.",
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Computed:    true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
 												"environment_names": {
 													Description: "Environment names of the CD pipeline.",
 													Type:        schema.TypeSet,

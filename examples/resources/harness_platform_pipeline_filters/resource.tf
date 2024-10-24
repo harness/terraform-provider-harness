@@ -13,6 +13,28 @@ resource "harness_platform_pipeline_filters" "test" {
   filter_visibility = "EveryOne"
 }
 
+# pipeline execution filter consisiting services (service_identifiers) filter
+resource "harness_platform_pipeline_filters" "execution" {
+  identifier = "identifier"
+  name       = "name"
+  org_id     = "org_id"
+  project_id = "project_id"
+  type       = "PipelineSetup"
+  filter_properties {
+    name                 = "pipeline_name"
+    description          = "pipeline_description"
+    pipeline_identifiers = ["id1", "id2"]
+    filter_type          = "PipelineExecution"
+    module_properties {
+      cd {
+        deployment_types    = "Kubernetes"
+        service_identifiers = ["nginx"]
+      }
+    }
+  }
+  filter_visibility = "EveryOne"
+}
+
 
 # pipeline filter with tags
 resource "harness_platform_pipeline_filters" "example_with_tags" {
@@ -48,3 +70,4 @@ resource "harness_platform_pipeline_filters" "example_with_tags" {
     }
   }
 }
+

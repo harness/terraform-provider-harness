@@ -61,6 +61,7 @@ Read-Only:
 - `artifact_display_names` (Set of String)
 - `deployment_types` (String)
 - `environment_names` (Set of String)
+- `service_identifiers` (Set of String)
 - `service_names` (Set of String)
 
 
@@ -76,15 +77,15 @@ Read-Only:
 - `tag` (String)
 
 <a id="nestedobjatt--filter_properties--module_properties--ci--ci_execution_info"></a>
-### Nested Schema for `filter_properties.module_properties.ci.tag`
+### Nested Schema for `filter_properties.module_properties.ci.ci_execution_info`
 
 Read-Only:
 
 - `event` (String)
-- `pull_request` (List of Object) (see [below for nested schema](#nestedobjatt--filter_properties--module_properties--ci--tag--pull_request))
+- `pull_request` (List of Object) (see [below for nested schema](#nestedobjatt--filter_properties--module_properties--ci--ci_execution_info--pull_request))
 
-<a id="nestedobjatt--filter_properties--module_properties--ci--tag--pull_request"></a>
-### Nested Schema for `filter_properties.module_properties.ci.tag.pull_request`
+<a id="nestedobjatt--filter_properties--module_properties--ci--ci_execution_info--pull_request"></a>
+### Nested Schema for `filter_properties.module_properties.ci.ci_execution_info.pull_request`
 
 Read-Only:
 
