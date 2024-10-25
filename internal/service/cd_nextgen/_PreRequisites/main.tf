@@ -46,6 +46,15 @@ resource "harness_platform_secret_text" "doNotDeleteHSM" {
   value_type                = "Inline"
   value                     = "my_secret_value"
 }
+resource "harness_platform_secret_text" "gitbotharnesstoken" {
+  identifier                = "gitbotharnesstoken"
+  name                      = "gitbotharnesstoken"
+  description               = "gitbotharnesstoken"
+  tags                      = ["ritek:test"]
+  secret_manager_identifier = "harnessSecretManager"
+  value_type                = "Inline"
+  value                     = "<+secrets.getValue("account.githubbotharnesstoken")>"
+}
 
 resource "harness_platform_connector_github" "DoNotDeleteGitX" {
   identifier  = "DoNotDeleteGitX"
@@ -77,7 +86,7 @@ resource "harness_platform_connector_github" "Jajoo" {
   }
 }
 
-resource "harness_connector_git" "DoNotDeleteRTerraformResource" {
+resource "harness_platform_connector_git" "DoNotDeleteRTerraformResource" {
     identifier = "DoNotDeleteRTerraformResource"
     name = "DoNotDeleteRTerraformResource"
     description = "DoNotDeleteRTerraformResource"
