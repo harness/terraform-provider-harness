@@ -8,6 +8,11 @@ terraform {
   }
 }
 
+variable "github_token_value" {
+  type = string
+}
+
+
 resource "harness_platform_secret_text" "TEST_spot_account_id" {
   identifier                = "TEST_spot_account_id"
   name                      = "TEST_spot_account_id"
@@ -46,6 +51,7 @@ resource "harness_platform_secret_text" "doNotDeleteHSM" {
   value_type                = "Inline"
   value                     = "my_secret_value"
 }
+
 resource "harness_platform_secret_text" "gitbotharnesstoken" {
   identifier                = "gitbotharnesstoken"
   name                      = "gitbotharnesstoken"
@@ -53,7 +59,7 @@ resource "harness_platform_secret_text" "gitbotharnesstoken" {
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
-  value                     = "<+secrets.getValue("account.githubbotharnesstoken")>"
+  value                     = var.github_token_value
 }
 
 resource "harness_platform_connector_github" "DoNotDeleteGitX" {
