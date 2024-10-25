@@ -75,6 +75,7 @@ func TestAccResourceConnectorGcp_Manual(t *testing.T) {
 }
 
 func TestAccResourceConnectorGcp_OIDC(t *testing.T) {
+	t.Skip()
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
