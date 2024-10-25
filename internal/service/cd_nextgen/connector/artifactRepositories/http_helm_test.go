@@ -95,6 +95,7 @@ func TestAccResourceConnector_httphelm_UsernameRefPassword(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	resourceName := "harness_platform_connector_helm.test"
+	secret := fmt.Sprintf("%s_secret", id)
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -114,7 +115,7 @@ func TestAccResourceConnector_httphelm_UsernameRefPassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://helm.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.username_ref", "account.TestAccResourceConnector_httphelm_UsernamePassword__a8NH"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.username_ref", "account."+secret),
 				),
 			},
 			{
@@ -201,8 +202,8 @@ func testAccResourceConnector_httphelm_usernamepassword(id string, name string) 
 func testAccResourceConnector_httphelm_usernameRefpassword(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
+		identifier = "%[1]s_secret"
+		name = "%[2]s_secret"
 		description = "test"
 		tags = ["foo:bar"]
 
@@ -212,23 +213,20 @@ func testAccResourceConnector_httphelm_usernameRefpassword(id string, name strin
 	}
 
 		resource "harness_platform_connector_helm" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			description = "test"
-			tags = ["foo:bar"]
-
-			url = "https://helm.example.com"
-			delegate_selectors = ["harness-delegate"]
-			credentials {
-				username_ref = "account.${harness_platform_secret_text.test.id}"
-				password_ref = "account.${harness_platform_secret_text.test.id}"
-			}
-			depends_on = [time_sleep.wait_4_seconds]
-		}
-
-		resource "time_sleep" "wait_4_seconds" {
-			depends_on = [harness_platform_secret_text.test]
-			destroy_duration = "4s"
+		  identifier           = "%[1]s"
+		  name                 = "%[2]s"
+		  description          = "test"
+		  tags                 = ["foo:bar"]
+		
+		  url                  = "https://helm.example.com"
+		  delegate_selectors   = ["harness-delegate"]
+		  
+		  credentials {
+			username_ref      = "account.${harness_platform_secret_text.test.id}"
+			password_ref      = "account.${harness_platform_secret_text.test.id}"
+		  }
+		
+		  depends_on           = [harness_platform_secret_text.test]
 		}
 `, id, name)
 }
