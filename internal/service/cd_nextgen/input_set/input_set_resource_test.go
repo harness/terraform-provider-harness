@@ -162,7 +162,7 @@ func TestAccResourceInputSetInline(t *testing.T) {
 func TestAccResourceInputSetImportFromGit(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	
+
 	resourceName := "harness_platform_input_set.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -181,17 +181,16 @@ func TestAccResourceInputSetImportFromGit(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.PipelineResourceImportStateIdFunc(resourceName),
-                ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path","git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%", "git_details.0.connector_ref", "git_details.0.connector_ref", "git_details.0.store_type", "git_details.0.store_type", "git_import_info.0.is_force_import","input_set_import_request.#", "input_set_import_request.0.%", "input_set_import_request.0.input_set_description", "input_set_import_request.0.input_set_name"},
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.PipelineResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path", "git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%", "git_details.0.connector_ref", "git_details.0.connector_ref", "git_details.0.store_type", "git_details.0.store_type", "git_import_info.0.is_force_import", "input_set_import_request.#", "input_set_import_request.0.%", "input_set_import_request.0.input_set_description", "input_set_import_request.0.input_set_name"},
 			},
 		},
 	})
 
 }
-
 
 func testAccGetInputSet(resourceName string, state *terraform.State) (*nextgen.InputSetResponseBody, error) {
 	r := acctest.TestAccGetResource(resourceName, state)

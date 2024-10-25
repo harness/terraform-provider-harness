@@ -1,4 +1,4 @@
-package infrastructure
+package environment
 
 import (
 	"context"
@@ -15,46 +15,37 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func ResourceInfrastructure() *schema.Resource {
+func ResourceEnvironment() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Infrastructure.",
+		Description: "Resource for creating a Harness environment.",
 
-		ReadContext:   resourceInfrastructureRead,
-		UpdateContext: resourceInfrastructureCreateOrUpdate,
-		DeleteContext: resourceInfrastructureDelete,
-		CreateContext: resourceInfrastructureCreateOrUpdate,
-		Importer:      helpers.EnvRelatedResourceImporter,
+		ReadContext:   resourceEnvironmentRead,
+		UpdateContext: resourceEnvironmentCreateOrUpdate,
+		DeleteContext: resourceEnvironmentDelete,
+		CreateContext: resourceEnvironmentCreateOrUpdate,
+		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Description: "Identifier of the Infrastructure.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"env_id": {
-				Description: "Environment Identifier.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"type": {
-				Description: fmt.Sprintf("Type of Infrastructure. Valid values are %s.", strings.Join(nextgen.InfrastructureTypeValues, ", ")),
-				Type:        schema.TypeString,
-				Optional:         true,
-			},
-			"yaml": {
-				Description:      "Infrastructure YAML." + helpers.Descriptions.YamlText.String(),
-				Type:             schema.TypeString,
-				Optional:         true,
-				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
-			},
-			"deployment_type": {
-				Description: fmt.Sprintf("Infrastructure deployment type. Valid values are %s.", strings.Join(nextgen.InfrastructureDeploymentypeValues, ", ")),
+			"color": {
+				Description: "Color of the environment.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
+			"type": {
+				Description:  fmt.Sprintf("The type of environment. Valid values are %s", strings.Join(nextgen.EnvironmentTypeValues, ", ")),
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringInSlice(nextgen.EnvironmentTypeValues, false),
+			},
+			"yaml": {
+				Description:      "Environment YAML." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Optional:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
+			},
 			"force_delete": {
-				Description: "Enable this flag for force deletion of infrastructure",
+				Description: "Enable this flag for force deletion of environments",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
@@ -129,13 +120,13 @@ func ResourceInfrastructure() *schema.Resource {
 							Computed:    true,
 						},
 						"last_object_id": {
-							Description: "Last object identifier (for Github). To be provided only when updating infrastructure.",
+							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
 						},
 						"last_commit_id": {
-							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating infrastructure.",
+							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
@@ -159,13 +150,13 @@ func ResourceInfrastructure() *schema.Resource {
 							Computed:    true,
 						},
 						"is_force_import": {
-							Description: "force import infrastructure from remote even if same file path already exist",
+							Description: "force import environment from remote even if same file path already exist",
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Computed:    true,
 						},
 						"import_from_git": {
-							Description: "import infrastructure from git",
+							Description: "import environment from git",
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Computed:    true,
@@ -175,54 +166,48 @@ func ResourceInfrastructure() *schema.Resource {
 			},
 		},
 	}
-	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
-	// overwrite schema for tags since these are read from the yaml
-	if s, ok := resource.Schema["tags"]; ok {
-		s.Computed = true
-	}
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
 
-func resourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	env_id := d.Get("env_id").(string)
-	infraParams := getInfraParams(d)
-	resp, httpResp, err := c.InfrastructuresApi.GetInfrastructure(ctx, d.Id(), c.AccountId, env_id, infraParams)
+	envParams := getEnvParams(d)
+	resp, httpResp, err := c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Id(), c.AccountId, envParams)
 
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readInfrastructure(d, resp.Data)
+	readEnvironment(d, resp.Data.Environment)
 
 	return nil
 }
 
-func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
-	var resp nextgen.ResponseDtoInfrastructureResponse
-	var importResp nextgen.ResponseInfrastructureImportResponse
+	var resp nextgen.ResponseDtoEnvironmentResponse
+	var importResp nextgen.ResponseEnvironmentImportResponseDto
 	var httpResp *http.Response
 	id := d.Id()
-	infra := buildInfrastructure(d)
+	env := buildEnvironment(d)
 
 	if id == "" {
 		if d.Get("git_details.0.import_from_git").(bool) {
-			env_id := d.Get("env_id").(string)
-			infraParams := infraImportParam(d)
-			importResp, httpResp, err = c.InfrastructuresApi.ImportInfrastructure(ctx, c.AccountId, env_id, &infraParams)
+			envParams := envImportParam(d)
+			importResp, httpResp, err = c.EnvironmentsApi.ImportEnvironment(ctx, c.AccountId, &envParams)
 		} else {
-			infraParams := infraCreateParam(infra, d)
-			resp, httpResp, err = c.InfrastructuresApi.CreateInfrastructure(ctx, c.AccountId, &infraParams)
+			envParams := envCreateParam(env, d)
+			resp, httpResp, err = c.EnvironmentsApi.CreateEnvironmentV2(ctx, c.AccountId, &envParams)
 		}
 	} else {
-		infraParams := infraUpdateParam(infra, d)
-		resp, httpResp, err = c.InfrastructuresApi.UpdateInfrastructure(ctx, c.AccountId, &infraParams)
+		envParams := envUpdateParam(env, d)
+		resp, httpResp, err = c.EnvironmentsApi.UpdateEnvironmentV2(ctx, c.AccountId, &envParams)
 	}
 
 	if err != nil {
@@ -230,20 +215,18 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 	}
 
 	if d.Get("git_details.0.import_from_git").(bool) {
-		readImportRes(d, importResp.Data.Identifier)
+		readImportRes(d, importResp.Data.EnvIdentifier)
 	} else {
-	    readInfrastructure(d, resp.Data)
+		readEnvironment(d, resp.Data.Environment)
 	}
 
 	return nil
 }
 
-func resourceInfrastructureDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEnvironmentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	env_id := d.Get("env_id").(string)
-
-	_, httpResp, err := c.InfrastructuresApi.DeleteInfrastructure(ctx, d.Id(), c.AccountId, env_id, &nextgen.InfrastructuresApiDeleteInfrastructureOpts{
+	_, httpResp, err := c.EnvironmentsApi.DeleteEnvironmentV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentsApiDeleteEnvironmentV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		ForceDelete:       helpers.BuildFieldForBoolean(d, "force_delete"),
@@ -256,13 +239,13 @@ func resourceInfrastructureDelete(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func buildInfrastructure(d *schema.ResourceData) *nextgen.InfrastructureRequest {
-	return &nextgen.InfrastructureRequest{
+func buildEnvironment(d *schema.ResourceData) *nextgen.EnvironmentRequest {
+	return &nextgen.EnvironmentRequest{
 		Identifier:        d.Get("identifier").(string),
 		OrgIdentifier:     d.Get("org_id").(string),
 		ProjectIdentifier: d.Get("project_id").(string),
-		EnvironmentRef:    d.Get("env_id").(string),
 		Name:              d.Get("name").(string),
+		Color:             d.Get("color").(string),
 		Description:       d.Get("description").(string),
 		Tags:              helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
 		Type_:             d.Get("type").(string),
@@ -270,34 +253,36 @@ func buildInfrastructure(d *schema.ResourceData) *nextgen.InfrastructureRequest 
 	}
 }
 
-func readInfrastructure(d *schema.ResourceData, infra *nextgen.InfrastructureResponse) {
-	d.SetId(infra.Infrastructure.Identifier)
-	d.Set("org_id", infra.Infrastructure.OrgIdentifier)
-	d.Set("project_id", infra.Infrastructure.ProjectIdentifier)
-	d.Set("env_id", infra.Infrastructure.EnvironmentRef)
-	d.Set("name", infra.Infrastructure.Name)
-	d.Set("description", infra.Infrastructure.Description)
-	d.Set("tags", helpers.FlattenTags(infra.Infrastructure.Tags))
-	d.Set("type", infra.Infrastructure.Type_)
-	d.Set("deployment_type", infra.Infrastructure.DeploymentType)
-	d.Set("yaml", infra.Infrastructure.Yaml)
-}
-
-func getInfraParams(d *schema.ResourceData) *nextgen.InfrastructuresApiGetInfrastructureOpts {
-	return &nextgen.InfrastructuresApiGetInfrastructureOpts{
-		OrgIdentifier:                 helpers.BuildField(d, "org_id"),
-		ProjectIdentifier:             helpers.BuildField(d, "project_id"),
-		Deleted:                       helpers.BuildFieldBool(d, "deleted"),
-		Branch:                        helpers.BuildField(d, "git_details.0.branch"),
-		RepoName:                      helpers.BuildField(d, "git_details.0.repo_name"),
-		LoadFromCache:                 helpers.BuildField(d, "git_details.0.load_from_cache"),
-		LoadFromFallbackBranch:        helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
+func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDetails) {
+	d.SetId(env.Identifier)
+	d.Set("identifier", env.Identifier)
+	d.Set("org_id", env.OrgIdentifier)
+	d.Set("project_id", env.ProjectIdentifier)
+	d.Set("name", env.Name)
+	d.Set("color", env.Color)
+	d.Set("description", env.Description)
+	d.Set("tags", helpers.FlattenTags(env.Tags))
+	d.Set("type", env.Type_.String())
+	if d.Get("yaml").(string) != "" {
+		d.Set("yaml", env.Yaml)
 	}
 }
 
-func infraCreateParam(infra *nextgen.InfrastructureRequest, d *schema.ResourceData) nextgen.InfrastructuresApiCreateInfrastructureOpts {
-	return nextgen.InfrastructuresApiCreateInfrastructureOpts{
-		Body:              optional.NewInterface(infra),
+func getEnvParams(d *schema.ResourceData) *nextgen.EnvironmentsApiGetEnvironmentV2Opts {
+	return &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+		OrgIdentifier:          helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:      helpers.BuildField(d, "project_id"),
+		Deleted:                helpers.BuildFieldBool(d, "deleted"),
+		Branch:                 helpers.BuildField(d, "git_details.0.branch"),
+		RepoName:               helpers.BuildField(d, "git_details.0.repo_name"),
+		LoadFromCache:          helpers.BuildField(d, "git_details.0.load_from_cache"),
+		LoadFromFallbackBranch: helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
+	}
+}
+
+func envCreateParam(env *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsApiCreateEnvironmentV2Opts {
+	return nextgen.EnvironmentsApiCreateEnvironmentV2Opts{
+		Body:              optional.NewInterface(env),
 		Branch:            helpers.BuildField(d, "git_details.0.branch"),
 		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
 		CommitMsg:         helpers.BuildField(d, "git_details.0.commit_message"),
@@ -310,9 +295,9 @@ func infraCreateParam(infra *nextgen.InfrastructureRequest, d *schema.ResourceDa
 	}
 }
 
-func infraUpdateParam(infra *nextgen.InfrastructureRequest, d *schema.ResourceData) nextgen.InfrastructuresApiUpdateInfrastructureOpts {
-	return nextgen.InfrastructuresApiUpdateInfrastructureOpts{
-		Body:              optional.NewInterface(infra),
+func envUpdateParam(env *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsApiUpdateEnvironmentV2Opts {
+	return nextgen.EnvironmentsApiUpdateEnvironmentV2Opts{
+		Body:              optional.NewInterface(env),
 		Branch:            helpers.BuildField(d, "git_details.0.branch"),
 		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
 		CommitMsg:         helpers.BuildField(d, "git_details.0.commit_message"),
@@ -320,22 +305,23 @@ func infraUpdateParam(infra *nextgen.InfrastructureRequest, d *schema.ResourceDa
 		BaseBranch:        helpers.BuildField(d, "git_details.0.base_branch"),
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
 		StoreType:         helpers.BuildField(d, "git_details.0.store_type"),
-		LastObjectId: helpers.BuildField(d, "git_details.0.last_object_id"),
-		LastCommitId: helpers.BuildField(d, "git_details.0.last_commit_id"),
+		IfMatch:           helpers.BuildField(d, "if_match"),
+		LastObjectId:      helpers.BuildField(d, "git_details.0.last_object_id"),
+		LastCommitId:      helpers.BuildField(d, "git_details.0.last_commit_id"),
 		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harnesscode_repo"),
 	}
 }
 
-func infraImportParam(d *schema.ResourceData) nextgen.InfrastructuresApiImportInfrastructureOpts {
-	return nextgen.InfrastructuresApiImportInfrastructureOpts{
+func envImportParam(d *schema.ResourceData) nextgen.EnvironmentsV2ApiImportEnvironmentOpts {
+	return nextgen.EnvironmentsV2ApiImportEnvironmentOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
-		ProjectIdentifier:     helpers.BuildField(d, "project_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		Branch:            helpers.BuildField(d, "git_details.0.branch"),
 		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
 		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harnesscode_repo"),
 		RepoName:          helpers.BuildField(d, "git_details.0.repo_name"),
-		IsForceImport: helpers.BuildFieldBool(d, "git_details.0.is_force_import"),
+		IsForceImport:     helpers.BuildFieldBool(d, "git_details.0.is_force_import"),
 	}
 }
 

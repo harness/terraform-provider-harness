@@ -56,9 +56,9 @@ func DataSourceVariables() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"value_type": {
-							Description:  "Type of Value of the Variable. For now only FIXED is supported",
-							Type:         schema.TypeString,
-							Computed:     true,
+							Description: "Type of Value of the Variable. For now only FIXED is supported",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 						"fixed_value": {
 							Description: "FixedValue of the variable",

@@ -90,7 +90,6 @@ func TestAccResourceFiltersWOnlyCreator(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "OnlyCreator"),
 				),
 			},
-			
 		},
 	})
 }

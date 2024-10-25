@@ -102,8 +102,8 @@ func dataSourceServiceOverridesRead(ctx context.Context, d *schema.ResourceData,
 
 	resp, httpResp, err := c.ServiceOverridesApi.GetServiceOverridesV2(ctx, identifier, c.AccountId,
 		&nextgen.ServiceOverridesApiGetServiceOverridesV2Opts{
-			OrgIdentifier:     helpers.BuildField(d, "org_id"),
-			ProjectIdentifier: helpers.BuildField(d, "project_id"),
+			OrgIdentifier:          helpers.BuildField(d, "org_id"),
+			ProjectIdentifier:      helpers.BuildField(d, "project_id"),
 			RepoName:               helpers.BuildField(d, "repo_name"),
 			Branch:                 helpers.BuildField(d, "branch"),
 			LoadFromFallbackBranch: helpers.BuildFieldBool(d, "load_from_fallback_branch"),

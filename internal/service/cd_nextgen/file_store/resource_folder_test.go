@@ -144,7 +144,7 @@ func TestAccResourceFileStoreFolder_DeleteUnderlyingResource(t *testing.T) {
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
-		CheckDestroy:      testAccFileStoreDestroy(resourceName),
+		CheckDestroy: testAccFileStoreDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceFileStore_FolderProjectLevel(id, name),
