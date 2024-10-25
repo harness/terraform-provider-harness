@@ -190,6 +190,11 @@ func testAccResourceConnector_httphelm_usernamepassword(id string, name string) 
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			create_duration  = "4s"
+		}
+
 `, id, name)
 }
 
@@ -219,6 +224,11 @@ func testAccResourceConnector_httphelm_usernameRefpassword(id string, name strin
 				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			create_duration  = "4s"
 		}
 `, id, name)
 }
