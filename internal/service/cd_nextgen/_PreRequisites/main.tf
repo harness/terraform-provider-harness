@@ -81,7 +81,7 @@ resource "harness_platform_connector_github" "Jajoo" {
   credentials {
       http {
           username = "admin"
-          password_ref = "account.githubbotharnesstoken"
+          token_ref = "account.githubbotharnesstoken"
       }
   }
 }
