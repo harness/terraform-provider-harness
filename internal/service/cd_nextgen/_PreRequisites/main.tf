@@ -61,6 +61,21 @@ resource "harness_platform_connector_github" "DoNotDeleteGitX" {
     }
   }
 }
+resource "harness_platform_connector_github" "Jajoo" {
+  identifier  = "Jajoo"
+  name        = "Jajoo"
+  description = "Jajoo"
+  tags        = ["ritek:test"]
+
+  url                = "https://github.com/wings-software/jajoo_git"
+  connection_type    = "Repo"
+  credentials {
+      http {
+          username = "admin"
+          password_ref = "account.githubbotharnesstoken"
+      }
+  }
+}
 
 resource "harness_connector_git" "DoNotDeleteRTerraformResource" {
     identifier = "DoNotDeleteRTerraformResource"
