@@ -72,6 +72,7 @@ resource "harness_platform_connector_github" "DoNotDeleteGitX" {
 
   url             = "https://github.com/sourabh-awashti/pcf_practice"
   connection_type = "Repo"
+  execute_on_delegate = false
   credentials {
     http {
       anonymous {}
