@@ -24,7 +24,7 @@ func ResourceConnectorGithub() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "URL of the Githubhub repository or account.",
+				Description: "URL of the Github repository or account.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
