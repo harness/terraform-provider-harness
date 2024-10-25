@@ -91,7 +91,7 @@ resource "harness_platform_connector_github" "Jajoo" {
   credentials {
     http {
       username  = "admin"
-      token_ref = "account.githubbotharnesstoken"
+      token_ref = "account.gitbotharnesstoken"
     }
   }
   depends_on = [harness_platform_connector_github.DoNotDeleteGitX]
@@ -108,7 +108,7 @@ resource "harness_platform_connector_git" "DoNotDeleteRTerraformResource" {
   credentials {
     http {
       username     = "admin"
-      password_ref = "account.githubbotharnesstoken"
+      password_ref = "account.gitbotharnesstoken"
     }
   }
   depends_on = [harness_platform_connector_github.Jajoo]
