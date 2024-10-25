@@ -3,24 +3,26 @@ package provider
 import (
 	"context"
 	"fmt"
+	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
 	"log"
 
+	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/gitx/webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
 	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
 	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/gitx/webhook"
 	governance_enforcement "github.com/harness/terraform-provider-harness/internal/service/platform/governance/enforcement"
 	governance_rule "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule"
 	governance_rule_set "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_rule"
 
+	cdng_manual_freeze "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
 	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/iacm"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
@@ -52,6 +54,12 @@ import (
 	cdng_connector_artifactRepositories "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/connector/artifactRepositories"
 	cdng_connector_cloudProviders "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/connector/cloudProviders"
 	cdng_connector_codeRepositories "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/connector/codeRepositories"
+	cdng_environment "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/environment"
+	cdng_environment_group "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/environment_group"
+	cdng_environment_service_overrides "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/environment_service_overrides"
+	cdng_file_store "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/file_store"
+	cdng_filters "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/filters"
+	cdng_infrastructure "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/infrastructure"
 	pl_account "github.com/harness/terraform-provider-harness/internal/service/platform/account"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
@@ -62,12 +70,7 @@ import (
 	pl_secretManagers "github.com/harness/terraform-provider-harness/internal/service/platform/connector/secretManagers"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
 	pl_delegatetoken "github.com/harness/terraform-provider-harness/internal/service/platform/delegate_token"
-	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
-	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
-	pl_environment_service_overrides "github.com/harness/terraform-provider-harness/internal/service/platform/environment_service_overrides"
-	file_store "github.com/harness/terraform-provider-harness/internal/service/platform/file_store"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/filters"
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
 	gitops_project_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/app_project"
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
@@ -77,15 +80,19 @@ import (
 	gitops_repository "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository"
 	gitops_repo_cert "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_certificates"
 	gitops_repo_cred "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_credentials"
-	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
 
-	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
+	pipeline_input_set "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/input_set"
+	cdng_overrides "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/overrides"
+	pipeline "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/pipeline"
+	pipeline_filters "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/pipeline_filters"
+	cdng_service_overrides_v2 "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service_overrides_v2"
+	pipeline_template "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/template"
+	pipeline_template_filters "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/template_filters"
+	pipeline_triggers "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/triggers"
+	cdng_variables "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/variables"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
-	pl_overrides "github.com/harness/terraform-provider-harness/internal/service/platform/overrides"
 	pl_permissions "github.com/harness/terraform-provider-harness/internal/service/platform/permissions"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
 	pl_provider "github.com/harness/terraform-provider-harness/internal/service/platform/provider"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo"
@@ -93,17 +100,10 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/roles"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
-	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
-	pl_service_overrides_v2 "github.com/harness/terraform-provider-harness/internal/service/platform/service_overrides_v2"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/slo"
-	pl_template "github.com/harness/terraform-provider-harness/internal/service/platform/template"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/template_filters"
 	pl_token "github.com/harness/terraform-provider-harness/internal/service/platform/token"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
 
 	"github.com/harness/harness-go-sdk/logging"
 	openapi_client_logging "github.com/harness/harness-openapi-go-client/logging"
@@ -159,7 +159,7 @@ func Provider(version string) func() *schema.Provider {
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"harness_platform_template":                        pl_template.DataSourceTemplate(),
+				"harness_platform_template":                        pipeline_template.DataSourceTemplate(),
 				"harness_platform_connector_azure_key_vault":       pl_secretManagers.DataSourceConnectorAzureKeyVault(),
 				"harness_platform_connector_gcp_cloud_cost":        connector.DataSourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.DatasourceConnectorKubernetesCloudCost(),
@@ -200,16 +200,16 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_current_account":                 pl_account.DataSourceCurrentAccount(),
 				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
 				"harness_platform_user":                            pl_user.DataSourceUser(),
-				"harness_platform_environment":                     pl_environment.DataSourceEnvironment(),
+				"harness_platform_environment":                     cdng_environment.DataSourceEnvironment(),
 				"harness_platform_db_schema":                       dbschema.DataSourceDBSchema(),
 				"harness_platform_db_instance":                     dbinstance.DataSourceDBInstance(),
-				"harness_platform_environment_list":                pl_environment.DataSourceEnvironmentList(),
-				"harness_platform_environment_group":               pl_environment_group.DataSourceEnvironmentGroup(),
+				"harness_platform_environment_list":                cdng_environment.DataSourceEnvironmentList(),
+				"harness_platform_environment_group":               cdng_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
-				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
-				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.DataSourceServiceOverrides(),
+				"harness_platform_environment_service_overrides":   cdng_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
+				"harness_platform_service_overrides_v2":            cdng_service_overrides_v2.DataSourceServiceOverrides(),
 				"harness_platform_provider":                        pl_provider.DataSourceProvider(),
-				"harness_platform_overrides":                       pl_overrides.DataSourceOverrides(),
+				"harness_platform_overrides":                       cdng_overrides.DataSourceOverrides(),
 				"harness_platform_gitops_agent":                    gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
 				"harness_platform_gitops_applications":             gitops_applications.DataSourceGitopsApplications(),
@@ -219,8 +219,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_repository":               gitops_repository.DataSourceGitopsRepository(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.DataSourceGitOpsRepoCert(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.DataSourceGitOpsRepoCred(),
-				"harness_platform_infrastructure":                  pl_infrastructure.DataSourceInfrastructure(),
-				"harness_platform_input_set":                       input_set.DataSourceInputSet(),
+				"harness_platform_infrastructure":                  cdng_infrastructure.DataSourceInfrastructure(),
+				"harness_platform_input_set":                       pipeline_input_set.DataSourceInputSet(),
 				"harness_platform_monitored_service":               monitored_service.DataSourceMonitoredService(),
 				"harness_platform_organization":                    organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.DataSourcePipeline(),
@@ -228,8 +228,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_permissions":                     pl_permissions.DataSourcePermissions(),
 				"harness_platform_project":                         project.DataSourceProject(),
 				"harness_platform_project_list":                    project.DataSourceProjectList(),
-				"harness_platform_service":                         pl_service.DataSourceService(),
-				"harness_platform_service_list":                    pl_service.DataSourceServiceList(),
+				"harness_platform_service":                         cdng_service.DataSourceService(),
+				"harness_platform_service_list":                    cdng_service.DataSourceServiceList(),
 				"harness_platform_usergroup":                       usergroup.DataSourceUserGroup(),
 				"harness_platform_secret_text":                     secret.DataSourceSecretText(),
 				"harness_platform_secret_file":                     secret.DataSourceSecretFile(),
@@ -237,14 +237,14 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_roles":                           roles.DataSourceRoles(),
 				"harness_platform_resource_group":                  resource_group.DataSourceResourceGroup(),
 				"harness_platform_service_account":                 service_account.DataSourceServiceAccount(),
-				"harness_platform_triggers":                        triggers.DataSourceTriggers(),
+				"harness_platform_triggers":                        pipeline_triggers.DataSourceTriggers(),
 				"harness_platform_role_assignments":                role_assignments.DataSourceRoleAssignments(),
-				"harness_platform_variables":                       variables.DataSourceVariables(),
+				"harness_platform_variables":                       cdng_variables.DataSourceVariables(),
 				"harness_platform_connector_vault":                 pl_secretManagers.DataSourceConnectorVault(),
-				"harness_platform_filters":                         filters.DataSourceFilters(),
+				"harness_platform_filters":                         cdng_filters.DataSourceFilters(),
 				"harness_platform_pipeline_filters":                pipeline_filters.DataSourcePipelineFilters(),
 				"harness_platform_ccm_filters":                     ccm_filters.DataSourceCCMFilters(),
-				"harness_platform_template_filters":                template_filters.DataSourceTemplateFilters(),
+				"harness_platform_template_filters":                pipeline_template_filters.DataSourceTemplateFilters(),
 				"harness_application":                              application.DataSourceApplication(),
 				"harness_current_account":                          account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                                 delegate.DataSourceDelegate(),
@@ -266,15 +266,15 @@ func Provider(version string) func() *schema.Provider {
 				"harness_trigger":                                  cd_trigger.DataSourceTrigger(),
 				"harness_platform_policy":                          policy.DataSourcePolicy(),
 				"harness_platform_policyset":                       policyset.DataSourcePolicyset(),
-				"harness_platform_manual_freeze":                   manual_freeze.DataSourceManualFreeze(),
+				"harness_platform_manual_freeze":                   cdng_manual_freeze.DataSourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                           pl_token.DataSourceToken(),
 				"harness_autostopping_rule_vm":                     as_rule.DataSourceVMRule(),
 				"harness_autostopping_rule_rds":                    as_rule.DataSourceRDSRule(),
 				"harness_autostopping_rule_ecs":                    as_rule.DataSourceECSRule(),
-				"harness_platform_file_store_file":                 file_store.DataSourceFileStoreNodeFile(),
-				"harness_platform_file_store_folder":               file_store.DataSourceFileStoreNodeFolder(),
+				"harness_platform_file_store_file":                 cdng_file_store.DataSourceFileStoreNodeFile(),
+				"harness_platform_file_store_folder":               cdng_file_store.DataSourceFileStoreNodeFolder(),
 				"harness_autostopping_azure_proxy":                 load_balancer.DataSourceAzureProxy(),
 				"harness_autostopping_aws_proxy":                   load_balancer.DataSourceAWSProxy(),
 				"harness_autostopping_gcp_proxy":                   load_balancer.DataSourceGCPProxy(),
@@ -289,14 +289,14 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                    repo_webhook.DataSourceRepoWebhook(),
 				"harness_platform_gitops_app_project":              gitops_project.DataSourceGitOpsProject(),
-				"harness_platform_gitx_webhook":                    webhook.DataSourceWebhook(),
+				"harness_platform_gitx_webhook":                    pipeline_gitx.DataSourceWebhook(),
 				"harness_governance_rule_enforcement":              governance_enforcement.DatasourceRuleEnforcement(),
 				"harness_governance_rule":                          governance_rule.DatasourceRule(),
 				"harness_governance_rule_set":                      governance_rule_set.DatasourceRuleSet(),
 				"harness_cluster_orchestrator":                     cluster_orchestrator.DataSourceClusterOrchestrator(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"harness_platform_template":                        pl_template.ResourceTemplate(),
+				"harness_platform_template":                        pipeline_template.ResourceTemplate(),
 				"harness_platform_connector_azure_key_vault":       pl_secretManagers.ResourceConnectorAzureKeyVault(),
 				"harness_platform_connector_gcp_cloud_cost":        connector.ResourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.ResourceConnectorKubernetesCloudCost(),
@@ -334,18 +334,18 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_terraform_cloud":       cdng_connector_cloudProviders.ResourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.ResourceConnectorSumologic(),
 				"harness_platform_connector_pdc":                   cdng_connector_cloudProviders.ResourceConnectorPdc(),
-				"harness_platform_environment":                     pl_environment.ResourceEnvironment(),
+				"harness_platform_environment":                     cdng_environment.ResourceEnvironment(),
 				"harness_platform_db_schema":                       dbschema.ResourceDBSchema(),
 				"harness_platform_db_instance":                     dbinstance.ResourceDBInstance(),
-				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
+				"harness_platform_environment_group":               cdng_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
-				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
+				"harness_platform_environment_service_overrides":   cdng_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
 				"harness_platform_feature_flag":                    feature_flag.ResourceFeatureFlag(),
 				"harness_platform_feature_flag_target_group":       feature_flag_target_group.ResourceFeatureFlagTargetGroup(),
 				"harness_platform_feature_flag_target":             feature_flag_target.ResourceFeatureFlagTarget(),
-				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
+				"harness_platform_service_overrides_v2":            cdng_service_overrides_v2.ResourceServiceOverrides(),
 				"harness_platform_provider":                        pl_provider.ResourceProvider(),
-				"harness_platform_overrides":                       pl_overrides.ResourceOverrides(),
+				"harness_platform_overrides":                       cdng_overrides.ResourceOverrides(),
 				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
@@ -356,13 +356,13 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_app_project":              gitops_project.ResourceProject(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.ResourceGitopsRepoCerts(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),
-				"harness_platform_infrastructure":                  pl_infrastructure.ResourceInfrastructure(),
-				"harness_platform_input_set":                       input_set.ResourceInputSet(),
+				"harness_platform_infrastructure":                  cdng_infrastructure.ResourceInfrastructure(),
+				"harness_platform_input_set":                       pipeline_input_set.ResourceInputSet(),
 				"harness_platform_monitored_service":               monitored_service.ResourceMonitoredService(),
 				"harness_platform_organization":                    organization.ResourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.ResourcePipeline(),
 				"harness_platform_project":                         project.ResourceProject(),
-				"harness_platform_service":                         pl_service.ResourceService(),
+				"harness_platform_service":                         cdng_service.ResourceService(),
 				"harness_platform_user":                            pl_user.ResourceUser(),
 				"harness_platform_usergroup":                       usergroup.ResourceUserGroup(),
 				"harness_platform_secret_text":                     secret.ResourceSecretText(),
@@ -371,14 +371,14 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_roles":                           roles.ResourceRoles(),
 				"harness_platform_resource_group":                  resource_group.ResourceResourceGroup(),
 				"harness_platform_service_account":                 service_account.ResourceServiceAccount(),
-				"harness_platform_triggers":                        triggers.ResourceTriggers(),
+				"harness_platform_triggers":                        pipeline_triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":                role_assignments.ResourceRoleAssignments(),
-				"harness_platform_variables":                       variables.ResourceVariables(),
+				"harness_platform_variables":                       cdng_variables.ResourceVariables(),
 				"harness_platform_connector_vault":                 pl_secretManagers.ResourceConnectorVault(),
-				"harness_platform_filters":                         filters.ResourceFilters(),
+				"harness_platform_filters":                         cdng_filters.ResourceFilters(),
 				"harness_platform_pipeline_filters":                pipeline_filters.ResourcePipelineFilters(),
 				"harness_platform_ccm_filters":                     ccm_filters.ResourceCCMFilters(),
-				"harness_platform_template_filters":                template_filters.ResourceTemplateFilters(),
+				"harness_platform_template_filters":                pipeline_template_filters.ResourceTemplateFilters(),
 				"harness_add_user_to_group":                        user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":                      application.ResourceApplicationGitSync(),
 				"harness_application":                              application.ResourceApplication(),
@@ -414,15 +414,15 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_tas":                   cdng_connector_cloudProviders.ResourceConnectorTas(),
 				"harness_platform_policy":                          policy.ResourcePolicy(),
 				"harness_platform_policyset":                       policyset.ResourcePolicyset(),
-				"harness_platform_manual_freeze":                   manual_freeze.ResourceManualFreeze(),
+				"harness_platform_manual_freeze":                   cdng_manual_freeze.ResourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
 				"harness_platform_token":                           pl_token.ResourceToken(),
 				"harness_autostopping_rule_vm":                     as_rule.ResourceVMRule(),
 				"harness_autostopping_rule_rds":                    as_rule.ResourceRDSRule(),
 				"harness_autostopping_rule_ecs":                    as_rule.ResourceECSRule(),
-				"harness_platform_file_store_file":                 file_store.ResourceFileStoreNodeFile(),
-				"harness_platform_file_store_folder":               file_store.ResourceFileStoreNodeFolder(),
+				"harness_platform_file_store_file":                 cdng_file_store.ResourceFileStoreNodeFile(),
+				"harness_platform_file_store_folder":               cdng_file_store.ResourceFileStoreNodeFolder(),
 				"harness_autostopping_azure_proxy":                 load_balancer.ResourceAzureProxy(),
 				"harness_autostopping_aws_proxy":                   load_balancer.ResourceAWSProxy(),
 				"harness_autostopping_gcp_proxy":                   load_balancer.ResourceGCPProxy(),
@@ -436,7 +436,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                    repo_webhook.ResourceRepoWebhook(),
 				"harness_platform_connector_custom_secret_manager": pl_secretManagers.ResourceConnectorCSM(),
-				"harness_platform_gitx_webhook":                    webhook.ResourceWebhook(),
+				"harness_platform_gitx_webhook":                    pipeline_gitx.ResourceWebhook(),
 				"harness_governance_rule_enforcement":              governance_enforcement.ResourceRuleEnforcement(),
 				"harness_governance_rule":                          governance_rule.ResourceRule(),
 				"harness_governance_rule_set":                      governance_rule_set.ResourceRuleSet(),
