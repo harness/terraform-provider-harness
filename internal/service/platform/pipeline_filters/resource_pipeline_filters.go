@@ -203,6 +203,14 @@ func ResourcePipelineFilters() *schema.Resource {
 														Type: schema.TypeString,
 													},
 												},
+												"service_identifiers": {
+													Description: "Service identifiers of the CD pipeline.",
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
 												"environment_names": {
 													Description: "Environment names of the CD pipeline.",
 													Type:        schema.TypeSet,
@@ -392,6 +400,9 @@ func buildPipelineFilter(d *schema.ResourceData) *nextgen.PipelineFilter {
 				if attr := cdProperties["service_names"].(*schema.Set).List(); len(attr) > 0 {
 					cd["serviceNames"] = attr
 				}
+				if attr := cdProperties["service_identifiers"].(*schema.Set).List(); len(attr) > 0 {
+					cd["serviceIdentifiers"] = attr
+				}
 				if attr := cdProperties["environment_names"].(*schema.Set).List(); len(attr) > 0 {
 					cd["environmentNames"] = attr
 				}
@@ -490,6 +501,9 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 			}
 			if attr, ok := hCdProperties["serviceNames"]; ok {
 				cdProperties["service_names"] = attr
+			}
+			if attr, ok := hCdProperties["serviceIdentifiers"]; ok {
+				cdProperties["service_identifiers"] = attr
 			}
 			if attr, ok := hCdProperties["environmentNames"]; ok {
 				cdProperties["environment_names"] = attr
