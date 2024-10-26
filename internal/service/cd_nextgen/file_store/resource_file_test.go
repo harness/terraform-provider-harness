@@ -211,7 +211,7 @@ func TestAccResourceFileStoreFile_DeleteUnderlyingResource(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					resp, _, err := c.FileStoreApi.DeleteFile(ctx, id, c.AccountId, nil)
+					resp, _, err := c.FileStoreApi.DeleteFile(ctx, c.AccountId, id, nil)
 					require.NoError(t, err)
 					require.True(t, resp.Data)
 				},
