@@ -112,7 +112,7 @@ resource "harness_platform_connector_github" "TF_open_repo_github_connector" {
   description = "TF_open_repo_github_connector"
   tags        = ["ritek:test"]
 
-  url             = "https://github.com/vtxorxwitty/open-repo"
+  url             = "https://github.com/ritek01/open-repo"
   execute_on_delegate = false
   connection_type = "Repo"
     credentials {
