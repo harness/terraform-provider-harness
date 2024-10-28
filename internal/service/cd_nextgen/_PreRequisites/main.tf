@@ -153,7 +153,7 @@ resource "harness_platform_connector_github" "github_Account_level_connector_del
   description = "github_Account_level_connector_delegate"
   tags        = ["ritek:test"]
 
-  url             = "https://github.com/harness-automation/Gitx-Automation"
+  url             = "https://github.com/harness-automation/Gitx-automation"
   connection_type = "Repo"
 
   credentials {

@@ -52,7 +52,7 @@ func testAccDataSourcepipelineList(id string, name string) string {
                             file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
                             connector_ref = "account.github_Account_level_connector_delegate"
                             store_type = "REMOTE"
-                            repo_name = "Gitx-Automation"
+                            repo_name = "Gitx-automation"
                         }
             yaml = <<-EOT
                 pipeline:
