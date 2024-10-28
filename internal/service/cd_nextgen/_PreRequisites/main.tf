@@ -191,17 +191,18 @@ resource "harness_platform_connector_github" "github_Account_level_connector" {
   description = "github_Account_level_connector"
   tags        = ["ritek:test"]
 
-  url             = "https://github.com/harness-automation/GitXTest3"
-  connection_type = "Repo"
+  url             = "https://github.com/harness-automation"
+  connection_type = "Account"
+  validation_repo = "GitXTest3"
   execute_on_delegate = false
   credentials {
     http {
-      username  = "admin"
-      token_ref = "account.gitbotharnesstoken"
+      username  = "harness-automation"
+      token_ref = "account.harness-automation-github-token"
     }
   }
   api_authentication {
-      token_ref = "account.gitbotharnesstoken"
+      token_ref = "account.harness-automation-github-token"
   }
   depends_on = [harness_platform_connector_github.github_Account_level_connector_delegate]
 }
