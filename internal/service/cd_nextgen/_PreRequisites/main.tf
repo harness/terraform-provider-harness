@@ -11,6 +11,12 @@ terraform {
 variable "github_token_value" {
   type = string
 }
+resource "harness_platform_project" "DoNotDelete_Amit" {
+		identifier = "DoNotDelete_Amit"
+		name = "DoNotDelete_Amit"
+		color = "#0063F7"
+		org_id = "default"
+}
 
 resource "harness_platform_secret_text" "TEST_spot_account_id" {
   identifier                = "TEST_spot_account_id"
@@ -20,6 +26,7 @@ resource "harness_platform_secret_text" "TEST_spot_account_id" {
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
   value                     = "my_secret_value"
+  depends_on                = [harness_platform_project.DoNotDelete_Amit]
 }
 
 resource "harness_platform_secret_text" "TEST_spot_api_token" {
@@ -82,6 +89,26 @@ resource "harness_platform_connector_github" "DoNotDeleteGitX" {
   }
   depends_on = [harness_platform_secret_text.gitbotharnesstoken]
 }
+resource "harness_platform_connector_github" "DoNotDeleteGithub" {
+  identifier  = "DoNotDeleteGithub"
+  name        = "DoNotDeleteGithub"
+  description = "DoNotDeleteGithub"
+  tags        = ["ritek:test"]
+
+  url             = "https://github.com/vtxorxwitty/open-repo"
+  execute_on_delegate = false
+  connection_type = "Repo"
+    credentials {
+      http {
+        username  = "admin"
+        token_ref = "account.gitbotharnesstoken"
+      }
+    }
+    api_authentication {
+        token_ref = "account.gitbotharnesstoken"
+    }
+  depends_on = [harness_platform_connector_github.DoNotDeleteGitX]
+}
 
 resource "harness_platform_connector_github" "Jajoo" {
   identifier  = "Jajoo"
@@ -100,7 +127,7 @@ resource "harness_platform_connector_github" "Jajoo" {
   api_authentication {
       token_ref = "account.gitbotharnesstoken"
   }
-  depends_on = [harness_platform_connector_github.DoNotDeleteGitX]
+  depends_on = [harness_platform_connector_github.DoNotDeleteGithub]
 }
 
 resource "harness_platform_connector_git" "DoNotDeleteRTerraformResource" {
@@ -126,7 +153,7 @@ resource "harness_platform_connector_github" "github_Account_level_connector_del
   description = "github_Account_level_connector_delegate"
   tags        = ["ritek:test"]
 
-  url             = "https://github.com/harness-automation/Gitx-automation"
+  url             = "https://github.com/harness-automation/Gitx-Automation"
   connection_type = "Repo"
 
   credentials {
@@ -139,4 +166,25 @@ resource "harness_platform_connector_github" "github_Account_level_connector_del
       token_ref = "account.gitbotharnesstoken"
   }
   depends_on = [harness_platform_connector_git.DoNotDeleteRTerraformResource]
+}
+
+resource "harness_platform_connector_github" "github_Account_level_connector" {
+  identifier  = "github_Account_level_connector"
+  name        = "github_Account_level_connector"
+  description = "github_Account_level_connector"
+  tags        = ["ritek:test"]
+
+  url             = "https://github.com/harness-automation/GitXTest3"
+  connection_type = "Repo"
+
+  credentials {
+    http {
+      username  = "admin"
+      token_ref = "account.gitbotharnesstoken"
+    }
+  }
+  api_authentication {
+      token_ref = "account.gitbotharnesstoken"
+  }
+  depends_on = [harness_platform_connector_github.github_Account_level_connector_delegate]
 }
