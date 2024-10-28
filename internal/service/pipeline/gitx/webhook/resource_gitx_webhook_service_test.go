@@ -184,7 +184,7 @@ func testGitXProjectProjectLevel(webhook_identifier string, webhook_name string)
 		resource "harness_platform_gitx_webhook" "test" {
 			identifier= "%[1]s"
 			name = "%[2]s"
-			project_id = "shivam"
+			project_id = "DoNotDelete_Amit"
 			org_id = "default"
 			repo_name =  "GitXTest3"
 			connector_ref = "account.github_Account_level_connector"
