@@ -138,5 +138,5 @@ resource "harness_platform_connector_github" "github_Account_level_connector_del
   api_authentication {
       token_ref = "account.gitbotharnesstoken"
   }
-  depends_on = [harness_platform_connector_github.DoNotDeleteRTerraformResource]
+  depends_on = [harness_platform_connector_git.DoNotDeleteRTerraformResource]
 }
