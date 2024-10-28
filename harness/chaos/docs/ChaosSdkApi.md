@@ -4,7 +4,7 @@ All URIs are relative to */api/manager*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**RegisterInfraV2**](DefaultApi.md#RegisterInfraV2) | **Post** /rest/v2/infrastructure | Register a new v2 infra
+[**RegisterInfraV2**](ChaosSdkApi.md#RegisterInfraV2) | **Post** /rest/v2/infrastructure | Register a new v2 infra
 
 # **RegisterInfraV2**
 > InfraV2RegisterInfrastructureV2Response RegisterInfraV2(ctx, body, accountIdentifier, organizationIdentifier, projectIdentifier, optional)
@@ -21,10 +21,10 @@ Name | Type | Description  | Notes
   **accountIdentifier** | **string**| account id that want to access the resource | 
   **organizationIdentifier** | **string**| organization id that want to access the resource | 
   **projectIdentifier** | **string**| project id that want to access the resource | 
- **optional** | ***DefaultApiRegisterInfraV2Opts** | optional parameters | nil if no parameters
+ **optional** | ***ChaosSdkApiRegisterInfraV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
-Optional parameters are passed through a pointer to a DefaultApiRegisterInfraV2Opts struct
+Optional parameters are passed through a pointer to a ChaosSdkApiRegisterInfraV2Opts struct
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 

@@ -1,11 +1,15 @@
 openapi: 3.0.1
 info:
+  title: Chaos Manager API
   contact: {}
+  version: "1.0"
 servers:
 - url: /api/manager
 paths:
   /rest/v2/infrastructure:
     post:
+      tags:
+      - chaos-sdk
       summary: Register a new v2 infra
       description: Register a new v2 infra
       operationId: registerInfraV2
