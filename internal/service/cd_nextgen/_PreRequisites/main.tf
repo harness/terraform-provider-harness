@@ -11,6 +11,11 @@ terraform {
 variable "github_token_value" {
   type = string
 }
+
+variable "harness-automation-github-token" {
+  type = string
+}
+
 resource "harness_platform_project" "DoNotDelete_Amit" {
 		identifier = "DoNotDelete_Amit"
 		name = "DoNotDelete_Amit"
@@ -73,6 +78,17 @@ resource "harness_platform_secret_text" "gitbotharnesstoken" {
   depends_on                = [harness_platform_secret_text.doNotDeleteHSM]
 }
 
+resource "harness_platform_secret_text" "harness-automation-github-token" {
+  identifier                = "harness-automation-github-token"
+  name                      = "harness-automation-github-token"
+  description               = "harness-automation-github-token"
+  tags                      = ["ritek:test"]
+  secret_manager_identifier = "harnessSecretManager"
+  value_type                = "Inline"
+  value                     = var.harness-automation-github-token
+  depends_on                = [harness_platform_secret_text.gitbotharnesstoken]
+}
+
 resource "harness_platform_connector_github" "DoNotDeleteGitX" {
   identifier  = "DoNotDeleteGitX"
   name        = "DoNotDeleteGitX"
@@ -87,8 +103,9 @@ resource "harness_platform_connector_github" "DoNotDeleteGitX" {
       anonymous {}
     }
   }
-  depends_on = [harness_platform_secret_text.gitbotharnesstoken]
+  depends_on = [harness_platform_secret_text.harness-automation-github-token]
 }
+
 resource "harness_platform_connector_github" "DoNotDeleteGithub" {
   identifier  = "DoNotDeleteGithub"
   name        = "DoNotDeleteGithub"
@@ -153,17 +170,17 @@ resource "harness_platform_connector_github" "github_Account_level_connector_del
   description = "github_Account_level_connector_delegate"
   tags        = ["ritek:test"]
 
-  url             = "https://github.com/harness-automation/Gitx-automation"
-  connection_type = "Repo"
-
+  url             = "https://github.com/harness-automation"
+  connection_type = "Account"
+  validation_repo = "Gitx-automation"
   credentials {
     http {
-      username  = "admin"
-      token_ref = "account.gitbotharnesstoken"
+      username  = "harness-automation"
+      token_ref = "account.harness-automation-github-token"
     }
   }
   api_authentication {
-      token_ref = "account.gitbotharnesstoken"
+      token_ref = "account.harness-automation-github-token"
   }
   depends_on = [harness_platform_connector_git.DoNotDeleteRTerraformResource]
 }
