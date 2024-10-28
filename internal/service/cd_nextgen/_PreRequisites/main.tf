@@ -193,7 +193,7 @@ resource "harness_platform_connector_github" "github_Account_level_connector" {
 
   url             = "https://github.com/harness-automation/GitXTest3"
   connection_type = "Repo"
-
+  execute_on_delegate = false
   credentials {
     http {
       username  = "admin"
