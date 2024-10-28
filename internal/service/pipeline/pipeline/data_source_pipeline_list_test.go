@@ -50,7 +50,7 @@ func testAccDataSourcepipelineList(id string, name string) string {
                             branch_name = "main"
                             commit_message = "Commit"
                             file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-                            connector_ref = "account.github_Account_level_connector_delegate"
+                            connector_ref = "account.TF_github_account_level_delegate_connector"
                             store_type = "REMOTE"
                             repo_name = "Gitx-automation"
                         }

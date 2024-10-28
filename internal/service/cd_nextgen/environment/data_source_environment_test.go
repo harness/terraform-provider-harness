@@ -140,7 +140,7 @@ func testSourceRemoteEnvironment(id string, name string) string {
 				type = "PreProduction"
 				git_details {
 					store_type = "REMOTE"
-					connector_ref = "account.DoNotDeleteGitX"
+					connector_ref = "account.TF_GitX_connector"
 					repo_name = "pcf_practice"
 					file_path = ".harness/automation/%[1]s.yaml"
 					branch = "main"

@@ -163,7 +163,7 @@ func testGitXProjectOrgLevel(webhook_identifier string, webhook_name string) str
 			name = "%[2]s"
 			org_id = "default"
 			repo_name =  "GitXTest3"
-			connector_ref = "account.github_Account_level_connector"
+			connector_ref = "account.TF_github_account_level_connector"
 		}
 	`, webhook_identifier, webhook_name)
 }
@@ -174,7 +174,7 @@ func testGitXAccountLevel(webhook_identifier string, webhook_name string) string
 			identifier= "%[1]s"
 			name = "%[2]s"
 			repo_name =  "GitXTest3"
-			connector_ref = "account.github_Account_level_connector"
+			connector_ref = "account.TF_github_account_level_connector"
 		}
 	`, webhook_identifier, webhook_name)
 }
@@ -184,10 +184,10 @@ func testGitXProjectProjectLevel(webhook_identifier string, webhook_name string)
 		resource "harness_platform_gitx_webhook" "test" {
 			identifier= "%[1]s"
 			name = "%[2]s"
-			project_id = "DoNotDelete_Amit"
+			project_id = "TF_Pipeline_Test"
 			org_id = "default"
 			repo_name =  "GitXTest3"
-			connector_ref = "account.github_Account_level_connector"
+			connector_ref = "account.TF_github_account_level_connector"
 		}
 	`, webhook_identifier, webhook_name)
 }

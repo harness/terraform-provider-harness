@@ -192,12 +192,12 @@ func testRemoteAccOverrides(id string, name string) string {
 				resource "harness_platform_overrides" "test" {
 					org_id = harness_platform_organization.test.id
 					project_id = harness_platform_project.test.id
-					env_id     = "account.DoNotDeleteGitx"
-					service_id = "account.DoNotDeleteGitx"
+					env_id     = "account.TF_GitX_connector"
+					service_id = "account.TF_GitX_connector"
 		            type = "ENV_SERVICE_OVERRIDE"
 					git_details {
 						store_type = "REMOTE"
-						connector_ref = "account.DoNotDeleteGitX"  
+						connector_ref = "account.TF_GitX_connector"  
 						repo_name = "pcf_practice"
 						file_path = ".harness/automation/overrides/a%[1]s.yaml"
 						branch = "main"

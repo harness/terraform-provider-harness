@@ -104,7 +104,7 @@ func testAccResourceConnectorNexus_usernamepassword(id string, name string) stri
 			version = "3.x"
 			credentials {
 				username = "admin"
-				password_ref = "account.doNotDeleteHSM"
+				password_ref = "account.TF_Nexus_Password"
 			}
 		}
 `, id, name)

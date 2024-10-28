@@ -830,7 +830,7 @@ func testResourceRemoteService(id string, name string) string {
     project_id = harness_platform_project.test.id
     git_details {
     store_type = "REMOTE"
-    connector_ref = "account.DoNotDeleteGitX"
+    connector_ref = "account.TF_GitX_connector"
     repo_name = "pcf_practice"
     file_path = ".harness/automation/%[1]s.yaml"
     branch = "main"
@@ -895,7 +895,7 @@ func testResourceImportRemoteService() string {
     import_from_git = "true"
     git_details {
     store_type = "REMOTE"
-    connector_ref = "account.DoNotDeleteGitX"
+    connector_ref = "account.TF_GitX_connector"
     repo_name = "pcf_practice"
     file_path = ".harness/accountService.yaml"
     branch = "main"

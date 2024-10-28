@@ -197,7 +197,7 @@ func testAccDataSourceTemplateProjectScope(id string, name string) string {
 				branch_name = "main"
 				commit_message = "Commit"
 				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-				connector_ref = "account.Jajoo"
+				connector_ref = "account.TF_Jajoo_github_connector"
 				store_type = "REMOTE"
 				repo_name = "jajoo_git"
 		}
@@ -283,7 +283,7 @@ func testAccDataSourceTemplate(id string, name string) string {
 				branch_name = "main"
 				commit_message = "Commit"
 				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-				connector_ref = "account.Jajoo"
+				connector_ref = "account.TF_Jajoo_github_connector"
 				store_type = "REMOTE"
 				repo_name = "jajoo_git"
 		}

@@ -44,7 +44,7 @@ func execute(t *testing.T, config string, executeOnDelegate string, id string, n
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "permanent_token.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "permanent_token.0.spot_account_id_ref", "account.TEST_spot_account_id"),
+					resource.TestCheckResourceAttr(resourceName, "permanent_token.0.spot_account_id_ref", "account.TF_spot_account_id"),
 					resource.TestCheckResourceAttr(resourceName, "permanent_token.0.execute_on_delegate", executeOnDelegate),
 				),
 			},
@@ -65,8 +65,8 @@ func testAccResourceConnectorSpotPermanentTokenWithNullExecuteOnDelegate(id stri
 			description = "test"
 			tags = ["foo:bar"]
 			permanent_token {
-				spot_account_id_ref = "account.TEST_spot_account_id"
-				api_token_ref = "account.TEST_spot_api_token"
+				spot_account_id_ref = "account.TF_spot_account_id"
+				api_token_ref = "account.TF_spot_api_token"
 				delegate_selectors = ["harness-delegate"]
 			}
 		}
@@ -81,8 +81,8 @@ func testAccResourceConnectorSpotPermanentTokenWithExecuteOnDelegateTrue(id stri
 			description = "test"
 			tags = ["foo:bar"]
 			permanent_token {
-				spot_account_id_ref = "account.TEST_spot_account_id"
-				api_token_ref = "account.TEST_api_token_ref"
+				spot_account_id_ref = "account.TF_spot_account_id"
+				api_token_ref = "account.TF_spot_api_token_ref"
 				delegate_selectors = ["harness-delegate"]
 				execute_on_delegate = true
 			}
@@ -98,8 +98,8 @@ func testAccResourceConnectorSpotPermanentTokenWithExecuteOnDelegateFalse(id str
 			description = "test"
 			tags = ["foo:bar"]
 			permanent_token {
-				spot_account_id_ref = "account.TEST_spot_account_id"
-				api_token_ref = "account.TEST_api_token_ref"
+				spot_account_id_ref = "account.TF_spot_account_id"
+				api_token_ref = "account.TF_spot_api_token_ref"
 				delegate_selectors = ["harness-delegate"]
 				execute_on_delegate = false
 			}

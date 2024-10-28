@@ -198,7 +198,7 @@ func testAccResourcePipeline(id string, name string) string {
                             branch_name = "main"
                             commit_message = "Commit"
                             file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-                            connector_ref = "account.Jajoo"
+                            connector_ref = "account.TF_Jajoo_github_connector"
                             store_type = "REMOTE"
                             repo_name = "jajoo_git"
                         }
@@ -415,13 +415,13 @@ func testAccResourcePipelineImportFromGit(id string, name string) string {
         resource "harness_platform_pipeline" "test" {
                         identifier = "gitx"
                         org_id = "default"
-						project_id = "DoNotDelete_Amit"
+						project_id = "TF_Pipeline_Test"
                         name = "gitx"
                         import_from_git = true
                         git_import_info {
                             branch_name = "main"
                             file_path = ".harness/gitx.yaml"
-                            connector_ref = "account.DoNotDeleteGithub"
+                            connector_ref = "account.TF_open_repo_github_connector"
                             repo_name = "open-repo"
                         }
                         pipeline_import_request {

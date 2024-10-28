@@ -170,7 +170,7 @@ func testSourceRemoteInfrastructure(id string, name string) string {
 			deployment_type = "Kubernetes"
 			git_details {
 				store_type = "REMOTE"
-				connector_ref = "account.DoNotDeleteRTerraformResource"
+				connector_ref = "account.TF_TerraformResource_git_connector"
 				repo_name = "terraform-test"
 				file_path = ".harness/%[1]s.yaml"
 				branch = "main"

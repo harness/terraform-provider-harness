@@ -109,7 +109,7 @@ EOT
           spec:
             type: Push
             spec:
-              connectorRef: account.Jajoo
+              connectorRef: account.TF_Jajoo_github_connector
               autoAbortPreviousExecutions: false
               payloadConditions:
                 - key: changedFiles

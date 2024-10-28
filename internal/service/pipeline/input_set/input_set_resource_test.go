@@ -432,7 +432,7 @@ func testAccResourceInputSetRemote(id string, name string) string {
             branch_name = "main"
             commit_message = "Commit"
             file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-            connector_ref = "account.Jajoo"
+            connector_ref = "account.TF_Jajoo_github_connector"
             store_type = "REMOTE"
             repo_name = "jajoo_git"
         }
@@ -543,7 +543,7 @@ resource "harness_platform_input_set" "test" {
         branch_name = "main"
         commit_message = "Commit"
         file_path = ".harness/GitEnabledInputSet%[1]s.yaml"
-        connector_ref = "account.Jajoo"
+        connector_ref = "account.TF_Jajoo_github_connector"
         store_type = "REMOTE"
         repo_name = "jajoo_git"
     }
@@ -731,14 +731,14 @@ func testAccResourceInputSetImportFromGit(id string, name string) string {
         resource "harness_platform_input_set" "test" {
                         identifier = "inputset"
                         org_id = "default"
-						project_id = "DoNotDelete_Amit"
+						project_id = "TF_Pipeline_Test"
                         name = "inputset"
                         pipeline_id = "DoNotDeletePipeline"
                         import_from_git = true
                         git_import_info {
                             branch_name = "main"
                             file_path = ".harness/inputset.yaml"
-                            connector_ref = "account.DoNotDeleteGithub"
+                            connector_ref = "account.TF_open_repo_github_connector"
                             repo_name = "open-repo"
                         }
                         input_set_import_request {

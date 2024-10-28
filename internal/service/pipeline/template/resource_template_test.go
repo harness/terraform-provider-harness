@@ -517,7 +517,7 @@ func testAccResourceTemplateAccScopeInline(id string, name string) string {
 				branch_name = "main"
 				commit_message = "Commit"
 				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-				connector_ref = "account.Jajoo"
+				connector_ref = "account.TF_Jajoo_github_connector"
 				store_type = "REMOTE"
 				repo_name = "jajoo_git"
 		}
@@ -597,7 +597,7 @@ func testAccResourceTemplateAccScope(id string, name string) string {
 				branch_name = "main"
 				commit_message = "Commit"
 				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-				connector_ref = "account.Jajoo"
+				connector_ref = "account.TF_Jajoo_github_connector"
 				store_type = "REMOTE"
 				repo_name = "jajoo_git"
 		}
@@ -1120,7 +1120,7 @@ func testAccResourceTemplateOrgScope(id string, name string) string {
 				branch_name = "main"
 				commit_message = "Commit"
 				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-				connector_ref = "account.Jajoo"
+				connector_ref = "account.TF_Jajoo_github_connector"
 				store_type = "REMOTE"
 				repo_name = "jajoo_git"
 		}
@@ -1216,7 +1216,7 @@ func testAccResourceTemplateProjectScope(id string, name string) string {
 				branch_name = "main"
 				commit_message = "Commit"
 				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-				connector_ref = "account.Jajoo"
+				connector_ref = "account.TF_Jajoo_github_connector"
 				store_type = "REMOTE"
 				repo_name = "jajoo_git"
 		}
@@ -1382,7 +1382,7 @@ func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string
                         git_import_details {
                             branch_name = "main"
                             file_path = ".harness/orgtemplate.yaml"
-                            connector_ref = "account.DoNotDeleteGithub"
+                            connector_ref = "account.TF_open_repo_github_connector"
                             repo_name = "open-repo"
                         }
                         template_import_request {
@@ -1409,14 +1409,14 @@ func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) st
         resource "harness_platform_template" "test" {
                         identifier = "%[1]s"
                         org_id = "default"
-						project_id = "DoNotDelete_Amit"
+						project_id = "TF_Pipeline_Test"
                         name = "%[2]s"
 						version = "v2"
                         import_from_git = true
                         git_import_details {
                             branch_name = "main"
                             file_path = ".harness/projecttemplate.yaml"
-                            connector_ref = "account.DoNotDeleteGithub"
+                            connector_ref = "account.TF_open_repo_github_connector"
                             repo_name = "open-repo"
                         }
                         template_import_request {
@@ -1448,7 +1448,7 @@ func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) st
                         git_import_details {
                             branch_name = "main"
                             file_path = ".harness/accounttemplate.yaml"
-                            connector_ref = "account.DoNotDeleteGithub"
+                            connector_ref = "account.TF_open_repo_github_connector"
                             repo_name = "open-repo"
                         }
                         template_import_request {

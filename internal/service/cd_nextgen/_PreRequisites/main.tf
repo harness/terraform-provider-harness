@@ -12,87 +12,87 @@ variable "github_token_value" {
   type = string
 }
 
-variable "harness-automation-github-token" {
+variable "TF_harness_automation_github_token" {
   type = string
 }
 
-resource "harness_platform_project" "DoNotDelete_Amit" {
-		identifier = "DoNotDelete_Amit"
-		name = "DoNotDelete_Amit"
+resource "harness_platform_project" "TF_Pipeline_Test" {
+		identifier = "TF_Pipeline_Test"
+		name = "TF_Pipeline_Test"
 		color = "#0063F7"
 		org_id = "default"
 }
 
-resource "harness_platform_secret_text" "TEST_spot_account_id" {
-  identifier                = "TEST_spot_account_id"
-  name                      = "TEST_spot_account_id"
+resource "harness_platform_secret_text" "TF_spot_account_id" {
+  identifier                = "TF_spot_account_id"
+  name                      = "TF_spot_account_id"
   description               = "This is a test Spot secret text"
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
   value                     = "my_secret_value"
-  depends_on                = [harness_platform_project.DoNotDelete_Amit]
+  depends_on                = [harness_platform_project.TF_Pipeline_Test]
 }
 
-resource "harness_platform_secret_text" "TEST_spot_api_token" {
-  identifier                = "TEST_spot_api_token"
-  name                      = "TEST_spot_api_token"
+resource "harness_platform_secret_text" "TF_spot_api_token" {
+  identifier                = "TF_spot_api_token"
+  name                      = "TF_spot_api_token"
   description               = "This is a test Spot secret text"
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
   value                     = "my_secret_value"
-  depends_on                = [harness_platform_secret_text.TEST_spot_account_id]
+  depends_on                = [harness_platform_secret_text.TF_spot_account_id]
 }
 
-resource "harness_platform_secret_text" "TEST_api_token_ref" {
-  identifier                = "TEST_api_token_ref"
-  name                      = "TEST_api_token_ref"
+resource "harness_platform_secret_text" "TF_spot_api_token_ref" {
+  identifier                = "TF_spot_api_token_ref"
+  name                      = "TF_spot_api_token_ref"
   description               = "This is a test Spot secret text"
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
   value                     = "my_secret_value"
-  depends_on                = [harness_platform_secret_text.TEST_spot_api_token]
+  depends_on                = [harness_platform_secret_text.TF_spot_api_token]
 }
 
-resource "harness_platform_secret_text" "doNotDeleteHSM" {
-  identifier                = "doNotDeleteHSM"
-  name                      = "doNotDeleteHSM"
+resource "harness_platform_secret_text" "TF_Nexus_Password" {
+  identifier                = "TF_Nexus_Password"
+  name                      = "TF_Nexus_Password"
   description               = "This is a test secret text"
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
   value                     = "my_secret_value"
-  depends_on                = [harness_platform_secret_text.TEST_api_token_ref]
+  depends_on                = [harness_platform_secret_text.TF_spot_api_token_ref]
 }
 
-resource "harness_platform_secret_text" "gitbotharnesstoken" {
-  identifier                = "gitbotharnesstoken"
-  name                      = "gitbotharnesstoken"
-  description               = "gitbotharnesstoken"
+resource "harness_platform_secret_text" "TF_git_bot_token" {
+  identifier                = "TF_git_bot_token"
+  name                      = "TF_git_bot_token"
+  description               = "TF_git_bot_token"
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
   value                     = var.github_token_value
-  depends_on                = [harness_platform_secret_text.doNotDeleteHSM]
+  depends_on                = [harness_platform_secret_text.TF_Nexus_Password]
 }
 
-resource "harness_platform_secret_text" "harness-automation-github-token" {
-  identifier                = "harness-automation-github-token"
-  name                      = "harness-automation-github-token"
-  description               = "harness-automation-github-token"
+resource "harness_platform_secret_text" "TF_harness_automation_github_token" {
+  identifier                = "TF_harness_automation_github_token"
+  name                      = "TF_harness_automation_github_token"
+  description               = "TF_harness_automation_github_token"
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
-  value                     = var.harness-automation-github-token
-  depends_on                = [harness_platform_secret_text.gitbotharnesstoken]
+  value                     = var.TF_harness_automation_github_token
+  depends_on                = [harness_platform_secret_text.TF_git_bot_token]
 }
 
-resource "harness_platform_connector_github" "DoNotDeleteGitX" {
-  identifier  = "DoNotDeleteGitX"
-  name        = "DoNotDeleteGitX"
-  description = "DoNotDeleteGitX"
+resource "harness_platform_connector_github" "TF_GitX_connector" {
+  identifier  = "TF_GitX_connector"
+  name        = "TF_GitX_connector"
+  description = "TF_GitX_connector"
   tags        = ["ritek:test"]
 
   url             = "https://github.com/sourabh-awashti/pcf_practice"
@@ -103,13 +103,13 @@ resource "harness_platform_connector_github" "DoNotDeleteGitX" {
       anonymous {}
     }
   }
-  depends_on = [harness_platform_secret_text.harness-automation-github-token]
+  depends_on = [harness_platform_secret_text.TF_harness_automation_github_token]
 }
 
-resource "harness_platform_connector_github" "DoNotDeleteGithub" {
-  identifier  = "DoNotDeleteGithub"
-  name        = "DoNotDeleteGithub"
-  description = "DoNotDeleteGithub"
+resource "harness_platform_connector_github" "TF_open_repo_github_connector" {
+  identifier  = "TF_open_repo_github_connector"
+  name        = "TF_open_repo_github_connector"
+  description = "TF_open_repo_github_connector"
   tags        = ["ritek:test"]
 
   url             = "https://github.com/vtxorxwitty/open-repo"
@@ -118,19 +118,19 @@ resource "harness_platform_connector_github" "DoNotDeleteGithub" {
     credentials {
       http {
         username  = "admin"
-        token_ref = "account.gitbotharnesstoken"
+        token_ref = "account.TF_git_bot_token"
       }
     }
     api_authentication {
-        token_ref = "account.gitbotharnesstoken"
+        token_ref = "account.TF_git_bot_token"
     }
-  depends_on = [harness_platform_connector_github.DoNotDeleteGitX]
+  depends_on = [harness_platform_connector_github.TF_GitX_connector]
 }
 
-resource "harness_platform_connector_github" "Jajoo" {
-  identifier  = "Jajoo"
-  name        = "Jajoo"
-  description = "Jajoo"
+resource "harness_platform_connector_github" "TF_Jajoo_github_connector" {
+  identifier  = "TF_Jajoo_github_connector"
+  name        = "TF_Jajoo_github_connector"
+  description = "TF_Jajoo_github_connector"
   tags        = ["ritek:test"]
 
   url             = "https://github.com/wings-software/jajoo_git"
@@ -138,19 +138,19 @@ resource "harness_platform_connector_github" "Jajoo" {
   credentials {
     http {
       username  = "admin"
-      token_ref = "account.gitbotharnesstoken"
+      token_ref = "account.TF_git_bot_token"
     }
   }
   api_authentication {
-      token_ref = "account.gitbotharnesstoken"
+      token_ref = "account.TF_git_bot_token"
   }
-  depends_on = [harness_platform_connector_github.DoNotDeleteGithub]
+  depends_on = [harness_platform_connector_github.TF_open_repo_github_connector]
 }
 
-resource "harness_platform_connector_git" "DoNotDeleteRTerraformResource" {
-  identifier       = "DoNotDeleteRTerraformResource"
-  name             = "DoNotDeleteRTerraformResource"
-  description      = "DoNotDeleteRTerraformResource"
+resource "harness_platform_connector_git" "TF_TerraformResource_git_connector" {
+  identifier       = "TF_TerraformResource_git_connector"
+  name             = "TF_TerraformResource_git_connector"
+  description      = "TF_TerraformResource_git_connector"
   tags             = ["ritek:test"]
 
   url              = "https://github.com/wings-software/terraform-test"
@@ -158,16 +158,16 @@ resource "harness_platform_connector_git" "DoNotDeleteRTerraformResource" {
   credentials {
     http {
       username     = "admin"
-      password_ref = "account.gitbotharnesstoken"
+      password_ref = "account.TF_git_bot_token"
     }
   }
-  depends_on = [harness_platform_connector_github.Jajoo]
+  depends_on = [harness_platform_connector_github.TF_Jajoo_github_connector]
 }
 
-resource "harness_platform_connector_github" "github_Account_level_connector_delegate" {
-  identifier  = "github_Account_level_connector_delegate"
-  name        = "github_Account_level_connector_delegate"
-  description = "github_Account_level_connector_delegate"
+resource "harness_platform_connector_github" "TF_github_account_level_delegate_connector" {
+  identifier  = "TF_github_account_level_delegate_connector"
+  name        = "TF_github_account_level_delegate_connector"
+  description = "TF_github_account_level_delegate_connector"
   tags        = ["ritek:test"]
 
   url             = "https://github.com/harness-automation"
@@ -176,19 +176,19 @@ resource "harness_platform_connector_github" "github_Account_level_connector_del
   credentials {
     http {
       username  = "harness-automation"
-      token_ref = "account.harness-automation-github-token"
+      token_ref = "account.TF_harness_automation_github_token"
     }
   }
   api_authentication {
-      token_ref = "account.harness-automation-github-token"
+      token_ref = "account.TF_harness_automation_github_token"
   }
-  depends_on = [harness_platform_connector_git.DoNotDeleteRTerraformResource]
+  depends_on = [harness_platform_connector_git.TF_TerraformResource_git_connector]
 }
 
-resource "harness_platform_connector_github" "github_Account_level_connector" {
-  identifier  = "github_Account_level_connector"
-  name        = "github_Account_level_connector"
-  description = "github_Account_level_connector"
+resource "harness_platform_connector_github" "TF_github_account_level_connector" {
+  identifier  = "TF_github_account_level_connector"
+  name        = "TF_github_account_level_connector"
+  description = "TF_github_account_level_connector"
   tags        = ["ritek:test"]
 
   url             = "https://github.com/harness-automation"
@@ -198,11 +198,11 @@ resource "harness_platform_connector_github" "github_Account_level_connector" {
   credentials {
     http {
       username  = "harness-automation"
-      token_ref = "account.harness-automation-github-token"
+      token_ref = "account.TF_harness_automation_github_token"
     }
   }
   api_authentication {
-      token_ref = "account.harness-automation-github-token"
+      token_ref = "account.TF_harness_automation_github_token"
   }
-  depends_on = [harness_platform_connector_github.github_Account_level_connector_delegate]
+  depends_on = [harness_platform_connector_github.TF_github_account_level_delegate_connector]
 }
