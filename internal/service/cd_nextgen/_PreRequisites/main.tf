@@ -97,6 +97,9 @@ resource "harness_platform_connector_github" "Jajoo" {
       token_ref = "account.gitbotharnesstoken"
     }
   }
+  api_authentication {
+      token_ref = "account.gitbotharnesstoken"
+  }
   depends_on = [harness_platform_connector_github.DoNotDeleteGitX]
 }
 
@@ -115,4 +118,25 @@ resource "harness_platform_connector_git" "DoNotDeleteRTerraformResource" {
     }
   }
   depends_on = [harness_platform_connector_github.Jajoo]
+}
+
+resource "harness_platform_connector_github" "github_Account_level_connector_delegate" {
+  identifier  = "github_Account_level_connector_delegate"
+  name        = "github_Account_level_connector_delegate"
+  description = "github_Account_level_connector_delegate"
+  tags        = ["ritek:test"]
+
+  url             = "https://github.com/harness-automation/Gitx-automation"
+  connection_type = "Repo"
+
+  credentials {
+    http {
+      username  = "admin"
+      token_ref = "account.gitbotharnesstoken"
+    }
+  }
+  api_authentication {
+      token_ref = "account.gitbotharnesstoken"
+  }
+  depends_on = [harness_platform_connector_github.DoNotDeleteRTerraformResource]
 }
