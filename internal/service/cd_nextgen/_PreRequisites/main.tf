@@ -8,11 +8,11 @@ terraform {
   }
 }
 
-variable "github_token_value" {
+variable "TF_VAR_github_token_value" {
   type = string
 }
 
-variable "TF_harness_automation_github_token" {
+variable "TF_VAR_harness_automation_github_token" {
   type = string
 }
 
@@ -74,7 +74,7 @@ resource "harness_platform_secret_text" "TF_git_bot_token" {
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
-  value                     = var.github_token_value
+  value                     = var.TF_VAR_github_token_value
   depends_on                = [harness_platform_secret_text.TF_Nexus_Password]
 }
 
@@ -85,7 +85,7 @@ resource "harness_platform_secret_text" "TF_harness_automation_github_token" {
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
-  value                     = var.TF_harness_automation_github_token
+  value                     = var.TF_VAR_harness_automation_github_token
   depends_on                = [harness_platform_secret_text.TF_git_bot_token]
 }
 
