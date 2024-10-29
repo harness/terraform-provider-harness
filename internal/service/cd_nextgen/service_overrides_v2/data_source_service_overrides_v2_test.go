@@ -190,12 +190,60 @@ func testRemoteAccerviceOverrides(id string, name string) string {
 					org_id = harness_platform_organization.test.id
 					color = "#0063F7"
 				}
+				resource "harness_platform_environment" "test" {
+							identifier = "%[1]s"
+							name = "%[2]s"
+							org_id = harness_platform_organization.test.id
+							project_id = harness_platform_project.test.id
+							tags = ["foo:bar", "baz"]
+							type = "PreProduction"
+				}
+		
+				resource "harness_platform_service" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+					org_id = harness_platform_organization.test.id
+					project_id = harness_platform_project.test.id
+					yaml = <<-EOT
+					service:
+					  name: %[1]s
+					  identifier: %[2]s
+					  serviceDefinition:
+						spec:
+						  manifests:
+							- manifest:
+								identifier: manifest1
+								type: Values
+								spec:
+								  store:
+									type: Github
+									spec:
+									  connectorRef: <+input>
+									  gitFetchType: Branch
+									  paths:
+										- files1
+									  repoName: <+input>
+									  branch: master
+								  skipResourceVersioning: false
+						  configFiles:
+							- configFile:
+								identifier: configFile1
+								spec:
+								  store:
+									type: Harness
+									spec:
+									  files:
+										- <+org.description>
+						type: Kubernetes
+					  gitOpsEnabled: false
+					  EOT
+				}
 
 				resource "harness_platform_service_overrides_v2" "test" {
 					org_id = harness_platform_organization.test.id
 					project_id = harness_platform_project.test.id
-					env_id     = "account.TF_GitX_connector"
-					service_id = "account.TF_GitX_connector"
+					env_id     = harness_platform_environment.test.id
+          			service_id = harness_platform_service.test.id
 		            type = "ENV_SERVICE_OVERRIDE"
 					git_details {
 						store_type = "REMOTE"
@@ -217,11 +265,11 @@ manifests:
         store:
           type: Github
           spec:
-            connectorRef: "<+input>"
+            connectorRef: <+input>
             gitFetchType: Branch
             paths:
               - files1
-            repoName: "<+input>"
+            repoName: <+input>
             branch: master
         skipResourceVersioning: false
 configFiles:
@@ -232,7 +280,7 @@ configFiles:
           type: Harness
           spec:
             files:
-              - "<+org.description>"
+              - <+org.description>
               EOT
                 }	 
 
