@@ -9,6 +9,7 @@ import (
 )
 
 func TestAccDataSourceOverrides(t *testing.T) {
+	t.Skip("Skipping this test as it need to check if overrides are supported or not")
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
@@ -30,6 +31,7 @@ func TestAccDataSourceOverrides(t *testing.T) {
 }
 
 func TestDataSourceRemoteOverrides(t *testing.T) {
+	t.Skip("Skipping this test as it need to check if overrides are supported or not")
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id

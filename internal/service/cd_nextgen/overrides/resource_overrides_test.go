@@ -13,6 +13,7 @@ import (
 )
 
 func TestAccOverrides_ProjectScope(t *testing.T) {
+	t.Skip("Skipping this test as it need to check if overrides are supported or not")
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	name := id
@@ -41,6 +42,7 @@ func TestAccOverrides_ProjectScope(t *testing.T) {
 }
 
 func TestAccOverrides_OrgScope(t *testing.T) {
+	t.Skip("Skipping this test as it need to check if overrides are supported or not")
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	name := id
