@@ -103,8 +103,9 @@ func TestAccRemoteServiceOverrides(t *testing.T) {
 		CheckDestroy:      testAccServiceOverridesDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testRemoteServiceOverrides(id, name),
-				Check:  resource.ComposeTestCheckFunc(),
+				Config:  testRemoteServiceOverrides(id, name),
+				Destroy: false,
+				Check:   resource.ComposeTestCheckFunc(),
 			},
 			{
 				ResourceName:      resourceName,

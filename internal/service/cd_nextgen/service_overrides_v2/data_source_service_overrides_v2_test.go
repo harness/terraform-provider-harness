@@ -40,7 +40,8 @@ func TestDataSourceRemoteServiceOverrides(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testRemoteAccerviceOverrides(id, name),
+				Config:  testRemoteAccerviceOverrides(id, name),
+				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
