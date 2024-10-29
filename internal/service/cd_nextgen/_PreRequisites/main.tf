@@ -95,13 +95,18 @@ resource "harness_platform_connector_github" "TF_GitX_connector" {
   description = "TF_GitX_connector"
   tags        = ["ritek:test"]
 
-  url             = "https://github.com/sourabh-awashti/pcf_practice"
-  connection_type = "Repo"
+  url             = "https://github.com/harness-automation"
+  connection_type = "Account"
+  validation_repo = "pcf_practice"
   execute_on_delegate = false
   credentials {
     http {
-      anonymous {}
+      username  = "harness-automation"
+      token_ref = "account.TF_harness_automation_github_token"
     }
+  }
+  api_authentication {
+      token_ref = "account.TF_harness_automation_github_token"
   }
   depends_on = [harness_platform_secret_text.TF_harness_automation_github_token]
 }
