@@ -279,8 +279,8 @@ func TestResourceImportRemoteEnvironment(t *testing.T) {
 			{
 				Config: testResourceImportRemoteEnvironment(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", "accountEnv"),
-					resource.TestCheckResourceAttr(resourceName, "name", "accountEnv"),
+					resource.TestCheckResourceAttr(resourceName, "id", "RemoteaccountEnv"),
+					resource.TestCheckResourceAttr(resourceName, "name", "RemoteaccountEnv"),
 				),
 			},
 			{
@@ -328,8 +328,8 @@ func testResourceRemoteEnvironment(id string, name string) string {
 func testResourceImportRemoteEnvironment() string {
 	return fmt.Sprintf(`
   resource "harness_platform_environment" "test" {
-    identifier  = "accountEnv"
-    name        = "accountEnv"
+    identifier  = "RemoteaccountEnv"
+    name        = "RemoteaccountEnv"
 	type = "PreProduction"
     git_details {
 		store_type = "REMOTE" 
