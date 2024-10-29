@@ -1,0 +1,45 @@
+# InfraV2KubernetesInfrastructureV2Details
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**CreatedAt** | **string** |  | [optional] [default to null]
+**CreatedBy** | [***InfraV2UserDetails**](infra_v2.UserDetails.md) |  | [optional] [default to null]
+**DeploymentType** | **string** |  | [optional] [default to null]
+**Description** | **string** |  | [optional] [default to null]
+**DiscoveryAgentID** | **string** |  | [optional] [default to null]
+**EnvironmentID** | **string** |  | [optional] [default to null]
+**HarnessInfraType** | **string** |  | [optional] [default to null]
+**Identifier** | [***InfraV2Identifiers**](infra_v2.Identifiers.md) |  | [optional] [default to null]
+**Identity** | **string** |  | [optional] [default to null]
+**InfraID** | **string** |  | [optional] [default to null]
+**InfraNamespace** | **string** |  | [optional] [default to null]
+**InfraScope** | [***InfraV2InfraScope**](infra_v2.InfraScope.md) |  | [optional] [default to null]
+**InfraType** | [***InfraV2InfraType**](infra_v2.InfraType.md) |  | [optional] [default to null]
+**InsecureSkipVerify** | **bool** |  | [optional] [default to null]
+**InstallationType** | [***InfraV2InstallationType**](infra_v2.InstallationType.md) |  | [optional] [default to null]
+**IsChaosEnabled** | **bool** |  | [optional] [default to null]
+**K8sConnectorID** | **string** |  | [optional] [default to null]
+**LastHeartbeat** | **int32** |  | [optional] [default to null]
+**LastWorkflowTimestamp** | **string** |  | [optional] [default to null]
+**Mtls** | [***InfraV2MtlsConfiguration**](infra_v2.MTLSConfiguration.md) |  | [optional] [default to null]
+**Name** | **string** |  | [optional] [default to null]
+**NoOfSchedules** | **int32** |  | [optional] [default to null]
+**NoOfWorkflows** | **int32** |  | [optional] [default to null]
+**NodeSelector** | **map[string]string** |  | [optional] [default to null]
+**PlatformName** | **string** |  | [optional] [default to null]
+**Proxy** | [***InfraV2ProxyConfiguration**](infra_v2.ProxyConfiguration.md) |  | [optional] [default to null]
+**RunAsGroup** | **int32** |  | [optional] [default to null]
+**RunAsUser** | **int32** |  | [optional] [default to null]
+**ServiceAccount** | **string** |  | [optional] [default to null]
+**Status** | [***InfraV2InfraStatus**](infra_v2.InfraStatus.md) |  | [optional] [default to null]
+**Tags** | **[]string** |  | [optional] [default to null]
+**Tolerations** | [**[]V1Toleration**](v1.Toleration.md) |  | [optional] [default to null]
+**UpdateStatus** | [***InfraV2UpdateStatus**](infra_v2.UpdateStatus.md) |  | [optional] [default to null]
+**UpdatedAt** | **string** |  | [optional] [default to null]
+**UpdatedBy** | [***InfraV2UserDetails**](infra_v2.UserDetails.md) |  | [optional] [default to null]
+**Upgrade** | [***InfraV2Upgrade**](infra_v2.Upgrade.md) |  | [optional] [default to null]
+**Version** | **string** |  | [optional] [default to null]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+

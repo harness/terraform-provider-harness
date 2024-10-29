@@ -7,6 +7,66 @@ servers:
 - url: /api/manager
 paths:
   /rest/v2/infrastructure:
+    put:
+      tags:
+      - chaos-sdk
+      summary: Update a new v2 infra
+      description: Update a new v2 infra
+      operationId: updateInfraV2
+      parameters:
+      - name: correlationID
+        in: query
+        description: correlation id is used to debug micro svc communication
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: accountIdentifier
+        in: query
+        description: account id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: organizationIdentifier
+        in: query
+        description: organization id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: project id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        description: update Infra V2
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/infra_v2.UpdateKubernetesInfrastructureV2Request'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/infra_v2.UpdateKubernetesInfrastructureV2Response'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api.RestError'
+      x-codegen-request-body-name: request"
     post:
       tags:
       - chaos-sdk
@@ -69,6 +129,214 @@ paths:
       security:
       - ApiKeyAuth: []
       x-codegen-request-body-name: request"
+  /rest/v2/infrastructure/{identity}:
+    get:
+      tags:
+      - chaos-sdk
+      summary: Get a new v2 infra
+      description: Get a new v2 infra
+      operationId: getInfraV2
+      parameters:
+      - name: identity
+        in: path
+        description: Chaos V2 Infra Identity
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: accountIdentifier
+        in: query
+        description: account id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: organizationIdentifier
+        in: query
+        description: organization id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: project id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: environmentIdentifier
+        in: query
+        description: environment identifier to filter resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/infra_v2.KubernetesInfrastructureV2Details'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api.RestError'
+    delete:
+      tags:
+      - chaos-sdk
+      summary: Delete a v2 infra
+      description: Delete a new v2 infra
+      operationId: deleteInfraV2
+      parameters:
+      - name: identity
+        in: path
+        description: Chaos V2 Infra Identity
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: accountIdentifier
+        in: query
+        description: account id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: organizationIdentifier
+        in: query
+        description: organization id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: project id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/infra_v2.DeleteKubernetesInfraV2Response'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api.RestError'
+  /rest/v2/infrastructures:
+    post:
+      tags:
+      - chaos-sdk
+      summary: List a new v2 infra
+      description: List a new v2 infra
+      operationId: listInfraV2
+      parameters:
+      - name: accountIdentifier
+        in: query
+        description: account id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: organizationIdentifier
+        in: query
+        description: organization id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: project id that want to access the resource
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: includeLegacyInfra
+        in: query
+        description: include legacy infra details
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      - name: environmentIdentifier
+        in: query
+        description: filter infra
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: page number
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: limit per page
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 10
+      - name: search
+        in: query
+        description: search based on name
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        description: list Infra V2
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/infra_v2.ListKubernetesInfraV2Request'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/infra_v2.ListKubernetesInfraV2Response'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api.RestError'
+      x-codegen-request-body-name: request"
 components:
   schemas:
     api.RestError:
@@ -78,6 +346,32 @@ components:
           type: string
         message:
           type: string
+    infra_v2.DeleteKubernetesInfraV2Response:
+      type: object
+      properties:
+        correlationId:
+          type: string
+        identity:
+          type: string
+        message:
+          type: string
+      example:
+        identity: identity
+        correlationId: correlationId
+        message: message
+    infra_v2.Identifiers:
+      type: object
+      properties:
+        accountIdentifier:
+          type: string
+        orgIdentifier:
+          type: string
+        projectIdentifier:
+          type: string
+      example:
+        orgIdentifier: orgIdentifier
+        accountIdentifier: accountIdentifier
+        projectIdentifier: projectIdentifier
     infra_v2.InfraScope:
       type: string
       enum:
@@ -86,6 +380,20 @@ components:
       x-enum-varnames:
       - InfraScopeNamespace
       - InfraScopeCluster
+    infra_v2.InfraStatus:
+      type: string
+      enum:
+      - ACTIVE
+      - INACTIVE
+      - PENDING
+      - UPGRADING
+      - UPGRADE_REQUIRED
+      x-enum-varnames:
+      - InfraStatusActive
+      - InfraStatusInactive
+      - InfraStatusPending
+      - InfraStatusUpgrading
+      - InfraStatusUpgradeRequired
     infra_v2.InfraType:
       type: string
       enum:
@@ -94,6 +402,343 @@ components:
       x-enum-varnames:
       - InfraTypeKubernetes
       - InfraTypeKubernetesV2
+    infra_v2.InfraTypeFilter:
+      type: string
+      enum:
+      - KUBERNETES
+      - KUBERNETESV2
+      - ALL
+      x-enum-varnames:
+      - InfraTypeFilterKubernetes
+      - InfraTypeFilterKubernetesV2
+      - InfraTypeFilterAll
+    infra_v2.InstallationType:
+      type: string
+      enum:
+      - CONNECTOR
+      - MANIFEST
+      - CONNECTOR_V2
+      x-enum-varnames:
+      - InstallationTypeConnector
+      - InstallationTypeManifest
+      - InstallationTypeConnectorV2
+    infra_v2.KubernetesInfraV2FilterInput:
+      type: object
+      properties:
+        infraScope:
+          $ref: '#/components/schemas/infra_v2.InfraScope'
+        infraTypeFilter:
+          $ref: '#/components/schemas/infra_v2.InfraTypeFilter'
+        tags:
+          type: array
+          items:
+            type: string
+    infra_v2.KubernetesInfrastructureV2Details:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        createdBy:
+          $ref: '#/components/schemas/infra_v2.UserDetails'
+        deploymentType:
+          type: string
+        description:
+          type: string
+        discoveryAgentID:
+          type: string
+        environmentID:
+          type: string
+        harnessInfraType:
+          type: string
+        identifier:
+          $ref: '#/components/schemas/infra_v2.Identifiers'
+        identity:
+          type: string
+        infraID:
+          type: string
+        infraNamespace:
+          type: string
+        infraScope:
+          $ref: '#/components/schemas/infra_v2.InfraScope'
+        infraType:
+          $ref: '#/components/schemas/infra_v2.InfraType'
+        insecureSkipVerify:
+          type: boolean
+        installationType:
+          $ref: '#/components/schemas/infra_v2.InstallationType'
+        isChaosEnabled:
+          type: boolean
+        k8sConnectorID:
+          type: string
+        lastHeartbeat:
+          type: integer
+        lastWorkflowTimestamp:
+          type: string
+        mtls:
+          $ref: '#/components/schemas/infra_v2.MTLSConfiguration'
+        name:
+          type: string
+        noOfSchedules:
+          type: integer
+        noOfWorkflows:
+          type: integer
+        nodeSelector:
+          type: object
+          additionalProperties:
+            type: string
+        platformName:
+          type: string
+        proxy:
+          $ref: '#/components/schemas/infra_v2.ProxyConfiguration'
+        runAsGroup:
+          type: integer
+        runAsUser:
+          type: integer
+        serviceAccount:
+          type: string
+        status:
+          $ref: '#/components/schemas/infra_v2.InfraStatus'
+        tags:
+          type: array
+          items:
+            type: string
+        tolerations:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1.Toleration'
+        updateStatus:
+          $ref: '#/components/schemas/infra_v2.UpdateStatus'
+        updatedAt:
+          type: string
+        updatedBy:
+          $ref: '#/components/schemas/infra_v2.UserDetails'
+        upgrade:
+          $ref: '#/components/schemas/infra_v2.Upgrade'
+        version:
+          type: string
+      example:
+        isChaosEnabled: true
+        discoveryAgentID: discoveryAgentID
+        k8sConnectorID: k8sConnectorID
+        lastHeartbeat: 0
+        noOfWorkflows: 1
+        description: description
+        nodeSelector:
+          key: nodeSelector
+        createdAt: createdAt
+        tolerations:
+        - effect: ""
+          tolerationSeconds: 2
+          value: value
+          key: key
+          operator: ""
+        - effect: ""
+          tolerationSeconds: 2
+          value: value
+          key: key
+          operator: ""
+        harnessInfraType: harnessInfraType
+        identity: identity
+        platformName: platformName
+        infraID: infraID
+        mtls:
+          secretName: secretName
+          certPath: certPath
+          keyPath: keyPath
+          url: url
+        updatedAt: updatedAt
+        identifier:
+          orgIdentifier: orgIdentifier
+          accountIdentifier: accountIdentifier
+          projectIdentifier: projectIdentifier
+        noOfSchedules: 6
+        updatedBy: null
+        upgrade:
+          isAutoUpgradeEnabled: true
+          status: UPGRADING_INFRA
+        infraNamespace: infraNamespace
+        serviceAccount: serviceAccount
+        version: version
+        lastWorkflowTimestamp: lastWorkflowTimestamp
+        runAsGroup: 5
+        infraScope: NAMESPACE
+        tags:
+        - tags
+        - tags
+        runAsUser: 5
+        proxy:
+          httpProxy: httpProxy
+          httpsProxy: httpsProxy
+          noProxy: noProxy
+          url: url
+        deploymentType: deploymentType
+        environmentID: environmentID
+        installationType: CONNECTOR
+        createdBy:
+          name: name
+          email: email
+          username: username
+        updateStatus: AVAILABLE
+        insecureSkipVerify: true
+        name: name
+        infraType: KUBERNETES
+        status: ACTIVE
+    infra_v2.ListKubernetesInfraV2Request:
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/infra_v2.KubernetesInfraV2FilterInput'
+        identifier:
+          $ref: '#/components/schemas/infra_v2.Identifiers'
+    infra_v2.ListKubernetesInfraV2Response:
+      type: object
+      properties:
+        infras:
+          type: array
+          items:
+            $ref: '#/components/schemas/infra_v2.KubernetesInfrastructureV2Details'
+        pagination:
+          $ref: '#/components/schemas/infra_v2.Pagination'
+        totalNoOfInfrastructures:
+          type: integer
+      example:
+        pagination:
+          limit: 0
+          page: 6
+        infras:
+        - isChaosEnabled: true
+          discoveryAgentID: discoveryAgentID
+          k8sConnectorID: k8sConnectorID
+          lastHeartbeat: 0
+          noOfWorkflows: 1
+          description: description
+          nodeSelector:
+            key: nodeSelector
+          createdAt: createdAt
+          tolerations:
+          - effect: ""
+            tolerationSeconds: 2
+            value: value
+            key: key
+            operator: ""
+          - effect: ""
+            tolerationSeconds: 2
+            value: value
+            key: key
+            operator: ""
+          harnessInfraType: harnessInfraType
+          identity: identity
+          platformName: platformName
+          infraID: infraID
+          mtls:
+            secretName: secretName
+            certPath: certPath
+            keyPath: keyPath
+            url: url
+          updatedAt: updatedAt
+          identifier:
+            orgIdentifier: orgIdentifier
+            accountIdentifier: accountIdentifier
+            projectIdentifier: projectIdentifier
+          noOfSchedules: 6
+          updatedBy: null
+          upgrade:
+            isAutoUpgradeEnabled: true
+            status: UPGRADING_INFRA
+          infraNamespace: infraNamespace
+          serviceAccount: serviceAccount
+          version: version
+          lastWorkflowTimestamp: lastWorkflowTimestamp
+          runAsGroup: 5
+          infraScope: NAMESPACE
+          tags:
+          - tags
+          - tags
+          runAsUser: 5
+          proxy:
+            httpProxy: httpProxy
+            httpsProxy: httpsProxy
+            noProxy: noProxy
+            url: url
+          deploymentType: deploymentType
+          environmentID: environmentID
+          installationType: CONNECTOR
+          createdBy:
+            name: name
+            email: email
+            username: username
+          updateStatus: AVAILABLE
+          insecureSkipVerify: true
+          name: name
+          infraType: KUBERNETES
+          status: ACTIVE
+        - isChaosEnabled: true
+          discoveryAgentID: discoveryAgentID
+          k8sConnectorID: k8sConnectorID
+          lastHeartbeat: 0
+          noOfWorkflows: 1
+          description: description
+          nodeSelector:
+            key: nodeSelector
+          createdAt: createdAt
+          tolerations:
+          - effect: ""
+            tolerationSeconds: 2
+            value: value
+            key: key
+            operator: ""
+          - effect: ""
+            tolerationSeconds: 2
+            value: value
+            key: key
+            operator: ""
+          harnessInfraType: harnessInfraType
+          identity: identity
+          platformName: platformName
+          infraID: infraID
+          mtls:
+            secretName: secretName
+            certPath: certPath
+            keyPath: keyPath
+            url: url
+          updatedAt: updatedAt
+          identifier:
+            orgIdentifier: orgIdentifier
+            accountIdentifier: accountIdentifier
+            projectIdentifier: projectIdentifier
+          noOfSchedules: 6
+          updatedBy: null
+          upgrade:
+            isAutoUpgradeEnabled: true
+            status: UPGRADING_INFRA
+          infraNamespace: infraNamespace
+          serviceAccount: serviceAccount
+          version: version
+          lastWorkflowTimestamp: lastWorkflowTimestamp
+          runAsGroup: 5
+          infraScope: NAMESPACE
+          tags:
+          - tags
+          - tags
+          runAsUser: 5
+          proxy:
+            httpProxy: httpProxy
+            httpsProxy: httpsProxy
+            noProxy: noProxy
+            url: url
+          deploymentType: deploymentType
+          environmentID: environmentID
+          installationType: CONNECTOR
+          createdBy:
+            name: name
+            email: email
+            username: username
+          updateStatus: AVAILABLE
+          insecureSkipVerify: true
+          name: name
+          infraType: KUBERNETES
+          status: ACTIVE
+        totalNoOfInfrastructures: 1
     infra_v2.MTLSConfiguration:
       type: object
       properties:
@@ -105,6 +750,21 @@ components:
           type: string
         url:
           type: string
+      example:
+        secretName: secretName
+        certPath: certPath
+        keyPath: keyPath
+        url: url
+    infra_v2.Pagination:
+      type: object
+      properties:
+        limit:
+          type: integer
+        page:
+          type: integer
+      example:
+        limit: 0
+        page: 6
     infra_v2.ProxyConfiguration:
       type: object
       properties:
@@ -116,6 +776,11 @@ components:
           type: string
         url:
           type: string
+      example:
+        httpProxy: httpProxy
+        httpsProxy: httpsProxy
+        noProxy: noProxy
+        url: url
     infra_v2.RegisterInfrastructureV2Request:
       type: object
       properties:
@@ -206,6 +871,132 @@ components:
         identity: identity
         name: name
         token: token
+    infra_v2.UpdateKubernetesInfrastructureV2Request:
+      type: object
+      properties:
+        annotation:
+          type: object
+          additionalProperties:
+            type: string
+        correlationId:
+          type: string
+        description:
+          type: string
+        env:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1.EnvVar'
+        envFrom:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1.EnvFromSource'
+        environmentID:
+          type: string
+        identity:
+          type: string
+        infraNamespace:
+          type: string
+        initContainers:
+          type: string
+        insecureSkipVerify:
+          type: boolean
+        label:
+          type: object
+          additionalProperties:
+            type: string
+        mtls:
+          $ref: '#/components/schemas/infra_v2.MTLSConfiguration'
+        name:
+          type: string
+        nodeSelector:
+          type: object
+          additionalProperties:
+            type: string
+        proxy:
+          $ref: '#/components/schemas/infra_v2.ProxyConfiguration'
+        runAsGroup:
+          type: integer
+        runAsUser:
+          type: integer
+        serviceAccount:
+          type: string
+        sidecarContainers:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        tolerations:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1.Toleration'
+        volumeMounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1.VolumeMount'
+        volumes:
+          type: array
+          items:
+            $ref: '#/components/schemas/v1.Volume'
+    infra_v2.UpdateKubernetesInfrastructureV2Response:
+      type: object
+      properties:
+        correlationId:
+          type: string
+        message:
+          type: string
+      example:
+        correlationId: correlationId
+        message: message
+    infra_v2.UpdateStatus:
+      type: string
+      enum:
+      - AVAILABLE
+      - MANDATORY
+      - NOT_REQUIRED
+      x-enum-varnames:
+      - UpdateStatusAvailable
+      - UpdateStatusMandatory
+      - UpdateStatusNotRequired
+    infra_v2.Upgrade:
+      type: object
+      properties:
+        isAutoUpgradeEnabled:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/infra_v2.UpgradeStatus'
+      example:
+        isAutoUpgradeEnabled: true
+        status: UPGRADING_INFRA
+    infra_v2.UpgradeStatus:
+      type: string
+      enum:
+      - UPGRADING_INFRA
+      - UPGRADE_SKIPPED
+      - UPGRADE_SUCCESSFUL
+      - UPGRADE_FAILED
+      - DETECTING_UPGRADER
+      - UPGRADER_DISABLED
+      x-enum-varnames:
+      - UpgradeStatusUpgrading
+      - UpgradeStatusSkipped
+      - UpgradeStatusSuccessful
+      - UpgradeStatusFailed
+      - UpgradeStatusDetecting
+      - UpgradeStatusDisabled
+    infra_v2.UserDetails:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        username:
+          type: string
+      example:
+        name: name
+        email: email
+        username: username
     resource.Quantity:
       type: object
       properties:
@@ -2015,6 +2806,12 @@ components:
             Value is the taint value the toleration matches to.
             If the operator is Exists, the value should be empty, otherwise just a regular string.
             +optional
+      example:
+        effect: ""
+        tolerationSeconds: 2
+        value: value
+        key: key
+        operator: ""
     v1.TolerationOperator:
       type: string
       enum:

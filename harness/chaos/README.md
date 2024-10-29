@@ -21,7 +21,11 @@ All URIs are relative to */api/manager*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*ChaosSdkApi* | [**DeleteInfraV2**](docs/ChaosSdkApi.md#deleteinfrav2) | **Delete** /rest/v2/infrastructure/{identity} | Delete a v2 infra
+*ChaosSdkApi* | [**GetInfraV2**](docs/ChaosSdkApi.md#getinfrav2) | **Get** /rest/v2/infrastructure/{identity} | Get a new v2 infra
+*ChaosSdkApi* | [**ListInfraV2**](docs/ChaosSdkApi.md#listinfrav2) | **Post** /rest/v2/infrastructures | List a new v2 infra
 *ChaosSdkApi* | [**RegisterInfraV2**](docs/ChaosSdkApi.md#registerinfrav2) | **Post** /rest/v2/infrastructure | Register a new v2 infra
+*ChaosSdkApi* | [**UpdateInfraV2**](docs/ChaosSdkApi.md#updateinfrav2) | **Put** /rest/v2/infrastructure | Update a new v2 infra
 
 ## Documentation For Models
 
@@ -97,12 +101,28 @@ Class | Method | HTTP request | Description
  - [AllOfv1VolumeStorageos](docs/AllOfv1VolumeStorageos.md)
  - [AllOfv1VolumeVsphereVolume](docs/AllOfv1VolumeVsphereVolume.md)
  - [ApiRestError](docs/ApiRestError.md)
+ - [InfraV2DeleteKubernetesInfraV2Response](docs/InfraV2DeleteKubernetesInfraV2Response.md)
+ - [InfraV2Identifiers](docs/InfraV2Identifiers.md)
  - [InfraV2InfraScope](docs/InfraV2InfraScope.md)
+ - [InfraV2InfraStatus](docs/InfraV2InfraStatus.md)
  - [InfraV2InfraType](docs/InfraV2InfraType.md)
+ - [InfraV2InfraTypeFilter](docs/InfraV2InfraTypeFilter.md)
+ - [InfraV2InstallationType](docs/InfraV2InstallationType.md)
+ - [InfraV2KubernetesInfraV2FilterInput](docs/InfraV2KubernetesInfraV2FilterInput.md)
+ - [InfraV2KubernetesInfrastructureV2Details](docs/InfraV2KubernetesInfrastructureV2Details.md)
+ - [InfraV2ListKubernetesInfraV2Request](docs/InfraV2ListKubernetesInfraV2Request.md)
+ - [InfraV2ListKubernetesInfraV2Response](docs/InfraV2ListKubernetesInfraV2Response.md)
  - [InfraV2MtlsConfiguration](docs/InfraV2MtlsConfiguration.md)
+ - [InfraV2Pagination](docs/InfraV2Pagination.md)
  - [InfraV2ProxyConfiguration](docs/InfraV2ProxyConfiguration.md)
  - [InfraV2RegisterInfrastructureV2Request](docs/InfraV2RegisterInfrastructureV2Request.md)
  - [InfraV2RegisterInfrastructureV2Response](docs/InfraV2RegisterInfrastructureV2Response.md)
+ - [InfraV2UpdateKubernetesInfrastructureV2Request](docs/InfraV2UpdateKubernetesInfrastructureV2Request.md)
+ - [InfraV2UpdateKubernetesInfrastructureV2Response](docs/InfraV2UpdateKubernetesInfrastructureV2Response.md)
+ - [InfraV2UpdateStatus](docs/InfraV2UpdateStatus.md)
+ - [InfraV2Upgrade](docs/InfraV2Upgrade.md)
+ - [InfraV2UpgradeStatus](docs/InfraV2UpgradeStatus.md)
+ - [InfraV2UserDetails](docs/InfraV2UserDetails.md)
  - [ResourceQuantity](docs/ResourceQuantity.md)
  - [V1AwsElasticBlockStoreVolumeSource](docs/V1AwsElasticBlockStoreVolumeSource.md)
  - [V1AzureDataDiskCachingMode](docs/V1AzureDataDiskCachingMode.md)
