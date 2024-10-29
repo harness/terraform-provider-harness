@@ -286,7 +286,7 @@ resource "harness_platform_environment" "test" {
 				store_type = "REMOTE"
 				connector_ref = "account.TF_GitX_connector"  
 				repo_name = "pcf_practice"
-				file_path = ".harness/automation/service/srv_%[1]s.yaml"
+				file_path = ".harness/automation/service/%[1]s.yaml"
 				branch = "main"
             }
 			yaml = <<-EOT
@@ -334,7 +334,7 @@ resource "harness_platform_environment" "test" {
        store_type = "REMOTE"
        connector_ref = "account.TF_GitX_connector"  
        repo_name = "pcf_practice"
-       file_path = ".harness/automation/overrides/a%[1]s.yaml"
+       file_path = ".harness/automation/overrides/%[1]s.yaml"
        branch = "main"
        }
        yaml = <<-EOT
