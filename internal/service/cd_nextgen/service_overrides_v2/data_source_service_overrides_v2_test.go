@@ -204,6 +204,13 @@ resource "harness_platform_environment" "test" {
 			name = "%[2]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
+            git_details {
+				store_type = "REMOTE"
+				connector_ref = "account.TF_GitX_connector"  
+				repo_name = "pcf_practice"
+				file_path = ".harness/automation/service/srv_%[1]s.yaml"
+				branch = "main"
+            }
 			yaml = <<-EOT
         service:
           name: %[1]s
