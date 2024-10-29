@@ -171,8 +171,8 @@ func testSourceRemoteInfrastructure(id string, name string) string {
 			git_details {
 				store_type = "REMOTE"
 				connector_ref = "account.TF_TerraformResource_git_connector"
-				repo_name = "terraform-test"
-				file_path = ".harness/%[1]s.yaml"
+				repo_name = "pcf_practice"
+				file_path = ".harness/remote/infra/%[1]s.yaml"
 				branch = "main"
 			}
 			yaml = <<-EOT
@@ -196,7 +196,7 @@ func testSourceRemoteInfrastructure(id string, name string) string {
      identifier = harness_platform_infrastructure.test.id
      env_id = harness_platform_environment.test.id
      git_details {
-     repo_name = "terraform-test"
+     repo_name = "pcf_practice"
      branch = "main"
     }
 		}

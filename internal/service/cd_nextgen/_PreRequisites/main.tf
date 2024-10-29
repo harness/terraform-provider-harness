@@ -152,20 +152,25 @@ resource "harness_platform_connector_github" "TF_Jajoo_github_connector" {
   depends_on = [harness_platform_connector_github.TF_open_repo_github_connector]
 }
 
-resource "harness_platform_connector_git" "TF_TerraformResource_git_connector" {
+resource "harness_platform_connector_github" "TF_TerraformResource_git_connector" {
   identifier       = "TF_TerraformResource_git_connector"
   name             = "TF_TerraformResource_git_connector"
   description      = "TF_TerraformResource_git_connector"
   tags             = ["ritek:test"]
 
-  url              = "https://github.com/wings-software/terraform-test"
-  connection_type  = "Repo"
-  credentials {
-    http {
-      username     = "admin"
-      password_ref = "account.TF_git_bot_token"
+  url             = "https://github.com/harness-automation"
+    connection_type = "Account"
+    validation_repo = "pcf_practice"
+    execute_on_delegate = false
+    credentials {
+      http {
+        username  = "harness-automation"
+        token_ref = "account.TF_harness_automation_github_token"
+      }
     }
-  }
+    api_authentication {
+        token_ref = "account.TF_harness_automation_github_token"
+    }
   depends_on = [harness_platform_connector_github.TF_Jajoo_github_connector]
 }
 
@@ -187,7 +192,7 @@ resource "harness_platform_connector_github" "TF_github_account_level_delegate_c
   api_authentication {
       token_ref = "account.TF_harness_automation_github_token"
   }
-  depends_on = [harness_platform_connector_git.TF_TerraformResource_git_connector]
+  depends_on = [harness_platform_connector_github.TF_TerraformResource_git_connector]
 }
 
 resource "harness_platform_connector_github" "TF_github_account_level_connector" {

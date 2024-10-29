@@ -306,8 +306,8 @@ func testResourceRemoteEnvironment(id string, name string) string {
     git_details {
     store_type = "REMOTE"
     connector_ref = "account.TF_TerraformResource_git_connector"
-    repo_name = "terraform-test"
-    file_path = ".harness/%[1]s.yaml"
+    repo_name = "pcf_practice"
+    file_path = ".harness/remote/env/%[1]s.yaml"
     branch = "main"
     }
     ## ENVIRONMENT V2 UPDATE
@@ -334,8 +334,8 @@ func testResourceImportRemoteEnvironment() string {
     git_details {
 		store_type = "REMOTE" 
 		connector_ref = "account.TF_TerraformResource_git_connector"
-		repo_name = "terraform-test"
-		file_path = ".harness/accountEnv.yaml"
+		repo_name = "pcf_practice"
+		file_path = ".harness/remote/env/accountEnv.yaml"
 		branch = "main"
 		import_from_git = "true"
 		is_force_import = "true"
