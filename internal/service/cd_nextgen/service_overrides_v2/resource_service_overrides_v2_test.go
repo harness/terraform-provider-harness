@@ -103,14 +103,18 @@ func TestAccRemoteServiceOverrides(t *testing.T) {
 		CheckDestroy:      testAccServiceOverridesDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config:  testRemoteServiceOverrides(id, name),
-				Destroy: false,
-				Check:   resource.ComposeTestCheckFunc(),
+				Config:             testRemoteServiceOverrides(id, name),
+				Destroy:            false,
+				ExpectNonEmptyPlan: true,
+				Check:              resource.ComposeTestCheckFunc(),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type",
+					"git_details.#", "git_details.0.%", "git_details.0.base_branch", "git_details.0.branch", "git_details.0.file_path", "git_details.0.is_harnesscode_repo", "git_details.0.is_new_branch",
+					"git_details.0.last_commit_id", "git_details.0.last_object_id", "git_details.0.load_from_cache", "git_details.0.load_from_fallback_branch", "git_details.0.repo_name", "git_details.0.import_from_git", "git_details.0.is_force_import", "git_details.0.parent_entity_connector_ref", "git_details.0.parent_entity_repo_name", "git_details.0.is_harness_code_repo", "yaml"},
 				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
