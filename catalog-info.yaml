@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: harness_terraform
+  description: Terraform provider for provisioning Harness resources
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: docs
+  owner: SalesEngineers
+  system: se-demo
+  lifecycle: production

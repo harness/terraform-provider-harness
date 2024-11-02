@@ -1,0 +1,9 @@
+site_name: "Harness Terraform Provider"
+repo_url: https://github.com/harness/terraform-provider-harness/
+edit_uri: https://github.com/harness/terraform-provider-harness/
+
+nav:
+  - Home: index.md
+
+plugins:
+  - techdocs-core
