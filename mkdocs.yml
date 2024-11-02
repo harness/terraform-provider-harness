@@ -4,6 +4,9 @@ edit_uri: https://github.com/harness/terraform-provider-harness/
 
 nav:
   - Home: index.md
+  - Resources: resources/*/*.md
+  - Data Sources: data-sources/*/*.md
+  - Guides: guides/*/*.md
 
 plugins:
   - techdocs-core
