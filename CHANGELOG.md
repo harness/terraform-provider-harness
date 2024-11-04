@@ -1,3 +1,10 @@
+# 0.34.2 (November 04,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_gitops_applications: add support for multi source applications
+resource/harness_platform_gitops_repository: add force delete repo that skips validation against apps using repo ([#1082](https://github.com/harness/terraform-provider-harness/issues/1082))
+
 # 0.34.1 (October 11,2024) 
 
 # 0.34.0 (October 09,2024) 
