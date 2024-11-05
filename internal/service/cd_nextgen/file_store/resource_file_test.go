@@ -188,7 +188,6 @@ func TestAccResourceFileStoreFileProjectLevel(t *testing.T) {
 }
 
 func TestAccResourceFileStoreFile_DeleteUnderlyingResource(t *testing.T) {
-	t.Skip("Skipping test for now as it is failing in CI")
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_file_store_file.test"

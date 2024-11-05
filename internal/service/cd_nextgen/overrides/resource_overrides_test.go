@@ -13,8 +13,7 @@ import (
 )
 
 func TestAccOverrides_ProjectScope(t *testing.T) {
-	t.Skip("Skipping this test as it need to check if overrides are supported or not")
-
+	t.Skip("Skipping Test until https://harness.atlassian.net/browse/CDS-81394 is done")
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	name := id
 	resourceName := "harness_platform_overrides.test"
@@ -42,8 +41,7 @@ func TestAccOverrides_ProjectScope(t *testing.T) {
 }
 
 func TestAccOverrides_OrgScope(t *testing.T) {
-	t.Skip("Skipping this test as it need to check if overrides are supported or not")
-
+	t.Skip("Skipping Test until https://harness.atlassian.net/browse/CDS-81394 is done")
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	name := id
 	resourceName := "harness_platform_overrides.test"
@@ -70,8 +68,7 @@ func TestAccOverrides_OrgScope(t *testing.T) {
 }
 
 func TestAccOverrides_AccountScope(t *testing.T) {
-	t.Skip("Skipping this test as it need to check if overrides are supported or not")
-
+	t.Skip("Skipping Test until https://harness.atlassian.net/browse/CDS-81394 is done")
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	name := id
 	resourceName := "harness_platform_overrides.test"
@@ -96,8 +93,7 @@ func TestAccOverrides_AccountScope(t *testing.T) {
 }
 
 func TestAccRemoteOverrides(t *testing.T) {
-	t.Skip("Skipping this test as it need to check if overrides are supported or not")
-
+	t.Skip("Skipping Test until https://harness.atlassian.net/browse/CDS-81394 is done")
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	name := id
 	resourceName := "harness_platform_overrides.test"
