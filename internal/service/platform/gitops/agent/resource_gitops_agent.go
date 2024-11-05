@@ -22,6 +22,34 @@ func ResourceGitopsAgent() *schema.Resource {
 		UpdateContext: resourceGitopsAgentUpdate,
 		DeleteContext: resourceGitopsAgentDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
+		CustomizeDiff: func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+			var e error
+			if diff.HasChange("project_id") && diff.Id() != "" {
+				e = fmt.Errorf("field 'project_id' cannot be changed after the resource is created")
+			}
+			if diff.HasChange("org_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("account_id") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created")
+				}
+			}
+			if diff.HasChange("identifier") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'identifier' cannot be changed after the resource is created:%v", e)
+				} else {
+					e = fmt.Errorf("field 'identifier' cannot be changed after the resource is created")
+				}
+			}
+			return e
+		},
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -71,6 +99,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				Description: "Metadata of the agent.",
 				Type:        schema.TypeList,
 				Optional:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {

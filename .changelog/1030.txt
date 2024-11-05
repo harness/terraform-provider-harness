@@ -1,0 +1,9 @@
+```release-note:fix
+modified:   internal/service/platform/gitops/agent/resource_gitops_agent.go
+        modified:   internal/service/platform/gitops/applications/resource_gitops_applications.go
+        modified:   internal/service/platform/gitops/repository_certificates/resource_gitops_repo_certs.go
+harness_platform_gitops_agent: add validation in terraform apply stage which fields cannot be updated.
+harness_platform_gitops_applications: add validation in terraform apply stage which fields cannot be updated, make `project` computed.
+harness_platform_gitops_repository_certificates: make account, org, project, agent fields immutable
+harness_platform_gitops_gnupg: make account, org, project, agent fields immutable
+```

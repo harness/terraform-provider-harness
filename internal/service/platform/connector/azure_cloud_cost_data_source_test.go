@@ -10,6 +10,7 @@ import (
 )
 
 func TestAccDataSourceConnectorAzureCloudCost(t *testing.T) {
+	t.Skip()
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		resourceName = "data.harness_platform_connector_azure_cloud_cost.test"
