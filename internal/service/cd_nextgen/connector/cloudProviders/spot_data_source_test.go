@@ -43,8 +43,8 @@ func testAccDataSourceConnectorSpot(name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 			permanent_token {
-				spot_account_id_ref = "account.TEST_spot_account_id"
-				api_token_ref = "account.TEST_spot_api_token"
+				spot_account_id_ref = "account.TF_spot_account_id"
+				api_token_ref = "account.TF_spot_api_token"
 				delegate_selectors = ["harness-delegate"]
 			}
 		}
