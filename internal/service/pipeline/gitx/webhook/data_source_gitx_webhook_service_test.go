@@ -85,7 +85,7 @@ func testDataSourceGitXOrgLevel(webhook_identifier string, webhook_name string) 
 			identifier= "%[1]s"
 			name = "%[2]s"
 			org_id = "default"
-			repo_name =  "GitXTest3"
+			repo_name =  "TriggerTesting"
 			connector_ref = "account.TF_github_account_level_connector"
 		}
 		data "harness_platform_gitx_webhook" "test" {
