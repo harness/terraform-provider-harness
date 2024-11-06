@@ -41,17 +41,17 @@ resource "harness_platform_connector_awscc" "test" {
 
 - `account_id` (String) The AWS account id.
 - `cross_account_access` (Block List, Min: 1, Max: 1) Harness uses the secure cross-account role to access your AWS account. The role includes a restricted policy to access the cost and usage reports and resources for the sole purpose of cost analysis and cost optimization. (see [below for nested schema](#nestedblock--cross_account_access))
-- `features_enabled` (Set of String) The features enabled for the connector. Valid values are BILLING, OPTIMIZATION, VISIBILITY.
+- `features_enabled` (Set of String) The features enabled for the connector. Valid values are BILLING, OPTIMIZATION, VISIBILITY, GOVERNANCE.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
 ### Optional
 
-- `report_name` (String) The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.
-- `s3_bucket` (String) The name of s3 bucket.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
+- `report_name` (String) The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.
+- `s3_bucket` (String) The name of s3 bucket.
 - `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only

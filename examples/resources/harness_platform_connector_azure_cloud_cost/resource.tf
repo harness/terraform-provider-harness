@@ -4,7 +4,7 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
   description = "example"
   tags        = ["foo:bar"]
 
-  features_enabled = ["BILLING", "VISIBILITY", "OPTIMIZATION"]
+  features_enabled = ["BILLING", "VISIBILITY", "OPTIMIZATION", "GOVERNANCE"]
   tenant_id        = "tenant_id"
   subscription_id  = "subscription_id"
   billing_export_spec {

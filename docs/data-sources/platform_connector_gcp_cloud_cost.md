@@ -35,7 +35,7 @@ data "harness_platform_connector_gcp_cloud_cost" "example" {
 
 - `billing_export_spec` (List of Object) Returns billing details. (see [below for nested schema](#nestedatt--billing_export_spec))
 - `description` (String) Description of the resource.
-- `features_enabled` (Set of String) Indicates which features to enable among Billing, Optimization, and Visibility.
+- `features_enabled` (Set of String) Indicates which features to enable among Billing, Optimization, Visibility and Governance.
 - `gcp_project_id` (String) GCP Project Id.
 - `id` (String) The ID of this resource.
 - `service_account_email` (String) Email corresponding to the Service Account.
@@ -48,5 +48,3 @@ Read-Only:
 
 - `data_set_id` (String)
 - `table_id` (String)
-
-
