@@ -12,7 +12,7 @@ func DataSourceConnectorAzureCloudCost() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"features_enabled": {
-				Description: "Indicates which feature to enable among Billing, Optimization, and Visibility.",
+				Description: "Indicates which feature to enable among Billing, Optimization, Visibility and Governance.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem: &schema.Schema{

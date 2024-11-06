@@ -4,7 +4,7 @@ resource "harness_platform_connector_gcp_cloud_cost" "test" {
   description = "test"
   tags        = ["foo:bar"]
 
-  features_enabled      = ["BILLING", "VISIBILITY", "OPTIMIZATION"]
+  features_enabled      = ["BILLING", "VISIBILITY", "OPTIMIZATION", "GOVERNANCE"]
   gcp_project_id        = "gcp_project_id"
   service_account_email = "service_account_email"
   billing_export_spec {
