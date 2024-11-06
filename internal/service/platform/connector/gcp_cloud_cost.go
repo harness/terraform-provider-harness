@@ -26,7 +26,7 @@ func ResourceConnectorGCPCloudCost() *schema.Resource {
 				Required:    true,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{"BILLING", "OPTIMIZATION", "GOVERNANCE"}, false),
+					ValidateFunc: validation.StringInSlice([]string{"BILLING", "OPTIMIZATION", "VISIBILITY", "GOVERNANCE"}, false),
 				},
 			},
 			"gcp_project_id": {
