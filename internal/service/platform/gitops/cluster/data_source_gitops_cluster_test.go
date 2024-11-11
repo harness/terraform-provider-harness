@@ -85,7 +85,7 @@ func testAccDataSourceGitopsCluster(id string, accountId string, name string, ag
 		resource "harness_platform_gitops_cluster" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
-			agent_id = "account.%[4]s"
+			agent_id = "%[4]s"
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
  			request {
@@ -114,7 +114,7 @@ func testAccDataSourceGitopsCluster(id string, accountId string, name string, ag
 			account_id = "%[2]s"
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
-			agent_id = "account.%[4]s"
+			agent_id = "%[4]s"
 
 		}
 		`, id, accountId, name, agentId, clusterName, clusterServer, clusterToken)
