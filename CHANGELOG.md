@@ -1,3 +1,11 @@
+# 0.34.3 (November 08,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_connector_awscc: Added GOVERNANCE as a feature that can be enabled for the AWS Cloud Cost connector.
+harness_platform_connector_azure_cloud_cost: Added GOVERNANCE as a feature that can be enabled for the Azure Cloud Cost connector.
+harness_platform_connector_gcp_cloud_cost: Added GOVERNANCE as a feature that can be enabled for the GCP Cloud Cost connector. ([#1091](https://github.com/harness/terraform-provider-harness/issues/1091))
+
 # 0.34.2 (November 05,2024) 
 
 ENHANCEMENTS:
