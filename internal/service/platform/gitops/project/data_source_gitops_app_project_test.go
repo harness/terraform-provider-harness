@@ -12,6 +12,7 @@ import (
 func TestAccDataSourceGitopsProjectAccLevel(t *testing.T) {
 	resourceName := "harness_platform_gitops_app_project.test"
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	agentNamespace := os.Getenv("HARNESS_TEST_GITOPS_AGENT_NAMESPACE")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -19,7 +20,7 @@ func TestAccDataSourceGitopsProjectAccLevel(t *testing.T) {
 		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataGitopsProjectOrgLevel(agentId, accountId, "my-project-3", "*"),
+				Config: testAccDataGitopsProjectOrgLevel(agentId, agentNamespace, accountId, "my-project-3", "*"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
@@ -29,7 +30,7 @@ func TestAccDataSourceGitopsProjectAccLevel(t *testing.T) {
 
 }
 
-func testAccDataGitopsProjectOrgLevel(agentId string, accountId string, name string, namespace string) string {
+func testAccDataGitopsProjectOrgLevel(agentId string, agentNamespace string, accountId string, name string, namespace string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_gitops_app_project" "test" {
 			account_id = "%[1]s"
@@ -38,7 +39,7 @@ func testAccDataGitopsProjectOrgLevel(agentId string, accountId string, name str
 			project {
 				metadata {
 					name = "%[3]s"
-					namespace = "%[2]s"
+					namespace = "%[5]s"
 					finalizers = ["resources-finalizer.argocd.argoproj.io"]
 					labels = {
 						v1 = "k1"
@@ -123,5 +124,5 @@ func testAccDataGitopsProjectOrgLevel(agentId string, accountId string, name str
 			agent_id = harness_platform_gitops_app_project.test.agent_id
 			query_name = harness_platform_gitops_app_project.test.project[0].metadata[0].name
 		}
-	`, accountId, agentId, name, namespace)
+	`, accountId, agentId, name, namespace, agentNamespace)
 }

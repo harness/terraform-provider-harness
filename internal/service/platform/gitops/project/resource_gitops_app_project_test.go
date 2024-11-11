@@ -16,6 +16,7 @@ func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
 	id = strings.ReplaceAll(id, "_", "")
 	name := strings.ToLower(id)
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	agentNamespace := os.Getenv("HARNESS_TEST_GITOPS_AGENT_NAMESPACE")
 	resourceName := "harness_platform_gitops_app_project.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resource.UnitTest(t, resource.TestCase{
@@ -24,13 +25,13 @@ func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
 		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, name, "*"),
+				Config: testAccResourceGitopsProjectAccountLevel(agentId, agentNamespace, accountId, name, "*"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
 			},
 			{
-				Config: testAccResourceGitopsProjectAccountLevelUpdate(agentId, accountId, name, "roll"),
+				Config: testAccResourceGitopsProjectAccountLevelUpdate(agentId, agentNamespace, accountId, name, "roll"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
@@ -47,7 +48,7 @@ func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
 
 }
 
-func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, name string, namespace string) string {
+func testAccResourceGitopsProjectAccountLevel(agentId string, agentNamespace string, accountId string, name string, namespace string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_gitops_app_project" "test" {
 			account_id = "%[1]s"
@@ -56,7 +57,7 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 			project {
 				metadata {
 					name = "%[3]s"
-					namespace = "%[2]s"
+					namespace = "%[5]s"
 					finalizers = ["resources-finalizer.argocd.argoproj.io"]
 					labels = {
 						v1 = "k1"
@@ -135,10 +136,10 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 				}
 			}
 		}
-	`, accountId, agentId, name, namespace)
+	`, accountId, agentId, name, namespace, agentNamespace)
 }
 
-func testAccResourceGitopsProjectAccountLevelUpdate(agentId string, accountId string, name string, namespace string) string {
+func testAccResourceGitopsProjectAccountLevelUpdate(agentId string, agentNamespace string, accountId string, name string, namespace string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_gitops_app_project" "test" {
 			account_id = "%[1]s"
@@ -147,7 +148,7 @@ func testAccResourceGitopsProjectAccountLevelUpdate(agentId string, accountId st
 			project {
 				metadata {
 					name = "%[3]s"
-					namespace = "%[2]s"
+					namespace = "%[5]s"
 					finalizers = ["resources-finalizer.argocd.argoproj.io"]
 					labels = {
 						v1 = "k2"
@@ -226,5 +227,5 @@ func testAccResourceGitopsProjectAccountLevelUpdate(agentId string, accountId st
 				}
 			}
 		}
-	`, accountId, agentId, name, namespace)
+	`, accountId, agentId, name, namespace, agentNamespace)
 }
