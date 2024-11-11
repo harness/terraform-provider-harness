@@ -56,7 +56,7 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 			project {
 				metadata {
 					name = "%[3]s"
-					namespace = "rollouts"
+					namespace = "%[2]s"
 					finalizers = ["resources-finalizer.argocd.argoproj.io"]
 					labels = {
 						v1 = "k1"
@@ -147,7 +147,7 @@ func testAccResourceGitopsProjectAccountLevelUpdate(agentId string, accountId st
 			project {
 				metadata {
 					name = "%[3]s"
-					namespace = "rollouts"
+					namespace = "%[2]s"
 					finalizers = ["resources-finalizer.argocd.argoproj.io"]
 					labels = {
 						v1 = "k2"
