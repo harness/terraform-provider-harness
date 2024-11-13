@@ -98,10 +98,16 @@ func testDataSourceGitXOrgLevel(webhook_identifier string, webhook_name string) 
 
 func testDataSourceGitXProjectLevel(webhook_identifier string, webhook_name string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_project" "Project_Test" {
+				identifier = "%[1]s_project"
+				name = "%[2]s_project"
+				color = "#0063F7"
+				org_id = "default"
+		}
 		resource "harness_platform_gitx_webhook" "test" {
 			identifier= "%[1]s"
 			name = "%[2]s"
-			project_id = "TF_Pipeline_Test"
+			project_id = harness_platform_project.Project_Test.identifier
 			org_id = "default"
 			repo_name =  "GitXTest3"
 			connector_ref = "account.TF_github_account_level_connector"

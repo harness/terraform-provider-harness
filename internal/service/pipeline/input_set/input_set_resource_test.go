@@ -728,10 +728,16 @@ func testAccResourceInputSetImportFromGit(id string, name string) string {
 					identifier = "%[1]s"
 					name = "%[2]s"
 				}
+		resource "harness_platform_project" "Project_Test" {
+				identifier = "TF_InputSet_Pipeline_Test"
+				name = "TF_InputSet_Pipeline_Test"
+				color = "#0063F7"
+				org_id = "default"
+		}
         resource "harness_platform_input_set" "test" {
                         identifier = "inputset"
                         org_id = "default"
-						project_id = "TF_Pipeline_Test"
+						project_id = harness_platform_project.Project_Test.identifier
                         name = "inputset"
                         pipeline_id = "DoNotDeletePipeline"
                         import_from_git = true
