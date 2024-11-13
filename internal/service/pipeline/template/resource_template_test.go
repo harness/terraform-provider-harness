@@ -242,6 +242,38 @@ func TestAccResourceTemplate_ProjectScopeImportFromGit(t *testing.T) {
 	})
 }
 
+func TestAccResourceTemplate_ProjectScopeImportFromGitNonDefaultBranch(t *testing.T) {
+	id := "projecttemplate"
+	name := id
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+			"null": {},
+		},
+		CheckDestroy: testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateProjectScopeImportFromGitNonDefaultBranch(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "projecttemplate"),
+					resource.TestCheckResourceAttr(resourceName, "name", "projecttemplate"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments", "git_details.0.branch_name", "git_details.0.file_path", "git_details.0.last_commit_id", "git_details.0.repo_name", "git_import_details.#", "git_import_details.0.%", "git_import_details.0.branch_name", "git_import_details.0.connector_ref", "git_import_details.0.file_path", "git_import_details.0.is_force_import", "git_import_details.0.repo_name", "import_from_git", "is_stable", "template_import_request.#", "template_import_request.0.%", "template_import_request.0.template_description", "template_import_request.0.template_name", "template_import_request.0.template_version", "template_yaml", "version", "git_details.0.last_object_id"},
+			},
+		},
+	})
+}
+
 func TestAccResourceTemplate_AccountScopeImportFromGit(t *testing.T) {
 	id := "accounttemplate"
 	name := id
@@ -1406,6 +1438,46 @@ func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string
 func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) string {
 	// This has project and org id static due to its config in the git.
 	return fmt.Sprintf(`
+		resource "harness_platform_project" "Project_Test" {
+				identifier = "TF_Project_Pipeline_Test"
+				name = "TF_Project_Pipeline_Test"
+				color = "#0063F7"
+				org_id = "default"
+		}
+        resource "harness_platform_template" "test" {
+                        identifier = "%[1]s"
+                        org_id = "default"
+						project_id = harness_platform_project.Project_Test.identifier
+                        name = "%[2]s"
+						version = "v2"
+                        import_from_git = true
+                        git_import_details {
+                            branch_name = "main"
+                            file_path = ".harness/projecttemplate.yaml"
+                            connector_ref = "account.TF_open_repo_github_connector"
+                            repo_name = "open-repo"
+                        }
+                        template_import_request {
+                            template_name = "%[2]s"
+							template_version = "v2"
+                            template_description = ""
+                        }
+                }
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+		}
+		
+		resource "null_resource" "next" {
+  			depends_on = [time_sleep.wait_4_seconds]
+		}
+        `, id, name)
+}
+
+func testAccResourceTemplateProjectScopeImportFromGitNonDefaultBranch(id string, name string) string {
+	// This has project and org id static due to its config in the git.
+	return fmt.Sprintf(`
         resource "harness_platform_template" "test" {
                         identifier = "%[1]s"
                         org_id = "default"
@@ -1414,7 +1486,7 @@ func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) st
 						version = "v2"
                         import_from_git = true
                         git_import_details {
-                            branch_name = "main"
+                            branch_name = "main-patch"
                             file_path = ".harness/projecttemplate.yaml"
                             connector_ref = "account.TF_open_repo_github_connector"
                             repo_name = "open-repo"

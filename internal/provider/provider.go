@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
 	"log"
@@ -294,6 +295,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_governance_rule":                          governance_rule.DatasourceRule(),
 				"harness_governance_rule_set":                      governance_rule_set.DatasourceRuleSet(),
 				"harness_cluster_orchestrator":                     cluster_orchestrator.DataSourceClusterOrchestrator(),
+				"harness_platform_infra_module":                    module_registry.DataSourceInfraModule(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pipeline_template.ResourceTemplate(),
@@ -441,6 +443,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_governance_rule":                          governance_rule.ResourceRule(),
 				"harness_governance_rule_set":                      governance_rule_set.ResourceRuleSet(),
 				"harness_cluster_orchestrator":                     cluster_orchestrator.ResourceClusterOrchestrator(),
+				"harness_platform_infra_module":                    module_registry.ResourceInfraModule(),
 			},
 		}
 

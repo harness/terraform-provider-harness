@@ -3,6 +3,7 @@ package triggers
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -89,6 +90,8 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 			d.Get("target_id").(string), &nextgen.TriggersApiCreateTriggerOpts{
 				WithServiceV2: optional.NewBool(true),
 			})
+		// A FORCED PAUSE TO PREVENT DUPLICATE WEBHOOK CREATION.
+		time.Sleep(5 * time.Second)
 	} else {
 		resp, httpResp, err = c.TriggersApi.UpdateTrigger(ctx, d.Get("yaml").(string), c.AccountId, d.Get("org_id").(string),
 			d.Get("project_id").(string),
