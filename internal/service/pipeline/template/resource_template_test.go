@@ -1406,10 +1406,16 @@ func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string
 func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) string {
 	// This has project and org id static due to its config in the git.
 	return fmt.Sprintf(`
+		resource "harness_platform_project" "Project_Test" {
+				identifier = "TF_Project_Pipeline_Test"
+				name = "TF_Project_Pipeline_Test"
+				color = "#0063F7"
+				org_id = "default"
+		}
         resource "harness_platform_template" "test" {
                         identifier = "%[1]s"
                         org_id = "default"
-						project_id = "TF_Pipeline_Test"
+						project_id = harness_platform_project.Project_Test.identifier
                         name = "%[2]s"
 						version = "v2"
                         import_from_git = true
