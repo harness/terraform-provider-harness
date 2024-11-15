@@ -29,6 +29,7 @@ website/node_modules
 .vscode
 *debug*
 website/vendor
+test-report.xml
 
 # Test exclusions
 !command/test-fixtures/**/*.tfstate

@@ -1349,7 +1349,9 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 	d.Set("repo_id", app.RepoIdentifier)
 	d.Set("name", app.Name)
 	d.Set("skip_repo_validation", app.SkipRepoValidation)
-	d.Set("repo_ids", app.RepoIdentifiers)
+	if app.RepoIdentifiers != nil {
+		d.Set("repo_ids", app.RepoIdentifiers)
+	}
 
 	if app.App != nil {
 		var applicationList = []interface{}{}
@@ -1368,6 +1370,21 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 			if app.App.Metadata.Annotations != nil {
 				metadata["annotations"] = app.App.Metadata.Annotations
 			}
+			if app.App.Metadata.Finalizers != nil {
+				metadata["finalizers"] = app.App.Metadata.Finalizers
+			}
+			if app.App.Metadata.OwnerReferences != nil {
+				var ownerReferencesList = []interface{}{}
+				for _, ownerReference := range app.App.Metadata.OwnerReferences {
+					var ownerReferenceMap = map[string]interface{}{}
+					ownerReferenceMap["api_version"] = ownerReference.ApiVersion
+					ownerReferenceMap["kind"] = ownerReference.Kind
+					ownerReferenceMap["name"] = ownerReference.Name
+					ownerReferenceMap["uid"] = ownerReference.Uid
+					ownerReferencesList = append(ownerReferencesList, ownerReferenceMap)
+				}
+				metadata["owner_references"] = ownerReferencesList
+			}
 			metadataList = append(metadataList, metadata)
 			application["metadata"] = metadataList
 		}
@@ -1381,7 +1398,7 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 			}
 			if app.App.Spec.Source != nil {
 				source := getSourceForState(app.App.Spec)
-				spec["source"] = source
+				spec["source"] = []interface{}{source}
 			}
 			if len(app.App.Spec.Sources) > 0 {
 				var sourcesList = []interface{}{}
