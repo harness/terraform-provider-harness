@@ -2,8 +2,8 @@ package connector
 
 import (
 	"context"
-    "strings"
-	
+    	"strings"
+
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal/utils"
