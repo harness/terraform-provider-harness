@@ -2,7 +2,7 @@ package connector
 
 import (
 	"context"
-
+    "strings"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal/utils"
@@ -25,6 +25,11 @@ func ResourceConnectorServiceNow() *schema.Resource {
 				Description: "URL of service now.",
 				Type:        schema.TypeString,
 				Required:    true,
+				// Suppress the diff shown if the service_now_url are equal when both compared after removing / suffix if present.
+				// API implementation returns url appended with /
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return strings.TrimSuffix(old, "/") == strings.TrimSuffix(new, "/")
+				},
 			},
 			"username": {
 				Description: "Username to use for authentication.",
