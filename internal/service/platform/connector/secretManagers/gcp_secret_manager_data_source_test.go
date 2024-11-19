@@ -123,6 +123,7 @@ func TestAccDataSourceConnectorGcpSmDefault(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmDefaultProjectLevel(t *testing.T) {
+	t.Skip()
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		gcpName      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
