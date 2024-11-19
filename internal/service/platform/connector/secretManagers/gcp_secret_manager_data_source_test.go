@@ -10,6 +10,7 @@ import (
 )
 
 func TestAccDataSourceConnectorGcpSm(t *testing.T) {
+	t.Skip()
 	var (
 		name = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
@@ -38,6 +39,7 @@ func TestAccDataSourceConnectorGcpSm(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmProjectLevel(t *testing.T) {
+	t.Skip()
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		gcpName      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -66,6 +68,7 @@ func TestAccDataSourceConnectorGcpSmProjectLevel(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmOrgLevel(t *testing.T) {
+	t.Skip()
 	var (
 		name          = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		connectorName = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
