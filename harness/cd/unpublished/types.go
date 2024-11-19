@@ -59,6 +59,7 @@ type SecretManager struct {
 	KeyRing                                       string             `json:"keyRing,omitempty"`
 	KeyName                                       string             `json:"keyName,omitempty"`
 	Credentials                                   string             `json:"credentials,omitempty"`
+	UsePutSecret                                  bool               `json:"usePutSecret,omitempty"`
 }
 
 type User struct {

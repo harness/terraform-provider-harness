@@ -19,4 +19,5 @@ type AwsSecretManager struct {
 	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
 	Default_          bool     `json:"default,omitempty"`
+	UsePutSecret      bool     `json:"usePutSecret,omitempty"`
 }
