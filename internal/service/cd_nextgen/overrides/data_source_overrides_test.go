@@ -9,8 +9,7 @@ import (
 )
 
 func TestAccDataSourceOverrides(t *testing.T) {
-	t.Skip("Skipping this test as it need to check if overrides are supported or not")
-
+	t.Skip("Skipping Test until https://harness.atlassian.net/browse/CDS-81394 is done")
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	resourceName := "data.harness_platform_overrides.test"
@@ -31,8 +30,7 @@ func TestAccDataSourceOverrides(t *testing.T) {
 }
 
 func TestDataSourceRemoteOverrides(t *testing.T) {
-	t.Skip("Skipping this test as it need to check if overrides are supported or not")
-
+	t.Skip("Skipping Test until https://harness.atlassian.net/browse/CDS-81394 is done")
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	resourceName := "data.harness_platform_overrides.test"

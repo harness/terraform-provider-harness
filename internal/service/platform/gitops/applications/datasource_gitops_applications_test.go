@@ -17,11 +17,17 @@ func TestAccDataSourceGitopsApplication(t *testing.T) {
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
-	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
+	//	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
+	//	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
 	repoId := os.Getenv("HARNESS_TEST_GITOPS_REPO_ID")
-	repo := "https://github.com/argoproj/argocd-example-apps"
+	repo := "https://github.com/harness-apps/hosted-gitops-example-apps"
+
 	clusterName := id
+	clusterId := id
+	//	clusterResourceName := "data.harness_platform_gitops_cluster.test"
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
+	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
+
 	namespace := "test"
 	resourceName := "harness_platform_gitops_applications.test"
 	resource.UnitTest(t, resource.TestCase{
@@ -29,10 +35,10 @@ func TestAccDataSourceGitopsApplication(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceGitopsApplication(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId),
+				Config: testAccDataSourceGitopsApplication(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId, clusterToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 		},
@@ -40,7 +46,7 @@ func TestAccDataSourceGitopsApplication(t *testing.T) {
 
 }
 
-func testAccDataSourceGitopsApplication(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterId string, repo string, repoId string) string {
+func testAccDataSourceGitopsApplication(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterId string, repo string, repoId string, clusterToken string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -83,8 +89,45 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 			upsert = true
 		}
 
+		resource "harness_platform_gitops_cluster" "test" {
+			identifier = "%[8]s"
+			account_id = "%[2]s"
+			agent_id = "%[4]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+ 			request {
+				upsert = true
+				cluster {
+					server = "%[7]s"
+					name = "%[8]s"
+					config {
+						bearer_token = "%[11]s"
+						tls_client_config {
+							insecure = true
+						}
+						cluster_connection_type = "SERVICE_ACCOUNT"
+					}
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
+				]
+			}
+		}
+
+		data "harness_platform_gitops_cluster" "test" {
+			depends_on = [harness_platform_gitops_cluster.test]
+			identifier = harness_platform_gitops_cluster.test.id
+			account_id = "%[2]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[4]s"
+
+		}
+
 		resource "harness_platform_gitops_applications" "test" {
-			depends_on = [harness_platform_gitops_repository.test]
+			depends_on = [harness_platform_gitops_repository.test, harness_platform_gitops_cluster.test]
 			application {
 				metadata {
 					annotations = {}
@@ -109,10 +152,9 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 						]
 					}
 					source {
-						target_revision = "master"
-						repo_url = "%[9]s"
-						path = "helm-guestbook"
-						
+							target_revision = "master"
+							repo_url = "%[9]s"
+							path = "helm-guestbook"
 					}
 					destination {
 						namespace = "%[6]s"
@@ -126,9 +168,10 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 			identifier = "%[1]s"
 			name = "%[3]s"
 			cluster_id = "%[8]s"
-			repo_id = "%[10]s"
+			repo_id = "%[1]s"
 			agent_id = "%[4]s"
 		}
+
 		data "harness_platform_gitops_applications" "test"{
 			depends_on = [harness_platform_gitops_applications.test]
 			identifier = harness_platform_gitops_applications.test.id
@@ -138,6 +181,6 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 			agent_id = "%[4]s"
 			name = "%[3]s"
 		}
-		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId)
+		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId, clusterToken)
 
 }

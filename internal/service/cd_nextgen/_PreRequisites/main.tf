@@ -16,13 +16,6 @@ variable "TF_VAR_harness_automation_github_token" {
   type = string
 }
 
-resource "harness_platform_project" "TF_Pipeline_Test" {
-		identifier = "TF_Pipeline_Test"
-		name = "TF_Pipeline_Test"
-		color = "#0063F7"
-		org_id = "default"
-}
-
 resource "harness_platform_secret_text" "TF_spot_account_id" {
   identifier                = "TF_spot_account_id"
   name                      = "TF_spot_account_id"
@@ -31,7 +24,6 @@ resource "harness_platform_secret_text" "TF_spot_account_id" {
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
   value                     = "my_secret_value"
-  depends_on                = [harness_platform_project.TF_Pipeline_Test]
 }
 
 resource "harness_platform_secret_text" "TF_spot_api_token" {
