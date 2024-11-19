@@ -42,6 +42,11 @@ func ResourceConnectorAwsSM() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
+			"use_put_secret": {
+				Description: "Whether to update secret value using putSecretValue action.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"credentials": {
 				Description: "Credentials to connect to AWS.",
 				Type:        schema.TypeList,
@@ -184,6 +189,10 @@ func buildConnectorAwsSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.AwsSecretManager.Default_ = attr.(bool)
 	}
 
+	if attr, ok := d.GetOk("use_put_secret"); ok {
+		connector.AwsSecretManager.UsePutSecret = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("credentials"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.AwsSecretManager.Credential = &nextgen.AwsSecretManagerCredential{}
@@ -237,6 +246,7 @@ func readConnectorAwsSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 	d.Set("region", connector.AwsSecretManager.Region)
 	d.Set("delegate_selectors", connector.AwsSecretManager.DelegateSelectors)
 	d.Set("default", connector.AwsSecretManager.Default_)
+	d.Set("use_put_secret", connector.AwsSecretManager.UsePutSecret)
 
 	switch connector.AwsSecretManager.Credential.Type_ {
 	case nextgen.AwsSecretManagerAuthTypes.AssumeIAMRole:

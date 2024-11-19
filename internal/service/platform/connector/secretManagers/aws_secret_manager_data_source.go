@@ -21,6 +21,11 @@ func DatasourceConnectorAwsSM() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"use_put_secret": {
+				Description: "Whether to update secret value using putSecretValue action.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
 			"delegate_selectors": {
 				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
