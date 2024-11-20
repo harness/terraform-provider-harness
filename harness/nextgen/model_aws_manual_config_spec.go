@@ -14,4 +14,5 @@ type AwsManualConfigSpec struct {
 	AccessKey    string `json:"accessKey,omitempty"`
 	AccessKeyRef string `json:"accessKeyRef,omitempty"`
 	SecretKeyRef string `json:"secretKeyRef"`
+	SessionTokenRef string `json:"sessionTokenRef,omitempty"`
 }
