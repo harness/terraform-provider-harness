@@ -24,6 +24,7 @@ resource "harness_platform_connector_aws" "aws" {
   manual {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
+    session_token_ref  = "session_token"
     delegate_selectors = ["harness-delegate"]
     region             = "aws_region"
   }
@@ -40,6 +41,7 @@ resource "harness_platform_connector_aws" "aws" {
   manual {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
+    session_token_ref  = "session_token"
     delegate_selectors = ["harness-delegate"]
     region             = "aws_region"
   }
@@ -61,6 +63,7 @@ resource "harness_platform_connector_aws" "aws" {
   manual {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
+    session_token_ref  = "session_token"
     delegate_selectors = ["harness-delegate"]
     region             = "aws_region"
   }
@@ -82,6 +85,7 @@ resource "harness_platform_connector_aws" "aws" {
   manual {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
+    session_token_ref  = "session_token"
     delegate_selectors = ["harness-delegate"]
     region             = "aws_region"
   }
@@ -211,6 +215,7 @@ Optional:
 
 - `access_key` (String) AWS access key.
 - `access_key_ref` (String) Reference to the Harness secret containing the aws access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `session_token_ref` (String) Reference to the Harness secret containing the aws session token.
 - `delegate_selectors` (Set of String) Connect only use delegates with these tags.
 - `region` (String) Test Region to perform Connection test of AWS Connector.
 

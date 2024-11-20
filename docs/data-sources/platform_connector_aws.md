@@ -111,6 +111,7 @@ Read-Only:
 - `access_key_ref` (String) Reference to the Harness secret containing the aws access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `delegate_selectors` (Set of String) Connect only use delegates with these tags.
 - `secret_key_ref` (String) Reference to the Harness secret containing the aws secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `session_token_ref` (String) Reference to the Harness secret containing the aws session token.
 - `region` AWS Region to perform Connection test of Connector.
 
 
