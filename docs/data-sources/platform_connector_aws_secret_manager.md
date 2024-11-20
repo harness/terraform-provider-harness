@@ -45,6 +45,7 @@ data "harness_platform_connector_aws_secret_manager" "example" {
 - `region` (String) The AWS region where the AWS Secret Manager is.
 - `secret_name_prefix` (String) A prefix to be added to all secrets.
 - `tags` (Set of String) Tags to associate with the resource.
+- `use_put_secret` (Boolean) Whether to update secret value using putSecretValue action.
 
 <a id="nestedatt--credentials"></a>
 ### Nested Schema for `credentials`
