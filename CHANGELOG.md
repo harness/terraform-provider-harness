@@ -1,14 +1,10 @@
 
-<a name="0.4.15"></a>
-## 0.4.15 (2024-11-19)
+<a name="0.4.16"></a>
+## 0.4.16 (2024-11-20)
 
 ### Add
 
 * Add Support for Execute on Delegate in Git Connector ([#571](https://github.com/harness/harness-go-sdk/issues/571))
-
-### Changes
-
-* changes for execution summary outline API ([#543](https://github.com/harness/harness-go-sdk/issues/543))
 
 ### Improve
 
@@ -16,6 +12,8 @@
 
 ### Release
 
+* Release version 0.4.15 11-19-2024
+* Release v0.4.15
 * Release version 0.4.14 11-06-2024
 * Release v0.4.14
 * Release version 0.4.13 10-30-2024
@@ -56,6 +54,4 @@
 * Release v0.3.98
 * Release version 0.3.97 07-17-2024
 * Release v0.3.97
-* Release version 0.3.96 07-12-2024
-* Release v0.3.96
 
