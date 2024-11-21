@@ -360,6 +360,7 @@ func testAccResourceConnectorAws_manual(id string, name string) string {
 			manual {
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+				session_token_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
 				region = "us-east-1"
 			}
@@ -395,6 +396,7 @@ func testAccResourceConnectorAws_manual_equal_jitter(id string, name string) str
 			manual {
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+				session_token_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
 				region = "us-east-1"
 			}
@@ -435,6 +437,7 @@ func testAccResourceConnectorAws_manual_full_jitter(id string, name string) stri
 			manual {
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+				session_token_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
 				region = "us-east-1"
 			}
@@ -475,6 +478,7 @@ func testAccResourceConnectorAws_manual_fixed_delay(id string, name string) stri
 			manual {
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+				session_token_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
 				region = "us-east-1"
 			}
