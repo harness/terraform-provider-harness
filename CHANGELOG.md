@@ -14,8 +14,6 @@
 
 * Release version 0.4.17 11-25-2024
 * Release v0.4.17
-* Release version 0.4.16-fix-dbops-743 11-25-2024
-* Release v0.4.16-fix-dbops-743
 * Release version 0.4.16 11-20-2024
 * Release v0.4.16
 * Release version 0.4.15 11-19-2024
