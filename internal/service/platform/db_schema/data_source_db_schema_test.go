@@ -67,7 +67,6 @@ func testAccDataSourceDBSchema(id string, name string) string {
                         org_id = harness_platform_project.test.org_id
 						project_id = harness_platform_project.test.id
                         name = "%[2]s"
-						service = "s1"
                         tags = ["foo:bar", "bar:foo"]
                         schema_source {
 							connector = "%[1]s"
