@@ -240,6 +240,21 @@ func (a *DatabaseSchemaApiService) V1DeleteProjDbSchema(ctx context.Context, org
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
 	}
+
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return nil, err
@@ -365,6 +380,21 @@ func (a *DatabaseSchemaApiService) V1GetProjDbSchema(ctx context.Context, org st
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
 	}
+
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -508,6 +538,7 @@ func (a *DatabaseSchemaApiService) V1ListProjDbSchema(ctx context.Context, org s
 	if localVarOptionals != nil && localVarOptionals.Order.IsSet() {
 		localVarQueryParams.Add("order", parameterToString(localVarOptionals.Order.Value(), ""))
 	}
+
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -527,6 +558,20 @@ func (a *DatabaseSchemaApiService) V1ListProjDbSchema(ctx context.Context, org s
 	}
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
+	}
+
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -661,6 +706,20 @@ func (a *DatabaseSchemaApiService) V1UpdateProjDbSchema(ctx context.Context, bod
 	}
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
+	}
+
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	// body params
 	localVarPostBody = &body
@@ -809,6 +868,20 @@ func (a *DatabaseSchemaApiService) V1UpdateProjDbSchemaInstance(ctx context.Cont
 	}
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
+	}
+
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	// body params
 	localVarPostBody = &body
