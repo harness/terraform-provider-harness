@@ -1,6 +1,6 @@
 
-<a name="0.4.17"></a>
-## 0.4.17 (2024-11-25)
+<a name="0.4.18"></a>
+## 0.4.18 (2024-11-25)
 
 ### Add
 
@@ -12,6 +12,8 @@
 
 ### Release
 
+* Release version 0.4.17 11-25-2024
+* Release v0.4.17
 * Release version 0.4.16-fix-dbops-743 11-25-2024
 * Release v0.4.16-fix-dbops-743
 * Release version 0.4.16 11-20-2024
@@ -55,5 +57,4 @@
 * Release version 0.3.99 07-29-2024
 * Release v0.3.99
 * Release version 0.3.98 07-24-2024
-* Release v0.3.98
 
