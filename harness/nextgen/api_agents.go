@@ -12,11 +12,12 @@ package nextgen
 import (
 	"context"
 	"fmt"
-	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -341,6 +342,7 @@ Get agents.
      * @param "PageSize" (optional.Int32) -
      * @param "PageIndex" (optional.Int32) -
      * @param "Scope" (optional.String) -
+     * @param "WithCredentials" (optional.Bool) -  Applicable when trying to retrieve an agent. Set to true to include the credentials for the agent in the response. (Private key may not be included in response if agent is already connected to harness). NOTE: Setting this to true requires the user to have edit permissions on Agent.
 @return V1Agent
 */
 
@@ -354,6 +356,7 @@ type AgentsApiAgentServiceForServerGetOpts struct {
 	PageSize          optional.Int32
 	PageIndex         optional.Int32
 	Scope             optional.String
+	WithCredentials   optional.Bool
 }
 
 func (a *AgentsApiService) AgentServiceForServerGet(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *AgentsApiAgentServiceForServerGetOpts) (V1Agent, *http.Response, error) {
@@ -401,6 +404,9 @@ func (a *AgentsApiService) AgentServiceForServerGet(ctx context.Context, identif
 	}
 	if localVarOptionals != nil && localVarOptionals.Scope.IsSet() {
 		localVarQueryParams.Add("scope", parameterToString(localVarOptionals.Scope.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.WithCredentials.IsSet() {
+		localVarQueryParams.Add("withCredentials", parameterToString(localVarOptionals.WithCredentials.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}

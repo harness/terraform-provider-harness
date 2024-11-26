@@ -116,6 +116,7 @@ Name | Type | Description  | Notes
  **pageSize** | **optional.Int32**|  | 
  **pageIndex** | **optional.Int32**|  | 
  **scope** | **optional.String**|  | [default to AGENT_SCOPE_UNSET]
+ **withCredentials** | **optional.Bool**| Applicable when trying to retrieve an agent. Set to true to include the credentials for the agent in the response. (Private key may not be included in response if agent is already connected to harness). NOTE: Setting this to true requires the user to have edit permissions on Agent. |
 
 ### Return type
 
