@@ -34,13 +34,6 @@ func ResourceGitopsAgent() *schema.Resource {
 					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created")
 				}
 			}
-			if diff.HasChange("account_id") && diff.Id() != "" {
-				if e != nil {
-					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created:%w", e)
-				} else {
-					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created")
-				}
-			}
 			if diff.HasChange("identifier") && diff.Id() != "" {
 				if e != nil {
 					e = fmt.Errorf("field 'identifier' cannot be changed after the resource is created:%v", e)
@@ -55,7 +48,9 @@ func ResourceGitopsAgent() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the GitOps agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps agent.",
@@ -194,16 +189,6 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 			e = append(e, diag.Errorf("%s", "Field 'identifier' cannot be updated after creation.")[0])
 		}
 		if err := d.Set("identifier", oldValue); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	if d.HasChange("account_id") {
-		oldValue, newValue := d.GetChange("account_id")
-		if oldValue != "" && oldValue != newValue {
-			e = append(e, diag.Errorf("%s", "Field 'account_id' cannot be updated after creation.")[0])
-		}
-		if err := d.Set("account_id", oldValue); err != nil {
 			return diag.FromErr(err)
 		}
 	}
