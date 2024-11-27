@@ -1,4 +1,4 @@
-# nextgen{{classname}}
+# dbops{{classname}}
 
 All URIs are relative to */*
 
@@ -42,7 +42,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -82,7 +82,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -122,7 +122,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -156,8 +156,8 @@ Name | Type | Description  | Notes
  **page** | **optional.Int64**| Pagination page number strategy: Specify the page number within the paginated collection related to the number of items on each page. | [default to 0]
  **limit** | **optional.Int32**| Pagination: Number of items to return. | [default to 10]
  **searchTerm** | **optional.String**| This would be used to filter resources having attributes matching the search term. | 
- **sort** | **optional.String**| Parameter on the basis of which sorting is done. | 
- **order** | **optional.String**| Order on the basis of which sorting is done. | 
+ **sort** | **optional.String**| Parameter on the basis of which sorting is done. | [default to created]
+ **order** | **optional.String**| Order on the basis of which sorting is done. | [default to DESC]
 
 ### Return type
 
@@ -165,7 +165,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -207,7 +207,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -251,7 +251,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 

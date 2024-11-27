@@ -86,7 +86,8 @@ func (a *DatabaseInstanceApiService) V1CreateProjDbSchemaInstance(ctx context.Co
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
 	}
-
+	// body params
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -100,8 +101,6 @@ func (a *DatabaseInstanceApiService) V1CreateProjDbSchemaInstance(ctx context.Co
 
 		}
 	}
-	// body params
-	localVarPostBody = &body
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -246,7 +245,6 @@ func (a *DatabaseInstanceApiService) V1DeleteProjDbSchemaInstance(ctx context.Co
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
 	}
-
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -387,7 +385,6 @@ func (a *DatabaseInstanceApiService) V1GetProjDbSchemaInstance(ctx context.Conte
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
 	}
-
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -494,6 +491,7 @@ Retrieves the specified database instances of the database schema
  * @param project Project identifier
  * @param dbschema Identifier of the database schema
  * @param optional nil or *DatabaseInstanceApiV1ListProjDbSchemaInstanceOpts - Optional Parameters:
+     * @param "Body" (optional.Interface of DbInstanceFilterIn) -
      * @param "HarnessAccount" (optional.String) -  Identifier field of the account the resource is scoped to. This is required for Authorization methods other than the x-api-key header. If you are using the x-api-key header, this can be skipped.
      * @param "Page" (optional.Int64) -  Pagination page number strategy: Specify the page number within the paginated collection related to the number of items on each page.
      * @param "Limit" (optional.Int32) -  Pagination: Number of items to return.
@@ -504,6 +502,7 @@ Retrieves the specified database instances of the database schema
 */
 
 type DatabaseInstanceApiV1ListProjDbSchemaInstanceOpts struct {
+	Body           optional.Interface
 	HarnessAccount optional.String
 	Page           optional.Int64
 	Limit          optional.Int32
@@ -514,7 +513,7 @@ type DatabaseInstanceApiV1ListProjDbSchemaInstanceOpts struct {
 
 func (a *DatabaseInstanceApiService) V1ListProjDbSchemaInstance(ctx context.Context, org string, project string, dbschema string, localVarOptionals *DatabaseInstanceApiV1ListProjDbSchemaInstanceOpts) ([]DbInstanceOut, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
@@ -522,7 +521,7 @@ func (a *DatabaseInstanceApiService) V1ListProjDbSchemaInstance(ctx context.Cont
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instance"
+	localVarPath := a.client.cfg.BasePath + "/v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instancelist"
 	localVarPath = strings.Replace(localVarPath, "{"+"org"+"}", fmt.Sprintf("%v", org), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"project"+"}", fmt.Sprintf("%v", project), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"dbschema"+"}", fmt.Sprintf("%v", dbschema), -1)
@@ -550,7 +549,7 @@ func (a *DatabaseInstanceApiService) V1ListProjDbSchemaInstance(ctx context.Cont
 		localVarQueryParams.Add("order", parameterToString(localVarOptionals.Order.Value(), ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -569,7 +568,12 @@ func (a *DatabaseInstanceApiService) V1ListProjDbSchemaInstance(ctx context.Cont
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
 	}
+	// body params
+	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
 
+		localVarOptionalBody := localVarOptionals.Body.Value()
+		localVarPostBody = &localVarOptionalBody
+	}
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {

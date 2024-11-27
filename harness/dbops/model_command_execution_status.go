@@ -16,4 +16,5 @@ const (
 	IN_PROGRESS_CommandExecutionStatus CommandExecutionStatus = "IN_PROGRESS"
 	SUCCESS_CommandExecutionStatus     CommandExecutionStatus = "SUCCESS"
 	FAILURE_CommandExecutionStatus     CommandExecutionStatus = "FAILURE"
+	CANCELLED_CommandExecutionStatus   CommandExecutionStatus = "CANCELLED"
 )

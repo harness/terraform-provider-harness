@@ -14,9 +14,13 @@ type Command string
 
 // List of Command
 const (
-	UPDATE_Command   Command = "Update"
-	VALIDATE_Command Command = "Validate"
-	HISTORY_Command  Command = "History"
-	TAG_Command      Command = "Tag"
-	ROLLBACK_Command Command = "Rollback"
+	UPDATE_Command         Command = "Update"
+	VALIDATE_Command       Command = "Validate"
+	HISTORY_Command        Command = "History"
+	TAG_Command            Command = "Tag"
+	ROLLBACK_Command       Command = "Rollback"
+	UPDATE_SQL_Command     Command = "UpdateSQL"
+	CLONE_Command          Command = "Clone"
+	CUSTOM_Command         Command = "Custom"
+	PARENT_WRAPPER_Command Command = "ParentWrapper"
 )

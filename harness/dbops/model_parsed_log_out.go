@@ -10,8 +10,8 @@
 package dbops
 
 type ParsedLogOut struct {
+	Success bool   `json:"success"`
 	Command string `json:"command"`
 	// identifier of the logIngest entity
-	Id      string `json:"id"`
-	Success bool   `json:"success"`
+	Id string `json:"id"`
 }

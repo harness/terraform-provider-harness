@@ -17,4 +17,6 @@ type Changelog struct {
 	Location string `json:"location"`
 	// repo name of the git based connector when ConnectionType is Account
 	Repo string `json:"repo,omitempty"`
+	// path excluding the repo till the archive file
+	ArchivePath string `json:"archivePath,omitempty"`
 }

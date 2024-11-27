@@ -11,16 +11,16 @@ package dbops
 
 // Database Instance Request
 type DbInstanceIn struct {
-	// branch where the instance is stored
-	Branch string `json:"branch"`
-	// DB Connector
-	Connector string `json:"connector"`
-	// Liquibase context
-	Context string `json:"context,omitempty"`
 	// identifier of the database instance
 	Identifier string `json:"identifier"`
 	// name of the database instance
 	Name string `json:"name,omitempty"`
 	// tags attached to the database instance
 	Tags map[string]string `json:"tags,omitempty"`
+	// branch where the instance is stored
+	Branch string `json:"branch,omitempty"`
+	// DB Connector
+	Connector string `json:"connector"`
+	// Liquibase context
+	Context string `json:"context,omitempty"`
 }

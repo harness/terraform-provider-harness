@@ -11,22 +11,25 @@ package dbops
 
 // Database Instance Response
 type DbInstanceOut struct {
+	// identifier of the database instance
+	Identifier string `json:"identifier"`
+	// name of the database instance
+	Name string `json:"name"`
+	// epoch seconds when the database instance was created
+	Created int64 `json:"created"`
+	// epoch seconds when the database instance was last updated
+	Updated int64 `json:"updated,omitempty"`
+	// tags attached to the database instance
+	Tags map[string]string `json:"tags,omitempty"`
 	// branch where the instance is stored
-	Branch string `json:"branch"`
+	Branch string `json:"branch,omitempty"`
 	// DB Connector
 	Connector string `json:"connector"`
 	// Liquibase context
 	Context string `json:"context,omitempty"`
-	// epoch seconds when the database instance was created
-	Created int64 `json:"created"`
-	// identifier of the database instance
-	Identifier string `json:"identifier"`
 	// Most recent tag applied to the database
 	LastAppliedTag string `json:"lastAppliedTag,omitempty"`
-	// name of the database instance
-	Name string `json:"name"`
-	// tags attached to the database instance
-	Tags map[string]string `json:"tags,omitempty"`
-	// epoch seconds when the database instance was last updated
-	Updated int64 `json:"updated,omitempty"`
+	ToOnboard      bool   `json:"toOnboard,omitempty"`
+	// Tag on last deployed changeSet
+	LastDeployedChangeSetTag string `json:"lastDeployedChangeSetTag"`
 }

@@ -11,13 +11,13 @@ package dbops
 
 // Database Schema Request
 type DbSchemaIn struct {
-	Changelog *Changelog `json:"changelog"`
 	// identifier of the database schema
 	Identifier string `json:"identifier"`
 	// name of the database schema
 	Name string `json:"name"`
+	// tags attached to the database schema
+	Tags      map[string]string `json:"tags,omitempty"`
+	Changelog *Changelog        `json:"changelog"`
 	// harness service corresponding to database schema
 	Service string `json:"service,omitempty"`
-	// tags attached to the database schema
-	Tags map[string]string `json:"tags,omitempty"`
 }

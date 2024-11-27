@@ -10,8 +10,12 @@
 package dbops
 
 type InlineResponse200 struct {
-	Image    string            `json:"image,omitempty"`
-	Instance *DbInstanceOut    `json:"instance,omitempty"`
-	Schema   *DbSchemaOut      `json:"schema,omitempty"`
-	Settings map[string]string `json:"settings,omitempty"`
+	Image            string            `json:"image,omitempty"`
+	DbImages         *interface{}      `json:"dbImages,omitempty"`
+	DownloadImages   *interface{}      `json:"downloadImages,omitempty"`
+	Settings         map[string]string `json:"settings,omitempty"`
+	DefaultConfigs   map[string]string `json:"defaultConfigs,omitempty"`
+	Schema           *DbSchemaOut      `json:"schema,omitempty"`
+	Instance         *DbInstanceOut    `json:"instance,omitempty"`
+	PropertiesResult map[string]string `json:"propertiesResult,omitempty"`
 }
