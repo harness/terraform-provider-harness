@@ -96,6 +96,11 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"prefixed_identifier": {
+				Description: "Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 		},
 	}
 	return resource
