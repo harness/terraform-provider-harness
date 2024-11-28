@@ -60,6 +60,7 @@ Required:
 Optional:
 
 - `repo` (String) If connector url is of account, which repository to connect to using the connector
+- `archive_path` (String) If connector type is artifactory, path to the archive file which contains the changeLog
 
 ## Import
 
