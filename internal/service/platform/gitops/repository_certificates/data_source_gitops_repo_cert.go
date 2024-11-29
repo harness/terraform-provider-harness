@@ -22,12 +22,13 @@ func DataSourceGitOpsRepoCert() *schema.Resource {
 			"agent_id": {
 				Description: "Agent identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": {
 				Description: "Account identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps repository certificate.",

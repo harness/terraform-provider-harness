@@ -89,9 +89,9 @@ resource "harness_platform_gitops_cluster" "example" {
       name   = "name"
       config {
         tls_client_config {
-          ca_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWApYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFgKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
+          ca_data      = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWApYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFgKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
         }
-        bearer_token            = "ey......X"
+        bearer_token = "ey......X"
         cluster_connection_type = "SERVICE_ACCOUNT"
       }
 
@@ -110,12 +110,12 @@ resource "harness_platform_gitops_cluster" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps cluster.
 - `agent_id` (String) Agent identifier of the GitOps cluster. (include scope prefix)
 - `identifier` (String) Identifier of the GitOps cluster.
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps cluster.
 - `org_id` (String) Organization identifier of the cluster.
 - `project_id` (String) Project identifier of the GitOps cluster.
 - `request` (Block List, Max: 1) Cluster create or update request. (see [below for nested schema](#nestedblock--request))
@@ -236,7 +236,7 @@ Read-Only:
 - `status` (String)
 
 <a id="nestedobjatt--request--cluster--info--connection_state--attempted_at"></a>
-### Nested Schema for `request.cluster.info.connection_state.attempted_at`
+### Nested Schema for `request.cluster.info.connection_state.status`
 
 Read-Only:
 
