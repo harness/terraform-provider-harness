@@ -50,6 +50,11 @@ func ResourceDBSchema() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
+						"archive_path": {
+							Description: "If connector type is artifactory, path to the archive file which contains the changeLog",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -131,9 +136,10 @@ func buildDbSchema(d *schema.ResourceData) *dbops.DbSchemaIn {
 		Tags:       helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
 		Service:    d.Get("service").(string),
 		Changelog: &dbops.Changelog{
-			Repo:      d.Get("schema_source.0.repo").(string),
-			Connector: d.Get("schema_source.0.connector").(string),
-			Location:  d.Get("schema_source.0.location").(string),
+			Repo:        d.Get("schema_source.0.repo").(string),
+			Connector:   d.Get("schema_source.0.connector").(string),
+			Location:    d.Get("schema_source.0.location").(string),
+			ArchivePath: d.Get("schema_source.0.archive_path").(string),
 		},
 	}
 }
@@ -147,4 +153,5 @@ func readDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut) {
 	d.Set("schema_source.0.location", dbSchema.Changelog.Location)
 	d.Set("schema_source.0.repo", dbSchema.Changelog.Repo)
 	d.Set("schema_source.0.connector", dbSchema.Changelog.Connector)
+	d.Set("schema_source.0.archive_path", dbSchema.Changelog.ArchivePath)
 }

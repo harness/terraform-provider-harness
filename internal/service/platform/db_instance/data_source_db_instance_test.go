@@ -67,7 +67,6 @@ func testAccDataSourceDBInstance(id string, name string) string {
 						org_id = harness_platform_project.test.org_id
 						project_id = harness_platform_project.test.id
 						name = "%[2]s"
-						service = "s1"
 						tags = ["foo:bar", "bar:foo"]
 						schema_source {
 							connector = harness_platform_connector_github.test.id
@@ -76,6 +75,34 @@ func testAccDataSourceDBInstance(id string, name string) string {
 						}
 
 		}
+
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			tags = ["foo:bar"]
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		  }
+		
+		resource "harness_platform_connector_jdbc" "test" {
+			  identifier = "%[1]sjdbc"
+			  name = "%[2]sjdbc"
+			  description = "test"
+              org_id = harness_platform_project.test.org_id
+              project_id = harness_platform_project.test.id
+			  tags = ["foo:bar"]
+			  url = "jdbc:sqlserver://1.2.3;trustServerCertificate=true"
+			  delegate_selectors = ["harness-delegate"]
+			  credentials {
+				username = "admin"
+				password_ref = harness_platform_secret_text.test.id
+			  }
+		}
+
         resource "harness_platform_db_instance" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
@@ -83,7 +110,7 @@ func testAccDataSourceDBInstance(id string, name string) string {
 			name = "%[2]s"
 			tags = ["foo:bar", "bar:foo"]
 			branch = "main"
-			connector = harness_platform_connector_github.test.id
+			connector = harness_platform_connector_jdbc.test.id
 			schema = harness_platform_db_schema.test.id
 		}
 		data "harness_platform_db_instance" "test" {
