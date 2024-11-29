@@ -30,4 +30,6 @@ type V1Agent struct {
 	UpgradeAvailable bool                `json:"upgradeAvailable,omitempty"`
 	Scope            *V1AgentScope       `json:"scope,omitempty"`
 	Operator         *V1AgentOperator    `json:"operator,omitempty"`
+	// The scoped identifier of the agent. This is a combination of the account, org, project, and agent identifiers.
+	PrefixedIdentifier string `json:"prefixedIdentifier,omitempty"`
 }
