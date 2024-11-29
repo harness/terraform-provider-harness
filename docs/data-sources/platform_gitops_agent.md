@@ -55,6 +55,7 @@ data "harness_platform_gitops_agent" "example" {
 - `metadata` (List of Object) Metadata of the agent. (see [below for nested schema](#nestedatt--metadata))
 - `name` (String) Name of the GitOps agent.
 - `operator` (String) The Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
+- `prefixed_identifier` (String) Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
 - `type` (String) Default: "AGENT_TYPE_UNSET"
 Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"

@@ -124,6 +124,11 @@ func ResourceGitopsAgent() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"prefixed_identifier": {
+				Description: "Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 		},
 	}
 	return resource
@@ -322,6 +327,7 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.Set("type", agent.Type_)
 	d.Set("project_id", agent.ProjectIdentifier)
 	d.Set("operator", agent.Operator)
+	d.Set("prefixed_identifier", agent.PrefixedIdentifier)
 	metadata := []interface{}{}
 	metaDataMap := map[string]interface{}{}
 	metaDataMap["namespace"] = agent.Metadata.Namespace
