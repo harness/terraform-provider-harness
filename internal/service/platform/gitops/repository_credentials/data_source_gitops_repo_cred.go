@@ -27,7 +27,8 @@ func DataSourceGitOpsRepoCred() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"identifier": {
 				Description: "Identifier of the Repository Credentials.",

@@ -22,7 +22,7 @@ func ResourceGitopsApplication() *schema.Resource {
 		ReadContext:   resourceGitopsApplicationRead,
 		UpdateContext: resourceGitopsApplicationUpdate,
 		DeleteContext: resourceGitopsApplicationDelete,
-		Importer:      helpers.GitopsAgentResourceImporter,
+		Importer:      helpers.GitopsAgentApplicationImporter,
 
 		CustomizeDiff: func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
 			var e error
@@ -34,13 +34,6 @@ func ResourceGitopsApplication() *schema.Resource {
 					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created:%w", e)
 				} else {
 					e = fmt.Errorf("field 'org_id' cannot be changed after the resource is created")
-				}
-			}
-			if diff.HasChange("account_id") && diff.Id() != "" {
-				if e != nil {
-					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created:%w", e)
-				} else {
-					e = fmt.Errorf("field 'account_id' cannot be changed after the resource is created")
 				}
 			}
 			if diff.HasChange("agent_id") && diff.Id() != "" {
@@ -64,7 +57,9 @@ func ResourceGitopsApplication() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the GitOps application.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps application.",
@@ -1200,16 +1195,6 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 			e = append(e, diag.Errorf("%s", "Field 'name' cannot be updated after creation.")[0])
 		}
 		if err := d.Set("name", oldValue); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	if d.HasChange("account_id") {
-		oldValue, newValue := d.GetChange("account_id")
-		if oldValue != "" && oldValue != newValue {
-			e = append(e, diag.Errorf("%s", "Field 'account_id' cannot be updated after creation.")[0])
-		}
-		if err := d.Set("account_id", oldValue); err != nil {
 			return diag.FromErr(err)
 		}
 	}

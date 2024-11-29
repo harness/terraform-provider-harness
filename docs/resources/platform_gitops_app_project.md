@@ -197,16 +197,16 @@ resource "harness_platform_gitops_app_project" "test" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps project/agent.
-- `agent_id` (String) Agent identifier of the GitOps project. Project is created on agent scope.
+- `agent_id` (String) Agent identifier of the agent where argo project will exist (include scope prefix)
 - `project` (Block List, Min: 1, Max: 1) GitOps project configuration. (see [below for nested schema](#nestedblock--project))
 
 ### Optional
 
-- `org_id` (String) Org identifier of the GitOps agent for which project is created.
-- `project_id` (String) Project identifier of the GitOps agent for which project is created.
-- `query_name` (String) Identifier for the GitOps project.
-- `upsert` (Boolean) Indicates if the GitOps project should be updated if existing and inserted if not.
+- `account_id` (String, Deprecated) Account identifier of the GitOps Agent where argo project will exist.
+- `org_id` (String) Org identifier of the GitOps Agent where argo project is to be created.
+- `project_id` (String) Project identifier of the Gitops Agent where argo project is to be created.
+- `query_name` (String) Identifier for the GitOps Argo project.
+- `upsert` (Boolean) Indicates if the argo project should be updated if existing and inserted if not.
 
 ### Read-Only
 
@@ -216,8 +216,9 @@ resource "harness_platform_gitops_app_project" "test" {
 ### Nested Schema for `project`
 
 Required:
-- `metadata` (Block List, Min: 1, Max: 1) Metadata details for the GitOps project. (see [below for nested schema](#nestedblock--project--metadata))
-- `spec` (Block List, Min: 1, Max: 1) Specification details for the GitOps project. (see [below for nested schema](#nestedblock--project--spec))
+
+- `metadata` (Block List, Min: 1, Max: 1) K8s object metadata for the Argo project. (see [below for nested schema](#nestedblock--project--metadata))
+- `spec` (Block List, Min: 1, Max: 1) Specification details for the Argo project. (see [below for nested schema](#nestedblock--project--spec))
 
 <a id="nestedblock--project--metadata"></a>
 ### Nested Schema for `project.metadata`

@@ -19,7 +19,8 @@ func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the GitOps agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps agent.",
@@ -88,12 +89,11 @@ func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 func dataSourceGitopsAgentDeployYamlRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	agentIdentifier := d.Get("identifier").(string)
+	accountIdentifier := c.AccountId
 
 	resp, httpResp, err := c.AgentApi.AgentServiceForServerPostDeployYaml(ctx, func() nextgen.V1AgentYamlQuery {
 		var yamlQuery nextgen.V1AgentYamlQuery
-		if attr, ok := d.GetOk("account_id"); ok {
-			yamlQuery.AccountIdentifier = attr.(string)
-		}
+		yamlQuery.AccountIdentifier = accountIdentifier
 		if attr, ok := d.GetOk("project_id"); ok {
 			yamlQuery.ProjectIdentifier = attr.(string)
 		}

@@ -64,7 +64,6 @@ resource "harness_platform_gitops_applications" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps application.
 - `agent_id` (String) Agent identifier of the GitOps application.
 - `application` (Block List, Min: 1, Max: 1) Definition of the GitOps application resource. (see [below for nested schema](#nestedblock--application))
 - `cluster_id` (String) Cluster identifier of the GitOps application.
@@ -74,6 +73,7 @@ resource "harness_platform_gitops_applications" "example" {
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps application.
 - `identifier` (String, Deprecated) Identifier of the GitOps application.
 - `kind` (String) Kind of the GitOps application.
 - `options_remove_existing_finalizers` (Boolean) Options to remove existing finalizers to delete the GitOps application.

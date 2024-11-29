@@ -25,7 +25,6 @@ data "harness_platform_gitops_gnupg" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier for the GnuPG Key.
 - `agent_id` (String) Agent identifier for the GnuPG Key.
 - `identifier` (String) Identifier for the GnuPG Key.
 
@@ -37,6 +36,7 @@ data "harness_platform_gitops_gnupg" "example" {
 
 ### Read-Only
 
+- `account_id` (String, Deprecated) Account Identifier for the GnuPG Key.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--request"></a>

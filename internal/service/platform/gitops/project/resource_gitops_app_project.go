@@ -29,8 +29,9 @@ func ResourceProject() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the GitOps Agent where argo project will exist.",
 				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
+				Optional:    true,
+				Computed:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"org_id": {
 				Description: "Org identifier of the GitOps Agent where argo project is to be created.",
