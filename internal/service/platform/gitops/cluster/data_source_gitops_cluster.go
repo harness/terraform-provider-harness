@@ -22,6 +22,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 				Description: "Account identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Computed:    true,
+				Optional:    true,
 				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"project_id": {

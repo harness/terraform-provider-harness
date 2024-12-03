@@ -23,6 +23,7 @@ func DatasourceGitopsAppProjectMapping() *schema.Resource {
 				Description: "Account identifier of the GitOps agent's Application Project.",
 				Type:        schema.TypeString,
 				Computed:    true,
+				Optional:    true,
 				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"org_id": {
