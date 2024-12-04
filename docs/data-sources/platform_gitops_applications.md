@@ -28,7 +28,6 @@ data "harness_platform_gitops_applications" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps application.
 - `agent_id` (String) Agent identifier of the GitOps application.
 - `name` (String) Name of the GitOps application.
 - `org_id` (String) Organization identifier of the GitOps application.
@@ -40,6 +39,7 @@ data "harness_platform_gitops_applications" "example" {
 
 ### Read-Only
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps application.
 - `application` (List of Object) Definition of the GitOps application resource. (see [below for nested schema](#nestedatt--application))
 - `cluster_id` (String) Cluster identifier of the GitOps application.
 - `id` (String) The ID of this resource.

@@ -409,6 +409,22 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 	},
 }
 
+var GitopsAgentApplicationImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		if len(parts) == 4 { //Project level
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.Set("agent_id", parts[2])
+			d.Set("name", parts[3])
+			d.SetId(parts[3])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
 // GitopsAppProjectMappingImporter defines the importer configuration for app project mapping.
 // The id used for the import should be in the format <org_id>/<project_id>/<identifier>/<argo_project_name>\
 // It is used always at project level.

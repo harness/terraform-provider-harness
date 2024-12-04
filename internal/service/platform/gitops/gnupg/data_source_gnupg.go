@@ -22,7 +22,9 @@ func DataSourceGitopsGnupg() *schema.Resource {
 			"account_id": {
 				Description: "Account Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"org_id": {
 				Description: "Organization Identifier for the GnuPG Key.",

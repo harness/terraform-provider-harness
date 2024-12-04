@@ -23,7 +23,9 @@ func DataSourceGitopsAgent() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the GitOps agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps agent.",
@@ -105,6 +107,11 @@ func DataSourceGitopsAgent() *schema.Resource {
 			"is_authenticated": {
 				Description: "This computed field specifies if the referenced agent ever successfully connected and was authenticated to harness. Note that this is different from whether the agent is currently connected. <b>Set with_credentials to true to allow computing of this field.</b> For retrieval of this information, the user associated to the token being used must have Gitops Agent Edit permissions",
 				Type:        schema.TypeBool,
+				Computed:    true,
+			},
+			"prefixed_identifier": {
+				Description: "Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent",
+				Type:        schema.TypeString,
 				Computed:    true,
 			},
 		},

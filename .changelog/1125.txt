@@ -1,0 +1,4 @@
+```release-note:deprecate account id from gitops resources.
+The account ID is inferred from the auth context.
+Fixed application import to use name instead of identifier.
+```

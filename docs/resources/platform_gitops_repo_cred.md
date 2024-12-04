@@ -38,12 +38,12 @@ resource "harness_platform_gitops_repo_cred" "test" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the Repository Credentials.
 - `agent_id` (String) Agent identifier of the Repository Credentials.
 - `identifier` (String) Identifier of the Repository Credentials.
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the Repository Credentials.
 - `creds` (Block List, Max: 1) credential details. (see [below for nested schema](#nestedblock--creds))
 - `org_id` (String) Organization identifier of the Repository Credentials.
 - `project_id` (String) Project identifier of the Repository Credentials.
