@@ -319,6 +319,7 @@ func buildCreateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 
 func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.SetId(agent.Identifier)
+	d.Set("account_id", agent.AccountIdentifier)
 	d.Set("identifier", agent.Identifier)
 	d.Set("name", agent.Name)
 	d.Set("description", agent.Description)
