@@ -139,10 +139,7 @@ func buildConnectorAzureKeyVault(d *schema.ResourceData) *nextgen.ConnectorInfo 
 	}
 
 	if attr, ok := d.GetOk("delegate_selectors"); ok {
-		delegate_selectors := attr.(*schema.Set).List()
-		if len(delegate_selectors) > 0 {
-			connector.Azure.DelegateSelectors = utils.InterfaceSliceToStringSlice(delegate_selectors)
-		}
+		connector.AzureKeyVault.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
 	return connector
@@ -155,7 +152,6 @@ func readConnectorAzureKeyVault(d *schema.ResourceData, connector *nextgen.Conne
 	d.Set("vault_name", connector.AzureKeyVault.VaultName)
 	d.Set("subscription", connector.AzureKeyVault.Subscription)
 	d.Set("is_default", connector.AzureKeyVault.IsDefault)
-
 	d.Set("delegate_selectors", connector.AzureKeyVault.DelegateSelectors)
 	d.Set("azure_environment_type", connector.AzureKeyVault.AzureEnvironmentType)
 
