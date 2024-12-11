@@ -45,6 +45,11 @@ func DataSourceDBSchema() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
+						"archive_path": {
+							Description: "If connector type is artifactory, path to the archive file which contains the changeLog",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
 					},
 				},
 			},
@@ -88,4 +93,5 @@ func readDataSourceDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut)
 	d.Set("schema_source.0.location", dbSchema.Changelog.Location)
 	d.Set("schema_source.0.repo", dbSchema.Changelog.Repo)
 	d.Set("schema_source.0.connector", dbSchema.Changelog.Connector)
+	d.Set("schema_source.0.archive_path", dbSchema.Changelog.ArchivePath)
 }

@@ -203,13 +203,13 @@ resource "harness_platform_gitops_repository" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps repository.
 - `agent_id` (String) Agent identifier of the GitOps repository.
 - `identifier` (String) Identifier of the GitOps repository.
 - `repo` (Block List, Min: 1, Max: 1) Repo details holding application configurations. (see [below for nested schema](#nestedblock--repo))
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps repository.
 - `creds_only` (Boolean) Indicates if to operate on credential set instead of repository.
 - `ecr_gen` (Block List, Max: 1) ECR access token generator specific configuration. (see [below for nested schema](#nestedblock--ecr_gen))
 - `force_delete` (Boolean) Indicates if the repository should be deleted forcefully, regardless of existing applications using that repo.

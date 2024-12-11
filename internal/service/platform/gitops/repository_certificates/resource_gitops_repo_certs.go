@@ -32,8 +32,9 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
+				Optional:    true,
+				Computed:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps repository certificate.",

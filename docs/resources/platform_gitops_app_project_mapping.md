@@ -27,11 +27,14 @@ resource "harness_platform_gitops_app_project_mapping" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps agent's Application Project.
 - `agent_id` (String) Agent identifier for which the ArgoCD and Harness project mapping is to be created.
 - `argo_project_name` (String) ArgoCD Project name which is to be mapped to the Harness project.
 - `org_id` (String) Organization identifier of the GitOps agent's Application Project.
 - `project_id` (String) Project identifier of the GitOps agent's Application Project.
+
+### Optional
+
+- `account_id` (String, Deprecated) Account identifier of the GitOps agent's Application Project.
 
 ### Read-Only
 

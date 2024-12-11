@@ -24,7 +24,6 @@ data "harness_platform_gitops_app_project" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps Agent where argo project resides.
 - `agent_id` (String) Agent identifier of the agent where argo project resides(include scope prefix)
 
 ### Optional
@@ -35,4 +34,5 @@ data "harness_platform_gitops_app_project" "example" {
 
 ### Read-Only
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps Agent where argo project resides.
 - `id` (String) The ID of this resource.

@@ -21,15 +21,17 @@ func DataSourceGitopsRepository() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the GitOps repository.",
 				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"project_id": {
-				Description: "Project identifier of the GitOps repository.",
-				Type:        schema.TypeString,
+				Computed:    true,
 				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps repository.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "Project identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},

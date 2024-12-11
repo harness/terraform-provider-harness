@@ -49,3 +49,4 @@ Read-Only:
 - `connector` (String)
 - `location` (String)
 - `repo` (String)
+- `archive_path` (String)

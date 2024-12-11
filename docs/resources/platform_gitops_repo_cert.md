@@ -39,12 +39,12 @@ resource "harness_platform_gitops_repo_cert" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps repository certificate.
 - `agent_id` (String) Agent identifier of the GitOps repository certificate.
 - `request` (Block List, Min: 1, Max: 1) Repository Certificate create/update request. (see [below for nested schema](#nestedblock--request))
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps repository certificate.
 - `org_id` (String) Organization identifier of the GitOps repository certificate.
 - `project_id` (String) Project identifier of the GitOps repository certificate.
 

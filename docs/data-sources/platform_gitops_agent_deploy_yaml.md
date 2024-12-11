@@ -27,7 +27,6 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps agent.
 - `identifier` (String) Identifier of the GitOps agent.
 - `namespace` (String) The kubernetes namespace where the agent is installed.
 
@@ -40,6 +39,7 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 
 ### Read-Only
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps agent.
 - `id` (String) The ID of this resource.
 - `yaml` (String) The deployment manifest YAML of the GitOps agent.
 
