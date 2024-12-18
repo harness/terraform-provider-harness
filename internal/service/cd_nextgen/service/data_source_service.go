@@ -80,6 +80,9 @@ func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta int
 			Branch:                 helpers.BuildField(d, "git_details.0.branch"),
 			LoadFromFallbackBranch: helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
 		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
 		svc = resp.Data.Service
 	} else if name != "" {
 		svc, httpResp, err = c.ServicesApi.GetServiceByName(ctx, c.AccountId, name, nextgen.GetServiceByNameOpts{
