@@ -16,7 +16,8 @@ type PipelineFilterProperties struct {
 	// This is the list of the Pipeline Identifiers on which the filter will be applied.
 	PipelineIdentifiers []string `json:"pipelineIdentifiers,omitempty"`
 	// This is the Pipeline Name on which the filter will be applied.
-	Name string `json:"name,omitempty"`
+	Name         string `json:"name,omitempty"`
+	PipelineName string `json:"pipelineName,omitempty"`
 	// This is the Pipeline Description on which the filter will be applied.
 	Description      string                 `json:"description,omitempty"`
 	ModuleProperties map[string]interface{} `json:"moduleProperties,omitempty"`
