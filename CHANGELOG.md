@@ -1,3 +1,12 @@
+# 0.34.5 (December 09,2024) 
+
+# 0.34.4 (December 06,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_infra_module - added a new resource for iacm module registry
+  harness_platform_infra_module - added a new data source for iacm module registry` ([#1099](https://github.com/harness/terraform-provider-harness/issues/1099))
+
 # 0.34.3 (November 08,2024) 
 
 ENHANCEMENTS:

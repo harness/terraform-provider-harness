@@ -26,8 +26,9 @@ func ResourceGitopsGnupg() *schema.Resource {
 			"account_id": {
 				Description: "Account Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
+				Optional:    true,
+				Computed:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"agent_id": {
 				Description: "Agent identifier for the GnuPG Key.",

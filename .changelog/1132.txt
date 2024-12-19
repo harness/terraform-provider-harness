@@ -1,0 +1,4 @@
+```release-note:fix account_id becoming null in platform_gitops_agent after deprecation
+platform_gitops_agent: there was a deprecation of account_id in all harness gitops resources. this introduced a bug in agent resource where
+it was not being set at all after it was changed to computed: true.
+```

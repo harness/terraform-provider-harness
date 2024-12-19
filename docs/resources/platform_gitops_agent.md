@@ -32,7 +32,6 @@ resource "harness_platform_gitops_agent" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the GitOps agent.
 - `identifier` (String) Identifier of the GitOps agent.
 - `name` (String) Name of the GitOps agent.
 - `type` (String) Default: "AGENT_TYPE_UNSET"
@@ -40,6 +39,7 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps agent.
 - `description` (String) Description of the GitOps agent.
 - `metadata` (Block List, Max: 1) Metadata of the agent. (see [below for nested schema](#nestedblock--metadata))
 - `operator` (String) The Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
@@ -51,6 +51,7 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 - `agent_token` (String) Agent token to be used for authentication of the agent with Harness.
 - `id` (String) The ID of this resource.
+- `prefixed_identifier` (String) Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent
 
 <a id="nestedblock--metadata"></a>
 ### Nested Schema for `metadata`
