@@ -96,6 +96,11 @@ func ResourcePipelineFilters() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
+						"pipeline_name": {
+							Description: "Name of the pipeline execution filter.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 						"description": {
 							Description: "description of the pipline filter.",
 							Type:        schema.TypeString,
@@ -195,6 +200,11 @@ func ResourcePipelineFilters() *schema.Resource {
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
+												"service_definition_types": {
+													Description: "Deployment type of the CD pipeline, eg. Kubernetes",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
 												"service_names": {
 													Description: "Service names of the CD pipeline.",
 													Type:        schema.TypeSet,
@@ -213,6 +223,14 @@ func ResourcePipelineFilters() *schema.Resource {
 												},
 												"environment_names": {
 													Description: "Environment names of the CD pipeline.",
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"environment_identifiers": {
+													Description: "Environment identifier of the CD pipeline.",
 													Type:        schema.TypeSet,
 													Optional:    true,
 													Elem: &schema.Schema{
@@ -381,6 +399,10 @@ func buildPipelineFilter(d *schema.ResourceData) *nextgen.PipelineFilter {
 			filter.FilterProperties.Name = name
 		}
 
+		if attr, ok := filterProperties["pipeline_name"]; ok {
+			filter.FilterProperties.PipelineName = attr.(string)
+		}
+
 		if attr, ok := filterProperties["description"]; ok {
 			description := attr.(string)
 			filter.FilterProperties.Description = description
@@ -406,8 +428,14 @@ func buildPipelineFilter(d *schema.ResourceData) *nextgen.PipelineFilter {
 				if attr := cdProperties["environment_names"].(*schema.Set).List(); len(attr) > 0 {
 					cd["environmentNames"] = attr
 				}
+				if attr := cdProperties["environment_identifiers"].(*schema.Set).List(); len(attr) > 0 {
+					cd["envIdentifiers"] = attr
+				}
 				if attr := cdProperties["artifact_display_names"].(*schema.Set).List(); len(attr) > 0 {
 					cd["artifactDisplayNames"] = attr
+				}
+				if attr, ok := cdProperties["service_definition_types"]; ok {
+					cd["serviceDefinitionTypes"] = attr.(string)
 				}
 				hModuleProperties["cd"] = cd
 			}
@@ -467,7 +495,10 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 
 	filterProperties := make(map[string]interface{})
 	filterProperties["filter_type"] = filter.FilterProperties.FilterType
-	filterProperties["tags"] = helpers.FlattenTags(filter.FilterProperties.Tags)
+	if len(helpers.FlattenTags(filter.FilterProperties.Tags)) > 0 {
+		filterProperties["tags"] = helpers.FlattenTags(filter.FilterProperties.Tags)
+	}
+
 	var pipelineTags []interface{}
 	for _, tagV := range filter.FilterProperties.PipelineTags {
 		pipelineTag := make(map[string]interface{})
@@ -484,6 +515,9 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 	if filter.FilterProperties.Name != "" {
 		filterProperties["name"] = filter.FilterProperties.Name
 	}
+	if filter.FilterProperties.PipelineName != "" {
+		filterProperties["pipeline_name"] = filter.FilterProperties.PipelineName
+	}
 	if filter.FilterProperties.Description != "" {
 		filterProperties["description"] = filter.FilterProperties.Description
 	}
@@ -499,6 +533,12 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 			if attr, ok := hCdProperties["deploymentTypes"]; ok {
 				cdProperties["deployment_types"] = attr.(string)
 			}
+			if attr, ok := hCdProperties["serviceDefinitionTypes"].([]interface{}); ok {
+				cdProperties["service_definition_types"] = attr[0]
+			}
+			if attr, ok := hCdProperties["serviceDefinitionTypes"].([]interface{}); ok {
+				cdProperties["service_definition_types"] = attr[0]
+			}
 			if attr, ok := hCdProperties["serviceNames"]; ok {
 				cdProperties["service_names"] = attr
 			}
@@ -507,6 +547,9 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 			}
 			if attr, ok := hCdProperties["environmentNames"]; ok {
 				cdProperties["environment_names"] = attr
+			}
+			if attr, ok := hCdProperties["envIdentifiers"]; ok {
+				cdProperties["environment_identifiers"] = attr
 			}
 			if attr, ok := hCdProperties["artifactDisplayNames"]; ok {
 				cdProperties["artifact_display_names"] = attr
