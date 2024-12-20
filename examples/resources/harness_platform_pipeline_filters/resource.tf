@@ -71,3 +71,32 @@ resource "harness_platform_pipeline_filters" "example_with_tags" {
   }
 }
 
+resource "harness_platform_pipeline_filters" "pipelinemoduleproperties" {
+  identifier = "identifier"
+  name       = "name"
+  org_id     = harness_platform_project.test.org_id
+  project_id = harness_platform_project.test.id
+  type       = "PipelineExecution"
+  filter_properties {
+    filter_type   = "PipelineExecution"
+    pipeline_name = "test"
+    pipeline_tags = [
+      {
+        "key"   = "k1"
+        "value" = "v1"
+      },
+      {
+        "key"   = "k2"
+        "value" = "v2"
+      },
+    ]
+    module_properties {
+      cd {
+        service_definition_types = "Kubernetes"
+        service_identifiers      = ["K8"]
+        environment_identifiers  = ["dev"]
+        artifact_display_names   = ["artificatname1"]
+      }
+    }
+  }
+}
