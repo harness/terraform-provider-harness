@@ -536,9 +536,6 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 			if attr, ok := hCdProperties["serviceDefinitionTypes"].([]interface{}); ok {
 				cdProperties["service_definition_types"] = attr[0]
 			}
-			if attr, ok := hCdProperties["serviceDefinitionTypes"].([]interface{}); ok {
-				cdProperties["service_definition_types"] = attr[0]
-			}
 			if attr, ok := hCdProperties["serviceNames"]; ok {
 				cdProperties["service_names"] = attr
 			}
