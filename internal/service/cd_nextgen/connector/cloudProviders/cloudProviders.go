@@ -99,6 +99,10 @@ func resourceConnectorCreateOrUpdateBase(ctx context.Context, d *schema.Resource
 		return nil, helpers.HandleApiError(err, d, httpResp)
 	}
 
+    if resp.Data.Connector == nil {
+        return nil, diag.FromErr(fmt.Errorf("Could not create/update connector. Please check the policy restrictions."))
+    }
+
 	readCommonConnectorData(d, resp.Data.Connector)
 
 	return resp.Data.Connector, nil

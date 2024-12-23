@@ -103,7 +103,6 @@ func testAccResourceDBInstance(id string, name string) string {
 			tags        = ["foo:bar"]
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
-			
 			url                = "https://github.com/account"
 			connection_type    = "Account"
 			validation_repo    = "some_repo"
@@ -121,7 +120,6 @@ func testAccResourceDBInstance(id string, name string) string {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			name = "%[2]s"
-			service = "s1"
 			tags = ["foo:bar", "bar:foo"]
 			schema_source {
 				connector = harness_platform_connector_github.test.id
@@ -129,8 +127,34 @@ func testAccResourceDBInstance(id string, name string) string {
 				location = "db/example-changelog.yaml"
 			}
 			depends_on = [harness_platform_connector_github.test]
-
         }
+
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			tags = ["foo:bar"]
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		  }
+		
+		resource "harness_platform_connector_jdbc" "test" {
+			  identifier = "%[1]sjdbc"
+			  name = "%[2]sjdbc"
+			  description = "test"
+              org_id = harness_platform_project.test.org_id
+              project_id = harness_platform_project.test.id
+			  tags = ["foo:bar"]
+			  url = "jdbc:sqlserver://1.2.3;trustServerCertificate=true"
+			  delegate_selectors = ["harness-delegate"]
+			  credentials {
+				username = "admin"
+				password_ref = harness_platform_secret_text.test.id
+			  }
+		}
         resource "harness_platform_db_instance" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
@@ -138,10 +162,9 @@ func testAccResourceDBInstance(id string, name string) string {
 			name = "%[2]s"
 			tags = ["foo:bar", "bar:foo"]
 			branch = "main"
-			connector = harness_platform_connector_github.test.id
+			connector = harness_platform_connector_jdbc.test.id
 			schema = harness_platform_db_schema.test.id
 			depends_on = [harness_platform_db_schema.test]
-
 		}
         `, id, name)
 }

@@ -29,7 +29,6 @@ func ResourceGitopsRepoCred() *schema.Resource {
 				Description: "Identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the Repository Credentials.",
@@ -40,8 +39,9 @@ func ResourceGitopsRepoCred() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
+				Computed:    true,
+				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"org_id": {
 				Description: "Organization identifier of the Repository Credentials.",

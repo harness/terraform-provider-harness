@@ -56,6 +56,38 @@ func TestAccResourcePipelineFilters(t *testing.T) {
 	})
 }
 
+func TestAccResourcePipelineFiltersCD(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	// updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_pipeline_filters.pipelinemoduleproperties"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccPipelineFiltersDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePipelineFiltersWithModulePropertiesCDTag(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "type", "PipelineExecution"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "PipelineExecution"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "EveryOne"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectFilterImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func TestAccResourcePipelineFiltersOrgLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -538,6 +570,51 @@ func testAccResourcePipelineFiltersWithModulePropertiesCiTag(id string, name str
 					ci {
 						repo_names = "repo1234"
 						tag = "tag123"
+					}
+				}
+			}
+		}
+`, id, name)
+}
+
+func testAccResourcePipelineFiltersWithModulePropertiesCDTag(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+		resource "harness_platform_pipeline_filters" "pipelinemoduleproperties" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			type = "PipelineExecution"
+			filter_properties {
+				filter_type = "PipelineExecution"
+				pipeline_name = "test"
+				pipeline_tags = [
+					{
+						"key" = "k1"
+                		"value" = "v1"
+					},
+					{
+						"key" = "k2"
+                		"value" = "v2"
+					},
+				]
+				module_properties {
+					cd {
+						service_definition_types = "Kubernetes"
+						service_identifiers = ["K8"]
+						environment_identifiers = ["dev"]
+						artifact_display_names = ["artificatname1"]
 					}
 				}
 			}

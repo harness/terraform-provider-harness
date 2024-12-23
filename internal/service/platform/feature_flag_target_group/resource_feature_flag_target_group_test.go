@@ -2,6 +2,8 @@ package featureflagtargetgroup_test
 
 import (
 	"fmt"
+	featureflagtargetgroup "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
+	"reflect"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -184,4 +186,172 @@ func testAccGetPlatformFeatureFlagTargetGroup(resourceName string, state *terraf
 	}
 
 	return &segment, nil
+}
+
+func TestRuleDiffs(t *testing.T) {
+	type args struct {
+		first  *[]nextgen.Clause
+		second *[]nextgen.Clause
+	}
+	type expected struct {
+		extraRules   []nextgen.Clause
+		missingRules []nextgen.Clause
+	}
+	tests := map[string]struct {
+		args     args
+		expected expected
+	}{
+		"no rules have no changes": {
+			args: args{},
+			expected: expected{
+				extraRules:   nil,
+				missingRules: nil,
+			},
+		},
+		"identical rules have no changes": {
+			args: args{
+				first:  &[]nextgen.Clause{{Attribute: "foo", Op: "equal", Values: []string{"bar"}}},
+				second: &[]nextgen.Clause{{Attribute: "foo", Op: "equal", Values: []string{"bar"}}},
+			},
+			expected: expected{
+				extraRules:   nil,
+				missingRules: nil,
+			},
+		},
+		"order of rules doesn't matter": {
+			args: args{
+				first:  &[]nextgen.Clause{{Attribute: "foo", Op: "equal", Values: []string{"bar"}}, {Attribute: "foo2", Op: "equal", Values: []string{"bar2"}}},
+				second: &[]nextgen.Clause{{Attribute: "foo2", Op: "equal", Values: []string{"bar2"}}, {Attribute: "foo", Op: "equal", Values: []string{"bar"}}},
+			},
+			expected: expected{
+				extraRules:   nil,
+				missingRules: nil,
+			},
+		},
+		"extra rule gets returned": {
+			args: args{
+				first:  &[]nextgen.Clause{{Attribute: "foo", Op: "equal", Values: []string{"bar"}}, {Attribute: "foo2", Op: "equal", Values: []string{"bar2"}}},
+				second: &[]nextgen.Clause{{Attribute: "foo", Op: "equal", Values: []string{"bar"}}},
+			},
+			expected: expected{
+				extraRules:   []nextgen.Clause{{Attribute: "foo2", Op: "equal", Values: []string{"bar2"}}},
+				missingRules: nil,
+			},
+		},
+		"missing rule gets returned": {
+			args: args{
+				first:  &[]nextgen.Clause{{Attribute: "foo", Op: "equal", Values: []string{"bar"}}},
+				second: &[]nextgen.Clause{{Attribute: "foo", Op: "equal", Values: []string{"bar"}}, {Attribute: "foo2", Op: "equal", Values: []string{"bar2"}}},
+			},
+			expected: expected{
+				extraRules:   nil,
+				missingRules: []nextgen.Clause{{Attribute: "foo2", Op: "equal", Values: []string{"bar2"}}},
+			},
+		},
+		"extra and missing rule gets returned": {
+			args: args{
+				first:  &[]nextgen.Clause{{Attribute: "foo", Op: "equal", Values: []string{"bar"}}, {Attribute: "foo2", Op: "equal", Values: []string{"bar2"}}},
+				second: &[]nextgen.Clause{{Attribute: "foo", Op: "equal", Values: []string{"bar"}}, {Attribute: "foo3", Op: "equal", Values: []string{"bar3"}}},
+			},
+			expected: expected{
+				extraRules:   []nextgen.Clause{{Attribute: "foo2", Op: "equal", Values: []string{"bar2"}}},
+				missingRules: []nextgen.Clause{{Attribute: "foo3", Op: "equal", Values: []string{"bar3"}}},
+			},
+		},
+	}
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			extraRules, missingRules := featureflagtargetgroup.RuleDiffs(tt.args.first, tt.args.second)
+			if !reflect.DeepEqual(extraRules, tt.expected.extraRules) {
+				t.Errorf("Expected extraRules to be %v, got %v", tt.expected.extraRules, extraRules)
+			}
+			if !reflect.DeepEqual(missingRules, tt.expected.missingRules) {
+				t.Errorf("Expected missingRules to be %v, got %v", tt.expected.missingRules, missingRules)
+			}
+		})
+	}
+}
+
+func TestIncludeRuleDiffs(t *testing.T) {
+	type args struct {
+		first  []string
+		second []string
+	}
+	type expected struct {
+		extraRules   []string
+		missingRules []string
+	}
+	tests := map[string]struct {
+		args     args
+		expected expected
+	}{
+		"no rules have no changes": {
+			args: args{},
+			expected: expected{
+				extraRules:   nil,
+				missingRules: nil,
+			},
+		},
+		"identical rules have no changes": {
+			args: args{
+				first:  []string{"foo"},
+				second: []string{"foo"},
+			},
+			expected: expected{
+				extraRules:   nil,
+				missingRules: nil,
+			},
+		},
+		"order of rules doesn't matter": {
+			args: args{
+				first:  []string{"foo", "foo2"},
+				second: []string{"foo2", "foo"},
+			},
+			expected: expected{
+				extraRules:   nil,
+				missingRules: nil,
+			},
+		},
+		"extra rule gets returned": {
+			args: args{
+				first:  []string{"foo", "foo2"},
+				second: []string{"foo"},
+			},
+			expected: expected{
+				extraRules:   []string{"foo2"},
+				missingRules: nil,
+			},
+		},
+		"missing rule gets returned": {
+			args: args{
+				first:  []string{"foo"},
+				second: []string{"foo", "foo2"},
+			},
+			expected: expected{
+				extraRules:   nil,
+				missingRules: []string{"foo2"},
+			},
+		},
+		"extra and missing rule gets returned": {
+			args: args{
+				first:  []string{"foo", "foo2"},
+				second: []string{"foo", "foo3"},
+			},
+			expected: expected{
+				extraRules:   []string{"foo2"},
+				missingRules: []string{"foo3"},
+			},
+		},
+	}
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			extraRules, missingRules := featureflagtargetgroup.IncludeRuleDiffs(tt.args.first, tt.args.second)
+			if !reflect.DeepEqual(extraRules, tt.expected.extraRules) {
+				t.Errorf("Expected extraRules to be %v, got %v", tt.expected.extraRules, extraRules)
+			}
+			if !reflect.DeepEqual(missingRules, tt.expected.missingRules) {
+				t.Errorf("Expected missingRules to be %v, got %v", tt.expected.missingRules, missingRules)
+			}
+		})
+	}
 }
