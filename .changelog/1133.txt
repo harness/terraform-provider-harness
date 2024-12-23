@@ -1,0 +1,3 @@
+```release-note:fix filter creation for type PipelineExecution
+harness_platform_pipeline_filters: filter creation was not working for type PipelineExecution. Added the support for PipelineExecution.
+```
