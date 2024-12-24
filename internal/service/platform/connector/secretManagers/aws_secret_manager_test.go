@@ -300,7 +300,7 @@ func TestAccResourceConnectorAwsSM_manualWithUsePutSecretFalse(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecoveryTrue(t *testing.T) {
+func TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -316,7 +316,7 @@ func TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecoveryTrue(t *t
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorAwsSM_manualWithForceDelete(id, name),
+				Config: TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -331,7 +331,7 @@ func TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecoveryTrue(t *t
 			},
 
 			{
-				Config: testAccResourceConnectorAwsSM_manualWithForceDelete(id, updatedName),
+				Config: TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -353,7 +353,7 @@ func TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecoveryTrue(t *t
 	})
 }
 
-func testAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecoveryTrue(id, name string) string {
+func testAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, name string) string {
 	return fmt.Sprintf(`
 resource "harness_platform_connector_aws_secret_manager" "test" {
   id                  = "%s"
@@ -385,7 +385,7 @@ func TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecoveryAndRecoveryWindow(id, name),
+				Config: TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -398,7 +398,7 @@ func TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecoveryAndRecoveryWindow(id, updatedName),
+				Config: TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -419,7 +419,7 @@ func TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(t *testing.T) {
 	})
 }
 
-func testAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, name string) string {
+func TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, name string) string {
 	return fmt.Sprintf(`
 resource "harness_platform_connector_aws_secret_manager" "test" {
   id                          = "%s"
