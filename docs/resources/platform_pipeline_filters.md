@@ -28,6 +28,28 @@ resource "harness_platform_pipeline_filters" "test" {
   filter_visibility = "EveryOne"
 }
 
+# pipeline execution filter consisiting services (service_identifiers) filter
+resource "harness_platform_pipeline_filters" "execution" {
+  identifier = "identifier"
+  name       = "name"
+  org_id     = "org_id"
+  project_id = "project_id"
+  type       = "PipelineSetup"
+  filter_properties {
+    name                 = "pipeline_name"
+    description          = "pipeline_description"
+    pipeline_identifiers = ["id1", "id2"]
+    filter_type          = "PipelineExecution"
+    module_properties {
+      cd {
+        deployment_types    = "Kubernetes"
+        service_identifiers = ["nginx"]
+      }
+    }
+  }
+  filter_visibility = "EveryOne"
+}
+
 
 # pipeline filter with tags
 resource "harness_platform_pipeline_filters" "example_with_tags" {
@@ -59,6 +81,36 @@ resource "harness_platform_pipeline_filters" "example_with_tags" {
         build_type = "branch"
         branch     = "branch123"
         repo_names = "repo1234"
+      }
+    }
+  }
+}
+
+resource "harness_platform_pipeline_filters" "pipelinemoduleproperties" {
+  identifier = "identifier"
+  name       = "name"
+  org_id     = harness_platform_project.test.org_id
+  project_id = harness_platform_project.test.id
+  type       = "PipelineExecution"
+  filter_properties {
+    filter_type   = "PipelineExecution"
+    pipeline_name = "test"
+    pipeline_tags = [
+      {
+        "key"   = "k1"
+        "value" = "v1"
+      },
+      {
+        "key"   = "k2"
+        "value" = "v2"
+      },
+    ]
+    module_properties {
+      cd {
+        service_definition_types = "Kubernetes"
+        service_identifiers      = ["K8"]
+        environment_identifiers  = ["dev"]
+        artifact_display_names   = ["artificatname1"]
       }
     }
   }
@@ -98,6 +150,7 @@ Optional:
 - `module_properties` (Block List, Max: 1) module properties of the pipline filter. (see [below for nested schema](#nestedblock--filter_properties--module_properties))
 - `name` (String) Name of the pipeline filter.
 - `pipeline_identifiers` (List of String) Pipeline identifiers to filter on.
+- `pipeline_name` (String) Name of the pipeline execution filter.
 - `pipeline_tags` (List of Map of String) Tags to associate with the pipeline. tags should be in the form of `{key:key1, value:key1value}`
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
@@ -116,7 +169,10 @@ Optional:
 
 - `artifact_display_names` (Set of String) Artifact display names of the CD pipeline.
 - `deployment_types` (String) Deployment type of the CD pipeline, eg. Kubernetes
+- `environment_identifiers` (Set of String) Environment identifier of the CD pipeline.
 - `environment_names` (Set of String) Environment names of the CD pipeline.
+- `service_definition_types` (String) Deployment type of the CD pipeline, eg. Kubernetes
+- `service_identifiers` (Set of String) Service identifiers of the CD pipeline.
 - `service_names` (Set of String) Service names of the CD pipeline.
 
 

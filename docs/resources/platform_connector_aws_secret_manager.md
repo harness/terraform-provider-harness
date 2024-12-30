@@ -29,6 +29,7 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   secret_name_prefix = "test"
   region             = "us-east-1"
   delegate_selectors = ["harness-delegate"]
+  use_put_secret     = false
   credentials {
     inherit_from_delegate = true
   }
@@ -45,6 +46,7 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   secret_name_prefix = "test"
   region             = "us-east-1"
   delegate_selectors = ["harness-delegate"]
+  use_put_secret     = false
   credentials {
     manual {
       secret_key_ref = "account.secret_id"
@@ -64,6 +66,7 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   secret_name_prefix = "test"
   region             = "us-east-1"
   delegate_selectors = ["harness-delegate"]
+  use_put_secret     = false
   credentials {
     assume_role {
       role_arn    = "somerolearn"
@@ -93,6 +96,7 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
 - `secret_name_prefix` (String) A prefix to be added to all secrets.
 - `tags` (Set of String) Tags to associate with the resource.
 - `default` (Boolean) Use as Default Secrets Manager.
+- `use_put_secret` (Boolean) Whether to update secret value using putSecretValue action.
 
 ### Read-Only
 
