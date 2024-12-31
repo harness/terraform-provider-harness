@@ -6,6 +6,8 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
+	"github.com/harness/harness-go-sdk/harness/chaos"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	"log"
 
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
@@ -296,6 +298,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_governance_rule_set":                      governance_rule_set.DatasourceRuleSet(),
 				"harness_cluster_orchestrator":                     cluster_orchestrator.DataSourceClusterOrchestrator(),
 				"harness_platform_infra_module":                    module_registry.DataSourceInfraModule(),
+				"harness_chaos_infrastructure":                     infrastructure.DataSourceChaosInfrastructureService(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pipeline_template.ResourceTemplate(),
@@ -444,6 +447,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_governance_rule_set":                      governance_rule_set.ResourceRuleSet(),
 				"harness_cluster_orchestrator":                     cluster_orchestrator.ResourceClusterOrchestrator(),
 				"harness_platform_infra_module":                    module_registry.ResourceInfraModule(),
+				"harness_chaos_infrastructure":                     infrastructure.ResourceChaosInfrastructure(),
 			},
 		}
 
@@ -538,6 +542,17 @@ func getCodeClient(d *schema.ResourceData, version string) *code.APIClient {
 	return client
 }
 
+func getChaosClient(d *schema.ResourceData, version string) *chaos.APIClient {
+	client := chaos.NewAPIClient(&chaos.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/chaos/manager/api", // check if this can be taken from sdk
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)},
+	})
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
@@ -549,6 +564,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			Client:      getClient(d, version),
 			CodeClient:  getCodeClient(d, version),
 			DBOpsClient: getDBOpsClient(d, version),
+			ChaosClient: getChaosClient(d, version),
 		}, nil
 	}
 }
