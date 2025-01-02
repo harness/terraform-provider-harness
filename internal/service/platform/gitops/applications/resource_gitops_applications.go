@@ -1324,7 +1324,7 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
+func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) error {
 	d.SetId(app.Name)
 	d.Set("org_id", app.OrgIdentifier)
 	d.Set("project_id", app.ProjectIdentifier)
@@ -1377,13 +1377,14 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 		if app.App.Spec != nil {
 			var specList = []interface{}{}
 			var spec = map[string]interface{}{}
-			fmt.Println("app.App.Spec: ", app.App.Spec)
 			if app.App.Spec.Project != "" {
 				spec["project"] = app.App.Spec.Project
 			}
 			if app.App.Spec.Source != nil {
 				source := getSourceForState(app.App.Spec)
-				spec["source"] = []interface{}{source}
+				var sourceList = []interface{}{}
+				sourceList = append(sourceList, source)
+				spec["source"] = sourceList
 			}
 			if len(app.App.Spec.Sources) > 0 {
 				var sourcesList = []interface{}{}
@@ -1441,9 +1442,13 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 			application["spec"] = specList
 		}
 		applicationList = append(applicationList, application)
-		d.Set("application", applicationList)
+		err := d.Set("application", applicationList)
+		if err != nil {
+			fmt.Printf("resource_gitops_application: Error setting application: %v\n", err)
+			return fmt.Errorf("error setting application: %v", err)
+		}
 	}
-
+	return nil
 }
 
 func buildCreateApplicationRequest(d *schema.ResourceData) nextgen.ApplicationsApplicationCreateRequest {
@@ -1644,7 +1649,6 @@ func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]
 	source["path"] = appSpec.Source.Path
 	source["target_revision"] = appSpec.Source.TargetRevision
 	source["chart"] = appSpec.Source.Chart
-	source["ref"] = appSpec.Source.Ref
 	if appSpec.Source.Helm != nil {
 		var helmList = []interface{}{}
 		var helm = map[string]interface{}{}
