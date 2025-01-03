@@ -3,8 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
+	har_registries "github.com/harness/terraform-provider-harness/internal/service/har/registries"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
 	"log"
 
@@ -35,6 +36,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/dbops"
+	"github.com/harness/harness-go-sdk/harness/har"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -358,6 +360,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_app_project":              gitops_project.ResourceProject(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.ResourceGitopsRepoCerts(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),
+				"harness_platform_har_registry":                    har_registries.ResourceRegistries(),
 				"harness_platform_infrastructure":                  cdng_infrastructure.ResourceInfrastructure(),
 				"harness_platform_input_set":                       pipeline_input_set.ResourceInputSet(),
 				"harness_platform_monitored_service":               monitored_service.ResourceMonitoredService(),
@@ -538,6 +541,20 @@ func getCodeClient(d *schema.ResourceData, version string) *code.APIClient {
 	return client
 }
 
+func getHarClient(d *schema.ResourceData, version string) *har.APIClient {
+	cfg := har.NewConfiguration()
+	client := har.NewAPIClient(&har.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/har/api/v1", // todo: this should be fixed in go sdk later
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		HTTPClient:    getOpenApiHttpClient(cfg.Logger),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)}, // todo: this should be fixed in go sdk later
+		DebugLogging:  openapi_client_logging.IsDebugOrHigher(cfg.Logger),
+	})
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
@@ -549,6 +566,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			Client:      getClient(d, version),
 			CodeClient:  getCodeClient(d, version),
 			DBOpsClient: getDBOpsClient(d, version),
+			HARClient:   getHarClient(d, version),
 		}, nil
 	}
 }
