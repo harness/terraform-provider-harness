@@ -9,6 +9,10 @@
 package chaos
 
 import (
+	"fmt"
+	"github.com/harness/harness-go-sdk/harness"
+	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"net/http"
 )
 
@@ -49,6 +53,8 @@ type APIKey struct {
 }
 
 type Configuration struct {
+	AccountId     string            `json:"accountId,omitempty"`
+	ApiKey        string            `json:"apiKey,omitempty"`
 	BasePath      string            `json:"basePath,omitempty"`
 	Host          string            `json:"host,omitempty"`
 	Scheme        string            `json:"scheme,omitempty"`
@@ -59,9 +65,11 @@ type Configuration struct {
 
 func NewConfiguration() *Configuration {
 	cfg := &Configuration{
-		BasePath:      "/api/manager",
+		AccountId:     helpers.EnvVars.AccountId.Get(),
+		ApiKey:        helpers.EnvVars.PlatformApiKey.Get(),
+		BasePath:      helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl) + "/chaos/manager/api",
 		DefaultHeader: make(map[string]string),
-		UserAgent:     "Swagger-Codegen/1.0.0/go",
+		UserAgent:     fmt.Sprintf("%s-%s", harness.SDKName, harness.SDKVersion),
 	}
 	return cfg
 }

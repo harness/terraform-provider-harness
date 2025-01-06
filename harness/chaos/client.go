@@ -42,6 +42,9 @@ type APIClient struct {
 	cfg    *Configuration
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
+	AccountId string
+	ApiKey    string
+	Endpoint  string
 	// API Services
 
 	ChaosSdkApi *ChaosSdkApiService
@@ -61,6 +64,11 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c := &APIClient{}
 	c.cfg = cfg
 	c.common.client = c
+
+	// Api Config
+	c.ApiKey = cfg.ApiKey
+	c.AccountId = cfg.AccountId
+	c.Endpoint = cfg.BasePath
 
 	// API Services
 	c.ChaosSdkApi = (*ChaosSdkApiService)(&c.common)
@@ -164,7 +172,6 @@ func (c *APIClient) prepareRequest(
 	fileBytes []byte) (localVarRequest *http.Request, err error) {
 
 	var body *bytes.Buffer
-
 	// Detect postBody type and post.
 	if postBody != nil {
 		contentType := headerParams["Content-Type"]
@@ -172,7 +179,6 @@ func (c *APIClient) prepareRequest(
 			contentType = detectContentType(postBody)
 			headerParams["Content-Type"] = contentType
 		}
-
 		body, err = setBody(postBody, contentType)
 		if err != nil {
 			return nil, err
@@ -245,7 +251,6 @@ func (c *APIClient) prepareRequest(
 
 	// Encode the parameters.
 	url.RawQuery = query.Encode()
-
 	// Generate a new request
 	if body != nil {
 		localVarRequest, err = http.NewRequest(method, url.String(), body)
@@ -309,17 +314,17 @@ func (c *APIClient) prepareRequest(
 }
 
 func (c *APIClient) decode(v interface{}, b []byte, contentType string) (err error) {
-		if strings.Contains(contentType, "application/xml") {
-			if err = xml.Unmarshal(b, v); err != nil {
-				return err
-			}
-			return nil
-		} else if strings.Contains(contentType, "application/json") {
-			if err = json.Unmarshal(b, v); err != nil {
-				return err
-			}
-			return nil
+	if strings.Contains(contentType, "application/xml") {
+		if err = xml.Unmarshal(b, v); err != nil {
+			return err
 		}
+		return nil
+	} else if strings.Contains(contentType, "application/json") {
+		if err = json.Unmarshal(b, v); err != nil {
+			return err
+		}
+		return nil
+	}
 	return errors.New("undefined response type")
 }
 
@@ -368,7 +373,6 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 	if err != nil {
 		return nil, err
 	}
-
 	if bodyBuf.Len() == 0 {
 		err = fmt.Errorf("Invalid body type %s\n", contentType)
 		return nil, err

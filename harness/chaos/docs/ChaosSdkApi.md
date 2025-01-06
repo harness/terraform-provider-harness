@@ -1,17 +1,17 @@
 # {{classname}}
 
-All URIs are relative to */api/manager*
+All URIs are relative to */chaos/manager/api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**DeleteInfraV2**](ChaosSdkApi.md#DeleteInfraV2) | **Delete** /rest/v2/infrastructure/{identity} | Delete a v2 infra
+[**DeleteInfraV2**](ChaosSdkApi.md#DeleteInfraV2) | **Delete** /rest/v2/infrastructure/{environmentIdentifier}/{identity} | Delete a v2 infra
 [**GetInfraV2**](ChaosSdkApi.md#GetInfraV2) | **Get** /rest/v2/infrastructure/{identity} | Get a new v2 infra
 [**ListInfraV2**](ChaosSdkApi.md#ListInfraV2) | **Post** /rest/v2/infrastructures | List a new v2 infra
 [**RegisterInfraV2**](ChaosSdkApi.md#RegisterInfraV2) | **Post** /rest/v2/infrastructure | Register a new v2 infra
 [**UpdateInfraV2**](ChaosSdkApi.md#UpdateInfraV2) | **Put** /rest/v2/infrastructure | Update a new v2 infra
 
 # **DeleteInfraV2**
-> InfraV2DeleteKubernetesInfraV2Response DeleteInfraV2(ctx, identity, accountIdentifier, organizationIdentifier, projectIdentifier)
+> InfraV2DeleteKubernetesInfraV2Response DeleteInfraV2(ctx, identity, environmentIdentifier, accountIdentifier, organizationIdentifier, projectIdentifier)
 Delete a v2 infra
 
 Delete a new v2 infra
@@ -22,6 +22,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **identity** | **string**| Chaos V2 Infra Identity | 
+  **environmentIdentifier** | **string**| Chaos V2 Environment Identity | 
   **accountIdentifier** | **string**| account id that want to access the resource | 
   **organizationIdentifier** | **string**| organization id that want to access the resource | 
   **projectIdentifier** | **string**| project id that want to access the resource | 
@@ -32,7 +33,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[ApiKeyAuth](../README.md#ApiKeyAuth)
 
 ### HTTP request headers
 
@@ -64,7 +65,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[ApiKeyAuth](../README.md#ApiKeyAuth)
 
 ### HTTP request headers
 
@@ -112,7 +113,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[ApiKeyAuth](../README.md#ApiKeyAuth)
 
 ### HTTP request headers
 
@@ -158,7 +159,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: */*
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
@@ -196,11 +197,11 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[ApiKeyAuth](../README.md#ApiKeyAuth)
 
 ### HTTP request headers
 
- - **Content-Type**: */*
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

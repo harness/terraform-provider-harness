@@ -3,15 +3,19 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Annotation** | **map[string]string** |  | [optional] [default to null]
+**Containers** | **string** |  | [optional] [default to null]
 **CreatedAt** | **string** |  | [optional] [default to null]
 **CreatedBy** | [***InfraV2UserDetails**](infra_v2.UserDetails.md) |  | [optional] [default to null]
 **DeploymentType** | **string** |  | [optional] [default to null]
 **Description** | **string** |  | [optional] [default to null]
 **DiscoveryAgentID** | **string** |  | [optional] [default to null]
+**Env** | [**[]InfraV2Env**](infra_v2.Env.md) |  | [optional] [default to null]
 **EnvironmentID** | **string** |  | [optional] [default to null]
 **HarnessInfraType** | **string** |  | [optional] [default to null]
 **Identifier** | [***InfraV2Identifiers**](infra_v2.Identifiers.md) |  | [optional] [default to null]
 **Identity** | **string** |  | [optional] [default to null]
+**ImageRegistry** | [***ImageRegistryImageRegistryV2**](image_registry.ImageRegistryV2.md) |  | [optional] [default to null]
 **InfraID** | **string** |  | [optional] [default to null]
 **InfraNamespace** | **string** |  | [optional] [default to null]
 **InfraScope** | [***InfraV2InfraScope**](infra_v2.InfraScope.md) |  | [optional] [default to null]
@@ -20,6 +24,7 @@ Name | Type | Description | Notes
 **InstallationType** | [***InfraV2InstallationType**](infra_v2.InstallationType.md) |  | [optional] [default to null]
 **IsChaosEnabled** | **bool** |  | [optional] [default to null]
 **K8sConnectorID** | **string** |  | [optional] [default to null]
+**Label** | **map[string]string** |  | [optional] [default to null]
 **LastHeartbeat** | **int32** |  | [optional] [default to null]
 **LastWorkflowTimestamp** | **string** |  | [optional] [default to null]
 **Mtls** | [***InfraV2MtlsConfiguration**](infra_v2.MTLSConfiguration.md) |  | [optional] [default to null]
@@ -40,6 +45,8 @@ Name | Type | Description | Notes
 **UpdatedBy** | [***InfraV2UserDetails**](infra_v2.UserDetails.md) |  | [optional] [default to null]
 **Upgrade** | [***InfraV2Upgrade**](infra_v2.Upgrade.md) |  | [optional] [default to null]
 **Version** | **string** |  | [optional] [default to null]
+**VolumeMounts** | [**[]V1VolumeMount**](v1.VolumeMount.md) |  | [optional] [default to null]
+**Volumes** | [**[]InfraV2Volumes**](infra_v2.Volumes.md) |  | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -8,11 +8,9 @@
  */
 package chaos
 
-type V1StorageMedium string
-
-// List of v1.StorageMedium
-const (
-	EMPTY_V1StorageMedium      V1StorageMedium = ""
-	MEMORY_V1StorageMedium     V1StorageMedium = "Memory"
-	HUGE_PAGES_V1StorageMedium V1StorageMedium = "HugePages-"
-)
+type ImageRegistryCustomImagesRequest struct {
+	Ddcr string `json:"ddcr,omitempty"`
+	DdcrFault string `json:"ddcrFault,omitempty"`
+	DdcrLib string `json:"ddcrLib,omitempty"`
+	LogWatcher string `json:"logWatcher,omitempty"`
+}

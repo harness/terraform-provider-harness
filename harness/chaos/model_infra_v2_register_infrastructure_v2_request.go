@@ -10,18 +10,19 @@ package chaos
 
 type InfraV2RegisterInfrastructureV2Request struct {
 	Annotation map[string]string `json:"annotation,omitempty"`
+	Containers string `json:"containers,omitempty"`
 	CorrelationId string `json:"correlationId,omitempty"`
 	Description string `json:"description,omitempty"`
 	DiscoveryAgentID string `json:"discoveryAgentID,omitempty"`
-	Env []V1EnvVar `json:"env,omitempty"`
-	EnvFrom []V1EnvFromSource `json:"envFrom,omitempty"`
+	Env []InfraV2Env `json:"env,omitempty"`
 	EnvironmentID string `json:"environmentID,omitempty"`
+	Identifier *InfraV2Identifiers `json:"identifier,omitempty"`
 	Identity string `json:"identity,omitempty"`
+	ImageRegistry *ImageRegistryImageRegistryV2 `json:"imageRegistry,omitempty"`
 	InfraID string `json:"infraID,omitempty"`
 	InfraNamespace string `json:"infraNamespace,omitempty"`
 	InfraScope *InfraV2InfraScope `json:"infraScope,omitempty"`
 	InfraType *InfraV2InfraType `json:"infraType,omitempty"`
-	InitContainers string `json:"initContainers,omitempty"`
 	InsecureSkipVerify bool `json:"insecureSkipVerify,omitempty"`
 	K8sConnectorID string `json:"k8sConnectorID,omitempty"`
 	Label map[string]string `json:"label,omitempty"`
@@ -32,9 +33,8 @@ type InfraV2RegisterInfrastructureV2Request struct {
 	RunAsGroup int32 `json:"runAsGroup,omitempty"`
 	RunAsUser int32 `json:"runAsUser,omitempty"`
 	ServiceAccount string `json:"serviceAccount,omitempty"`
-	SidecarContainers string `json:"sidecarContainers,omitempty"`
 	Tags []string `json:"tags,omitempty"`
 	Tolerations []V1Toleration `json:"tolerations,omitempty"`
 	VolumeMounts []V1VolumeMount `json:"volumeMounts,omitempty"`
-	Volumes []V1Volume `json:"volumes,omitempty"`
+	Volumes []InfraV2Volumes `json:"volumes,omitempty"`
 }

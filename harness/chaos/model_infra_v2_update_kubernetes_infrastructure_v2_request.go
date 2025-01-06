@@ -10,14 +10,14 @@ package chaos
 
 type InfraV2UpdateKubernetesInfrastructureV2Request struct {
 	Annotation map[string]string `json:"annotation,omitempty"`
+	Containers string `json:"containers,omitempty"`
 	CorrelationId string `json:"correlationId,omitempty"`
 	Description string `json:"description,omitempty"`
-	Env []V1EnvVar `json:"env,omitempty"`
-	EnvFrom []V1EnvFromSource `json:"envFrom,omitempty"`
+	Env []InfraV2Env `json:"env,omitempty"`
 	EnvironmentID string `json:"environmentID,omitempty"`
 	Identity string `json:"identity,omitempty"`
+	ImageRegistry *ImageRegistryImageRegistryV2 `json:"imageRegistry,omitempty"`
 	InfraNamespace string `json:"infraNamespace,omitempty"`
-	InitContainers string `json:"initContainers,omitempty"`
 	InsecureSkipVerify bool `json:"insecureSkipVerify,omitempty"`
 	Label map[string]string `json:"label,omitempty"`
 	Mtls *InfraV2MtlsConfiguration `json:"mtls,omitempty"`
@@ -27,9 +27,8 @@ type InfraV2UpdateKubernetesInfrastructureV2Request struct {
 	RunAsGroup int32 `json:"runAsGroup,omitempty"`
 	RunAsUser int32 `json:"runAsUser,omitempty"`
 	ServiceAccount string `json:"serviceAccount,omitempty"`
-	SidecarContainers string `json:"sidecarContainers,omitempty"`
 	Tags []string `json:"tags,omitempty"`
 	Tolerations []V1Toleration `json:"tolerations,omitempty"`
 	VolumeMounts []V1VolumeMount `json:"volumeMounts,omitempty"`
-	Volumes []V1Volume `json:"volumes,omitempty"`
+	Volumes []InfraV2Volumes `json:"volumes,omitempty"`
 }

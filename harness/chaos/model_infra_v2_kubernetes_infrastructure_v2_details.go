@@ -9,15 +9,19 @@
 package chaos
 
 type InfraV2KubernetesInfrastructureV2Details struct {
+	Annotation map[string]string `json:"annotation,omitempty"`
+	Containers string `json:"containers,omitempty"`
 	CreatedAt string `json:"createdAt,omitempty"`
 	CreatedBy *InfraV2UserDetails `json:"createdBy,omitempty"`
 	DeploymentType string `json:"deploymentType,omitempty"`
 	Description string `json:"description,omitempty"`
 	DiscoveryAgentID string `json:"discoveryAgentID,omitempty"`
+	Env []InfraV2Env `json:"env,omitempty"`
 	EnvironmentID string `json:"environmentID,omitempty"`
 	HarnessInfraType string `json:"harnessInfraType,omitempty"`
 	Identifier *InfraV2Identifiers `json:"identifier,omitempty"`
 	Identity string `json:"identity,omitempty"`
+	ImageRegistry *ImageRegistryImageRegistryV2 `json:"imageRegistry,omitempty"`
 	InfraID string `json:"infraID,omitempty"`
 	InfraNamespace string `json:"infraNamespace,omitempty"`
 	InfraScope *InfraV2InfraScope `json:"infraScope,omitempty"`
@@ -26,6 +30,7 @@ type InfraV2KubernetesInfrastructureV2Details struct {
 	InstallationType *InfraV2InstallationType `json:"installationType,omitempty"`
 	IsChaosEnabled bool `json:"isChaosEnabled,omitempty"`
 	K8sConnectorID string `json:"k8sConnectorID,omitempty"`
+	Label map[string]string `json:"label,omitempty"`
 	LastHeartbeat int32 `json:"lastHeartbeat,omitempty"`
 	LastWorkflowTimestamp string `json:"lastWorkflowTimestamp,omitempty"`
 	Mtls *InfraV2MtlsConfiguration `json:"mtls,omitempty"`
@@ -46,4 +51,6 @@ type InfraV2KubernetesInfrastructureV2Details struct {
 	UpdatedBy *InfraV2UserDetails `json:"updatedBy,omitempty"`
 	Upgrade *InfraV2Upgrade `json:"upgrade,omitempty"`
 	Version string `json:"version,omitempty"`
+	VolumeMounts []V1VolumeMount `json:"volumeMounts,omitempty"`
+	Volumes []InfraV2Volumes `json:"volumes,omitempty"`
 }

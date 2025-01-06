@@ -448,7 +448,6 @@ func (c *APIClient) prepareRequest(
 			contentType = detectContentType(postBody)
 			headerParams["Content-Type"] = contentType
 		}
-
 		body, err = setBody(postBody, contentType)
 		if err != nil {
 			return nil, err
@@ -644,7 +643,6 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 	if err != nil {
 		return nil, err
 	}
-
 	if bodyBuf.Len() == 0 {
 		err = fmt.Errorf("Invalid body type %s\n", contentType)
 		return nil, err

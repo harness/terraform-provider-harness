@@ -8,11 +8,8 @@
  */
 package chaos
 
-type V1StorageMedium string
-
-// List of v1.StorageMedium
-const (
-	EMPTY_V1StorageMedium      V1StorageMedium = ""
-	MEMORY_V1StorageMedium     V1StorageMedium = "Memory"
-	HUGE_PAGES_V1StorageMedium V1StorageMedium = "HugePages-"
-)
+type ImageRegistryUserDetails struct {
+	Email string `json:"email,omitempty"`
+	UserID string `json:"userID,omitempty"`
+	Username string `json:"username,omitempty"`
+}

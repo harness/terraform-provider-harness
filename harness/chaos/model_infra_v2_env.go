@@ -8,11 +8,9 @@
  */
 package chaos
 
-type V1StorageMedium string
-
-// List of v1.StorageMedium
-const (
-	EMPTY_V1StorageMedium      V1StorageMedium = ""
-	MEMORY_V1StorageMedium     V1StorageMedium = "Memory"
-	HUGE_PAGES_V1StorageMedium V1StorageMedium = "HugePages-"
-)
+type InfraV2Env struct {
+	Key string `json:"key,omitempty"`
+	Name string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+	ValueFrom *InfraV2EnvValueFrom `json:"valueFrom,omitempty"`
+}
