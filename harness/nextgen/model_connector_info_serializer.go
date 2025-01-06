@@ -35,6 +35,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.AwsSecretManager)
 	case ConnectorTypes.Azure:
 		err = json.Unmarshal(aux.Spec, &a.Azure)
+	case ConnectorTypes.AzureArtifacts:
+		err = json.Unmarshal(aux.Spec, &a.AzureArtifacts)
 	case ConnectorTypes.AzureKeyVault:
 		err = json.Unmarshal(aux.Spec, &a.AzureKeyVault)
 	case ConnectorTypes.CEAzure:
@@ -177,6 +179,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.Splunk)
 	case ConnectorTypes.Azure:
 		spec, err = json.Marshal(a.Azure)
+	case ConnectorTypes.AzureArtifacts:
+		spec, err = json.Marshal(a.AzureArtifacts)
 	case ConnectorTypes.AzureKeyVault:
 		spec, err = json.Marshal(a.AzureKeyVault)
 	case ConnectorTypes.CEAzure:

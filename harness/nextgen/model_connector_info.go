@@ -38,6 +38,7 @@ type ConnectorInfo struct {
 	AwsSecretManager    *AwsSecretManager               `json:"-"`
 	AzureCloudCost      *CeAzureConnector               `json:"-"`
 	Azure               *AzureConnector                 `json:"-"`
+	AzureArtifacts      *AzureArtifactsConnector        `json:"-"`
 	AzureKeyVault       *AzureKeyVaultConnector         `json:"-"`
 	BitBucket           *BitbucketConnector             `json:"-"`
 	CustomSecretManager *CustomSecretManager            `json:"_"`

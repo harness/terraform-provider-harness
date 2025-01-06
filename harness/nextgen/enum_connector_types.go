@@ -8,6 +8,7 @@ var ConnectorTypes = struct {
 	Splunk              ConnectorType
 	AppDynamics         ConnectorType
 	Azure               ConnectorType
+	AzureArtifacts      ConnectorType
 	Prometheus          ConnectorType
 	Dynatrace           ConnectorType
 	Vault               ConnectorType
@@ -85,6 +86,7 @@ var ConnectorTypes = struct {
 	PagerDuty:           "PagerDuty",
 	GcpSecretManager:    "GcpSecretManager",
 	Azure:               "Azure",
+	AzureArtifacts:      "AzureArtifacts",
 	Spot:                "Spot",
 	ServiceNow:          "ServiceNow",
 	Tas:                 "Tas",
@@ -133,6 +135,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.PagerDuty.String(),
 	ConnectorTypes.GcpSecretManager.String(),
 	ConnectorTypes.Azure.String(),
+	ConnectorTypes.AzureArtifacts.String(),
 	ConnectorTypes.Spot.String(),
 	ConnectorTypes.ServiceNow.String(),
 	ConnectorTypes.Tas.String(),
