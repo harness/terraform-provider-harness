@@ -1108,6 +1108,9 @@ func datasourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData
 		d.MarkNewResource()
 		return nil
 	}
-	setApplication(d, &resp)
+	err = setApplication(d, &resp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return nil
 }

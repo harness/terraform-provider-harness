@@ -1137,7 +1137,11 @@ func resourceGitopsApplicationCreate(ctx context.Context, d *schema.ResourceData
 		d.MarkNewResource()
 		return nil
 	}
-	setApplication(d, &resp)
+	err = setApplication(d, &resp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
 }
 
@@ -1176,7 +1180,11 @@ func resourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData, 
 		d.MarkNewResource()
 		return nil
 	}
-	setApplication(d, &resp)
+	err = setApplication(d, &resp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
 }
 
@@ -1279,7 +1287,11 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 		d.MarkNewResource()
 		return nil
 	}
-	setApplication(d, &resp)
+	err = setApplication(d, &resp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
 }
 
@@ -1324,7 +1336,7 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
+func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) error {
 	d.SetId(app.Name)
 	d.Set("org_id", app.OrgIdentifier)
 	d.Set("project_id", app.ProjectIdentifier)
@@ -1441,9 +1453,13 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 			application["spec"] = specList
 		}
 		applicationList = append(applicationList, application)
-		d.Set("application", applicationList)
-	}
 
+		err := d.Set("application", applicationList)
+		if err != nil {
+			return fmt.Errorf("error setting application: %v", err)
+		}
+	}
+	return nil
 }
 
 func buildCreateApplicationRequest(d *schema.ResourceData) nextgen.ApplicationsApplicationCreateRequest {
@@ -1644,7 +1660,6 @@ func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]
 	source["path"] = appSpec.Source.Path
 	source["target_revision"] = appSpec.Source.TargetRevision
 	source["chart"] = appSpec.Source.Chart
-	source["ref"] = appSpec.Source.Ref
 	if appSpec.Source.Helm != nil {
 		var helmList = []interface{}{}
 		var helm = map[string]interface{}{}
