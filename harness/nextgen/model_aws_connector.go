@@ -14,9 +14,9 @@ type AwsConnector struct {
 	Credential                          *AwsCredential               `json:"credential"`
 	AwsSdkClientBackOffStrategyOverride *AwsSdkClientBackoffStrategy `json:"awsSdkClientBackOffStrategyOverride,omitempty"`
 	DelegateSelectors                   []string                     `json:"delegateSelectors,omitempty"`
-	ExecuteOnDelegate                   bool                         `json:"executeOnDelegate,omitempty"`
-	Proxy                               bool                         `json:"proxy,omitempty"`
+	ExecuteOnDelegate                   bool                         `json:"executeOnDelegate"`
+	Proxy                               bool                         `json:"proxy"`
 	ProxyUrl                            string                       `json:"proxyUrl,omitempty"`
-	IgnoreTestConnection                bool                         `json:"ignoreTestConnection,omitempty"`
+	IgnoreTestConnection                bool                         `json:"ignoreTestConnection"`
 	ConnectorType                       string                       `json:"connectorType"`
 }

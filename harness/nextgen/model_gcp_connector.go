@@ -13,5 +13,5 @@ package nextgen
 type GcpConnector struct {
 	Credential        *GcpConnectorCredential `json:"credential"`
 	DelegateSelectors []string                `json:"delegateSelectors,omitempty"`
-	ExecuteOnDelegate bool                    `json:"executeOnDelegate,omitempty"`
+	ExecuteOnDelegate bool                    `json:"executeOnDelegate"`
 }

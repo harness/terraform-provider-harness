@@ -16,5 +16,5 @@ type AzureConnector struct {
 	DelegateSelectors []string         `json:"delegateSelectors,omitempty"`
 	// This specifies the Azure Environment type, which is AZURE by default.
 	AzureEnvironmentType string `json:"azureEnvironmentType"`
-	ExecuteOnDelegate    bool   `json:"executeOnDelegate,omitempty"`
+	ExecuteOnDelegate    bool   `json:"executeOnDelegate"`
 }
