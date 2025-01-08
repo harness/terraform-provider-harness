@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -12,7 +13,7 @@ func DataSourceChaosInfrastructureService() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a chaos infrastructure.",
 
-		ReadContext: dataSourceInfrastructureRead,
+		ReadContext: dataSourceChaosInfrastructureRead,
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {
@@ -41,7 +42,7 @@ func DataSourceChaosInfrastructureService() *schema.Resource {
 	return resource
 }
 
-func dataSourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceChaosInfrastructureRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 	var accountIdentifier, orgIdentifier, projectIdentifier, identifier, envIdentifier string
 	accountIdentifier = c.AccountId

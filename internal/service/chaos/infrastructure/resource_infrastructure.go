@@ -2,23 +2,24 @@ package infrastructure
 
 import (
 	"context"
+	"log"
+
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"log"
 )
 
 func ResourceChaosInfrastructure() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Resource for creating a Chaos Infrastructure.",
 
-		ReadContext:   resourceInfrastructureRead,
-		UpdateContext: resourceChaosInfraUpdate,
-		DeleteContext: resourceInfraDelete,
-		CreateContext: resourceInfraCreate,
+		ReadContext:   resourceChaosInfrastructureRead,
+		UpdateContext: resourceChaosInfrastructureUpdate,
+		DeleteContext: resourceChaosInfrastructureDelete,
+		CreateContext: resourceChaosInfrastructureCreate,
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
@@ -78,7 +79,7 @@ func ResourceChaosInfrastructure() *schema.Resource {
 	return resource
 }
 
-func resourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceChaosInfrastructureRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 	var accountIdentifier, orgIdentifier, projectIdentifier, identifier, envIdentifier string
 	accountIdentifier = c.AccountId
@@ -109,7 +110,7 @@ func resourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, met
 	return nil
 }
 
-func resourceChaosInfraUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceChaosInfrastructureUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 	var accountIdentifier, orgIdentifier, projectIdentifier string
 	accountIdentifier = c.AccountId
@@ -165,7 +166,7 @@ func readInfraUpdate(d *schema.ResourceData, identifier string, envID string) {
 
 }
 
-func resourceInfraDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceChaosInfrastructureDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 
 	var accountIdentifier, orgIdentifier, projectIdentifier, identifier, environmentID string
@@ -197,7 +198,7 @@ func readInfraCreate(d *schema.ResourceData, infraResponse *chaos.InfraV2Registe
 	d.Set("environment_id", envID)
 }
 
-func resourceInfraCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceChaosInfrastructureCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 	log.Printf("Debugging message: %v", c)
 
