@@ -3,12 +3,15 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
-	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
-	"github.com/harness/harness-go-sdk/harness/chaos"
-	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	"log"
+
+	"log"
+
+	"github.com/harness/harness-go-sdk/harness/chaos"
+	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
 
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
@@ -309,6 +312,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_appdynamics":           connector.ResourceConnectorAppDynamics(),
 				"harness_platform_connector_elasticsearch":         connector.ResourceConnectorElasticSearch(),
 				"harness_platform_connector_artifactory":           cdng_connector_artifactRepositories.ResourceConnectorArtifactory(),
+				"harness_platform_connector_azure_artifacts":       cdng_connector_artifactRepositories.ResourceConnectorAzureArtifacts(),
 				"harness_platform_connector_aws_secret_manager":    pl_secretManagers.ResourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                   cdng_connector_cloudProviders.ResourceConnectorAws(),
 				"harness_platform_connector_awscc":                 connector.ResourceConnectorAwsCC(),
