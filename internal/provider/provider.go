@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	"log"
-
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
