@@ -37,11 +37,11 @@ func DatasourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
-                        "session_token_ref": {
-                            Description: "Reference to the Harness secret containing the aws session token." + secret_ref_text,
-                            Type:        schema.TypeString,
-                            Optional:    true,
-                        },
+						"session_token_ref": {
+							Description: "Reference to the Harness secret containing the aws session token." + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 						"delegate_selectors": {
 							Description: "Connect only use delegates with these tags.",
 							Type:        schema.TypeSet,
@@ -206,6 +206,11 @@ func DatasourceConnectorAws() *schema.Resource {
 						},
 					},
 				},
+			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Computed:    true,
 			},
 		},
 	}

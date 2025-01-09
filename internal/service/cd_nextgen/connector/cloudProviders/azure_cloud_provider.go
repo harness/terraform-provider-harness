@@ -313,6 +313,9 @@ func buildConnectorAzureCloudProvider(d *schema.ResourceData) *nextgen.Connector
 	if attr, ok := d.GetOk("azure_environment_type"); ok {
 		connector.Azure.AzureEnvironmentType = attr.(string)
 	}
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Azure.ExecuteOnDelegate = attr.(bool)
+	}
 
 	return connector
 }
@@ -327,6 +330,7 @@ func readConnectorAzureCloudProvider(d *schema.ResourceData, connector *nextgen.
 	})
 	d.Set("delegate_selectors", connector.Azure.DelegateSelectors)
 	d.Set("azure_environment_type", connector.Azure.AzureEnvironmentType)
+	d.Set("execute_on_delegate", connector.Azure.ExecuteOnDelegate)
 
 	return nil
 }
