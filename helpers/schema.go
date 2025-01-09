@@ -200,6 +200,13 @@ func BuildField(d *schema.ResourceData, field string) optional.String {
 	return optional.EmptyString()
 }
 
+func BuildFieldInt32(d *schema.ResourceData, field string) optional.Int32 {
+	if arr, ok := d.GetOk(field); ok {
+		return optional.NewInt32(int32(arr.(int)))
+	}
+	return optional.EmptyInt32()
+}
+
 func BuildFieldForBoolean(d *schema.ResourceData, field string) optional.Bool {
 	if arr, ok := d.GetOk(field); ok {
 
