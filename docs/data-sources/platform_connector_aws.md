@@ -36,6 +36,7 @@ data "harness_platform_connector_aws" "example" {
 - `cross_account_access` (List of Object) Select this option if you want to use one AWS account for the connection, but you want to deploy or build in a different AWS account. In this scenario, the AWS account used for AWS access in Credentials will assume the IAM role you specify in Cross-account role ARN setting. This option uses the AWS Security Token Service (STS) feature. (see [below for nested schema](#nestedatt--cross_account_access))
 - `description` (String) Description of the resource.
 - `equal_jitter_backoff_strategy` (List of Object) Equal Jitter BackOff Strategy. (see [below for nested schema](#nestedatt--equal_jitter_backoff_strategy))
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `fixed_delay_backoff_strategy` (List of Object) Fixed Delay BackOff Strategy. (see [below for nested schema](#nestedatt--fixed_delay_backoff_strategy))
 - `full_jitter_backoff_strategy` (List of Object) Full Jitter BackOff Strategy. (see [below for nested schema](#nestedatt--full_jitter_backoff_strategy))
 - `id` (String) The ID of this resource.
@@ -43,7 +44,6 @@ data "harness_platform_connector_aws" "example" {
 - `irsa` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--irsa))
 - `manual` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--manual))
 - `oidc_authentication` (List of Object) Authentication using harness oidc. (see [below for nested schema](#nestedatt--oidc_authentication))
-- `region` AWS Region to perform Connection test of Connector.
 - `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedatt--cross_account_access"></a>
@@ -51,8 +51,8 @@ data "harness_platform_connector_aws" "example" {
 
 Read-Only:
 
-- `external_id` (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
-- `role_arn` (String) The Amazon Resource Name (ARN) of the role that you want to assume. This is an IAM role in the target AWS account.
+- `external_id` (String)
+- `role_arn` (String)
 
 
 <a id="nestedatt--equal_jitter_backoff_strategy"></a>
@@ -60,9 +60,9 @@ Read-Only:
 
 Read-Only:
 
-- `base_delay` (Number) Base delay.
-- `max_backoff_time` (Number) Max BackOff Time.
-- `retry_count` (Number) Retry Count.
+- `base_delay` (Number)
+- `max_backoff_time` (Number)
+- `retry_count` (Number)
 
 
 <a id="nestedatt--fixed_delay_backoff_strategy"></a>
@@ -70,8 +70,8 @@ Read-Only:
 
 Read-Only:
 
-- `fixed_backoff` (Number) Fixed Backoff.
-- `retry_count` (Number) Retry Count.
+- `fixed_backoff` (Number)
+- `retry_count` (Number)
 
 
 <a id="nestedatt--full_jitter_backoff_strategy"></a>
@@ -79,9 +79,9 @@ Read-Only:
 
 Read-Only:
 
-- `base_delay` (Number) Base delay.
-- `max_backoff_time` (Number) Max BackOff Time.
-- `retry_count` (Number) Retry Count.
+- `base_delay` (Number)
+- `max_backoff_time` (Number)
+- `retry_count` (Number)
 
 
 <a id="nestedatt--inherit_from_delegate"></a>
@@ -89,8 +89,8 @@ Read-Only:
 
 Read-Only:
 
-- `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
-- `region` AWS Region to perform Connection test of Connector.
+- `delegate_selectors` (Set of String)
+- `region` (String)
 
 
 <a id="nestedatt--irsa"></a>
@@ -98,8 +98,8 @@ Read-Only:
 
 Read-Only:
 
-- `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
-- `region` AWS Region to perform Connection test of Connector.
+- `delegate_selectors` (Set of String)
+- `region` (String)
 
 
 <a id="nestedatt--manual"></a>
@@ -107,20 +107,20 @@ Read-Only:
 
 Read-Only:
 
-- `access_key` (String) AWS access key.
-- `access_key_ref` (String) Reference to the Harness secret containing the aws access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
-- `delegate_selectors` (Set of String) Connect only use delegates with these tags.
-- `secret_key_ref` (String) Reference to the Harness secret containing the aws secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
-- `session_token_ref` (String) Reference to the Harness secret containing the aws session token.
-- `region` AWS Region to perform Connection test of Connector.
+- `access_key` (String)
+- `access_key_plain_text` (String)
+- `access_key_ref` (String)
+- `delegate_selectors` (Set of String)
+- `region` (String)
+- `secret_key_ref` (String)
+- `session_token_ref` (String)
 
 
 <a id="nestedatt--oidc_authentication"></a>
-### Nested Schema for `oidc authentication`
+### Nested Schema for `oidc_authentication`
 
 Read-Only:
 
-- `iam_role_arn` (String) The IAM Role to assume the credentials from.
-- `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
-- `region` AWS Region to perform Connection test of Connector.
-
+- `delegate_selectors` (Set of String)
+- `iam_role_arn` (String)
+- `region` (String)
