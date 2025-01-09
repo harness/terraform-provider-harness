@@ -2,8 +2,8 @@ package internal
 
 import (
 	"context"
-
 	"github.com/harness/harness-go-sdk/harness/cd"
+	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -19,6 +19,7 @@ type Session struct {
 	DBOpsClient *dbops.APIClient
 	Client      *openapi_client_nextgen.APIClient
 	CodeClient  *code.APIClient
+	ChaosClient *chaos.APIClient
 }
 
 func (s *Session) GetPlatformClient() (*nextgen.APIClient, context.Context) {
@@ -62,4 +63,11 @@ func (s *Session) GetCodeClientWithContext(ctx context.Context) (*code.APIClient
 	}
 
 	return s.CodeClient.WithAuthContext(ctx)
+}
+
+func (s *Session) GetChaosClientWithContext(ctx context.Context) (*chaos.APIClient, context.Context) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return s.ChaosClient.WithAuthContext(ctx)
 }
