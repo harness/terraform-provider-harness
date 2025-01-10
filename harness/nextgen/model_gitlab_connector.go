@@ -11,10 +11,14 @@ package nextgen
 
 // This contains details of Gitlab connectors
 type GitlabConnector struct {
-	Url               string                `json:"url"`
-	ValidationRepo    string                `json:"validationRepo,omitempty"`
-	Authentication    *GitlabAuthentication `json:"authentication"`
-	ApiAccess         *GitlabApiAccess      `json:"apiAccess,omitempty"`
-	DelegateSelectors []string              `json:"delegateSelectors,omitempty"`
-	Type_             GitConnectorType      `json:"type"`
+	Url                  string                `json:"url"`
+	ValidationRepo       string                `json:"validationRepo,omitempty"`
+	Authentication       *GitlabAuthentication `json:"authentication"`
+	ApiAccess            *GitlabApiAccess      `json:"apiAccess,omitempty"`
+	DelegateSelectors    []string              `json:"delegateSelectors,omitempty"`
+	ExecuteOnDelegate    bool                  `json:"executeOnDelegate"`
+	Proxy                bool                  `json:"proxy"`
+	IgnoreTestConnection bool                  `json:"ignoreTestConnection"`
+	Type_                string                `json:"type"`
+	ConnectorType        string                `json:"connectorType"`
 }
