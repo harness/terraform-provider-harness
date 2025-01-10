@@ -1,0 +1,4786 @@
+openapi: 3.0.0
+info:
+  title: Harness Artifact Registry API
+  contact:
+    name: Harness Artifact Registry - developers
+    url: https://www.harness.io
+  version: 1.0.0
+servers:
+- url: /gateway/har/api/v1
+  description: Registry
+tags:
+- name: Registries
+  description: "APIs to create, update, list registries"
+- name: Artifacts
+  description: "APIs to get, list artifacts"
+- name: Docker Artifacts
+  description: APIs to get details of docker artifacts
+- name: Helm Artifacts
+  description: APIs to get details of helm artifacts
+paths:
+  /registry:
+    post:
+      tags:
+      - Registries
+      summary: Create Registry.
+      description: Create a Registry.
+      operationId: CreateRegistry
+      parameters:
+      - name: space_ref
+        in: query
+        description: Unique space path
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/RegistryRequest'
+      responses:
+        "201":
+          description: "response for create, get and update registry"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_identifier}/artifact/{artifact}/redirect:
+    get:
+      tags:
+      - Artifacts
+      summary: Redirect to Harness Artifact Page
+      description: Redirect to Harness Artifact Page
+      operationId: RedirectHarnessArtifact
+      parameters:
+      - name: registry_identifier
+        in: path
+        description: Unique registry Identifier in a account.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: query
+        description: Version
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "302":
+          description: Temporary Redirect
+          headers:
+            Location:
+              description: The URL of the redirected resource
+              style: simple
+              explode: false
+              schema:
+                type: string
+                format: uri
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+:
+    get:
+      tags:
+      - Registries
+      summary: Returns Registry Details
+      description: Returns Registry Details in the account for the given key
+      operationId: GetRegistry
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "response for create, get and update registry"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+      - Registries
+      summary: Updates a Registry
+      description: Updates a Registry in the account for the given key
+      operationId: ModifyRegistry
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/RegistryRequest'
+      responses:
+        "200":
+          description: "response for create, get and update registry"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - Registries
+      summary: Delete a Registry
+      description: Delete a Registry in the account for the given key
+      operationId: DeleteRegistry
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}:
+    delete:
+      tags:
+      - Artifacts
+      summary: Delete Artifact
+      description: Delete Artifact.
+      operationId: DeleteArtifact
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/labels:
+    put:
+      tags:
+      - Artifacts
+      summary: Update Artifact Labels
+      description: Update Artifact Labels.
+      operationId: UpdateArtifactLabels
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/ArtifactLabelRequest'
+      responses:
+        "200":
+          description: response to get artifact label response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/stats:
+    get:
+      tags:
+      - Artifacts
+      summary: Get Artifact Stats
+      description: Get Artifact Stats.
+      operationId: GetArtifactStats
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date. Format - MM/DD/YYYY
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: Date. Format - MM/DD/YYYY
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get artifact stats response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/summary:
+    get:
+      tags:
+      - Artifacts
+      summary: Get Artifact Summary
+      description: Get Artifact Summary.
+      operationId: GetArtifactSummary
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get artifact summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}:
+    delete:
+      tags:
+      - Artifacts
+      summary: Delete an Artifact Version
+      description: Delete Artifact Version.
+      operationId: DeleteArtifactVersion
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/deploymentdetails:
+    get:
+      tags:
+      - Artifacts
+      summary: Describe Artifact Deployments
+      description: Get Artifact Deployments
+      operationId: GetArtifactDeployments
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: env_type
+        in: query
+        description: env type
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          description: Environment Type
+          enum:
+          - PreProduction
+          - Production
+      - name: page
+        in: query
+        description: Current page number
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 1
+      - name: size
+        in: query
+        description: Number of items per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 20
+      - name: sort_order
+        in: query
+        description: sortOrder
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: sort_field
+        in: query
+        description: sortField
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: search_term
+        in: query
+        description: search Term.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get docker artifact deployments details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/docker/details:
+    get:
+      tags:
+      - Docker Artifacts
+      summary: Describe Docker Artifact Detail
+      description: Get Docker Artifact Details
+      operationId: GetDockerArtifactDetails
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: digest
+        in: query
+        description: Digest.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get docker artifact detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/docker/integrationdetails:
+    get:
+      tags:
+      - Docker Artifacts
+      summary: Describe Docker Artifact Integration Detail
+      description: Get Docker Artifact Integration Details
+      operationId: GetDockerArtifactIntegrationDetails
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: digest
+        in: query
+        description: Digest.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get docker artifact integration detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/docker/layers:
+    get:
+      tags:
+      - Docker Artifacts
+      summary: Describe Docker Artifact Layers
+      description: Get Docker Artifact Layers
+      operationId: GetDockerArtifactLayers
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: digest
+        in: query
+        description: Digest.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get artifact layers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_6'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/docker/manifest:
+    get:
+      tags:
+      - Docker Artifacts
+      summary: Describe Docker Artifact Manifest
+      description: Get Docker Artifact Manifest
+      operationId: GetDockerArtifactManifest
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: digest
+        in: query
+        description: Digest.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get docker artifact manifest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_7'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/docker/manifests:
+    get:
+      tags:
+      - Docker Artifacts
+      summary: Describe Docker Artifact Manifests
+      description: Get Docker Artifact Manifests
+      operationId: GetDockerArtifactManifests
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get artifact layers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_8'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/helm/details:
+    get:
+      tags:
+      - Helm Artifacts
+      summary: Describe Helm Artifact Detail
+      description: Get Helm Artifact Details
+      operationId: GetHelmArtifactDetails
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get helm artifact detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_9'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/helm/manifest:
+    get:
+      tags:
+      - Helm Artifacts
+      summary: Describe Helm Artifact Manifest
+      description: Get Helm Artifact Manifest
+      operationId: GetHelmArtifactManifest
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get helm artifact manifest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_10'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/summary:
+    get:
+      tags:
+      - Artifacts
+      summary: Get Artifact Version Summary
+      description: Get Artifact Version Summary.
+      operationId: GetArtifactVersionSummary
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version
+        in: path
+        description: Name of Artifact Version.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: digest
+        in: query
+        description: Digest.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get docker artifact version summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_11'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/{artifact}/versions:
+    get:
+      tags:
+      - Artifacts
+      summary: List Artifact Versions
+      description: Lists all the Artifact Versions.
+      operationId: GetAllArtifactVersions
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: path
+        description: Name of artifact.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Current page number
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 1
+      - name: size
+        in: query
+        description: Number of items per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 20
+      - name: sort_order
+        in: query
+        description: sortOrder
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: sort_field
+        in: query
+        description: sortField
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: search_term
+        in: query
+        description: search Term.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response for list versions of artifact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_12'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/labels:
+    get:
+      tags:
+      - Artifacts
+      summary: List Artifact Labels
+      description: List Artifact Labels.
+      operationId: ListArtifactLabels
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Current page number
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 1
+      - name: size
+        in: query
+        description: Number of items per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 20
+      - name: search_term
+        in: query
+        description: search Term.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response for list artifact labels
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_13'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifact/stats:
+    get:
+      tags:
+      - Artifacts
+      summary: Get Artifact Stats
+      description: Get Artifact Stats.
+      operationId: GetArtifactStatsForRegistry
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date. Format - MM/DD/YYYY
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: Date. Format - MM/DD/YYYY
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get artifact stats response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/artifacts:
+    get:
+      tags:
+      - Registries
+      summary: List Artifacts for Registry
+      description: Lists all the Artifacts for Registry
+      operationId: GetAllArtifactsByRegistry
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: label
+        in: query
+        description: Label.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+      - name: page
+        in: query
+        description: Current page number
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 1
+      - name: size
+        in: query
+        description: Number of items per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 20
+      - name: sort_order
+        in: query
+        description: sortOrder
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: sort_field
+        in: query
+        description: sortField
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: search_term
+        in: query
+        description: search Term.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response for list artifact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_14'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /registry/{registry_ref}/+/client-setup-details:
+    get:
+      tags:
+      - Registries
+      summary: Returns CLI Client Setup Details
+      description: Returns CLI Client Setup Details based on package type
+      operationId: GetClientSetupDetails
+      parameters:
+      - name: registry_ref
+        in: path
+        description: Unique registry path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: artifact
+        in: query
+        description: Artifat
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        description: Version
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response for client setup details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_15'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /spaces/{space_ref}/+/artifact/stats:
+    get:
+      tags:
+      - Artifacts
+      summary: Get Artifact Stats
+      description: Get Artifact Stats.
+      operationId: GetArtifactStatsForSpace
+      parameters:
+      - name: space_ref
+        in: path
+        description: Unique space path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date. Format - MM/DD/YYYY
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: Date. Format - MM/DD/YYYY
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: response to get artifact stats response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /spaces/{space_ref}/+/artifacts:
+    get:
+      tags:
+      - Spaces
+      summary: List Harness Artifacts
+      description: Lists all the Harness Artifacts.
+      operationId: GetAllHarnessArtifacts
+      parameters:
+      - name: space_ref
+        in: path
+        description: Unique space path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: reg_identifier
+        in: query
+        description: Registry Identifier
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+      - name: page
+        in: query
+        description: Current page number
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 1
+      - name: size
+        in: query
+        description: Number of items per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 20
+      - name: sort_order
+        in: query
+        description: sortOrder
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: sort_field
+        in: query
+        description: sortField
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: search_term
+        in: query
+        description: search Term.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: latest_version
+        in: query
+        description: Latest Version Filter.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      - name: deployed_artifact
+        in: query
+        description: Deployed Artifact Filter.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      - name: package_type
+        in: query
+        description: Registry Package Type
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: response for list artifact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_16'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /spaces/{space_ref}/+/registries:
+    get:
+      tags:
+      - Spaces
+      summary: List Registries
+      description: Lists all the Registries.
+      operationId: GetAllRegistries
+      parameters:
+      - name: space_ref
+        in: path
+        description: Unique space path.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: package_type
+        in: query
+        description: Registry Package Type
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+      - name: type
+        in: query
+        description: Registry Type
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - VIRTUAL
+          - UPSTREAM
+      - name: page
+        in: query
+        description: Current page number
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 1
+      - name: size
+        in: query
+        description: Number of items per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 20
+      - name: sort_order
+        in: query
+        description: sortOrder
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: sort_field
+        in: query
+        description: sortField
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: search_term
+        in: query
+        description: search Term.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: recursive
+        in: query
+        description: Whether to list registries recursively.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+          default: false
+      responses:
+        "200":
+          description: response for list registry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_17'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Anonymous: {}
+    ArtifactDeploymentsDetail:
+      type: object
+      properties:
+        count:
+          type: integer
+        envIdentifier:
+          type: string
+        envName:
+          type: string
+        envType:
+          $ref: '#/components/schemas/EnvironmentType'
+        infraIdentifier:
+          type: string
+        infraName:
+          type: string
+        lastDeployedAt:
+          type: string
+        lastDeployedById:
+          type: string
+        lastDeployedByName:
+          type: string
+        lastPipelineExecutionId:
+          type: string
+        lastPipelineExecutionName:
+          type: string
+        orgIdentifier:
+          type: string
+        pipelineId:
+          type: string
+        projectIdentifier:
+          type: string
+        serviceIdentifier:
+          type: string
+        serviceName:
+          type: string
+      description: Artifact deployments Detail
+      example:
+        lastDeployedAt: lastDeployedAt
+        infraIdentifier: infraIdentifier
+        orgIdentifier: orgIdentifier
+        count: 0
+        infraName: infraName
+        lastDeployedById: lastDeployedById
+        serviceName: serviceName
+        pipelineId: pipelineId
+        serviceIdentifier: serviceIdentifier
+        lastDeployedByName: lastDeployedByName
+        envName: envName
+        envType: PreProduction
+        lastPipelineExecutionId: lastPipelineExecutionId
+        projectIdentifier: projectIdentifier
+        envIdentifier: envIdentifier
+        lastPipelineExecutionName: lastPipelineExecutionName
+    ArtifactDeploymentsDetails:
+      required:
+      - deployments
+      type: object
+      properties:
+        deployments:
+          $ref: '#/components/schemas/ArtifactDeploymentsList'
+        deploymentsStats:
+          $ref: '#/components/schemas/DeploymentStats'
+      description: Docker Artifact deployments Details
+      example:
+        deployments:
+          deployments:
+          - lastDeployedAt: lastDeployedAt
+            infraIdentifier: infraIdentifier
+            orgIdentifier: orgIdentifier
+            count: 0
+            infraName: infraName
+            lastDeployedById: lastDeployedById
+            serviceName: serviceName
+            pipelineId: pipelineId
+            serviceIdentifier: serviceIdentifier
+            lastDeployedByName: lastDeployedByName
+            envName: envName
+            envType: PreProduction
+            lastPipelineExecutionId: lastPipelineExecutionId
+            projectIdentifier: projectIdentifier
+            envIdentifier: envIdentifier
+            lastPipelineExecutionName: lastPipelineExecutionName
+          - lastDeployedAt: lastDeployedAt
+            infraIdentifier: infraIdentifier
+            orgIdentifier: orgIdentifier
+            count: 0
+            infraName: infraName
+            lastDeployedById: lastDeployedById
+            serviceName: serviceName
+            pipelineId: pipelineId
+            serviceIdentifier: serviceIdentifier
+            lastDeployedByName: lastDeployedByName
+            envName: envName
+            envType: PreProduction
+            lastPipelineExecutionId: lastPipelineExecutionId
+            projectIdentifier: projectIdentifier
+            envIdentifier: envIdentifier
+            lastPipelineExecutionName: lastPipelineExecutionName
+          pageCount: 100
+          pageIndex: 0
+          pageSize: 1
+          itemCount: 1
+        deploymentsStats:
+          Production: 1
+          PreProduction: 6
+    ArtifactDeploymentsList:
+      required:
+      - artifacts
+      type: object
+      properties:
+        deployments:
+          type: array
+          description: A list of Artifact
+          items:
+            $ref: '#/components/schemas/ArtifactDeploymentsDetail'
+        itemCount:
+          type: integer
+          description: The total number of items
+          format: int64
+          example: 1
+        pageCount:
+          type: integer
+          description: The total number of pages
+          format: int64
+          example: 100
+        pageIndex:
+          type: integer
+          description: The current page
+          format: int64
+          example: 0
+        pageSize:
+          type: integer
+          description: The number of items per page
+          example: 1
+      description: A list of Artifact Deployments
+      example:
+        deployments:
+        - lastDeployedAt: lastDeployedAt
+          infraIdentifier: infraIdentifier
+          orgIdentifier: orgIdentifier
+          count: 0
+          infraName: infraName
+          lastDeployedById: lastDeployedById
+          serviceName: serviceName
+          pipelineId: pipelineId
+          serviceIdentifier: serviceIdentifier
+          lastDeployedByName: lastDeployedByName
+          envName: envName
+          envType: PreProduction
+          lastPipelineExecutionId: lastPipelineExecutionId
+          projectIdentifier: projectIdentifier
+          envIdentifier: envIdentifier
+          lastPipelineExecutionName: lastPipelineExecutionName
+        - lastDeployedAt: lastDeployedAt
+          infraIdentifier: infraIdentifier
+          orgIdentifier: orgIdentifier
+          count: 0
+          infraName: infraName
+          lastDeployedById: lastDeployedById
+          serviceName: serviceName
+          pipelineId: pipelineId
+          serviceIdentifier: serviceIdentifier
+          lastDeployedByName: lastDeployedByName
+          envName: envName
+          envType: PreProduction
+          lastPipelineExecutionId: lastPipelineExecutionId
+          projectIdentifier: projectIdentifier
+          envIdentifier: envIdentifier
+          lastPipelineExecutionName: lastPipelineExecutionName
+        pageCount: 100
+        pageIndex: 0
+        pageSize: 1
+        itemCount: 1
+    ArtifactLabelRequest:
+      required:
+      - labels
+      type: object
+      properties:
+        labels:
+          type: array
+          items:
+            type: string
+    ArtifactMetadata:
+      required:
+      - latestVersion
+      - name
+      - registryIdentifier
+      - registryPath
+      - version
+      type: object
+      properties:
+        deploymentMetadata:
+          $ref: '#/components/schemas/DeploymentMetadata'
+        downloadsCount:
+          type: integer
+          format: int64
+        labels:
+          type: array
+          items:
+            type: string
+        lastModified:
+          type: string
+        latestVersion:
+          type: string
+        name:
+          type: string
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        pullCommand:
+          type: string
+        registryIdentifier:
+          type: string
+        registryPath:
+          type: string
+        scannedDigest:
+          type: array
+          items:
+            $ref: '#/components/schemas/STODigestMetadata'
+        scannedDigestCount:
+          type: integer
+          format: int64
+        stoMetadata:
+          $ref: '#/components/schemas/STOMetadata'
+        totalDigestCount:
+          type: integer
+          format: int64
+        version:
+          type: string
+      description: Artifact Metadata
+      example:
+        scannedDigest:
+        - stoPipelineId: stoPipelineId
+          stoExecutionId: stoExecutionId
+          osArch: osArch
+          digest: digest
+        - stoPipelineId: stoPipelineId
+          stoExecutionId: stoExecutionId
+          osArch: osArch
+          digest: digest
+        deploymentMetadata:
+          nonProdEnvCount: 0
+          prodEnvCount: 6
+        registryPath: registryPath
+        stoMetadata:
+          scannedCount: 1
+          totalCount: 5
+          digestMetadata:
+          - null
+          - null
+        packageType: DOCKER
+        version: version
+        labels:
+        - labels
+        - labels
+        downloadsCount: 0
+        scannedDigestCount: 6
+        totalDigestCount: 5
+        latestVersion: latestVersion
+        name: name
+        lastModified: lastModified
+        pullCommand: pullCommand
+        registryIdentifier: registryIdentifier
+    ArtifactStats:
+      type: object
+      properties:
+        downloadCount:
+          type: integer
+          format: int64
+        downloadSize:
+          type: integer
+          format: int64
+        totalStorageSize:
+          type: integer
+          format: int64
+        uploadSize:
+          type: integer
+          format: int64
+      description: Harness Artifact Stats
+      example:
+        uploadSize: 5
+        downloadSize: 6
+        downloadCount: 0
+        totalStorageSize: 1
+    ArtifactSummary:
+      required:
+      - imageName
+      - packageType
+      type: object
+      properties:
+        createdAt:
+          type: string
+        downloadsCount:
+          type: integer
+          format: int64
+        imageName:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        modifiedAt:
+          type: string
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+      description: Harness Artifact Summary
+      example:
+        createdAt: createdAt
+        downloadsCount: 0
+        imageName: imageName
+        modifiedAt: modifiedAt
+        packageType: DOCKER
+        labels:
+        - labels
+        - labels
+    ArtifactVersionMetadata:
+      required:
+      - latestVersion
+      - name
+      - registryIdentifier
+      - registryPath
+      type: object
+      properties:
+        deploymentMetadata:
+          $ref: '#/components/schemas/DeploymentMetadata'
+        digestCount:
+          type: integer
+          format: int64
+        downloadsCount:
+          type: integer
+          format: int64
+        islatestVersion:
+          type: boolean
+        lastModified:
+          type: string
+        name:
+          type: string
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        pullCommand:
+          type: string
+        registryIdentifier:
+          type: string
+        registryPath:
+          type: string
+        size:
+          type: string
+      description: Artifact Version Metadata
+      example:
+        downloadsCount: 5
+        islatestVersion: true
+        size: size
+        deploymentMetadata:
+          nonProdEnvCount: 0
+          prodEnvCount: 6
+        registryPath: registryPath
+        name: name
+        lastModified: lastModified
+        digestCount: 1
+        packageType: DOCKER
+        pullCommand: pullCommand
+        registryIdentifier: registryIdentifier
+    ArtifactVersionSummary:
+      required:
+      - imageName
+      - packageType
+      - version
+      type: object
+      properties:
+        imageName:
+          type: string
+        isLatestVersion:
+          type: boolean
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        sscaArtifactId:
+          type: string
+        sscaArtifactSourceId:
+          type: string
+        stoExecutionId:
+          type: string
+        stoPipelineId:
+          type: string
+        version:
+          type: string
+      description: Docker Artifact Version Summary
+      example:
+        imageName: imageName
+        isLatestVersion: true
+        stoPipelineId: stoPipelineId
+        stoExecutionId: stoExecutionId
+        sscaArtifactId: sscaArtifactId
+        sscaArtifactSourceId: sscaArtifactSourceId
+        packageType: DOCKER
+        version: version
+    AuthType:
+      type: string
+      description: Authentication type
+      enum:
+      - UserPassword
+      - Anonymous
+    BuildDetails:
+      type: object
+      properties:
+        orgIdentifier:
+          type: string
+        pipelineDisplayName:
+          type: string
+        pipelineExecutionId:
+          type: string
+        pipelineIdentifier:
+          type: string
+        projectIdentifier:
+          type: string
+        stageExecutionId:
+          type: string
+        stepExecutionId:
+          type: string
+      example:
+        stepExecutionId: stepExecutionId
+        pipelineIdentifier: pipelineIdentifier
+        stageExecutionId: stageExecutionId
+        orgIdentifier: orgIdentifier
+        pipelineDisplayName: pipelineDisplayName
+        pipelineExecutionId: pipelineExecutionId
+        projectIdentifier: projectIdentifier
+    CleanupPolicy:
+      type: object
+      properties:
+        expireDays:
+          type: integer
+        name:
+          type: string
+        packagePrefix:
+          type: array
+          items:
+            type: string
+        versionPrefix:
+          type: array
+          items:
+            type: string
+      description: Cleanup Policy for Harness Artifact Registries
+      example:
+        expireDays: 0
+        versionPrefix:
+        - versionPrefix
+        - versionPrefix
+        packagePrefix:
+        - packagePrefix
+        - packagePrefix
+        name: name
+    ClientSetupDetails:
+      required:
+      - mainHeader
+      - secHeader
+      - sections
+      type: object
+      properties:
+        mainHeader:
+          type: string
+        secHeader:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientSetupSection'
+      description: Client Setup Details
+      example:
+        mainHeader: mainHeader
+        secHeader: secHeader
+        sections:
+        - header: header
+          steps:
+          - header: header
+            type: Static
+            commands:
+            - label: label
+              value: value
+            - label: label
+              value: value
+          - header: header
+            type: Static
+            commands:
+            - label: label
+              value: value
+            - label: label
+              value: value
+        - header: header
+          steps:
+          - header: header
+            type: Static
+            commands:
+            - label: label
+              value: value
+            - label: label
+              value: value
+          - header: header
+            type: Static
+            commands:
+            - label: label
+              value: value
+            - label: label
+              value: value
+    ClientSetupSection:
+      type: object
+      properties:
+        header:
+          type: string
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientSetupStep'
+      description: Client Setup Section
+      example:
+        header: header
+        steps:
+        - header: header
+          type: Static
+          commands:
+          - label: label
+            value: value
+          - label: label
+            value: value
+        - header: header
+          type: Static
+          commands:
+          - label: label
+            value: value
+          - label: label
+            value: value
+    ClientSetupStep:
+      type: object
+      properties:
+        commands:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientSetupStepCommand'
+        header:
+          type: string
+        type:
+          $ref: '#/components/schemas/ClientSetupStepType'
+      description: Client Setup Step
+      example:
+        header: header
+        type: Static
+        commands:
+        - label: label
+          value: value
+        - label: label
+          value: value
+    ClientSetupStepCommand:
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+      description: Client Setup Step Command
+      example:
+        label: label
+        value: value
+    ClientSetupStepType:
+      type: string
+      description: ClientSetupStepType type
+      enum:
+      - Static
+      - GenerateToken
+    DeploymentDetails:
+      required:
+      - nonProdDeployment
+      - prodDeployment
+      - totalDeployment
+      type: object
+      properties:
+        nonProdDeployment:
+          type: integer
+        prodDeployment:
+          type: integer
+        totalDeployment:
+          type: integer
+      example:
+        totalDeployment: 1
+        prodDeployment: 6
+        nonProdDeployment: 0
+    DeploymentMetadata:
+      required:
+      - nonProdEnvCount
+      - prodEnvCount
+      type: object
+      properties:
+        nonProdEnvCount:
+          type: integer
+        prodEnvCount:
+          type: integer
+      example:
+        nonProdEnvCount: 0
+        prodEnvCount: 6
+    DeploymentStats:
+      required:
+      - PreProduction
+      - Production
+      type: object
+      properties:
+        PreProduction:
+          type: integer
+        Production:
+          type: integer
+      description: DeploymentStats
+      example:
+        Production: 1
+        PreProduction: 6
+    DockerArtifactDetail:
+      required:
+      - imageName
+      - packageType
+      - registryPath
+      - url
+      - version
+      type: object
+      properties:
+        createdAt:
+          type: string
+        downloadsCount:
+          type: integer
+          format: int64
+        imageName:
+          type: string
+        isLatestVersion:
+          type: boolean
+        modifiedAt:
+          type: string
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        pullCommand:
+          type: string
+        registryPath:
+          type: string
+        size:
+          type: string
+        url:
+          type: string
+        version:
+          type: string
+      description: Docker Artifact Detail
+      example:
+        createdAt: createdAt
+        downloadsCount: 0
+        imageName: imageName
+        isLatestVersion: true
+        size: size
+        modifiedAt: modifiedAt
+        registryPath: registryPath
+        packageType: DOCKER
+        pullCommand: pullCommand
+        version: version
+        url: url
+    DockerArtifactIntegrationDetail:
+      type: object
+      properties:
+        buildDetails:
+          $ref: '#/components/schemas/BuildDetails'
+        deploymentsDetails:
+          $ref: '#/components/schemas/DeploymentDetails'
+        sbomDetails:
+          $ref: '#/components/schemas/SBOMDetails'
+        slsaDetails:
+          $ref: '#/components/schemas/SLSADetails'
+        stoDetails:
+          $ref: '#/components/schemas/STODetails'
+      description: Docker Artifact Detail
+      example:
+        stoDetails:
+          executionId: executionId
+          ignored: 3
+          high: 9
+          total: 1
+          critical: 7
+          low: 4
+          medium: 7
+          info: 2
+          lastScanned: lastScanned
+          pipelineId: pipelineId
+        sbomDetails:
+          avgScore: avgScore
+          orchestrationId: orchestrationId
+          allowListViolations: 5
+          artifactSourceId: artifactSourceId
+          artifactId: artifactId
+          denyListViolations: 2
+          maxScore: maxScore
+          componentsCount: 5
+          projectId: projectId
+          orgId: orgId
+        slsaDetails:
+          provenanceId: provenanceId
+          status: status
+        deploymentsDetails:
+          totalDeployment: 1
+          prodDeployment: 6
+          nonProdDeployment: 0
+        buildDetails:
+          stepExecutionId: stepExecutionId
+          pipelineIdentifier: pipelineIdentifier
+          stageExecutionId: stageExecutionId
+          orgIdentifier: orgIdentifier
+          pipelineDisplayName: pipelineDisplayName
+          pipelineExecutionId: pipelineExecutionId
+          projectIdentifier: projectIdentifier
+    DockerArtifactManifest:
+      required:
+      - manifest
+      type: object
+      properties:
+        manifest:
+          type: string
+      description: Docker Artifact Manifest
+      example:
+        manifest: manifest
+    DockerLayerEntry:
+      required:
+      - command
+      type: object
+      properties:
+        command:
+          type: string
+        size:
+          type: string
+      description: Harness Artifact Layers
+      example:
+        size: size
+        command: command
+    DockerLayersSummary:
+      required:
+      - digest
+      type: object
+      properties:
+        digest:
+          type: string
+        layers:
+          type: array
+          items:
+            $ref: '#/components/schemas/DockerLayerEntry'
+        osArch:
+          type: string
+      description: Harness Layers Summary
+      example:
+        osArch: osArch
+        digest: digest
+        layers:
+        - size: size
+          command: command
+        - size: size
+          command: command
+    DockerManifestDetails:
+      required:
+      - digest
+      - layers
+      - osArch
+      type: object
+      properties:
+        createdAt:
+          type: string
+        digest:
+          type: string
+        downloadsCount:
+          type: integer
+          format: int64
+        osArch:
+          type: string
+        size:
+          type: string
+        stoExecutionId:
+          type: string
+        stoPipelineId:
+          type: string
+      description: Harness Artifact Layers
+      example:
+        createdAt: createdAt
+        downloadsCount: 0
+        stoPipelineId: stoPipelineId
+        size: size
+        stoExecutionId: stoExecutionId
+        osArch: osArch
+        digest: digest
+    DockerManifests:
+      required:
+      - imageName
+      - version
+      type: object
+      properties:
+        imageName:
+          type: string
+        isLatestVersion:
+          type: boolean
+        manifests:
+          type: array
+          items:
+            $ref: '#/components/schemas/DockerManifestDetails'
+        version:
+          type: string
+      description: Harness Manifests
+      example:
+        imageName: imageName
+        isLatestVersion: true
+        manifests:
+        - createdAt: createdAt
+          downloadsCount: 0
+          stoPipelineId: stoPipelineId
+          size: size
+          stoExecutionId: stoExecutionId
+          osArch: osArch
+          digest: digest
+        - createdAt: createdAt
+          downloadsCount: 0
+          stoPipelineId: stoPipelineId
+          size: size
+          stoExecutionId: stoExecutionId
+          osArch: osArch
+          digest: digest
+        version: version
+    EnvironmentType:
+      type: string
+      description: Environment Type
+      enum:
+      - PreProduction
+      - Production
+    Error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+          description: The http error code
+          example: "404"
+        details:
+          type: object
+          description: Additional details about the error
+        message:
+          type: string
+          description: The reason the request failed
+    HelmArtifactDetail:
+      required:
+      - imageName
+      - packageType
+      - registryPath
+      - url
+      - version
+      type: object
+      properties:
+        artifact:
+          type: string
+        createdAt:
+          type: string
+        downloadsCount:
+          type: integer
+          format: int64
+        isLatestVersion:
+          type: boolean
+        modifiedAt:
+          type: string
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        pullCommand:
+          type: string
+        registryPath:
+          type: string
+        size:
+          type: string
+        url:
+          type: string
+        version:
+          type: string
+      description: Helm Artifact Detail
+      example:
+        artifact: artifact
+        createdAt: createdAt
+        downloadsCount: 0
+        isLatestVersion: true
+        size: size
+        modifiedAt: modifiedAt
+        registryPath: registryPath
+        packageType: DOCKER
+        pullCommand: pullCommand
+        version: version
+        url: url
+    HelmArtifactManifest:
+      required:
+      - manifest
+      type: object
+      properties:
+        manifest:
+          type: string
+      description: Helm Artifact Manifest
+      example:
+        manifest: manifest
+    ListArtifact:
+      required:
+      - artifacts
+      type: object
+      properties:
+        artifacts:
+          type: array
+          description: A list of Artifact
+          items:
+            $ref: '#/components/schemas/ArtifactMetadata'
+        itemCount:
+          type: integer
+          description: The total number of items
+          format: int64
+          example: 1
+        pageCount:
+          type: integer
+          description: The total number of pages
+          format: int64
+          example: 100
+        pageIndex:
+          type: integer
+          description: The current page
+          format: int64
+          example: 0
+        pageSize:
+          type: integer
+          description: The number of items per page
+          example: 1
+      description: A list of Artifacts
+      example:
+        pageCount: 100
+        pageIndex: 0
+        pageSize: 1
+        artifacts:
+        - scannedDigest:
+          - stoPipelineId: stoPipelineId
+            stoExecutionId: stoExecutionId
+            osArch: osArch
+            digest: digest
+          - stoPipelineId: stoPipelineId
+            stoExecutionId: stoExecutionId
+            osArch: osArch
+            digest: digest
+          deploymentMetadata:
+            nonProdEnvCount: 0
+            prodEnvCount: 6
+          registryPath: registryPath
+          stoMetadata:
+            scannedCount: 1
+            totalCount: 5
+            digestMetadata:
+            - null
+            - null
+          packageType: DOCKER
+          version: version
+          labels:
+          - labels
+          - labels
+          downloadsCount: 0
+          scannedDigestCount: 6
+          totalDigestCount: 5
+          latestVersion: latestVersion
+          name: name
+          lastModified: lastModified
+          pullCommand: pullCommand
+          registryIdentifier: registryIdentifier
+        - scannedDigest:
+          - stoPipelineId: stoPipelineId
+            stoExecutionId: stoExecutionId
+            osArch: osArch
+            digest: digest
+          - stoPipelineId: stoPipelineId
+            stoExecutionId: stoExecutionId
+            osArch: osArch
+            digest: digest
+          deploymentMetadata:
+            nonProdEnvCount: 0
+            prodEnvCount: 6
+          registryPath: registryPath
+          stoMetadata:
+            scannedCount: 1
+            totalCount: 5
+            digestMetadata:
+            - null
+            - null
+          packageType: DOCKER
+          version: version
+          labels:
+          - labels
+          - labels
+          downloadsCount: 0
+          scannedDigestCount: 6
+          totalDigestCount: 5
+          latestVersion: latestVersion
+          name: name
+          lastModified: lastModified
+          pullCommand: pullCommand
+          registryIdentifier: registryIdentifier
+        itemCount: 1
+    ListArtifactLabel:
+      required:
+      - labels
+      type: object
+      properties:
+        itemCount:
+          type: integer
+          description: The total number of items
+          format: int64
+          example: 1
+        labels:
+          type: array
+          items:
+            type: string
+        pageCount:
+          type: integer
+          description: The total number of pages
+          format: int64
+          example: 100
+        pageIndex:
+          type: integer
+          description: The current page
+          format: int64
+          example: 0
+        pageSize:
+          type: integer
+          description: The number of items per page
+          example: 1
+      description: A list of Harness Artifact Labels
+      example:
+        pageCount: 100
+        pageIndex: 0
+        pageSize: 1
+        itemCount: 1
+        labels:
+        - labels
+        - labels
+    ListArtifactVersion:
+      required:
+      - artifacts
+      type: object
+      properties:
+        artifactVersions:
+          type: array
+          description: A list of Artifact versions
+          items:
+            $ref: '#/components/schemas/ArtifactVersionMetadata'
+        itemCount:
+          type: integer
+          description: The total number of items
+          format: int64
+          example: 1
+        pageCount:
+          type: integer
+          description: The total number of pages
+          format: int64
+          example: 100
+        pageIndex:
+          type: integer
+          description: The current page
+          format: int64
+          example: 0
+        pageSize:
+          type: integer
+          description: The number of items per page
+          example: 1
+      description: A list of Artifact versions
+      example:
+        pageCount: 100
+        artifactVersions:
+        - downloadsCount: 5
+          islatestVersion: true
+          size: size
+          deploymentMetadata:
+            nonProdEnvCount: 0
+            prodEnvCount: 6
+          registryPath: registryPath
+          name: name
+          lastModified: lastModified
+          digestCount: 1
+          packageType: DOCKER
+          pullCommand: pullCommand
+          registryIdentifier: registryIdentifier
+        - downloadsCount: 5
+          islatestVersion: true
+          size: size
+          deploymentMetadata:
+            nonProdEnvCount: 0
+            prodEnvCount: 6
+          registryPath: registryPath
+          name: name
+          lastModified: lastModified
+          digestCount: 1
+          packageType: DOCKER
+          pullCommand: pullCommand
+          registryIdentifier: registryIdentifier
+        pageIndex: 0
+        pageSize: 1
+        itemCount: 1
+    ListRegistry:
+      required:
+      - registries
+      type: object
+      properties:
+        itemCount:
+          type: integer
+          description: The total number of items
+          format: int64
+          example: 1
+        pageCount:
+          type: integer
+          description: The total number of pages
+          format: int64
+          example: 100
+        pageIndex:
+          type: integer
+          description: The current page
+          format: int64
+          example: 0
+        pageSize:
+          type: integer
+          description: The number of items per page
+          example: 1
+        registries:
+          type: array
+          description: A list of Harness Artifact Registries
+          items:
+            $ref: '#/components/schemas/RegistryMetadata'
+      description: A list of Harness Artifact Registries
+      example:
+        pageCount: 100
+        pageIndex: 0
+        pageSize: 1
+        registries:
+        - downloadsCount: 6
+          identifier: identifier
+          path: path
+          artifactsCount: 0
+          description: description
+          registrySize: registrySize
+          lastModified: lastModified
+          type: VIRTUAL
+          packageType: DOCKER
+          url: url
+          labels:
+          - labels
+          - labels
+        - downloadsCount: 6
+          identifier: identifier
+          path: path
+          artifactsCount: 0
+          description: description
+          registrySize: registrySize
+          lastModified: lastModified
+          type: VIRTUAL
+          packageType: DOCKER
+          url: url
+          labels:
+          - labels
+          - labels
+        itemCount: 1
+    ListRegistryArtifact:
+      required:
+      - artifacts
+      type: object
+      properties:
+        artifacts:
+          type: array
+          description: A list of Artifact
+          items:
+            $ref: '#/components/schemas/RegistryArtifactMetadata'
+        itemCount:
+          type: integer
+          description: The total number of items
+          format: int64
+          example: 1
+        pageCount:
+          type: integer
+          description: The total number of pages
+          format: int64
+          example: 100
+        pageIndex:
+          type: integer
+          description: The current page
+          format: int64
+          example: 0
+        pageSize:
+          type: integer
+          description: The number of items per page
+          example: 1
+      description: A list of Artifacts
+      example:
+        pageCount: 100
+        pageIndex: 0
+        pageSize: 1
+        artifacts:
+        - downloadsCount: 0
+          latestVersion: latestVersion
+          registryPath: registryPath
+          name: name
+          lastModified: lastModified
+          packageType: DOCKER
+          labels:
+          - labels
+          - labels
+          registryIdentifier: registryIdentifier
+        - downloadsCount: 0
+          latestVersion: latestVersion
+          registryPath: registryPath
+          name: name
+          lastModified: lastModified
+          packageType: DOCKER
+          labels:
+          - labels
+          - labels
+          registryIdentifier: registryIdentifier
+        itemCount: 1
+    PackageType:
+      type: string
+      description: refers to package
+      enum:
+      - DOCKER
+      - MAVEN
+      - GENERIC
+      - HELM
+    Registry:
+      required:
+      - identifier
+      - name
+      - packageType
+      - type
+      - url
+      type: object
+      properties:
+        allowedPattern:
+          type: array
+          items:
+            type: string
+        blockedPattern:
+          type: array
+          items:
+            type: string
+        cleanupPolicy:
+          type: array
+          items:
+            $ref: '#/components/schemas/CleanupPolicy'
+        config:
+          $ref: '#/components/schemas/RegistryConfig'
+        createdAt:
+          type: string
+        description:
+          type: string
+        identifier:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        modifiedAt:
+          type: string
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        url:
+          type: string
+      description: Harness Artifact Registry
+      example:
+        createdAt: createdAt
+        identifier: identifier
+        modifiedAt: modifiedAt
+        description: description
+        blockedPattern:
+        - blockedPattern
+        - blockedPattern
+        allowedPattern:
+        - allowedPattern
+        - allowedPattern
+        config:
+          type: VIRTUAL
+        packageType: DOCKER
+        url: url
+        cleanupPolicy:
+        - expireDays: 0
+          versionPrefix:
+          - versionPrefix
+          - versionPrefix
+          packagePrefix:
+          - packagePrefix
+          - packagePrefix
+          name: name
+        - expireDays: 0
+          versionPrefix:
+          - versionPrefix
+          - versionPrefix
+          packagePrefix:
+          - packagePrefix
+          - packagePrefix
+          name: name
+        labels:
+        - labels
+        - labels
+    RegistryArtifactMetadata:
+      required:
+      - latestVersion
+      - name
+      - registryIdentifier
+      - registryPath
+      type: object
+      properties:
+        downloadsCount:
+          type: integer
+          format: int64
+        labels:
+          type: array
+          items:
+            type: string
+        lastModified:
+          type: string
+        latestVersion:
+          type: string
+        name:
+          type: string
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        registryIdentifier:
+          type: string
+        registryPath:
+          type: string
+      description: Artifact Metadata
+      example:
+        downloadsCount: 0
+        latestVersion: latestVersion
+        registryPath: registryPath
+        name: name
+        lastModified: lastModified
+        packageType: DOCKER
+        labels:
+        - labels
+        - labels
+        registryIdentifier: registryIdentifier
+    RegistryConfig:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/RegistryType'
+      description: SubConfig specific for Virtual or Upstream Registry
+      example:
+        type: VIRTUAL
+      discriminator:
+        propertyName: type
+        mapping:
+          UPSTREAM: '#/components/schemas/UpstreamConfig'
+          VIRTUAL: '#/components/schemas/VirtualConfig'
+      oneOf:
+      - $ref: '#/components/schemas/VirtualConfig'
+      - $ref: '#/components/schemas/UpstreamConfig'
+    RegistryMetadata:
+      required:
+      - identifier
+      - packageType
+      - type
+      - url
+      type: object
+      properties:
+        artifactsCount:
+          type: integer
+          format: int64
+        description:
+          type: string
+        downloadsCount:
+          type: integer
+          format: int64
+        identifier:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        lastModified:
+          type: string
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        path:
+          type: string
+        registrySize:
+          type: string
+        type:
+          $ref: '#/components/schemas/RegistryType'
+        url:
+          type: string
+      description: Harness Artifact Registry Metadata
+      example:
+        downloadsCount: 6
+        identifier: identifier
+        path: path
+        artifactsCount: 0
+        description: description
+        registrySize: registrySize
+        lastModified: lastModified
+        type: VIRTUAL
+        packageType: DOCKER
+        url: url
+        labels:
+        - labels
+        - labels
+    RegistryRequest:
+      required:
+      - identifier
+      - packageType
+      - type
+      type: object
+      properties:
+        allowedPattern:
+          type: array
+          items:
+            type: string
+        blockedPattern:
+          type: array
+          items:
+            type: string
+        cleanupPolicy:
+          type: array
+          items:
+            $ref: '#/components/schemas/CleanupPolicy'
+        config:
+          $ref: '#/components/schemas/RegistryConfig'
+        description:
+          type: string
+        identifier:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        parentRef:
+          type: string
+        scanners:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scanner'
+    RegistryType:
+      type: string
+      description: refers to type of registry i.e virtual or upstream
+      discriminator:
+        propertyName: type
+      enum:
+      - VIRTUAL
+      - UPSTREAM
+    SBOMDetails:
+      type: object
+      properties:
+        allowListViolations:
+          type: integer
+        artifactId:
+          type: string
+        artifactSourceId:
+          type: string
+        avgScore:
+          type: string
+        componentsCount:
+          type: integer
+        denyListViolations:
+          type: integer
+        maxScore:
+          type: string
+        orchestrationId:
+          type: string
+        orgId:
+          type: string
+        projectId:
+          type: string
+      example:
+        avgScore: avgScore
+        orchestrationId: orchestrationId
+        allowListViolations: 5
+        artifactSourceId: artifactSourceId
+        artifactId: artifactId
+        denyListViolations: 2
+        maxScore: maxScore
+        componentsCount: 5
+        projectId: projectId
+        orgId: orgId
+    SLSADetails:
+      type: object
+      properties:
+        provenanceId:
+          type: string
+        status:
+          type: string
+      example:
+        provenanceId: provenanceId
+        status: status
+    STODetails:
+      type: object
+      properties:
+        critical:
+          type: integer
+        executionId:
+          type: string
+        high:
+          type: integer
+        ignored:
+          type: integer
+        info:
+          type: integer
+        lastScanned:
+          type: string
+        low:
+          type: integer
+        medium:
+          type: integer
+        pipelineId:
+          type: string
+        total:
+          type: integer
+      example:
+        executionId: executionId
+        ignored: 3
+        high: 9
+        total: 1
+        critical: 7
+        low: 4
+        medium: 7
+        info: 2
+        lastScanned: lastScanned
+        pipelineId: pipelineId
+    STODigestMetadata:
+      type: object
+      properties:
+        digest:
+          type: string
+        osArch:
+          type: string
+        stoExecutionId:
+          type: string
+        stoPipelineId:
+          type: string
+      example:
+        stoPipelineId: stoPipelineId
+        stoExecutionId: stoExecutionId
+        osArch: osArch
+        digest: digest
+    STOMetadata:
+      type: object
+      properties:
+        digestMetadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/STODigestMetadata'
+        scannedCount:
+          type: integer
+          format: int64
+        totalCount:
+          type: integer
+          format: int64
+      example:
+        scannedCount: 1
+        totalCount: 5
+        digestMetadata:
+        - null
+        - null
+    Scanner:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - AQUA_TRIVY
+          - GRYPE
+      description: Scanner for Harness Artifact Registries
+    Status:
+      type: string
+      description: Indicates if the request was successful or not
+      enum:
+      - SUCCESS
+      - FAILURE
+      - ERROR
+    UpstreamConfig:
+      required:
+      - authType
+      type: object
+      properties:
+        auth:
+          oneOf:
+          - $ref: '#/components/schemas/UserPassword'
+          - $ref: '#/components/schemas/Anonymous'
+        authType:
+          $ref: '#/components/schemas/AuthType'
+        source:
+          type: string
+          enum:
+          - Dockerhub
+          - Custom
+        url:
+          type: string
+      description: Configuration for Harness Artifact UpstreamProxies
+      x-discriminator-value: UPSTREAM
+    UserPassword:
+      required:
+      - password
+      - userName
+      properties:
+        secretIdentifier:
+          type: string
+        secretSpaceId:
+          type: integer
+        secretSpacePath:
+          type: string
+        userName:
+          type: string
+    VirtualConfig:
+      type: object
+      properties:
+        upstreamProxies:
+          type: array
+          items:
+            type: string
+      description: Configuration for Harness Virtual Artifact Registries
+    inline_response_201:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Registry'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          createdAt: createdAt
+          identifier: identifier
+          modifiedAt: modifiedAt
+          description: description
+          blockedPattern:
+          - blockedPattern
+          - blockedPattern
+          allowedPattern:
+          - allowedPattern
+          - allowedPattern
+          config:
+            type: VIRTUAL
+          packageType: DOCKER
+          url: url
+          cleanupPolicy:
+          - expireDays: 0
+            versionPrefix:
+            - versionPrefix
+            - versionPrefix
+            packagePrefix:
+            - packagePrefix
+            - packagePrefix
+            name: name
+          - expireDays: 0
+            versionPrefix:
+            - versionPrefix
+            - versionPrefix
+            packagePrefix:
+            - packagePrefix
+            - packagePrefix
+            name: name
+          labels:
+          - labels
+          - labels
+        status: SUCCESS
+    inline_response_200:
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        status: SUCCESS
+    inline_response_200_1:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArtifactSummary'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          createdAt: createdAt
+          downloadsCount: 0
+          imageName: imageName
+          modifiedAt: modifiedAt
+          packageType: DOCKER
+          labels:
+          - labels
+          - labels
+        status: SUCCESS
+    inline_response_200_2:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArtifactStats'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          uploadSize: 5
+          downloadSize: 6
+          downloadCount: 0
+          totalStorageSize: 1
+        status: SUCCESS
+    inline_response_200_3:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArtifactDeploymentsDetails'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          deployments:
+            deployments:
+            - lastDeployedAt: lastDeployedAt
+              infraIdentifier: infraIdentifier
+              orgIdentifier: orgIdentifier
+              count: 0
+              infraName: infraName
+              lastDeployedById: lastDeployedById
+              serviceName: serviceName
+              pipelineId: pipelineId
+              serviceIdentifier: serviceIdentifier
+              lastDeployedByName: lastDeployedByName
+              envName: envName
+              envType: PreProduction
+              lastPipelineExecutionId: lastPipelineExecutionId
+              projectIdentifier: projectIdentifier
+              envIdentifier: envIdentifier
+              lastPipelineExecutionName: lastPipelineExecutionName
+            - lastDeployedAt: lastDeployedAt
+              infraIdentifier: infraIdentifier
+              orgIdentifier: orgIdentifier
+              count: 0
+              infraName: infraName
+              lastDeployedById: lastDeployedById
+              serviceName: serviceName
+              pipelineId: pipelineId
+              serviceIdentifier: serviceIdentifier
+              lastDeployedByName: lastDeployedByName
+              envName: envName
+              envType: PreProduction
+              lastPipelineExecutionId: lastPipelineExecutionId
+              projectIdentifier: projectIdentifier
+              envIdentifier: envIdentifier
+              lastPipelineExecutionName: lastPipelineExecutionName
+            pageCount: 100
+            pageIndex: 0
+            pageSize: 1
+            itemCount: 1
+          deploymentsStats:
+            Production: 1
+            PreProduction: 6
+        status: SUCCESS
+    inline_response_200_4:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DockerArtifactDetail'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          createdAt: createdAt
+          downloadsCount: 0
+          imageName: imageName
+          isLatestVersion: true
+          size: size
+          modifiedAt: modifiedAt
+          registryPath: registryPath
+          packageType: DOCKER
+          pullCommand: pullCommand
+          version: version
+          url: url
+        status: SUCCESS
+    inline_response_200_5:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DockerArtifactIntegrationDetail'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          stoDetails:
+            executionId: executionId
+            ignored: 3
+            high: 9
+            total: 1
+            critical: 7
+            low: 4
+            medium: 7
+            info: 2
+            lastScanned: lastScanned
+            pipelineId: pipelineId
+          sbomDetails:
+            avgScore: avgScore
+            orchestrationId: orchestrationId
+            allowListViolations: 5
+            artifactSourceId: artifactSourceId
+            artifactId: artifactId
+            denyListViolations: 2
+            maxScore: maxScore
+            componentsCount: 5
+            projectId: projectId
+            orgId: orgId
+          slsaDetails:
+            provenanceId: provenanceId
+            status: status
+          deploymentsDetails:
+            totalDeployment: 1
+            prodDeployment: 6
+            nonProdDeployment: 0
+          buildDetails:
+            stepExecutionId: stepExecutionId
+            pipelineIdentifier: pipelineIdentifier
+            stageExecutionId: stageExecutionId
+            orgIdentifier: orgIdentifier
+            pipelineDisplayName: pipelineDisplayName
+            pipelineExecutionId: pipelineExecutionId
+            projectIdentifier: projectIdentifier
+        status: SUCCESS
+    inline_response_200_6:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DockerLayersSummary'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          osArch: osArch
+          digest: digest
+          layers:
+          - size: size
+            command: command
+          - size: size
+            command: command
+        status: SUCCESS
+    inline_response_200_7:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DockerArtifactManifest'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          manifest: manifest
+        status: SUCCESS
+    inline_response_200_8:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DockerManifests'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          imageName: imageName
+          isLatestVersion: true
+          manifests:
+          - createdAt: createdAt
+            downloadsCount: 0
+            stoPipelineId: stoPipelineId
+            size: size
+            stoExecutionId: stoExecutionId
+            osArch: osArch
+            digest: digest
+          - createdAt: createdAt
+            downloadsCount: 0
+            stoPipelineId: stoPipelineId
+            size: size
+            stoExecutionId: stoExecutionId
+            osArch: osArch
+            digest: digest
+          version: version
+        status: SUCCESS
+    inline_response_200_9:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/HelmArtifactDetail'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          artifact: artifact
+          createdAt: createdAt
+          downloadsCount: 0
+          isLatestVersion: true
+          size: size
+          modifiedAt: modifiedAt
+          registryPath: registryPath
+          packageType: DOCKER
+          pullCommand: pullCommand
+          version: version
+          url: url
+        status: SUCCESS
+    inline_response_200_10:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/HelmArtifactManifest'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          manifest: manifest
+        status: SUCCESS
+    inline_response_200_11:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ArtifactVersionSummary'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          imageName: imageName
+          isLatestVersion: true
+          stoPipelineId: stoPipelineId
+          stoExecutionId: stoExecutionId
+          sscaArtifactId: sscaArtifactId
+          sscaArtifactSourceId: sscaArtifactSourceId
+          packageType: DOCKER
+          version: version
+        status: SUCCESS
+    inline_response_200_12:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ListArtifactVersion'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          pageCount: 100
+          artifactVersions:
+          - downloadsCount: 5
+            islatestVersion: true
+            size: size
+            deploymentMetadata:
+              nonProdEnvCount: 0
+              prodEnvCount: 6
+            registryPath: registryPath
+            name: name
+            lastModified: lastModified
+            digestCount: 1
+            packageType: DOCKER
+            pullCommand: pullCommand
+            registryIdentifier: registryIdentifier
+          - downloadsCount: 5
+            islatestVersion: true
+            size: size
+            deploymentMetadata:
+              nonProdEnvCount: 0
+              prodEnvCount: 6
+            registryPath: registryPath
+            name: name
+            lastModified: lastModified
+            digestCount: 1
+            packageType: DOCKER
+            pullCommand: pullCommand
+            registryIdentifier: registryIdentifier
+          pageIndex: 0
+          pageSize: 1
+          itemCount: 1
+        status: SUCCESS
+    inline_response_200_13:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ListArtifactLabel'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          pageCount: 100
+          pageIndex: 0
+          pageSize: 1
+          itemCount: 1
+          labels:
+          - labels
+          - labels
+        status: SUCCESS
+    inline_response_200_14:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ListRegistryArtifact'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          pageCount: 100
+          pageIndex: 0
+          pageSize: 1
+          artifacts:
+          - downloadsCount: 0
+            latestVersion: latestVersion
+            registryPath: registryPath
+            name: name
+            lastModified: lastModified
+            packageType: DOCKER
+            labels:
+            - labels
+            - labels
+            registryIdentifier: registryIdentifier
+          - downloadsCount: 0
+            latestVersion: latestVersion
+            registryPath: registryPath
+            name: name
+            lastModified: lastModified
+            packageType: DOCKER
+            labels:
+            - labels
+            - labels
+            registryIdentifier: registryIdentifier
+          itemCount: 1
+        status: SUCCESS
+    inline_response_200_15:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ClientSetupDetails'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          mainHeader: mainHeader
+          secHeader: secHeader
+          sections:
+          - header: header
+            steps:
+            - header: header
+              type: Static
+              commands:
+              - label: label
+                value: value
+              - label: label
+                value: value
+            - header: header
+              type: Static
+              commands:
+              - label: label
+                value: value
+              - label: label
+                value: value
+          - header: header
+            steps:
+            - header: header
+              type: Static
+              commands:
+              - label: label
+                value: value
+              - label: label
+                value: value
+            - header: header
+              type: Static
+              commands:
+              - label: label
+                value: value
+              - label: label
+                value: value
+        status: SUCCESS
+    inline_response_200_16:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ListArtifact'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          pageCount: 100
+          pageIndex: 0
+          pageSize: 1
+          artifacts:
+          - scannedDigest:
+            - stoPipelineId: stoPipelineId
+              stoExecutionId: stoExecutionId
+              osArch: osArch
+              digest: digest
+            - stoPipelineId: stoPipelineId
+              stoExecutionId: stoExecutionId
+              osArch: osArch
+              digest: digest
+            deploymentMetadata:
+              nonProdEnvCount: 0
+              prodEnvCount: 6
+            registryPath: registryPath
+            stoMetadata:
+              scannedCount: 1
+              totalCount: 5
+              digestMetadata:
+              - null
+              - null
+            packageType: DOCKER
+            version: version
+            labels:
+            - labels
+            - labels
+            downloadsCount: 0
+            scannedDigestCount: 6
+            totalDigestCount: 5
+            latestVersion: latestVersion
+            name: name
+            lastModified: lastModified
+            pullCommand: pullCommand
+            registryIdentifier: registryIdentifier
+          - scannedDigest:
+            - stoPipelineId: stoPipelineId
+              stoExecutionId: stoExecutionId
+              osArch: osArch
+              digest: digest
+            - stoPipelineId: stoPipelineId
+              stoExecutionId: stoExecutionId
+              osArch: osArch
+              digest: digest
+            deploymentMetadata:
+              nonProdEnvCount: 0
+              prodEnvCount: 6
+            registryPath: registryPath
+            stoMetadata:
+              scannedCount: 1
+              totalCount: 5
+              digestMetadata:
+              - null
+              - null
+            packageType: DOCKER
+            version: version
+            labels:
+            - labels
+            - labels
+            downloadsCount: 0
+            scannedDigestCount: 6
+            totalDigestCount: 5
+            latestVersion: latestVersion
+            name: name
+            lastModified: lastModified
+            pullCommand: pullCommand
+            registryIdentifier: registryIdentifier
+          itemCount: 1
+        status: SUCCESS
+    inline_response_200_17:
+      required:
+      - data
+      - status
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ListRegistry'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        data:
+          pageCount: 100
+          pageIndex: 0
+          pageSize: 1
+          registries:
+          - downloadsCount: 6
+            identifier: identifier
+            path: path
+            artifactsCount: 0
+            description: description
+            registrySize: registrySize
+            lastModified: lastModified
+            type: VIRTUAL
+            packageType: DOCKER
+            url: url
+            labels:
+            - labels
+            - labels
+          - downloadsCount: 6
+            identifier: identifier
+            path: path
+            artifactsCount: 0
+            description: description
+            registrySize: registrySize
+            lastModified: lastModified
+            type: VIRTUAL
+            packageType: DOCKER
+            url: url
+            labels:
+            - labels
+            - labels
+          itemCount: 1
+        status: SUCCESS
+  responses:
+    ArtifactDeploymentsResponse:
+      description: response to get docker artifact deployments details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_3'
+    ArtifactLabelResponse:
+      description: response to get artifact label response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_1'
+    ArtifactStatsResponse:
+      description: response to get artifact stats response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_2'
+    ArtifactSummaryResponse:
+      description: response to get artifact summary
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_1'
+    ArtifactVersionSummaryResponse:
+      description: response to get docker artifact version summary
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_11'
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ClientSetupDetailsResponse:
+      description: response for client setup details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_15'
+    DockerArtifactDetailIntegrationResponse:
+      description: response to get docker artifact integration detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_5'
+    DockerArtifactDetailResponse:
+      description: response to get docker artifact detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_4'
+    DockerArtifactManifestResponse:
+      description: response to get docker artifact manifest
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_7'
+    DockerLayersResponse:
+      description: response to get artifact layers
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_6'
+    DockerManifestsResponse:
+      description: response to get artifact layers
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_8'
+    HelmArtifactDetailResponse:
+      description: response to get helm artifact detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_9'
+    HelmArtifactManifestResponse:
+      description: response to get helm artifact manifest
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_10'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ListArtifactLabelResponse:
+      description: response for list artifact labels
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_13'
+    ListArtifactResponse:
+      description: response for list artifact
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_16'
+    ListArtifactVersionResponse:
+      description: response for list versions of artifact
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_12'
+    ListRegistryArtifactResponse:
+      description: response for list artifact
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_14'
+    ListRegistryResponse:
+      description: response for list registry
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200_17'
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Redirect:
+      description: Temporary Redirect
+      headers:
+        Location:
+          description: The URL of the redirected resource
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uri
+    RegistryResponse:
+      description: "response for create, get and update registry"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_201'
+    Success:
+      description: Success Response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200'
+    Unauthenticated:
+      description: Unauthenticated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    AccountIdentifierParam:
+      name: accountIdentifier
+      in: query
+      description: Account Identifier
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    LabelsParam:
+      name: label
+      in: query
+      description: Label.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+    RegistryIdentifierParam:
+      name: reg_identifier
+      in: query
+      description: Registry Identifier
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+    RegistryIdentifierPathParam:
+      name: registry_identifier
+      in: path
+      description: Unique registry Identifier in a account.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    RegistryTypeParam:
+      name: type
+      in: query
+      description: Registry Type
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        enum:
+        - VIRTUAL
+        - UPSTREAM
+    artifactParam:
+      name: artifact
+      in: query
+      description: Artifat
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    artifactPathParam:
+      name: artifact
+      in: path
+      description: Name of artifact.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    deployedArtifact:
+      name: deployed_artifact
+      in: query
+      description: Deployed Artifact Filter.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: boolean
+    digestOptParam:
+      name: digest
+      in: query
+      description: Digest.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    digestParam:
+      name: digest
+      in: query
+      description: Digest.
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+    envType:
+      name: env_type
+      in: query
+      description: env type
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        description: Environment Type
+        enum:
+        - PreProduction
+        - Production
+    fromDateParam:
+      name: from
+      in: query
+      description: Date. Format - MM/DD/YYYY
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    latestVersion:
+      name: latest_version
+      in: query
+      description: Latest Version Filter.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: boolean
+    packageTypeParam:
+      name: package_type
+      in: query
+      description: Registry Package Type
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+    pageNumber:
+      name: page
+      in: query
+      description: Current page number
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int64
+        default: 1
+    pageSize:
+      name: size
+      in: query
+      description: Number of items per page
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int64
+        default: 20
+    recursiveParam:
+      name: recursive
+      in: query
+      description: Whether to list registries recursively.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: boolean
+        default: false
+    registryRefPathParam:
+      name: registry_ref
+      in: path
+      description: Unique registry path.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    searchTerm:
+      name: search_term
+      in: query
+      description: search Term.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    sortField:
+      name: sort_field
+      in: query
+      description: sortField
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    sortOrder:
+      name: sort_order
+      in: query
+      description: sortOrder
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    spaceRefPathParam:
+      name: space_ref
+      in: path
+      description: Unique space path.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    spaceRefQueryParam:
+      name: space_ref
+      in: query
+      description: Unique space path
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    toDateParam:
+      name: to
+      in: query
+      description: Date. Format - MM/DD/YYYY
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    versionParam:
+      name: version
+      in: query
+      description: Version
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    versionPathParam:
+      name: version
+      in: path
+      description: Name of Artifact Version.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+  requestBodies:
+    ArtifactLabelRequest:
+      description: request to update artifact labels
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArtifactLabelRequest'
+    RegistryRequest:
+      description: request for create and update registry
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RegistryRequest'
