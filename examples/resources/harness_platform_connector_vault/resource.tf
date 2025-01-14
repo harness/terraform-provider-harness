@@ -1,3 +1,15 @@
+
+terraform {
+  required_providers {
+    harness = {
+      source = "harness/harness"
+       version = ">= 0.34.0"
+    }
+    
+  }
+}
+
+
 resource "harness_platform_connector_vault" "aws_auth" {
   identifier  = "identifier"
   name        = "name"
@@ -148,4 +160,5 @@ resource "harness_platform_connector_vault" "jwt" {
   use_jwt_auth                      = true
   vault_jwt_auth_role               = "vault_jwt_auth_role"
   vault_jwt_auth_path               = "vault_jwt_auth_path"
+  execute_on_delegate               = true
 }
