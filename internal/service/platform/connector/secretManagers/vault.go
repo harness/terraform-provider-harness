@@ -163,7 +163,7 @@ func ResourceConnectorVault() *schema.Resource {
 				Description:  "Access type.",
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"APP_ROLE", "TOKEN", "VAULT_AGENT", "AWS_IAM", "K8s_AUTH"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"APP_ROLE", "TOKEN", "VAULT_AGENT", "AWS_IAM", "K8s_AUTH", "JWT"}, false),
 			},
 			"default": {
 				Description: "Is default or not.",
@@ -302,6 +302,14 @@ func buildConnectorVault(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	if attr, ok := d.GetOk("use_jwt_auth"); ok {
 		connector.Vault.UseJwtAuth = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("vault_jwt_auth_path"); ok {
+		connector.Vault.JwtAuthPath = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("vault_jwt_auth_role"); ok {
+		connector.Vault.JwtAuthRole = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("vault_k8s_auth_role"); ok {
