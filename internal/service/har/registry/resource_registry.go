@@ -2,6 +2,7 @@ package registry
 
 import (
 	"context"
+	"fmt"
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/har"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -54,9 +55,16 @@ func ResourceRegistry() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Description: "Type of registry (VIRTUAL, UPSTREAM)",
+							Description: "Type of registry (VIRTUAL only supported)",
 							Type:        schema.TypeString,
 							Required:    true,
+							ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+								v := val.(string)
+								if v != "VIRTUAL" {
+									errs = append(errs, fmt.Errorf("config Type must be 'VIRTUAL', got: %s", v))
+								}
+								return
+							},
 						},
 						"auth": {
 							Description: "Authentication configuration for UPSTREAM type",
