@@ -60,6 +60,8 @@ type SecretManager struct {
 	KeyName                                       string             `json:"keyName,omitempty"`
 	Credentials                                   string             `json:"credentials,omitempty"`
 	UsePutSecret                                  bool               `json:"usePutSecret,omitempty"`
+	ForceDeleteWithoutRecovery                    bool               `json:"forceDeleteWithoutRecovery,omitempty"`
+	RecoveryWindowInDays                          int64              `json:"recoveryWindowInDays,omitempty"`
 }
 
 type User struct {
