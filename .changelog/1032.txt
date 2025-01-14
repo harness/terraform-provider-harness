@@ -1,0 +1,4 @@
+```relese-note:fix
+harness_platform_connector_aws: Added Support for execute_on_delegate param.
+harness_platform_connector_azure_cloud_provider: Added Support for execute_on_delegate param.
+```

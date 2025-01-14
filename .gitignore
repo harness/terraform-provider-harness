@@ -41,3 +41,4 @@ test-report.xml
 terraform-provider-harness
 
 .terraform.lock.hcl
+local.sh

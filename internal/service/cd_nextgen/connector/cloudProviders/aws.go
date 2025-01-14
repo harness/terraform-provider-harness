@@ -58,11 +58,11 @@ func ResourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 						},
-                        "session_token_ref": {
-                            Description: "Reference to the Harness secret containing the aws session token." + secret_ref_text,
-                            Type:        schema.TypeString,
-                            Optional:    true,
-                        },
+						"session_token_ref": {
+							Description: "Reference to the Harness secret containing the aws session token." + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 						"delegate_selectors": {
 							Description: "Connect only use delegates with these tags.",
 							Type:        schema.TypeSet,
@@ -286,6 +286,11 @@ func ResourceConnectorAws() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"execute_on_delegate": {
+				Description: "Enable this flag to execute on Delegate",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 		},
 	}
 
@@ -351,9 +356,9 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			connector.Aws.Credential.ManualConfig.SecretKeyRef = attr
 		}
 
-        if attr := config["session_token_ref"].(string); attr != "" {
-            connector.Aws.Credential.ManualConfig.SessionTokenRef = attr
-        }
+		if attr := config["session_token_ref"].(string); attr != "" {
+			connector.Aws.Credential.ManualConfig.SessionTokenRef = attr
+		}
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
@@ -468,6 +473,9 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.FixedBackoff = int64(val.(int))
 		}
 	}
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Aws.ExecuteOnDelegate = attr.(bool)
+	}
 
 	return connector
 }
@@ -546,6 +554,7 @@ func readConnectorAws(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 		default:
 			return fmt.Errorf("unsupported aws credential type: %s", connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_)
 		}
+		d.Set("execute_on_delegate", connector.Aws.ExecuteOnDelegate)
 
 	}
 	return nil
