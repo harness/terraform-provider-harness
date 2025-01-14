@@ -175,6 +175,11 @@ func ResourceConnectorVault() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
 		},
 	}
 	helpers.SetMultiLevelResourceSchema(resource.Schema)
@@ -338,6 +343,10 @@ func buildConnectorVault(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	if attr, ok := d.GetOk("read_only"); ok {
 		connector.Vault.ReadOnly = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Vault.ExecuteOnDelegate = attr.(bool)
 	}
 
 	return connector
