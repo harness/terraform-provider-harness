@@ -109,17 +109,17 @@ resource "harness_platform_connector_github" "TF_open_repo_github_connector" {
   description = "TF_open_repo_github_connector"
   tags        = ["ritek:test"]
 
-  url             = "https://github.com/ritek01/open-repo"
+  url             = "https://github.com/harness-automation/open-repo"
   execute_on_delegate = false
   connection_type = "Repo"
     credentials {
       http {
         username  = "admin"
-        token_ref = "account.TF_git_bot_token"
+        token_ref = "account.TF_harness_automation_github_token"
       }
     }
     api_authentication {
-        token_ref = "account.TF_git_bot_token"
+        token_ref = "account.TF_harness_automation_github_token"
     }
   depends_on = [harness_platform_connector_github.TF_GitX_connector]
 }
