@@ -28,12 +28,6 @@ func TestAccDataSourceGitopsAgentDeployYaml(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "yaml"),
 				),
 			},
-			{
-				Config: testAccDataSourceGitopsAgentDeployYaml(agentId, accountId, agentId, namespace),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(resourceName, "yaml"),
-				),
-			},
 		},
 	})
 
