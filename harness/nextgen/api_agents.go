@@ -507,15 +507,23 @@ func (a *AgentsApiService) AgentServiceForServerGet(ctx context.Context, identif
 
 /*
 AgentsApiService
-GetDeployYaml returns depoyment yamls for agents.
+GetDeployYaml returns deployment yamls for agents.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param agentIdentifier Agent identifier for entity.
- * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *AgentsApiAgentServiceForServerGetDeployYamlOpts - Optional Parameters:
- * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
- * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
- * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
- * @param "Namespace" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "Namespace" (optional.String) -
+     * @param "DisasterRecoveryIdentifier" (optional.String) -  Disaster Recovery Identifier for entity.
+     * @param "SkipCrds" (optional.Bool) -
+     * @param "CaData" (optional.String) -  Certificate chain for the agent, must be base64 encoded.
+     * @param "ProxyHttp" (optional.String) -
+     * @param "ProxyHttps" (optional.String) -
+     * @param "ProxyUsername" (optional.String) -
+     * @param "ProxyPassword" (optional.String) -
+     * @param "ProxySkipSSLVerify" (optional.Bool) -
+     * @param "PrivateKey" (optional.String) -
 @return string
 */
 
@@ -526,6 +534,13 @@ type AgentsApiAgentServiceForServerGetDeployYamlOpts struct {
 	Namespace                  optional.String
 	DisasterRecoveryIdentifier optional.String
 	SkipCrds                   optional.Bool
+	CaData                     optional.String
+	ProxyHttp                  optional.String
+	ProxyHttps                 optional.String
+	ProxyUsername              optional.String
+	ProxyPassword              optional.String
+	ProxySkipSSLVerify         optional.Bool
+	PrivateKey                 optional.String
 }
 
 func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Context, agentIdentifier string, accountIdentifier string, localVarOptionals *AgentsApiAgentServiceForServerGetDeployYamlOpts) (string, *http.Response, error) {
@@ -556,6 +571,34 @@ func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Contex
 	if localVarOptionals != nil && localVarOptionals.Namespace.IsSet() {
 		localVarQueryParams.Add("namespace", parameterToString(localVarOptionals.Namespace.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.DisasterRecoveryIdentifier.IsSet() {
+		localVarQueryParams.Add("disasterRecoveryIdentifier", parameterToString(localVarOptionals.DisasterRecoveryIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.SkipCrds.IsSet() {
+		localVarQueryParams.Add("skipCrds", parameterToString(localVarOptionals.SkipCrds.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.CaData.IsSet() {
+		localVarQueryParams.Add("caData", parameterToString(localVarOptionals.CaData.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxyHttp.IsSet() {
+		localVarQueryParams.Add("proxy.http", parameterToString(localVarOptionals.ProxyHttp.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxyHttps.IsSet() {
+		localVarQueryParams.Add("proxy.https", parameterToString(localVarOptionals.ProxyHttps.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxyUsername.IsSet() {
+		localVarQueryParams.Add("proxy.username", parameterToString(localVarOptionals.ProxyUsername.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxyPassword.IsSet() {
+		localVarQueryParams.Add("proxy.password", parameterToString(localVarOptionals.ProxyPassword.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxySkipSSLVerify.IsSet() {
+		localVarQueryParams.Add("proxy.skipSSLVerify", parameterToString(localVarOptionals.ProxySkipSSLVerify.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.PrivateKey.IsSet() {
+		localVarQueryParams.Add("privateKey", parameterToString(localVarOptionals.PrivateKey.Value(), ""))
+	}
+
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 

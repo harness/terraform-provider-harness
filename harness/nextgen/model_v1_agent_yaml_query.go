@@ -25,4 +25,5 @@ type V1AgentYamlQuery struct {
 	// Certificate chain for the agent, must be base64 encoded.
 	CaData string   `json:"caData,omitempty"`
 	Proxy  *V1Proxy `json:"proxy,omitempty"`
+	PrivateKey string `json:"privateKey,omitempty"`
 }

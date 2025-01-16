@@ -70,6 +70,14 @@ Name | Type | Description  | Notes
  **pageSize** | **optional.Int32**|  | 
  **pageIndex** | **optional.Int32**|  | 
  **scope** | **optional.String**|  | [default to AGENT_SCOPE_UNSET]
+ **drIdentifier** | **optional.String**|  | 
+ **sortBy** | **optional.String**|  | [default to SORT_BY_NOT_SET]
+ **sortOrder** | **optional.String**|  | [default to SORT_ORDER_NOT_SET]
+ **metadataOnly** | **optional.Bool**|  | 
+ **ignoreScope** | **optional.Bool**|  | 
+ **connectedStatus** | **optional.String**|  | [default to CONNECTED_STATUS_UNSET]
+ **healthStatus** | **optional.String**|  | [default to HEALTH_STATUS_UNSET]
+ **withCredentials** | **optional.Bool**| Applicable when trying to retrieve an agent. Set to true to include the credentials for the agent in the response. (Private key may not be included in response if agent is already connected to harness). NOTE: Setting this to true requires the user to have edit permissions on Agent. | 
 
 ### Return type
 
@@ -158,6 +166,13 @@ Name | Type | Description  | Notes
  **namespace** | **optional.String**|  | 
  **disasterRecoveryIdentifier** | **optional.String**| Disaster Recovery Identifier for entity. | 
  **skipCrds** | **optional.Bool**|  | 
+ **caData** | **optional.String**| Certificate chain for the agent, must be base64 encoded. | 
+ **proxyHttp** | **optional.String**|  | 
+ **proxyHttps** | **optional.String**|  | 
+ **proxyUsername** | **optional.String**|  | 
+ **proxyPassword** | **optional.String**|  | 
+ **proxySkipSSLVerify** | **optional.Bool**|  | 
+ **privateKey** | **optional.String**|  | 
 
 ### Return type
 
@@ -199,6 +214,13 @@ Name | Type | Description  | Notes
  **namespace** | **optional.String**|  | 
  **disasterRecoveryIdentifier** | **optional.String**| Disaster Recovery Identifier for entity. | 
  **skipCrds** | **optional.Bool**|  | 
+ **caData** | **optional.String**| Certificate chain for the agent, must be base64 encoded. | 
+ **proxyHttp** | **optional.String**|  | 
+ **proxyHttps** | **optional.String**|  | 
+ **proxyUsername** | **optional.String**|  | 
+ **proxyPassword** | **optional.String**|  | 
+ **proxySkipSSLVerify** | **optional.Bool**|  | 
+ **privateKey** | **optional.String**|  | 
 
 ### Return type
 
@@ -211,7 +233,7 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: application/x-yml
+ - **Accept**: application/yaml
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -250,6 +272,9 @@ Name | Type | Description  | Notes
  **sortOrder** | **optional.String**|  | [default to SORT_ORDER_NOT_SET]
  **metadataOnly** | **optional.Bool**|  | 
  **ignoreScope** | **optional.Bool**|  | 
+ **connectedStatus** | **optional.String**|  | [default to CONNECTED_STATUS_UNSET]
+ **healthStatus** | **optional.String**|  | [default to HEALTH_STATUS_UNSET]
+ **withCredentials** | **optional.Bool**| Applicable when trying to retrieve an agent. Set to true to include the credentials for the agent in the response. (Private key may not be included in response if agent is already connected to harness). NOTE: Setting this to true requires the user to have edit permissions on Agent. | 
 
 ### Return type
 
@@ -320,7 +345,7 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
 - **Content-Type**: application/json
-- **Accept**: application/x-yml
+ - **Accept**: application/yaml
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -382,6 +407,14 @@ Name | Type | Description  | Notes
  **pageSize** | **optional.Int32**|  | 
  **pageIndex** | **optional.Int32**|  | 
  **scope** | **optional.String**|  | [default to AGENT_SCOPE_UNSET]
+ **drIdentifier** | **optional.String**|  | 
+ **sortBy** | **optional.String**|  | [default to SORT_BY_NOT_SET]
+ **sortOrder** | **optional.String**|  | [default to SORT_ORDER_NOT_SET]
+ **metadataOnly** | **optional.Bool**|  | 
+ **ignoreScope** | **optional.Bool**|  | 
+ **connectedStatus** | **optional.String**|  | [default to CONNECTED_STATUS_UNSET]
+ **healthStatus** | **optional.String**|  | [default to HEALTH_STATUS_UNSET]
+ **withCredentials** | **optional.Bool**| Applicable when trying to retrieve an agent. Set to true to include the credentials for the agent in the response. (Private key may not be included in response if agent is already connected to harness). NOTE: Setting this to true requires the user to have edit permissions on Agent. | 
 
 ### Return type
 
