@@ -19,6 +19,6 @@ type GitlabConnector struct {
 	ExecuteOnDelegate    bool                  `json:"executeOnDelegate"`
 	Proxy                bool                  `json:"proxy"`
 	IgnoreTestConnection bool                  `json:"ignoreTestConnection"`
-	Type_                string                `json:"type"`
+	Type_                GitConnectorType      `json:"type"`
 	ConnectorType        string                `json:"connectorType"`
 }
