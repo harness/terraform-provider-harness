@@ -186,7 +186,7 @@ func buildConnectorGitlab(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	}
 
 	if attr, ok := d.GetOk("connection_type"); ok {
-		connector.Gitlab.Type_ = string(nextgen.GitConnectorType(attr.(string)))
+		connector.Gitlab.Type_ = nextgen.GitConnectorType(attr.(string))
 	}
 
 	if attr, ok := d.GetOk("credentials"); ok {
