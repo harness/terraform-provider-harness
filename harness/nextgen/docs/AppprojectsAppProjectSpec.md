@@ -14,6 +14,9 @@ Name | Type | Description | Notes
 **NamespaceResourceWhitelist** | [**[]V1GroupKind**](v1GroupKind.md) |  | [optional] [default to null]
 **SignatureKeys** | [**[]AppprojectsSignatureKey**](appprojectsSignatureKey.md) |  | [optional] [default to null]
 **ClusterResourceBlacklist** | [**[]V1GroupKind**](v1GroupKind.md) |  | [optional] [default to null]
+**SourceNamespaces** | **[]string** |  | [optional] [default to null]
+**PermitOnlyProjectScopedClusters** | **bool** |  | [optional] [default to null]
+**DestinationServiceAccounts** | [**[]AppprojectsApplicationDestinationServiceAccount**](appprojectsApplicationDestinationServiceAccount.md) | DestinationServiceAccounts holds information about the service accounts to be impersonated for the application sync operation for each destination. | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

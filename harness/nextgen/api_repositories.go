@@ -194,7 +194,7 @@ DeleteRepository deletes a repository from the configuration.
      * @param "QueryRepo" (optional.String) -  Repo URL for query.
      * @param "QueryForceRefresh" (optional.Bool) -  Whether to force a cache refresh on repo&#x27;s connection state.
      * @param "QueryProject" (optional.String) -  The associated project project.
-     * @param "ForceDelete" (optional.Bool) - 
+     * @param "ForceDelete" (optional.Bool) -
 @return RepositoriesRepoResponse
 */
 
@@ -205,7 +205,7 @@ type RepositoriesApiAgentRepositoryServiceDeleteRepositoryOpts struct {
 	QueryRepo         optional.String
 	QueryForceRefresh optional.Bool
 	QueryProject      optional.String
-        ForceDelete optional.Bool
+	ForceDelete       optional.Bool
 }
 
 func (a *RepositoriesApiService) AgentRepositoryServiceDeleteRepository(ctx context.Context, agentIdentifier string, identifier string, localVarOptionals *RepositoriesApiAgentRepositoryServiceDeleteRepositoryOpts) (RepositoriesRepoResponse, *http.Response, error) {
@@ -520,12 +520,25 @@ GetAppDetails returns application details by given path.
      * @param "QuerySourceHelmValues" (optional.String) -  Values specifies Helm values to be passed to helm template, typically defined as a block.
      * @param "QuerySourceHelmVersion" (optional.String) -  Version is the Helm version to use for templating (either \&quot;2\&quot; or \&quot;3\&quot;).
      * @param "QuerySourceHelmPassCredentials" (optional.Bool) -  PassCredentials pass credentials to all domains (Helm&#x27;s --pass-credentials).
+     * @param "QuerySourceHelmIgnoreMissingValueFiles" (optional.Bool) -  IgnoreMissingValueFiles prevents helm template from failing when valueFiles do not exist locally by not appending them to helm template --values.
+     * @param "QuerySourceHelmSkipCrds" (optional.Bool) -  SkipCrds skips custom resource definition installation step (Helm&#x27;s --skip-crds).
+     * @param "QuerySourceHelmValuesObjectRaw" (optional.String) -  Raw is the underlying serialization of this object.  TODO: Determine how to detect ContentType and ContentEncoding of &#x27;Raw&#x27; data.
+     * @param "QuerySourceHelmNamespace" (optional.String) -  Namespace is an optional namespace to template with. If left empty, defaults to the app&#x27;s destination namespace.
+     * @param "QuerySourceHelmKubeVersion" (optional.String) -  KubeVersion specifies the Kubernetes API version to pass to Helm when templating manifests. By default, Argo CD uses the Kubernetes version of the target cluster.
+     * @param "QuerySourceHelmApiVersions" (optional.Interface of []string) -  APIVersions specifies the Kubernetes resource API versions to pass to Helm when templating manifests. By default, Argo CD uses the API versions of the target cluster. The format is [group/]version/kind.
+     * @param "QuerySourceHelmSkipTests" (optional.Bool) -  SkipTests skips test manifest installation step (Helm&#x27;s --skip-tests).
+     * @param "QuerySourceHelmSkipSchemaValidation" (optional.Bool) -  SkipSchemaValidation skips JSON schema validation (Helm&#x27;s --skip-schema-validation).
      * @param "QuerySourceKustomizeNamePrefix" (optional.String) -  NamePrefix is a prefix appended to resources for Kustomize apps.
      * @param "QuerySourceKustomizeNameSuffix" (optional.String) -  NameSuffix is a suffix appended to resources for Kustomize apps.
      * @param "QuerySourceKustomizeImages" (optional.Interface of []string) -  Images is a list of Kustomize image override specifications.
      * @param "QuerySourceKustomizeVersion" (optional.String) -  Version controls which version of Kustomize to use for rendering manifests.
      * @param "QuerySourceKustomizeForceCommonLabels" (optional.Bool) -  ForceCommonLabels specifies whether to force applying common labels to resources for Kustomize apps.
      * @param "QuerySourceKustomizeForceCommonAnnotations" (optional.Bool) -  ForceCommonAnnotations specifies whether to force applying common annotations to resources for Kustomize apps.
+     * @param "QuerySourceKustomizeNamespace" (optional.String) -  Namespace sets the namespace that Kustomize adds to all resources.
+     * @param "QuerySourceKustomizeComponents" (optional.Interface of []string) -  Components specifies a list of kustomize components to add to the kustomization before building.
+     * @param "QuerySourceKustomizeLabelWithoutSelector" (optional.Bool) -  LabelWithoutSelector specifies whether to apply common labels to resource selectors or not.
+     * @param "QuerySourceKustomizeKubeVersion" (optional.String) -  KubeVersion specifies the Kubernetes API version to pass to Helm when templating manifests. By default, Argo CD uses the Kubernetes version of the target cluster.
+     * @param "QuerySourceKustomizeApiVersions" (optional.Interface of []string) -  APIVersions specifies the Kubernetes resource API versions to pass to Helm when templating manifests. By default, Argo CD uses the API versions of the target cluster. The format is [group/]version/kind.
      * @param "QuerySourceKsonnetEnvironment" (optional.String) -  Environment is a ksonnet application environment name.
      * @param "QuerySourceDirectoryRecurse" (optional.Bool) -  Recurse specifies whether to scan a directory recursively for manifests.
      * @param "QuerySourceDirectoryJsonnetLibs" (optional.Interface of []string) -  Additional library search dirs.
@@ -533,8 +546,12 @@ GetAppDetails returns application details by given path.
      * @param "QuerySourceDirectoryInclude" (optional.String) -  Include contains a glob pattern to match paths against that should be explicitly included during manifest generation.
      * @param "QuerySourcePluginName" (optional.String) -
      * @param "QuerySourceChart" (optional.String) -  Chart is a Helm chart name, and must be specified for applications sourced from a Helm repo.
+     * @param "QuerySourceRef" (optional.String) -  Ref is reference to another source within sources field. This field will not be used if used with a &#x60;source&#x60; tag.
+     * @param "QuerySourceName" (optional.String) -  Name is used to refer to a source and is displayed in the UI. It is used in multi-source Applications.
      * @param "QueryAppName" (optional.String) -
      * @param "QueryAppProject" (optional.String) -
+     * @param "QuerySourceIndex" (optional.Int32) -  source index (for multi source apps).
+     * @param "QueryVersionId" (optional.Int32) -  versionId from historical data (for multi source apps).
 @return RepositoriesRepoAppDetailsResponse
 */
 
@@ -549,12 +566,25 @@ type RepositoriesApiAgentRepositoryServiceGetAppDetailsOpts struct {
 	QuerySourceHelmValues                      optional.String
 	QuerySourceHelmVersion                     optional.String
 	QuerySourceHelmPassCredentials             optional.Bool
+	QuerySourceHelmIgnoreMissingValueFiles     optional.Bool
+	QuerySourceHelmSkipCrds                    optional.Bool
+	QuerySourceHelmValuesObjectRaw             optional.String
+	QuerySourceHelmNamespace                   optional.String
+	QuerySourceHelmKubeVersion                 optional.String
+	QuerySourceHelmApiVersions                 optional.Interface
+	QuerySourceHelmSkipTests                   optional.Bool
+	QuerySourceHelmSkipSchemaValidation        optional.Bool
 	QuerySourceKustomizeNamePrefix             optional.String
 	QuerySourceKustomizeNameSuffix             optional.String
 	QuerySourceKustomizeImages                 optional.Interface
 	QuerySourceKustomizeVersion                optional.String
 	QuerySourceKustomizeForceCommonLabels      optional.Bool
 	QuerySourceKustomizeForceCommonAnnotations optional.Bool
+	QuerySourceKustomizeNamespace              optional.String
+	QuerySourceKustomizeComponents             optional.Interface
+	QuerySourceKustomizeLabelWithoutSelector   optional.Bool
+	QuerySourceKustomizeKubeVersion            optional.String
+	QuerySourceKustomizeApiVersions            optional.Interface
 	QuerySourceKsonnetEnvironment              optional.String
 	QuerySourceDirectoryRecurse                optional.Bool
 	QuerySourceDirectoryJsonnetLibs            optional.Interface
@@ -562,8 +592,12 @@ type RepositoriesApiAgentRepositoryServiceGetAppDetailsOpts struct {
 	QuerySourceDirectoryInclude                optional.String
 	QuerySourcePluginName                      optional.String
 	QuerySourceChart                           optional.String
+	QuerySourceRef                             optional.String
+	QuerySourceName                            optional.String
 	QueryAppName                               optional.String
 	QueryAppProject                            optional.String
+	QuerySourceIndex                           optional.Int32
+	QueryVersionId                             optional.Int32
 }
 
 func (a *RepositoriesApiService) AgentRepositoryServiceGetAppDetails(ctx context.Context, agentIdentifier string, identifier string, accountIdentifier string, localVarOptionals *RepositoriesApiAgentRepositoryServiceGetAppDetailsOpts) (RepositoriesRepoAppDetailsResponse, *http.Response, error) {
@@ -616,6 +650,30 @@ func (a *RepositoriesApiService) AgentRepositoryServiceGetAppDetails(ctx context
 	if localVarOptionals != nil && localVarOptionals.QuerySourceHelmPassCredentials.IsSet() {
 		localVarQueryParams.Add("query.source.helm.passCredentials", parameterToString(localVarOptionals.QuerySourceHelmPassCredentials.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceHelmIgnoreMissingValueFiles.IsSet() {
+		localVarQueryParams.Add("query.source.helm.ignoreMissingValueFiles", parameterToString(localVarOptionals.QuerySourceHelmIgnoreMissingValueFiles.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceHelmSkipCrds.IsSet() {
+		localVarQueryParams.Add("query.source.helm.skipCrds", parameterToString(localVarOptionals.QuerySourceHelmSkipCrds.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceHelmValuesObjectRaw.IsSet() {
+		localVarQueryParams.Add("query.source.helm.valuesObject.raw", parameterToString(localVarOptionals.QuerySourceHelmValuesObjectRaw.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceHelmNamespace.IsSet() {
+		localVarQueryParams.Add("query.source.helm.namespace", parameterToString(localVarOptionals.QuerySourceHelmNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceHelmKubeVersion.IsSet() {
+		localVarQueryParams.Add("query.source.helm.kubeVersion", parameterToString(localVarOptionals.QuerySourceHelmKubeVersion.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceHelmApiVersions.IsSet() {
+		localVarQueryParams.Add("query.source.helm.apiVersions", parameterToString(localVarOptionals.QuerySourceHelmApiVersions.Value(), "multi"))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceHelmSkipTests.IsSet() {
+		localVarQueryParams.Add("query.source.helm.skipTests", parameterToString(localVarOptionals.QuerySourceHelmSkipTests.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceHelmSkipSchemaValidation.IsSet() {
+		localVarQueryParams.Add("query.source.helm.skipSchemaValidation", parameterToString(localVarOptionals.QuerySourceHelmSkipSchemaValidation.Value(), ""))
+	}
 	if localVarOptionals != nil && localVarOptionals.QuerySourceKustomizeNamePrefix.IsSet() {
 		localVarQueryParams.Add("query.source.kustomize.namePrefix", parameterToString(localVarOptionals.QuerySourceKustomizeNamePrefix.Value(), ""))
 	}
@@ -633,6 +691,21 @@ func (a *RepositoriesApiService) AgentRepositoryServiceGetAppDetails(ctx context
 	}
 	if localVarOptionals != nil && localVarOptionals.QuerySourceKustomizeForceCommonAnnotations.IsSet() {
 		localVarQueryParams.Add("query.source.kustomize.forceCommonAnnotations", parameterToString(localVarOptionals.QuerySourceKustomizeForceCommonAnnotations.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceKustomizeNamespace.IsSet() {
+		localVarQueryParams.Add("query.source.kustomize.namespace", parameterToString(localVarOptionals.QuerySourceKustomizeNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceKustomizeComponents.IsSet() {
+		localVarQueryParams.Add("query.source.kustomize.components", parameterToString(localVarOptionals.QuerySourceKustomizeComponents.Value(), "multi"))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceKustomizeLabelWithoutSelector.IsSet() {
+		localVarQueryParams.Add("query.source.kustomize.labelWithoutSelector", parameterToString(localVarOptionals.QuerySourceKustomizeLabelWithoutSelector.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceKustomizeKubeVersion.IsSet() {
+		localVarQueryParams.Add("query.source.kustomize.kubeVersion", parameterToString(localVarOptionals.QuerySourceKustomizeKubeVersion.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceKustomizeApiVersions.IsSet() {
+		localVarQueryParams.Add("query.source.kustomize.apiVersions", parameterToString(localVarOptionals.QuerySourceKustomizeApiVersions.Value(), "multi"))
 	}
 	if localVarOptionals != nil && localVarOptionals.QuerySourceKsonnetEnvironment.IsSet() {
 		localVarQueryParams.Add("query.source.ksonnet.environment", parameterToString(localVarOptionals.QuerySourceKsonnetEnvironment.Value(), ""))
@@ -655,11 +728,23 @@ func (a *RepositoriesApiService) AgentRepositoryServiceGetAppDetails(ctx context
 	if localVarOptionals != nil && localVarOptionals.QuerySourceChart.IsSet() {
 		localVarQueryParams.Add("query.source.chart", parameterToString(localVarOptionals.QuerySourceChart.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceRef.IsSet() {
+		localVarQueryParams.Add("query.source.ref", parameterToString(localVarOptionals.QuerySourceRef.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceName.IsSet() {
+		localVarQueryParams.Add("query.source.name", parameterToString(localVarOptionals.QuerySourceName.Value(), ""))
+	}
 	if localVarOptionals != nil && localVarOptionals.QueryAppName.IsSet() {
 		localVarQueryParams.Add("query.appName", parameterToString(localVarOptionals.QueryAppName.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.QueryAppProject.IsSet() {
 		localVarQueryParams.Add("query.appProject", parameterToString(localVarOptionals.QueryAppProject.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QuerySourceIndex.IsSet() {
+		localVarQueryParams.Add("query.sourceIndex", parameterToString(localVarOptionals.QuerySourceIndex.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryVersionId.IsSet() {
+		localVarQueryParams.Add("query.versionId", parameterToString(localVarOptionals.QueryVersionId.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}

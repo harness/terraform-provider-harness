@@ -10,11 +10,23 @@
 package nextgen
 
 type ApplicationsApplicationSourceHelm struct {
-	ValueFiles      []string                        `json:"valueFiles,omitempty"`
-	Parameters      []ApplicationsHelmParameter     `json:"parameters,omitempty"`
-	ReleaseName     string                          `json:"releaseName,omitempty"`
-	Values          string                          `json:"values,omitempty"`
-	FileParameters  []ApplicationsHelmFileParameter `json:"fileParameters,omitempty"`
-	Version         string                          `json:"version,omitempty"`
-	PassCredentials bool                            `json:"passCredentials,omitempty"`
+	ValueFiles              []string                        `json:"valueFiles,omitempty"`
+	Parameters              []ApplicationsHelmParameter     `json:"parameters,omitempty"`
+	ReleaseName             string                          `json:"releaseName,omitempty"`
+	Values                  string                          `json:"values,omitempty"`
+	FileParameters          []ApplicationsHelmFileParameter `json:"fileParameters,omitempty"`
+	Version                 string                          `json:"version,omitempty"`
+	PassCredentials         bool                            `json:"passCredentials,omitempty"`
+	IgnoreMissingValueFiles bool                            `json:"ignoreMissingValueFiles,omitempty"`
+	SkipCrds                bool                            `json:"skipCrds,omitempty"`
+	ValuesObject            *RuntimeRawExtension            `json:"valuesObject,omitempty"`
+	// Namespace is an optional namespace to template with. If left empty, defaults to the app's destination namespace.
+	Namespace string `json:"namespace,omitempty"`
+	// KubeVersion specifies the Kubernetes API version to pass to Helm when templating manifests. By default, Argo CD uses the Kubernetes version of the target cluster.
+	KubeVersion string `json:"kubeVersion,omitempty"`
+	// APIVersions specifies the Kubernetes resource API versions to pass to Helm when templating manifests. By default, Argo CD uses the API versions of the target cluster. The format is [group/]version/kind.
+	ApiVersions []string `json:"apiVersions,omitempty"`
+	// SkipTests skips test manifest installation step (Helm's --skip-tests).
+	SkipTests            bool `json:"skipTests,omitempty"`
+	SkipSchemaValidation bool `json:"skipSchemaValidation,omitempty"`
 }

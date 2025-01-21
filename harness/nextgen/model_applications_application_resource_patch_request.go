@@ -18,4 +18,6 @@ type ApplicationsApplicationResourcePatchRequest struct {
 	Kind         string `json:"kind,omitempty"`
 	Patch        string `json:"patch,omitempty"`
 	PatchType    string `json:"patchType,omitempty"`
+	AppNamespace string `json:"appNamespace,omitempty"`
+	Project      string `json:"project,omitempty"`
 }

@@ -13,4 +13,5 @@ type ApplicationsSyncStatus struct {
 	Status     string                  `json:"status,omitempty"`
 	ComparedTo *ApplicationsComparedTo `json:"comparedTo,omitempty"`
 	Revision   string                  `json:"revision,omitempty"`
+	Revisions  []string                `json:"revisions,omitempty"`
 }

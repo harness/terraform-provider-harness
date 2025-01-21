@@ -8,6 +8,8 @@ Name | Type | Description | Notes
 **Id** | **string** |  | [optional] [default to null]
 **Source** | [***ApplicationsApplicationSource**](applicationsApplicationSource.md) |  | [optional] [default to null]
 **DeployStartedAt** | [***V1Time**](v1Time.md) |  | [optional] [default to null]
+**DeployedAtTs** | [**time.Time**](time.Time.md) |  | [optional] [default to null]
+**DeployStartedAtTs** | [**time.Time**](time.Time.md) |  | [optional] [default to null]
 **Sources** | [**[]ApplicationsApplicationSource**](applicationsApplicationSource.md) |  | [optional] [default to null]
 **Revisions** | **[]string** |  | [optional] [default to null]
 **InitiatedBy** | [***ApplicationsOperationInitiator**](applicationsOperationInitiator.md) |  | [optional] [default to null]

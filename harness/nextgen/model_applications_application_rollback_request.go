@@ -10,8 +10,10 @@
 package nextgen
 
 type ApplicationsApplicationRollbackRequest struct {
-	Name   string `json:"name,omitempty"`
-	Id     string `json:"id,omitempty"`
-	DryRun bool   `json:"dryRun,omitempty"`
-	Prune  bool   `json:"prune,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Id           string `json:"id,omitempty"`
+	DryRun       bool   `json:"dryRun,omitempty"`
+	Prune        bool   `json:"prune,omitempty"`
+	AppNamespace string `json:"appNamespace,omitempty"`
+	Project      string `json:"project,omitempty"`
 }

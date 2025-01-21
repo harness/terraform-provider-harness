@@ -10,13 +10,15 @@
 package nextgen
 
 type ApplicationsResourceStatus struct {
-	Group           string                    `json:"group,omitempty"`
-	Version         string                    `json:"version,omitempty"`
-	Kind            string                    `json:"kind,omitempty"`
-	Namespace       string                    `json:"namespace,omitempty"`
-	Name            string                    `json:"name,omitempty"`
-	Status          string                    `json:"status,omitempty"`
-	Health          *ApplicationsHealthStatus `json:"health,omitempty"`
-	Hook            bool                      `json:"hook,omitempty"`
-	RequiresPruning bool                      `json:"requiresPruning,omitempty"`
+	Group                        string                    `json:"group,omitempty"`
+	Version                      string                    `json:"version,omitempty"`
+	Kind                         string                    `json:"kind,omitempty"`
+	Namespace                    string                    `json:"namespace,omitempty"`
+	Name                         string                    `json:"name,omitempty"`
+	Status                       string                    `json:"status,omitempty"`
+	Health                       *ApplicationsHealthStatus `json:"health,omitempty"`
+	Hook                         bool                      `json:"hook,omitempty"`
+	RequiresPruning              bool                      `json:"requiresPruning,omitempty"`
+	SyncWave                     string                    `json:"syncWave,omitempty"`
+	RequiresDeletionConfirmation bool                      `json:"requiresDeletionConfirmation,omitempty"`
 }

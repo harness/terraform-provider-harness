@@ -10,6 +10,7 @@
 package nextgen
 
 type ApplicationsApplicationSourcePlugin struct {
-	Name string                 `json:"name,omitempty"`
-	Env  []ApplicationsEnvEntry `json:"env,omitempty"`
+	Name       string                                         `json:"name,omitempty"`
+	Env        []ApplicationsEnvEntry                         `json:"env,omitempty"`
+	Parameters []ApplicationsApplicationSourcePluginParameter `json:"parameters,omitempty"`
 }

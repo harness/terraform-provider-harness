@@ -39,7 +39,7 @@ Creates application in project.
      * @param "ClusterIdentifier" (optional.String) -
      * @param "RepoIdentifier" (optional.String) -
      * @param "SkipRepoValidation" (optional.Bool) -
-     * @param "RepoIdentifiers" (optional.Interface of []string) - 
+     * @param "RepoIdentifiers" (optional.Interface of []string) -
 @return Servicev1Application
 */
 
@@ -50,7 +50,7 @@ type ApplicationsApiAgentApplicationServiceCreateOpts struct {
 	ClusterIdentifier  optional.String
 	RepoIdentifier     optional.String
 	SkipRepoValidation optional.Bool
-    RepoIdentifiers optional.Interface
+	RepoIdentifiers    optional.Interface
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceCreate(ctx context.Context, body ApplicationsApplicationCreateRequest, agentIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServiceCreateOpts) (Servicev1Application, *http.Response, error) {
@@ -207,6 +207,8 @@ Delete deletes an application.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "RequestCascade" (optional.Bool) -
      * @param "RequestPropagationPolicy" (optional.String) -
+     * @param "RequestAppNamespace" (optional.String) -
+     * @param "RequestProject" (optional.String) -
      * @param "OptionsRemoveExistingFinalizers" (optional.Bool) -
 @return ApplicationsApplicationResponse
 */
@@ -217,6 +219,8 @@ type ApplicationsApiAgentApplicationServiceDeleteOpts struct {
 	ProjectIdentifier               optional.String
 	RequestCascade                  optional.Bool
 	RequestPropagationPolicy        optional.String
+	RequestAppNamespace             optional.String
+	RequestProject                  optional.String
 	OptionsRemoveExistingFinalizers optional.Bool
 }
 
@@ -253,6 +257,12 @@ func (a *ApplicationsApiService) AgentApplicationServiceDelete(ctx context.Conte
 	}
 	if localVarOptionals != nil && localVarOptionals.RequestPropagationPolicy.IsSet() {
 		localVarQueryParams.Add("request.propagationPolicy", parameterToString(localVarOptionals.RequestPropagationPolicy.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RequestAppNamespace.IsSet() {
+		localVarQueryParams.Add("request.appNamespace", parameterToString(localVarOptionals.RequestAppNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RequestProject.IsSet() {
+		localVarQueryParams.Add("request.project", parameterToString(localVarOptionals.RequestProject.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OptionsRemoveExistingFinalizers.IsSet() {
 		localVarQueryParams.Add("options.removeExistingFinalizers", parameterToString(localVarOptionals.OptionsRemoveExistingFinalizers.Value(), ""))
@@ -371,6 +381,8 @@ DeleteResource deletes a single application resource.
      * @param "RequestKind" (optional.String) -
      * @param "RequestForce" (optional.Bool) -
      * @param "RequestOrphan" (optional.Bool) -
+     * @param "RequestAppNamespace" (optional.String) -
+     * @param "RequestProject" (optional.String) -
 @return ApplicationsApplicationResponse
 */
 
@@ -385,6 +397,8 @@ type ApplicationsApiAgentApplicationServiceDeleteResourceOpts struct {
 	RequestKind         optional.String
 	RequestForce        optional.Bool
 	RequestOrphan       optional.Bool
+	RequestAppNamespace optional.String
+	RequestProject      optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceDeleteResource(ctx context.Context, agentIdentifier string, requestName string, localVarOptionals *ApplicationsApiAgentApplicationServiceDeleteResourceOpts) (ApplicationsApplicationResponse, *http.Response, error) {
@@ -435,6 +449,12 @@ func (a *ApplicationsApiService) AgentApplicationServiceDeleteResource(ctx conte
 	}
 	if localVarOptionals != nil && localVarOptionals.RequestOrphan.IsSet() {
 		localVarQueryParams.Add("request.orphan", parameterToString(localVarOptionals.RequestOrphan.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RequestAppNamespace.IsSet() {
+		localVarQueryParams.Add("request.appNamespace", parameterToString(localVarOptionals.RequestAppNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RequestProject.IsSet() {
+		localVarQueryParams.Add("request.project", parameterToString(localVarOptionals.RequestProject.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -531,20 +551,28 @@ ApplicationsApiService Get returns an application by name
  * @param orgIdentifier Organization Identifier for the Entity.
  * @param projectIdentifier Project Identifier for the Entity.
  * @param optional nil or *ApplicationsApiAgentApplicationServiceGetOpts - Optional Parameters:
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "QueryRefresh" (optional.String) -  forces application reconciliation if set to true.
      * @param "QueryProject" (optional.Interface of []string) -  the project names to restrict returned list applications.
      * @param "QueryResourceVersion" (optional.String) -  when specified with a watch call, shows changes that occur after that particular version of a resource.
      * @param "QuerySelector" (optional.String) -  the selector to to restrict returned list to applications only with matched labels.
      * @param "QueryRepo" (optional.String) -  the repoURL to restrict returned list applications.
+     * @param "QueryAppNamespace" (optional.String) -
 @return Servicev1Application
 */
 
 type ApplicationsApiAgentApplicationServiceGetOpts struct {
+	AccountIdentifier    optional.String
+	OrgIdentifier        optional.String
+	ProjectIdentifier    optional.String
 	QueryRefresh         optional.String
 	QueryProject         optional.Interface
 	QueryResourceVersion optional.String
 	QuerySelector        optional.String
 	QueryRepo            optional.String
+	QueryAppNamespace    optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceGet(ctx context.Context, agentIdentifier string, queryName string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServiceGetOpts) (Servicev1Application, *http.Response, error) {
@@ -583,6 +611,9 @@ func (a *ApplicationsApiService) AgentApplicationServiceGet(ctx context.Context,
 	}
 	if localVarOptionals != nil && localVarOptionals.QueryRepo.IsSet() {
 		localVarQueryParams.Add("query.repo", parameterToString(localVarOptionals.QueryRepo.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryAppNamespace.IsSet() {
+		localVarQueryParams.Add("query.appNamespace", parameterToString(localVarOptionals.QueryAppNamespace.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -943,6 +974,8 @@ GetResource returns single application resource.
      * @param "RequestVersion" (optional.String) -
      * @param "RequestGroup" (optional.String) -
      * @param "RequestKind" (optional.String) -
+     * @param "RequestAppNamespace" (optional.String) -
+     * @param "RequestProject" (optional.String) -
 @return ApplicationsApplicationResourceResponse
 */
 
@@ -955,6 +988,8 @@ type ApplicationsApiAgentApplicationServiceGetResourceOpts struct {
 	RequestVersion      optional.String
 	RequestGroup        optional.String
 	RequestKind         optional.String
+	RequestAppNamespace optional.String
+	RequestProject      optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceGetResource(ctx context.Context, agentIdentifier string, requestName string, localVarOptionals *ApplicationsApiAgentApplicationServiceGetResourceOpts) (ApplicationsApplicationResourceResponse, *http.Response, error) {
@@ -999,6 +1034,12 @@ func (a *ApplicationsApiService) AgentApplicationServiceGetResource(ctx context.
 	}
 	if localVarOptionals != nil && localVarOptionals.RequestKind.IsSet() {
 		localVarQueryParams.Add("request.kind", parameterToString(localVarOptionals.RequestKind.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RequestAppNamespace.IsSet() {
+		localVarQueryParams.Add("request.appNamespace", parameterToString(localVarOptionals.RequestAppNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RequestProject.IsSet() {
+		localVarQueryParams.Add("request.project", parameterToString(localVarOptionals.RequestProject.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -1100,6 +1141,7 @@ List returns list of applications for a specific agent.
      * @param "QueryResourceVersion" (optional.String) -  when specified with a watch call, shows changes that occur after that particular version of a resource.
      * @param "QuerySelector" (optional.String) -  the selector to to restrict returned list to applications only with matched labels.
      * @param "QueryRepo" (optional.String) -  the repoURL to restrict returned list applications.
+     * @param "QueryAppNamespace" (optional.String) -
 @return ApplicationsApplicationList
 */
 
@@ -1110,6 +1152,7 @@ type ApplicationsApiAgentApplicationServiceListOpts struct {
 	QueryResourceVersion optional.String
 	QuerySelector        optional.String
 	QueryRepo            optional.String
+	QueryAppNamespace    optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceList(ctx context.Context, agentIdentifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServiceListOpts) (ApplicationsApplicationList, *http.Response, error) {
@@ -1150,6 +1193,9 @@ func (a *ApplicationsApiService) AgentApplicationServiceList(ctx context.Context
 	}
 	if localVarOptionals != nil && localVarOptionals.QueryRepo.IsSet() {
 		localVarQueryParams.Add("query.repo", parameterToString(localVarOptionals.QueryRepo.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryAppNamespace.IsSet() {
+		localVarQueryParams.Add("query.appNamespace", parameterToString(localVarOptionals.QueryAppNamespace.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -1251,6 +1297,8 @@ ListResourceActions returns list of resource actions.
      * @param "RequestVersion" (optional.String) -
      * @param "RequestGroup" (optional.String) -
      * @param "RequestKind" (optional.String) -
+     * @param "RequestAppNamespace" (optional.String) -
+     * @param "RequestProject" (optional.String) -
 @return ApplicationsResourceActionsListResponse
 */
 
@@ -1260,6 +1308,8 @@ type ApplicationsApiAgentApplicationServiceListResourceActionsOpts struct {
 	RequestVersion      optional.String
 	RequestGroup        optional.String
 	RequestKind         optional.String
+	RequestAppNamespace optional.String
+	RequestProject      optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceListResourceActions(ctx context.Context, agentIdentifier string, requestName string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServiceListResourceActionsOpts) (ApplicationsResourceActionsListResponse, *http.Response, error) {
@@ -1298,6 +1348,12 @@ func (a *ApplicationsApiService) AgentApplicationServiceListResourceActions(ctx 
 	}
 	if localVarOptionals != nil && localVarOptionals.RequestKind.IsSet() {
 		localVarQueryParams.Add("request.kind", parameterToString(localVarOptionals.RequestKind.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RequestAppNamespace.IsSet() {
+		localVarQueryParams.Add("request.appNamespace", parameterToString(localVarOptionals.RequestAppNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RequestProject.IsSet() {
+		localVarQueryParams.Add("request.project", parameterToString(localVarOptionals.RequestProject.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -1397,6 +1453,8 @@ ListResourceEvents returns list of event resources.
      * @param "QueryResourceNamespace" (optional.String) -
      * @param "QueryResourceName" (optional.String) -
      * @param "QueryResourceUID" (optional.String) -
+     * @param "QueryAppNamespace" (optional.String) -
+     * @param "QueryProject" (optional.String) -
 @return V1EventList
 */
 
@@ -1404,6 +1462,8 @@ type ApplicationsApiAgentApplicationServiceListResourceEventsOpts struct {
 	QueryResourceNamespace optional.String
 	QueryResourceName      optional.String
 	QueryResourceUID       optional.String
+	QueryAppNamespace      optional.String
+	QueryProject           optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceListResourceEvents(ctx context.Context, agentIdentifier string, queryName string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServiceListResourceEventsOpts) (V1EventList, *http.Response, error) {
@@ -1436,6 +1496,12 @@ func (a *ApplicationsApiService) AgentApplicationServiceListResourceEvents(ctx c
 	}
 	if localVarOptionals != nil && localVarOptionals.QueryResourceUID.IsSet() {
 		localVarQueryParams.Add("query.resourceUID", parameterToString(localVarOptionals.QueryResourceUID.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryAppNamespace.IsSet() {
+		localVarQueryParams.Add("query.appNamespace", parameterToString(localVarOptionals.QueryAppNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryProject.IsSet() {
+		localVarQueryParams.Add("query.project", parameterToString(localVarOptionals.QueryProject.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -1537,6 +1603,8 @@ ManagedResources returns list of managed resources.
      * @param "QueryVersion" (optional.String) -
      * @param "QueryGroup" (optional.String) -
      * @param "QueryKind" (optional.String) -
+     * @param "QueryAppNamespace" (optional.String) -
+     * @param "QueryProject" (optional.String) -
 @return ApplicationsManagedResourcesResponse
 */
 
@@ -1944,6 +2012,8 @@ PodLogs returns stream of log entries for the specified pod(s).
      * @param "QueryGroup" (optional.String) -
      * @param "QueryResourceName" (optional.String) -
      * @param "QueryPrevious" (optional.Bool) -
+     * @param "QueryAppNamespace" (optional.String) -
+     * @param "QueryProject" (optional.String) -
 @return StreamResultOfApplicationsLogEntry
 */
 
@@ -1961,6 +2031,8 @@ type ApplicationsApiAgentApplicationServicePodLogsOpts struct {
 	QueryGroup            optional.String
 	QueryResourceName     optional.String
 	QueryPrevious         optional.Bool
+	QueryAppNamespace     optional.String
+	QueryProject          optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServicePodLogs(ctx context.Context, agentIdentifier string, queryName string, queryPodName string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServicePodLogsOpts) (StreamResultOfApplicationsLogEntry, *http.Response, error) {
@@ -2024,6 +2096,12 @@ func (a *ApplicationsApiService) AgentApplicationServicePodLogs(ctx context.Cont
 	}
 	if localVarOptionals != nil && localVarOptionals.QueryPrevious.IsSet() {
 		localVarQueryParams.Add("query.previous", parameterToString(localVarOptionals.QueryPrevious.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryAppNamespace.IsSet() {
+		localVarQueryParams.Add("query.appNamespace", parameterToString(localVarOptionals.QueryAppNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryProject.IsSet() {
+		localVarQueryParams.Add("query.project", parameterToString(localVarOptionals.QueryProject.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -2134,6 +2212,8 @@ PodLogs returns stream of log entries for the specified pod(s).
      * @param "QueryGroup" (optional.String) -
      * @param "QueryResourceName" (optional.String) -
      * @param "QueryPrevious" (optional.Bool) -
+     * @param "QueryAppNamespace" (optional.String) -
+     * @param "QueryProject" (optional.String) -
 @return StreamResultOfApplicationsLogEntry
 */
 
@@ -2152,6 +2232,8 @@ type ApplicationsApiAgentApplicationServicePodLogs2Opts struct {
 	QueryGroup            optional.String
 	QueryResourceName     optional.String
 	QueryPrevious         optional.Bool
+	QueryAppNamespace     optional.String
+	QueryProject          optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServicePodLogs2(ctx context.Context, agentIdentifier string, queryName string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServicePodLogs2Opts) (StreamResultOfApplicationsLogEntry, *http.Response, error) {
@@ -2217,6 +2299,12 @@ func (a *ApplicationsApiService) AgentApplicationServicePodLogs2(ctx context.Con
 	}
 	if localVarOptionals != nil && localVarOptionals.QueryPrevious.IsSet() {
 		localVarQueryParams.Add("query.previous", parameterToString(localVarOptionals.QueryPrevious.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryAppNamespace.IsSet() {
+		localVarQueryParams.Add("query.appNamespace", parameterToString(localVarOptionals.QueryAppNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryProject.IsSet() {
+		localVarQueryParams.Add("query.project", parameterToString(localVarOptionals.QueryProject.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -2318,6 +2406,8 @@ ResourceTree returns resource tree.
      * @param "QueryVersion" (optional.String) -
      * @param "QueryGroup" (optional.String) -
      * @param "QueryKind" (optional.String) -
+     * @param "QueryAppNamespace" (optional.String) -
+     * @param "QueryProject" (optional.String) -
 @return ApplicationsApplicationTree
 */
 
@@ -3084,17 +3174,16 @@ Update updates an application.
      * @param "ClusterIdentifier" (optional.String) -
      * @param "RepoIdentifier" (optional.String) -
      * @param "SkipRepoValidation" (optional.Bool) -
-     * @param "RepoIdentifiers" (optional.Interface of []string) - 
+     * @param "RepoIdentifiers" (optional.Interface of []string) -
 @return Servicev1Application
 */
 
 type ApplicationsApiAgentApplicationServiceUpdateOpts struct {
-    ClusterIdentifier optional.String
-    RepoIdentifier optional.String
-    SkipRepoValidation optional.Bool
-    RepoIdentifiers optional.Interface
+	ClusterIdentifier  optional.String
+	RepoIdentifier     optional.String
+	SkipRepoValidation optional.Bool
+	RepoIdentifiers    optional.Interface
 }
-
 
 func (a *ApplicationsApiService) AgentApplicationServiceUpdate(ctx context.Context, body ApplicationsApplicationUpdateRequest, accountIdentifier string, orgIdentifier string, projectIdentifier string, agentIdentifier string, requestApplicationMetadataName string, localVarOptionals *ApplicationsApiAgentApplicationServiceUpdateOpts) (Servicev1Application, *http.Response, error) {
 	var (
@@ -3370,6 +3459,7 @@ Watch returns stream of application change events.
      * @param "QueryResourceVersion" (optional.String) -  when specified with a watch call, shows changes that occur after that particular version of a resource.
      * @param "QuerySelector" (optional.String) -  the selector to to restrict returned list to applications only with matched labels.
      * @param "QueryRepo" (optional.String) -  the repoURL to restrict returned list applications.
+     * @param "QueryAppNamespace" (optional.String) -
 @return StreamResultOfApplicationsApplicationWatchEvent
 */
 
@@ -3379,6 +3469,7 @@ type ApplicationsApiAgentApplicationServiceWatchOpts struct {
 	QueryResourceVersion optional.String
 	QuerySelector        optional.String
 	QueryRepo            optional.String
+	QueryAppNamespace    optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceWatch(ctx context.Context, agentIdentifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, queryName string, localVarOptionals *ApplicationsApiAgentApplicationServiceWatchOpts) (StreamResultOfApplicationsApplicationWatchEvent, *http.Response, error) {
@@ -3417,6 +3508,9 @@ func (a *ApplicationsApiService) AgentApplicationServiceWatch(ctx context.Contex
 	}
 	if localVarOptionals != nil && localVarOptionals.QueryRepo.IsSet() {
 		localVarQueryParams.Add("query.repo", parameterToString(localVarOptionals.QueryRepo.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryAppNamespace.IsSet() {
+		localVarQueryParams.Add("query.appNamespace", parameterToString(localVarOptionals.QueryAppNamespace.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -3518,15 +3612,19 @@ WatchResourceTree returns stream of application resource tree.
      * @param "QueryVersion" (optional.String) -
      * @param "QueryGroup" (optional.String) -
      * @param "QueryKind" (optional.String) -
+     * @param "QueryAppNamespace" (optional.String) -
+     * @param "QueryProject" (optional.String) -
 @return StreamResultOfApplicationsApplicationTree
 */
 
 type ApplicationsApiAgentApplicationServiceWatchResourceTreeOpts struct {
-	QueryNamespace optional.String
-	QueryName      optional.String
-	QueryVersion   optional.String
-	QueryGroup     optional.String
-	QueryKind      optional.String
+	QueryNamespace    optional.String
+	QueryName         optional.String
+	QueryVersion      optional.String
+	QueryGroup        optional.String
+	QueryKind         optional.String
+	QueryAppNamespace optional.String
+	QueryProject      optional.String
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceWatchResourceTree(ctx context.Context, agentIdentifier string, queryApplicationName string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServiceWatchResourceTreeOpts) (StreamResultOfApplicationsApplicationTree, *http.Response, error) {
@@ -3565,6 +3663,12 @@ func (a *ApplicationsApiService) AgentApplicationServiceWatchResourceTree(ctx co
 	}
 	if localVarOptionals != nil && localVarOptionals.QueryKind.IsSet() {
 		localVarQueryParams.Add("query.kind", parameterToString(localVarOptionals.QueryKind.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryAppNamespace.IsSet() {
+		localVarQueryParams.Add("query.appNamespace", parameterToString(localVarOptionals.QueryAppNamespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryProject.IsSet() {
+		localVarQueryParams.Add("query.project", parameterToString(localVarOptionals.QueryProject.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}

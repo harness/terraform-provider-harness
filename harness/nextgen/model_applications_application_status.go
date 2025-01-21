@@ -10,17 +10,17 @@
 package nextgen
 
 type ApplicationsApplicationStatus struct {
-	Resources      []ApplicationsResourceStatus       `json:"resources,omitempty"`
-	Sync           *ApplicationsSyncStatus            `json:"sync,omitempty"`
-	Health         *ApplicationsHealthStatus          `json:"health,omitempty"`
-	History        []ApplicationsRevisionHistory      `json:"history,omitempty"`
-	Conditions     []ApplicationsApplicationCondition `json:"conditions,omitempty"`
-	ReconciledAt   *V1Time                            `json:"reconciledAt,omitempty"`
-	OperationState *ApplicationsOperationState        `json:"operationState,omitempty"`
-	ObservedAt     *V1Time                            `json:"observedAt,omitempty"`
-	SourceType     string                             `json:"sourceType,omitempty"`
-	Summary        *ApplicationsApplicationSummary    `json:"summary,omitempty"`
-	ResourceHealthSource string `json:"resourceHealthSource,omitempty"`
-	SourceTypes []string `json:"sourceTypes,omitempty"`
-	ControllerNamespace string `json:"controllerNamespace,omitempty"`
+	Resources            []ApplicationsResourceStatus       `json:"resources,omitempty"`
+	Sync                 *ApplicationsSyncStatus            `json:"sync,omitempty"`
+	Health               *ApplicationsHealthStatus          `json:"health,omitempty"`
+	History              []ApplicationsRevisionHistory      `json:"history,omitempty"`
+	Conditions           []ApplicationsApplicationCondition `json:"conditions,omitempty"`
+	ReconciledAt         *V1Time                            `json:"reconciledAt,omitempty"`
+	OperationState       *ApplicationsOperationState        `json:"operationState,omitempty"`
+	ObservedAt           *V1Time                            `json:"observedAt,omitempty"`
+	SourceType           string                             `json:"sourceType,omitempty"`
+	Summary              *ApplicationsApplicationSummary    `json:"summary,omitempty"`
+	ResourceHealthSource string                             `json:"resourceHealthSource,omitempty"`
+	SourceTypes          []string                           `json:"sourceTypes,omitempty"`
+	ControllerNamespace  string                             `json:"controllerNamespace,omitempty"`
 }

@@ -10,6 +10,8 @@ Name | Type | Description | Notes
 **StartedAt** | [***V1Time**](v1Time.md) |  | [optional] [default to null]
 **FinishedAt** | [***V1Time**](v1Time.md) |  | [optional] [default to null]
 **RetryCount** | **string** |  | [optional] [default to null]
+**StartedAtTs** | [**time.Time**](time.Time.md) |  | [optional] [default to null]
+**FinishedAtTs** | [**time.Time**](time.Time.md) |  | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

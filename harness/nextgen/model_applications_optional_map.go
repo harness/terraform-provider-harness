@@ -9,10 +9,6 @@
  */
 package nextgen
 
-type ApplicationsApplicationDeleteRequest struct {
-	Name              string `json:"name,omitempty"`
-	Cascade           bool   `json:"cascade,omitempty"`
-	PropagationPolicy string `json:"propagationPolicy,omitempty"`
-	AppNamespace      string `json:"appNamespace,omitempty"`
-	Project           string `json:"project,omitempty"`
+type ApplicationsOptionalMap struct {
+	Map_ map[string]string `json:"map,omitempty"`
 }

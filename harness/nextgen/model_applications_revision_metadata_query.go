@@ -10,6 +10,10 @@
 package nextgen
 
 type ApplicationsRevisionMetadataQuery struct {
-	Name string `json:"name,omitempty"`
-	Revision string `json:"revision,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Revision     string `json:"revision,omitempty"`
+	AppNamespace string `json:"appNamespace,omitempty"`
+	Project      string `json:"project,omitempty"`
+	SourceIndex  int32  `json:"sourceIndex,omitempty"`
+	VersionId    int32  `json:"versionId,omitempty"`
 }

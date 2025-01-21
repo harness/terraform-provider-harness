@@ -24,4 +24,6 @@ type ApplicationsApplicationSource struct {
 	Chart string `json:"chart,omitempty"`
 	// Ref is reference to another source within sources field. This field will not be used if used with a `source` tag.
 	Ref string `json:"ref,omitempty"`
+	// Name is used to refer to a source and is displayed in the UI. It is used in multi-source Applications.
+	Name string `json:"name,omitempty"`
 }

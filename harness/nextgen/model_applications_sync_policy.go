@@ -10,7 +10,8 @@
 package nextgen
 
 type ApplicationsSyncPolicy struct {
-	Automated   *ApplicationsSyncPolicyAutomated `json:"automated,omitempty"`
-	SyncOptions []string                         `json:"syncOptions,omitempty"`
-	Retry       *ApplicationsRetryStrategy       `json:"retry,omitempty"`
+	Automated                *ApplicationsSyncPolicyAutomated      `json:"automated,omitempty"`
+	SyncOptions              []string                              `json:"syncOptions,omitempty"`
+	Retry                    *ApplicationsRetryStrategy            `json:"retry,omitempty"`
+	ManagedNamespaceMetadata *ApplicationsManagedNamespaceMetadata `json:"managedNamespaceMetadata,omitempty"`
 }

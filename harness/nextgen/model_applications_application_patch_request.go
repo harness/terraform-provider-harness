@@ -10,7 +10,9 @@
 package nextgen
 
 type ApplicationsApplicationPatchRequest struct {
-	Name      string `json:"name,omitempty"`
-	Patch     string `json:"patch,omitempty"`
-	PatchType string `json:"patchType,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Patch        string `json:"patch,omitempty"`
+	PatchType    string `json:"patchType,omitempty"`
+	AppNamespace string `json:"appNamespace,omitempty"`
+	Project      string `json:"project,omitempty"`
 }

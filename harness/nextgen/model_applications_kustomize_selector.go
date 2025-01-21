@@ -9,10 +9,8 @@
  */
 package nextgen
 
-type ApplicationsApplicationDeleteRequest struct {
-	Name              string `json:"name,omitempty"`
-	Cascade           bool   `json:"cascade,omitempty"`
-	PropagationPolicy string `json:"propagationPolicy,omitempty"`
-	AppNamespace      string `json:"appNamespace,omitempty"`
-	Project           string `json:"project,omitempty"`
+type ApplicationsKustomizeSelector struct {
+	ResId              *ApplicationsKustomizeResId `json:"resId,omitempty"`
+	AnnotationSelector string                      `json:"annotationSelector,omitempty"`
+	LabelSelector      string                      `json:"labelSelector,omitempty"`
 }

@@ -9,10 +9,9 @@
  */
 package nextgen
 
-type ApplicationsApplicationDeleteRequest struct {
-	Name              string `json:"name,omitempty"`
-	Cascade           bool   `json:"cascade,omitempty"`
-	PropagationPolicy string `json:"propagationPolicy,omitempty"`
-	AppNamespace      string `json:"appNamespace,omitempty"`
-	Project           string `json:"project,omitempty"`
+type ApplicationsKustomizePatch struct {
+	Path    string                         `json:"path,omitempty"`
+	Patch   string                         `json:"patch,omitempty"`
+	Target  *ApplicationsKustomizeSelector `json:"target,omitempty"`
+	Options map[string]bool                `json:"options,omitempty"`
 }

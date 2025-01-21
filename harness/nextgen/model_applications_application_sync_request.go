@@ -10,14 +10,18 @@
 package nextgen
 
 type ApplicationsApplicationSyncRequest struct {
-	Name          string                              `json:"name,omitempty"`
-	Revision      string                              `json:"revision,omitempty"`
-	DryRun        bool                                `json:"dryRun,omitempty"`
-	Prune         bool                                `json:"prune,omitempty"`
-	Strategy      *ApplicationsSyncStrategy           `json:"strategy,omitempty"`
-	Resources     []ApplicationsSyncOperationResource `json:"resources,omitempty"`
-	Manifests     []string                            `json:"manifests,omitempty"`
-	Infos         []ApplicationsInfo                  `json:"infos,omitempty"`
-	RetryStrategy *ApplicationsRetryStrategy          `json:"retryStrategy,omitempty"`
-	SyncOptions   *ApplicationsSyncOptions            `json:"syncOptions,omitempty"`
+	Name            string                              `json:"name,omitempty"`
+	Revision        string                              `json:"revision,omitempty"`
+	DryRun          bool                                `json:"dryRun,omitempty"`
+	Prune           bool                                `json:"prune,omitempty"`
+	Strategy        *ApplicationsSyncStrategy           `json:"strategy,omitempty"`
+	Resources       []ApplicationsSyncOperationResource `json:"resources,omitempty"`
+	Manifests       []string                            `json:"manifests,omitempty"`
+	Infos           []ApplicationsInfo                  `json:"infos,omitempty"`
+	RetryStrategy   *ApplicationsRetryStrategy          `json:"retryStrategy,omitempty"`
+	SyncOptions     *ApplicationsSyncOptions            `json:"syncOptions,omitempty"`
+	AppNamespace    string                              `json:"appNamespace,omitempty"`
+	Project         string                              `json:"project,omitempty"`
+	SourcePositions []string                            `json:"sourcePositions,omitempty"`
+	Revisions       []string                            `json:"revisions,omitempty"`
 }

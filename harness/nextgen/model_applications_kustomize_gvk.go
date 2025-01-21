@@ -9,10 +9,8 @@
  */
 package nextgen
 
-type ApplicationsApplicationDeleteRequest struct {
-	Name              string `json:"name,omitempty"`
-	Cascade           bool   `json:"cascade,omitempty"`
-	PropagationPolicy string `json:"propagationPolicy,omitempty"`
-	AppNamespace      string `json:"appNamespace,omitempty"`
-	Project           string `json:"project,omitempty"`
+type ApplicationsKustomizeGvk struct {
+	Group   string `json:"group,omitempty"`
+	Version string `json:"version,omitempty"`
+	Kind    string `json:"kind,omitempty"`
 }

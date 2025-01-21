@@ -10,14 +10,21 @@
 package nextgen
 
 type ApplicationsApplicationSourceKustomize struct {
-	NamePrefix             string            `json:"namePrefix,omitempty"`
-	NameSuffix             string            `json:"nameSuffix,omitempty"`
-	Images                 []string          `json:"images,omitempty"`
-	CommonLabels           map[string]string `json:"commonLabels,omitempty"`
-	Version                string            `json:"version,omitempty"`
-	CommonAnnotations      map[string]string `json:"commonAnnotations,omitempty"`
-	ForceCommonLabels      bool              `json:"forceCommonLabels,omitempty"`
-	ForceCommonAnnotations bool              `json:"forceCommonAnnotations,omitempty"`
-	Namespace string `json:"namespace,omitempty"`
-	Replicas []ApplicationsKustomizeReplicas `json:"replicas,omitempty"`
+	NamePrefix             string                          `json:"namePrefix,omitempty"`
+	NameSuffix             string                          `json:"nameSuffix,omitempty"`
+	Images                 []string                        `json:"images,omitempty"`
+	CommonLabels           map[string]string               `json:"commonLabels,omitempty"`
+	Version                string                          `json:"version,omitempty"`
+	CommonAnnotations      map[string]string               `json:"commonAnnotations,omitempty"`
+	ForceCommonLabels      bool                            `json:"forceCommonLabels,omitempty"`
+	ForceCommonAnnotations bool                            `json:"forceCommonAnnotations,omitempty"`
+	Namespace              string                          `json:"namespace,omitempty"`
+	Replicas               []ApplicationsKustomizeReplicas `json:"replicas,omitempty"`
+	Patches                []ApplicationsKustomizePatch    `json:"patches,omitempty"`
+	Components             []string                        `json:"components,omitempty"`
+	LabelWithoutSelector   bool                            `json:"labelWithoutSelector,omitempty"`
+	// KubeVersion specifies the Kubernetes API version to pass to Helm when templating manifests. By default, Argo CD uses the Kubernetes version of the target cluster.
+	KubeVersion string `json:"kubeVersion,omitempty"`
+	// APIVersions specifies the Kubernetes resource API versions to pass to Helm when templating manifests. By default, Argo CD uses the API versions of the target cluster. The format is [group/]version/kind.
+	ApiVersions []string `json:"apiVersions,omitempty"`
 }

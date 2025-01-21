@@ -10,6 +10,6 @@
 package nextgen
 
 type Applicationv1alpha1RepositoryCertificateList struct {
-	Metadata *V1ListMeta `json:"metadata,omitempty"`
-	Items []Applicationv1alpha1RepositoryCertificate `json:"items,omitempty"`
+	Metadata *V1ListMeta                                `json:"metadata,omitempty"`
+	Items    []Applicationv1alpha1RepositoryCertificate `json:"items,omitempty"`
 }

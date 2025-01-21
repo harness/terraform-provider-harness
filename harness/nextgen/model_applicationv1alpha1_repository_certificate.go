@@ -10,9 +10,9 @@
 package nextgen
 
 type Applicationv1alpha1RepositoryCertificate struct {
-	ServerName string `json:"serverName,omitempty"`
-	CertType string `json:"certType,omitempty"`
+	ServerName  string `json:"serverName,omitempty"`
+	CertType    string `json:"certType,omitempty"`
 	CertSubType string `json:"certSubType,omitempty"`
-	CertData string `json:"certData,omitempty"`
-	CertInfo string `json:"certInfo,omitempty"`
+	CertData    string `json:"certData,omitempty"`
+	CertInfo    string `json:"certInfo,omitempty"`
 }

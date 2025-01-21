@@ -13,5 +13,4 @@ type ApplicationsApplicationCondition struct {
 	Type_              string  `json:"type,omitempty"`
 	Message            string  `json:"message,omitempty"`
 	LastTransitionTime *V1Time `json:"lastTransitionTime,omitempty"`
-
 }

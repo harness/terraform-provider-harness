@@ -9,10 +9,11 @@
  */
 package nextgen
 
-type ApplicationsApplicationDeleteRequest struct {
-	Name              string `json:"name,omitempty"`
-	Cascade           bool   `json:"cascade,omitempty"`
-	PropagationPolicy string `json:"propagationPolicy,omitempty"`
-	AppNamespace      string `json:"appNamespace,omitempty"`
-	Project           string `json:"project,omitempty"`
+type ApplicationsApplicationSourcePluginParameter struct {
+	// Name is the name identifying a parameter.
+	Name string `json:"name,omitempty"`
+	// String_ is the value of a string type parameter.
+	String_ string                     `json:"string,omitempty"`
+	Map_    *ApplicationsOptionalMap   `json:"map,omitempty"`
+	Array   *ApplicationsOptionalArray `json:"array,omitempty"`
 }

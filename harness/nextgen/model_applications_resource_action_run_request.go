@@ -17,4 +17,6 @@ type ApplicationsResourceActionRunRequest struct {
 	Group        string `json:"group,omitempty"`
 	Kind         string `json:"kind,omitempty"`
 	Action       string `json:"action,omitempty"`
+	AppNamespace string `json:"appNamespace,omitempty"`
+	Project      string `json:"project,omitempty"`
 }

@@ -9,8 +9,7 @@
  */
 package nextgen
 
-
 type ApplicationsKustomizeReplicas struct {
 	Count string `json:"count,omitempty"`
-	Name string `json:"name,omitempty"`
+	Name  string `json:"name,omitempty"`
 }

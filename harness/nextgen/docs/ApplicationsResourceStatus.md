@@ -12,6 +12,8 @@ Name | Type | Description | Notes
 **Health** | [***ApplicationsHealthStatus**](applicationsHealthStatus.md) |  | [optional] [default to null]
 **Hook** | **bool** |  | [optional] [default to null]
 **RequiresPruning** | **bool** |  | [optional] [default to null]
+**SyncWave** | **string** |  | [optional] [default to null]
+**RequiresDeletionConfirmation** | **bool** |  | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

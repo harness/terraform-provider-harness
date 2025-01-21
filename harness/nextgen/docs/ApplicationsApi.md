@@ -4,36 +4,38 @@ All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**AgentApplicationServiceCreate**](ApplicationsApi.md#AgentApplicationServiceCreate) | **Post** /api/v1/agents/{agentIdentifier}/applications | Create creates an application
-[**AgentApplicationServiceDelete**](ApplicationsApi.md#AgentApplicationServiceDelete) | **Delete** /api/v1/agents/{agentIdentifier}/applications/{request.name} | Delete deletes an application
-[**AgentApplicationServiceDeleteResource**](ApplicationsApi.md#AgentApplicationServiceDeleteResource) | **Delete** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | DeleteResource deletes a single application resource
-[**AgentApplicationServiceGet**](ApplicationsApi.md#AgentApplicationServiceGet) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name} | Get returns an application by name
-[**AgentApplicationServiceGetApplicationSyncWindows**](ApplicationsApi.md#AgentApplicationServiceGetApplicationSyncWindows) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/syncwindows | Get returns sync windows of the application
-[**AgentApplicationServiceGetManifests**](ApplicationsApi.md#AgentApplicationServiceGetManifests) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/manifests | GetManifests returns application manifests
-[**AgentApplicationServiceGetResource**](ApplicationsApi.md#AgentApplicationServiceGetResource) | **Get** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | GetResource returns single application resource
-[**AgentApplicationServiceList**](ApplicationsApi.md#AgentApplicationServiceList) | **Get** /api/v1/agents/{agentIdentifier}/applications | List returns list of applications for a specific agent
-[**AgentApplicationServiceListResourceActions**](ApplicationsApi.md#AgentApplicationServiceListResourceActions) | **Get** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions | ListResourceActions returns list of resource actions
-[**AgentApplicationServiceListResourceEvents**](ApplicationsApi.md#AgentApplicationServiceListResourceEvents) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/events | ListResourceEvents returns a list of event resources
-[**AgentApplicationServiceManagedResources**](ApplicationsApi.md#AgentApplicationServiceManagedResources) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.applicationName}/managed-resources | ManagedResources returns list of managed resources
-[**AgentApplicationServiceParent**](ApplicationsApi.md#AgentApplicationServiceParent) | **Get** /api/v1/agents/{agentIdentifier}/applications/parent/{query.name} | Get returns an application by name
-[**AgentApplicationServicePatch**](ApplicationsApi.md#AgentApplicationServicePatch) | **Patch** /api/v1/agents/{agentIdentifier}/applications/{request.name} | Patch patch an application
-[**AgentApplicationServicePatchResource**](ApplicationsApi.md#AgentApplicationServicePatchResource) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | PatchResource patch single application resource
+[**AgentApplicationServiceCreate**](ApplicationsApi.md#AgentApplicationServiceCreate) | **Post** /api/v1/agents/{agentIdentifier}/applications | Create an application
+[**AgentApplicationServiceDelete**](ApplicationsApi.md#AgentApplicationServiceDelete) | **Delete** /api/v1/agents/{agentIdentifier}/applications/{request.name} | Delete an application
+[**AgentApplicationServiceDeleteResource**](ApplicationsApi.md#AgentApplicationServiceDeleteResource) | **Delete** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | Delete resource
+[**AgentApplicationServiceGet**](ApplicationsApi.md#AgentApplicationServiceGet) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name} | Get application
+[**AgentApplicationServiceGetApplicationSyncWindows**](ApplicationsApi.md#AgentApplicationServiceGetApplicationSyncWindows) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/syncwindows | Get sync windows of the application
+[**AgentApplicationServiceGetManifests**](ApplicationsApi.md#AgentApplicationServiceGetManifests) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/manifests | Get application manifest
+[**AgentApplicationServiceGetResource**](ApplicationsApi.md#AgentApplicationServiceGetResource) | **Get** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | Get an application resource
+[**AgentApplicationServiceList**](ApplicationsApi.md#AgentApplicationServiceList) | **Get** /api/v1/agents/{agentIdentifier}/applications | List applications for a specific agent
+[**AgentApplicationServiceListResourceActions**](ApplicationsApi.md#AgentApplicationServiceListResourceActions) | **Get** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions | List resource actions
+[**AgentApplicationServiceListResourceEvents**](ApplicationsApi.md#AgentApplicationServiceListResourceEvents) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/events | List resource events
+[**AgentApplicationServiceManagedResources**](ApplicationsApi.md#AgentApplicationServiceManagedResources) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.applicationName}/managed-resources | Get ManagedResources
+[**AgentApplicationServiceParent**](ApplicationsApi.md#AgentApplicationServiceParent) | **Get** /api/v1/agents/{agentIdentifier}/applications/parent/{query.name} | Get parent application
+[**AgentApplicationServicePatch**](ApplicationsApi.md#AgentApplicationServicePatch) | **Patch** /api/v1/agents/{agentIdentifier}/applications/{request.name} | Patch an application
+[**AgentApplicationServicePatchResource**](ApplicationsApi.md#AgentApplicationServicePatchResource) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | Patch an application resource
 [**AgentApplicationServicePodLogs**](ApplicationsApi.md#AgentApplicationServicePodLogs) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/pods/{query.podName}/logs | PodLogs returns stream of log entries for the specified pod(s).
 [**AgentApplicationServicePodLogs2**](ApplicationsApi.md#AgentApplicationServicePodLogs2) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/logs | PodLogs returns stream of log entries for the specified pod(s).
-[**AgentApplicationServiceResourceTree**](ApplicationsApi.md#AgentApplicationServiceResourceTree) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/resource-tree | ResourceTree returns resource tree
-[**AgentApplicationServiceRevisionMetadata**](ApplicationsApi.md#AgentApplicationServiceRevisionMetadata) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/revisions/{query.revision}/metadata | Get the meta-data (author, date, tags, message) for a specific revision of the application
-[**AgentApplicationServiceRollback**](ApplicationsApi.md#AgentApplicationServiceRollback) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/rollback | Rollback syncs an application to its target state Harness Event type (rollback)
-[**AgentApplicationServiceRunResourceAction**](ApplicationsApi.md#AgentApplicationServiceRunResourceAction) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions | RunResourceAction run resource action
-[**AgentApplicationServiceSync**](ApplicationsApi.md#AgentApplicationServiceSync) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/sync | Sync syncs an application to its target state Harness Event type (deploy)
-[**AgentApplicationServiceTerminateOperation**](ApplicationsApi.md#AgentApplicationServiceTerminateOperation) | **Delete** /api/v1/agents/{agentIdentifier}/applications/{request.name}/operation | TerminateOperation terminates the currently running operation
-[**AgentApplicationServiceUpdate**](ApplicationsApi.md#AgentApplicationServiceUpdate) | **Put** /api/v1/agents/{agentIdentifier}/applications/{request.application.metadata.name} | Update updates an application
-[**AgentApplicationServiceUpdateSpec**](ApplicationsApi.md#AgentApplicationServiceUpdateSpec) | **Put** /api/v1/agents/{agentIdentifier}/applications/{request.name}/spec | UpdateSpec updates an application spec
+[**AgentApplicationServiceResourceTree**](ApplicationsApi.md#AgentApplicationServiceResourceTree) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.applicationName}/resource-tree | Get resource tree
+[**AgentApplicationServiceRevisionMetadata**](ApplicationsApi.md#AgentApplicationServiceRevisionMetadata) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/revisions/{query.revision}/metadata | Get revision metadata
+[**AgentApplicationServiceRollback**](ApplicationsApi.md#AgentApplicationServiceRollback) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/rollback | Rollback syncs an application to its target state
+[**AgentApplicationServiceRunResourceAction**](ApplicationsApi.md#AgentApplicationServiceRunResourceAction) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions | Run resource action
+[**AgentApplicationServiceSync**](ApplicationsApi.md#AgentApplicationServiceSync) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/sync | Sync an application
+[**AgentApplicationServiceTerminateOperation**](ApplicationsApi.md#AgentApplicationServiceTerminateOperation) | **Delete** /api/v1/agents/{agentIdentifier}/applications/{request.name}/operation | Terminate operation
+[**AgentApplicationServiceUpdate**](ApplicationsApi.md#AgentApplicationServiceUpdate) | **Put** /api/v1/agents/{agentIdentifier}/applications/{request.application.metadata.name} | Update an application
+[**AgentApplicationServiceUpdateSpec**](ApplicationsApi.md#AgentApplicationServiceUpdateSpec) | **Put** /api/v1/agents/{agentIdentifier}/applications/{request.name}/spec | Update application spec
 [**AgentApplicationServiceWatch**](ApplicationsApi.md#AgentApplicationServiceWatch) | **Get** /api/v1/agents/{agentIdentifier}/stream/applications | Watch returns stream of application change events
 [**AgentApplicationServiceWatchResourceTree**](ApplicationsApi.md#AgentApplicationServiceWatchResourceTree) | **Get** /api/v1/agents/{agentIdentifier}/stream/applications/{query.applicationName}/resource-tree | WatchResourceTree returns stream of application resource tree
-[**ApplicationServiceExists**](ApplicationsApi.md#ApplicationServiceExists) | **Get** /api/v1/applications/{name}/exists | Checks whether an app with the given name exists
-[**ApplicationServiceListAppSync**](ApplicationsApi.md#ApplicationServiceListAppSync) | **Post** /api/v1/applications/sync | List returns list of application sync status
-[**ApplicationServiceListAttributes**](ApplicationsApi.md#ApplicationServiceListAttributes) | **Get** /api/v1/applications/attributes | 
-[**ApplicationServiceListNs**](ApplicationsApi.md#ApplicationServiceListNs) | **Post** /api/v1/applications/ns | ListNs returns list of namespaces for a query.
+[**ApplicationServiceExists**](ApplicationsApi.md#ApplicationServiceExists) | **Get** /api/v1/applications/{name}/exists | Check if an application exists
+[**ApplicationServiceIsMultiSourceEnabled**](ApplicationsApi.md#ApplicationServiceIsMultiSourceEnabled) | **Get** /api/v1/applications/multisource | Check if multisource feature is enabled
+[**ApplicationServiceListAppSets**](ApplicationsApi.md#ApplicationServiceListAppSets) | **Get** /api/v1/applications/sets | List ApplicationSets
+[**ApplicationServiceListAppSync**](ApplicationsApi.md#ApplicationServiceListAppSync) | **Post** /api/v1/applications/sync | List application sync status
+[**ApplicationServiceListAttributes**](ApplicationsApi.md#ApplicationServiceListAttributes) | **Get** /api/v1/applications/attributes | List attributes for applications
+[**ApplicationServiceListNs**](ApplicationsApi.md#ApplicationServiceListNs) | **Post** /api/v1/applications/ns | List namespaces for a specific query
 
 # **AgentApplicationServiceCreate**
 > Servicev1Application AgentApplicationServiceCreate(ctx, body, agentIdentifier, accountIdentifier, optional)
@@ -109,6 +111,8 @@ Name | Type | Description  | Notes
 
  **requestCascade** | **optional.Bool**|  | 
  **requestPropagationPolicy** | **optional.String**|  | 
+ **requestAppNamespace** | **optional.String**|  | 
+ **requestProject** | **optional.String**|  | 
  **optionsRemoveExistingFinalizers** | **optional.Bool**|  | 
 
 ### Return type
@@ -160,6 +164,8 @@ Name | Type | Description  | Notes
  **requestKind** | **optional.String**|  | 
  **requestForce** | **optional.Bool**|  | 
  **requestOrphan** | **optional.Bool**|  | 
+ **requestAppNamespace** | **optional.String**|  | 
+ **requestProject** | **optional.String**|  | 
 
 ### Return type
 
@@ -208,6 +214,7 @@ Name | Type | Description  | Notes
  **queryResourceVersion** | **optional.String**| when specified with a watch call, shows changes that occur after that particular version of a resource. | 
  **querySelector** | **optional.String**| the selector to to restrict returned list to applications only with matched labels. | 
  **queryRepo** | **optional.String**| the repoURL to restrict returned list applications. | 
+ **queryAppNamespace** | **optional.String**|  | 
 
 ### Return type
 
@@ -284,6 +291,10 @@ Name | Type | Description  | Notes
 
 
  **queryRevision** | **optional.String**|  | 
+ **queryAppNamespace** | **optional.String**|  | 
+ **queryProject** | **optional.String**|  | 
+ **querySourcePositions** | [**optional.Interface of []string**](string.md)|  | 
+ **queryRevisions** | [**optional.Interface of []string**](string.md)|  | 
 
 ### Return type
 
@@ -332,6 +343,8 @@ Name | Type | Description  | Notes
  **requestVersion** | **optional.String**|  | 
  **requestGroup** | **optional.String**|  | 
  **requestKind** | **optional.String**|  | 
+ **requestAppNamespace** | **optional.String**|  | 
+ **requestProject** | **optional.String**|  | 
 
 ### Return type
 
@@ -379,6 +392,7 @@ Name | Type | Description  | Notes
  **queryResourceVersion** | **optional.String**| when specified with a watch call, shows changes that occur after that particular version of a resource. | 
  **querySelector** | **optional.String**| the selector to to restrict returned list to applications only with matched labels. | 
  **queryRepo** | **optional.String**| the repoURL to restrict returned list applications. | 
+ **queryAppNamespace** | **optional.String**|  | 
 
 ### Return type
 
@@ -427,6 +441,8 @@ Name | Type | Description  | Notes
  **requestVersion** | **optional.String**|  | 
  **requestGroup** | **optional.String**|  | 
  **requestKind** | **optional.String**|  | 
+ **requestAppNamespace** | **optional.String**|  | 
+ **requestProject** | **optional.String**|  | 
 
 ### Return type
 
@@ -473,6 +489,8 @@ Name | Type | Description  | Notes
  **queryResourceNamespace** | **optional.String**|  | 
  **queryResourceName** | **optional.String**|  | 
  **queryResourceUID** | **optional.String**|  | 
+ **queryAppNamespace** | **optional.String**|  | 
+ **queryProject** | **optional.String**|  | 
 
 ### Return type
 
@@ -521,6 +539,8 @@ Name | Type | Description  | Notes
  **queryVersion** | **optional.String**|  | 
  **queryGroup** | **optional.String**|  | 
  **queryKind** | **optional.String**|  | 
+ **queryAppNamespace** | **optional.String**|  | 
+ **queryProject** | **optional.String**|  | 
 
 ### Return type
 
@@ -566,6 +586,7 @@ Name | Type | Description  | Notes
  **queryResourceVersion** | **optional.String**| when specified with a watch call, shows changes that occur after that particular version of a resource. | 
  **querySelector** | **optional.String**| the selector to to restrict returned list to applications only with matched labels. | 
  **queryRepo** | **optional.String**| the repoURL to restrict returned list applications. | 
+ **queryAppNamespace** | **optional.String**|  | 
 
 ### Return type
 
@@ -687,6 +708,8 @@ Name | Type | Description  | Notes
  **queryGroup** | **optional.String**|  | 
  **queryResourceName** | **optional.String**|  | 
  **queryPrevious** | **optional.Bool**|  | 
+ **queryAppNamespace** | **optional.String**|  | 
+ **queryProject** | **optional.String**|  | 
 
 ### Return type
 
@@ -744,6 +767,8 @@ Name | Type | Description  | Notes
  **queryGroup** | **optional.String**|  | 
  **queryResourceName** | **optional.String**|  | 
  **queryPrevious** | **optional.Bool**|  | 
+ **queryAppNamespace** | **optional.String**|  | 
+ **queryProject** | **optional.String**|  | 
 
 ### Return type
 
@@ -789,9 +814,12 @@ Name | Type | Description  | Notes
 
  **queryApplicationName** | **optional.String**|  | 
  **queryNamespace** | **optional.String**|  | 
+ **queryName** | **optional.String**|  | 
  **queryVersion** | **optional.String**|  | 
  **queryGroup** | **optional.String**|  | 
  **queryKind** | **optional.String**|  | 
+ **queryAppNamespace** | **optional.String**|  | 
+ **queryProject** | **optional.String**|  | 
 
 ### Return type
 
@@ -1085,6 +1113,7 @@ Name | Type | Description  | Notes
  **queryResourceVersion** | **optional.String**| when specified with a watch call, shows changes that occur after that particular version of a resource. | 
  **querySelector** | **optional.String**| the selector to to restrict returned list to applications only with matched labels. | 
  **queryRepo** | **optional.String**| the repoURL to restrict returned list applications. | 
+ **queryAppNamespace** | **optional.String**|  | 
 
 ### Return type
 
@@ -1133,6 +1162,8 @@ Name | Type | Description  | Notes
  **queryVersion** | **optional.String**|  | 
  **queryGroup** | **optional.String**|  | 
  **queryKind** | **optional.String**|  | 
+ **queryAppNamespace** | **optional.String**|  | 
+ **queryProject** | **optional.String**|  | 
 
 ### Return type
 

@@ -10,9 +10,10 @@
 package nextgen
 
 type ApplicationsSyncOperationResult struct {
-	Resources []ApplicationsResourceResult   `json:"resources,omitempty"`
-	Revision  string                         `json:"revision,omitempty"`
-	Source    *ApplicationsApplicationSource `json:"source,omitempty"`
-	Sources []ApplicationsApplicationSource `json:"sources,omitempty"`
-	Revisions []string `json:"revisions,omitempty"`
+	Resources                []ApplicationsResourceResult          `json:"resources,omitempty"`
+	Revision                 string                                `json:"revision,omitempty"`
+	Source                   *ApplicationsApplicationSource        `json:"source,omitempty"`
+	Sources                  []ApplicationsApplicationSource       `json:"sources,omitempty"`
+	Revisions                []string                              `json:"revisions,omitempty"`
+	ManagedNamespaceMetadata *ApplicationsManagedNamespaceMetadata `json:"managedNamespaceMetadata,omitempty"`
 }

@@ -21,4 +21,6 @@ type ClustersClusterConfig struct {
 	RoleARN               string                      `json:"roleARN,omitempty"`
 	ExecProviderConfig    *ClustersExecProviderConfig `json:"execProviderConfig,omitempty"`
 	ClusterConnectionType string                      `json:"clusterConnectionType,omitempty"`
+	DisableCompression    bool                        `json:"disableCompression,omitempty"`
+	ProxyUrl              string                      `json:"proxyUrl,omitempty"`
 }

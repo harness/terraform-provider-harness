@@ -12,6 +12,8 @@ Name | Type | Description | Notes
 **AwsClusterName** | **string** | AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster. | [optional] [default to null]
 **ExecProviderConfig** | [***ClustersExecProviderConfig**](clustersExecProviderConfig.md) |  | [optional] [default to null]
 **ClusterConnectionType** | **string** |  | [optional] [default to null]
+**DisableCompression** | **bool** | DisableCompression bypasses automatic GZip compression requests to the server. | [optional] [default to null]
+**ProxyUrl** | **string** |  | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

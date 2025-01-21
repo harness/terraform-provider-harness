@@ -271,6 +271,14 @@ Name | Type | Description  | Notes
  **querySourceHelmValues** | **optional.String**| Values specifies Helm values to be passed to helm template, typically defined as a block. | 
  **querySourceHelmVersion** | **optional.String**| Version is the Helm version to use for templating (either \&quot;2\&quot; or \&quot;3\&quot;). | 
  **querySourceHelmPassCredentials** | **optional.Bool**| PassCredentials pass credentials to all domains (Helm&#x27;s --pass-credentials). | 
+ **querySourceHelmIgnoreMissingValueFiles** | **optional.Bool**| IgnoreMissingValueFiles prevents helm template from failing when valueFiles do not exist locally by not appending them to helm template --values. | 
+ **querySourceHelmSkipCrds** | **optional.Bool**| SkipCrds skips custom resource definition installation step (Helm&#x27;s --skip-crds). | 
+ **querySourceHelmValuesObjectRaw** | **optional.String**| Raw is the underlying serialization of this object.  TODO: Determine how to detect ContentType and ContentEncoding of &#x27;Raw&#x27; data. | 
+ **querySourceHelmNamespace** | **optional.String**| Namespace is an optional namespace to template with. If left empty, defaults to the app&#x27;s destination namespace. | 
+ **querySourceHelmKubeVersion** | **optional.String**| KubeVersion specifies the Kubernetes API version to pass to Helm when templating manifests. By default, Argo CD uses the Kubernetes version of the target cluster. | 
+ **querySourceHelmApiVersions** | [**optional.Interface of []string**](string.md)| APIVersions specifies the Kubernetes resource API versions to pass to Helm when templating manifests. By default, Argo CD uses the API versions of the target cluster. The format is [group/]version/kind. | 
+ **querySourceHelmSkipTests** | **optional.Bool**| SkipTests skips test manifest installation step (Helm&#x27;s --skip-tests). | 
+ **querySourceHelmSkipSchemaValidation** | **optional.Bool**| SkipSchemaValidation skips JSON schema validation (Helm&#x27;s --skip-schema-validation). | 
  **querySourceKustomizeNamePrefix** | **optional.String**| NamePrefix is a prefix appended to resources for Kustomize apps. | 
  **querySourceKustomizeNameSuffix** | **optional.String**| NameSuffix is a suffix appended to resources for Kustomize apps. | 
  **querySourceKustomizeImages** | [**optional.Interface of []string**](string.md)| Images is a list of Kustomize image override specifications. | 
@@ -278,6 +286,10 @@ Name | Type | Description  | Notes
  **querySourceKustomizeForceCommonLabels** | **optional.Bool**| ForceCommonLabels specifies whether to force applying common labels to resources for Kustomize apps. | 
  **querySourceKustomizeForceCommonAnnotations** | **optional.Bool**| ForceCommonAnnotations specifies whether to force applying common annotations to resources for Kustomize apps. | 
  **querySourceKustomizeNamespace** | **optional.String**| Namespace sets the namespace that Kustomize adds to all resources. | 
+ **querySourceKustomizeComponents** | [**optional.Interface of []string**](string.md)| Components specifies a list of kustomize components to add to the kustomization before building. | 
+ **querySourceKustomizeLabelWithoutSelector** | **optional.Bool**| LabelWithoutSelector specifies whether to apply common labels to resource selectors or not. | 
+ **querySourceKustomizeKubeVersion** | **optional.String**| KubeVersion specifies the Kubernetes API version to pass to Helm when templating manifests. By default, Argo CD uses the Kubernetes version of the target cluster. | 
+ **querySourceKustomizeApiVersions** | [**optional.Interface of []string**](string.md)| APIVersions specifies the Kubernetes resource API versions to pass to Helm when templating manifests. By default, Argo CD uses the API versions of the target cluster. The format is [group/]version/kind. | 
  **querySourceKsonnetEnvironment** | **optional.String**| Environment is a ksonnet application environment name. | 
  **querySourceDirectoryRecurse** | **optional.Bool**| Recurse specifies whether to scan a directory recursively for manifests. | 
  **querySourceDirectoryJsonnetLibs** | [**optional.Interface of []string**](string.md)| Additional library search dirs. | 
@@ -286,8 +298,11 @@ Name | Type | Description  | Notes
  **querySourcePluginName** | **optional.String**|  | 
  **querySourceChart** | **optional.String**| Chart is a Helm chart name, and must be specified for applications sourced from a Helm repo. | 
  **querySourceRef** | **optional.String**| Ref is reference to another source within sources field. This field will not be used if used with a &#x60;source&#x60; tag. | 
+ **querySourceName** | **optional.String**| Name is used to refer to a source and is displayed in the UI. It is used in multi-source Applications. | 
  **queryAppName** | **optional.String**|  | 
  **queryAppProject** | **optional.String**|  | 
+ **querySourceIndex** | **optional.Int32**| source index (for multi source apps). | 
+ **queryVersionId** | **optional.Int32**| versionId from historical data (for multi source apps). | 
 
 ### Return type
 
@@ -332,6 +347,7 @@ Name | Type | Description  | Notes
 
 
  **identifier** | **optional.String**|  | 
+ **querySourceRepoURL** | **optional.String**| RepoURL is the URL to the repository (Git or Helm) that contains the application manifests. | 
  **querySourcePath** | **optional.String**| Path is a directory path within the Git repository, and is only valid for applications sourced from Git. | 
  **querySourceTargetRevision** | **optional.String**| TargetRevision defines the revision of the source to sync the application to. In case of Git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag for the Chart&#x27;s version. | 
  **querySourceHelmValueFiles** | [**optional.Interface of []string**](string.md)| ValuesFiles is a list of Helm value files to use when generating a template. | 
@@ -339,6 +355,14 @@ Name | Type | Description  | Notes
  **querySourceHelmValues** | **optional.String**| Values specifies Helm values to be passed to helm template, typically defined as a block. | 
  **querySourceHelmVersion** | **optional.String**| Version is the Helm version to use for templating (either \&quot;2\&quot; or \&quot;3\&quot;). | 
  **querySourceHelmPassCredentials** | **optional.Bool**| PassCredentials pass credentials to all domains (Helm&#x27;s --pass-credentials). | 
+ **querySourceHelmIgnoreMissingValueFiles** | **optional.Bool**| IgnoreMissingValueFiles prevents helm template from failing when valueFiles do not exist locally by not appending them to helm template --values. | 
+ **querySourceHelmSkipCrds** | **optional.Bool**| SkipCrds skips custom resource definition installation step (Helm&#x27;s --skip-crds). | 
+ **querySourceHelmValuesObjectRaw** | **optional.String**| Raw is the underlying serialization of this object.  TODO: Determine how to detect ContentType and ContentEncoding of &#x27;Raw&#x27; data. | 
+ **querySourceHelmNamespace** | **optional.String**| Namespace is an optional namespace to template with. If left empty, defaults to the app&#x27;s destination namespace. | 
+ **querySourceHelmKubeVersion** | **optional.String**| KubeVersion specifies the Kubernetes API version to pass to Helm when templating manifests. By default, Argo CD uses the Kubernetes version of the target cluster. | 
+ **querySourceHelmApiVersions** | [**optional.Interface of []string**](string.md)| APIVersions specifies the Kubernetes resource API versions to pass to Helm when templating manifests. By default, Argo CD uses the API versions of the target cluster. The format is [group/]version/kind. | 
+ **querySourceHelmSkipTests** | **optional.Bool**| SkipTests skips test manifest installation step (Helm&#x27;s --skip-tests). | 
+ **querySourceHelmSkipSchemaValidation** | **optional.Bool**| SkipSchemaValidation skips JSON schema validation (Helm&#x27;s --skip-schema-validation). | 
  **querySourceKustomizeNamePrefix** | **optional.String**| NamePrefix is a prefix appended to resources for Kustomize apps. | 
  **querySourceKustomizeNameSuffix** | **optional.String**| NameSuffix is a suffix appended to resources for Kustomize apps. | 
  **querySourceKustomizeImages** | [**optional.Interface of []string**](string.md)| Images is a list of Kustomize image override specifications. | 
@@ -346,6 +370,10 @@ Name | Type | Description  | Notes
  **querySourceKustomizeForceCommonLabels** | **optional.Bool**| ForceCommonLabels specifies whether to force applying common labels to resources for Kustomize apps. | 
  **querySourceKustomizeForceCommonAnnotations** | **optional.Bool**| ForceCommonAnnotations specifies whether to force applying common annotations to resources for Kustomize apps. | 
  **querySourceKustomizeNamespace** | **optional.String**| Namespace sets the namespace that Kustomize adds to all resources. | 
+ **querySourceKustomizeComponents** | [**optional.Interface of []string**](string.md)| Components specifies a list of kustomize components to add to the kustomization before building. | 
+ **querySourceKustomizeLabelWithoutSelector** | **optional.Bool**| LabelWithoutSelector specifies whether to apply common labels to resource selectors or not. | 
+ **querySourceKustomizeKubeVersion** | **optional.String**| KubeVersion specifies the Kubernetes API version to pass to Helm when templating manifests. By default, Argo CD uses the Kubernetes version of the target cluster. | 
+ **querySourceKustomizeApiVersions** | [**optional.Interface of []string**](string.md)| APIVersions specifies the Kubernetes resource API versions to pass to Helm when templating manifests. By default, Argo CD uses the API versions of the target cluster. The format is [group/]version/kind. | 
  **querySourceKsonnetEnvironment** | **optional.String**| Environment is a ksonnet application environment name. | 
  **querySourceDirectoryRecurse** | **optional.Bool**| Recurse specifies whether to scan a directory recursively for manifests. | 
  **querySourceDirectoryJsonnetLibs** | [**optional.Interface of []string**](string.md)| Additional library search dirs. | 
@@ -354,8 +382,11 @@ Name | Type | Description  | Notes
  **querySourcePluginName** | **optional.String**|  | 
  **querySourceChart** | **optional.String**| Chart is a Helm chart name, and must be specified for applications sourced from a Helm repo. | 
  **querySourceRef** | **optional.String**| Ref is reference to another source within sources field. This field will not be used if used with a &#x60;source&#x60; tag. | 
+ **querySourceName** | **optional.String**| Name is used to refer to a source and is displayed in the UI. It is used in multi-source Applications. | 
  **queryAppName** | **optional.String**|  | 
  **queryAppProject** | **optional.String**|  | 
+ **querySourceIndex** | **optional.Int32**| source index (for multi source apps). | 
+ **queryVersionId** | **optional.Int32**| versionId from historical data (for multi source apps). | 
 
 ### Return type
 
@@ -484,6 +515,7 @@ Name | Type | Description  | Notes
 
 
  **identifier** | **optional.String**|  | 
+ **queryRepo** | **optional.String**| Repo URL for query. | 
  **queryForceRefresh** | **optional.Bool**| Whether to force a cache refresh on repo&#x27;s connection state. | 
  **queryProject** | **optional.String**| The associated project project. | 
 
