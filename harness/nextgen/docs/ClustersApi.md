@@ -89,6 +89,7 @@ Name | Type | Description  | Notes
  **queryIdType** | **optional.String**| type is the type of the specified cluster identifier ( \&quot;server\&quot; - default, \&quot;name\&quot; ). | 
  **queryIdValue** | **optional.String**| value holds the cluster server URL or cluster name. | 
  **queryProject** | **optional.String**|  | 
+ **forceDelete** | **optional.Bool**|  | 
 
 ### Return type
 
@@ -162,8 +163,8 @@ List clusters.
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **agentIdentifier** | **string**| Agent identifier for entity. | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+  **agentIdentifier** | **string**| Agent identifier for entity. |
+  **accountIdentifier** | **string**| Account Identifier for the Entity. |
  **optional** | ***ClustersApiAgentClusterServiceListOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters

@@ -191,6 +191,7 @@ Delete cluster.
      * @param "QueryIdType" (optional.String) -  type is the type of the specified cluster identifier ( \&quot;server\&quot; - default, \&quot;name\&quot; ).
      * @param "QueryIdValue" (optional.String) -  value holds the cluster server URL or cluster name.
      * @param "QueryProject" (optional.String) -
+     * @param "ForceDelete" (optional.Bool) -
 @return ClustersClusterResponse
 */
 
@@ -203,6 +204,7 @@ type ClustersApiAgentClusterServiceDeleteOpts struct {
 	QueryIdType       optional.String
 	QueryIdValue      optional.String
 	QueryProject      optional.String
+	ForceDelete       optional.Bool
 }
 
 func (a *ClustersApiService) AgentClusterServiceDelete(ctx context.Context, agentIdentifier string, identifier string, localVarOptionals *ClustersApiAgentClusterServiceDeleteOpts) (ClustersClusterResponse, *http.Response, error) {
@@ -247,6 +249,9 @@ func (a *ClustersApiService) AgentClusterServiceDelete(ctx context.Context, agen
 	}
 	if localVarOptionals != nil && localVarOptionals.QueryProject.IsSet() {
 		localVarQueryParams.Add("query.project", parameterToString(localVarOptionals.QueryProject.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
+		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
