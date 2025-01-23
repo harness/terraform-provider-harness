@@ -56,6 +56,11 @@ func ResourceGitopsCluster() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 			},
+			"force_delete": {
+				Description: "Indicates if the cluster should be deleted forcefully, regardless of existing applications using that repo.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"request": {
 				Description: "Cluster create or update request.",
 				Type:        schema.TypeList,
@@ -497,6 +502,7 @@ func resourceGitopsClusterDelete(ctx context.Context, d *schema.ResourceData, me
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		ForceDelete:       optional.NewBool(d.Get("force_delete").(bool)),
 	})
 
 	if err != nil {
