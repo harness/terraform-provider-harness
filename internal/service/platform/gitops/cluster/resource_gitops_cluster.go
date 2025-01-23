@@ -57,7 +57,7 @@ func ResourceGitopsCluster() *schema.Resource {
 				ForceNew:    true,
 			},
 			"force_delete": {
-				Description: "Indicates if the cluster should be deleted forcefully, regardless of existing applications using that repo.",
+				Description: "Indicates if the cluster should be deleted forcefully, regardless of existing applications using that cluster.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
