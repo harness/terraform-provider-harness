@@ -503,6 +503,7 @@ func resourceGitopsClusterDelete(ctx context.Context, d *schema.ResourceData, me
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		ForceDelete:       optional.NewBool(d.Get("force_delete").(bool)),
+		QueryServer:       optional.NewString(d.Get("request.0.cluster.0.server").(string)),
 	})
 
 	if err != nil {
