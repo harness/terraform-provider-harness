@@ -12,14 +12,16 @@ func DatasourceConnectorGcpSM() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"execute_on_delegate": {
-				Description: "The delegate to execute the action on.",
+				Description: "Execute on delegate or not.",
 				Type:        schema.TypeBool,
-				Computed:    true,
+				Optional:    true,
+				Default:     true,
 			},
 			"default": {
-				Description: "Whether this is the default connector.",
+				Description: "Set this flag to set this secret manager as default secret manager.",
 				Type:        schema.TypeBool,
-				Computed:    true,
+				Optional:    true,
+				Default:     false,
 			},
 			"manual": {
 				Description: "Manual credential configuration.",

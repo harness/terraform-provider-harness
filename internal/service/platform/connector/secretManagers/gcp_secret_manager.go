@@ -74,7 +74,7 @@ func ResourceConnectorGCPSecretManager() *schema.Resource {
 						"delegate_selectors": {
 							Description: "The delegates to inherit the credentials from.",
 							Type:        schema.TypeSet,
-							Required:    true,
+							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
 					},
@@ -130,10 +130,10 @@ func ResourceConnectorGCPSecretManager() *schema.Resource {
 				},
 			},
 			"execute_on_delegate": {
-				Description: "Enable this flag to execute on Delegate.",
+				Description: "Execute on delegate or not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
+				Default:     true,
 			},
 			"default": {
 				Description: "Set this flag to set this secret manager as default secret manager.",
@@ -193,6 +193,14 @@ func buildConnectorGcpSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.GcpSecretManager.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.GcpSecretManager.ExecuteOnDelegate = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("default"); ok {
+		connector.GcpSecretManager.Default_ = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("manual"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.GcpSecretManager.Credential.Type_ = nextgen.GcpAuthTypes.ManualConfig
@@ -202,12 +210,20 @@ func buildConnectorGcpSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			connector.GcpSecretManager.Credential.ManualConfig.SecretKeyRef = attr.(string)
 		}
 
+		if attr, ok := config["delegate_selectors"]; ok {
+			connector.GcpSecretManager.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+		}
+
 	}
 
-	if _, ok := d.GetOk("inherit_from_delegate"); ok {
+	if attr, ok := d.GetOk("inherit_from_delegate"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.GcpSecretManager.Credential.Type_ = nextgen.GcpAuthTypes.InheritFromDelegate
 		connector.GcpSecretManager.AssumeCredentialsOnDelegate = true
 
+		if attr, ok := config["delegate_selectors"]; ok {
+			connector.GcpSecretManager.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+		}
 	}
 
 	if attr, ok := d.GetOk("oidc_authentication"); ok {
@@ -229,6 +245,10 @@ func buildConnectorGcpSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 		if attr := config["gcp_project_id"].(string); attr != "" {
 			connector.GcpSecretManager.Credential.OidcConfig.GcpProjectId = attr
+		}
+
+		if attr, ok := config["delegate_selectors"]; ok {
+			connector.GcpSecretManager.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 		}
 	}
 
@@ -264,7 +284,7 @@ func readConnectorGcpSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 	default:
 		return fmt.Errorf("invalid gcp credential type: %s", connector.Gcp.Credential.Type_)
 	}
-	d.Set("is_default", connector.GcpSecretManager.Default_)
+	d.Set("default", connector.GcpSecretManager.Default_)
 	d.Set("execute_on_delegate", connector.GcpSecretManager.ExecuteOnDelegate)
 	return nil
 }
