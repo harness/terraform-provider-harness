@@ -2,6 +2,7 @@ package nextgen
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 func (a *JdbcAuthenticationDto) UnmarshalJSON(data []byte) error {
@@ -19,7 +20,14 @@ func (a *JdbcAuthenticationDto) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	err = json.Unmarshal(aux.Spec, &a.UsernamePassword)
+	switch a.Type_ {
+	case JDBCAuthTypes.UsernamePassword:
+		err = json.Unmarshal(aux.Spec, &a.UsernamePassword)
+	case JDBCAuthTypes.ServiceAccount:
+		err = json.Unmarshal(aux.Spec, &a.ServiceAccount)
+	default:
+		panic(fmt.Sprintf("unknown jdbc auth method type %s", a.Type_))
+	}
 
 	return err
 }
@@ -30,7 +38,14 @@ func (a *JdbcAuthenticationDto) MarshalJSON() ([]byte, error) {
 	var spec []byte
 	var err error
 
-	spec, err = json.Marshal(a.UsernamePassword)
+	switch a.Type_ {
+	case JDBCAuthTypes.UsernamePassword:
+		spec, err = json.Marshal(a.UsernamePassword)
+	case JDBCAuthTypes.ServiceAccount:
+		spec, err = json.Marshal(a.ServiceAccount)
+	default:
+		panic(fmt.Sprintf("unknown jdbc auth method type %s", a.Type_))
+	}
 
 	if err != nil {
 		return nil, err

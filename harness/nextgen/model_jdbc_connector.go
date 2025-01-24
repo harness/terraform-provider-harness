@@ -11,9 +11,9 @@ package nextgen
 
 // This contains details of the JDBC connector
 type JdbcConnector struct {
-	Url               string                 `json:"url"`
-	Auth              *JdbcAuthenticationDto `json:"auth,omitempty"`
-	DelegateSelectors []string               `json:"delegateSelectors,omitempty"`
-	ConnectorType     string                 `json:"connectorType"`
-	ExecuteOnDelegate bool                   `json:"executeOnDelegate"`
+	Url                  string                 `json:"url"`
+	Auth                 *JdbcAuthenticationDto `json:"auth,omitempty"`
+	DelegateSelectors    []string               `json:"delegateSelectors,omitempty"`
+	ExecuteOnDelegate    bool                   `json:"executeOnDelegate"`
+	IgnoreTestConnection bool                   `json:"ignoreTestConnection,omitempty"`
 }
