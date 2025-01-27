@@ -177,6 +177,7 @@ func TestAccResourceConnectorAwsSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "use_put_secret", "false"),
 				),
 			},
 			{
@@ -189,6 +190,7 @@ func TestAccResourceConnectorAwsSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "use_put_secret", "false"),
 				),
 			},
 			{
@@ -216,7 +218,7 @@ func TestAccResourceConnectorAwsSM_manualWithUsePutSecretTrue(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorAwsSM_manual(id, name),
+				Config: testAccResourceConnectorAwsSM_manual_withUsePutSecret(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -229,7 +231,7 @@ func TestAccResourceConnectorAwsSM_manualWithUsePutSecretTrue(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceConnectorAwsSM_manual(id, updatedName),
+				Config: testAccResourceConnectorAwsSM_manual_withUsePutSecret(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -249,57 +251,6 @@ func TestAccResourceConnectorAwsSM_manualWithUsePutSecretTrue(t *testing.T) {
 		},
 	})
 }
-
-func TestAccResourceConnectorAwsSM_manualWithUsePutSecretFalse(t *testing.T) {
-
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_aws_secret_manager.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		CheckDestroy: testAccConnectorDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceConnectorAwsSM_manual(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
-					resource.TestCheckResourceAttr(resourceName, "use_put_secret", "false"),
-				),
-			},
-			{
-				Config: testAccResourceConnectorAwsSM_manual(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
-					resource.TestCheckResourceAttr(resourceName, "use_put_secret", "false"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
 
 func TestProjectResourceConnectorAwsSM_manual(t *testing.T) {
 
@@ -499,6 +450,7 @@ func TestProjectResourceConnectorAwsSM_assumerole(t *testing.T) {
 		},
 	})
 }
+
 func TestOrgResourceConnectorAwsSM_assumerole(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -546,6 +498,328 @@ func TestOrgResourceConnectorAwsSM_assumerole(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceConnectorAwsSM_oidc_platform(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_aws_secret_manager.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAwsSM_oidc_platform(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorAwsSM_oidc_platform(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestOrgResourceConnectorAwsSM_oidc_platform(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_aws_secret_manager.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceConnectorAwsSM_oidc_platform(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				Config: testOrgResourceConnectorAwsSM_oidc_platform(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestProjectResourceConnectorAwsSM_oidc_platform(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_aws_secret_manager.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceConnectorAwsSM_oidc_platform(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				Config: testProjectResourceConnectorAwsSM_oidc_platform(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceConnectorAwsSM_oidc_delegate(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_aws_secret_manager.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAwsSM_oidc_delegate(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorAwsSM_oidc_delegate(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestOrgResourceConnectorAwsSM_oidc_delegate(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_aws_secret_manager.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceConnectorAwsSM_oidc_delegate(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				Config: testOrgResourceConnectorAwsSM_oidc_delegate(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestProjectResourceConnectorAwsSM_oidc_delegate(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_aws_secret_manager.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceConnectorAwsSM_oidc_delegate(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				Config: testProjectResourceConnectorAwsSM_oidc_delegate(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "arn:aws:iam:testarn"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -659,6 +933,46 @@ func testAccResourceConnectorAwsSM_manual(id string, name string) string {
 		}
 `, id, name)
 }
+
+func testAccResourceConnectorAwsSM_manual_withUsePutSecret(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+		resource "harness_platform_connector_aws_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_name_prefix = "test"
+			region = "us-east-1"
+			delegate_selectors = ["harness-delegate"]
+			use_put_secret = true
+			credentials {
+				manual {
+					secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+					access_key_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
 func testProjectResourceConnectorAwsSM_manual(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
@@ -842,6 +1156,172 @@ func testOrgResourceConnectorAwsSM_assumerole(id string, name string) string {
 					role_arn = "somerolearn"
 					external_id = "externalid"
 					duration = 900
+				}
+			}
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorAwsSM_oidc_platform(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_aws_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_name_prefix = "test"
+			region = "us-east-1"
+			execute_on_delegate = false
+
+			credentials {
+				oidc_authentication {
+					iam_role_arn = "arn:aws:iam:testarn"
+				}
+			}
+		}
+`, id, name)
+}
+
+func testOrgResourceConnectorAwsSM_oidc_platform(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_connector_aws_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+
+			secret_name_prefix = "test"
+			region = "us-east-1"
+			execute_on_delegate = false
+
+			credentials {
+				oidc_authentication {
+					iam_role_arn = "arn:aws:iam:testarn"
+				}
+			}
+		}
+`, id, name)
+}
+
+func testProjectResourceConnectorAwsSM_oidc_platform(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_connector_aws_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+
+			secret_name_prefix = "test"
+			region = "us-east-1"
+			execute_on_delegate = false
+
+			credentials {
+				oidc_authentication {
+					iam_role_arn = "arn:aws:iam:testarn"
+				}
+			}
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorAwsSM_oidc_delegate(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_aws_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_name_prefix = "test"
+			region = "us-east-1"
+			delegate_selectors = ["harness-delegate"]
+
+			credentials {
+				oidc_authentication {
+					iam_role_arn = "arn:aws:iam:testarn"
+				}
+			}
+		}
+`, id, name)
+}
+
+func testOrgResourceConnectorAwsSM_oidc_delegate(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_connector_aws_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+
+			secret_name_prefix = "test"
+			region = "us-east-1"
+			delegate_selectors = ["harness-delegate"]
+
+			credentials {
+				oidc_authentication {
+					iam_role_arn = "arn:aws:iam:testarn"
+				}
+			}
+		}
+`, id, name)
+}
+
+func testProjectResourceConnectorAwsSM_oidc_delegate(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_connector_aws_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+
+			secret_name_prefix = "test"
+			region = "us-east-1"
+			delegate_selectors = ["harness-delegate"]
+
+			credentials {
+				oidc_authentication {
+					iam_role_arn = "arn:aws:iam:testarn"
 				}
 			}
 		}

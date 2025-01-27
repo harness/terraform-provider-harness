@@ -41,11 +41,13 @@ func ResourceConnectorAwsSM() *schema.Resource {
 				Description: "Use as Default Secrets Manager.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 			},
 			"use_put_secret": {
 				Description: "Whether to update secret value using putSecretValue action.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 			},
 			"execute_on_delegate": {
 				Description: "Run the operation on the delegate or harness platform.",
