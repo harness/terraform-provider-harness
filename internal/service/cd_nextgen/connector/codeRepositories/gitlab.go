@@ -257,7 +257,7 @@ func buildConnectorGitlab(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 func readConnectorGitlab(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
 	d.Set("url", connector.Gitlab.Url)
-	d.Set("connection_type", connector.Gitlab.Type_.String())
+	d.Set("connection_type", string(connector.Gitlab.Type_))
 	d.Set("delegate_selectors", connector.Gitlab.DelegateSelectors)
 	d.Set("validation_repo", connector.Gitlab.ValidationRepo)
 

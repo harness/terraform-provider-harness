@@ -77,6 +77,7 @@ func TestAccDataSourceConnectorAwsFullJitterBackOff(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceConnectorAwsFullJitterBackOff(name),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -108,6 +109,7 @@ func TestAccDataSourceConnectorAwsEqualJitterBackOff(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceConnectorAwsEqualJitterBackOff(name),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -138,6 +140,7 @@ func TestAccDataSourceConnectorAwsFixedDelayBackOff(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceConnectorAwsFixedDelayBackOff(name),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
