@@ -20,12 +20,12 @@ func DatasourceConnectorGcpKms() *schema.Resource {
 						"credentials": {
 							Description: "Reference to the Harness secret containing the secret key." + secret_ref_text,
 							Type:        schema.TypeString,
-							Required:    true,
+							Computed:    true,
 						},
 						"delegate_selectors": {
 							Description: "The delegates to connect with.",
 							Type:        schema.TypeSet,
-							Optional:    true,
+							Computed:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
 					},
@@ -40,22 +40,22 @@ func DatasourceConnectorGcpKms() *schema.Resource {
 						"workload_pool_id": {
 							Description: "The workload pool ID value created in GCP.",
 							Type:        schema.TypeString,
-							Required:    true,
+							Computed:    true,
 						},
 						"provider_id": {
 							Description: "The OIDC provider ID value configured in GCP.",
 							Type:        schema.TypeString,
-							Required:    true,
+							Computed:    true,
 						},
 						"gcp_project_id": {
 							Description: "The project number of the GCP project that is used to create the workload identity..",
 							Type:        schema.TypeString,
-							Required:    true,
+							Computed:    true,
 						},
 						"service_account_email": {
 							Description: "The service account linked to workload identity pool while setting GCP workload identity provider.",
 							Type:        schema.TypeString,
-							Required:    true,
+							Computed:    true,
 						},
 						"delegate_selectors": {
 							Description: "The delegates to inherit the credentials from.",
@@ -65,6 +65,36 @@ func DatasourceConnectorGcpKms() *schema.Resource {
 						},
 					},
 				},
+			},
+			"execute_on_delegate": {
+				Description: "Enable this flag to execute on Delegate.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
+			"default": {
+				Description: "Set this flag to set this secret manager as default secret manager.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
+			"region": {
+				Description: "The region of the GCP KMS.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"gcp_project_id": {
+				Description: "The project ID of the GCP KMS.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"key_ring": {
+				Description: "The key ring of the GCP KMS.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"key_name": {
+				Description: "The key name of the GCP KMS.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 		},
 	}

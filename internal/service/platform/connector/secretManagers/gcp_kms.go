@@ -102,12 +102,33 @@ func ResourceConnectorGcpKms() *schema.Resource {
 				Description: "Enable this flag to execute on Delegate.",
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed:    true,
+				Default:     true,
 			},
 			"default": {
 				Description: "Set this flag to set this secret manager as default secret manager.",
 				Type:        schema.TypeBool,
-				Optional:    false,
+				Optional:    true,
+				Default:     false,
+			},
+			"region": {
+				Description: "The region of the GCP KMS.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"gcp_project_id": {
+				Description: "The project ID of the GCP KMS.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"key_ring": {
+				Description: "The key ring of the GCP KMS.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"key_name": {
+				Description: "The key name of the GCP KMS.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 		},
 	}
@@ -158,8 +179,8 @@ func buildConnectorGcpKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	if attr, ok := d.GetOk("manual"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 
-		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
-			connector.GcpKms.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
+		if attr, ok := config["delegate_selectors"]; ok {
+			connector.GcpKms.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 		}
 
 		if attr := config["credentials"].(string); attr != "" {
@@ -172,8 +193,8 @@ func buildConnectorGcpKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.GcpKms.OidcDetails = &nextgen.GcpOidcDetails{}
 
-		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
-			connector.GcpKms.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
+		if attr, ok := config["delegate_selectors"]; ok {
+			connector.GcpKms.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 		}
 
 		if attr := config["workload_pool_id"].(string); attr != "" {
@@ -205,7 +226,7 @@ func buildConnectorGcpKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.GcpKms.Region = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("project_id"); ok {
+	if attr, ok := d.GetOk("gcp_project_id"); ok {
 		connector.GcpKms.ProjectId = attr.(string)
 	}
 
@@ -245,7 +266,7 @@ func readConnectorGcpKms(d *schema.ResourceData, connector *nextgen.ConnectorInf
 	d.Set("execute_on_delegate", connector.GcpKms.ExecuteOnDelegate)
 	d.Set("default", connector.GcpKms.Default_)
 	d.Set("region", connector.GcpKms.Region)
-	d.Set("project_id", connector.GcpKms.ProjectId)
+	d.Set("gcp_project_id", connector.GcpKms.ProjectId)
 	d.Set("key_ring", connector.GcpKms.KeyRing)
 	d.Set("key_name", connector.GcpKms.KeyName)
 
