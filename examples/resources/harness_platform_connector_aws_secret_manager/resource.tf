@@ -53,3 +53,43 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
     }
   }
 }
+
+# Credentials oidc using Harness Platform
+resource "harness_platform_connector_aws_secret_manager" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  secret_name_prefix  = "test"
+  region              = "us-east-1"
+  default             = true
+  use_put_secret      = false
+  execute_on_delegate = false
+
+  credentials {
+    oidc_authentication {
+      iam_role_arn = "arn:aws:iam:testarn"
+    }
+  }
+}
+
+# Credentials oidc using Delegate
+resource "harness_platform_connector_aws_secret_manager" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  secret_name_prefix = "test"
+  region             = "us-east-1"
+  delegate_selectors = ["harness-delegate"]
+  default            = true
+  use_put_secret     = false
+
+  credentials {
+    oidc_authentication {
+      iam_role_arn = "arn:aws:iam:testarn"
+    }
+  }
+}
