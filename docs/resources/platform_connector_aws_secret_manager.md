@@ -24,7 +24,6 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
-  default     = true
 
   secret_name_prefix = "test"
   region             = "us-east-1"
@@ -41,7 +40,6 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
-  default     = true
 
   secret_name_prefix = "test"
   region             = "us-east-1"
@@ -61,11 +59,11 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
-  default     = true
 
   secret_name_prefix = "test"
   region             = "us-east-1"
   delegate_selectors = ["harness-delegate"]
+  default            = true
   use_put_secret     = false
   credentials {
     assume_role {
@@ -89,13 +87,14 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
 
 ### Optional
 
+- `default` (Boolean) Use as Default Secrets Manager.
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Run the operation on the delegate or harness platform.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `secret_name_prefix` (String) A prefix to be added to all secrets.
 - `tags` (Set of String) Tags to associate with the resource.
-- `default` (Boolean) Use as Default Secrets Manager.
 - `use_put_secret` (Boolean) Whether to update secret value using putSecretValue action.
 
 ### Read-Only
@@ -110,6 +109,7 @@ Optional:
 - `assume_role` (Block List, Max: 1) Connect using STS assume role. (see [below for nested schema](#nestedblock--credentials--assume_role))
 - `inherit_from_delegate` (Boolean) Inherit the credentials from from the delegate.
 - `manual` (Block List, Max: 1) Specify the AWS key and secret used for authenticating. (see [below for nested schema](#nestedblock--credentials--manual))
+- `oidc_authentication` (Block List, Max: 1) Authentication using harness oidc. (see [below for nested schema](#nestedblock--credentials--oidc_authentication))
 
 <a id="nestedblock--credentials--assume_role"></a>
 ### Nested Schema for `credentials.assume_role`
@@ -129,8 +129,20 @@ Optional:
 
 Required:
 
-- `access_key_ref` (String) The reference to the Harness secret containing the AWS access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `secret_key_ref` (String) The reference to the Harness secret containing the AWS secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+- `access_key_ref` (String) The reference to the Harness secret containing the AWS access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+Optional:
+
+- `access_key_plain_text` (String) The plain text AWS access key. This is required if the access_key_ref is not provided.
+
+<a id="nestedblock--credentials--oidc_authentication"></a>
+### Nested Schema for `credentials.oidc_authentication`
+
+Required:
+
+- `iam_role_arn` (String) The IAM role ARN.
 
 ## Import
 
