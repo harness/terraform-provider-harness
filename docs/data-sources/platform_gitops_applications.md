@@ -39,7 +39,6 @@ data "harness_platform_gitops_applications" "example" {
 
 ### Read-Only
 
-- `account_id` (String, Deprecated) Account identifier of the GitOps application.
 - `application` (List of Object) Definition of the GitOps application resource. (see [below for nested schema](#nestedatt--application))
 - `cluster_id` (String) Cluster identifier of the GitOps application.
 - `id` (String) The ID of this resource.
@@ -128,26 +127,26 @@ Read-Only:
 - `target_revision` (String)
 
 <a id="nestedobjatt--application--spec--source--directory"></a>
-### Nested Schema for `application.spec.source.target_revision`
+### Nested Schema for `application.spec.source.directory`
 
 Read-Only:
 
 - `exclude` (String)
 - `include` (String)
-- `jsonnet` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--target_revision--jsonnet))
+- `jsonnet` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--directory--jsonnet))
 - `recurse` (Boolean)
 
-<a id="nestedobjatt--application--spec--source--target_revision--jsonnet"></a>
-### Nested Schema for `application.spec.source.target_revision.jsonnet`
+<a id="nestedobjatt--application--spec--source--directory--jsonnet"></a>
+### Nested Schema for `application.spec.source.directory.jsonnet`
 
 Read-Only:
 
-- `ext_vars` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--target_revision--jsonnet--ext_vars))
+- `ext_vars` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--directory--jsonnet--ext_vars))
 - `libs` (List of String)
-- `tlas` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--target_revision--jsonnet--tlas))
+- `tlas` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--directory--jsonnet--tlas))
 
-<a id="nestedobjatt--application--spec--source--target_revision--jsonnet--ext_vars"></a>
-### Nested Schema for `application.spec.source.target_revision.jsonnet.tlas`
+<a id="nestedobjatt--application--spec--source--directory--jsonnet--ext_vars"></a>
+### Nested Schema for `application.spec.source.directory.jsonnet.ext_vars`
 
 Read-Only:
 
@@ -156,8 +155,8 @@ Read-Only:
 - `value` (String)
 
 
-<a id="nestedobjatt--application--spec--source--target_revision--jsonnet--tlas"></a>
-### Nested Schema for `application.spec.source.target_revision.jsonnet.tlas`
+<a id="nestedobjatt--application--spec--source--directory--jsonnet--tlas"></a>
+### Nested Schema for `application.spec.source.directory.jsonnet.tlas`
 
 Read-Only:
 
@@ -169,20 +168,24 @@ Read-Only:
 
 
 <a id="nestedobjatt--application--spec--source--helm"></a>
-### Nested Schema for `application.spec.source.target_revision`
+### Nested Schema for `application.spec.source.helm`
 
 Read-Only:
 
-- `file_parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--target_revision--file_parameters))
-- `parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--target_revision--parameters))
+- `file_parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--helm--file_parameters))
+- `ignore_missing_value_files` (Boolean)
+- `parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--helm--parameters))
 - `pass_credentials` (Boolean)
 - `release_name` (String)
+- `skip_crds` (Boolean)
+- `skip_schema_validation` (Boolean)
+- `skip_tests` (Boolean)
 - `value_files` (List of String)
 - `values` (String)
 - `version` (String)
 
-<a id="nestedobjatt--application--spec--source--target_revision--file_parameters"></a>
-### Nested Schema for `application.spec.source.target_revision.file_parameters`
+<a id="nestedobjatt--application--spec--source--helm--file_parameters"></a>
+### Nested Schema for `application.spec.source.helm.file_parameters`
 
 Read-Only:
 
@@ -190,8 +193,8 @@ Read-Only:
 - `path` (String)
 
 
-<a id="nestedobjatt--application--spec--source--target_revision--parameters"></a>
-### Nested Schema for `application.spec.source.target_revision.parameters`
+<a id="nestedobjatt--application--spec--source--helm--parameters"></a>
+### Nested Schema for `application.spec.source.helm.parameters`
 
 Read-Only:
 
@@ -202,15 +205,15 @@ Read-Only:
 
 
 <a id="nestedobjatt--application--spec--source--ksonnet"></a>
-### Nested Schema for `application.spec.source.target_revision`
+### Nested Schema for `application.spec.source.ksonnet`
 
 Read-Only:
 
 - `environment` (String)
-- `parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--target_revision--parameters))
+- `parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--ksonnet--parameters))
 
-<a id="nestedobjatt--application--spec--source--target_revision--parameters"></a>
-### Nested Schema for `application.spec.source.target_revision.parameters`
+<a id="nestedobjatt--application--spec--source--ksonnet--parameters"></a>
+### Nested Schema for `application.spec.source.ksonnet.parameters`
 
 Read-Only:
 
@@ -221,7 +224,7 @@ Read-Only:
 
 
 <a id="nestedobjatt--application--spec--source--kustomize"></a>
-### Nested Schema for `application.spec.source.target_revision`
+### Nested Schema for `application.spec.source.kustomize`
 
 Read-Only:
 
@@ -236,15 +239,15 @@ Read-Only:
 
 
 <a id="nestedobjatt--application--spec--source--plugin"></a>
-### Nested Schema for `application.spec.source.target_revision`
+### Nested Schema for `application.spec.source.plugin`
 
 Read-Only:
 
-- `env` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--target_revision--env))
+- `env` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--source--plugin--env))
 - `name` (String)
 
-<a id="nestedobjatt--application--spec--source--target_revision--env"></a>
-### Nested Schema for `application.spec.source.target_revision.env`
+<a id="nestedobjatt--application--spec--source--plugin--env"></a>
+### Nested Schema for `application.spec.source.plugin.env`
 
 Read-Only:
 
@@ -271,26 +274,26 @@ Read-Only:
 - `target_revision` (String)
 
 <a id="nestedobjatt--application--spec--sources--directory"></a>
-### Nested Schema for `application.spec.sources.target_revision`
+### Nested Schema for `application.spec.sources.directory`
 
 Read-Only:
 
 - `exclude` (String)
 - `include` (String)
-- `jsonnet` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--target_revision--jsonnet))
+- `jsonnet` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--directory--jsonnet))
 - `recurse` (Boolean)
 
-<a id="nestedobjatt--application--spec--sources--target_revision--jsonnet"></a>
-### Nested Schema for `application.spec.sources.target_revision.jsonnet`
+<a id="nestedobjatt--application--spec--sources--directory--jsonnet"></a>
+### Nested Schema for `application.spec.sources.directory.jsonnet`
 
 Read-Only:
 
-- `ext_vars` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--target_revision--jsonnet--ext_vars))
+- `ext_vars` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--directory--jsonnet--ext_vars))
 - `libs` (List of String)
-- `tlas` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--target_revision--jsonnet--tlas))
+- `tlas` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--directory--jsonnet--tlas))
 
-<a id="nestedobjatt--application--spec--sources--target_revision--jsonnet--ext_vars"></a>
-### Nested Schema for `application.spec.sources.target_revision.jsonnet.tlas`
+<a id="nestedobjatt--application--spec--sources--directory--jsonnet--ext_vars"></a>
+### Nested Schema for `application.spec.sources.directory.jsonnet.ext_vars`
 
 Read-Only:
 
@@ -299,8 +302,8 @@ Read-Only:
 - `value` (String)
 
 
-<a id="nestedobjatt--application--spec--sources--target_revision--jsonnet--tlas"></a>
-### Nested Schema for `application.spec.sources.target_revision.jsonnet.tlas`
+<a id="nestedobjatt--application--spec--sources--directory--jsonnet--tlas"></a>
+### Nested Schema for `application.spec.sources.directory.jsonnet.tlas`
 
 Read-Only:
 
@@ -312,20 +315,20 @@ Read-Only:
 
 
 <a id="nestedobjatt--application--spec--sources--helm"></a>
-### Nested Schema for `application.spec.sources.target_revision`
+### Nested Schema for `application.spec.sources.helm`
 
 Read-Only:
 
-- `file_parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--target_revision--file_parameters))
-- `parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--target_revision--parameters))
+- `file_parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--helm--file_parameters))
+- `parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--helm--parameters))
 - `pass_credentials` (Boolean)
 - `release_name` (String)
 - `value_files` (List of String)
 - `values` (String)
 - `version` (String)
 
-<a id="nestedobjatt--application--spec--sources--target_revision--file_parameters"></a>
-### Nested Schema for `application.spec.sources.target_revision.file_parameters`
+<a id="nestedobjatt--application--spec--sources--helm--file_parameters"></a>
+### Nested Schema for `application.spec.sources.helm.file_parameters`
 
 Read-Only:
 
@@ -333,8 +336,8 @@ Read-Only:
 - `path` (String)
 
 
-<a id="nestedobjatt--application--spec--sources--target_revision--parameters"></a>
-### Nested Schema for `application.spec.sources.target_revision.parameters`
+<a id="nestedobjatt--application--spec--sources--helm--parameters"></a>
+### Nested Schema for `application.spec.sources.helm.parameters`
 
 Read-Only:
 
@@ -345,15 +348,15 @@ Read-Only:
 
 
 <a id="nestedobjatt--application--spec--sources--ksonnet"></a>
-### Nested Schema for `application.spec.sources.target_revision`
+### Nested Schema for `application.spec.sources.ksonnet`
 
 Read-Only:
 
 - `environment` (String)
-- `parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--target_revision--parameters))
+- `parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--ksonnet--parameters))
 
-<a id="nestedobjatt--application--spec--sources--target_revision--parameters"></a>
-### Nested Schema for `application.spec.sources.target_revision.parameters`
+<a id="nestedobjatt--application--spec--sources--ksonnet--parameters"></a>
+### Nested Schema for `application.spec.sources.ksonnet.parameters`
 
 Read-Only:
 
@@ -364,7 +367,7 @@ Read-Only:
 
 
 <a id="nestedobjatt--application--spec--sources--kustomize"></a>
-### Nested Schema for `application.spec.sources.target_revision`
+### Nested Schema for `application.spec.sources.kustomize`
 
 Read-Only:
 
@@ -379,15 +382,15 @@ Read-Only:
 
 
 <a id="nestedobjatt--application--spec--sources--plugin"></a>
-### Nested Schema for `application.spec.sources.target_revision`
+### Nested Schema for `application.spec.sources.plugin`
 
 Read-Only:
 
-- `env` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--target_revision--env))
+- `env` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--plugin--env))
 - `name` (String)
 
-<a id="nestedobjatt--application--spec--sources--target_revision--env"></a>
-### Nested Schema for `application.spec.sources.target_revision.env`
+<a id="nestedobjatt--application--spec--sources--plugin--env"></a>
+### Nested Schema for `application.spec.sources.plugin.env`
 
 Read-Only:
 
@@ -407,7 +410,7 @@ Read-Only:
 - `sync_options` (List of String)
 
 <a id="nestedobjatt--application--spec--sync_policy--automated"></a>
-### Nested Schema for `application.spec.sync_policy.sync_options`
+### Nested Schema for `application.spec.sync_policy.automated`
 
 Read-Only:
 
@@ -417,15 +420,15 @@ Read-Only:
 
 
 <a id="nestedobjatt--application--spec--sync_policy--retry"></a>
-### Nested Schema for `application.spec.sync_policy.sync_options`
+### Nested Schema for `application.spec.sync_policy.retry`
 
 Read-Only:
 
-- `backoff` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sync_policy--sync_options--backoff))
+- `backoff` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sync_policy--retry--backoff))
 - `limit` (String)
 
-<a id="nestedobjatt--application--spec--sync_policy--sync_options--backoff"></a>
-### Nested Schema for `application.spec.sync_policy.sync_options.backoff`
+<a id="nestedobjatt--application--spec--sync_policy--retry--backoff"></a>
+### Nested Schema for `application.spec.sync_policy.retry.backoff`
 
 Read-Only:
 

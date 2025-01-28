@@ -226,6 +226,16 @@ func ResourceGitopsCluster() *schema.Resource {
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
+												"disable_compression": {
+													Description: "DisableCompression bypasses automatic GZip compression requests to to the cluster's API server. Corresponds to running kubectl with --disable-compression",
+													Type:        schema.TypeBool,
+													Optional:    true,
+												},
+												"proxy_url": {
+													Description: "The URL to the proxy to be used for all requests send to the cluster's API server",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
 											},
 										},
 									},
@@ -567,6 +577,8 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 				config["exec_provider_config"] = execProviderConfigList
 			}
 			config["cluster_connection_type"] = cl.Cluster.Config.ClusterConnectionType
+			config["disable_compression"] = cl.Cluster.Config.DisableCompression
+			config["proxy_url"] = cl.Cluster.Config.ProxyUrl
 
 			configList = append(configList, config)
 			cluster["config"] = configList
@@ -766,6 +778,12 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 
 				if clusterConfig["cluster_connection_type"] != nil {
 					clusterDetails.Config.ClusterConnectionType = clusterConfig["cluster_connection_type"].(string)
+				}
+				if clusterConfig["disable_compression"] != nil {
+					clusterDetails.Config.DisableCompression = clusterConfig["disable_compression"].(bool)
+				}
+				if clusterConfig["proxy_url"] != nil {
+					clusterDetails.Config.ProxyUrl = clusterConfig["proxy_url"].(string)
 				}
 			}
 
