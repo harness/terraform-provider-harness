@@ -339,6 +339,12 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		},
 	}
 
+	// The execute_on_delegate attribute is evaluated at the beginning, allowing it to be modified as 
+	// needed by other conditions, such as in the case of inherit_from_delegate.
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Aws.ExecuteOnDelegate = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("manual"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.ManualConfig
@@ -393,6 +399,10 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := config["region"].(string); attr != "" {
 			connector.Aws.Credential.Region = attr
 		}
+
+		// Set the execute_on_delegate attribute to true when creating a connector that uses
+		// credentials inherited from the delegate.
+		connector.Aws.ExecuteOnDelegate = true
 	}
 
 	if attr, ok := d.GetOk("oidc_authentication"); ok {
@@ -472,9 +482,6 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if val, ok := config["fixed_backoff"]; ok {
 			connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.FixedBackoff = int64(val.(int))
 		}
-	}
-	if attr, ok := d.GetOk("execute_on_delegate"); ok {
-		connector.Aws.ExecuteOnDelegate = attr.(bool)
 	}
 
 	return connector
