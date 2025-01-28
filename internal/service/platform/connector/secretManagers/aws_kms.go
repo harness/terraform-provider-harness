@@ -202,11 +202,10 @@ func buildConnectorAwsKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	if attr, ok := d.GetOk("default"); ok {
 		connector.AwsKms.Default_ = attr.(bool)
-
 	}
 
-	if attr, ok := d.Get("execute_on_delegate").(bool); ok {
-		connector.AwsKms.ExecuteOnDelegate = attr
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.AwsKms.ExecuteOnDelegate = attr.(bool)
 	}
 
 	if attr, ok := d.GetOk("credentials"); ok {
@@ -259,18 +258,13 @@ func buildConnectorAwsKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := config["oidc_authentication"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
 			connector.AwsKms.Credential.Type_ = nextgen.AwsKmsAuthTypes.OidcAuthentication
-			connector.AwsKms.Credential.OidcConfig = &nextgen.AwsSmCredentialSpecOidcConfig{}
+			connector.AwsKms.Credential.OidcConfig = &nextgen.AwsSmCredentialSpecOidcConfig{
+				DelegateSelectors: connector.AwsKms.DelegateSelectors,
+			}
 
 			if attr, ok := config["iam_role_arn"]; ok {
 				connector.AwsKms.Credential.OidcConfig.IamRoleArn = attr.(string)
 			}
-
-			if executeOnDelegate, ok := config["execute_on_delegate"].(bool); ok && executeOnDelegate {
-				if attr, ok := d.GetOk("delegate_selectors"); ok {
-					connector.AwsKms.Credential.OidcConfig.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
-				}
-			}
-
 		}
 	}
 

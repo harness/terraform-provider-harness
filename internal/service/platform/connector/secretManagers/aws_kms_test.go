@@ -32,6 +32,10 @@ func TestAccResourceConnectorAwsKms_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -44,6 +48,8 @@ func TestAccResourceConnectorAwsKms_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -80,6 +86,8 @@ func TestProjectResourceConnectorAwsKms_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -92,6 +100,8 @@ func TestProjectResourceConnectorAwsKms_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -129,6 +139,8 @@ func TestOrgResourceConnectorAwsKms_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -141,6 +153,8 @@ func TestOrgResourceConnectorAwsKms_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -178,7 +192,11 @@ func TestAccResourceConnectorAwsKms_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", "account."+id),
 				),
 			},
 			{
@@ -189,7 +207,11 @@ func TestAccResourceConnectorAwsKms_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", "account."+id),
 				),
 			},
 			{
@@ -224,7 +246,11 @@ func TestProjectResourceConnectorAwsKms_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", id),
 				),
 			},
 			{
@@ -235,7 +261,11 @@ func TestProjectResourceConnectorAwsKms_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", id),
 				),
 			},
 			{
@@ -271,7 +301,11 @@ func TestOrgResourceConnectorAwsKms_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", "org."+id),
 				),
 			},
 			{
@@ -282,7 +316,11 @@ func TestOrgResourceConnectorAwsKms_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", "org."+id),
 				),
 			},
 			{
@@ -318,6 +356,8 @@ func TestAccResourceConnectorAwsKms_assumerole(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
@@ -332,6 +372,8 @@ func TestAccResourceConnectorAwsKms_assumerole(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
@@ -370,6 +412,8 @@ func TestProjectResourceConnectorAwsKms_assumerole(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
@@ -384,6 +428,8 @@ func TestProjectResourceConnectorAwsKms_assumerole(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
@@ -423,6 +469,8 @@ func TestOrgResourceConnectorAwsKms_assumerole(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
@@ -437,6 +485,8 @@ func TestOrgResourceConnectorAwsKms_assumerole(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
@@ -476,6 +526,8 @@ func TestAccResourceConnectorAwsKms_oidc_platform(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
@@ -488,6 +540,8 @@ func TestAccResourceConnectorAwsKms_oidc_platform(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
@@ -517,31 +571,31 @@ func TestProjectResourceConnectorAwsKms_oidc_platform(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjectResourceConnectorAwsKms_assumerole(id, name),
+				Config: testProjectResourceConnectorAwsKms_oidc_platform(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
-				Config: testProjectResourceConnectorAwsKms_assumerole(id, updatedName),
+				Config: testProjectResourceConnectorAwsKms_oidc_platform(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
@@ -570,31 +624,31 @@ func TestOrgResourceConnectorAwsKms_oidc_platform(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testOrgResourceConnectorAwsKms_assumerole(id, name),
+				Config: testOrgResourceConnectorAwsKms_oidc_platform(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
-				Config: testOrgResourceConnectorAwsKms_assumerole(id, updatedName),
+				Config: testOrgResourceConnectorAwsKms_oidc_platform(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
@@ -623,31 +677,31 @@ func TestAccResourceConnectorAwsKms_oidc_delegate(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorAwsKms_assumerole(id, name),
+				Config: testAccResourceConnectorAwsKms_oidc_delegate(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
-				Config: testAccResourceConnectorAwsKms_assumerole(id, updatedName),
+				Config: testAccResourceConnectorAwsKms_oidc_delegate(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
@@ -675,31 +729,31 @@ func TestProjectResourceConnectorAwsKms_oidc_delegate(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjectResourceConnectorAwsKms_assumerole(id, name),
+				Config: testProjectResourceConnectorAwsKms_oidc_delegate(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
-				Config: testProjectResourceConnectorAwsKms_assumerole(id, updatedName),
+				Config: testProjectResourceConnectorAwsKms_oidc_delegate(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
@@ -728,31 +782,31 @@ func TestOrgResourceConnectorAwsKms_oidc_delegate(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testOrgResourceConnectorAwsKms_assumerole(id, name),
+				Config: testOrgResourceConnectorAwsKms_oidc_delegate(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
-				Config: testOrgResourceConnectorAwsKms_assumerole(id, updatedName),
+				Config: testOrgResourceConnectorAwsKms_oidc_delegate(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.role_arn", "somerolearn"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.external_id", "externalid"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.assume_role.0.duration", "900"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc_authentication.0.iam_role_arn", "somerolearn"),
 				),
 			},
 			{
@@ -1274,12 +1328,10 @@ func testProjectResourceConnectorAwsKms_oidc_platform(id string, name string) st
 			project_id = harness_platform_project.test.id
 			arn_ref = "${harness_platform_secret_text.test.id}"
 			region = "us-east-1"
-			delegate_selectors = ["harness-delegate"]
+			execute_on_delegate = false
 			credentials {
-				assume_role {
-					role_arn = "somerolearn"
-					external_id = "externalid"
-					duration = 900
+				oidc_authentication {
+					iam_role_arn = "somerolearn"
 				}
 			}
 			depends_on = [time_sleep.wait_4_seconds]
@@ -1324,12 +1376,10 @@ func testOrgResourceConnectorAwsKms_oidc_platform(id string, name string) string
 			org_id=harness_platform_organization.test.id
 			arn_ref = "org.${harness_platform_secret_text.test.id}"
 			region = "us-east-1"
-			delegate_selectors = ["harness-delegate"]
+			execute_on_delegate = false
 			credentials {
-				assume_role {
-					role_arn = "somerolearn"
-					external_id = "externalid"
-					duration = 900
+				oidc_authentication {
+					iam_role_arn = "somerolearn"
 				}
 			}
 			depends_on = [time_sleep.wait_4_seconds]
@@ -1365,10 +1415,8 @@ func testAccResourceConnectorAwsKms_oidc_delegate(id string, name string) string
 			region = "us-east-1"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
-				assume_role {
-					role_arn = "somerolearn"
-					external_id = "externalid"
-					duration = 900
+				oidc_authentication {
+					iam_role_arn = "somerolearn"
 				}
 			}
 			depends_on = [time_sleep.wait_4_seconds]
@@ -1424,10 +1472,8 @@ func testProjectResourceConnectorAwsKms_oidc_delegate(id string, name string) st
 			region = "us-east-1"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
-				assume_role {
-					role_arn = "somerolearn"
-					external_id = "externalid"
-					duration = 900
+				oidc_authentication {
+					iam_role_arn = "somerolearn"
 				}
 			}
 			depends_on = [time_sleep.wait_4_seconds]
@@ -1474,10 +1520,8 @@ func testOrgResourceConnectorAwsKms_oidc_delegate(id string, name string) string
 			region = "us-east-1"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
-				assume_role {
-					role_arn = "somerolearn"
-					external_id = "externalid"
-					duration = 900
+				oidc_authentication {
+					iam_role_arn = "somerolearn"
 				}
 			}
 			depends_on = [time_sleep.wait_4_seconds]
