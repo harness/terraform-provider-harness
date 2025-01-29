@@ -44,6 +44,7 @@ resource "harness_autostopping_rule_rds" "test" {
 - `depends` (Block List) Dependent rules (see [below for nested schema](#nestedblock--depends))
 - `idle_time_mins` (Number) Idle time in minutes. This is the time that the AutoStopping rule waits before stopping the idle instances.
 - `tcp` (Block List) TCP routing configuration (see [below for nested schema](#nestedblock--tcp))
+- `dry_run` (Boolean) Boolean that indicates whether the AutoStopping rule should be created in DryRun mode
 
 ### Read-Only
 

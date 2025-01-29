@@ -78,6 +78,7 @@ resource "harness_autostopping_rule_vm" "test" {
 
 - `custom_domains` (List of String) Custom URLs used to access the instances
 - `depends` (Block List) Dependent rules (see [below for nested schema](#nestedblock--depends))
+- `dry_run` (Boolean) Boolean that indicates whether the AutoStopping rule should be created in DryRun mode
 - `http` (Block List) Http routing configuration (see [below for nested schema](#nestedblock--http))
 - `idle_time_mins` (Number) Idle time in minutes. This is the time that the AutoStopping rule waits before stopping the idle instances.
 - `tcp` (Block List) TCP routing configuration (see [below for nested schema](#nestedblock--tcp))
