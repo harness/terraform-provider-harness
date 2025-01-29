@@ -54,6 +54,12 @@ func ResourceVMRule() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"dry_run": {
+				Description: "Boolean that indicates whether the AutoStopping rule should be created in DryRun mode",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
 			"filter": {
 				Type:     schema.TypeList,
 				Required: true,
