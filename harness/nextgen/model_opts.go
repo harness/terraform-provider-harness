@@ -15,4 +15,5 @@ type Opts struct {
 	AlwaysUsePrivateIp   bool         `json:"always_use_private_ip,omitempty"`
 	AccessDetails        *interface{} `json:"access_details,omitempty"`
 	HideProgressPage     bool         `json:"hide_progress_page,omitempty"`
+	DryRun               bool         `json:"dry_run,omitempty"`
 }

@@ -28,4 +28,5 @@ type ServiceV2 struct {
 	CreatedAt          string           `json:"created_at,omitempty"`
 	Metadata           *ServiceMetadata `json:"metadata,omitempty"`
 	Status             string           `json:"status,omitempty"`
+	Opts               *Opts            `json:"opts,omitempty"`
 }
