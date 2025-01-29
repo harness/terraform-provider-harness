@@ -613,6 +613,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 			cluster["info"] = clusterInfoList
 		}
 		cluster["project"] = cl.Cluster.Project
+		cluster["shard"] = cl.Cluster.Shard
 		if cl.Cluster.Annotations != nil {
 			cluster["annotations"] = cl.Cluster.Annotations
 		}
