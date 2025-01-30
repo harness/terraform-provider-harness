@@ -27,6 +27,8 @@ func (a *AwsKmsConnectorCredential) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.AssumeStsRole)
 	case AwsKmsAuthTypes.ManualConfig:
 		err = json.Unmarshal(aux.Spec, &a.ManualConfig)
+	case AwsKmsAuthTypes.OidcAuthentication:
+		err = json.Unmarshal(aux.Spec, &a.OidcConfig)
 	default:
 		panic(fmt.Sprintf("unknown aws kms auth type %s", a.Type_))
 	}
@@ -47,6 +49,8 @@ func (a *AwsKmsConnectorCredential) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.AssumeStsRole)
 	case AwsKmsAuthTypes.ManualConfig:
 		spec, err = json.Marshal(a.ManualConfig)
+	case AwsKmsAuthTypes.OidcAuthentication:
+		spec, err = json.Marshal(a.OidcConfig)
 	default:
 		panic(fmt.Sprintf("unknown aws kms auth type %s", a.Type_))
 	}

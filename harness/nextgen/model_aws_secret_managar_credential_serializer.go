@@ -27,6 +27,8 @@ func (a *AwsSecretManagerCredential) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.AssumeIamRole)
 	case AwsSecretManagerAuthTypes.AssumeSTSRole:
 		err = json.Unmarshal(aux.Spec, &a.AssumeStsRole)
+	case AwsSecretManagerAuthTypes.OidcAuthentication:
+		err = json.Unmarshal(aux.Spec, &a.OidcConfig)
 	default:
 		panic(fmt.Sprintf("unknown aws auth type %s", a.Type_))
 	}
@@ -48,6 +50,8 @@ func (a *AwsSecretManagerCredential) MarshalJSON() ([]byte, error) {
 		// noop
 	case AwsSecretManagerAuthTypes.AssumeSTSRole:
 		spec, err = json.Marshal(a.AssumeStsRole)
+	case AwsSecretManagerAuthTypes.OidcAuthentication:
+		spec, err = json.Marshal(a.OidcConfig)
 	default:
 		panic(fmt.Sprintf("unknown aws auth type %s", a.Type_))
 	}

@@ -9,10 +9,9 @@
  */
 package nextgen
 
-// This contains the AWS KMS Secret Manager's secret reference access key and secret key.
-type AwsKmsCredentialSpecManualConfig struct {
+// Returns secret reference access key and secret key of AWS Secret Manager.
+type AwsSmCredentialSpecOidcConfig struct {
 	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
 	DelegateSelectors []string `json:"delegateSelectors"`
-	AccessKey         string   `json:"accessKey"`
-	SecretKey         string   `json:"secretKey"`
+	IamRoleArn        string   `json:"iamRoleArn,omitempty"`
 }

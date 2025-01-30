@@ -18,5 +18,6 @@ type AwsKmsConnectorCredential struct {
 	AssumeIamRole *AwsKmsCredentialSpecAssumeIam    `json:"-"`
 	AssumeStsRole *AwsKmsCredentialSpecAssumeSts    `json:"-"`
 	ManualConfig  *AwsKmsCredentialSpecManualConfig `json:"-"`
+	OidcConfig    *AwsSmCredentialSpecOidcConfig    `json:"-"`
 	Spec          json.RawMessage                   `json:"spec,omitempty"`
 }

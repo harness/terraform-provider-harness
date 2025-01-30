@@ -17,5 +17,6 @@ type AwsSecretManagerCredential struct {
 	AssumeIamRole *AwsSmCredentialSpecAssumeIam    `json:"-"`
 	AssumeStsRole *AwsSmCredentialSpecAssumeSts    `json:"-"`
 	ManualConfig  *AwsSmCredentialSpecManualConfig `json:"-"`
+	OidcConfig    *AwsSmCredentialSpecOidcConfig   `json:"-"`
 	Spec          json.RawMessage                  `json:"spec,omitempty"`
 }

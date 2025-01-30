@@ -12,10 +12,17 @@ package nextgen
 // This has configuration details for the AWS KMS Secret Manager.
 type AwsKmsConnector struct {
 	Credential *AwsKmsConnectorCredential `json:"credential"`
-	KmsArn     string                     `json:"kmsArn"`
+	// ARN for AWS KMS.
+	KmsArn string `json:"kmsArn"`
 	// Region for AWS KMS.
-	Region string `json:"region"`
+	Region    string `json:"region"`
+	IsDefault bool   `json:"isDefault,omitempty"`
 	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Default_          bool     `json:"default,omitempty"`
+	DelegateSelectors                      []string                                `json:"delegateSelectors,omitempty"`
+	AwsOidcTokenExchangeDetailsForDelegate *AwsOidcTokenExchangeDetailsForDelegate `json:"awsOidcTokenExchangeDetailsForDelegate,omitempty"`
+	IgnoreTestConnection                   bool                                    `json:"ignoreTestConnection,omitempty"`
+	// Should the secret manager execute operations on the delegate, or via Harness platform
+	ExecuteOnDelegate bool   `json:"executeOnDelegate"`
+	Default_          bool   `json:"default"`
+	ConnectorType     string `json:"connectorType"`
 }
