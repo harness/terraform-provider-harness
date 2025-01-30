@@ -48,6 +48,7 @@ type ConnectorInfo struct {
 	Dynatrace           *DynatraceConnectorDto          `json:"-"`
 	Gcp                 *GcpConnector                   `json:"-"`
 	GcpCloudCost        *GcpCloudCostConnectorDto       `json:"-"`
+	GcpKms              *GcpKmsConnector                `json:"-"`
 	Git                 *GitConfig                      `json:"-"`
 	Github              *GithubConnector                `json:"-"`
 	Gitlab              *GitlabConnector                `json:"-"`

@@ -18,9 +18,15 @@ type GcpKmsConnector struct {
 	// Name of the Key Ring where Google Cloud Symmetric Key is created.
 	KeyRing string `json:"keyRing"`
 	// Name of the Google Cloud Symmetric Key.
-	KeyName     string `json:"keyName"`
-	Credentials string `json:"credentials"`
+	KeyName string `json:"keyName"`
+	// File Secret which is Service Account Key.
+	Credentials string `json:"credentials,omitempty"`
 	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Default_          bool     `json:"default,omitempty"`
+	DelegateSelectors    []string        `json:"delegateSelectors,omitempty"`
+	OidcDetails          *GcpOidcDetails `json:"oidcDetails,omitempty"`
+	IgnoreTestConnection bool            `json:"ignoreTestConnection,omitempty"`
+	// Should the secret manager execute operations on the delegate, or via Harness platform
+	ExecuteOnDelegate bool   `json:"executeOnDelegate"`
+	Default_          bool   `json:"default"`
+	ConnectorType     string `json:"connectorType"`
 }
