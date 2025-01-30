@@ -15,31 +15,48 @@ func TestResourceRDSRule(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		// CheckDestroy:      testRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testRDSRule(name),
+				Config: testRDSRule(name, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "dry_run", "true"),
 				),
 			},
 			{
-				Config: testRDSRuleUpdate(name, "15"),
+				Config: testRDSRule(name, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "dry_run", "false"),
+				),
+			},
+			{
+				Config: testRDSRuleUpdate(name, "15", true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "idle_time_mins", "15"),
+					resource.TestCheckResourceAttr(resourceName, "dry_run", "true"),
+				),
+			},
+			{
+				Config: testRDSRuleUpdate(name, "20", false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "idle_time_mins", "20"),
+					resource.TestCheckResourceAttr(resourceName, "dry_run", "false"),
 				),
 			},
 		},
 	})
 }
 
-func testRDSRule(name string) string {
+func testRDSRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_rds" "test" {
 		name = "%[1]s"  
 		cloud_connector_id = "DoNotDelete_LightwingNonProd" 
-		idle_time_mins = 10              
+		idle_time_mins = 10
+		dry_run = %[2]t            
+
 		database {
 			id = "database_id"
 		  	region = "us-east-1"
@@ -51,15 +68,17 @@ func testRDSRule(name string) string {
 			}                     
 		}      
 	}
-`, name)
+`, name, dryRun)
 }
 
-func testRDSRuleUpdate(name string, idleTime string) string {
+func testRDSRuleUpdate(name string, idleTime string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_rds" "test" {
 		name = "%[1]s"  
 		cloud_connector_id = "DoNotDelete_LightwingNonProd" 
-		idle_time_mins = %[2]s             
+		idle_time_mins = %[2]s
+		dry_run = %[3]t              
+
 		database {
 			id = "database_id"
 		  	region = "us-east-1"
@@ -71,5 +90,5 @@ func testRDSRuleUpdate(name string, idleTime string) string {
 			}                     
 		}  
 	}
-`, name, idleTime)
+`, name, idleTime, dryRun)
 }
