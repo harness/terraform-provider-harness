@@ -339,7 +339,7 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		},
 	}
 
-	// The execute_on_delegate attribute is evaluated at the beginning, allowing it to be modified as 
+	// The execute_on_delegate attribute is evaluated at the beginning, allowing it to be modified as
 	// needed by other conditions, such as in the case of inherit_from_delegate.
 	if attr, ok := d.GetOk("execute_on_delegate"); ok {
 		connector.Aws.ExecuteOnDelegate = attr.(bool)
@@ -386,6 +386,9 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := config["region"].(string); attr != "" {
 			connector.Aws.Credential.Region = attr
 		}
+
+		// Set the execute_on_delegate attribute to true when creating a connector that use IRSA
+		connector.Aws.ExecuteOnDelegate = true
 	}
 
 	if attr, ok := d.GetOk("inherit_from_delegate"); ok {
