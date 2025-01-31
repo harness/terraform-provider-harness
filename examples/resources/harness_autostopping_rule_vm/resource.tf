@@ -2,6 +2,7 @@ resource "harness_autostopping_rule_vm" "test" {
   name               = "name"
   cloud_connector_id = "cloud_connector_id"
   idle_time_mins     = 10
+  dry_run            = true
   filter {
     vm_ids  = ["/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Compute/virtualMachines/virtual_machine"]
     regions = ["useast2"]

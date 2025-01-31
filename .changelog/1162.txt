@@ -1,0 +1,4 @@
+```release-note:fix
+resource: platform_gitops_appproject: schema for source_namespaces field in spec was missing the type of element for list.
+it was also missing setting this field during create and read, this is fixed.
+```
