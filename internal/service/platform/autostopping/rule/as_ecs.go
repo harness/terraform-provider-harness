@@ -48,6 +48,12 @@ func ResourceECSRule() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"dry_run": {
+				Description: "Boolean that indicates whether the AutoStopping rule should be created in DryRun mode",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
 			"container": {
 				Type:     schema.TypeList,
 				Optional: true,

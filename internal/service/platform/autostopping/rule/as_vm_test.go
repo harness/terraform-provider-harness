@@ -18,12 +18,18 @@ func TestResourceVMRule(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		//		CheckDestroy:      testRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testVMRule(name),
+				Config: testVMRule(name, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "dry_run", "true"),
+				),
+			},
+			{
+				Config: testVMRule(name, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "dry_run", "false"),
 				),
 			},
 		},
@@ -56,12 +62,13 @@ func testGetRule(resourceName string, state *terraform.State) (*nextgen.Service,
 	return resp.Response.Service, nil
 }
 
-func testVMRule(name string) string {
+func testVMRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_vm" "test" {
 		name = "%[1]s"  
 		cloud_connector_id = "Azure_SE" 
 		idle_time_mins = 10              
+		dry_run = %[2]t
 		filter {
 			vm_ids = ["/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Compute/virtualMachines/virtual_machine"]
 		  	regions = ["useast2"]
@@ -108,5 +115,5 @@ func testVMRule(name string) string {
 			delay_in_sec = 5
 		}        
 	}
-`, name)
+`, name, dryRun)
 }
