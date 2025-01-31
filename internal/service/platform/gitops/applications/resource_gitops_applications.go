@@ -409,6 +409,26 @@ func ResourceGitopsApplication() *schema.Resource {
 																	},
 																},
 															},
+															"ignore_missing_value_files": {
+																Description: "Prevents 'helm template' from failing when value_files do not exist locally.",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_crds": {
+																Description: "Indicates if to skip CRDs during helm template. Corresponds to helm --skip-crds",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_tests": {
+																Description: "Indicates if to skip tests during helm template. Corresponds to helm --skip-tests",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_schema_validation": {
+																Description: "Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
 														},
 													},
 												},
@@ -1691,6 +1711,10 @@ func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]
 			}
 			helm["file_parameters"] = helmFileParametersList
 		}
+		helm["ignore_missing_value_files"] = appSpec.Source.Helm.IgnoreMissingValueFiles
+		helm["skip_crds"] = appSpec.Source.Helm.SkipCrds
+		helm["skip_tests"] = appSpec.Source.Helm.SkipTests
+		helm["skip_schema_validation"] = appSpec.Source.Helm.SkipSchemaValidation
 
 		helmList = append(helmList, helm)
 		source["helm"] = helmList
@@ -1858,6 +1882,19 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 				helmData.FileParameters = helmFileParams
 			}
 		}
+		if helm["ignore_missing_value_files"] != nil {
+			helmData.IgnoreMissingValueFiles = helm["ignore_missing_value_files"].(bool)
+		}
+		if helm["skip_crds"] != nil {
+			helmData.SkipCrds = helm["skip_crds"].(bool)
+		}
+		if helm["skip_tests"] != nil {
+			helmData.SkipTests = helm["skip_tests"].(bool)
+		}
+		if helm["skip_schema_validation"] != nil {
+			helmData.SkipSchemaValidation = helm["skip_schema_validation"].(bool)
+		}
+
 		specSource.Helm = &helmData
 	}
 
