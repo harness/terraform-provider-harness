@@ -76,14 +76,16 @@ Read-Only:
 - `aws_cluster_name` (String)
 - `bearer_token` (String)
 - `cluster_connection_type` (String)
+- `disable_compression` (Boolean)
 - `exec_provider_config` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster--config--exec_provider_config))
 - `password` (String)
+- `proxy_url` (String)
 - `role_a_r_n` (String)
 - `tls_client_config` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster--config--tls_client_config))
 - `username` (String)
 
 <a id="nestedobjatt--request--cluster--config--exec_provider_config"></a>
-### Nested Schema for `request.cluster.config.username`
+### Nested Schema for `request.cluster.config.exec_provider_config`
 
 Read-Only:
 
@@ -95,7 +97,7 @@ Read-Only:
 
 
 <a id="nestedobjatt--request--cluster--config--tls_client_config"></a>
-### Nested Schema for `request.cluster.config.username`
+### Nested Schema for `request.cluster.config.tls_client_config`
 
 Read-Only:
 
@@ -119,7 +121,7 @@ Read-Only:
 - `server_version` (String)
 
 <a id="nestedobjatt--request--cluster--info--cache_info"></a>
-### Nested Schema for `request.cluster.info.server_version`
+### Nested Schema for `request.cluster.info.cache_info`
 
 Read-Only:
 
@@ -129,16 +131,16 @@ Read-Only:
 
 
 <a id="nestedobjatt--request--cluster--info--connection_state"></a>
-### Nested Schema for `request.cluster.info.server_version`
+### Nested Schema for `request.cluster.info.connection_state`
 
 Read-Only:
 
-- `attempted_at` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster--info--server_version--attempted_at))
+- `attempted_at` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster--info--connection_state--attempted_at))
 - `message` (String)
 - `status` (String)
 
-<a id="nestedobjatt--request--cluster--info--server_version--attempted_at"></a>
-### Nested Schema for `request.cluster.info.server_version.attempted_at`
+<a id="nestedobjatt--request--cluster--info--connection_state--attempted_at"></a>
+### Nested Schema for `request.cluster.info.connection_state.attempted_at`
 
 Read-Only:
 
