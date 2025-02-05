@@ -56,6 +56,26 @@ resource "harness_platform_connector_awskms" "test" {
   }
 }
 
+# Credentials manual as Default Secret Manager
+resource "harness_platform_connector_awskms" "test" {
+  identifier  = "identifer"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+
+
+  arn_ref            = "account.secret_id"
+  region             = "us-east-1"
+  delegate_selectors = ["harness-delegate"]
+  default            = true
+  credentials {
+    manual {
+      secret_key_ref = "account.secret_id"
+      access_key_ref = "account.secret_id"
+    }
+  }
+}
+
 # Credentials inherit_from_delegate
 resource "harness_platform_connector_awskms" "test" {
   identifier  = "identifer"
@@ -68,6 +88,38 @@ resource "harness_platform_connector_awskms" "test" {
   delegate_selectors = ["harness-delegate"]
   credentials {
     inherit_from_delegate = true
+  }
+}
+
+# Credentials OIDC using Harness Platform
+resource "harness_platform_connector_awskms" "test" {
+  identifier          = "%[1]s"
+  name                = "%[1]s"
+  description         = "test"
+  tags                = ["foo:bar"]
+  arn_ref             = "account.secret_id"
+  region              = "us-east-1"
+  execute_on_delegate = false
+  credentials {
+    oidc_authentication {
+      iam_role_arn = "somerolearn"
+    }
+  }
+}
+
+# Credentials OIDC using Delegate
+resource "harness_platform_connector_awskms" "test" {
+  identifier         = "%[1]s"
+  name               = "%[1]s"
+  description        = "test"
+  tags               = ["foo:bar"]
+  arn_ref            = "account.secret_id"
+  region             = "us-east-1"
+  delegate_selectors = ["harness-delegate"]
+  credentials {
+    oidc_authentication {
+      iam_role_arn = "somerolearn"
+    }
   }
 }
 ```
@@ -85,8 +137,10 @@ resource "harness_platform_connector_awskms" "test" {
 
 ### Optional
 
+- `default` (Boolean) Set this connector as the default for all the services.
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Execute the command on the delegate.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -103,6 +157,7 @@ Optional:
 - `assume_role` (Block List, Max: 1) Connect using STS assume role. (see [below for nested schema](#nestedblock--credentials--assume_role))
 - `inherit_from_delegate` (Boolean) Inherit the credentials from from the delegate.
 - `manual` (Block List, Max: 1) Specify the AWS key and secret used for authenticating. (see [below for nested schema](#nestedblock--credentials--manual))
+- `oidc_authentication` (Block List, Max: 1) Connect using OIDC authentication. (see [below for nested schema](#nestedblock--credentials--oidc_authentication))
 
 <a id="nestedblock--credentials--assume_role"></a>
 ### Nested Schema for `credentials.assume_role`
@@ -124,6 +179,14 @@ Required:
 
 - `access_key_ref` (String) The reference to the Harness secret containing the AWS access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `secret_key_ref` (String) The reference to the Harness secret containing the AWS secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+
+<a id="nestedblock--credentials--oidc_authentication"></a>
+### Nested Schema for `credentials.oidc_authentication`
+
+Required:
+
+- `iam_role_arn` (String) The ARN of the IAM role to assume.
 
 ## Import
 
