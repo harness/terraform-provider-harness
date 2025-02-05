@@ -428,6 +428,9 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 					template_id = resp.Slug
 				}
 			}
+			if err != nil {
+				return helpers.HandleApiError(err, d, httpResp)
+			}
 		}
 
 		if is_stable == true {
