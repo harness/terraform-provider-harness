@@ -83,7 +83,7 @@ func buildConnectorGcpSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	}
 
 	if attr, ok := d.GetOk("is_default"); ok {
-		connector.GcpSecretManager.IsDefault = attr.(bool)
+		connector.GcpSecretManager.Default_ = attr.(bool)
 	}
 
 	if attr, ok := d.GetOk("credentials_ref"); ok {

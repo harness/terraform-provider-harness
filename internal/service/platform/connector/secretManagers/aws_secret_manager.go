@@ -41,10 +41,28 @@ func ResourceConnectorAwsSM() *schema.Resource {
 				Description: "Use as Default Secrets Manager.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 			},
 			"use_put_secret": {
 				Description: "Whether to update secret value using putSecretValue action.",
 				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
+			"execute_on_delegate": {
+				Description: "Run the operation on the delegate or harness platform.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+			},
+			"force_delete_without_recovery": {
+				Description: "Whether to force delete secret value or not.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"recovery_window_in_days": {
+				Description: "Recovery duration in days in AWS Secrets Manager.",
+				Type:        schema.TypeInt,
 				Optional:    true,
 			},
 			"credentials": {
@@ -59,8 +77,9 @@ func ResourceConnectorAwsSM() *schema.Resource {
 							Type:          schema.TypeList,
 							MaxItems:      1,
 							Optional:      true,
-							ConflictsWith: []string{"credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
-							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
+							ConflictsWith: []string{"credentials.0.assume_role", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
+							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
+							RequiredWith:  []string{"delegate_selectors"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"access_key_ref": {
@@ -85,8 +104,8 @@ func ResourceConnectorAwsSM() *schema.Resource {
 							Description:   "Inherit the credentials from from the delegate.",
 							Type:          schema.TypeBool,
 							Optional:      true,
-							ConflictsWith: []string{"credentials.0.manual", "credentials.0.assume_role"},
-							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
+							ConflictsWith: []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.oidc_authentication"},
+							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
 							RequiredWith:  []string{"delegate_selectors"},
 						},
 						"assume_role": {
@@ -94,8 +113,8 @@ func ResourceConnectorAwsSM() *schema.Resource {
 							Type:          schema.TypeList,
 							Optional:      true,
 							MaxItems:      1,
-							ConflictsWith: []string{"credentials.0.manual", "credentials.0.inherit_from_delegate"},
-							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
+							ConflictsWith: []string{"credentials.0.manual", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
+							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
 							RequiredWith:  []string{"delegate_selectors"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -120,6 +139,23 @@ func ResourceConnectorAwsSM() *schema.Resource {
 											}
 											return
 										},
+									},
+								},
+							},
+						},
+						"oidc_authentication": {
+							Description:   "Authentication using harness oidc.",
+							Type:          schema.TypeList,
+							Optional:      true,
+							MaxItems:      1,
+							ConflictsWith: []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
+							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"iam_role_arn": {
+										Description: "The IAM role ARN.",
+										Type:        schema.TypeString,
+										Required:    true,
 									},
 								},
 							},
@@ -193,6 +229,18 @@ func buildConnectorAwsSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.AwsSecretManager.UsePutSecret = attr.(bool)
 	}
 
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.AwsSecretManager.ExecuteOnDelegate = attr.(bool)
+  }
+
+	if attr, ok := d.GetOk("recovery_window_in_days"); ok {
+		connector.AwsSecretManager.RecoveryWindowInDays = int64(attr.(int))
+	}
+
+	if attr, ok := d.GetOk("force_delete_without_recovery"); ok {
+		connector.AwsSecretManager.ForceDeleteWithoutRecovery = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("credentials"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.AwsSecretManager.Credential = &nextgen.AwsSecretManagerCredential{}
@@ -236,6 +284,16 @@ func buildConnectorAwsSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 				connector.AwsSecretManager.Credential.AssumeStsRole.AssumeStsRoleDuration = int32(attr.(int))
 			}
 		}
+
+		if attr := config["oidc_authentication"].([]interface{}); len(attr) > 0 {
+			config := attr[0].(map[string]interface{})
+			connector.AwsSecretManager.Credential.Type_ = nextgen.AwsSecretManagerAuthTypes.OidcAuthentication
+			connector.AwsSecretManager.Credential.OidcConfig = &nextgen.AwsSmCredentialSpecOidcConfig{}
+
+			if attr, ok := config["iam_role_arn"]; ok {
+				connector.AwsSecretManager.Credential.OidcConfig.IamRoleArn = attr.(string)
+			}
+		}
 	}
 
 	return connector
@@ -247,6 +305,9 @@ func readConnectorAwsSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 	d.Set("delegate_selectors", connector.AwsSecretManager.DelegateSelectors)
 	d.Set("default", connector.AwsSecretManager.Default_)
 	d.Set("use_put_secret", connector.AwsSecretManager.UsePutSecret)
+	d.Set("execute_on_delegate", connector.AwsSecretManager.ExecuteOnDelegate)
+	d.Set("recovery_window_in_days", connector.AwsSecretManager.RecoveryWindowInDays)
+	d.Set("force_delete_without_recovery", connector.AwsSecretManager.ForceDeleteWithoutRecovery)
 
 	switch connector.AwsSecretManager.Credential.Type_ {
 	case nextgen.AwsSecretManagerAuthTypes.AssumeIAMRole:
@@ -275,6 +336,16 @@ func readConnectorAwsSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 						"role_arn":    connector.AwsSecretManager.Credential.AssumeStsRole.RoleArn,
 						"external_id": connector.AwsSecretManager.Credential.AssumeStsRole.ExternalId,
 						"duration":    connector.AwsSecretManager.Credential.AssumeStsRole.AssumeStsRoleDuration,
+					},
+				},
+			},
+		})
+	case nextgen.AwsSecretManagerAuthTypes.OidcAuthentication:
+		d.Set("credentials", []interface{}{
+			map[string]interface{}{
+				"oidc_authentication": []interface{}{
+					map[string]interface{}{
+						"iam_role_arn": connector.AwsSecretManager.Credential.OidcConfig.IamRoleArn,
 					},
 				},
 			},
