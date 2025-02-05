@@ -39,8 +39,10 @@ data "harness_platform_connector_aws_secret_manager" "example" {
 ### Read-Only
 
 - `credentials` (List of Object) Credentials to connect to AWS. (see [below for nested schema](#nestedatt--credentials))
+- `default` (Boolean) Whether this is the default connector.
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) The delegate to execute the action on.
 - `id` (String) The ID of this resource.
 - `region` (String) The AWS region where the AWS Secret Manager is.
 - `secret_name_prefix` (String) A prefix to be added to all secrets.
@@ -57,6 +59,7 @@ Read-Only:
 - `assume_role` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--assume_role))
 - `inherit_from_delegate` (Boolean)
 - `manual` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--manual))
+- `oidc_authentication` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--oidc_authentication))
 
 <a id="nestedobjatt--credentials--assume_role"></a>
 ### Nested Schema for `credentials.assume_role`
@@ -77,3 +80,9 @@ Read-Only:
 - `secret_key_ref` (String)
 
 
+<a id="nestedobjatt--credentials--oidc_authentication"></a>
+### Nested Schema for `credentials.oidc_authentication`
+
+Read-Only:
+
+- `iam_role_arn` (String)
