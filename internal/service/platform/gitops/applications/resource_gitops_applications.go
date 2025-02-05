@@ -409,6 +409,26 @@ func ResourceGitopsApplication() *schema.Resource {
 																	},
 																},
 															},
+															"ignore_missing_value_files": {
+																Description: "Prevents 'helm template' from failing when value_files do not exist locally.",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_crds": {
+																Description: "Indicates if to skip CRDs during helm template. Corresponds to helm --skip-crds",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_tests": {
+																Description: "Indicates if to skip tests during helm template. Corresponds to helm --skip-tests",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_schema_validation": {
+																Description: "Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
 														},
 													},
 												},
@@ -1137,7 +1157,11 @@ func resourceGitopsApplicationCreate(ctx context.Context, d *schema.ResourceData
 		d.MarkNewResource()
 		return nil
 	}
-	setApplication(d, &resp)
+	err = setApplication(d, &resp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
 }
 
@@ -1176,7 +1200,11 @@ func resourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData, 
 		d.MarkNewResource()
 		return nil
 	}
-	setApplication(d, &resp)
+	err = setApplication(d, &resp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
 }
 
@@ -1279,7 +1307,11 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 		d.MarkNewResource()
 		return nil
 	}
-	setApplication(d, &resp)
+	err = setApplication(d, &resp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
 }
 
@@ -1324,7 +1356,7 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
+func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) error {
 	d.SetId(app.Name)
 	d.Set("org_id", app.OrgIdentifier)
 	d.Set("project_id", app.ProjectIdentifier)
@@ -1441,9 +1473,13 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 			application["spec"] = specList
 		}
 		applicationList = append(applicationList, application)
-		d.Set("application", applicationList)
-	}
 
+		err := d.Set("application", applicationList)
+		if err != nil {
+			return fmt.Errorf("error setting application: %v", err)
+		}
+	}
+	return nil
 }
 
 func buildCreateApplicationRequest(d *schema.ResourceData) nextgen.ApplicationsApplicationCreateRequest {
@@ -1644,7 +1680,6 @@ func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]
 	source["path"] = appSpec.Source.Path
 	source["target_revision"] = appSpec.Source.TargetRevision
 	source["chart"] = appSpec.Source.Chart
-	source["ref"] = appSpec.Source.Ref
 	if appSpec.Source.Helm != nil {
 		var helmList = []interface{}{}
 		var helm = map[string]interface{}{}
@@ -1676,6 +1711,10 @@ func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]
 			}
 			helm["file_parameters"] = helmFileParametersList
 		}
+		helm["ignore_missing_value_files"] = appSpec.Source.Helm.IgnoreMissingValueFiles
+		helm["skip_crds"] = appSpec.Source.Helm.SkipCrds
+		helm["skip_tests"] = appSpec.Source.Helm.SkipTests
+		helm["skip_schema_validation"] = appSpec.Source.Helm.SkipSchemaValidation
 
 		helmList = append(helmList, helm)
 		source["helm"] = helmList
@@ -1843,6 +1882,19 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 				helmData.FileParameters = helmFileParams
 			}
 		}
+		if helm["ignore_missing_value_files"] != nil {
+			helmData.IgnoreMissingValueFiles = helm["ignore_missing_value_files"].(bool)
+		}
+		if helm["skip_crds"] != nil {
+			helmData.SkipCrds = helm["skip_crds"].(bool)
+		}
+		if helm["skip_tests"] != nil {
+			helmData.SkipTests = helm["skip_tests"].(bool)
+		}
+		if helm["skip_schema_validation"] != nil {
+			helmData.SkipSchemaValidation = helm["skip_schema_validation"].(bool)
+		}
+
 		specSource.Helm = &helmData
 	}
 

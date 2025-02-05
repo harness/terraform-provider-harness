@@ -118,6 +118,7 @@ resource "harness_platform_gitops_cluster" "example" {
 - `account_id` (String, Deprecated) Account identifier of the GitOps cluster.
 - `org_id` (String) Organization identifier of the cluster.
 - `project_id` (String) Project identifier of the GitOps cluster.
+- `force_delete` (Boolean) Indicates if the cluster should be deleted forcefully, regardless of existing applications using that cluster.
 - `request` (Block List, Max: 1) Cluster create or update request. (see [below for nested schema](#nestedblock--request))
 
 ### Read-Only
@@ -165,8 +166,10 @@ Optional:
 - `aws_cluster_name` (String) AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster.
 - `bearer_token` (String, Sensitive) Bearer authentication token the cluster.
 - `cluster_connection_type` (String) Identifies the authentication method used to connect to the cluster.
+- `disable_compression` (Boolean) DisableCompression bypasses automatic GZip compression requests to to the cluster's API server. Corresponds to running kubectl with --disable-compression
 - `exec_provider_config` (Block List, Max: 1) Configuration for an exec provider. (see [below for nested schema](#nestedblock--request--cluster--config--exec_provider_config))
 - `password` (String) Password of the server of the cluster.
+- `proxy_url` (String) The URL to the proxy to be used for all requests send to the cluster's API server
 - `role_a_r_n` (String) Optional role ARN. If set then used for AWS IAM Authenticator.
 - `tls_client_config` (Block List, Max: 1) Settings to enable transport layer security. (see [below for nested schema](#nestedblock--request--cluster--config--tls_client_config))
 - `username` (String) Username of the server of the cluster.
@@ -236,7 +239,7 @@ Read-Only:
 - `status` (String)
 
 <a id="nestedobjatt--request--cluster--info--connection_state--attempted_at"></a>
-### Nested Schema for `request.cluster.info.connection_state.status`
+### Nested Schema for `request.cluster.info.connection_state.attempted_at`
 
 Read-Only:
 

@@ -488,6 +488,19 @@ func ResourceProject() *schema.Resource {
 											},
 										},
 									},
+									"source_namespaces": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: "Source namespaces defines the namespaces application resources are allowed to be created in.",
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+									"permit_only_project_scoped_clusters": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Description: "This option determines whether destinations can only reference clusters which are argo project-scoped",
+									},
 								},
 							},
 						},
@@ -1017,17 +1030,38 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				}
 			}
 
+			var sourceNamespaces []string
+			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
+				specData := sr[0].(map[string]interface{})
+
+				if source, ok := specData["source_namespaces"].([]interface{}); ok {
+					for _, s := range source {
+						sourceNamespaces = append(sourceNamespaces, s.(string))
+					}
+				}
+			}
+
+			var permitOnlyProjectScopedClusters bool
+			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
+				specData := sr[0].(map[string]interface{})
+				if permitOnlyProjectScopedClustersData, ok := specData["permit_only_project_scoped_clusters"]; ok {
+					permitOnlyProjectScopedClusters = permitOnlyProjectScopedClustersData.(bool)
+				}
+			}
+
 			approjectsAppProjectSpec = &nextgen.AppprojectsAppProjectSpec{
-				Destinations:               appprojectsApplicationDestination,
-				ClusterResourceWhitelist:   v1GroupKind,
-				ClusterResourceBlacklist:   v1GroupKindCluster,
-				NamespaceResourceBlacklist: v1GroupKindNameSpaceBlacklist,
-				NamespaceResourceWhitelist: v1GroupKindNameSpaceWhitelist,
-				SourceRepos:                sourceRepos,
-				Roles:                      appprojectsProjectRole,
-				SyncWindows:                appprojectsSyncWindow,
-				SignatureKeys:              appprojectsSignatureKey,
-				OrphanedResources:          orphanedResources,
+				Destinations:                    appprojectsApplicationDestination,
+				ClusterResourceWhitelist:        v1GroupKind,
+				ClusterResourceBlacklist:        v1GroupKindCluster,
+				NamespaceResourceBlacklist:      v1GroupKindNameSpaceBlacklist,
+				NamespaceResourceWhitelist:      v1GroupKindNameSpaceWhitelist,
+				SourceRepos:                     sourceRepos,
+				Roles:                           appprojectsProjectRole,
+				SyncWindows:                     appprojectsSyncWindow,
+				SignatureKeys:                   appprojectsSignatureKey,
+				OrphanedResources:               orphanedResources,
+				SourceNamespaces:                sourceNamespaces,
+				PermitOnlyProjectScopedClusters: permitOnlyProjectScopedClusters,
 			}
 
 			appprojectsAppProject = &nextgen.AppprojectsAppProject{
@@ -1354,17 +1388,38 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 				}
 			}
 
+			var sourceNamespaces []string
+			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
+				specData := sr[0].(map[string]interface{})
+
+				if source, ok := specData["source_namespaces"].([]interface{}); ok {
+					for _, s := range source {
+						sourceNamespaces = append(sourceNamespaces, s.(string))
+					}
+				}
+			}
+
+			var permitOnlyProjectScopedClusters bool
+			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
+				specData := sr[0].(map[string]interface{})
+				if permitOnlyProjectScopedClustersData, ok := specData["permit_only_project_scoped_clusters"]; ok {
+					permitOnlyProjectScopedClusters = permitOnlyProjectScopedClustersData.(bool)
+				}
+			}
+
 			approjectsAppProjectSpec = &nextgen.AppprojectsAppProjectSpec{
-				Destinations:               appprojectsApplicationDestination,
-				ClusterResourceWhitelist:   v1GroupKind,
-				ClusterResourceBlacklist:   v1GroupKindCluster,
-				NamespaceResourceBlacklist: v1GroupKindNameSpaceBlacklist,
-				NamespaceResourceWhitelist: v1GroupKindNameSpaceWhitelist,
-				SourceRepos:                sourceRepos,
-				Roles:                      appprojectsProjectRole,
-				SyncWindows:                appprojectsSyncWindow,
-				SignatureKeys:              appprojectsSignatureKey,
-				OrphanedResources:          orphanedResources,
+				Destinations:                    appprojectsApplicationDestination,
+				ClusterResourceWhitelist:        v1GroupKind,
+				ClusterResourceBlacklist:        v1GroupKindCluster,
+				NamespaceResourceBlacklist:      v1GroupKindNameSpaceBlacklist,
+				NamespaceResourceWhitelist:      v1GroupKindNameSpaceWhitelist,
+				SourceRepos:                     sourceRepos,
+				Roles:                           appprojectsProjectRole,
+				SyncWindows:                     appprojectsSyncWindow,
+				SignatureKeys:                   appprojectsSignatureKey,
+				OrphanedResources:               orphanedResources,
+				SourceNamespaces:                sourceNamespaces,
+				PermitOnlyProjectScopedClusters: permitOnlyProjectScopedClusters,
 			}
 
 			appprojectsAppProject = &nextgen.AppprojectsAppProject{
@@ -1524,6 +1579,19 @@ func setProjectDetails(d *schema.ResourceData, account_id string, projects *next
 			}
 			spec["sync_windows"] = syncWindowsList
 		}
+		if len(projects.Spec.SignatureKeys) > 0 {
+			signatureKeysList := make([]interface{}, len(projects.Spec.SignatureKeys))
+			for i, item := range projects.Spec.SignatureKeys {
+				signatureKeysList[i] = map[string]interface{}{
+					"key_id": item.KeyID,
+				}
+			}
+			spec["signature_keys"] = signatureKeysList
+		}
+		if len(projects.Spec.SourceNamespaces) > 0 {
+			spec["source_namespaces"] = projects.Spec.SourceNamespaces
+		}
+		spec["permit_only_project_scoped_clusters"] = projects.Spec.PermitOnlyProjectScopedClusters
 		specdataList = append(specdataList, spec)
 		project["spec"] = specdataList
 	}

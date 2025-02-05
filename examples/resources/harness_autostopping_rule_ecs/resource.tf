@@ -2,6 +2,7 @@ resource "harness_autostopping_rule_ecs" "test" {
   name               = "name"
   cloud_connector_id = "cloud_connector_id"
   idle_time_mins     = 10
+  dry_run            = true
   container {
     cluster    = "cluster"
     service    = "service"

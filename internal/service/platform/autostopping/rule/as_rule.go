@@ -109,6 +109,13 @@ func buildASRule(d *schema.ResourceData, kind string, accountId string) nextgen.
 		}
 		serviceV2.CustomDomains = domains
 	}
+
+	opts := &nextgen.Opts{}
+	if attr, ok := d.GetOk("dry_run"); ok {
+		opts.DryRun = attr.(bool)
+	}
+	serviceV2.Opts = opts
+
 	routingData := &nextgen.RoutingDataV2{}
 	httpProxy, tcpProxy, healthCheck := getRoutingConfigurations(d)
 	if httpProxy != nil {

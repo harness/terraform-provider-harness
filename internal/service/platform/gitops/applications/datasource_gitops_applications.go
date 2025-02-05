@@ -355,6 +355,26 @@ func DataSourceGitopsApplications() *schema.Resource {
 																	},
 																},
 															},
+															"ignore_missing_value_files": {
+																Description: "Prevents 'helm template' from failing when value_files do not exist locally.",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_crds": {
+																Description: "Indicates if to skip CRDs during helm template. Corresponds to helm --skip-crds",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_tests": {
+																Description: "Indicates if to skip tests during helm template. Corresponds to helm --skip-tests",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_schema_validation": {
+																Description: "Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
 														},
 													},
 												},
@@ -1108,6 +1128,9 @@ func datasourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData
 		d.MarkNewResource()
 		return nil
 	}
-	setApplication(d, &resp)
+	err = setApplication(d, &resp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return nil
 }

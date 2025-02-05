@@ -201,6 +201,16 @@ func DataSourceGitopsCluster() *schema.Resource {
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
+												"disable_compression": {
+													Description: "DisableCompression bypasses automatic GZip compression requests to to the cluster's API server. Corresponds to running kubectl with --disable-compression",
+													Type:        schema.TypeBool,
+													Optional:    true,
+												},
+												"proxy_url": {
+													Description: "The URL to the proxy to be used for all requests send to the cluster's API server",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
 											},
 										},
 									},

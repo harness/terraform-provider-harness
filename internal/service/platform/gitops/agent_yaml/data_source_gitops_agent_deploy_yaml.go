@@ -53,6 +53,16 @@ func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"skip_crds": {
+				Description: "Skip CRDs for the GitOps agent.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"private_key": {
+				Description: "Private key for the GitOps agent. If provided authentication token will not be regenerated. Must be base64 encoded.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"proxy": {
 				Description: "Proxy settings for the GitOps agent.",
 				Type:        schema.TypeList,
@@ -106,6 +116,12 @@ func dataSourceGitopsAgentDeployYamlRead(ctx context.Context, d *schema.Resource
 		}
 		if attr, ok := d.GetOk("ca_data"); ok {
 			yamlQuery.CaData = attr.(string)
+		}
+		if attr, ok := d.GetOk("skip_crds"); ok {
+			yamlQuery.SkipCrds = attr.(bool)
+		}
+		if attr, ok := d.GetOk("private_key"); ok {
+			yamlQuery.PrivateKey = attr.(string)
 		}
 
 		if attr, ok := d.GetOk("proxy"); ok {
