@@ -55,6 +55,16 @@ func ResourceConnectorAwsSM() *schema.Resource {
 				Optional:    true,
 				Default:     true,
 			},
+			"force_delete_without_recovery": {
+				Description: "Whether to force delete secret value or not.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"recovery_window_in_days": {
+				Description: "Recovery duration in days in AWS Secrets Manager.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+			},
 			"credentials": {
 				Description: "Credentials to connect to AWS.",
 				Type:        schema.TypeList,
@@ -221,6 +231,14 @@ func buildConnectorAwsSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	if attr, ok := d.GetOk("execute_on_delegate"); ok {
 		connector.AwsSecretManager.ExecuteOnDelegate = attr.(bool)
+  }
+
+	if attr, ok := d.GetOk("recovery_window_in_days"); ok {
+		connector.AwsSecretManager.RecoveryWindowInDays = int64(attr.(int))
+	}
+
+	if attr, ok := d.GetOk("force_delete_without_recovery"); ok {
+		connector.AwsSecretManager.ForceDeleteWithoutRecovery = attr.(bool)
 	}
 
 	if attr, ok := d.GetOk("credentials"); ok {
@@ -288,6 +306,8 @@ func readConnectorAwsSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 	d.Set("default", connector.AwsSecretManager.Default_)
 	d.Set("use_put_secret", connector.AwsSecretManager.UsePutSecret)
 	d.Set("execute_on_delegate", connector.AwsSecretManager.ExecuteOnDelegate)
+	d.Set("recovery_window_in_days", connector.AwsSecretManager.RecoveryWindowInDays)
+	d.Set("force_delete_without_recovery", connector.AwsSecretManager.ForceDeleteWithoutRecovery)
 
 	switch connector.AwsSecretManager.Credential.Type_ {
 	case nextgen.AwsSecretManagerAuthTypes.AssumeIAMRole:
