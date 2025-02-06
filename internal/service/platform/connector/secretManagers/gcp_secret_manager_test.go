@@ -31,11 +31,11 @@ func TestAccResourceConnectorGcpSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.secret_key_ref", "account."+id),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -46,11 +46,11 @@ func TestAccResourceConnectorGcpSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.secret_key_ref", "account."+id),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -85,11 +85,11 @@ func TestOrgResourceConnectorGcpSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.secret_key_ref", "org."+id),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -101,11 +101,11 @@ func TestOrgResourceConnectorGcpSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.secret_key_ref", "org."+id),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "org."+id),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -142,11 +142,11 @@ func TestProjectResourceConnectorGcpSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.secret_key_ref", id),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -159,11 +159,11 @@ func TestProjectResourceConnectorGcpSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.secret_key_ref", id),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", id),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -198,10 +198,11 @@ func TestAccResourceConnectorGcpSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -212,10 +213,11 @@ func TestAccResourceConnectorGcpSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -250,10 +252,11 @@ func TestOrgResourceConnectorGcpSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -265,10 +268,11 @@ func TestOrgResourceConnectorGcpSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -305,10 +309,11 @@ func TestProjectResourceConnectorGcpSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -321,10 +326,11 @@ func TestProjectResourceConnectorGcpSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -359,7 +365,7 @@ func TestAccResourceConnectorGcpSM_oidc_platform(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
@@ -375,7 +381,7 @@ func TestAccResourceConnectorGcpSM_oidc_platform(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
@@ -415,7 +421,7 @@ func TestOrgResourceConnectorGcpSM_oidc_platform(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
@@ -432,7 +438,7 @@ func TestOrgResourceConnectorGcpSM_oidc_platform(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
@@ -474,7 +480,7 @@ func TestProjectResourceConnectorGcpSM_oidc_platform(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
@@ -492,7 +498,7 @@ func TestProjectResourceConnectorGcpSM_oidc_platform(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
@@ -532,10 +538,10 @@ func TestAccResourceConnectorGcpSM_oidc_delegate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
@@ -550,10 +556,10 @@ func TestAccResourceConnectorGcpSM_oidc_delegate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
@@ -592,10 +598,10 @@ func TestOrgResourceConnectorGcpSM_oidc_delegate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
@@ -611,10 +617,10 @@ func TestOrgResourceConnectorGcpSM_oidc_delegate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
@@ -655,10 +661,10 @@ func TestProjectResourceConnectorGcpSM_oidc_delegate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
@@ -675,10 +681,10 @@ func TestProjectResourceConnectorGcpSM_oidc_delegate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
@@ -695,7 +701,7 @@ func TestProjectResourceConnectorGcpSM_oidc_delegate(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnectorGcpSM_manual_default(t *testing.T) {
+func TestAccResourceConnectorGcpSM_manual_is_default(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
@@ -710,33 +716,33 @@ func TestAccResourceConnectorGcpSM_manual_default(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorGcpSM_manual_default(id, name),
+				Config: testAccResourceConnectorGcpSM_manual_is_default(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "true"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "true"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.secret_key_ref", "account."+id),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
-				Config: testAccResourceConnectorGcpSM_manual_default(id, updatedName),
+				Config: testAccResourceConnectorGcpSM_manual_is_default(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "default", "true"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "true"),
 					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.secret_key_ref", "account."+id),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 			{
@@ -756,7 +762,7 @@ func testAccResourceConnectorGcpSM_manual(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
@@ -766,10 +772,8 @@ func testAccResourceConnectorGcpSM_manual(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 		
-			manual {
-   				delegate_selectors = [ "harness-delegate" ]
-    			secret_key_ref = "account.${harness_platform_secret_text.test.id}"
-			}
+			delegate_selectors = [ "harness-delegate" ]
+			credentials_ref = "account.${harness_platform_secret_text.test.id}"
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 
@@ -799,7 +803,7 @@ func testOrgResourceConnectorGcpSM_manual(id string, name string) string {
 			tags = ["foo:bar"]
 			org_id = harness_platform_organization.test.id
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
@@ -810,10 +814,9 @@ func testOrgResourceConnectorGcpSM_manual(id string, name string) string {
 			tags = ["foo:bar"]
 			org_id = harness_platform_organization.test.id
 		
-			manual {
-   				delegate_selectors = [ "harness-delegate" ]
-    			secret_key_ref = "org.${harness_platform_secret_text.test.id}"
-			}
+			delegate_selectors = [ "harness-delegate" ]
+			credentials_ref =  "org.${harness_platform_secret_text.test.id}"
+
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 
@@ -851,7 +854,7 @@ func testProjectResourceConnectorGcpSM_manual(id string, name string) string {
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
@@ -863,10 +866,9 @@ func testProjectResourceConnectorGcpSM_manual(id string, name string) string {
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 		
-			manual {
-   				delegate_selectors = [ "harness-delegate" ]
-    			secret_key_ref = "${harness_platform_secret_text.test.id}"
-			}
+			delegate_selectors = [ "harness-delegate" ]
+			credentials_ref = "${harness_platform_secret_text.test.id}"
+			
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 
@@ -885,9 +887,8 @@ func testAccResourceConnectorGcpSM_inherit(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 		
-			inherit_from_delegate {
-   				delegate_selectors = [ "harness-delegate" ]
-			}
+			delegate_selectors = [ "harness-delegate" ]
+			inherit_from_delegate = true
 		}
 `, id, name)
 }
@@ -911,9 +912,8 @@ func testOrgResourceConnectorGcpSM_inherit(id string, name string) string {
 			tags = ["foo:bar"]
 			org_id = harness_platform_organization.test.id
 		
-			inherit_from_delegate {
-   				delegate_selectors = [ "harness-delegate" ]
-			}
+			delegate_selectors = [ "harness-delegate" ]
+			inherit_from_delegate = true
 		}
 `, id, name)
 }
@@ -945,9 +945,8 @@ func testProjectResourceConnectorGcpSM_inherit(id string, name string) string {
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 		
-			inherit_from_delegate {
-   				delegate_selectors = [ "harness-delegate" ]
-			}
+			delegate_selectors = [ "harness-delegate" ]
+			inherit_from_delegate = true
 		}
 `, id, name)
 }
@@ -1050,12 +1049,12 @@ func testAccResourceConnectorGcpSM_oidc_delegate(id string, name string) string 
 			description = "test"
 			tags = ["foo:bar"]
 		
+			delegate_selectors = [ "harness-delegate" ]
 			oidc_authentication {
    				workload_pool_id = "harness-pool-test"
 				provider_id = "harness"
 				gcp_project_id = "1234567"
 				service_account_email = "harness.sample@iam.gserviceaccount.com"
-				delegate_selectors = [ "harness-delegate" ]
 			}
 		}
 `, id, name)
@@ -1080,12 +1079,12 @@ func testOrgResourceConnectorGcpSM_oidc_delegate(id string, name string) string 
 			tags = ["foo:bar"]
 			org_id = harness_platform_organization.test.id
 		
+			delegate_selectors = [ "harness-delegate" ]
 			oidc_authentication {
    				workload_pool_id = "harness-pool-test"
 				provider_id = "harness"
 				gcp_project_id = "1234567"
 				service_account_email = "harness.sample@iam.gserviceaccount.com"
-				delegate_selectors = [ "harness-delegate" ]
 			}
 		}
 `, id, name)
@@ -1118,18 +1117,18 @@ func testProjectResourceConnectorGcpSM_oidc_delegate(id string, name string) str
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 		
+			delegate_selectors = [ "harness-delegate" ]
 			oidc_authentication {
    				workload_pool_id = "harness-pool-test"
 				provider_id = "harness"
 				gcp_project_id = "1234567"
 				service_account_email = "harness.sample@iam.gserviceaccount.com"
-				delegate_selectors = [ "harness-delegate" ]
 			}
 		}
 `, id, name)
 }
 
-func testAccResourceConnectorGcpSM_manual_default(id string, name string) string {
+func testAccResourceConnectorGcpSM_manual_is_default(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_secret_text" "test" {
 			identifier = "%[1]s"
@@ -1137,7 +1136,7 @@ func testAccResourceConnectorGcpSM_manual_default(id string, name string) string
 			description = "test"
 			tags = ["foo:bar"]
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
@@ -1147,12 +1146,10 @@ func testAccResourceConnectorGcpSM_manual_default(id string, name string) string
 			description = "test"
 			tags = ["foo:bar"]
 
-			default = true
+			is_default = true
 		
-			manual {
-   				delegate_selectors = [ "harness-delegate" ]
-    			secret_key_ref = "account.${harness_platform_secret_text.test.id}"
-			}
+			delegate_selectors = [ "harness-delegate" ]
+			credentials_ref =  "account.${harness_platform_secret_text.test.id}"
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 
