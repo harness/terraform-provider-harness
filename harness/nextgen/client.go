@@ -229,6 +229,7 @@ type APIClient struct {
 	ProjectGitxWebhooksApiService *ProjectGitxWebhooksApiService
 	OrgGitxWebhooksApiService     *OrgGitxWebhooksApiService
 	ModuleRegistryApi             *ModuleRegistryApiService
+	VariableSetsApi               *VariableSetsApiService
 }
 
 type service struct {
@@ -341,6 +342,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.ProjectGitxWebhooksApiService = (*ProjectGitxWebhooksApiService)(&c.common)
 	c.OrgGitxWebhooksApiService = (*OrgGitxWebhooksApiService)(&c.common)
 	c.ModuleRegistryApi = (*ModuleRegistryApiService)(&c.common)
+	c.VariableSetsApi = (*VariableSetsApiService)(&c.common)
 	return c
 }
 

@@ -55,4 +55,6 @@ type IacmCreateWorkspaceRequestBody struct {
 	TerraformVariableFiles []IacmWorkspaceTerraformVariableFiles `json:"terraform_variable_files,omitempty"`
 	// list of terraform variables configured on the workspace.
 	TerraformVariables map[string]IacmVariable `json:"terraform_variables"`
+	// Optional Variable Sets as references
+	VariableSets []string `json:"variable_sets,omitempty"`
 }

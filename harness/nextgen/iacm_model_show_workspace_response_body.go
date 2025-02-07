@@ -71,4 +71,6 @@ type IacmShowWorkspaceResponseBody struct {
 	TerraformVariables map[string]IacmVariableResource `json:"terraform_variables"`
 	// Modified is the unix timestamp at which the resource was last modified in milliseconds.
 	Updated int64 `json:"updated"`
+	// Optional Variable Sets as references
+	VariableSets []string `json:"variable_sets,omitempty"`
 }
