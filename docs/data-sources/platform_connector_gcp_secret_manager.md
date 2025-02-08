@@ -39,10 +39,21 @@ data "harness_platform_connector_gcp_secret_manager" "example" {
 ### Read-Only
 
 - `credentials_ref` (String) Reference to the secret containing credentials of IAM service account for Google Secret Manager. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
-- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
+- `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `id` (String) The ID of this resource.
-- `is_default` (Boolean) Indicative if this is default Secret manager for secrets.
+- `inherit_from_delegate` (Boolean) Inherit configuration from delegate.
+- `is_default` (Boolean) Set this flag to set this secret manager as default secret manager.
+- `oidc_authentication` (List of Object) Authentication using harness oidc. (see [below for nested schema](#nestedatt--oidc_authentication))
 - `tags` (Set of String) Tags to associate with the resource.
 
+<a id="nestedatt--oidc_authentication"></a>
+### Nested Schema for `oidc_authentication`
 
+Read-Only:
+
+- `gcp_project_id` (String)
+- `provider_id` (String)
+- `service_account_email` (String)
+- `workload_pool_id` (String)
