@@ -3,12 +3,12 @@ data "harness_platform_infra_variable_set" "test" {
 }
 
 data "harness_platform_infra_variable_set" "testorg" {
-  identifier              = "identifier"
-  org_id                  = "someorg"
+  identifier = "identifier"
+  org_id     = "someorg"
 }
 
 data "harness_platform_infra_variable_set" "testproj" {
-  identifier              = "identifier"
-  org_id                  = "someorg"
-  project_id              = "someproj"
+  identifier = "identifier"
+  org_id     = "someorg"
+  project_id = "someproj"
 }
