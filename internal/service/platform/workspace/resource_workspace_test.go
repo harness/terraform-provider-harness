@@ -154,6 +154,34 @@ func testAccResourceWorkspace(id string, name string, repositoryType string) str
 			}
 		}
 
+		resource "harness_platform_infra_variable_set" "test" {
+			identifier              = "%[1]s"
+			name                    = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			description             = "desc"
+
+			environment_variable {
+				key = "key1"
+				value = "value1"
+				value_type = "string"
+			}
+
+			terraform_variable {
+				key = "key1"
+				value = "1111"
+				value_type = "string"
+			}
+
+			terraform_variable_file {
+				repository              = "https://github.com/org/repo"
+				repository_branch       = "main"
+				repository_path         = "tf/aws/basic"
+				repository_connector    = "account.${harness_platform_connector_github.test.id}"
+			}     
+
+		}		
+
 		resource "harness_platform_workspace" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -194,6 +222,7 @@ func testAccResourceWorkspace(id string, name string, repositoryType string) str
 				repository_path         = "tf/aws/basic"
 				repository_connector    = "account.${harness_platform_connector_github.test.id}"
 			}			
+			variable_sets = [harness_platform_infra_variable_set.test.id]
   		}
 `, id, name, repositoryX)
 }
