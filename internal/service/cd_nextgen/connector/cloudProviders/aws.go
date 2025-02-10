@@ -388,7 +388,9 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		}
 
 		// Set the execute_on_delegate attribute to true when creating a connector that use IRSA
-		connector.Aws.ExecuteOnDelegate = true
+		if d.Id() == "" {
+			connector.Aws.ExecuteOnDelegate = true
+		}
 	}
 
 	if attr, ok := d.GetOk("inherit_from_delegate"); ok {
@@ -405,7 +407,9 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 		// Set the execute_on_delegate attribute to true when creating a connector that uses
 		// credentials inherited from the delegate.
-		connector.Aws.ExecuteOnDelegate = true
+		if d.Id() == "" {
+			connector.Aws.ExecuteOnDelegate = true
+		}
 	}
 
 	if attr, ok := d.GetOk("oidc_authentication"); ok {
