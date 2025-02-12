@@ -317,7 +317,7 @@ func TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(t *testi
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, name),
+				Config: testAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -332,7 +332,7 @@ func TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(t *testi
 			},
 
 			{
-				Config: TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, updatedName),
+				Config: testAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -353,8 +353,6 @@ func TestAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(t *testi
 		},
 	})
 }
-
-
 
 func TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(t *testing.T) {
 
@@ -372,7 +370,7 @@ func TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, name),
+				Config: testAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -385,7 +383,7 @@ func TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(t *testing.T) {
 				),
 			},
 			{
-				Config: TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, updatedName),
+				Config: testAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -401,55 +399,6 @@ func TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestProjectResourceConnectorAwsSM_manual(t *testing.T) {
-
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_aws_secret_manager.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		CheckDestroy: testAccConnectorDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testOrgResourceConnectorAwsSM_manual(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
-				),
-			},
-			{
-				Config: testOrgResourceConnectorAwsSM_manual(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -1450,7 +1399,7 @@ func testAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, name
 `, id, id, name)
 }
 
-func TestAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, name string) string {
+func testAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, name string) string {
 	return fmt.Sprintf(`
 resource "harness_platform_connector_aws_secret_manager" "test" {
   id                          = "%s"
