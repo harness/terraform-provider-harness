@@ -12,6 +12,7 @@ import (
 	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/variable_set"
 
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
@@ -303,7 +304,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator":                     cluster_orchestrator.DataSourceClusterOrchestrator(),
 				"harness_platform_infra_module":                    module_registry.DataSourceInfraModule(),
 				"harness_chaos_infrastructure":                     infrastructure.DataSourceChaosInfrastructureService(),
-				"harness_platform_har_registry": 					har_registry.DataSourceRegistry(),
+				"harness_platform_har_registry":                    har_registry.DataSourceRegistry(),
+				"harness_platform_infra_variable_set":              variable_set.DataSourceVariableSet(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pipeline_template.ResourceTemplate(),
@@ -455,7 +457,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator":                     cluster_orchestrator.ResourceClusterOrchestrator(),
 				"harness_platform_infra_module":                    module_registry.ResourceInfraModule(),
 				"harness_chaos_infrastructure":                     infrastructure.ResourceChaosInfrastructure(),
-				"harness_platform_har_registry": 					har_registry.ResourceRegistry(),
+				"harness_platform_har_registry":                    har_registry.ResourceRegistry(),
+				"harness_platform_infra_variable_set":              variable_set.ResourceVariableSet(),
 			},
 		}
 

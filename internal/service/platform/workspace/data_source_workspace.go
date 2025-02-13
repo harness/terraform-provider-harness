@@ -185,6 +185,15 @@ func DataSourceWorkspace() *schema.Resource {
 				Type:        schema.TypeMap,
 				Computed:    true,
 			},
+			"variable_sets": {
+				Description: "Variable sets to use.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 	}
 	return resource

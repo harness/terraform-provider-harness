@@ -50,6 +50,7 @@ data "harness_platform_workspace" "test" {
 - `repository_path` (String) Repository Path is the path in which the infra code resides
 - `terraform_variable` (Block Set) Terraform variables configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable))
 - `terraform_variable_file` (Block Set) Terraform variables files configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable_file))
+- `variable_sets` (Set of String) Variable set identifiers. Currently support only one variable set.
 
 <a id="nestedblock--environment_variable"></a>
 ### Nested Schema for `environment_variable`
