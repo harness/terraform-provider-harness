@@ -675,7 +675,7 @@ func testAccResourceConnectorGcpKMS_manual(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
@@ -723,7 +723,7 @@ func testOrgResourceConnectorGcpKMS_manual(id string, name string) string {
 			tags = ["foo:bar"]
 			org_id = harness_platform_organization.test.id
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
@@ -780,7 +780,7 @@ func testProjectResourceConnectorGcpKMS_manual(id string, name string) string {
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
@@ -1026,7 +1026,7 @@ func testAccResourceConnectorGcpKMS_manual_default(id string, name string) strin
 			description = "test"
 			tags = ["foo:bar"]
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
