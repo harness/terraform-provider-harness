@@ -522,7 +522,7 @@ func testProjectDataSourceConnectorGcpKMS_manual(name string) string {
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
@@ -804,7 +804,7 @@ func testAccDataSourceConnectorGcpKMS_manual_default(name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
