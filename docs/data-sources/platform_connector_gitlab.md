@@ -38,6 +38,7 @@ data "harness_platform_connector_gitlab" "example" {
 - `credentials` (List of Object) Credentials to use for the connection. (see [below for nested schema](#nestedatt--credentials))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
 - `url` (String) URL of the gitlab repository or account.
@@ -76,5 +77,3 @@ Read-Only:
 Read-Only:
 
 - `ssh_key_ref` (String)
-
-
