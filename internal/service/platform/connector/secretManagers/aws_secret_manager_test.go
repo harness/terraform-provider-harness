@@ -1385,31 +1385,80 @@ func testProjectResourceConnectorAwsSM_oidc_delegate(id string, name string) str
 
 func testAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, name string) string {
 	return fmt.Sprintf(`
-    resource "harness_platform_connector_aws_secret_manager" "test" {
-      id                  = "%s"
-      identifier          = "%s"
-      name                = "%s"
-      description         = "test"
-      tags                = ["test"]
-      delegate_selectors  = ["test"]
-      secret_name_prefix  = "test"
-      use_put_secret      = "false"
-      force_delete_without_recovery        = true
-    }
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_aws_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_name_prefix = "test"
+			region = "us-east-1"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				manual {
+					secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+					access_key_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+
+			force_delete_without_recovery = true
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
 `, id, id, name)
 }
 
 func testAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, name string) string {
 	return fmt.Sprintf(`
-resource "harness_platform_connector_aws_secret_manager" "test" {
-  id                          = "%s"
-  identifier                  = "%s"
-  name                        = "%s"
-  description                 = "test"
-  tags                        = ["test"]
-  delegate_selectors          = ["test"]
-  secret_name_prefix          = "test"
-  recovery_window_in_days     = 15
-}
-`, id, id, name)
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_aws_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_name_prefix = "test"
+			region = "us-east-1"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				manual {
+					secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+					access_key_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+
+			recovery_window_in_days = 15
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+	`, id, name)
 }
