@@ -1420,7 +1420,7 @@ func testAccResourceConnectorAwsSM_manualWithForceDeleteWithoutRecovery(id, name
 			depends_on = [harness_platform_secret_text.test]
 			destroy_duration = "4s"
 		}
-`, id, id, name)
+`, id, name)
 }
 
 func testAccResourceConnectorAwsSM_manualWithRecoveryWindow(id, name string) string {
