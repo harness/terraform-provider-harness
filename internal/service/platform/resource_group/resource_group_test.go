@@ -741,3 +741,38 @@ func testProjectResourceResourceGroupTagsAttributeFilter(id string, name string,
 		}
 	`, id, name, accountId)
 }
+
+func testAccResourceGroup_InvalidPipelineNames(name string, accountId string, orgId string, projectId string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_resource_group" "test" {
+	identifier  = "%[1]s"
+	name        = "%[1]s"
+	description = "test"
+	tags        = ["foo:bar"]
+
+	org_id      = "%[3]s"
+	project_id  = "%[4]s"
+	account_id  = "%[2]s"
+	allowed_scope_levels = ["project"]
+
+	included_scopes {
+		filter     = "EXCLUDING_CHILD_SCOPES"
+		account_id = "%[2]s"
+		org_id     = "%[3]s"
+		project_id = "%[4]s"
+	}
+
+	resource_filter {
+		include_all_resources = false
+		resources {
+			resource_type = "ENVIRONMENT"
+			identifiers = [
+				"invalid-env", 
+				"QA",
+				"Prod-1"
+			]
+		}
+	}
+}
+`, name, accountId, orgId, projectId)
+}

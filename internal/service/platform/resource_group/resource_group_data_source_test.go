@@ -3,6 +3,7 @@ package resource_group_test
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -86,6 +87,61 @@ func TestAccDataSourceResourceGroupOrgLevel(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccDataSourceResourceGroup_InvalidEnvironmentNames(t *testing.T) {
+	var (
+		name      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		accountId = os.Getenv("HARNESS_ACCOUNT_ID")
+		orgId     = "default"
+		projectId = "ResourceGroupTest"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceGroup_InvalidEnvironmentNames(name, accountId, orgId, projectId),
+				ExpectError: regexp.MustCompile(`The following environments are invalid`),
+			},
+		},
+	})
+}
+
+func testAccResourceGroup_InvalidEnvironmentNames(name string, accountId string, orgId string, projectId string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_resource_group" "test" {
+	identifier  = "%[1]s"
+	name        = "%[1]s"
+	description = "test"
+	tags        = ["foo:bar"]
+
+	org_id      = "%[3]s"
+	project_id  = "%[4]s"
+	account_id  = "%[2]s"
+	allowed_scope_levels = ["project"]
+
+	included_scopes {
+		filter     = "EXCLUDING_CHILD_SCOPES"
+		account_id = "%[2]s"
+		org_id     = "%[3]s"
+		project_id = "%[4]s"
+	}
+
+	resource_filter {
+		include_all_resources = false
+		resources {
+			resource_type = "ENVIRONMENT"
+			identifiers = [
+				"invalid-env", 
+				"QA",
+				"Prod-1"
+			]
+		}
+	}
+}
+`, name, accountId, orgId, projectId)
 }
 
 func testAccDataSourceResourceGroup(name string, accountId string) string {
