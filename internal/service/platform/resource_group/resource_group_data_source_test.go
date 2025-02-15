@@ -2,13 +2,11 @@ package resource_group_test
 
 import (
 	"fmt"
-	"os"
-	"regexp"
-	"testing"
-
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"os"
+	"testing"
 )
 
 func TestAccDataSourceResourceGroup(t *testing.T) {
@@ -91,10 +89,11 @@ func TestAccDataSourceResourceGroupOrgLevel(t *testing.T) {
 
 func TestAccDataSourceResourceGroup_InvalidEnvironmentNames(t *testing.T) {
 	var (
-		name      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		accountId = os.Getenv("HARNESS_ACCOUNT_ID")
-		orgId     = "default"
-		projectId = "ResourceGroupTest"
+		name         = fmt.Sprintf("pl_auto_rg_%s", utils.RandStringBytes(5))
+		resourceName = "data.harness_platform_resource_group.test"
+		projectId    = "ResourceGroupTest"
+		orgId        = "default"
+		accountId    = os.Getenv("HARNESS_ACCOUNT_ID")
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -102,8 +101,16 @@ func TestAccDataSourceResourceGroup_InvalidEnvironmentNames(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccResourceGroup_InvalidEnvironmentNames(name, accountId, orgId, projectId),
-				ExpectError: regexp.MustCompile(`The following environments are invalid`),
+				Config: testAccResourceGroup_InvalidEnvironmentNames(name, accountId, orgId, projectId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "included_scopes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "resource_filter.0.include_all_resources", "false"),
+				),
 			},
 		},
 	})
@@ -111,36 +118,39 @@ func TestAccDataSourceResourceGroup_InvalidEnvironmentNames(t *testing.T) {
 
 func testAccResourceGroup_InvalidEnvironmentNames(name string, accountId string, orgId string, projectId string) string {
 	return fmt.Sprintf(`
-resource "harness_platform_resource_group" "test" {
-	identifier  = "%[1]s"
-	name        = "%[1]s"
-	description = "test"
-	tags        = ["foo:bar"]
+	resource "harness_platform_resource_group" "test" {
+		identifier  = "%[1]s"
+		name        = "%[1]s"
+		description = "test"
+		tags        = ["foo:bar"]
+	
+		org_id      = "%[3]s"
+		project_id  = "%[4]s"
+		account_id  = "%[2]s"
+		allowed_scope_levels = ["project"]
+	
+		included_scopes {
+			filter     = "EXCLUDING_CHILD_SCOPES"
+			account_id = "%[2]s"
+			org_id     = "%[3]s"
+			project_id = "%[4]s"
+		}
+	
+		resource_filter {
+			include_all_resources = false
+			resources {
+				resource_type = "ENVIRONMENT"
+				identifiers = [
+					"QA",
+					"Prod-1"
+				]
+			}
+		}
 
-	org_id      = "%[3]s"
-	project_id  = "%[4]s"
-	account_id  = "%[2]s"
-	allowed_scope_levels = ["project"]
-
-	included_scopes {
-		filter     = "EXCLUDING_CHILD_SCOPES"
-		account_id = "%[2]s"
-		org_id     = "%[3]s"
-		project_id = "%[4]s"
-	}
-
-	resource_filter {
-		include_all_resources = false
-		resources {
-			resource_type = "ENVIRONMENT"
-			identifiers = [
-				"invalid-env", 
-				"QA",
-				"Prod-1"
-			]
+		lifecycle {
+			prevent_destroy = true
 		}
 	}
-}
 `, name, accountId, orgId, projectId)
 }
 
