@@ -69,6 +69,13 @@ func testAccDataSourceWorkspace(id string, name string) string {
 			}
 		}
 
+		resource "harness_platform_infra_variable_set" "test" {
+			identifier              = "%[1]s"
+			name                    = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+		}		
+
 		resource "harness_platform_workspace" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -83,6 +90,7 @@ func testAccDataSourceWorkspace(id string, name string) string {
 			cost_estimation_enabled = true
 			provider_connector      = "account.${harness_platform_connector_github.test.id}"
 			repository_connector    = "account.${harness_platform_connector_github.test.id}"
+			variable_sets = [harness_platform_infra_variable_set.test.id]
   		}
 
 		data "harness_platform_workspace" "test" {

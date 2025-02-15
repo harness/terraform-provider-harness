@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/harness/terraform-provider-harness/internal/utils"
+
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -198,6 +200,14 @@ func ResourceWorkspace() *schema.Resource {
 				Type:        schema.TypeMap,
 				Optional:    true,
 			},
+			"variable_sets": {
+				Description: "Variable sets to use.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 	}
 
@@ -319,6 +329,7 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 	d.Set("repository_path", ws.RepositoryPath)
 	d.Set("repository_connector", ws.RepositoryConnector)
 	d.Set("cost_estimation_enabled", ws.CostEstimationEnabled)
+	d.Set("variable_sets", ws.VariableSets)
 	var environmentVariables []interface{}
 	for _, v := range ws.EnvironmentVariables {
 		environmentVariables = append(environmentVariables, map[string]string{
@@ -410,6 +421,10 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 	}
 	ws.DefaultPipelines = defaultPipelines
 
+	if varSets := d.Get("variable_sets").([]interface{}); len(varSets) > 0 {
+		ws.VariableSets = utils.InterfaceSliceToStringSlice(varSets)
+	}
+
 	return ws, nil
 }
 
@@ -465,6 +480,10 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 		return nextgen.IacmCreateWorkspaceRequestBody{}, err
 	}
 	ws.DefaultPipelines = defaultPipelines
+
+	if varSets := d.Get("variable_sets").([]interface{}); len(varSets) > 0 {
+		ws.VariableSets = utils.InterfaceSliceToStringSlice(varSets)
+	}
 
 	return ws, nil
 }
