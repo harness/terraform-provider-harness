@@ -503,6 +503,165 @@ func (a *FeatureFlagsApiService) DeleteFeatureFlag(ctx context.Context, identifi
 }
 
 /*
+FeatureFlagsApiService Restores an archived Feature Flag
+Restores a Feature Flag in the Project
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier
+ * @param orgIdentifier Organization Identifier
+ * @param projectIdentifier Project Identifier
+ * @param envIdentifier Environment Identifier
+ * @param flagIdentifier Flag Identifier
+ * @param optional nil or *FeatureFlagsApiRestoreFeatureFlagOpts - Optional Parameters:
+     * @param "CommitMsg" (optional.String) - Commit message for git sync
+
+*/
+
+type FeatureFlagsApiRestoreFeatureFlagOpts struct {
+	CommitMsg optional.String
+}
+
+func (a *FeatureFlagsApiService) RestoreFeatureFlag(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, envIdentifier string, flagIdentifier string, localVarOptionals *FeatureFlagsApiRestoreFeatureFlagOpts) (*http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Post")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/cf/admin/features/{identifier}/restore"
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", flagIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
+	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
+	localVarQueryParams.Add("environmentIdentifier", parameterToString(envIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.CommitMsg.IsSet() {
+		localVarQueryParams.Add("commitMsg", parameterToString(localVarOptionals.CommitMsg.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"text/plain"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v CfError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 401 {
+			var v CfError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 403 {
+			var v CfError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 409 {
+			var v CfError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 424 {
+			var v CfError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v CfError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		return localVarHttpResponse, newErr
+	}
+
+	return localVarHttpResponse, nil
+}
+
+/*
 FeatureFlagsApiService Returns all Feature Flags for the project
 Returns all the Feature Flag details for the given project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
