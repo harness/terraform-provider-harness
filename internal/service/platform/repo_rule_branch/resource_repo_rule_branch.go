@@ -249,7 +249,7 @@ func convertToEnumMergeMethod(s []interface{}) ([]code.EnumMergeMethod, error) {
 }
 
 func convertToInt32Slice(i []interface{}) []int32 {
-	list := make([]int32, len(i))
+	list := make([]int32, 0, len(i))
 
 	for _, v := range i {
 		list = append(list, v.(int32))
@@ -259,7 +259,7 @@ func convertToInt32Slice(i []interface{}) []int32 {
 }
 
 func convertSliceToString(i []interface{}) []string {
-	list := make([]string, len(i))
+	list := make([]string, 0, len(i))
 
 	for _, v := range i {
 		list = append(list, v.(string))
