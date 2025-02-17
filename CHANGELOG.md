@@ -1,3 +1,13 @@
+# 0.35.5 (February 17,2025) 
+
+FEATURES:
+
+* **New Resource:** `resource/harness_platform_infra_variable_set add iacm variable set resource to be used by multiple workspaces` ([#1173](https://github.com/harness/terraform-provider-harness/issues/1173))
+
+ENHANCEMENTS:
+
+* harness_platform_connector_jdbc: adding new ServiceAccount auth support ([#1160](https://github.com/harness/terraform-provider-harness/issues/1160))
+
 # 0.35.4 (February 11,2025) 
 
 # 0.35.3 (February 03,2025) 
