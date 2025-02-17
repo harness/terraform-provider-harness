@@ -1,0 +1,3 @@
+```release-note:enhancement
+harness_platform_connector_jdbc: adding new ServiceAccount auth support
+```
