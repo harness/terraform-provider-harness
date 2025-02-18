@@ -13,5 +13,5 @@ type UpstreamConfig struct {
 	Auth     *OneOfUpstreamConfigAuth `json:"auth,omitempty"`
 	AuthType *AuthType                `json:"authType"`
 	Source   string                   `json:"source,omitempty"`
-	Url      string                   `json:"url,omitempty"`
+	Url      string                   `json:"url"`
 }

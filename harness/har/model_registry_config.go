@@ -11,4 +11,5 @@ package har
 // SubConfig specific for Virtual or Upstream Registry
 type RegistryConfig struct {
 	Type_ *RegistryType `json:"type"`
+	OneOfRegistryConfig
 }
