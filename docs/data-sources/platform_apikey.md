@@ -26,22 +26,22 @@ data "harness_platform_apikey" "test" {
 
 ## Schema
 
-### Required Arguments
+### Required
 
-* `account_id` - (String) Account Identifier for the Entity
-* `apikey_type` - (String) Type of the API Key
-* `identifier` - (String) Unique identifier of the resource.
-* `name` - (String) Name of the resource.
-* `parent_id` - (String) Parent Entity Identifier of the API Key
+- `account_id` (String) Account Identifier for the Entity
+- `apikey_type` (String) Type of the API Key
+- `identifier` (String) Unique identifier of the resource.
+- `name` (String) Name of the resource.
+- `parent_id` (String) Parent Entity Identifier of the API Key
 
-### Optional Arguments
+### Optional
 
-* `description` - (String) Description of the resource.
-* `tags` - (String) Tags to associate with the resource.
-* `default_time_to_expire_token` - (String) Default expiration time of the Token within API Key
-* `org_id` - (String) Unique identifier of the organization.
-* `project_id` - (String) Unique identifier of the project.
+- `description` (String) Description of the resource.
+- `tags` (Set of String) Tags to associate with the resource.
+- `default_time_to_expire_token` (Number) Default expiration time of the Token within API Key
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
-### Read-Only Attributes
+### Read-Only
 
-* `id` - The ID of this resource.
+- `id` (String) The ID of this resource.
