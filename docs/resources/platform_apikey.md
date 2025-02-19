@@ -45,36 +45,37 @@ resource "harness_platform_apikey" "project_level" {
 
 ## Schema
 
-### Required Arguments
+### Required
 
-* `identifier` - (String) Unique identifier of the API Key.
-* `name` - (String) Name of the API Key.
-* `parent_id` - (String) Parent entity identifier of the API Key.
-* `apikey_type` - (String) Type of the API Key. Valid value: `USER`.
-* `account_id` - (String) Harness account identifier.
+- `account_id` (String) Account Identifier for the Entity
+- `apikey_type` (String) Type of the API Key
+- `identifier` (String) Unique identifier of the resource.
+- `name` (String) Name of the resource.
+- `parent_id` (String) Parent Entity Identifier of the API Key
 
-### Optional Arguments
+### Optional
 
-* `org_id` - (String) Organization identifier. Required for organization-level and project-level API Keys.
-* `project_id` - (String) Project identifier. Required for project-level API Keys.
-* `description` - (String) Description of the API Key.
-* `tags` - (Set of String) Tags to associate with the API Key.
-* `default_time_to_expire_token` - (Number) Default expiration time (in milliseconds) for tokens generated using this API Key.
+- `description` (String) Description of the resource.
+- `tags` (Set of String) Tags to associate with the resource.
+- `default_time_to_expire_token` (Number) Default expiration time of the Token within API Key
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
-### Read-Only Attributes
+### Read-Only
 
-* `id` - (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import account-level API Key
-terraform import harness_platform_apikey.account_level <parent_id>/<apikey_id>/<apikey_type>
+# Import account level apikey
+terraform import harness_platform_apikey <parent_id>/<apikey_id>/<apikey_type>
 
-# Import organization-level API Key
-terraform import harness_platform_apikey.org_level <org_id>/<parent_id>/<apikey_id>/<apikey_type>
+# Import org level apikey
+terraform import harness_platform_apikey <org_id>/<parent_id>/<apikey_id>/<apikey_type>
 
-# Import project-level API Key
-terraform import harness_platform_apikey.project_level <org_id>/<project_id>/<parent_id>/<apikey_id>/<apikey_type>
+# Import project level apikey
+terraform import harness_platform_apikey <org_id>/<project_id>/<parent_id>/<apikey_id>/<apikey_type>
+```
