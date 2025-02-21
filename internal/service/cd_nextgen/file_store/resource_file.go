@@ -46,7 +46,7 @@ func ResourceFileStoreNodeFile() *schema.Resource {
 				Computed:    true,
 			},
 			"file_usage": {
-				Description: fmt.Sprintf("File usage. Valid options are %s", strings.Join(nextgen.FileUsageValues, ", ")),
+				Description: fmt.Sprintf("File usage. Valid options are %s", strings.Join(ValidFileUsages(), ", ")),
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
@@ -266,6 +266,11 @@ func buildFileStoreApiFileUpdateRequest(d *schema.ResourceData) (*nextgen.FileSt
 		tagsJson = buildTagsJson(tags)
 	}
 
+	fileUsageStr := d.Get(fileUsage).(string)
+	if !isValidFileUsage(fileUsageStr) {
+		return nil, fmt.Errorf("invalid fileUsage: %s, valid options are %s", fileUsage, strings.Join(ValidFileUsages(), ", "))
+	}
+
 	update := &nextgen.FileStoreApiUpdateOpts{
 		OrgIdentifier:     getOptionalString(d.Get(orgId)),
 		ProjectIdentifier: getOptionalString(d.Get(projectId)),
@@ -339,4 +344,24 @@ func getFileContent(filePath interface{}, fileContent interface{}) (optional.Int
 	}
 
 	return optional.NewInterface(fileContent), nil
+}
+
+func ValidFileUsages() []string {
+	var validFileUsages []string
+	for _, value := range nextgen.FileUsageValues {
+		if value != "," {
+			validFileUsages = append(validFileUsages, value)
+		}
+	}
+	return validFileUsages
+}
+
+func isValidFileUsage(fileUsage string) bool {
+	validFileUsages := ValidFileUsages()
+	for _, valid := range validFileUsages {
+		if valid == fileUsage {
+			return true
+		}
+	}
+	return false
 }
