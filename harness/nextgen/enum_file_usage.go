@@ -7,14 +7,14 @@ var FileUsages = struct {
 	Config       FileUsage
 	Script       FileUsage
 }{
-	ManifestFile: "ManifestFile",
-	Config:       "Config",
-	Script:       "Script",
+	ManifestFile: "MANIFEST_FILE",
+	Config:       "CONFIG",
+	Script:       "SCRIPT",
 }
 
 var FileUsageValues = []string{
-	FileUsages.ManifestFile.String(),
-	FileUsages.Config.String(),
+	FileUsages.ManifestFile.String(), ",",
+	FileUsages.Config.String(), ",",
 	FileUsages.Script.String(),
 }
 
