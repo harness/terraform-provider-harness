@@ -76,14 +76,45 @@ func ResourceRegistry() *schema.Resource {
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
+							ConflictsWith: []string{
+								"config.0.source",
+								"config.0.url",
+								"config.0.auth",
+								"config.0.auth_type",
+							},
 						},
 
 						// Upstream Config
+						"source": {
+							Description: "Source of the upstream (only for UPSTREAM type)",
+							Type:        schema.TypeString,
+							Optional:    true,
+							ConflictsWith: []string{
+								"config.0.upstream_proxies",
+							},
+						},
+						"url": {
+							Description: "URL of the upstream (required if type=UPSTREAM & package_type=HELM)",
+							Type:        schema.TypeString,
+							Optional:    true,
+							ValidateFunc: validation.All(
+								validation.StringMatch(
+									regexp.MustCompile(`^https?://`),
+									"URL must start with http:// or https://",
+								),
+							),
+							ConflictsWith: []string{
+								"config.0.upstream_proxies",
+							},
+						},
 						"auth": {
 							Description: "Authentication configuration for UPSTREAM registry type",
 							Type:        schema.TypeList,
 							Optional:    true,
 							MaxItems:    1,
+							ConflictsWith: []string{
+								"config.0.upstream_proxies",
+							},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"auth_type": {
@@ -115,48 +146,16 @@ func ResourceRegistry() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"UserPassword", "Anonymous"}, false),
-						},
-						"source": {
-							Description: "Source of the upstream (only for UPSTREAM type)",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
-						"url": {
-							Description: "URL of the upstream (required if type=UPSTREAM & package_type=HELM)",
-							Type:        schema.TypeString,
-							Optional:    true,
-							ValidateFunc: validation.All(
-								validation.StringMatch(
-									regexp.MustCompile(`^https?://`),
-									"URL must start with http:// or https://",
-								),
-							),
+							ConflictsWith: []string{
+								"config.0.upstream_proxies",
+							},
 						},
 					},
 					CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, i interface{}) error {
 						configType := d.Get("config.0.type").(string)
 						packageType := d.Get("package_type").(string)
 
-						if configType == "VIRTUAL" {
-							// Validate Virtual Config
-							if _, ok := d.GetOk("config.0.source"); ok {
-								return fmt.Errorf("'source' is not allowed for VIRTUAL registry type")
-							}
-							if _, ok := d.GetOk("config.0.url"); ok {
-								return fmt.Errorf("'url' is not allowed for VIRTUAL registry type")
-							}
-							if _, ok := d.GetOk("config.0.auth"); ok {
-								return fmt.Errorf("'auth' is not allowed for VIRTUAL registry type")
-							}
-							if _, ok := d.GetOk("config.0.auth_type"); ok {
-								return fmt.Errorf("'auth_type' is not allowed for VIRTUAL registry type")
-							}
-						} else if configType == "UPSTREAM" {
-							// Validate Upstream Config
-							if _, ok := d.GetOk("config.0.upstream_proxies"); ok {
-								return fmt.Errorf("'upstream_proxies' is not allowed for UPSTREAM registry type")
-							}
-
+						if configType == "UPSTREAM" {
 							// Source is required for UPSTREAM
 							if source, ok := d.GetOk("config.0.source"); !ok || source.(string) == "" {
 								return fmt.Errorf("'source' is required for UPSTREAM registry type")
