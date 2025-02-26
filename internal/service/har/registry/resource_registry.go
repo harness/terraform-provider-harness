@@ -9,8 +9,9 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"net/http"
-	"strings"
+	"regexp"
 )
 
 func ResourceRegistry() *schema.Resource {
@@ -48,28 +49,26 @@ func ResourceRegistry() *schema.Resource {
 				Description: "Type of package (DOCKER, HELM, etc.)",
 				Type:        schema.TypeString,
 				Required:    true,
+				ValidateFunc: validation.StringInSlice([]string{
+					"DOCKER",
+					"HELM",
+				}, false),
 			},
 			"config": {
 				Description: "Configuration for the registry",
 				Type:        schema.TypeList,
 				Required:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
 							Description: "Type of registry (VIRTUAL or UPSTREAM)",
 							Type:        schema.TypeString,
 							Required:    true,
-							ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
-								v := val.(string)
-								validTypes := map[string]bool{
-									"VIRTUAL":  true,
-									"UPSTREAM": true,
-								}
-								if !validTypes[v] {
-									errs = append(errs, fmt.Errorf("config type must be either 'VIRTUAL' or 'UPSTREAM', got: %s", v))
-								}
-								return
-							},
+							ValidateFunc: validation.StringInSlice([]string{
+								"VIRTUAL",
+								"UPSTREAM",
+							}, false),
 						},
 						// Virtual Config
 						"upstream_proxies": {
@@ -84,12 +83,14 @@ func ResourceRegistry() *schema.Resource {
 							Description: "Authentication configuration for UPSTREAM registry type",
 							Type:        schema.TypeList,
 							Optional:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"auth_type": {
-										Description: "Type of authentication (UserPassword)",
-										Type:        schema.TypeString,
-										Required:    true,
+										Description:  "Type of authentication (UserPassword, Anonymous)",
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.StringInSlice([]string{"UserPassword", "Anonymous"}, false),
 									},
 									"secret_identifier": {
 										Description: "Secret identifier for UserPassword auth type",
@@ -102,7 +103,7 @@ func ResourceRegistry() *schema.Resource {
 										Optional:    true,
 									},
 									"user_name": {
-										Description: "User name  for UserPassword auth type",
+										Description: "User name for UserPassword auth type",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -110,9 +111,10 @@ func ResourceRegistry() *schema.Resource {
 							},
 						},
 						"auth_type": {
-							Description: "Type of authentication for UPSTREAM registry type (UserPassword, Anonymous)",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:  "Type of authentication for UPSTREAM registry type (UserPassword, Anonymous)",
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"UserPassword", "Anonymous"}, false),
 						},
 						"source": {
 							Description: "Source of the upstream (only for UPSTREAM type)",
@@ -123,15 +125,68 @@ func ResourceRegistry() *schema.Resource {
 							Description: "URL of the upstream (required if type=UPSTREAM & package_type=HELM)",
 							Type:        schema.TypeString,
 							Optional:    true,
-							ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
-								v, _ := val.(string)
-								// Validate URL format (basic check)
-								if v != "" && !strings.HasPrefix(v, "http://") && !strings.HasPrefix(v, "https://") {
-									errs = append(errs, fmt.Errorf("invalid URL format, must start with http:// or https://"))
-								}
-								return
-							},
+							ValidateFunc: validation.All(
+								validation.StringMatch(
+									regexp.MustCompile(`^https?://`),
+									"URL must start with http:// or https://",
+								),
+							),
 						},
+					},
+					CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, i interface{}) error {
+						configType := d.Get("config.0.type").(string)
+						packageType := d.Get("package_type").(string)
+
+						if configType == "VIRTUAL" {
+							// Validate Virtual Config
+							if _, ok := d.GetOk("config.0.source"); ok {
+								return fmt.Errorf("'source' is not allowed for VIRTUAL registry type")
+							}
+							if _, ok := d.GetOk("config.0.url"); ok {
+								return fmt.Errorf("'url' is not allowed for VIRTUAL registry type")
+							}
+							if _, ok := d.GetOk("config.0.auth"); ok {
+								return fmt.Errorf("'auth' is not allowed for VIRTUAL registry type")
+							}
+							if _, ok := d.GetOk("config.0.auth_type"); ok {
+								return fmt.Errorf("'auth_type' is not allowed for VIRTUAL registry type")
+							}
+						} else if configType == "UPSTREAM" {
+							// Validate Upstream Config
+							if _, ok := d.GetOk("config.0.upstream_proxies"); ok {
+								return fmt.Errorf("'upstream_proxies' is not allowed for UPSTREAM registry type")
+							}
+
+							// Source is required for UPSTREAM
+							if source, ok := d.GetOk("config.0.source"); !ok || source.(string) == "" {
+								return fmt.Errorf("'source' is required for UPSTREAM registry type")
+							}
+
+							// URL is required for HELM package type
+							if packageType == "HELM" {
+								if url, ok := d.GetOk("config.0.url"); !ok || url.(string) == "" {
+									return fmt.Errorf("'url' is required for UPSTREAM registry type with HELM package type")
+								}
+							}
+
+							// Validate auth configuration
+							if auth, ok := d.GetOk("config.0.auth"); ok {
+								authConfig := auth.([]interface{})[0].(map[string]interface{})
+								authType := authConfig["auth_type"].(string)
+
+								if authType == "UserPassword" {
+									// Check required fields for UserPassword auth
+									if userName, ok := authConfig["user_name"].(string); !ok || userName == "" {
+										return fmt.Errorf("'user_name' is required for UserPassword authentication")
+									}
+									if secretId, ok := authConfig["secret_identifier"].(string); !ok || secretId == "" {
+										return fmt.Errorf("'secret_identifier' is required for UserPassword authentication")
+									}
+								}
+							}
+						}
+
+						return nil
 					},
 				},
 			},
