@@ -152,22 +152,22 @@ func (a *AgentsApiService) AgentServiceForServerCreate(ctx context.Context, body
 }
 
 /*
-AgentsApiService
-Delete agents.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param optional nil or *AgentsApiAgentServiceForServerDeleteOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "Name" (optional.String) -
-     * @param "Type_" (optional.String) -
-     * @param "Tags" (optional.Interface of []string) -
-     * @param "SearchTerm" (optional.String) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "PageIndex" (optional.Int32) -
-     * @param "Scope" (optional.String) -
-@return V1Agent
+ AgentsApiService
+ Delete agents.
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param identifier
+  * @param optional nil or *AgentsApiAgentServiceForServerDeleteOpts - Optional Parameters:
+	  * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+	  * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+	  * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+	  * @param "Name" (optional.String) -
+	  * @param "Type_" (optional.String) -
+	  * @param "Tags" (optional.Interface of []string) -
+	  * @param "SearchTerm" (optional.String) -
+	  * @param "PageSize" (optional.Int32) -
+	  * @param "PageIndex" (optional.Int32) -
+	  * @param "Scope" (optional.String) -
+ @return V1Agent
 */
 
 type AgentsApiAgentServiceForServerDeleteOpts struct {
@@ -327,23 +327,23 @@ func (a *AgentsApiService) AgentServiceForServerDelete(ctx context.Context, iden
 }
 
 /*
-AgentsApiService
-Get agents.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountIdentifier Account Identifier for the Entity.
- * @param optional nil or *AgentsApiAgentServiceForServerGetOpts - Optional Parameters:
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "Name" (optional.String) -
-     * @param "Type_" (optional.String) -
-     * @param "Tags" (optional.Interface of []string) -
-     * @param "SearchTerm" (optional.String) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "PageIndex" (optional.Int32) -
-     * @param "Scope" (optional.String) -
-     * @param "WithCredentials" (optional.Bool) -  Applicable when trying to retrieve an agent. Set to true to include the credentials for the agent in the response. (Private key may not be included in response if agent is already connected to harness). NOTE: Setting this to true requires the user to have edit permissions on Agent.
-@return V1Agent
+ AgentsApiService
+ Get agents.
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param identifier
+  * @param accountIdentifier Account Identifier for the Entity.
+  * @param optional nil or *AgentsApiAgentServiceForServerGetOpts - Optional Parameters:
+	  * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+	  * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+	  * @param "Name" (optional.String) -
+	  * @param "Type_" (optional.String) -
+	  * @param "Tags" (optional.Interface of []string) -
+	  * @param "SearchTerm" (optional.String) -
+	  * @param "PageSize" (optional.Int32) -
+	  * @param "PageIndex" (optional.Int32) -
+	  * @param "Scope" (optional.String) -
+	  * @param "WithCredentials" (optional.Bool) -  Applicable when trying to retrieve an agent. Set to true to include the credentials for the agent in the response. (Private key may not be included in response if agent is already connected to harness). NOTE: Setting this to true requires the user to have edit permissions on Agent.
+ @return V1Agent
 */
 
 type AgentsApiAgentServiceForServerGetOpts struct {
@@ -506,25 +506,25 @@ func (a *AgentsApiService) AgentServiceForServerGet(ctx context.Context, identif
 }
 
 /*
-AgentsApiService
-GetDeployYaml returns deployment yamls for agents.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param agentIdentifier Agent identifier for entity.
- * @param optional nil or *AgentsApiAgentServiceForServerGetDeployYamlOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "Namespace" (optional.String) -
-     * @param "DisasterRecoveryIdentifier" (optional.String) -  Disaster Recovery Identifier for entity.
-     * @param "SkipCrds" (optional.Bool) -
-     * @param "CaData" (optional.String) -  Certificate chain for the agent, must be base64 encoded.
-     * @param "ProxyHttp" (optional.String) -
-     * @param "ProxyHttps" (optional.String) -
-     * @param "ProxyUsername" (optional.String) -
-     * @param "ProxyPassword" (optional.String) -
-     * @param "ProxySkipSSLVerify" (optional.Bool) -
-     * @param "PrivateKey" (optional.String) -
-@return string
+ AgentsApiService
+ GetDeployYaml returns deployment yamls for agents.
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param agentIdentifier Agent identifier for entity.
+  * @param optional nil or *AgentsApiAgentServiceForServerGetDeployYamlOpts - Optional Parameters:
+	  * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+	  * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+	  * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+	  * @param "Namespace" (optional.String) -
+	  * @param "DisasterRecoveryIdentifier" (optional.String) -  Disaster Recovery Identifier for entity.
+	  * @param "SkipCrds" (optional.Bool) -
+	  * @param "CaData" (optional.String) -  Certificate chain for the agent, must be base64 encoded.
+	  * @param "ProxyHttp" (optional.String) -
+	  * @param "ProxyHttps" (optional.String) -
+	  * @param "ProxyUsername" (optional.String) -
+	  * @param "ProxyPassword" (optional.String) -
+	  * @param "ProxySkipSSLVerify" (optional.Bool) -
+	  * @param "PrivateKey" (optional.String) -
+ @return string
 */
 
 type AgentsApiAgentServiceForServerGetDeployYamlOpts struct {
@@ -650,6 +650,189 @@ func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Contex
 		//err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 		if err == nil {
 			return string(localVarBody), localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v string
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ AgentsApiService
+ GetOperatorYaml returns operator yaml for deploying the agents.
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param agentIdentifier Agent identifier for entity.
+  * @param optional nil or *AgentsApiAgentServiceForServerGetOperatorYamlOpts - Optional Parameters:
+	  * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+	  * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+	  * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+	  * @param "Namespace" (optional.String) -
+	  * @param "DisasterRecoveryIdentifier" (optional.String) -  Disaster Recovery Identifier for entity.
+	  * @param "SkipCrds" (optional.Bool) -
+	  * @param "CaData" (optional.String) -  Certificate chain for the agent, must be base64 encoded.
+	  * @param "ProxyHttp" (optional.String) -
+	  * @param "ProxyHttps" (optional.String) -
+	  * @param "ProxyUsername" (optional.String) -
+	  * @param "ProxyPassword" (optional.String) -
+	  * @param "ProxySkipSSLVerify" (optional.Bool) -
+	  * @param "PrivateKey" (optional.String) -
+ @return string
+*/
+
+type AgentsApiAgentServiceForServerGetOperatorYamlOpts struct {
+	AccountIdentifier          optional.String
+	OrgIdentifier              optional.String
+	ProjectIdentifier          optional.String
+	Namespace                  optional.String
+	DisasterRecoveryIdentifier optional.String
+	SkipCrds                   optional.Bool
+	CaData                     optional.String
+	ProxyHttp                  optional.String
+	ProxyHttps                 optional.String
+	ProxyUsername              optional.String
+	ProxyPassword              optional.String
+	ProxySkipSSLVerify         optional.Bool
+	PrivateKey                 optional.String
+}
+
+func (a *AgentsApiService) AgentServiceForServerGetOperatorYaml(ctx context.Context, agentIdentifier string, localVarOptionals *AgentsApiAgentServiceForServerGetOperatorYamlOpts) (string, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue string
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/api/v1/agents/{agentIdentifier}/operator/yaml"
+	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
+		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Namespace.IsSet() {
+		localVarQueryParams.Add("namespace", parameterToString(localVarOptionals.Namespace.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.DisasterRecoveryIdentifier.IsSet() {
+		localVarQueryParams.Add("disasterRecoveryIdentifier", parameterToString(localVarOptionals.DisasterRecoveryIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.SkipCrds.IsSet() {
+		localVarQueryParams.Add("skipCrds", parameterToString(localVarOptionals.SkipCrds.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.CaData.IsSet() {
+		localVarQueryParams.Add("caData", parameterToString(localVarOptionals.CaData.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxyHttp.IsSet() {
+		localVarQueryParams.Add("proxy.http", parameterToString(localVarOptionals.ProxyHttp.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxyHttps.IsSet() {
+		localVarQueryParams.Add("proxy.https", parameterToString(localVarOptionals.ProxyHttps.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxyUsername.IsSet() {
+		localVarQueryParams.Add("proxy.username", parameterToString(localVarOptionals.ProxyUsername.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxyPassword.IsSet() {
+		localVarQueryParams.Add("proxy.password", parameterToString(localVarOptionals.ProxyPassword.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProxySkipSSLVerify.IsSet() {
+		localVarQueryParams.Add("proxy.skipSSLVerify", parameterToString(localVarOptionals.ProxySkipSSLVerify.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.PrivateKey.IsSet() {
+		localVarQueryParams.Add("privateKey", parameterToString(localVarOptionals.PrivateKey.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		if localVarHttpResponse.Header.Get("Content-Type") == "application/yaml" {
+			return string(localVarBody), localVarHttpResponse, err
+		}
+		if err := a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type")); err != nil {
+			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
@@ -902,24 +1085,24 @@ func (a *AgentsApiService) AgentServiceForServerPostDeployYaml(ctx context.Conte
 }
 
 /*
-AgentsApiService
-List agents.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param type_ MANAGED_ARGO_PROVIDER
- * @param optional nil or *AgentsApiAgentServiceForServerListOpts - Optional Parameters:
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "Identifier" (optional.String) -
-     * @param "Name" (optional.String) -
-     * @param "Tags" (optional.Interface of []string) -
-     * @param "SearchTerm" (optional.String) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "PageIndex" (optional.Int32) -
-     * @param "Scope" (optional.String) -
-     * @param "MetadataOnly" (optional.Bool) -
-     * @param "IgnoreScope" (optional.Bool) -
-@return V1AgentList
+ AgentsApiService
+ List agents.
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param accountIdentifier Account Identifier for the Entity.
+  * @param type_ MANAGED_ARGO_PROVIDER
+  * @param optional nil or *AgentsApiAgentServiceForServerListOpts - Optional Parameters:
+	  * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+	  * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+	  * @param "Identifier" (optional.String) -
+	  * @param "Name" (optional.String) -
+	  * @param "Tags" (optional.Interface of []string) -
+	  * @param "SearchTerm" (optional.String) -
+	  * @param "PageSize" (optional.Int32) -
+	  * @param "PageIndex" (optional.Int32) -
+	  * @param "Scope" (optional.String) -
+	  * @param "MetadataOnly" (optional.Bool) -
+	  * @param "IgnoreScope" (optional.Bool) -
+ @return V1AgentList
 */
 
 type AgentsApiAgentServiceForServerListOpts struct {
@@ -1048,7 +1231,124 @@ func (a *AgentsApiService) AgentServiceForServerList(ctx context.Context, accoun
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 200 {
-			var v V1AgentList
+			var v string
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+AgentsApiService
+PostOperatorYaml returns operator yaml for deploying the agents.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+  - @param agentIdentifier Agent identifier for entity.
+
+@return string
+*/
+func (a *AgentsApiService) AgentServiceForServerPostOperatorYaml(ctx context.Context, body V1AgentYamlQuery, agentIdentifier string) (string, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue string
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/operator/yaml"
+	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+
+	// body params
+	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		if localVarHttpResponse.Header.Get("Content-Type") == "application/yaml" {
+			return string(localVarBody), localVarHttpResponse, err
+		}
+		if err := a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type")); err != nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v string
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1184,22 +1484,22 @@ func (a *AgentsApiService) AgentServiceForServerRegenerateCredentials(ctx contex
 }
 
 /*
-AgentsApiService
-Unique returns unique agents.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountIdentifier Account Identifier for the Entity.
- * @param optional nil or *AgentsApiAgentServiceForServerUniqueOpts - Optional Parameters:
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "Name" (optional.String) -
-     * @param "Type_" (optional.String) -
-     * @param "Tags" (optional.Interface of []string) -
-     * @param "SearchTerm" (optional.String) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "PageIndex" (optional.Int32) -
-     * @param "Scope" (optional.String) -
-@return V1UniqueMessage
+ AgentsApiService
+ Unique returns unique agents.
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param identifier
+  * @param accountIdentifier Account Identifier for the Entity.
+  * @param optional nil or *AgentsApiAgentServiceForServerUniqueOpts - Optional Parameters:
+	  * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+	  * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+	  * @param "Name" (optional.String) -
+	  * @param "Type_" (optional.String) -
+	  * @param "Tags" (optional.Interface of []string) -
+	  * @param "SearchTerm" (optional.String) -
+	  * @param "PageSize" (optional.Int32) -
+	  * @param "PageIndex" (optional.Int32) -
+	  * @param "Scope" (optional.String) -
+ @return V1UniqueMessage
 */
 
 type AgentsApiAgentServiceForServerUniqueOpts struct {
