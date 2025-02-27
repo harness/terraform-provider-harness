@@ -3,8 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/harness/harness-go-sdk/harness/har"
 	"log"
+
+	"github.com/harness/harness-go-sdk/harness/har"
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
@@ -220,6 +221,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_overrides":                       cdng_overrides.DataSourceOverrides(),
 				"harness_platform_gitops_agent":                    gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
+				"harness_platform_gitops_agent_operator_yaml":      agent_yaml.DataSourceGitopsAgentOperatorYaml(),
 				"harness_platform_gitops_applications":             gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.DataSourceGitopsCluster(),
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.DataSourceGitopsGnupg(),

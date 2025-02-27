@@ -1,0 +1,3 @@
+```release-note:enhancement
+data-source/harness_platform_gitops_agent_operator_yaml: Added support for retrieving GitOps Agent Operator Yaml
+```
