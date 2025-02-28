@@ -376,11 +376,14 @@ func buildPipelineFilter(d *schema.ResourceData) *nextgen.PipelineFilter {
 				if v != nil {
 					var vMap = v.(map[string]interface{})
 					key := vMap["key"].(string)
-					value := vMap["value"].(string)
-					if key != "" && value != "" {
+					value, hasValue := vMap["value"].(string)
+					if key != "" {
 						hPipelineTag := nextgen.NgTag{
-							Key:   key,
-							Value: value,
+							Key: key,
+						}
+						// Only set value if it's provided, otherwise just use the key
+						if hasValue && value != "" {
+							hPipelineTag.Value = value
 						}
 						hPipelineTags = append(hPipelineTags, hPipelineTag)
 					}
@@ -504,9 +507,12 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 		pipelineTag := make(map[string]interface{})
 		key := tagV.Key
 		value := tagV.Value
-		if key != "" && value != "" {
+		if key != "" {
 			pipelineTag["key"] = key
-			pipelineTag["value"] = value
+			// Only include value in the map if it's non-empty
+			if value != "" {
+				pipelineTag["value"] = value
+			}
 			pipelineTags = append(pipelineTags, pipelineTag)
 		}
 	}
