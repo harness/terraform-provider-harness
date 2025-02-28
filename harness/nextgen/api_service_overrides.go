@@ -1026,3 +1026,181 @@ func (a *ServiceOverridesApiService) ImportServiceOverrides(ctx context.Context,
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
+type ServiceOverrideGitUpdateRequestDTO struct {
+	Identifier                   string                          `json:"identifier,omitempty"`
+	EnvironmentRef               string                          `json:"environmentRef,omitempty"`
+	ServiceRef                   string                          `json:"serviceRef,omitempty"`
+	InfraIdentifier              string                          `json:"infraIdentifier,omitempty"`
+	ServiceOverridesType         string                          `json:"serviceOverridesType,omitempty"`
+	GitMetadataUpdateRequestInfo GitMetadataUpdateRequestInfoDTO `json:"gitMetadataUpdateRequestInfo,omitempty"`
+}
+
+type ServiceOverrideGitUpdateResponseDTO struct {
+	Identifier      string `json:"identifier,omitempty"`
+	EnvironmentRef  string `json:"environmentRef,omitempty"`
+	ServiceRef      string `json:"serviceRef,omitempty"`
+	InfraIdentifier string `json:"infraIdentifier,omitempty"`
+}
+
+type GitMetadataUpdateRequestInfoDTO struct {
+	ConnectorRef optional.String `json:"connectorRef,omitempty"`
+	RepoName     optional.String `json:"repoName,omitempty"`
+	FilePath     optional.String `json:"filePath,omitempty"`
+}
+
+func (a *ServiceOverridesApiService) EditGitDetialsForServiceOverridesV2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, serviceIdentifier string, localVarOptionals *ServiceOverrideGitUpdateRequestDTO) (ResponseDtoEditServiceOverrideV2GitDetailsResponse, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoEditServiceOverrideV2GitDetailsResponse
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/serviceOverrides/update-git-metadata"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
+	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
+
+	if localVarOptionals != nil {
+		if localVarOptionals.Identifier != "" {
+			localVarQueryParams.Add("identifier", parameterToString(localVarOptionals.Identifier, ""))
+		}
+		if localVarOptionals.EnvironmentRef != "" {
+			localVarQueryParams.Add("environmentRef", parameterToString(localVarOptionals.EnvironmentRef, ""))
+		}
+		if localVarOptionals.ServiceRef != "" {
+			localVarQueryParams.Add("serviceRef", parameterToString(localVarOptionals.ServiceRef, ""))
+		}
+		if localVarOptionals.InfraIdentifier != "" {
+			localVarQueryParams.Add("infraIdentifier", parameterToString(localVarOptionals.InfraIdentifier, ""))
+		}
+		if localVarOptionals.ServiceOverridesType != "" {
+			localVarQueryParams.Add("serviceOverridesType", parameterToString(localVarOptionals.ServiceOverridesType, ""))
+		}
+
+		// Git Metadata params
+		if localVarOptionals.GitMetadataUpdateRequestInfo.ConnectorRef.IsSet() {
+			localVarQueryParams.Add("connectorRef", parameterToString(localVarOptionals.GitMetadataUpdateRequestInfo.ConnectorRef, ""))
+		}
+		if localVarOptionals.GitMetadataUpdateRequestInfo.RepoName.IsSet() {
+			localVarQueryParams.Add("repoName", parameterToString(localVarOptionals.GitMetadataUpdateRequestInfo.RepoName, ""))
+		}
+		if localVarOptionals.GitMetadataUpdateRequestInfo.FilePath.IsSet() {
+			localVarQueryParams.Add("filePath", parameterToString(localVarOptionals.GitMetadataUpdateRequestInfo.FilePath, ""))
+		}
+	}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+
+	// body params
+	localVarPostBody = localVarOptionals
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 404 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoEditServiceOverrideV2GitDetailsResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}

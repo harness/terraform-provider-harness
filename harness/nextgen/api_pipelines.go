@@ -203,11 +203,12 @@ func (a *PipelinesApiService) DeletePipeline(ctx context.Context, accountIdentif
 
 /*
 PipelinesApiService Get the Execution Node by Execution Id
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param orgIdentifier Organization Identifier for the Entity.
- * @param projectIdentifier Project Identifier for the Entity.
- * @param nodeExecutionId Id for the corresponding Node Execution
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountIdentifier Account Identifier for the Entity.
+  - @param orgIdentifier Organization Identifier for the Entity.
+  - @param projectIdentifier Project Identifier for the Entity.
+  - @param nodeExecutionId Id for the corresponding Node Execution
+
 @return ResponseDtoExecutionNode
 */
 func (a *PipelinesApiService) GetExecutionNode(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, nodeExecutionId string) (ResponseDtoExecutionNode, *http.Response, error) {
@@ -999,9 +1000,10 @@ func (a *PipelinesApiService) GetPipelineSummary(ctx context.Context, accountIde
 
 /*
 PipelinesApiService Gets all the Steps for given Category (V2 Version)
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Step Pallete Filter request body
- * @param accountId Account Identifier for the Entity.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body Step Pallete Filter request body
+  - @param accountId Account Identifier for the Entity.
+
 @return ResponseDtoStepCategory
 */
 func (a *PipelinesApiService) GetStepsV2(ctx context.Context, body StepPalleteFilterWrapper, accountId string) (ResponseDtoStepCategory, *http.Response, error) {
@@ -1305,11 +1307,12 @@ func (a *PipelinesApiService) PostPipeline(ctx context.Context, body string, acc
 
 /*
 PipelinesApiService Validate a Pipeline YAML with Schema
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Pipeline YAML
- * @param accountIdentifier Account Identifier for the Entity.
- * @param orgIdentifier Organization Identifier for the Entity.
- * @param projectIdentifier Project Identifier for the Entity.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body Pipeline YAML
+  - @param accountIdentifier Account Identifier for the Entity.
+  - @param orgIdentifier Organization Identifier for the Entity.
+  - @param projectIdentifier Project Identifier for the Entity.
+
 @return ResponseDtoString
 */
 func (a *PipelinesApiService) PostPipeline1(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string) (ResponseDtoString, *http.Response, error) {
@@ -1440,11 +1443,12 @@ func (a *PipelinesApiService) PostPipeline1(ctx context.Context, body string, ac
 
 /*
 PipelinesApiService Validate a Pipeline with Schema
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param orgIdentifier Organization Identifier for the Entity.
- * @param projectIdentifier Project Identifier for the Entity.
- * @param pipelineIdentifier Pipeline Identifier
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountIdentifier Account Identifier for the Entity.
+  - @param orgIdentifier Organization Identifier for the Entity.
+  - @param projectIdentifier Project Identifier for the Entity.
+  - @param pipelineIdentifier Pipeline Identifier
+
 @return ResponseDtoString
 */
 func (a *PipelinesApiService) PostPipeline2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string) (ResponseDtoString, *http.Response, error) {
@@ -2107,6 +2111,148 @@ func (a *PipelinesApiService) UpdatePipelineV2(ctx context.Context, body string,
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoPipelineSaveResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+type PipelinesApiEditGitDetailsOpts struct {
+	ConnectorRef optional.String
+	RepoName     optional.String
+	FilePath     optional.String
+}
+
+func (a *PipelinesApiService) EditGitDetialsForPipeline(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *PipelinesApiEditGitDetailsOpts) (ResponseDtoEditPmsGitDetailsResponse, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoEditPmsGitDetailsResponse
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/pipeline/api/pipelines/{pipelineIdentifier}/update-git-metadata"
+	localVarPath = strings.Replace(localVarPath, "{"+"pipelineIdentifier"+"}", fmt.Sprintf("%v", pipelineIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
+	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.ConnectorRef.IsSet() {
+		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.ConnectorRef.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RepoName.IsSet() {
+		localVarQueryParams.Add("repoIdentifier", parameterToString(localVarOptionals.RepoName.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.FilePath.IsSet() {
+		localVarQueryParams.Add("filePath", parameterToString(localVarOptionals.FilePath.Value(), ""))
+	}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+
+	// body params
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 404 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoEditPmsGitDetailsResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

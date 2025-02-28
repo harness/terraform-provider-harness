@@ -33,31 +33,31 @@ EnvironmentsApiService Create an Environment
  * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *EnvironmentsApiCreateEnvironmentV2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of EnvironmentRequestDto) - Details of the Environment to be created
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "RootFolder" (optional.String) - 
-     * @param "FilePath" (optional.String) - 
-     * @param "CommitMsg" (optional.String) - 
-     * @param "IsNewBranch" (optional.Bool) - 
-     * @param "BaseBranch" (optional.String) - 
-     * @param "ConnectorRef" (optional.String) - 
-     * @param "StoreType" (optional.String) - 
-     * @param "RepoName" (optional.String) - 
-     * @param "IsHarnessCodeRepo" (optional.Bool) - 
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "RootFolder" (optional.String) -
+     * @param "FilePath" (optional.String) -
+     * @param "CommitMsg" (optional.String) -
+     * @param "IsNewBranch" (optional.Bool) -
+     * @param "BaseBranch" (optional.String) -
+     * @param "ConnectorRef" (optional.String) -
+     * @param "StoreType" (optional.String) -
+     * @param "RepoName" (optional.String) -
+     * @param "IsHarnessCodeRepo" (optional.Bool) -
 @return ResponseDtoEnvironmentResponse
 */
 
 type EnvironmentsApiCreateEnvironmentV2Opts struct {
-	Body optional.Interface
-    Branch optional.String
-    FilePath optional.String
-    CommitMsg optional.String
-    IsNewBranch optional.Bool
-    BaseBranch optional.String
-    ConnectorRef optional.String
-    StoreType optional.String
-    RepoName optional.String
-    IsHarnessCodeRepo optional.Bool
+	Body              optional.Interface
+	Branch            optional.String
+	FilePath          optional.String
+	CommitMsg         optional.String
+	IsNewBranch       optional.Bool
+	BaseBranch        optional.String
+	ConnectorRef      optional.String
+	StoreType         optional.String
+	RepoName          optional.String
+	IsHarnessCodeRepo optional.Bool
 }
 
 func (a *EnvironmentsApiService) CreateEnvironmentV2(ctx context.Context, accountIdentifier string, localVarOptionals *EnvironmentsApiCreateEnvironmentV2Opts) (ResponseDtoEnvironmentResponse, *http.Response, error) {
@@ -823,28 +823,28 @@ EnvironmentsApiService Gets an Environment by identifier
      * @param "OrgIdentifier" (optional.String) - Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) - Project Identifier for the Entity.
      * @param "Deleted" (optional.Bool) - Specify whether Environment is deleted or not
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) - 
-     * @param "ParentEntityConnectorRef" (optional.String) - 
-     * @param "ParentEntityRepoName" (optional.String) - 
-     * @param "ParentEntityAccountIdentifier" (optional.String) - 
-     * @param "ParentEntityOrgIdentifier" (optional.String) - 
-     * @param "ParentEntityProjectIdentifier" (optional.String) - 
-     * @param "RepoName" (optional.String) - 
-     * @param "LoadFromCache" (optional.String) - 
-     * @param "LoadFromFallbackBranch" (optional.Bool) - 
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
+     * @param "ParentEntityConnectorRef" (optional.String) -
+     * @param "ParentEntityRepoName" (optional.String) -
+     * @param "ParentEntityAccountIdentifier" (optional.String) -
+     * @param "ParentEntityOrgIdentifier" (optional.String) -
+     * @param "ParentEntityProjectIdentifier" (optional.String) -
+     * @param "RepoName" (optional.String) -
+     * @param "LoadFromCache" (optional.String) -
+     * @param "LoadFromFallbackBranch" (optional.Bool) -
 @return ResponseDtoEnvironmentResponse
 */
 
 type EnvironmentsApiGetEnvironmentV2Opts struct {
-	OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    Deleted optional.Bool
-    Branch optional.String
-    RepoName optional.String
-    LoadFromCache optional.String
-    LoadFromFallbackBranch optional.Bool
+	OrgIdentifier          optional.String
+	ProjectIdentifier      optional.String
+	Deleted                optional.Bool
+	Branch                 optional.String
+	RepoName               optional.String
+	LoadFromCache          optional.String
+	LoadFromFallbackBranch optional.Bool
 }
 
 func (a *EnvironmentsApiService) GetEnvironmentV2(ctx context.Context, environmentIdentifier string, accountIdentifier string, localVarOptionals *EnvironmentsApiGetEnvironmentV2Opts) (ResponseDtoEnvironmentResponse, *http.Response, error) {
@@ -1138,36 +1138,36 @@ EnvironmentsApiService Update an Environment by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *EnvironmentsApiUpdateEnvironmentV2Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of EnvironmentRequestDto) - 
-     * @param "IfMatch" (optional.String) - 
-     * @param "Branch" (optional.String) - 
-     * @param "FilePath" (optional.String) - 
-     * @param "CommitMsg" (optional.String) - 
-     * @param "LastObjectId" (optional.String) - 
-     * @param "ResolvedConflictCommitId" (optional.String) - 
-     * @param "BaseBranch" (optional.String) - 
-     * @param "ConnectorRef" (optional.String) - 
-     * @param "StoreType" (optional.String) - 
-     * @param "LastCommitId" (optional.String) - 
-     * @param "IsNewBranch" (optional.Bool) - 
-     * @param "IsHarnessCodeRepo" (optional.Bool) - 
+     * @param "Body" (optional.Interface of EnvironmentRequestDto) -
+     * @param "IfMatch" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "FilePath" (optional.String) -
+     * @param "CommitMsg" (optional.String) -
+     * @param "LastObjectId" (optional.String) -
+     * @param "ResolvedConflictCommitId" (optional.String) -
+     * @param "BaseBranch" (optional.String) -
+     * @param "ConnectorRef" (optional.String) -
+     * @param "StoreType" (optional.String) -
+     * @param "LastCommitId" (optional.String) -
+     * @param "IsNewBranch" (optional.Bool) -
+     * @param "IsHarnessCodeRepo" (optional.Bool) -
 @return ResponseDtoEnvironmentResponse
 */
 
 type EnvironmentsApiUpdateEnvironmentV2Opts struct {
-	Body optional.Interface
-    IfMatch optional.String
-    Branch optional.String
-    FilePath optional.String
-    CommitMsg optional.String
-    LastObjectId optional.String
-    ResolvedConflictCommitId optional.String
-    BaseBranch optional.String
-    ConnectorRef optional.String
-    StoreType optional.String
-    LastCommitId optional.String
-    IsNewBranch optional.Bool
-    IsHarnessCodeRepo optional.Bool
+	Body                     optional.Interface
+	IfMatch                  optional.String
+	Branch                   optional.String
+	FilePath                 optional.String
+	CommitMsg                optional.String
+	LastObjectId             optional.String
+	ResolvedConflictCommitId optional.String
+	BaseBranch               optional.String
+	ConnectorRef             optional.String
+	StoreType                optional.String
+	LastCommitId             optional.String
+	IsNewBranch              optional.Bool
+	IsHarnessCodeRepo        optional.Bool
 }
 
 func (a *EnvironmentsApiService) UpdateEnvironmentV2(ctx context.Context, accountIdentifier string, localVarOptionals *EnvironmentsApiUpdateEnvironmentV2Opts) (ResponseDtoEnvironmentResponse, *http.Response, error) {
@@ -1587,41 +1587,42 @@ func (a *EnvironmentsApiService) UpsertServiceOverride(ctx context.Context, acco
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 EnvironmentsV2ApiService Get Environment YAML from Git Repository
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
  * @param optional nil or *EnvironmentsV2ApiImportEnvironmentOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
-     * @param "EnvironmentIdentifier" (optional.String) - 
-     * @param "ConnectorRef" (optional.String) - 
-     * @param "RepoName" (optional.String) - 
-     * @param "Branch" (optional.String) - 
-     * @param "FilePath" (optional.String) - 
-     * @param "IsForceImport" (optional.Bool) - 
-     * @param "IsHarnessCodeRepo" (optional.Bool) - 
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "EnvironmentIdentifier" (optional.String) -
+     * @param "ConnectorRef" (optional.String) -
+     * @param "RepoName" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "FilePath" (optional.String) -
+     * @param "IsForceImport" (optional.Bool) -
+     * @param "IsHarnessCodeRepo" (optional.Bool) -
 @return ResponseEnvironmentImportResponseDto
 */
 
 type EnvironmentsV2ApiImportEnvironmentOpts struct {
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    EnvironmentIdentifier optional.String
-    ConnectorRef optional.String
-    RepoName optional.String
-    Branch optional.String
-    FilePath optional.String
-    IsForceImport optional.Bool
-    IsHarnessCodeRepo optional.Bool
+	OrgIdentifier         optional.String
+	ProjectIdentifier     optional.String
+	EnvironmentIdentifier optional.String
+	ConnectorRef          optional.String
+	RepoName              optional.String
+	Branch                optional.String
+	FilePath              optional.String
+	IsForceImport         optional.Bool
+	IsHarnessCodeRepo     optional.Bool
 }
 
 func (a *EnvironmentsApiService) ImportEnvironment(ctx context.Context, accountIdentifier string, localVarOptionals *EnvironmentsV2ApiImportEnvironmentOpts) (ResponseEnvironmentImportResponseDto, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseEnvironmentImportResponseDto
 	)
 
@@ -1691,7 +1692,6 @@ func (a *EnvironmentsApiService) ImportEnvironment(ctx context.Context, accountI
 		}
 	}
 
-
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -1710,46 +1710,188 @@ func (a *EnvironmentsApiService) ImportEnvironment(ctx context.Context, accountI
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 200 {
 			var v EnvironmentImportResponseDto
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 400 {
 			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+type EnvironmentApiEditGitDetailsMetadataOpts struct {
+	ConnectorRef optional.String
+	RepoName     optional.String
+	FilePath     optional.String
+}
+
+func (a *EnvironmentsApiService) EditGitDetailsForEnviornment(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, environmentIdentifier string, localVarOptionals *EnvironmentApiEditGitDetailsMetadataOpts) (ResponseDtoEditEnviornmentGitDetailsResponse, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoEditEnviornmentGitDetailsResponse
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/environmentsV2/{environmentIdentifier}/update-git-metadata"
+	localVarPath = strings.Replace(localVarPath, "{"+"environmentIdentifier"+"}", fmt.Sprintf("%v", environmentIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
+	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.ConnectorRef.IsSet() {
+		localVarQueryParams.Add("connectorRef", parameterToString(localVarOptionals.ConnectorRef.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RepoName.IsSet() {
+		localVarQueryParams.Add("repoName", parameterToString(localVarOptionals.RepoName.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.FilePath.IsSet() {
+		localVarQueryParams.Add("filePath", parameterToString(localVarOptionals.FilePath.Value(), ""))
+	}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+
+	// body params
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 404 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoEditEnviornmentGitDetailsResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
