@@ -260,12 +260,22 @@ func resourceServiceOverridesEditGitDetials(ctx context.Context, c *nextgen.APIC
 	id := d.Id()
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
-	gitDetails := &nextgen.ServiceOverridesV2ApiEditGitDetailsOpts{
-		ConnectorRef: helpers.BuildField(d, "git_details.0.branch_name"),
-		RepoName:     helpers.BuildField(d, "git_details.0.connector_ref"),
-		FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
+	gitUpdateRequest := &nextgen.ServiceOverrideGitUpdateRequestDTO{
+		// Core service override identification fields
+		Identifier:           d.Id(),                              // Service override identifier
+		EnvironmentRef:       d.Get("environment_id").(string),    // Environment reference
+		ServiceRef:           d.Get("service_id").(string),        // Service reference
+		InfraIdentifier:      d.Get("infrastructure_id").(string), // Infrastructure identifier
+		ServiceOverridesType: d.Get("type").(string),              // Type of service override
+
+		// Git metadata details
+		GitMetadataUpdateRequestInfo: nextgen.GitMetadataUpdateRequestInfoDTO{
+			ConnectorRef: helpers.BuildField(d, "git_details.0.branch_name"),
+			RepoName:     helpers.BuildField(d, "git_details.0.connector_ref"),
+			FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
+		},
 	}
-	resp, httpResp, err := c.ServiceOverridesApi.EditGitDetialsForServiceOverridesV2(ctx, c.AccountId, org_id, project_id, id, gitDetails)
+	resp, httpResp, err := c.ServiceOverridesApi.EditGitDetialsForServiceOverridesV2(ctx, c.AccountId, org_id, project_id, id, gitUpdateRequest)
 
 	if httpResp.StatusCode == 404 {
 		d.SetId("")
