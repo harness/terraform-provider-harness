@@ -182,6 +182,54 @@ func TestAccResourcePipelineFiltersTags(t *testing.T) {
 	})
 }
 
+func TestAccResourcePipelineFiltersTagsWithNullValue(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_pipeline_filters.pipelinetags"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccPipelineFiltersDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePipelineFiltersWithTagsWithNullValue(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "type", "PipelineSetup"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "PipelineSetup"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.key", "tag1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.name", "pipeline_name"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.description", "pipeline_description"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_identifiers.0", "id1"),
+				),
+			},
+			{
+				Config: testAccResourcePipelineFiltersWithTagsWithNullValue(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "type", "PipelineSetup"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "PipelineSetup"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.key", "tag1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.name", "pipeline_name"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.description", "pipeline_description"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_identifiers.0", "id1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectFilterImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func TestAccResourcePipelineFiltersModuleProperties(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -617,6 +665,41 @@ func testAccResourcePipelineFiltersWithModulePropertiesCDTag(id string, name str
 						artifact_display_names = ["artificatname1"]
 					}
 				}
+			}
+		}
+`, id, name)
+}
+
+func testAccResourcePipelineFiltersWithTagsWithNullValue(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_pipeline_filters" "pipelinetags" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			type = "PipelineSetup"
+			filter_properties {
+				filter_type = "PipelineSetup"
+				name = "pipeline_name"
+				description = "pipeline_description"
+				pipeline_identifiers = ["id1", "id2"]
+				pipeline_tags = [
+					{
+						"key" = "tag1"
+					},
+				]
 			}
 		}
 `, id, name)
