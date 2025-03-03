@@ -21,6 +21,10 @@ Name | Type | Description | Notes
 **Default_** | **bool** |  | [optional] [default to null]
 **AccessType** | **string** |  | [optional] [default to null]
 **ReadOnly** | **bool** |  | [optional] [default to null]
+**UseJwtAuth** | **bool** |  | [optional] [default to false]
+**JwtAuthRole** | **string** |  | [optional] [default to null]
+**JwtAuthPath** | **string** |  | [optional] [default to null]
+**ExecuteOnDelegate** | **bool** |  | [optional] [default to true]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

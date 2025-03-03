@@ -62,6 +62,10 @@ type SecretManager struct {
 	UsePutSecret                                  bool               `json:"usePutSecret,omitempty"`
 	ForceDeleteWithoutRecovery                    bool               `json:"forceDeleteWithoutRecovery,omitempty"`
 	RecoveryWindowInDays                          int64              `json:"recoveryWindowInDays,omitempty"`
+	UseJwtAuth                                    bool               `json:"useJwtAuth,omitempty"`
+	JwtAuthRole                                   string             `json:"jwtAuthRole,omitempty"`
+	JwtAuthPath                                   string             `json:"jwtAuthPath,omitempty"`
+	ExecuteOnDelegate                             bool               `json:"executeOnDelegate"`
 }
 
 type User struct {

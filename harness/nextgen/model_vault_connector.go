@@ -61,4 +61,11 @@ type VaultConnector struct {
 	AccessType        string `json:"accessType,omitempty"`
 	Default_          bool   `json:"default,omitempty"`
 	ReadOnly          bool   `json:"readOnly,omitempty"`
+	// Boolean value to indicate if JWT Auth is used for authentication.
+	UseJwtAuth bool `json:"useJwtAuth,omitempty"`
+	// This is the role name which is created to perform JWT auth method.
+	JwtAuthRole string `json:"jwtAuthRole,omitempty"`
+	// This specifies mount path where JWT auth method is enabled.
+	JwtAuthPath       string `json:"jwtAuthPath,omitempty"`
+	ExecuteOnDelegate bool   `json:"executeOnDelegate"`
 }
