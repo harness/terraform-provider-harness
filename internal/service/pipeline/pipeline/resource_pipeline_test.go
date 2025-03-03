@@ -27,19 +27,26 @@ func TestAccResourcePipeline(t *testing.T) {
 		CheckDestroy:      testAccPipelineDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourcePipeline(id, name),
+				Config: testAccResourcePipeline(id, name, id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourcePipeline(id, updatedName),
+				Config: testAccResourcePipeline(id, updatedName, id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
+			{
+				Config: testAccResourcePipeline(id, updatedName, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "git_details.0.file_path", fmt.Sprintf(`.harness/GitEnabledPipeline%[1]s.yaml`, updatedName)),
+				)},
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
@@ -176,7 +183,7 @@ func testAccPipelineDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAccResourcePipeline(id string, name string) string {
+func testAccResourcePipeline(id string, name string, filepath string) string {
 	return fmt.Sprintf(`
 				resource "harness_platform_organization" "test" {
 					identifier = "%[1]s"
@@ -292,7 +299,7 @@ func testAccResourcePipeline(id string, name string) string {
                                             type: StageRollback
             EOT
         }
-        `, id, name)
+        `, id, name, filepath)
 }
 
 func testAccResourcePipelineInline(id string, name string) string {
