@@ -14,4 +14,5 @@ type TerraformCloudConnector struct {
 	TerraformCloudUrl string                    `json:"terraformCloudUrl"`
 	Credential        *TerraformCloudCredential `json:"credential"`
 	DelegateSelectors []string                  `json:"delegateSelectors,omitempty"`
+	ExecuteOnDelegate bool                      `json:"executeOnDelegate"`
 }
