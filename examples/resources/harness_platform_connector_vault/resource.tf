@@ -1,15 +1,4 @@
 
-terraform {
-  required_providers {
-    harness = {
-      source = "harness/harness"
-       version = ">= 0.34.0"
-    }
-    
-  }
-}
-
-
 resource "harness_platform_connector_vault" "aws_auth" {
   identifier  = "identifier"
   name        = "name"

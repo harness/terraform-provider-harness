@@ -157,6 +157,11 @@ func DataSourceConnectorVault() *schema.Resource {
 				Type:        schema.TypeBool,
 				Computed:    true,
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
 			"read_only": {
 				Description: "Read only.",
 				Type:        schema.TypeBool,
