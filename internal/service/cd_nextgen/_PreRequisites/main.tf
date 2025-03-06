@@ -1,5 +1,3 @@
-# main.tf
-
 terraform {
   required_providers {
     harness = {
@@ -15,6 +13,23 @@ variable "TF_VAR_github_token_value" {
 
 variable "TF_VAR_harness_automation_github_token" {
   type = string
+}
+
+# Data sources with try() function to safely handle non-existent resources
+locals {
+  spot_account_id_exists                  = try(data.harness_platform_secret_text.existing_spot_account_id.id, null) != null
+  spot_api_token_exists                   = try(data.harness_platform_secret_text.existing_spot_api_token.id, null) != null
+  spot_api_token_ref_exists               = try(data.harness_platform_secret_text.existing_spot_api_token_ref.id, null) != null
+  nexus_password_exists                   = try(data.harness_platform_secret_text.existing_nexus_password.id, null) != null
+  git_bot_token_exists                    = try(data.harness_platform_secret_text.existing_git_bot_token.id, null) != null
+  harness_automation_github_token_exists  = try(data.harness_platform_secret_text.existing_harness_automation_github_token.id, null) != null
+  
+  gitx_connector_exists                    = try(data.harness_platform_connector_github.existing_gitx_connector.id, null) != null
+  open_repo_connector_exists               = try(data.harness_platform_connector_github.existing_open_repo_connector.id, null) != null
+  jajoo_connector_exists                   = try(data.harness_platform_connector_github.existing_jajoo_connector.id, null) != null
+  terraform_resource_connector_exists      = try(data.harness_platform_connector_github.existing_terraform_resource_connector.id, null) != null
+  account_level_delegate_connector_exists  = try(data.harness_platform_connector_github.existing_account_level_delegate_connector.id, null) != null
+  account_level_connector_exists           = try(data.harness_platform_connector_github.existing_account_level_connector.id, null) != null
 }
 
 # Data sources to check if resources exist
@@ -49,7 +64,7 @@ data "harness_platform_secret_text" "existing_harness_automation_github_token" {
 }
 
 resource "harness_platform_secret_text" "TF_spot_account_id" {
-  count                     = data.harness_platform_secret_text.existing_spot_account_id == null ? 1 : 0
+  count                     = local.spot_account_id_exists ? 0 : 1
   identifier                = "TF_spot_account_id"
   name                      = "TF_spot_account_id"
   description               = "This is a test Spot secret text"
@@ -64,7 +79,7 @@ resource "harness_platform_secret_text" "TF_spot_account_id" {
 }
 
 resource "harness_platform_secret_text" "TF_spot_api_token" {
-  count                     = data.harness_platform_secret_text.existing_spot_api_token == null ? 1 : 0
+  count                     = local.spot_api_token_exists ? 0 : 1
   identifier                = "TF_spot_api_token"
   name                      = "TF_spot_api_token"
   description               = "This is a test Spot secret text"
@@ -79,7 +94,7 @@ resource "harness_platform_secret_text" "TF_spot_api_token" {
 }
 
 resource "harness_platform_secret_text" "TF_spot_api_token_ref" {
-  count                     = data.harness_platform_secret_text.existing_spot_api_token_ref == null ? 1 : 0
+  count                     = local.spot_api_token_ref_exists ? 0 : 1
   identifier                = "TF_spot_api_token_ref"
   name                      = "TF_spot_api_token_ref"
   description               = "This is a test Spot secret text"
@@ -94,7 +109,7 @@ resource "harness_platform_secret_text" "TF_spot_api_token_ref" {
 }
 
 resource "harness_platform_secret_text" "TF_Nexus_Password" {
-  count                     = data.harness_platform_secret_text.existing_nexus_password == null ? 1 : 0
+  count                     = local.nexus_password_exists ? 0 : 1
   identifier                = "TF_Nexus_Password"
   name                      = "TF_Nexus_Password"
   description               = "This is a test secret text"
@@ -109,7 +124,7 @@ resource "harness_platform_secret_text" "TF_Nexus_Password" {
 }
 
 resource "harness_platform_secret_text" "TF_git_bot_token" {
-  count                     = data.harness_platform_secret_text.existing_git_bot_token == null ? 1 : 0
+  count                     = local.git_bot_token_exists ? 0 : 1
   identifier                = "TF_git_bot_token"
   name                      = "TF_git_bot_token"
   description               = "TF_git_bot_token"
@@ -124,7 +139,7 @@ resource "harness_platform_secret_text" "TF_git_bot_token" {
 }
 
 resource "harness_platform_secret_text" "TF_harness_automation_github_token" {
-  count                     = data.harness_platform_secret_text.existing_harness_automation_github_token == null ? 1 : 0
+  count                     = local.harness_automation_github_token_exists ? 0 : 1
   identifier                = "TF_harness_automation_github_token"
   name                      = "TF_harness_automation_github_token"
   description               = "TF_harness_automation_github_token"
@@ -169,12 +184,9 @@ data "harness_platform_connector_github" "existing_account_level_connector" {
   name       = "TF_github_account_level_connector"
 }
 
-# Modified connector resources with both validations
+# Modified connector resources with improved conditionals
 resource "harness_platform_connector_github" "TF_GitX_connector" {
-  count = (
-    data.harness_platform_connector_github.existing_gitx_connector.id == null &&
-    data.harness_platform_secret_text.existing_harness_automation_github_token.identifier != null
-  ) ? 1 : 0
+  count = !local.gitx_connector_exists && local.harness_automation_github_token_exists ? 1 : 0
 
   identifier          = "TF_GitX_connector"
   name                = "TF_GitX_connector"
@@ -202,10 +214,7 @@ resource "harness_platform_connector_github" "TF_GitX_connector" {
 }
 
 resource "harness_platform_connector_github" "TF_open_repo_github_connector" {
-  count = (
-    data.harness_platform_connector_github.existing_open_repo_connector.id == null &&
-    data.harness_platform_secret_text.existing_harness_automation_github_token.identifier != null
-  ) ? 1 : 0
+  count = !local.open_repo_connector_exists && local.harness_automation_github_token_exists ? 1 : 0
 
   identifier          = "TF_open_repo_github_connector"
   name                = "TF_open_repo_github_connector"
@@ -232,10 +241,7 @@ resource "harness_platform_connector_github" "TF_open_repo_github_connector" {
 }
 
 resource "harness_platform_connector_github" "TF_Jajoo_github_connector" {
-  count = (
-    data.harness_platform_connector_github.existing_jajoo_connector.id == null &&
-    data.harness_platform_secret_text.existing_git_bot_token.identifier != null
-  ) ? 1 : 0
+  count = !local.jajoo_connector_exists && local.git_bot_token_exists ? 1 : 0
 
   identifier          = "TF_Jajoo_github_connector"
   name                = "TF_Jajoo_github_connector"
@@ -261,10 +267,7 @@ resource "harness_platform_connector_github" "TF_Jajoo_github_connector" {
 }
 
 resource "harness_platform_connector_github" "TF_TerraformResource_git_connector" {
-  count = (
-    data.harness_platform_connector_github.existing_terraform_resource_connector.id == null &&
-    data.harness_platform_secret_text.existing_harness_automation_github_token.identifier != null
-  ) ? 1 : 0
+  count = !local.terraform_resource_connector_exists && local.harness_automation_github_token_exists ? 1 : 0
 
   identifier          = "TF_TerraformResource_git_connector"
   name                = "TF_TerraformResource_git_connector"
@@ -292,10 +295,7 @@ resource "harness_platform_connector_github" "TF_TerraformResource_git_connector
 }
 
 resource "harness_platform_connector_github" "TF_github_account_level_delegate_connector" {
-  count = (
-    data.harness_platform_connector_github.existing_account_level_delegate_connector.id == null &&
-    data.harness_platform_secret_text.existing_harness_automation_github_token.identifier != null
-  ) ? 1 : 0
+  count = !local.account_level_delegate_connector_exists && local.harness_automation_github_token_exists ? 1 : 0
 
   identifier          = "TF_github_account_level_delegate_connector"
   name                = "TF_github_account_level_delegate_connector"
@@ -322,10 +322,7 @@ resource "harness_platform_connector_github" "TF_github_account_level_delegate_c
 }
 
 resource "harness_platform_connector_github" "TF_github_account_level_connector" {
-  count = (
-    data.harness_platform_connector_github.existing_account_level_connector.id == null &&
-    data.harness_platform_secret_text.existing_harness_automation_github_token.identifier != null
-  ) ? 1 : 0
+  count = !local.account_level_connector_exists && local.harness_automation_github_token_exists ? 1 : 0
 
   identifier          = "TF_github_account_level_connector"
   name                = "TF_github_account_level_connector"
