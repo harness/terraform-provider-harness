@@ -32,6 +32,7 @@ func TestProjResourceRepoRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
 					resource.TestCheckResourceAttr(resourceName, "policies.0.require_pull_request", "true"),
+					resource.TestCheckResourceAttr(resourceName, "policies.0.require_status_checks.0", "check-stage1"),
 				),
 			},
 			{
@@ -40,6 +41,7 @@ func TestProjResourceRepoRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", updatedDescription),
 					resource.TestCheckResourceAttr(resourceName, "policies.0.require_pull_request", "true"),
+					resource.TestCheckResourceAttr(resourceName, "policies.0.require_status_checks.0", "check-stage1"),
 				),
 			},
 			{
@@ -90,6 +92,9 @@ func testProjResourceRepoRule(identifier, description string) string {
 			}
 			policies {
 				require_pull_request = true
+				require_status_checks = [
+					"check-stage1"
+				]
 			}
 			bypass  {}
 		}

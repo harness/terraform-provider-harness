@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -35,7 +34,7 @@ func DataSourceFileStoreNodeFile() *schema.Resource {
 				Computed:    true,
 			},
 			"file_usage": {
-				Description: fmt.Sprintf("File usage. Valid options are %s", strings.Join(nextgen.FileUsageValues, ", ")),
+				Description: fmt.Sprintf("File usage. Valid options are %s", strings.Join(ValidFileUsages(), ", ")),
 				Type:        schema.TypeString,
 				Optional:    false,
 				Computed:    true,

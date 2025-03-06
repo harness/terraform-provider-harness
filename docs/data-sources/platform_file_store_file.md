@@ -37,7 +37,7 @@ data "harness_platform_file_store_file" "example" {
 - `created_by` (List of Object) Created by (see [below for nested schema](#nestedatt--created_by))
 - `description` (String) Description of the resource.
 - `file_content_path` (String) File content path to be upladed on Harness File Store
-- `file_usage` (String) File usage. Valid options are ManifestFile, Config, Script
+- `file_usage` (String) File usage. Valid options are MANIFEST_FILE, CONFIG, SCRIPT
 - `id` (String) The ID of this resource.
 - `last_modified_at` (Number) Last modified at
 - `last_modified_by` (List of Object) Last modified by (see [below for nested schema](#nestedatt--last_modified_by))

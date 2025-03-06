@@ -219,6 +219,18 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 			resp, httpResp, err = c.ServiceOverridesApi.CreateServiceOverrideV2(ctx, c.AccountId, svcCreateParam)
 		}
 	} else {
+		// Check if git details have changed using `d.HasChange` to compare the old and new values.
+		connector_ref_changed := d.HasChange("git_details.0.connector_ref")
+		filepath_changed := d.HasChange("git_details.0.file_path")
+		reponame_changed := d.HasChange("git_details.0.repo_name")
+
+		// If any of the Git-related fields have changed, we set the flag.
+		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
+
+		if shouldUpdateGitDetails {
+			resourceServiceOverridesEditGitDetials(ctx, c, d)
+		}
+
 		svcUpdateParam := svcOverrideUpdateParam(env, d)
 		resp, httpResp, err = c.ServiceOverridesApi.UpdateServiceOverrideV2(ctx, c.AccountId, svcUpdateParam)
 	}
@@ -240,6 +252,43 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	} else {
 		readServiceOverridesV2(d, resp.Data)
 	}
+
+	return nil
+}
+
+func resourceServiceOverridesEditGitDetials(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
+	id := d.Id()
+	org_id := d.Get("org_id").(string)
+	project_id := d.Get("project_id").(string)
+	gitUpdateRequest := &nextgen.ServiceOverrideGitUpdateRequestDTO{
+		// Core service override identification fields
+		Identifier:           d.Id(),                              // Service override identifier
+		EnvironmentRef:       d.Get("environment_id").(string),    // Environment reference
+		ServiceRef:           d.Get("service_id").(string),        // Service reference
+		InfraIdentifier:      d.Get("infrastructure_id").(string), // Infrastructure identifier
+		ServiceOverridesType: d.Get("type").(string),              // Type of service override
+
+		// Git metadata details
+		GitMetadataUpdateRequestInfo: nextgen.GitMetadataUpdateRequestInfoDTO{
+			ConnectorRef: helpers.BuildField(d, "git_details.0.branch_name"),
+			RepoName:     helpers.BuildField(d, "git_details.0.connector_ref"),
+			FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
+		},
+	}
+	resp, httpResp, err := c.ServiceOverridesApi.EditGitDetialsForServiceOverridesV2(ctx, c.AccountId, org_id, project_id, id, gitUpdateRequest)
+
+	if httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	d.SetId(resp.Data.Identifier)
+	d.Set("identifier", resp.Data.Identifier)
 
 	return nil
 }

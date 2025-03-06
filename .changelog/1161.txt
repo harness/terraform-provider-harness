@@ -1,0 +1,3 @@
+```release-note:fix
+resource: platform_gitops_cluster: shard was not stored in the state showing up as change in every plan, this is fixed.
+```

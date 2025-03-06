@@ -45,6 +45,11 @@ func ResourceConnectorGitlab() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"api_authentication": {
 				Description: "Configuration for using the gitlab api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
 				Type:        schema.TypeList,
@@ -181,6 +186,10 @@ func buildConnectorGitlab(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.Gitlab.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Gitlab.ExecuteOnDelegate = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("validation_repo"); ok {
 		connector.Gitlab.ValidationRepo = attr.(string)
 	}
@@ -257,8 +266,9 @@ func buildConnectorGitlab(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 func readConnectorGitlab(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
 	d.Set("url", connector.Gitlab.Url)
-	d.Set("connection_type", connector.Gitlab.Type_.String())
+	d.Set("connection_type", string(connector.Gitlab.Type_))
 	d.Set("delegate_selectors", connector.Gitlab.DelegateSelectors)
+	d.Set("execute_on_delegate", connector.Gitlab.ExecuteOnDelegate)
 	d.Set("validation_repo", connector.Gitlab.ValidationRepo)
 
 	if connector.Gitlab.Authentication != nil {
