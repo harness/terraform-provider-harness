@@ -1176,7 +1176,7 @@ resource "harness_platform_template" "test" {
 
 - `comments` (String) Specify comment with respect to changes.
 - `description` (String, Deprecated) Description of the entity. Description field is deprecated
-- `force_delete` (String) Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it
+- `force_delete` (Boolean) When set to true, enables force deletion of the template. It will delete the Harness entity even if your pipelines or other entities reference it.
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `git_import_details` (Block List, Max: 1) Contains Git Information for importing entities from Git (see [below for nested schema](#nestedblock--git_import_details))
 - `import_from_git` (Boolean) Flag to set if importing from Git
