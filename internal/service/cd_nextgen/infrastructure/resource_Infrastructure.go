@@ -55,7 +55,7 @@ func ResourceInfrastructure() *schema.Resource {
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of infrastructure",
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
 			},
@@ -286,7 +286,7 @@ func resourceInfrastructureDelete(ctx context.Context, d *schema.ResourceData, m
 	_, httpResp, err := c.InfrastructuresApi.DeleteInfrastructure(ctx, d.Id(), c.AccountId, env_id, &nextgen.InfrastructuresApiDeleteInfrastructureOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		ForceDelete:       helpers.BuildFieldForBoolean(d, "force_delete"),
+		ForceDelete:       helpers.BuildFieldBool(d, "force_delete"),
 	})
 
 	if err != nil {
