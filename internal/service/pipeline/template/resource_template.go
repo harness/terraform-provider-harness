@@ -115,7 +115,7 @@ func ResourceTemplate() *schema.Resource {
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it",
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
 			},
@@ -564,19 +564,19 @@ func resourceTemplateDelete(ctx context.Context, d *schema.ResourceData, meta in
 		httpResp, err = c.ProjectTemplateApi.DeleteTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiDeleteTemplateProjectOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 			Comments:       helpers.BuildField(d, "comments"),
-			ForceDelete:    helpers.BuildFieldForBoolean(d, "force_delete"),
+			ForceDelete:    helpers.BuildFieldBool(d, "force_delete"),
 		})
 	} else if org_id != "" && project_id == "" {
 		httpResp, err = c.OrgTemplateApi.DeleteTemplateOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiDeleteTemplateOrgOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 			Comments:       helpers.BuildField(d, "comments"),
-			ForceDelete:    helpers.BuildFieldForBoolean(d, "force_delete"),
+			ForceDelete:    helpers.BuildFieldBool(d, "force_delete"),
 		})
 	} else {
 		httpResp, err = c.AccountTemplateApi.DeleteTemplateAcc(ctx, id, version, &nextgen.AccountTemplateApiDeleteTemplateAccOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 			Comments:       helpers.BuildField(d, "comments"),
-			ForceDelete:    helpers.BuildFieldForBoolean(d, "force_delete"),
+			ForceDelete:    helpers.BuildFieldBool(d, "force_delete"),
 		})
 
 	}

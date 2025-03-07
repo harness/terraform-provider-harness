@@ -53,7 +53,7 @@ func ResourceEnvironmentGroup() *schema.Resource {
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of environment group",
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
 			},
@@ -133,7 +133,7 @@ func resourceEnvironmentGroupDelete(ctx context.Context, d *schema.ResourceData,
 	_, httpResp, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
 		Branch:            helpers.BuildField(d, "branch"),
 		RepoIdentifier:    helpers.BuildField(d, "repo_id"),
-		ForceDelete:       helpers.BuildFieldForBoolean(d, "force_delete"),
+		ForceDelete:       helpers.BuildFieldBool(d, "force_delete"),
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
