@@ -46,7 +46,7 @@ func ResourceEnvironment() *schema.Resource {
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of environments",
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
 			},
@@ -268,7 +268,7 @@ func resourceEnvironmentDelete(ctx context.Context, d *schema.ResourceData, meta
 	_, httpResp, err := c.EnvironmentsApi.DeleteEnvironmentV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentsApiDeleteEnvironmentV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		ForceDelete:       helpers.BuildFieldForBoolean(d, "force_delete"),
+		ForceDelete:       helpers.BuildFieldBool(d, "force_delete"),
 	})
 
 	if err != nil {

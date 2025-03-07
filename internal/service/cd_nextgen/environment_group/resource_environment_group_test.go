@@ -188,6 +188,7 @@ func TestAccResourceEnvironmentGroupForceDelete(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "color", "#0063F7"),
+					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
 				),
 			},
 			{
