@@ -179,6 +179,7 @@ func ResourceConnectorVault() *schema.Resource {
 				Description: "Execute on delegate or not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     true,
 			},
 		},
 	}
