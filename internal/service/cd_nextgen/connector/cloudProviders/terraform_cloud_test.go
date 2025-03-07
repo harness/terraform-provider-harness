@@ -17,6 +17,18 @@ func TestAccResourceConnectorTerraformCloud(t *testing.T) {
 	executeTfCloudTest(t, testAccResourceConnectorTerraformCloud(id, name), "true", id, name)
 }
 
+func TestAccResourceConnectorTerraformCloudExecuteOnPlatform(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	executeTfCloudTest(t, testAccResourceConnectorTerraformCloudExecuteOnPlatform(id, name), "false", id, name)
+}
+
+func TestAccResourceConnectorTerraformCloudExecuteOnDelegate(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	executeTfCloudTest(t, testAccResourceConnectorTerraformCloudExecuteOnDelegate(id, name), "true", id, name)
+}
+
 func TestAccResourceConnectorTerraformCloud_DeleteUnderlyingResource(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -69,6 +81,7 @@ func executeTfCloudTest(t *testing.T, config string, executeOnDelegate string, i
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", executeOnDelegate),
 				),
 			},
 			{
@@ -129,6 +142,79 @@ func testAccResourceConnectorTerraformCloud(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 			delegate_selectors = ["harness-delegate"]
+			credentials {
+				api_token {
+					api_token_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorTerraformCloudExecuteOnPlatform(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_terraform_cloud" "test" {
+			url = "https://app.terraform.io/"
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+			delegate_selectors = ["harness-delegate"]
+			execute_on_delegate = false
+			credentials {
+				api_token {
+					api_token_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorTerraformCloudExecuteOnDelegate(id string, name string) string {
+	// Explicit set the execute_on_delegate to true
+	return fmt.Sprintf(`
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_terraform_cloud" "test" {
+			url = "https://app.terraform.io/"
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+			delegate_selectors = ["harness-delegate"]
+			execute_on_delegate = true
 			credentials {
 				api_token {
 					api_token_ref = "account.${harness_platform_secret_text.test.id}"
