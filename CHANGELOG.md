@@ -1,3 +1,9 @@
+# 0.35.7 (March 07,2025) 
+
+ENHANCEMENTS:
+
+* data-source/harness_platform_gitops_agent_operator_yaml: Added support for retrieving GitOps Agent Operator Yaml ([#1185](https://github.com/harness/terraform-provider-harness/issues/1185))
+
 # 0.35.6 (February 21,2025) 
 
 # 0.35.5 (February 17,2025) 
