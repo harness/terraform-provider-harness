@@ -204,7 +204,7 @@ func testAccResourcePipeline(id string, name string, filepath string) string {
                         git_details {
                             branch_name = "main"
                             commit_message = "Commit"
-                            file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
+                            file_path = ".harness/GitEnabledPipeline%[3]s.yaml"
                             connector_ref = "account.TF_Jajoo_github_connector"
                             store_type = "REMOTE"
                             repo_name = "jajoo_git"
