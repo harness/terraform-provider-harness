@@ -1099,7 +1099,7 @@ resource "time_sleep" "wait_10_seconds" {
   destroy_duration = "10s"
 }
 
-##Importing Account Level Templates
+## Importing Account Level Templates
 resource "harness_platform_template" "test" {
   identifier      = "accounttemplate"
   name            = "accounttemplate"
@@ -1119,7 +1119,7 @@ resource "harness_platform_template" "test" {
   }
 }
 
-##Importing Org Level Templates
+## Importing Org Level Templates
 resource "harness_platform_template" "test" {
   identifier      = "orgtemplate"
   name            = "orgtemplate"
@@ -1140,7 +1140,7 @@ resource "harness_platform_template" "test" {
   }
 }
 
-##Importing Project Level Templates
+## Importing Project Level Templates
 resource "harness_platform_template" "test" {
   identifier      = "projecttemplate"
   name            = "projecttemplate"
@@ -1170,7 +1170,7 @@ resource "harness_platform_template" "test" {
 
 - `identifier` (String) Unique identifier of the resource
 - `name` (String) Name of the Variable
-- `version` (String) Version Label for Template.
+- `version` (String) Version Label for Template. This should match the `versionLabel` specified in the template YAML.
 
 ### Optional
 
