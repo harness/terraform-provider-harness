@@ -45,7 +45,10 @@ for secret in "${secrets[@]}"; do
         echo -e "${GREEN}✓ Secret '$secret' already exists${NC}"
     else
         echo -e "${RED}Secret '$secret' not found. Creating...${NC}"
-        terraform apply -auto-approve -target="harness_platform_secret_text.$secret"
+        terraform apply -auto-approve \
+            -var="github_token_value=${github_token_value}" \
+            -var="harness_automation_github_token=${harness_automation_github_token}" \
+            -target="harness_platform_secret_text.$secret"
         if [ $? -eq 0 ]; then
             echo -e "${GREEN}✓ Successfully created secret: $secret${NC}"
         else
@@ -72,7 +75,10 @@ for connector in "${connectors[@]}"; do
         echo -e "${GREEN}✓ Connector '$connector' already exists${NC}"
     else
         echo -e "${RED}Connector '$connector' not found. Creating...${NC}"
-        terraform apply -auto-approve -target="harness_platform_connector_github.$connector"
+        terraform apply -auto-approve \
+            -var="github_token_value=${github_token_value}" \
+            -var="harness_automation_github_token=${harness_automation_github_token}" \
+            -target="harness_platform_connector_github.$connector"
         if [ $? -eq 0 ]; then
             echo -e "${GREEN}✓ Successfully created connector: $connector${NC}"
         else
