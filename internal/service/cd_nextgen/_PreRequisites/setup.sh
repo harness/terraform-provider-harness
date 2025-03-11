@@ -12,14 +12,14 @@ echo -e "${BLUE}=== Starting Harness Resource Setup ===${NC}\n"
 # Function to check if a secret exists
 check_secret() {
     local secret_name=$1
-    terraform show -json | jq -e ".values.root_module.resources[] | select(.type == \"harness_platform_secret_text\" and .values.name == \"$secret_name\")" > /dev/null 2>&1
+    terraform state list | grep -q "harness_platform_secret_text.$secret_name"
     return $?
 }
 
 # Function to check if a connector exists
 check_connector() {
     local connector_name=$1
-    terraform show -json | jq -e ".values.root_module.resources[] | select(.type == \"harness_platform_connector_github\" and .values.name == \"$connector_name\")" > /dev/null 2>&1
+    terraform state list | grep -q "harness_platform_connector_github.$connector_name"
     return $?
 }
 
