@@ -243,24 +243,25 @@ resource "harness_platform_connector_github" "TF_open_repo_github_connector" {
 }
 
 resource "harness_platform_connector_github" "TF_Jajoo_github_connector" {
-  count = !local.jajoo_connector_exists && local.git_bot_token_exists ? 1 : 0
+  count = !local.jajoo_connector_exists && local.harness_automation_github_token_exists ? 1 : 0
 
   identifier          = "TF_Jajoo_github_connector"
   name                = "TF_Jajoo_github_connector"
   description         = "TF_Jajoo_github_connector"
   tags                = ["ritek:test"]
-  url                 = "https://github.com/wings-software/jajoo_git"
-  connection_type     = "Repo"
+  url                 = "https://github.com/harness-automation"
+  connection_type     = "Account"
+  validation_repo     = "jajoo_git.git"
 
   credentials {
     http {
-      username  = "admin"
-      token_ref = "account.TF_git_bot_token"
+      username  = "harness-automation"
+      token_ref = "account.TF_harness_automation_github_token"
     }
   }
 
   api_authentication {
-    token_ref = "account.TF_git_bot_token"
+    token_ref = "account.TF_harness_automation_github_token"
   }
 
   lifecycle {
