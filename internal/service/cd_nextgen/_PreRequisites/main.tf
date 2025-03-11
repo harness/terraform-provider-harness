@@ -6,15 +6,6 @@ terraform {
   }
 }
 
-# Secret Variables
-variable "TF_VAR_github_token_value" {
-  type = string
-}
-
-variable "TF_VAR_harness_automation_github_token" {
-  type = string
-}
-
 # Data sources with try() function to safely handle non-existent resources
 locals {
   spot_account_id_exists                  = try(data.harness_platform_secret_text.existing_spot_account_id.id, null) != null
@@ -131,7 +122,7 @@ resource "harness_platform_secret_text" "TF_git_bot_token" {
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
-  value                     = var.TF_VAR_github_token_value
+  value                     = sensitive(coalesce(getenv("github_token_value"), ""))
 
   lifecycle {
       ignore_changes = [identifier]
@@ -146,7 +137,7 @@ resource "harness_platform_secret_text" "TF_harness_automation_github_token" {
   tags                      = ["ritek:test"]
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
-  value                     = var.TF_VAR_harness_automation_github_token
+  value                     = sensitive(coalesce(getenv("harness_automation_github_token"), ""))
 
   lifecycle {
       ignore_changes = [identifier]
