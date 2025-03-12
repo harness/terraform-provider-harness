@@ -133,6 +133,7 @@ func ResourceGitopsCluster() *schema.Resource {
 													Type:        schema.TypeString,
 													Sensitive:   true,
 													Optional:    true,
+													Computed:    true,
 												},
 												"tls_client_config": {
 													Description: "Settings to enable transport layer security.",
@@ -442,6 +443,13 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 		d.MarkNewResource()
 		return nil
 	}
+
+	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
+			resp.Cluster.Config.BearerToken = attr.(string)
+		}
+	}
+
 	setClusterDetails(d, &resp)
 	return nil
 }
@@ -466,6 +474,12 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
+	}
+
+	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
+			resp.Cluster.Config.BearerToken = attr.(string)
+		}
 	}
 	setClusterDetails(d, &resp)
 	return nil
@@ -499,6 +513,13 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 		d.MarkNewResource()
 		return nil
 	}
+
+	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
+			resp.Cluster.Config.BearerToken = attr.(string)
+		}
+	}
+	
 	setClusterDetails(d, &resp)
 	return nil
 }
