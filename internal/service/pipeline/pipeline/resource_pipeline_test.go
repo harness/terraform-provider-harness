@@ -8,10 +8,11 @@ import (
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/harness-openapi-go-client/nextgen"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
-	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/stretchr/testify/require"
+
+	"github.com/harness/terraform-provider-harness/internal/acctest"
 )
 
 func TestAccResourcePipeline(t *testing.T) {
@@ -454,7 +455,7 @@ func testAccResourcePipelineHC(id string, name string) string {
 				  identifier     = "%[1]s"
 				  org_id         = harness_platform_organization.test.id
 				  project_id     = harness_platform_project.test.id
-				  default_branch = "main"
+				  default_branch = "master"
 				  source {
 					repo = "octocat/hello-worId"
 					type = "github"
@@ -467,7 +468,7 @@ func testAccResourcePipelineHC(id string, name string) string {
                         name = "%[2]s"
                         tags = ["foo:bar", "bar:foo"]
                         git_details {
-                            branch_name = "main"
+                            branch_name = "master"
                             commit_message = "Commit"
                             file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
                             store_type = "REMOTE"

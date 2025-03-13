@@ -6,11 +6,12 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-openapi-go-client/nextgen"
-	"github.com/harness/terraform-provider-harness/helpers"
-	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
+	"github.com/harness/terraform-provider-harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
 )
 
 func ResourceInputSet() *schema.Resource {
@@ -423,7 +424,7 @@ func buildCreateInputSet(d *schema.ResourceData) nextgen.InputSetCreateRequestBo
 		if attr, ok := config["repo_name"]; ok {
 			inputSet.GitDetails.RepoName = attr.(string)
 		}
-		if attr, ok := config["repo_name"]; ok {
+		if attr, ok := config["is_harness_code_repo"]; ok {
 			inputSet.GitDetails.IsHarnessCodeRepo = attr.(bool)
 		}
 	}
@@ -509,6 +510,9 @@ func readGitDetails(inputSet *nextgen.InputSetResponseBody, store_type optional.
 	}
 	if connector_ref.IsSet() {
 		git_details["connector_ref"] = connector_ref.Value()
+	}
+	if !connector_ref.IsSet() || connector_ref.Value() == "" {
+		git_details["is_harness_code_repo"] = true
 	}
 	return git_details
 }

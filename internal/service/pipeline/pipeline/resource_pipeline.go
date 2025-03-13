@@ -6,11 +6,12 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-openapi-go-client/nextgen"
-	"github.com/harness/terraform-provider-harness/helpers"
-	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
+	"github.com/harness/terraform-provider-harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
 )
 
 func ResourcePipeline() *schema.Resource {
@@ -460,6 +461,10 @@ func readGitDetails(pipeline nextgen.PipelineGetResponseBody, store_type optiona
 	}
 	if connector_ref.IsSet() {
 		git_details["connector_ref"] = connector_ref.Value()
+	}
+
+	if !connector_ref.IsSet() || connector_ref.Value() == "" {
+		git_details["is_harness_code_repo"] = true
 	}
 	return git_details
 }
