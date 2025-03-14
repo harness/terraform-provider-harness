@@ -82,6 +82,11 @@ func ResourceFeatureFlag() *schema.Resource {
 				Type:        schema.TypeBool,
 				Required:    true,
 			},
+			"archived": {
+				Description: "Whether or not the flag is archived.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"tags": {
 				Description: "The tags for the flag",
 				Type:        schema.TypeList,
@@ -256,14 +261,31 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
+	archivedChanged := d.HasChange("archived")
+
+	// if archived set to false restore before making flag updates
+	if archivedChanged && !d.Get("archived").(bool) {
+		restoreFlag(ctx, d, meta)
+	}
+
 	qp := buildFFQueryParameters(d)
 	opts := buildFFPutOpts(d)
 
 	if opts != nil {
+		// if flag is archived then we cant't make changes
+		if !archivedChanged && d.Get("archived").(bool) {
+			return diag.Errorf("Flag is archived and cannot be updated")
+		}
 		httpResp, err := c.FeatureFlagsApi.PutFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, opts)
 
 		if err != nil {
 			return HandleCFApiError(err, d, httpResp)
+		}
+	}
+	if archivedChanged && d.Get("archived").(bool) {
+		err := deleteFlag(ctx, d, meta, false)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -297,6 +319,11 @@ func resourceFeatureFlagRead(ctx context.Context, d *schema.ResourceData, meta i
 		resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, opts)
 
 		if err != nil {
+			if httpResp.StatusCode == 404 {
+				d.MarkNewResource()
+				d.SetId("")
+				return nil
+			}
 			return HandleCFApiError(err, d, httpResp)
 		}
 
@@ -344,10 +371,22 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 
 	d.SetId(id)
 
+	// set archived if needed
+	if d.Get("archived").(bool) {
+		err := deleteFlag(ctx, d, meta, false)
+		if err != nil {
+			return err
+		}
+	}
+
 	return resourceFeatureFlagRead(ctx, d, meta)
 }
 
 func resourceFeatureFlagDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return deleteFlag(ctx, d, meta, true)
+}
+
+func deleteFlag(ctx context.Context, d *schema.ResourceData, meta interface{}, forceDelete bool) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
@@ -356,7 +395,32 @@ func resourceFeatureFlagDelete(ctx context.Context, d *schema.ResourceData, meta
 	}
 	qp := buildFFQueryParameters(d)
 
-	httpResp, err := c.FeatureFlagsApi.DeleteFeatureFlag(ctx, d.Id(), c.AccountId, qp.OrganizationId, qp.ProjectId, &nextgen.FeatureFlagsApiDeleteFeatureFlagOpts{CommitMsg: optional.EmptyString(), ForceDelete: optional.NewBool(true)})
+	httpResp, err := c.FeatureFlagsApi.DeleteFeatureFlag(ctx, d.Id(), c.AccountId, qp.OrganizationId, qp.ProjectId, &nextgen.FeatureFlagsApiDeleteFeatureFlagOpts{CommitMsg: optional.EmptyString(), ForceDelete: optional.NewBool(forceDelete)})
+	if err != nil {
+		return HandleCFApiError(err, d, httpResp)
+	}
+
+	return nil
+}
+
+func restoreFlag(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	id := d.Id()
+	if id == "" {
+		return nil
+	}
+	qp := buildFFQueryParameters(d)
+
+	envs := getEnvironmentData(d)
+	var firstEnv string
+	if len(envs) > 0 {
+		firstEnv = envs[0].Identifier
+	} else {
+		return diag.Errorf("at least one environment needs to be configured for the flag to restore via terraform")
+	}
+
+	httpResp, err := c.FeatureFlagsApi.RestoreFeatureFlag(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, firstEnv, d.Id(), &nextgen.FeatureFlagsApiRestoreFeatureFlagOpts{CommitMsg: optional.EmptyString()})
 	if err != nil {
 		return HandleCFApiError(err, d, httpResp)
 	}
@@ -368,6 +432,7 @@ func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryP
 	d.SetId(flag.Identifier)
 	d.Set("identifier", flag.Identifier)
 	d.Set("name", flag.Name)
+	d.Set("archived", flag.Archived)
 	d.Set("description", flag.Description)
 	d.Set("project_id", flag.Project)
 	d.Set("default_on_variation", flag.DefaultOnVariation)

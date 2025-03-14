@@ -67,6 +67,8 @@ resource "harness_platform_workspace" "example" {
     repository_path      = "tf/aws/basic"
     repository_connector = harness_platform_connector_github.test.id
   }
+  
+  variable_sets = [harness_platform_infra_variable_set.test.id]
 }
 ```
 
@@ -97,6 +99,7 @@ resource "harness_platform_workspace" "example" {
 - `tags` (Set of String) Tags to associate with the resource.
 - `terraform_variable` (Block Set) Terraform variables configured on the workspace. Terraform variable keys must be unique within the workspace. (see [below for nested schema](#nestedblock--terraform_variable))
 - `terraform_variable_file` (Block Set) Terraform variables files configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable_file))
+- `variable_sets` (Set of String) Variable set identifiers. Currently support only one variable set.
 
 ### Read-Only
 

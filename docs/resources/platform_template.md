@@ -1099,7 +1099,7 @@ resource "time_sleep" "wait_10_seconds" {
   destroy_duration = "10s"
 }
 
-##Importing Account Level Templates
+## Importing Account Level Templates
 resource "harness_platform_template" "test" {
   identifier      = "accounttemplate"
   name            = "accounttemplate"
@@ -1119,7 +1119,7 @@ resource "harness_platform_template" "test" {
   }
 }
 
-##Importing Org Level Templates
+## Importing Org Level Templates
 resource "harness_platform_template" "test" {
   identifier      = "orgtemplate"
   name            = "orgtemplate"
@@ -1140,7 +1140,7 @@ resource "harness_platform_template" "test" {
   }
 }
 
-##Importing Project Level Templates
+## Importing Project Level Templates
 resource "harness_platform_template" "test" {
   identifier      = "projecttemplate"
   name            = "projecttemplate"
@@ -1170,13 +1170,13 @@ resource "harness_platform_template" "test" {
 
 - `identifier` (String) Unique identifier of the resource
 - `name` (String) Name of the Variable
-- `version` (String) Version Label for Template.
+- `version` (String) Version Label for Template. This should match the `versionLabel` specified in the template YAML.
 
 ### Optional
 
 - `comments` (String) Specify comment with respect to changes.
 - `description` (String, Deprecated) Description of the entity. Description field is deprecated
-- `force_delete` (String) Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it
+- `force_delete` (Boolean) When set to true, enables force deletion of the template. It will delete the Harness entity even if your pipelines or other entities reference it.
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `git_import_details` (Block List, Max: 1) Contains Git Information for importing entities from Git (see [below for nested schema](#nestedblock--git_import_details))
 - `import_from_git` (Boolean) Flag to set if importing from Git

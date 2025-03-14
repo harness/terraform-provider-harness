@@ -34,6 +34,16 @@ func DataSourceServiceList() *schema.Resource {
 					},
 				},
 			},
+			"page": {
+				Description: "Page index of the results to fetch. Default: 0",
+				Type:        schema.TypeInt,
+				Optional:    true,
+			},
+			"size": {
+				Description: "Results per page. Default: 100; Max: 1000",
+				Type:        schema.TypeInt,
+				Optional:    true,
+			},
 		},
 	}
 
@@ -52,6 +62,8 @@ func dataSourceServiceListRead(ctx context.Context, d *schema.ResourceData, meta
 	resp, httpResp, err = c.ServicesApi.GetServiceList(ctx, c.AccountId, &nextgen.ServicesApiGetServiceListOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+		Page:              helpers.BuildFieldInt32(d, "page"),
+		Size:              helpers.BuildFieldInt32(d, "size"),
 	})
 	var output []nextgen.ServiceResponse = resp.Data.Content
 	var services []map[string]interface{}

@@ -40,6 +40,12 @@ func ResourceRDSRule() *schema.Resource {
 				Optional:    true,
 				Default:     15,
 			},
+			"dry_run": {
+				Description: "Boolean that indicates whether the AutoStopping rule should be created in DryRun mode",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
 			"database": {
 				Type:     schema.TypeList,
 				Required: true,

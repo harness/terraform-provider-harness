@@ -223,7 +223,7 @@ func TestAccResourceInputSetImportFromGit(t *testing.T) {
 			{
 				Config: testAccResourceInputSetImportFromGit(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", "inputset"),
+					resource.TestCheckResourceAttr(resourceName, "id", "inputset2"),
 					resource.TestCheckResourceAttr(resourceName, "pipeline_id", "DoNotDeletePipeline"),
 				),
 			},
@@ -782,20 +782,20 @@ func testAccResourceInputSetImportFromGit(id string, name string) string {
 				org_id = "default"
 		}
         resource "harness_platform_input_set" "test" {
-                        identifier = "inputset"
+                        identifier = "inputset2"
                         org_id = "default"
 						project_id = harness_platform_project.Project_Test.identifier
-                        name = "inputset"
+                        name = "inputset2"
                         pipeline_id = "DoNotDeletePipeline"
                         import_from_git = true
                         git_import_info {
                             branch_name = "main"
-                            file_path = ".harness/inputset.yaml"
+                            file_path = ".harness/inputset2.yaml"
                             connector_ref = "account.TF_open_repo_github_connector"
                             repo_name = "open-repo"
                         }
                         input_set_import_request {
-                            input_set_name = "inputset"
+                            input_set_name = "inputset2"
                             input_set_description = ""
                         }
                 }

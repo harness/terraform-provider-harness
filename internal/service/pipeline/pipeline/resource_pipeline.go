@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/antihax/optional"
+	pipeline_go_sdk "github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -260,6 +261,18 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 		pipeline_id = pipeline.Identifier
 
+		// Check if git details have changed using `d.HasChange` to compare the old and new values.
+		connector_ref_changed := d.HasChange("git_details.0.connector_ref")
+		filepath_changed := d.HasChange("git_details.0.file_path")
+		reponame_changed := d.HasChange("git_details.0.repo_name")
+
+		// If any of the Git-related fields have changed, we set the flag.
+		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
+
+		if shouldUpdateGitDetails {
+			resourcePipelineEditGitDetials(ctx, d, meta)
+		}
+
 		if pipeline.GitDetails != nil {
 			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
 			branch_name = pipeline.GitDetails.BranchName
@@ -288,6 +301,35 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	readPipeline(d, resp, org_id, project_id, template_applied, store_type, base_branch, commit_message, connector_ref)
+
+	return nil
+}
+
+func resourcePipelineEditGitDetials(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	id := d.Id()
+	org_id := d.Get("org_id").(string)
+	project_id := d.Get("project_id").(string)
+	gitDetails := &pipeline_go_sdk.PipelinesApiEditGitDetailsOpts{
+		ConnectorRef: helpers.BuildField(d, "git_details.0.branch_name"),
+		RepoName:     helpers.BuildField(d, "git_details.0.connector_ref"),
+		FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
+	}
+	resp, httpResp, err := c.PipelinesApi.EditGitDetialsForPipeline(ctx, c.AccountId, org_id, project_id, id, gitDetails)
+
+	if httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	d.SetId(resp.Data.Identifier)
+	d.Set("identifier", resp.Data.Identifier)
 
 	return nil
 }

@@ -1,3 +1,37 @@
+# 0.35.8 (March 07,2025) 
+
+# 0.35.7 (March 07,2025) 
+
+ENHANCEMENTS:
+
+* data-source/harness_platform_gitops_agent_operator_yaml: Added support for retrieving GitOps Agent Operator Yaml ([#1185](https://github.com/harness/terraform-provider-harness/issues/1185))
+
+# 0.35.6 (February 21,2025) 
+
+# 0.35.5 (February 17,2025) 
+
+FEATURES:
+
+* **New Resource:** `resource/harness_platform_infra_variable_set add iacm variable set resource to be used by multiple workspaces` ([#1173](https://github.com/harness/terraform-provider-harness/issues/1173))
+
+ENHANCEMENTS:
+
+* harness_platform_connector_jdbc: adding new ServiceAccount auth support ([#1160](https://github.com/harness/terraform-provider-harness/issues/1160))
+
+# 0.35.4 (February 11,2025) 
+
+# 0.35.3 (February 03,2025) 
+
+# 0.35.2 (January 23,2025) 
+
+# 0.35.1 (January 22,2025) 
+
+# 0.35.0 (January 20,2025) 
+
+# 0.34.9 (January 13,2025) 
+
+# 0.34.8 (January 08,2025) 
+
 # 0.34.7 (January 07,2025) 
 
 # 0.34.6 (December 26,2024) 

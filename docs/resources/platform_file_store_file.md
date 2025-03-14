@@ -42,7 +42,7 @@ resource "harness_platform_file_store_file" "example" {
 
 - `description` (String) Description of the resource.
 - `file_content_path` (String) File content path to be upladed on Harness File Store
-- `file_usage` (String) File usage. Valid options are ManifestFile, Config, Script
+- `file_usage` (String) File usage. Valid options are MANIFEST_FILE, CONFIG, SCRIPT
 - `mime_type` (String) File mime type
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.

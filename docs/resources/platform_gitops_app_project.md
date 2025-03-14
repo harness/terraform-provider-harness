@@ -261,8 +261,10 @@ Optional:
 - `namespace_resource_blacklist` (Block List) Namespace resource blacklist for the Argo project. (see [below for nested schema](#nestedblock--project--spec--namespace_resource_blacklist))
 - `namespace_resource_whitelist` (Block List) Namespace resource whitelist for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--namespace_resource_whitelist))
 - `orphaned_resources` (Block List) OrphanedResources specifies if agent should monitor orphaned resources of apps in this project (see [below for nested schema](#nestedblock--project--spec--orphaned_resources))
+- `permit_only_project_scoped_clusters` (Boolean) This option determines whether destinations can only reference clusters which are argo project-scoped
 - `roles` (Block List) Roles associated with the Argo project. (see [below for nested schema](#nestedblock--project--spec--roles))
 - `signature_keys` (Block List) Signature keys for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--signature_keys))
+- `source_namespaces` (List of String) Source namespaces defines the namespaces application resources are allowed to be created in.
 - `source_repos` (List of String) Allowed Source repositories for the Argo project.
 - `sync_windows` (Block List) Synchronization windows for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--sync_windows))
 

@@ -56,6 +56,11 @@ func ResourceGitopsCluster() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 			},
+			"force_delete": {
+				Description: "Indicates if the cluster should be deleted forcefully, regardless of existing applications using that cluster.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"request": {
 				Description: "Cluster create or update request.",
 				Type:        schema.TypeList,
@@ -128,6 +133,7 @@ func ResourceGitopsCluster() *schema.Resource {
 													Type:        schema.TypeString,
 													Sensitive:   true,
 													Optional:    true,
+													Computed:    true,
 												},
 												"tls_client_config": {
 													Description: "Settings to enable transport layer security.",
@@ -218,6 +224,16 @@ func ResourceGitopsCluster() *schema.Resource {
 												},
 												"cluster_connection_type": {
 													Description: "Identifies the authentication method used to connect to the cluster.",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
+												"disable_compression": {
+													Description: "DisableCompression bypasses automatic GZip compression requests to to the cluster's API server. Corresponds to running kubectl with --disable-compression",
+													Type:        schema.TypeBool,
+													Optional:    true,
+												},
+												"proxy_url": {
+													Description: "The URL to the proxy to be used for all requests send to the cluster's API server",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
@@ -427,6 +443,13 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 		d.MarkNewResource()
 		return nil
 	}
+
+	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
+			resp.Cluster.Config.BearerToken = attr.(string)
+		}
+	}
+
 	setClusterDetails(d, &resp)
 	return nil
 }
@@ -451,6 +474,12 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
+	}
+
+	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
+			resp.Cluster.Config.BearerToken = attr.(string)
+		}
 	}
 	setClusterDetails(d, &resp)
 	return nil
@@ -484,6 +513,13 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 		d.MarkNewResource()
 		return nil
 	}
+
+	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
+			resp.Cluster.Config.BearerToken = attr.(string)
+		}
+	}
+
 	setClusterDetails(d, &resp)
 	return nil
 }
@@ -497,6 +533,8 @@ func resourceGitopsClusterDelete(ctx context.Context, d *schema.ResourceData, me
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		ForceDelete:       optional.NewBool(d.Get("force_delete").(bool)),
+		QueryServer:       optional.NewString(d.Get("request.0.cluster.0.server").(string)),
 	})
 
 	if err != nil {
@@ -560,6 +598,8 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 				config["exec_provider_config"] = execProviderConfigList
 			}
 			config["cluster_connection_type"] = cl.Cluster.Config.ClusterConnectionType
+			config["disable_compression"] = cl.Cluster.Config.DisableCompression
+			config["proxy_url"] = cl.Cluster.Config.ProxyUrl
 
 			configList = append(configList, config)
 			cluster["config"] = configList
@@ -594,6 +634,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 			cluster["info"] = clusterInfoList
 		}
 		cluster["project"] = cl.Cluster.Project
+		cluster["shard"] = cl.Cluster.Shard
 		if cl.Cluster.Annotations != nil {
 			cluster["annotations"] = cl.Cluster.Annotations
 		}
@@ -759,6 +800,12 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 
 				if clusterConfig["cluster_connection_type"] != nil {
 					clusterDetails.Config.ClusterConnectionType = clusterConfig["cluster_connection_type"].(string)
+				}
+				if clusterConfig["disable_compression"] != nil {
+					clusterDetails.Config.DisableCompression = clusterConfig["disable_compression"].(bool)
+				}
+				if clusterConfig["proxy_url"] != nil {
+					clusterDetails.Config.ProxyUrl = clusterConfig["proxy_url"].(string)
 				}
 			}
 

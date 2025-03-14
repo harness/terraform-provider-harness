@@ -55,7 +55,7 @@ func ResourceInfrastructure() *schema.Resource {
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of infrastructure",
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
 			},
@@ -221,6 +221,18 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 			resp, httpResp, err = c.InfrastructuresApi.CreateInfrastructure(ctx, c.AccountId, &infraParams)
 		}
 	} else {
+		// Check if git details have changed using `d.HasChange` to compare the old and new values.
+		connector_ref_changed := d.HasChange("git_details.0.connector_ref")
+		filepath_changed := d.HasChange("git_details.0.file_path")
+		reponame_changed := d.HasChange("git_details.0.repo_name")
+
+		// If any of the Git-related fields have changed, we set the flag.
+		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
+
+		if shouldUpdateGitDetails {
+			resourceInfrastructureEditGitDetials(ctx, c, d)
+		}
+
 		infraParams := infraUpdateParam(infra, d)
 		resp, httpResp, err = c.InfrastructuresApi.UpdateInfrastructure(ctx, c.AccountId, &infraParams)
 	}
@@ -238,6 +250,34 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
+func resourceInfrastructureEditGitDetials(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
+	id := d.Id()
+	org_id := d.Get("org_id").(string)
+	project_id := d.Get("project_id").(string)
+	env_id := d.Get("env_id").(string)
+	gitDetails := &nextgen.InfrastructuresApiEditGitDetailsMetadataOpts{
+		ConnectorRef: helpers.BuildField(d, "git_details.0.branch_name"),
+		RepoName:     helpers.BuildField(d, "git_details.0.connector_ref"),
+		FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
+	}
+	resp, httpResp, err := c.InfrastructuresApi.EditGitDetailsForInfrastructure(ctx, c.AccountId, org_id, project_id, env_id, id, gitDetails)
+
+	if httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	d.SetId(resp.Data.Identifier)
+	d.Set("identifier", resp.Data.Identifier)
+
+	return nil
+}
+
 func resourceInfrastructureDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
@@ -246,7 +286,7 @@ func resourceInfrastructureDelete(ctx context.Context, d *schema.ResourceData, m
 	_, httpResp, err := c.InfrastructuresApi.DeleteInfrastructure(ctx, d.Id(), c.AccountId, env_id, &nextgen.InfrastructuresApiDeleteInfrastructureOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		ForceDelete:       helpers.BuildFieldForBoolean(d, "force_delete"),
+		ForceDelete:       helpers.BuildFieldBool(d, "force_delete"),
 	})
 
 	if err != nil {

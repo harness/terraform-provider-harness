@@ -2,6 +2,7 @@ resource "harness_autostopping_rule_rds" "test" {
   name               = "name"
   cloud_connector_id = "cloud_connector_id"
   idle_time_mins     = 10
+  dry_run            = true
   database {
     id     = "database_id"
     region = "region"

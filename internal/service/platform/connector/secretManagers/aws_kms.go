@@ -37,6 +37,18 @@ func ResourceConnectorAwsKms() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"default": {
+				Description: "Set this connector as the default for all the services.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
+			"execute_on_delegate": {
+				Description: "Execute the command on the delegate.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+			},
 			"credentials": {
 				Description: "Credentials to connect to AWS.",
 				Type:        schema.TypeList,
@@ -50,7 +62,8 @@ func ResourceConnectorAwsKms() *schema.Resource {
 							MaxItems:      1,
 							Optional:      true,
 							ConflictsWith: []string{"credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
-							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
+							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
+							RequiredWith:  []string{"delegate_selectors"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"access_key_ref": {
@@ -71,7 +84,7 @@ func ResourceConnectorAwsKms() *schema.Resource {
 							Type:          schema.TypeBool,
 							Optional:      true,
 							ConflictsWith: []string{"credentials.0.manual", "credentials.0.assume_role"},
-							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
+							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
 							RequiredWith:  []string{"delegate_selectors"},
 						},
 						"assume_role": {
@@ -80,7 +93,7 @@ func ResourceConnectorAwsKms() *schema.Resource {
 							Optional:      true,
 							MaxItems:      1,
 							ConflictsWith: []string{"credentials.0.manual", "credentials.0.inherit_from_delegate"},
-							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
+							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
 							RequiredWith:  []string{"delegate_selectors"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -105,6 +118,23 @@ func ResourceConnectorAwsKms() *schema.Resource {
 											}
 											return
 										},
+									},
+								},
+							},
+						},
+						"oidc_authentication": {
+							Description:   "Connect using OIDC authentication.",
+							Type:          schema.TypeList,
+							Optional:      true,
+							MaxItems:      1,
+							ConflictsWith: []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate"},
+							AtLeastOneOf:  []string{"credentials.0.manual", "credentials.0.assume_role", "credentials.0.inherit_from_delegate", "credentials.0.oidc_authentication"},
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"iam_role_arn": {
+										Description: "The ARN of the IAM role to assume.",
+										Type:        schema.TypeString,
+										Required:    true,
 									},
 								},
 							},
@@ -170,6 +200,14 @@ func buildConnectorAwsKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.AwsKms.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
+	if attr, ok := d.GetOk("default"); ok {
+		connector.AwsKms.Default_ = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.AwsKms.ExecuteOnDelegate = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("credentials"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.AwsKms.Credential = &nextgen.AwsKmsConnectorCredential{}
@@ -184,7 +222,9 @@ func buildConnectorAwsKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := config["manual"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
 			connector.AwsKms.Credential.Type_ = nextgen.AwsKmsAuthTypes.ManualConfig
-			connector.AwsKms.Credential.ManualConfig = &nextgen.AwsKmsCredentialSpecManualConfig{}
+			connector.AwsKms.Credential.ManualConfig = &nextgen.AwsKmsCredentialSpecManualConfig{
+				DelegateSelectors: connector.AwsKms.DelegateSelectors,
+			}
 
 			if attr, ok := config["access_key_ref"]; ok {
 				connector.AwsKms.Credential.ManualConfig.AccessKey = attr.(string)
@@ -214,6 +254,18 @@ func buildConnectorAwsKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 				connector.AwsKms.Credential.AssumeStsRole.AssumeStsRoleDuration = int32(attr.(int))
 			}
 		}
+
+		if attr := config["oidc_authentication"].([]interface{}); len(attr) > 0 {
+			config := attr[0].(map[string]interface{})
+			connector.AwsKms.Credential.Type_ = nextgen.AwsKmsAuthTypes.OidcAuthentication
+			connector.AwsKms.Credential.OidcConfig = &nextgen.AwsSmCredentialSpecOidcConfig{
+				DelegateSelectors: connector.AwsKms.DelegateSelectors,
+			}
+
+			if attr, ok := config["iam_role_arn"]; ok {
+				connector.AwsKms.Credential.OidcConfig.IamRoleArn = attr.(string)
+			}
+		}
 	}
 
 	return connector
@@ -223,6 +275,8 @@ func readConnectorAwsKms(d *schema.ResourceData, connector *nextgen.ConnectorInf
 	d.Set("arn_ref", connector.AwsKms.KmsArn)
 	d.Set("region", connector.AwsKms.Region)
 	d.Set("delegate_selectors", connector.AwsKms.DelegateSelectors)
+	d.Set("default", connector.AwsKms.Default_)
+	d.Set("execute_on_delegate", connector.AwsKms.ExecuteOnDelegate)
 
 	switch connector.AwsKms.Credential.Type_ {
 	case nextgen.AwsKmsAuthTypes.AssumeIAMRole:
@@ -250,6 +304,16 @@ func readConnectorAwsKms(d *schema.ResourceData, connector *nextgen.ConnectorInf
 						"role_arn":    connector.AwsKms.Credential.AssumeStsRole.RoleArn,
 						"external_id": connector.AwsKms.Credential.AssumeStsRole.ExternalName,
 						"duration":    connector.AwsKms.Credential.AssumeStsRole.AssumeStsRoleDuration,
+					},
+				},
+			},
+		})
+	case nextgen.AwsKmsAuthTypes.OidcAuthentication:
+		d.Set("credentials", []interface{}{
+			map[string]interface{}{
+				"oidc_authentication": []interface{}{
+					map[string]interface{}{
+						"iam_role_arn": connector.AwsKms.Credential.OidcConfig.IamRoleArn,
 					},
 				},
 			},

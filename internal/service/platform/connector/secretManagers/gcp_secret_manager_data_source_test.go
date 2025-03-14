@@ -9,11 +9,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceConnectorGcpSm(t *testing.T) {
-	t.Skip()
-	var (
-		name = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+func TestAccDataSourceConnectorGcpSM_manual(t *testing.T) {
 
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
 	)
 
@@ -25,80 +24,25 @@ func TestAccDataSourceConnectorGcpSm(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceConnectorGcpSM(name, name),
+				Config: testAccDataSourceConnectorGcpSM_manual(name),
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
-				),
-			},
-		},
-	})
-}
-func TestAccDataSourceConnectorGcpSmProjectLevel(t *testing.T) {
-	t.Skip()
-	var (
-		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		gcpName      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
-	)
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		Steps: []resource.TestStep{
-			{
-				Config: testAccDataSourceConnectorGcpSMProjectLevel(name, name, gcpName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", gcpName),
-					resource.TestCheckResourceAttr(resourceName, "name", gcpName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "account."+name),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
-				),
-			},
-		},
-	})
-}
-func TestAccDataSourceConnectorGcpSmOrgLevel(t *testing.T) {
-	t.Skip()
-	var (
-		name          = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		connectorName = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-		resourceName  = "data.harness_platform_connector_gcp_secret_manager.test"
-	)
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		Steps: []resource.TestStep{
-			{
-				Config: testAccDataSourceConnectorGcpSMOrgLevel(name, connectorName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", connectorName),
-					resource.TestCheckResourceAttr(resourceName, "name", connectorName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 		},
 	})
 }
 
-func TestAccDataSourceConnectorGcpSmDefault(t *testing.T) {
-	t.Skip()
+func TestOrgDataSourceConnectorGcpSM_manual(t *testing.T) {
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
@@ -112,24 +56,28 @@ func TestAccDataSourceConnectorGcpSmDefault(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceConnectorGcpSMDefault(name, name),
+				Config: testOrgDataSourceConnectorGcpSM_manual(name),
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", name),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "org."+name),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "is_default", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 		},
 	})
 }
-func TestAccDataSourceConnectorGcpSmDefaultProjectLevel(t *testing.T) {
-	t.Skip()
+
+func TestProjectDataSourceConnectorGcpSM_manual(t *testing.T) {
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		gcpName      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
 	)
 
@@ -141,24 +89,29 @@ func TestAccDataSourceConnectorGcpSmDefaultProjectLevel(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceConnectorGcpSMDefaultProjectLevel(name, gcpName),
+				Config: testProjectDataSourceConnectorGcpSM_manual(name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", gcpName),
-					resource.TestCheckResourceAttr(resourceName, "name", gcpName),
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", name),
+					resource.TestCheckResourceAttr(resourceName, "project_id", name),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", name),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "is_default", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 		},
 	})
 }
-func TestAccDataSourceConnectorGcpSmDefaultOrgLevel(t *testing.T) {
-	t.Skip()
+
+func TestAccDataSourceConnectorGcpSM_inherit(t *testing.T) {
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		gcpname      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
 	)
 
@@ -170,21 +123,334 @@ func TestAccDataSourceConnectorGcpSmDefaultOrgLevel(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceConnectorGcpSMDefaultOrgLevel(name, gcpname),
+				Config: testAccDataSourceConnectorGcpSM_inherit(name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", gcpname),
-					resource.TestCheckResourceAttr(resourceName, "name", gcpname),
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate", "true"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "is_default", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
 				),
 			},
 		},
 	})
 }
 
-func testAccDataSourceConnectorGcpSM(id string, name string) string {
+func TestOrgDataSourceConnectorGcpSM_inherit(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgDataSourceConnectorGcpSM_inherit(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", name),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+				),
+			},
+		},
+	})
+}
+
+func TestProjectDataSourceConnectorGcpSM_inherit(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectDataSourceConnectorGcpSM_inherit(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", name),
+					resource.TestCheckResourceAttr(resourceName, "project_id", name),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataSourceConnectorGcpSM_oidc_platform(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceConnectorGcpSM_oidc_platform(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.service_account_email", "harness.sample@iam.gserviceaccount.com"),
+				),
+			},
+		},
+	})
+}
+
+func TestOrgDataSourceConnectorGcpSM_oidc_platform(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgDataSourceConnectorGcpSM_oidc_platform(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", name),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.service_account_email", "harness.sample@iam.gserviceaccount.com"),
+				),
+			},
+		},
+	})
+}
+
+func TestProjectDataSourceConnectorGcpSM_oidc_platform(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectDataSourceConnectorGcpSM_oidc_platform(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", name),
+					resource.TestCheckResourceAttr(resourceName, "project_id", name),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.service_account_email", "harness.sample@iam.gserviceaccount.com"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataSourceConnectorGcpSM_oidc_delegate(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceConnectorGcpSM_oidc_delegate(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.service_account_email", "harness.sample@iam.gserviceaccount.com"),
+				),
+			},
+		},
+	})
+}
+
+func TestOrgDataSourceConnectorGcpSM_oidc_delegate(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgDataSourceConnectorGcpSM_oidc_delegate(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", name),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.service_account_email", "harness.sample@iam.gserviceaccount.com"),
+				),
+			},
+		},
+	})
+}
+
+func TestProjectDataSourceConnectorGcpSM_oidc_delegate(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectDataSourceConnectorGcpSM_oidc_delegate(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", name),
+					resource.TestCheckResourceAttr(resourceName, "project_id", name),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.service_account_email", "harness.sample@iam.gserviceaccount.com"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataSourceConnectorGcpSM_manual_is_default(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceConnectorGcpSM_manual_is_default(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "true"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "account."+name),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.0", "harness-delegate"),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSourceConnectorGcpSM_manual(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_secret_text" "test" {
 			identifier = "%[1]s"
@@ -192,17 +458,18 @@ func testAccDataSourceConnectorGcpSM(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
 		resource "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = "%[1]s"
-			name = "%[2]s"
+			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
+		
+			delegate_selectors = [ "harness-delegate" ]
 			credentials_ref = "account.${harness_platform_secret_text.test.id}"
-			delegate_selectors = ["harness-delegate"]
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 
@@ -210,178 +477,103 @@ func testAccDataSourceConnectorGcpSM(id string, name string) string {
 			depends_on = [harness_platform_secret_text.test]
 			destroy_duration = "4s"
 		}
+
 		data "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
-			
 		}
-`, id, name)
+`, name)
 }
-func testAccDataSourceConnectorGcpSMProjectLevel(id string, name string, gcpName string) string {
+
+func testOrgDataSourceConnectorGcpSM_manual(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
-			name = "%[2]s"
+			name = "%[1]s"
 		}
-	
+
+		resource "time_sleep" "wait_3_seconds" {
+			depends_on = [harness_platform_organization.test]
+			create_duration = "3s"
+		}
+
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+		
+			delegate_selectors = [ "harness-delegate" ]
+			credentials_ref = "org.${harness_platform_secret_text.test.id}"
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
+		}
+`, name)
+}
+
+func testProjectDataSourceConnectorGcpSM_manual(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
 		resource "harness_platform_project" "test" {
 			identifier = "%[1]s"
-			name = "%[2]s"
+			name = "%[1]s"
 			org_id = harness_platform_organization.test.id
 			color = "#472848"
-		}
-
-		resource "harness_platform_connector_azure_key_vault" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		description = "test"
-		tags = ["foo:bar"]
-		org_id= harness_platform_organization.test.id
-		project_id=harness_platform_project.test.id
-		client_id = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
-		secret_key = "account.azuretest"
-		tenant_id = "b229b2bb-5f33-4d22-bce0-730f6474e906"
-		vault_name = "Aman-test"
-		subscription = "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"
-		is_default = false
-
-		azure_environment_type = "AZURE"
-			depends_on = [time_sleep.wait_3_seconds]
 		}
 
 		resource "time_sleep" "wait_3_seconds" {
 			depends_on = [harness_platform_project.test]
 			create_duration = "3s"
 		}
+
 		resource "harness_platform_secret_text" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
-			description = "test"
-			org_id= harness_platform_organization.test.id
-			project_id=harness_platform_project.test.id
-			tags = ["foo:bar"]
-			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
-			value = "secret"
-			depends_on = [time_sleep.wait_5_seconds]
-		}
-
-		resource "time_sleep" "wait_5_seconds" {
-			depends_on = [harness_platform_connector_azure_key_vault.test]
-			create_duration = "5s"
-		}
-
-		resource "harness_platform_connector_gcp_secret_manager" "test" {
-			identifier = "%[3]s"
-			name = "%[3]s"
-			description = "test"
-			org_id= harness_platform_organization.test.id
-			project_id=harness_platform_project.test.id
-			tags = ["foo:bar"]
-			credentials_ref = "${harness_platform_secret_text.test.id}"
-			delegate_selectors = ["harness-delegate"]
-			depends_on = [time_sleep.wait_4_seconds]
-		}
-
-		resource "time_sleep" "wait_4_seconds" {
-			depends_on = [harness_platform_secret_text.test]
-			create_duration = "4s"
-		}
-		data "harness_platform_connector_gcp_secret_manager" "test" {
-			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
-			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
-			project_id = harness_platform_connector_gcp_secret_manager.test.project_id
-		}
-`, id, name, gcpName)
-}
-
-func testAccDataSourceConnectorGcpSMOrgLevel(id string, name string) string {
-	return fmt.Sprintf(`
-	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
-		name = "%[1]s"
-	}
-
-	resource "harness_platform_connector_azure_key_vault" "test" {
-		identifier = "%[1]s"
-		name = "%[1]s"
-		description = "test"
-		tags = ["foo:bar"]
-		org_id= harness_platform_organization.test.id
-		client_id = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
-		secret_key = "account.azuretest"
-		tenant_id = "b229b2bb-5f33-4d22-bce0-730f6474e906"
-		vault_name = "Aman-test"
-		subscription = "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"
-		is_default = false
-
-		azure_environment_type = "AZURE"
-		depends_on = [time_sleep.wait_3_seconds]
-	}
-
-	resource "time_sleep" "wait_3_seconds" {
-		depends_on = [harness_platform_organization.test]
-		create_duration = "3s"
-	}
-		resource "harness_platform_secret_text" "test" {
-			identifier = "%[1]s"
-			name = "%[1]s"
-			description = "test"
-			org_id= harness_platform_organization.test.id
-			tags = ["foo:bar"]
-			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
-			value = "secret"
-			depends_on = [time_sleep.wait_5_seconds]
-		}
-
-		resource "time_sleep" "wait_5_seconds" {
-			depends_on = [harness_platform_connector_azure_key_vault.test]
-			create_duration = "5s"
-		}
-
-		resource "harness_platform_connector_gcp_secret_manager" "test" {
-			identifier = "%[2]s"
-			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
 			org_id = harness_platform_organization.test.id
-			delegate_selectors = ["harness-delegate"]
-			credentials_ref = "org.${harness_platform_secret_text.test.id}"
-			depends_on = [time_sleep.wait_4_seconds]
-		}
-
-		resource "time_sleep" "wait_4_seconds" {
-			depends_on = [harness_platform_secret_text.test]
-			create_duration = "4s"
-		}
-		data "harness_platform_connector_gcp_secret_manager" "test" {
-			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
-			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
-			
-		}
-`, id, name)
-}
-
-func testAccDataSourceConnectorGcpSMDefault(id string, name string) string {
-	return fmt.Sprintf(`
-		resource "harness_platform_secret_text" "test" {
-			identifier = "%[1]s"
-			name = "%[1]s"
-			description = "test"
-			tags = ["foo:bar"]
+			project_id = harness_platform_project.test.id
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
 		}
 
 		resource "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = "%[1]s"
-			name = "%[2]s"
+			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
-			is_default = true
-			credentials_ref = "account.${harness_platform_secret_text.test.id}"
-			delegate_selectors = ["harness-delegate"]
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+		
+			delegate_selectors = [ "harness-delegate" ]
+			credentials_ref = "${harness_platform_secret_text.test.id}"
+			
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 
@@ -389,154 +581,342 @@ func testAccDataSourceConnectorGcpSMDefault(id string, name string) string {
 			depends_on = [harness_platform_secret_text.test]
 			destroy_duration = "4s"
 		}
+
 		data "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
-			
+			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
+			project_id = harness_platform_connector_gcp_secret_manager.test.project_id
 		}
-`, id, name)
+`, name)
 }
-func testAccDataSourceConnectorGcpSMDefaultProjectLevel(id string, gcpname string) string {
 
+func testAccDataSourceConnectorGcpSM_inherit(name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
-		name = "%[1]s"
-	}
-	
-	resource "harness_platform_project" "test" {
-		identifier = "%[1]s"
-		name = "%[1]s"
-		org_id = harness_platform_organization.test.id
-		color = "#472848"
-	}
-
-	resource "harness_platform_connector_azure_key_vault" "test" {
-		identifier = "%[1]s"
-		name = "%[1]s"
-		description = "test"
-		tags = ["foo:bar"]
-		org_id= harness_platform_organization.test.id
-		project_id=harness_platform_project.test.id
-		client_id = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
-		secret_key = "account.azuretest"
-		tenant_id = "b229b2bb-5f33-4d22-bce0-730f6474e906"
-		vault_name = "Aman-test"
-		subscription = "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"
-
-		azure_environment_type = "AZURE"
-		depends_on = [time_sleep.wait_3_seconds]
-	}
-
-	resource "time_sleep" "wait_3_seconds" {
-		depends_on = [harness_platform_project.test]
-		create_duration = "3s"
-	}
-		resource "harness_platform_secret_text" "test" {
+		resource "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
 			description = "test"
-			org_id= harness_platform_organization.test.id
-			project_id=harness_platform_project.test.id
 			tags = ["foo:bar"]
-			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
-			value = "secret"
-			depends_on = [time_sleep.wait_5_seconds]
-	}
+		
+			delegate_selectors = [ "harness-delegate" ]
+			inherit_from_delegate = true
+		}
 
-	resource "time_sleep" "wait_5_seconds" {
-		depends_on = [harness_platform_connector_azure_key_vault.test]
-		create_duration = "5s"
-	}
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+		}
+`, name)
+}
+
+func testOrgDataSourceConnectorGcpSM_inherit(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "time_sleep" "wait_3_seconds" {
+			depends_on = [harness_platform_organization.test]
+			create_duration = "3s"
+		}
 
 		resource "harness_platform_connector_gcp_secret_manager" "test" {
-			identifier = "%[2]s"
-			name = "%[2]s"
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+		
+			delegate_selectors = [ "harness-delegate" ]
+			inherit_from_delegate = true
+		}
+
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
+		}
+`, name)
+}
+
+func testProjectDataSourceConnectorGcpSM_inherit(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "time_sleep" "wait_3_seconds" {
+			depends_on = [harness_platform_project.test]
+			create_duration = "3s"
+		}
+
+		resource "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
-			delegate_selectors = ["harness-delegate"]
-			credentials_ref = "${harness_platform_secret_text.test.id}"
-			is_default = true
-			depends_on = [time_sleep.wait_4_seconds]
-		}
-
-		resource "time_sleep" "wait_4_seconds" {
-			depends_on = [harness_platform_secret_text.test]
-			create_duration = "4s"
+		
+			delegate_selectors = [ "harness-delegate" ]
+			inherit_from_delegate = true
 		}
 
 		data "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
 			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
-			project_id =harness_platform_connector_gcp_secret_manager.test.project_id
-			
+			project_id = harness_platform_connector_gcp_secret_manager.test.project_id
 		}
-`, id, gcpname)
+`, name)
 }
-func testAccDataSourceConnectorGcpSMDefaultOrgLevel(id string, gcpname string) string {
+
+func testAccDataSourceConnectorGcpSM_oidc_platform(name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
-		name = "%[1]s"
-	}
+		resource "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+		
+			execute_on_delegate = false
 
-	resource "harness_platform_connector_azure_key_vault" "test" {
-		identifier = "%[1]s"
-		name = "%[1]s"
-		description = "test"
-		tags = ["foo:bar"]
-		org_id= harness_platform_organization.test.id
-		client_id = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
-		secret_key = "account.azuretest"
-		tenant_id = "b229b2bb-5f33-4d22-bce0-730f6474e906"
-		vault_name = "Aman-test"
-		subscription = "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"
-		azure_environment_type = "AZURE"
-		depends_on = [time_sleep.wait_3_seconds]
-	}
+			oidc_authentication {
+   				workload_pool_id = "harness-pool-test"
+				provider_id = "harness"
+				gcp_project_id = "1234567"
+				service_account_email = "harness.sample@iam.gserviceaccount.com"
+			}
+		}
 
-	resource "time_sleep" "wait_3_seconds" {
-		depends_on = [harness_platform_organization.test]
-		create_duration = "3s"
-	}
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+		}
+`, name)
+}
+
+func testOrgDataSourceConnectorGcpSM_oidc_platform(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "time_sleep" "wait_3_seconds" {
+			depends_on = [harness_platform_organization.test]
+			create_duration = "3s"
+		}
+
+		resource "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+
+			execute_on_delegate = false
+		
+			oidc_authentication {
+   				workload_pool_id = "harness-pool-test"
+				provider_id = "harness"
+				gcp_project_id = "1234567"
+				service_account_email = "harness.sample@iam.gserviceaccount.com"
+			}
+		}
+
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
+		}
+`, name)
+}
+
+func testProjectDataSourceConnectorGcpSM_oidc_platform(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "time_sleep" "wait_3_seconds" {
+			depends_on = [harness_platform_project.test]
+			create_duration = "3s"
+		}
+
+		resource "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+
+			execute_on_delegate = false
+		
+			oidc_authentication {
+   				workload_pool_id = "harness-pool-test"
+				provider_id = "harness"
+				gcp_project_id = "1234567"
+				service_account_email = "harness.sample@iam.gserviceaccount.com"
+			}
+		}
+
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
+			project_id = harness_platform_connector_gcp_secret_manager.test.project_id
+		}
+`, name)
+}
+
+func testAccDataSourceConnectorGcpSM_oidc_delegate(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+		
+			delegate_selectors = [ "harness-delegate" ]
+			oidc_authentication {
+   				workload_pool_id = "harness-pool-test"
+				provider_id = "harness"
+				gcp_project_id = "1234567"
+				service_account_email = "harness.sample@iam.gserviceaccount.com"
+			}
+		}
+
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+		}
+`, name)
+}
+
+func testOrgDataSourceConnectorGcpSM_oidc_delegate(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "time_sleep" "wait_3_seconds" {
+			depends_on = [harness_platform_organization.test]
+			create_duration = "3s"
+		}
+
+		resource "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+		
+			delegate_selectors = [ "harness-delegate" ]
+			oidc_authentication {
+   				workload_pool_id = "harness-pool-test"
+				provider_id = "harness"
+				gcp_project_id = "1234567"
+				service_account_email = "harness.sample@iam.gserviceaccount.com"
+			}
+		}
+
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
+		}
+`, name)
+}
+
+func testProjectDataSourceConnectorGcpSM_oidc_delegate(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "time_sleep" "wait_3_seconds" {
+			depends_on = [harness_platform_project.test]
+			create_duration = "3s"
+		}
+
+		resource "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+		
+			delegate_selectors = [ "harness-delegate" ]
+			oidc_authentication {
+   				workload_pool_id = "harness-pool-test"
+				provider_id = "harness"
+				gcp_project_id = "1234567"
+				service_account_email = "harness.sample@iam.gserviceaccount.com"
+			}
+		}
+
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
+			project_id = harness_platform_connector_gcp_secret_manager.test.project_id
+		}
+`, name)
+}
+
+func testAccDataSourceConnectorGcpSM_manual_is_default(name string) string {
+	return fmt.Sprintf(`
 		resource "harness_platform_secret_text" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
 			description = "test"
-			org_id= harness_platform_organization.test.id
 			tags = ["foo:bar"]
 			secret_manager_identifier = "harnessSecretManager"
-			value_type = "Reference"
+			value_type = "Inline"
 			value = "secret"
-			depends_on = [time_sleep.wait_5_seconds]
-		}
-
-		resource "time_sleep" "wait_5_seconds" {
-			depends_on = [harness_platform_connector_azure_key_vault.test]
-			create_duration = "5s"
 		}
 
 		resource "harness_platform_connector_gcp_secret_manager" "test" {
-			identifier = "%[2]s"
-			name = "%[2]s"
+			identifier = "%[1]s"
+			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
-			org_id = harness_platform_organization.test.id
-			delegate_selectors = ["harness-delegate"]
+
 			is_default = true
-			credentials_ref = "org.${harness_platform_secret_text.test.id}"
+		
+			delegate_selectors = [ "harness-delegate" ]
+			credentials_ref = "account.${harness_platform_secret_text.test.id}"
+
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 
 		resource "time_sleep" "wait_4_seconds" {
 			depends_on = [harness_platform_secret_text.test]
-			create_duration = "4s"
+			destroy_duration = "4s"
 		}
+			
 		data "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
-			org_id = harness_platform_connector_gcp_secret_manager.test.org_id
 		}
-`, id, gcpname)
+`, name)
 }

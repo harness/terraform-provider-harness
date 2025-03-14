@@ -56,6 +56,12 @@ func ResourceConnectorTerraformCloud() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Enable this flag to execute on delegate (default: true).",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -106,6 +112,24 @@ func buildConnectorTerraformCloud(d *schema.ResourceData) *nextgen.ConnectorInfo
 		},
 	}
 
+	// In the Terraform Plugin SDK (legacy), d.GetOk("attribute") returns false in two cases:
+	//
+	// 	1. When the attribute is not defined by the user.
+	//	2. When the user explicitly sets it to false.
+	//
+	// This happens because false is treated as a zero-value, making GetOk() unable to distinguish between false and
+	// “not defined”. To handle this, we need to use GetOkExists() instead of GetOk() to check if the attribute is
+	// defined by the user.
+	v, ok := d.GetOkExists("execute_on_delegate")
+	if !ok {
+		// Set the execute_on_delegate attribute to true when creating the connector; required to keep backward compatibility.
+		if d.Id() == "" {
+			connector.TerraformCloud.ExecuteOnDelegate = true
+		}
+	} else {
+		connector.TerraformCloud.ExecuteOnDelegate = v.(bool)
+	}
+
 	if attr, ok := d.GetOk("url"); ok {
 		connector.TerraformCloud.TerraformCloudUrl = attr.(string)
 	}
@@ -135,6 +159,7 @@ func buildConnectorTerraformCloud(d *schema.ResourceData) *nextgen.ConnectorInfo
 func readConnectorTerraformCloud(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
 	d.Set("url", connector.TerraformCloud.TerraformCloudUrl)
 	d.Set("delegate_selectors", connector.TerraformCloud.DelegateSelectors)
+	d.Set("execute_on_delegate", connector.TerraformCloud.ExecuteOnDelegate)
 
 	switch connector.TerraformCloud.Credential.Type_ {
 	case nextgen.TerraformCloudAuthTypes.ApiToken:

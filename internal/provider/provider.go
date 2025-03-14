@@ -5,9 +5,15 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/harness/harness-go-sdk/harness/har"
+
+	"github.com/harness/harness-go-sdk/harness/chaos"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
+	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/variable_set"
 
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
@@ -180,6 +186,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_jdbc":                  connector.DatasourceConnectorJDBC(),
 				"harness_platform_connector_dynatrace":             connector.DatasourceConnectorDynatrace(),
 				"harness_platform_connector_gcp":                   cdng_connector_cloudProviders.DatasourceConnectorGcp(),
+				"harness_platform_connector_gcp_kms":               pl_secretManagers.DatasourceConnectorGcpKms(),
 				"harness_platform_connector_gcp_secret_manager":    pl_secretManagers.DatasourceConnectorGcpSM(),
 				"harness_platform_connector_git":                   cdng_connector_codeRepositories.DatasourceConnectorGit(),
 				"harness_platform_connector_github":                cdng_connector_codeRepositories.DatasourceConnectorGithub(),
@@ -214,6 +221,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_overrides":                       cdng_overrides.DataSourceOverrides(),
 				"harness_platform_gitops_agent":                    gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
+				"harness_platform_gitops_agent_operator_yaml":      agent_yaml.DataSourceGitopsAgentOperatorYaml(),
 				"harness_platform_gitops_applications":             gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.DataSourceGitopsCluster(),
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.DataSourceGitopsGnupg(),
@@ -297,6 +305,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_governance_rule_set":                      governance_rule_set.DatasourceRuleSet(),
 				"harness_cluster_orchestrator":                     cluster_orchestrator.DataSourceClusterOrchestrator(),
 				"harness_platform_infra_module":                    module_registry.DataSourceInfraModule(),
+				"harness_chaos_infrastructure":                     infrastructure.DataSourceChaosInfrastructureService(),
+				"harness_platform_har_registry":                    har_registry.DataSourceRegistry(),
+				"harness_platform_infra_variable_set":              variable_set.DataSourceVariableSet(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pipeline_template.ResourceTemplate(),
@@ -319,6 +330,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_jdbc":                  connector.ResourceConnectorJDBC(),
 				"harness_platform_connector_dynatrace":             connector.ResourceConnectorDynatrace(),
 				"harness_platform_connector_gcp":                   cdng_connector_cloudProviders.ResourceConnectorGcp(),
+				"harness_platform_connector_gcp_kms":               pl_secretManagers.ResourceConnectorGcpKms(),
 				"harness_platform_connector_gcp_secret_manager":    pl_secretManagers.ResourceConnectorGCPSecretManager(),
 				"harness_platform_connector_git":                   cdng_connector_codeRepositories.ResourceConnectorGit(),
 				"harness_platform_connector_github":                cdng_connector_codeRepositories.ResourceConnectorGithub(),
@@ -446,6 +458,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_governance_rule_set":                      governance_rule_set.ResourceRuleSet(),
 				"harness_cluster_orchestrator":                     cluster_orchestrator.ResourceClusterOrchestrator(),
 				"harness_platform_infra_module":                    module_registry.ResourceInfraModule(),
+				"harness_chaos_infrastructure":                     infrastructure.ResourceChaosInfrastructure(),
+				"harness_platform_har_registry":                    har_registry.ResourceRegistry(),
+				"harness_platform_infra_variable_set":              variable_set.ResourceVariableSet(),
 			},
 		}
 
@@ -540,6 +555,31 @@ func getCodeClient(d *schema.ResourceData, version string) *code.APIClient {
 	return client
 }
 
+func getChaosClient(d *schema.ResourceData, version string) *chaos.APIClient {
+	client := chaos.NewAPIClient(&chaos.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/chaos/manager/api", // check if this can be taken from sdk
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)},
+	})
+	return client
+}
+
+func getHarClient(d *schema.ResourceData, version string) *har.APIClient {
+	cfg := har.NewConfiguration()
+	client := har.NewAPIClient(&har.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/har/api/v1",
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		HTTPClient:    getOpenApiHttpClient(cfg.Logger),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)},
+		DebugLogging:  openapi_client_logging.IsDebugOrHigher(cfg.Logger),
+	})
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
@@ -551,6 +591,8 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			Client:      getClient(d, version),
 			CodeClient:  getCodeClient(d, version),
 			DBOpsClient: getDBOpsClient(d, version),
+			ChaosClient: getChaosClient(d, version),
+			HARClient:   getHarClient(d, version),
 		}, nil
 	}
 }
