@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/harness_platform_pipeline: Added support for harness code
+resource/harness_platform_input_set: Added support for harness code
+```

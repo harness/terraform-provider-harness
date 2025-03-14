@@ -231,7 +231,7 @@ func buildConnectorAwsSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	if attr, ok := d.GetOk("execute_on_delegate"); ok {
 		connector.AwsSecretManager.ExecuteOnDelegate = attr.(bool)
-  }
+	}
 
 	if attr, ok := d.GetOk("recovery_window_in_days"); ok {
 		connector.AwsSecretManager.RecoveryWindowInDays = int64(attr.(int))

@@ -117,8 +117,8 @@ func buildConnectorTerraformCloud(d *schema.ResourceData) *nextgen.ConnectorInfo
 	// 	1. When the attribute is not defined by the user.
 	//	2. When the user explicitly sets it to false.
 	//
-	// This happens because false is treated as a zero-value, making GetOk() unable to distinguish between false and 
-	// “not defined”. To handle this, we need to use GetOkExists() instead of GetOk() to check if the attribute is 
+	// This happens because false is treated as a zero-value, making GetOk() unable to distinguish between false and
+	// “not defined”. To handle this, we need to use GetOkExists() instead of GetOk() to check if the attribute is
 	// defined by the user.
 	v, ok := d.GetOkExists("execute_on_delegate")
 	if !ok {
