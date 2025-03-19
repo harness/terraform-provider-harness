@@ -5,9 +5,8 @@ import (
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-
 	"github.com/harness/terraform-provider-harness/internal/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDataSourceConnectorAws(t *testing.T) {
