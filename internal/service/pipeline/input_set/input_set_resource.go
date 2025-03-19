@@ -554,7 +554,7 @@ func readGitDetails(inputSet *nextgen.InputSetResponseBody, store_type optional.
 	if connector_ref.IsSet() {
 		git_details["connector_ref"] = connector_ref.Value()
 	}
-	if !connector_ref.IsSet() || connector_ref.Value() == "" {
+	if connector_ref.Value() == "" {
 		git_details["is_harness_code_repo"] = true
 	}
 	return git_details
