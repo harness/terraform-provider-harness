@@ -142,6 +142,7 @@ manifests:
             folderPath: null
             repoName: <+input>
           type: Github
+        optionalValuesYaml: null
 configFiles:
   - configFile:
       identifier: configFile1
