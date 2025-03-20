@@ -130,6 +130,7 @@ Optional:
 - `commit_message` (String) Commit message used for the merge commit.
 - `connector_ref` (String) Identifier of the Harness Connector used for CRUD operations on the Entity. To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `file_path` (String) File path of the Entity in the repository.
+- `is_harness_code_repo` (Boolean) If the repo is harness code.
 - `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.
 - `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Pipeline.
 - `parent_entity_connector_ref` (String) Connector reference for Parent Entity (Pipeline). To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.

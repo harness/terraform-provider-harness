@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.46.4
 	github.com/docker/docker v24.0.5+incompatible
 	github.com/harness/harness-go-sdk v0.4.40
-	github.com/harness/harness-openapi-go-client v0.0.21
+	github.com/harness/harness-openapi-go-client v0.0.25
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/go-retryablehttp v0.7.4
@@ -85,6 +85,6 @@ require (
 	gotest.tools/v3 v3.3.0 // indirect
 )
 
-// replace github.com/harness/harness-go-sdk => ../harness-go-sdk
+//replace github.com/harness/harness-go-sdk => ../harness-go-sdk
 
-// replace github.com/harness/harness-openapi-go-client => ../harness-openapi-go-client
+//replace github.com/harness/harness-openapi-go-client => ../harness-openapi-go-client
