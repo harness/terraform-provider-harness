@@ -1,8 +1,6 @@
 module github.com/harness/terraform-provider-harness/tools
 
-go 1.23.0
-
-toolchain go1.23.5
+go 1.23
 
 require (
 	github.com/hashicorp/go-changelog v0.0.0-20220225074834-3eb750c2cd53
