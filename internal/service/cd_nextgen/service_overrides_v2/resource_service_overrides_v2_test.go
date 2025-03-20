@@ -242,8 +242,9 @@ manifests:
             paths:
               - files1
             folderPath: null
-            repoName: "<+input>"
+            repoName: <+input>
           type: Github
+        optionalValuesYaml: null
 configFiles:
   - configFile:
       identifier: configFile1
@@ -455,6 +456,7 @@ manifests:
             folderPath: null
             repoName: <+input>
           type: Github
+        optionalValuesYaml: null
 configFiles:
   - configFile:
       identifier: configFile1
@@ -543,6 +545,7 @@ manifests:
             folderPath: null
             repoName: <+input>
           type: Github
+        optionalValuesYaml: null
 configFiles:
   - configFile:
       identifier: configFile1
