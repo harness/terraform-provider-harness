@@ -1,6 +1,6 @@
 module github.com/harness/terraform-provider-harness
 
-go 1.23
+go 1.21
 
 require (
 	github.com/antihax/optional v1.0.0
