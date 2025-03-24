@@ -11,7 +11,7 @@ builds:
     goos:
       - freebsd
       - windows
-      - linuxs
+      - linux
       - darwin
     goarch:
       - amd64
@@ -22,7 +22,6 @@ builds:
       - goos: darwin
         goarch: '386'
     mod_timestamp: '{{ .CommitTimestamp }}'
-    go_version: 1.23.0  # Explicitly setting Go version
     flags:
       - -trimpath
     ldflags:
