@@ -7,11 +7,12 @@ import (
 	"github.com/antihax/optional"
 	input_set_go_sdk "github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-openapi-go-client/nextgen"
-	"github.com/harness/terraform-provider-harness/helpers"
-	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
+	"github.com/harness/terraform-provider-harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
 )
 
 func ResourceInputSet() *schema.Resource {
@@ -108,6 +109,12 @@ func ResourceInputSet() *schema.Resource {
 						"parent_entity_repo_name": {
 							Description: "Repository name for Parent Entity (Pipeline).",
 							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"is_harness_code_repo": {
+							Description: "If the repo is harness code.",
+							Type:        schema.TypeBool,
 							Optional:    true,
 							Computed:    true,
 						},
@@ -460,6 +467,9 @@ func buildCreateInputSet(d *schema.ResourceData) nextgen.InputSetCreateRequestBo
 		if attr, ok := config["repo_name"]; ok {
 			inputSet.GitDetails.RepoName = attr.(string)
 		}
+		if attr, ok := config["is_harness_code_repo"]; ok {
+			inputSet.GitDetails.IsHarnessCodeRepo = attr.(bool)
+		}
 	}
 	return inputSet
 }
@@ -501,6 +511,9 @@ func buildUpdateInputSet(d *schema.ResourceData) nextgen.InputSetUpdateRequestBo
 			if attr, ok := config["parent_entity_repo_name"]; ok {
 				inputSet.GitDetails.ParentEntityRepoName = attr.(string)
 			}
+			if attr, ok := config["is_harness_code_repo"]; ok {
+				inputSet.GitDetails.IsHarnessCodeRepo = attr.(bool)
+			}
 		}
 	}
 	return inputSet
@@ -540,6 +553,9 @@ func readGitDetails(inputSet *nextgen.InputSetResponseBody, store_type optional.
 	}
 	if connector_ref.IsSet() {
 		git_details["connector_ref"] = connector_ref.Value()
+	}
+	if connector_ref.Value() == "" {
+		git_details["is_harness_code_repo"] = true
 	}
 	return git_details
 }

@@ -7,11 +7,12 @@ import (
 	"github.com/antihax/optional"
 	pipeline_go_sdk "github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-openapi-go-client/nextgen"
-	"github.com/harness/terraform-provider-harness/helpers"
-	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
+	"github.com/harness/terraform-provider-harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
 )
 
 func ResourcePipeline() *schema.Resource {
@@ -92,6 +93,12 @@ func ResourcePipeline() *schema.Resource {
 						"last_commit_id": {
 							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.",
 							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"is_harness_code_repo": {
+							Description: "If the repo is harness code.",
+							Type:        schema.TypeBool,
 							Optional:    true,
 							Computed:    true,
 						},
@@ -414,6 +421,9 @@ func buildCreatePipeline(d *schema.ResourceData) nextgen.PipelineCreateRequestBo
 		if attr, ok := config["repo_name"]; ok {
 			pipeline.GitDetails.RepoName = attr.(string)
 		}
+		if attr, ok := config["is_harness_code_repo"]; ok {
+			pipeline.GitDetails.IsHarnessCodeRepo = attr.(bool)
+		}
 	}
 	return pipeline
 }
@@ -448,6 +458,9 @@ func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBo
 			}
 			if attr, ok := config["last_commit_id"]; ok {
 				pipeline.GitDetails.LastCommitId = attr.(string)
+			}
+			if attr, ok := config["is_harness_code_repo"]; ok {
+				pipeline.GitDetails.IsHarnessCodeRepo = attr.(bool)
 			}
 		}
 	}
@@ -490,6 +503,10 @@ func readGitDetails(pipeline nextgen.PipelineGetResponseBody, store_type optiona
 	}
 	if connector_ref.IsSet() {
 		git_details["connector_ref"] = connector_ref.Value()
+	}
+
+	if connector_ref.Value() == "" {
+		git_details["is_harness_code_repo"] = true
 	}
 	return git_details
 }
