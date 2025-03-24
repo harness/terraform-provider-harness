@@ -118,7 +118,7 @@ func TestAccResourcePipelineImportFromGit(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdGitFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path", "git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%"},
+				ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path", "git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%", "git_details.0.is_harness_code_repo"},
 			},
 		},
 	})
