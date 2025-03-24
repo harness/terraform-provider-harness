@@ -1,4 +1,0 @@
-{
-  "harness_lang": "Golang,Shell",
-  "harness_build_tool": "Go"
-}
