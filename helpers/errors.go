@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"github.com/harness/harness-go-sdk/harness/policymgmt"
 	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -32,6 +33,28 @@ func HandleDBOpsApiError(err error, d *schema.ResourceData, httpResp *http.Respo
 		}
 		if httpResp.StatusCode == 404 {
 			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
+		}
+	}
+
+	return diag.Errorf(err.Error())
+}
+
+func HandlePolicyApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	_, ok := err.(policymgmt.GenericSwaggerError)
+	if ok && httpResp != nil {
+		if httpResp.StatusCode == 401 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+				"1) Please check if token has expired or is wrong.\n" +
+				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
+		}
+		if httpResp.StatusCode == 403 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+				"1) Please check if the token has required permission for this operation.\n" +
+				"2) Please check if the token has expired or is wrong.")
+		}
+		if httpResp.StatusCode == 404 {
+			d.SetId("")
+			return nil
 		}
 	}
 
