@@ -121,7 +121,7 @@ func resourcePolicyRead(ctx context.Context, d *schema.ResourceData, meta interf
 	policy, httpResp, err := c.PoliciesApi.PoliciesFind(ctx, id, &localVarOptionals)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandlePolicyApiError(err, d, httpResp)
 	}
 
 	readPolicy(d, policy)
@@ -162,6 +162,10 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 			localVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 		}
 		responsePolicy, httpResp, err = c.PoliciesApi.PoliciesCreate(ctx, body, &localVarOptionals)
+		if err != nil {
+			// For create operations, we should return the error directly
+			return diag.Errorf("error creating policy: %v", err)
+		}
 	} else {
 		body := policymgmt.UpdateRequestBody{
 			Name: d.Get("name").(string),
@@ -184,7 +188,15 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 			localVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 		}
 		httpResp, err = c.PoliciesApi.PoliciesUpdate(ctx, body, id, &localVarOptionals)
-		if err == nil && httpResp.StatusCode == http.StatusNoContent {
+		if err != nil {
+			// For update operations, if we get a 404, we should trigger recreation
+			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+				d.SetId("")
+				return nil
+			}
+			return diag.Errorf("error updating policy: %v", err)
+		}
+		if httpResp.StatusCode == http.StatusNoContent {
 			// if we get a 204, we need to get the policy again to get the updated values
 			findLocalVarOptionals := policymgmt.PoliciesApiPoliciesFindOpts{
 				AccountIdentifier: optional.NewString(meta.(*internal.Session).AccountId),
@@ -198,10 +210,15 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 				findLocalVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 			}
 			responsePolicy, httpResp, err = c.PoliciesApi.PoliciesFind(ctx, id, &findLocalVarOptionals)
+			if err != nil {
+				// If we can't find the policy after update, trigger recreation
+				if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+					d.SetId("")
+					return nil
+				}
+				return diag.Errorf("error reading policy after update: %v", err)
+			}
 		}
-	}
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readPolicy(d, responsePolicy)
@@ -225,7 +242,7 @@ func resourcePolicyDelete(ctx context.Context, d *schema.ResourceData, meta inte
 	httpResp, err := c.PoliciesApi.PoliciesDelete(ctx, d.Id(), &localVarOptionals)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandlePolicyApiError(err, d, httpResp)
 	}
 
 	return nil
