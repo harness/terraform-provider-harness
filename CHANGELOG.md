@@ -1,3 +1,9 @@
+# v0.36.2 (March 24, 2025)
+Reverted the Go version upgrade.
+
+# v0.36.0 (March 24, 2025)
+This version is not recommended for use with the Terraform provider. Please use a different version.
+
 # 0.35.8 (March 07,2025) 
 
 # 0.35.7 (March 07,2025) 
