@@ -1,11 +1,8 @@
-# v0.36.2 (March 24,2025) 
+# v0.36.2 (March 24, 2025)
+Reverted the Go version upgrade.
 
-# 0.36.0 (March 24,2025) 
-
-ENHANCEMENTS:
-
-* resource/harness_platform_pipeline: Added support for harness code
-resource/harness_platform_input_set: Added support for harness code ([#1186](https://github.com/harness/terraform-provider-harness/issues/1186))
+# v0.36.0 (March 24, 2025)
+This version is not recommended for use with the Terraform provider. Please use a different version.
 
 # 0.35.8 (March 07,2025) 
 
