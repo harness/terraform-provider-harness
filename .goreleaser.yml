@@ -1,9 +1,10 @@
+version: 2
 # Visit https://goreleaser.com for documentation on how to customize this
 # behavior.
 before:
   hooks:
     # this is just an example and not a requirement for provider building/publishing
-    - go mod tidy -compat=1.17 
+    - go mod tidy -compat=1.23
 builds:
 - env:
     # goreleaser does not work with CGO, it could also complicate
@@ -16,18 +17,18 @@ builds:
   ldflags:
     - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
   goos:
+    - darwin
     - freebsd
     - windows
     - linux
-    - darwin
   goarch:
+    - arm64
     - amd64
     - '386'
     - arm
-    - arm64
-  ignore:
-    - goos: darwin
-      goarch: '386'
+#  ignore:
+#    - goos: darwin
+#      goarch: '386'
   binary: '{{ .ProjectName }}_v{{ .Version }}'
 archives:
 - format: zip
@@ -38,7 +39,7 @@ checksum:
 signs:
   - artifacts: checksum
     args:
-      # if you are using this in a GitHub action or some other automated pipeline, you 
+      # if you are using this in a GitHub action or some other automated pipeline, you
       # need to pass the batch flag to indicate its not interactive.
       - "--batch"
       - "--local-user"
@@ -51,7 +52,6 @@ release:
   # If you want to manually examine the release before its live, uncomment this line:
   # draft: true
 changelog:
-  skip: false
   # Commit messages matching the regexp listed here will be removed from
   # the changelog
   # Default is empty
