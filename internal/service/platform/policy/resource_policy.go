@@ -187,7 +187,6 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 		if d.Get("org_id").(string) != "" {
 			localVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 		}
-		httpResp, err = c.PoliciesApi.PoliciesUpdate(ctx, body, id, &localVarOptionals)
 		if err != nil {
 			// For update operations, if we get a 404, we should trigger recreation
 			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
@@ -196,6 +195,7 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 			}
 			return diag.Errorf("error updating policy: %v", err)
 		}
+
 		if httpResp.StatusCode == http.StatusNoContent {
 			// if we get a 204, we need to get the policy again to get the updated values
 			findLocalVarOptionals := policymgmt.PoliciesApiPoliciesFindOpts{
@@ -209,7 +209,6 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 			if d.Get("org_id").(string) != "" {
 				findLocalVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 			}
-			responsePolicy, httpResp, err = c.PoliciesApi.PoliciesFind(ctx, id, &findLocalVarOptionals)
 			if err != nil {
 				// If we can't find the policy after update, trigger recreation
 				if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
