@@ -138,7 +138,7 @@ func resourceFFApiKeyCreate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		// handle conflict
 		if httpResp != nil && httpResp.StatusCode == 409 {
-			return diag.Errorf("An api key with identifier [%s] orgIdentifier [%s] project [%s]  and environment [%s] already exists", d.Get("identifier").(string), qp.OrganizationId, qp.ProjectId, qp.EnvironmentId)
+			return diag.Errorf("An API key with identifier [%s] orgIdentifier [%s] project [%s] and environment [%s] already exists", d.Get("identifier").(string), qp.OrganizationId, qp.ProjectId, qp.EnvironmentId)
 		}
 		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}

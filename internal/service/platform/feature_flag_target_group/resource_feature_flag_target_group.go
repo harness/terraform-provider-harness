@@ -205,8 +205,6 @@ func resourceFeatureFlagTargetCreate(ctx context.Context, d *schema.ResourceData
 		d.MarkNewResource()
 	}
 
-	httpResp, err = c.TargetGroupsApi.CreateSegment(ctx, segmentRequest, c.AccountId, qp.OrgID)
-
 	if err != nil {
 		// handle conflict
 		if httpResp != nil && httpResp.StatusCode == 409 {
@@ -251,8 +249,11 @@ func resourceFeatureFlagTargetGroupUpdate(ctx context.Context, d *schema.Resourc
 
 	segment, httpResp, err := c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {
-		body, _ := io.ReadAll(httpResp.Body)
-		return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
+		if httpResp != nil {
+			body, _ := io.ReadAll(httpResp.Body)
+			return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
+		}
+		return diag.Errorf("error fetching target group: %v", err)
 	}
 
 	readFeatureFlagTargetGroup(d, &segment, qp)
