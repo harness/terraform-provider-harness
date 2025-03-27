@@ -133,17 +133,24 @@ func resourceFFApiKeyCreate(ctx context.Context, d *schema.ResourceData, meta in
 	var resp nextgen.CfApiKey
 	var httpResp *http.Response
 
-	resp, httpResp, err = c.APIKeysApi.AddAPIKey(ctx, c.AccountId, qp.OrganizationId, qp.EnvironmentId, qp.ProjectId, opts)
+	resp, httpRespTmp, err := c.APIKeysApi.AddAPIKey(ctx, c.AccountId, qp.OrganizationId, qp.EnvironmentId, qp.ProjectId, opts)
+	httpResp = httpRespTmp
 
 	if err != nil {
-		// handle conflict
-		if httpResp != nil && httpResp.StatusCode == 409 {
-			return diag.Errorf("An api key with identifier [%s] orgIdentifier [%s] project [%s]  and environment [%s] already exists", d.Get("identifier").(string), qp.OrganizationId, qp.ProjectId, qp.EnvironmentId)
+		if httpResp != nil {
+			if httpResp.StatusCode == 409 {
+				return diag.Errorf(
+					"An API key with identifier [%s] orgIdentifier [%s] project [%s] and environment [%s] already exists",
+					d.Get("identifier").(string), qp.OrganizationId, qp.ProjectId, qp.EnvironmentId,
+				)
+			}
+			return feature_flag.HandleCFApiError(err, d, httpResp)
 		}
-		return feature_flag.HandleCFApiError(err, d, httpResp)
+
+		return diag.Errorf("API key creation failed: %v", err)
 	}
 
-	readFFApiKey(d, &resp, qp)
+	d.SetId(resp.Identifier)
 
 	return nil
 }

@@ -319,7 +319,7 @@ func resourceFeatureFlagRead(ctx context.Context, d *schema.ResourceData, meta i
 		resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, opts)
 
 		if err != nil {
-			if httpResp.StatusCode == 404 {
+			if httpResp != nil && httpResp.StatusCode == 404 {
 				d.MarkNewResource()
 				d.SetId("")
 				return nil
@@ -347,8 +347,6 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 
 	var err error
 	var httpResp *http.Response
-
-	httpResp, err = c.FeatureFlagsApi.CreateFeatureFlag(ctx, c.AccountId, qp.OrganizationId, opts)
 
 	if err != nil {
 		// handle conflict

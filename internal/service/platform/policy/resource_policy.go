@@ -133,7 +133,7 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 	c := meta.(*internal.Session).GetPolicyManagementClient()
 	var err error
 	var responsePolicy policymgmt.Policy
-	var httpResp *http.Response
+
 	id := d.Id()
 
 	if id == "" {
@@ -161,7 +161,7 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 		if d.Get("org_id").(string) != "" {
 			localVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 		}
-		responsePolicy, httpResp, err = c.PoliciesApi.PoliciesCreate(ctx, body, &localVarOptionals)
+		responsePolicy, _, err = c.PoliciesApi.PoliciesCreate(ctx, body, &localVarOptionals)
 		if err != nil {
 			// For create operations, we should return the error directly
 			return diag.Errorf("error creating policy: %v", err)
@@ -187,16 +187,17 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 		if d.Get("org_id").(string) != "" {
 			localVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 		}
-		httpResp, err = c.PoliciesApi.PoliciesUpdate(ctx, body, id, &localVarOptionals)
+		updateResp, err := c.PoliciesApi.PoliciesUpdate(ctx, body, id, &localVarOptionals)
 		if err != nil {
 			// For update operations, if we get a 404, we should trigger recreation
-			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			if updateResp != nil && updateResp.StatusCode == http.StatusNotFound {
 				d.SetId("")
 				return nil
 			}
 			return diag.Errorf("error updating policy: %v", err)
 		}
-		if httpResp.StatusCode == http.StatusNoContent {
+
+		if updateResp.StatusCode == http.StatusNoContent {
 			// if we get a 204, we need to get the policy again to get the updated values
 			findLocalVarOptionals := policymgmt.PoliciesApiPoliciesFindOpts{
 				AccountIdentifier: optional.NewString(meta.(*internal.Session).AccountId),
@@ -209,15 +210,17 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 			if d.Get("org_id").(string) != "" {
 				findLocalVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 			}
-			responsePolicy, httpResp, err = c.PoliciesApi.PoliciesFind(ctx, id, &findLocalVarOptionals)
+			var findResp *http.Response
+			responsePolicy, findResp, err = c.PoliciesApi.PoliciesFind(ctx, id, &findLocalVarOptionals)
 			if err != nil {
-				// If we can't find the policy after update, trigger recreation
-				if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+				// Ensure findResp is not nil before checking StatusCode
+				if err.Error() == "Not Found" || (findResp != nil && findResp.StatusCode == http.StatusNotFound) {
 					d.SetId("")
 					return nil
 				}
 				return diag.Errorf("error reading policy after update: %v", err)
 			}
+
 		}
 	}
 
