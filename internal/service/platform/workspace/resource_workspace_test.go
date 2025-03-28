@@ -31,6 +31,10 @@ func TestAccResourceWorkspace(t *testing.T) {
 				Config: testAccResourceWorkspace(id, name, "branch"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "default_pipelines.{destroy}", "destroy_pipeline_identifier"),
+					resource.TestCheckResourceAttr(resourceName, "default_pipelines.{drift}", "drift_pipeline_identifier"),
+					resource.TestCheckResourceAttr(resourceName, "default_pipelines.{apply}", "apply_pipeline_identifier"),
+					resource.TestCheckResourceAttr(resourceName, "default_pipelines.{plan}", "plan_pipeline_identifier"),
 				),
 			},
 			{
@@ -221,7 +225,13 @@ func testAccResourceWorkspace(id string, name string, repositoryType string) str
 				%[3]s
 				repository_path         = "tf/aws/basic"
 				repository_connector    = "account.${harness_platform_connector_github.test.id}"
-			}			
+			}
+			default_pipelines = {
+				"destroy" = "destroy_pipeline_id"
+				"drift"   = "drift_pipeline_id"
+				"plan"    = "plan_pipeline_id"
+				"apply"   = "apply_pipeline_id"
+  			}			
 			variable_sets = [harness_platform_infra_variable_set.test.id]
   		}
 `, id, name, repositoryX)

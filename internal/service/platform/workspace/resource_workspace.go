@@ -55,12 +55,12 @@ func ResourceWorkspace() *schema.Resource {
 				Optional:    true,
 			},
 			"provisioner_type": {
-				Description: "Provisioner type defines the provisioning tool to use. Currently only terraform is supported.",
+				Description: "Provisioner type defines the provisioning tool to use (terraform or opentofu)",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"provisioner_version": {
-				Description: "Provisioner version defines the tool version to use. Currently we support versions of terraform less than or equal 1.5.6",
+				Description: "Provisioner version defines the provisioner version to use. The latest version of Opentofu should always be supported, Terraform is only supported up to version 1.5.7.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
