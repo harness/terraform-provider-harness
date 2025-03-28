@@ -211,7 +211,7 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 				findLocalVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 			}
 			var findResp *http.Response
-			_, findResp, err := c.PoliciesApi.PoliciesFind(ctx, id, &findLocalVarOptionals)
+			responsePolicy, findResp, err = c.PoliciesApi.PoliciesFind(ctx, id, &findLocalVarOptionals)
 			if err != nil {
 				// Check error message first
 				if err.Error() == "Not Found" {
