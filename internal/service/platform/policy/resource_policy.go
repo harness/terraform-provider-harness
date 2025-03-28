@@ -133,6 +133,7 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 	c := meta.(*internal.Session).GetPolicyManagementClient()
 	var err error
 	var responsePolicy policymgmt.Policy
+	var findResp *http.Response
 
 	id := d.Id()
 
@@ -210,7 +211,6 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 			if d.Get("org_id").(string) != "" {
 				findLocalVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 			}
-			var findResp *http.Response
 			responsePolicy, findResp, err = c.PoliciesApi.PoliciesFind(ctx, id, &findLocalVarOptionals)
 			if err != nil {
 				// Check error message first
@@ -218,14 +218,15 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 					d.SetId("")
 					return nil
 				}
-				// Only access findResp if it's not nil
-				if findResp != nil && findResp.StatusCode == http.StatusNotFound {
-					d.SetId("")
-					return nil
+				// Use a local variable to handle nil check more safely
+				if findResp != nil {
+					if findResp.StatusCode == http.StatusNotFound {
+						d.SetId("")
+						return nil
+					}
 				}
 				return diag.Errorf("error reading policy after update: %v", err)
 			}
-
 		}
 	}
 
