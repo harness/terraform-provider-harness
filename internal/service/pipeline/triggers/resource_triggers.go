@@ -2,7 +2,9 @@ package triggers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"regexp"
 	"time"
 
 	"github.com/antihax/optional"
@@ -11,6 +13,13 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+)
+
+// Regex patterns for validation
+const (
+	triggerIdentifierPattern = "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+	triggerNamePattern       = "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
 )
 
 func ResourceTriggers() *schema.Resource {
@@ -23,6 +32,26 @@ func ResourceTriggers() *schema.Resource {
 		Importer:      helpers.TriggerResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "Identifier of the trigger",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				ValidateFunc: validation.StringMatch(
+					regexp.MustCompile(triggerIdentifierPattern),
+					"identifier must start with a letter or underscore and can contain only alphanumeric characters and underscores (max 128 chars)",
+				),
+			},
+			"name": {
+				Description: "Name of the trigger",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				ValidateFunc: validation.StringMatch(
+					regexp.MustCompile(triggerNamePattern),
+					"name must start with a letter, number, underscore, hyphen, or dot and can contain alphanumeric characters, hyphens, underscores, spaces, and dots (max 128 chars)",
+				),
+			},
 			"target_id": {
 				Description: "Identifier of the target pipeline",
 				Type:        schema.TypeString,
@@ -38,6 +67,7 @@ func ResourceTriggers() *schema.Resource {
 				Type:             schema.TypeString,
 				Required:         true,
 				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
+				ValidateFunc:     validateTriggerYaml,
 			},
 			"if_match": {
 				Description: "if-Match",
@@ -49,6 +79,37 @@ func ResourceTriggers() *schema.Resource {
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
 
 	return resource
+}
+
+// validateTriggerYaml validates that the YAML contains valid identifier and name
+func validateTriggerYaml(v interface{}, k string) (warns []string, errs []error) {
+	yamlStr := v.(string)
+	
+	// Extract identifier and name from YAML
+	identifierRegex := regexp.MustCompile(`identifier:\s*([^\s]+)`)
+	nameRegex := regexp.MustCompile(`name:\s*([^\n]+)`)
+	
+	identifierMatches := identifierRegex.FindStringSubmatch(yamlStr)
+	nameMatches := nameRegex.FindStringSubmatch(yamlStr)
+	
+	// Validate identifier if found
+	if len(identifierMatches) > 1 {
+		identifier := identifierMatches[1]
+		if !regexp.MustCompile(triggerIdentifierPattern).MatchString(identifier) {
+			errs = append(errs, fmt.Errorf("invalid identifier in YAML: %s. Identifier must start with a letter or underscore and can contain only alphanumeric characters and underscores (max 128 chars)", identifier))
+		}
+	}
+	
+	// Validate name if found
+	if len(nameMatches) > 1 {
+		name := nameMatches[1]
+		name = regexp.MustCompile(`^[\s"']*|[\s"']*$`).ReplaceAllString(name, "") // Trim quotes and spaces
+		if !regexp.MustCompile(triggerNamePattern).MatchString(name) {
+			errs = append(errs, fmt.Errorf("invalid name in YAML: %s. Name must start with a letter, number, underscore, hyphen, or dot and can contain alphanumeric characters, hyphens, underscores, spaces, and dots (max 128 chars)", name))
+		}
+	}
+	
+	return warns, errs
 }
 
 func resourceTriggersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
