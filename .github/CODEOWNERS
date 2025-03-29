@@ -1,1 +1,5 @@
 internal/service/platform/connector/connector.go rathod.meetsatish@harness.io
+internal/service/cd/** ritek.rounak@harness.io
+internal/service/cd_nextgen/** ritek.rounak@harness.io
+internal/service/har/** ritek.rounak@harness.io
+internal/service/pipeline/** ritek.rounak@harness.io
