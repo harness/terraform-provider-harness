@@ -31,10 +31,11 @@ func TestAccResourceWorkspace(t *testing.T) {
 				Config: testAccResourceWorkspace(id, name, "branch"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "default_pipelines.{destroy}", "destroy_pipeline_identifier"),
-					resource.TestCheckResourceAttr(resourceName, "default_pipelines.{drift}", "drift_pipeline_identifier"),
-					resource.TestCheckResourceAttr(resourceName, "default_pipelines.{apply}", "apply_pipeline_identifier"),
-					resource.TestCheckResourceAttr(resourceName, "default_pipelines.{plan}", "plan_pipeline_identifier"),
+					resource.TestCheckResourceAttr(resourceName, "default_pipelines.%", "4"),
+					resource.TestCheckResourceAttr(resourceName, "default_pipelines.destroy", "destroy_pipeline_id"),
+					resource.TestCheckResourceAttr(resourceName, "default_pipelines.drift", "drift_pipeline_id"),
+					resource.TestCheckResourceAttr(resourceName, "default_pipelines.apply", "apply_pipeline_id"),
+					resource.TestCheckResourceAttr(resourceName, "default_pipelines.plan", "plan_pipeline_id"),
 				),
 			},
 			{
