@@ -53,5 +53,12 @@ resource "harness_platform_workspace" "example" {
     repository_connector = harness_platform_connector_github.test.id
   }
 
-  variable_sets          = [harness_platform_infra_variable_set.test.id]
+  variable_sets = [harness_platform_infra_variable_set.test.id]
+
+  default_pipelines = {
+    "destroy" = "destroy_pipeline_id"
+    "drift"   = "drift_pipeline_id"
+    "plan"    = "plan_pipeline_id"
+    "apply"   = "apply_pipeline_id"
+  }
 }
