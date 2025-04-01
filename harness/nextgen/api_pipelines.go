@@ -2152,10 +2152,10 @@ func (a *PipelinesApiService) EditGitDetialsForPipeline(ctx context.Context, acc
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.ConnectorRef.IsSet() {
-		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.ConnectorRef.Value(), ""))
+		localVarQueryParams.Add("connectorRef", parameterToString(localVarOptionals.ConnectorRef.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.RepoName.IsSet() {
-		localVarQueryParams.Add("repoIdentifier", parameterToString(localVarOptionals.RepoName.Value(), ""))
+		localVarQueryParams.Add("repoName", parameterToString(localVarOptionals.RepoName.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.FilePath.IsSet() {
 		localVarQueryParams.Add("filePath", parameterToString(localVarOptionals.FilePath.Value(), ""))
