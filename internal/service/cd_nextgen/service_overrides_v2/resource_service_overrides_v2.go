@@ -2,10 +2,7 @@ package service_overrides_v2
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -176,39 +173,6 @@ func ResourceServiceOverrides() *schema.Resource {
 	SetScopedResourceSchemaForServiceOverride(resource.Schema)
 
 	return resource
-}
-
-func resourceDataToString(d *schema.ResourceData) string {
-	// Create a builder for the string
-	var sb strings.Builder
-
-	sb.WriteString(fmt.Sprintf("ResourceData ID: %s\n", d.Id()))
-
-	// Get all keys from the schema
-	resourceSchema := ResourceServiceOverrides().Schema
-	sb.WriteString("Available fields:\n")
-
-	// Build a map of all data
-	dataMap := make(map[string]interface{})
-
-	for key := range resourceSchema {
-		val, exists := d.GetOk(key)
-		valStr := fmt.Sprintf("%v", val)
-		if len(valStr) > 100 {
-			valStr = valStr[:100] + "..." // Truncate long values
-		}
-		dataMap[key] = valStr
-		sb.WriteString(fmt.Sprintf("  %s = %s (exists: %v)\n", key, valStr, exists))
-	}
-
-	// Try to marshal the map to JSON for a different view
-	jsonData, err := json.MarshalIndent(dataMap, "", "  ")
-	if err == nil {
-		sb.WriteString("\nAs JSON:\n")
-		sb.WriteString(string(jsonData))
-	}
-
-	return sb.String()
 }
 
 func resourceServiceOverridesV2Read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
