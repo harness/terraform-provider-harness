@@ -34,11 +34,13 @@ data "harness_platform_workspace" "test" {
 - `description` (String) Description of the Workspace
 - `repository_branch` (String) Repository Branch in which the code should be accessed
 - `repository_commit` (String) Repository Tag in which the code should be accessed
-- `repository_sha` (String) Repository SHA in which the code should be accessed
+- `repository_sha` (String) Repository Commit SHA in which the code should be accessed
+- `variable_sets` (List of String) Variable sets to use.
 
 ### Read-Only
 
 - `cost_estimation_enabled` (Boolean) If enabled cost estimation operations will be performed in this workspace
+- `default_pipelines` (Map of String) Default pipelines associated with this workspace
 - `environment_variable` (Block Set) Environment variables configured on the workspace (see [below for nested schema](#nestedblock--environment_variable))
 - `id` (String) The ID of this resource.
 - `name` (String) Name of the Workspace
@@ -50,7 +52,6 @@ data "harness_platform_workspace" "test" {
 - `repository_path` (String) Repository Path is the path in which the infra code resides
 - `terraform_variable` (Block Set) Terraform variables configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable))
 - `terraform_variable_file` (Block Set) Terraform variables files configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable_file))
-- `variable_sets` (Set of String) Variable set identifiers. Currently support only one variable set.
 
 <a id="nestedblock--environment_variable"></a>
 ### Nested Schema for `environment_variable`
@@ -80,6 +81,6 @@ Read-Only:
 - `repository` (String) Repository is the name of the repository to fetch the code from.
 - `repository_branch` (String) Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit or sha is set
 - `repository_commit` (String) Repository commit is tag to fetch the variables from. This cannot be set if repository branch or sha is set.
-- `repository_sha` (String) Repository commit is sha to fetch the variables from. This cannot be set if repository branch or commit is set.
 - `repository_connector` (String) Repository connector is the reference to the connector used to fetch the variables.
 - `repository_path` (String) Repository path is the path in which the variables reside.
+- `repository_sha` (String) Repository commit is SHA to fetch the variables from. This cannot be set if repository branch or commit is set.
