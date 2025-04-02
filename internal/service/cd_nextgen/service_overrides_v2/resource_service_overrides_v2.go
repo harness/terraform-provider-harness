@@ -263,9 +263,9 @@ func resourceServiceOverridesEditGitDetials(ctx context.Context, c *nextgen.APIC
 	gitUpdateRequest := &nextgen.ServiceOverrideGitUpdateRequestDTO{
 		// Core service override identification fields
 		Identifier:           d.Id(),                              // Service override identifier
-		EnvironmentRef:       d.Get("environment_id").(string),    // Environment reference
-		ServiceRef:           d.Get("service_id").(string),        // Service reference
-		InfraIdentifier:      d.Get("infrastructure_id").(string), // Infrastructure identifier
+		EnvironmentRef:       d.Get("env_id").(string),            // Environment reference
+		ServiceRef:           helpers.BuildField(d, "service_id"), // Service reference
+		InfraIdentifier:      helpers.BuildField(d, "infra_id"),   // Infrastructure identifier
 		ServiceOverridesType: d.Get("type").(string),              // Type of service override
 
 		// Git metadata details
