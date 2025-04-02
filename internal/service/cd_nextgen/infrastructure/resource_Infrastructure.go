@@ -256,8 +256,8 @@ func resourceInfrastructureEditGitDetials(ctx context.Context, c *nextgen.APICli
 	project_id := d.Get("project_id").(string)
 	env_id := d.Get("env_id").(string)
 	gitDetails := &nextgen.InfrastructuresApiEditGitDetailsMetadataOpts{
-		ConnectorRef: helpers.BuildField(d, "git_details.0.branch_name"),
-		RepoName:     helpers.BuildField(d, "git_details.0.connector_ref"),
+		ConnectorRef: helpers.BuildField(d, "git_details.0.connector_ref"),
+		RepoName:     helpers.BuildField(d, "git_details.0.repo_name"),
 		FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
 	}
 	resp, httpResp, err := c.InfrastructuresApi.EditGitDetailsForInfrastructure(ctx, c.AccountId, org_id, project_id, env_id, id, gitDetails)
