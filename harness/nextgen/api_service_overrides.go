@@ -1030,17 +1030,17 @@ func (a *ServiceOverridesApiService) ImportServiceOverrides(ctx context.Context,
 type ServiceOverrideGitUpdateRequestDTO struct {
 	Identifier                   string                          `json:"identifier,omitempty"`
 	EnvironmentRef               string                          `json:"environmentRef,omitempty"`
-	ServiceRef                   string                          `json:"serviceRef,omitempty"`
-	InfraIdentifier              string                          `json:"infraIdentifier,omitempty"`
+	ServiceRef                   optional.String                 `json:"serviceRef,omitempty"`
+	InfraIdentifier              optional.String                 `json:"infraIdentifier,omitempty"`
 	ServiceOverridesType         string                          `json:"serviceOverridesType,omitempty"`
 	GitMetadataUpdateRequestInfo GitMetadataUpdateRequestInfoDTO `json:"gitMetadataUpdateRequestInfo,omitempty"`
 }
 
 type ServiceOverrideGitUpdateResponseDTO struct {
-	Identifier      string `json:"identifier,omitempty"`
-	EnvironmentRef  string `json:"environmentRef,omitempty"`
-	ServiceRef      string `json:"serviceRef,omitempty"`
-	InfraIdentifier string `json:"infraIdentifier,omitempty"`
+	Identifier      string          `json:"identifier,omitempty"`
+	EnvironmentRef  string          `json:"environmentRef,omitempty"`
+	ServiceRef      optional.String `json:"serviceRef,omitempty"`
+	InfraIdentifier optional.String `json:"infraIdentifier,omitempty"`
 }
 
 type GitMetadataUpdateRequestInfoDTO struct {
@@ -1076,11 +1076,11 @@ func (a *ServiceOverridesApiService) EditGitDetialsForServiceOverridesV2(ctx con
 		if localVarOptionals.EnvironmentRef != "" {
 			localVarQueryParams.Add("environmentRef", parameterToString(localVarOptionals.EnvironmentRef, ""))
 		}
-		if localVarOptionals.ServiceRef != "" {
-			localVarQueryParams.Add("serviceRef", parameterToString(localVarOptionals.ServiceRef, ""))
+		if localVarOptionals.ServiceRef.IsSet() {
+			localVarQueryParams.Add("serviceRef", parameterToString(localVarOptionals.ServiceRef.Value(), ""))
 		}
-		if localVarOptionals.InfraIdentifier != "" {
-			localVarQueryParams.Add("infraIdentifier", parameterToString(localVarOptionals.InfraIdentifier, ""))
+		if localVarOptionals.InfraIdentifier.IsSet() {
+			localVarQueryParams.Add("infraIdentifier", parameterToString(localVarOptionals.InfraIdentifier.Value(), ""))
 		}
 		if localVarOptionals.ServiceOverridesType != "" {
 			localVarQueryParams.Add("serviceOverridesType", parameterToString(localVarOptionals.ServiceOverridesType, ""))
@@ -1088,13 +1088,13 @@ func (a *ServiceOverridesApiService) EditGitDetialsForServiceOverridesV2(ctx con
 
 		// Git Metadata params
 		if localVarOptionals.GitMetadataUpdateRequestInfo.ConnectorRef.IsSet() {
-			localVarQueryParams.Add("connectorRef", parameterToString(localVarOptionals.GitMetadataUpdateRequestInfo.ConnectorRef, ""))
+			localVarQueryParams.Add("connectorRef", parameterToString(localVarOptionals.GitMetadataUpdateRequestInfo.ConnectorRef.Value(), ""))
 		}
 		if localVarOptionals.GitMetadataUpdateRequestInfo.RepoName.IsSet() {
-			localVarQueryParams.Add("repoName", parameterToString(localVarOptionals.GitMetadataUpdateRequestInfo.RepoName, ""))
+			localVarQueryParams.Add("repoName", parameterToString(localVarOptionals.GitMetadataUpdateRequestInfo.RepoName.Value(), ""))
 		}
 		if localVarOptionals.GitMetadataUpdateRequestInfo.FilePath.IsSet() {
-			localVarQueryParams.Add("filePath", parameterToString(localVarOptionals.GitMetadataUpdateRequestInfo.FilePath, ""))
+			localVarQueryParams.Add("filePath", parameterToString(localVarOptionals.GitMetadataUpdateRequestInfo.FilePath.Value(), ""))
 		}
 	}
 
