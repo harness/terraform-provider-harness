@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_workspace: Updated docs to include opentofu as a supported value for provisioner_type attribute, updated example to include use of default_pipelines attribute and updated acceptance test to include use of default_pipelines attribute.
+```
