@@ -23,7 +23,8 @@ type V1AgentYamlQuery struct {
 	DisasterRecoveryIdentifier string `json:"disasterRecoveryIdentifier,omitempty"`
 	SkipCrds                   bool   `json:"skipCrds,omitempty"`
 	// Certificate chain for the agent, must be base64 encoded.
-	CaData string   `json:"caData,omitempty"`
-	Proxy  *V1Proxy `json:"proxy,omitempty"`
-	PrivateKey string `json:"privateKey,omitempty"`
+	CaData         string            `json:"caData,omitempty"`
+	Proxy          *V1Proxy          `json:"proxy,omitempty"`
+	PrivateKey     string            `json:"privateKey,omitempty"`
+	ArgocdSettings *V1ArgoCdSettings `json:"argocdSettings,omitempty"`
 }

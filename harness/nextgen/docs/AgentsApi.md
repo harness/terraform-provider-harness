@@ -173,6 +173,7 @@ Name | Type | Description  | Notes
  **proxyPassword** | **optional.String**|  | 
  **proxySkipSSLVerify** | **optional.Bool**|  | 
  **privateKey** | **optional.String**|  | 
+ **argocdSettingsEnableHelmPathTraversal** | **optional.Bool**| Controls the Environment variable HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL to allow or deny dot-dot-slash values file paths. Disabled by default for security reasons. This config is pushed as an env variable to the repo-server. | 
 
 ### Return type
 
@@ -221,6 +222,7 @@ Name | Type | Description  | Notes
  **proxyPassword** | **optional.String**|  | 
  **proxySkipSSLVerify** | **optional.Bool**|  | 
  **privateKey** | **optional.String**|  | 
+ **argocdSettingsEnableHelmPathTraversal** | **optional.Bool**| Controls the Environment variable HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL to allow or deny dot-dot-slash values file paths. Disabled by default for security reasons. This config is pushed as an env variable to the repo-server. | 
 
 ### Return type
 
@@ -269,6 +271,7 @@ Name | Type | Description  | Notes
  **proxyPassword** | **optional.String**|  | 
  **proxySkipSSLVerify** | **optional.Bool**|  | 
  **privateKey** | **optional.String**|  | 
+ **argocdSettingsEnableHelmPathTraversal** | **optional.Bool**| Controls the Environment variable HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL to allow or deny dot-dot-slash values file paths. Disabled by default for security reasons. This config is pushed as an env variable to the repo-server. | 
 
 ### Return type
 

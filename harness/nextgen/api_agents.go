@@ -524,23 +524,25 @@ func (a *AgentsApiService) AgentServiceForServerGet(ctx context.Context, identif
 	  * @param "ProxyPassword" (optional.String) -
 	  * @param "ProxySkipSSLVerify" (optional.Bool) -
 	  * @param "PrivateKey" (optional.String) -
+      * @param "ArgocdSettingsEnableHelmPathTraversal" (optional.Bool) -  Controls the Environment variable HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL to allow or deny dot-dot-slash values file paths. Disabled by default for security reasons. This config is pushed as an env variable to the repo-server.
  @return string
 */
 
 type AgentsApiAgentServiceForServerGetDeployYamlOpts struct {
-	AccountIdentifier          optional.String
-	OrgIdentifier              optional.String
-	ProjectIdentifier          optional.String
-	Namespace                  optional.String
-	DisasterRecoveryIdentifier optional.String
-	SkipCrds                   optional.Bool
-	CaData                     optional.String
-	ProxyHttp                  optional.String
-	ProxyHttps                 optional.String
-	ProxyUsername              optional.String
-	ProxyPassword              optional.String
-	ProxySkipSSLVerify         optional.Bool
-	PrivateKey                 optional.String
+	AccountIdentifier                     optional.String
+	OrgIdentifier                         optional.String
+	ProjectIdentifier                     optional.String
+	Namespace                             optional.String
+	DisasterRecoveryIdentifier            optional.String
+	SkipCrds                              optional.Bool
+	CaData                                optional.String
+	ProxyHttp                             optional.String
+	ProxyHttps                            optional.String
+	ProxyUsername                         optional.String
+	ProxyPassword                         optional.String
+	ProxySkipSSLVerify                    optional.Bool
+	PrivateKey                            optional.String
+	ArgocdSettingsEnableHelmPathTraversal optional.Bool
 }
 
 func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Context, agentIdentifier string, accountIdentifier string, localVarOptionals *AgentsApiAgentServiceForServerGetDeployYamlOpts) (string, *http.Response, error) {
@@ -597,6 +599,9 @@ func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Contex
 	}
 	if localVarOptionals != nil && localVarOptionals.PrivateKey.IsSet() {
 		localVarQueryParams.Add("privateKey", parameterToString(localVarOptionals.PrivateKey.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ArgocdSettingsEnableHelmPathTraversal.IsSet() {
+		localVarQueryParams.Add("argocdSettings.enableHelmPathTraversal", parameterToString(localVarOptionals.ArgocdSettingsEnableHelmPathTraversal.Value(), ""))
 	}
 
 	// to determine the Content-Type header
@@ -703,23 +708,25 @@ func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Contex
 	  * @param "ProxyPassword" (optional.String) -
 	  * @param "ProxySkipSSLVerify" (optional.Bool) -
 	  * @param "PrivateKey" (optional.String) -
+      * @param "ArgocdSettingsEnableHelmPathTraversal" (optional.Bool) -  Controls the Environment variable HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL to allow or deny dot-dot-slash values file paths. Disabled by default for security reasons. This config is pushed as an env variable to the repo-server.
  @return string
 */
 
 type AgentsApiAgentServiceForServerGetOperatorYamlOpts struct {
-	AccountIdentifier          optional.String
-	OrgIdentifier              optional.String
-	ProjectIdentifier          optional.String
-	Namespace                  optional.String
-	DisasterRecoveryIdentifier optional.String
-	SkipCrds                   optional.Bool
-	CaData                     optional.String
-	ProxyHttp                  optional.String
-	ProxyHttps                 optional.String
-	ProxyUsername              optional.String
-	ProxyPassword              optional.String
-	ProxySkipSSLVerify         optional.Bool
-	PrivateKey                 optional.String
+	AccountIdentifier                     optional.String
+	OrgIdentifier                         optional.String
+	ProjectIdentifier                     optional.String
+	Namespace                             optional.String
+	DisasterRecoveryIdentifier            optional.String
+	SkipCrds                              optional.Bool
+	CaData                                optional.String
+	ProxyHttp                             optional.String
+	ProxyHttps                            optional.String
+	ProxyUsername                         optional.String
+	ProxyPassword                         optional.String
+	ProxySkipSSLVerify                    optional.Bool
+	PrivateKey                            optional.String
+	ArgocdSettingsEnableHelmPathTraversal optional.Bool
 }
 
 func (a *AgentsApiService) AgentServiceForServerGetOperatorYaml(ctx context.Context, agentIdentifier string, localVarOptionals *AgentsApiAgentServiceForServerGetOperatorYamlOpts) (string, *http.Response, error) {
@@ -777,6 +784,9 @@ func (a *AgentsApiService) AgentServiceForServerGetOperatorYaml(ctx context.Cont
 	}
 	if localVarOptionals != nil && localVarOptionals.PrivateKey.IsSet() {
 		localVarQueryParams.Add("privateKey", parameterToString(localVarOptionals.PrivateKey.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ArgocdSettingsEnableHelmPathTraversal.IsSet() {
+		localVarQueryParams.Add("argocdSettings.enableHelmPathTraversal", parameterToString(localVarOptionals.ArgocdSettingsEnableHelmPathTraversal.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
