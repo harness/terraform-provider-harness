@@ -63,12 +63,19 @@ resource "harness_platform_workspace" "example" {
   }
   terraform_variable_file {
     repository           = "https://github.com/org/repo"
-    repository_sha    = "349d90bb9c90f4a3482981c259080de31609e6f6"
+    repository_sha       = "349d90bb9c90f4a3482981c259080de31609e6f6"
     repository_path      = "tf/aws/basic"
     repository_connector = harness_platform_connector_github.test.id
   }
-  
+
   variable_sets = [harness_platform_infra_variable_set.test.id]
+
+  default_pipelines = {
+    "destroy" = "destroy_pipeline_id"
+    "drift"   = "drift_pipeline_id"
+    "plan"    = "plan_pipeline_id"
+    "apply"   = "apply_pipeline_id"
+  }
 }
 ```
 
@@ -83,23 +90,24 @@ resource "harness_platform_workspace" "example" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `provider_connector` (String) Provider connector is the reference to the connector for the infrastructure provider
-- `provisioner_type` (String) Provisioner type defines the provisioning tool to use. Currently only terraform is supported.
-- `provisioner_version` (String) Provisioner version defines the tool version to use. Currently we support versions of terraform less than or equal 1.5.6
+- `provisioner_type` (String) Provisioner type defines the provisioning tool to use (terraform or opentofu)
+- `provisioner_version` (String) Provisioner version defines the provisioner version to use. The latest version of Opentofu should always be supported, Terraform is only supported up to version 1.5.7.
 - `repository` (String) Repository is the name of the repository to fetch the code from.
 - `repository_connector` (String) Repository connector is the reference to the connector used to fetch the code.
 - `repository_path` (String) Repository path is the path in which the code resides.
 
 ### Optional
 
+- `default_pipelines` (Map of String) Default pipelines associated with this workspace
 - `description` (String) Description of the resource.
 - `environment_variable` (Block Set) Environment variables configured on the workspace (see [below for nested schema](#nestedblock--environment_variable))
 - `repository_branch` (String) Repository branch is the name of the branch to fetch the code from. This cannot be set if repository commit or sha is set.
 - `repository_commit` (String) Repository commit is tag to fetch the code from. This cannot be set if repository branch or sha is set.
-- `repository_sha` (String) Repository commit is sha to fetch the code from. This cannot be set if repository branch or commit is set.
+- `repository_sha` (String) Repository commit is commit SHA to fetch the code from. This cannot be set if repository branch or commit is set.
 - `tags` (Set of String) Tags to associate with the resource.
 - `terraform_variable` (Block Set) Terraform variables configured on the workspace. Terraform variable keys must be unique within the workspace. (see [below for nested schema](#nestedblock--terraform_variable))
 - `terraform_variable_file` (Block Set) Terraform variables files configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable_file))
-- `variable_sets` (Set of String) Variable set identifiers. Currently support only one variable set.
+- `variable_sets` (List of String) Variable sets to use.
 
 ### Read-Only
 
@@ -137,13 +145,13 @@ Optional:
 
 - `repository_branch` (String) Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit or sha is set
 - `repository_commit` (String) Repository commit is tag to fetch the variables from. This cannot be set if repository branch or sha is set.
-- `repository_sha` (String) Repository commit is sha to fetch the variables from. This cannot be set if repository branch or commit is set.
 - `repository_path` (String) Repository path is the path in which the variables reside.
+- `repository_sha` (String) Repository commit is SHA to fetch the variables from. This cannot be set if repository branch or commit is set.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-terraform import harness_platform_workspace.example <org_id>/<project_id>/<slo_id>
+terraform import harness_platform_workspace.example <org_id>/<project_id>/<workspace_id>
 ```
