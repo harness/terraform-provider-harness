@@ -179,6 +179,11 @@ Class | Method | HTTP request | Description
 *FilterApi* | [**PipelineupdateFilter**](docs/FilterApi.md#pipelineupdatefilter) | **Put** /pipeline/api/filters | Updates the Filter
 *FilterApi* | [**PostFilter**](docs/FilterApi.md#postfilter) | **Post** /ng/api/filters | Creates a Filter
 *FilterApi* | [**UpdateFilter**](docs/FilterApi.md#updatefilter) | **Put** /ng/api/filters | Updates the Filter
+*FiltersApi* | [**FilterServiceCreate**](docs/FiltersApi.md#filterservicecreate) | **Post** /api/filters | Create a GitOps filter
+*FiltersApi* | [**FilterServiceDelete**](docs/FiltersApi.md#filterservicedelete) | **Delete** /api/filters/{identifier} | Delete deletes a GitOps filter
+*FiltersApi* | [**FilterServiceGet**](docs/FiltersApi.md#filterserviceget) | **Get** /api/filters/{identifier} | Get get GitOps filter details
+*FiltersApi* | [**FilterServiceList**](docs/FiltersApi.md#filterservicelist) | **Get** /api/filters | List GitOps filters
+*FiltersApi* | [**FilterServiceUpdate**](docs/FiltersApi.md#filterserviceupdate) | **Put** /api/filters | Update a GitOps filter
 *GitBranchesApi* | [**GetListOfBranchesWithStatus**](docs/GitBranchesApi.md#getlistofbrancheswithstatus) | **Get** /ng/api/git-sync-branch/listBranchesWithStatus | Lists branches with their status(Synced, Unsynced) by Git Sync Config Id for the given scope
 *GitBranchesApi* | [**SyncGitBranch**](docs/GitBranchesApi.md#syncgitbranch) | **Post** /ng/api/git-sync-branch/sync | Sync the content of new Git Branch into harness with Git Sync Config Id
 *GitFullSyncApi* | [**CreateGitFullSyncConfig**](docs/GitFullSyncApi.md#creategitfullsyncconfig) | **Post** /ng/api/git-full-sync/config | Create Configuration for Git Full Sync for the provided scope
@@ -1466,6 +1471,10 @@ Class | Method | HTTP request | Description
  - [ViewTimeRange](docs/ViewTimeRange.md)
  - [ViewVisualization](docs/ViewVisualization.md)
  - [VirtualMachine](docs/VirtualMachine.md)
+- [V1Filter](docs/V1Filter.md)
+- [V1FilterList](docs/V1FilterList.md)
+- [V1FilterType](docs/V1FilterType.md)
+- [V1FilterVisibility](docs/V1FilterVisibility.md)
  - [WebhookAutoRegistrationStatus](docs/WebhookAutoRegistrationStatus.md)
  - [WebhookDetails](docs/WebhookDetails.md)
  - [WebhookEventProcessingDetails](docs/WebhookEventProcessingDetails.md)

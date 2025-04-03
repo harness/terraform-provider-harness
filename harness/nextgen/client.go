@@ -114,6 +114,8 @@ type APIClient struct {
 
 	FileStoreApi *FileStoreApiService
 
+	GitOpsFiltersApi *FiltersApiService
+
 	FilterApi *FilterApiService
 
 	FreezeCRUDApi *FreezeCRUDApiService
@@ -281,6 +283,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.ExecutionDetailsApi = (*ExecutionDetailsApiService)(&c.common)
 	c.FeatureFlagsApi = (*FeatureFlagsApiService)(&c.common)
 	c.FileStoreApi = (*FileStoreApiService)(&c.common)
+	c.GitOpsFiltersApi = (*FiltersApiService)(&c.common)
 	c.FilterApi = (*FilterApiService)(&c.common)
 	c.FreezeCRUDApi = (*FreezeCRUDApiService)(&c.common)
 	c.GitBranchesApi = (*GitBranchesApiService)(&c.common)
