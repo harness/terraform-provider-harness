@@ -542,6 +542,29 @@ var OrgResourceImporter = &schema.ResourceImporter{
 	},
 }
 
+var GitOpsFilterImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+
+		if len(parts) != 4 {
+			return nil, fmt.Errorf("invalid format. Expected: <org_id>/<project_id>/<filter_id>/<filter_type>")
+		}
+
+		orgId := parts[0]
+		projectId := parts[1]
+		filterId := parts[2]
+		filterType := parts[3]
+
+		d.SetId(filterId)
+		d.Set("identifier", filterId)
+		d.Set("org_id", orgId)
+		d.Set("project_id", projectId)
+		d.Set("type", filterType)
+
+		return []*schema.ResourceData{d}, nil
+	},
+}
+
 // MultiLevelResourceImporter defines the importer configuration for all multi level resources.
 // The format used for the id is as follows:
 //   - Account Level: <identifier>
