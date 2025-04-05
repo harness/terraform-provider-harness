@@ -1,0 +1,15 @@
+```release-note:new-resource
+resource/harness_platform_gitops_filters: Added new GitOps filters resource to manage filters for GitOps resources at project level
+```
+
+```release-note:new-data-source
+data-source/harness_platform_gitops_filters: Added new data source to fetch GitOps filters
+```
+
+```release-note:enhancement
+resources/imports: Added custom GitOps filter importer to handle the specific import format needed for GitOps filters
+```
+
+```release-note:bug
+Fixed compilation issues in GitOps filters tests and improved error handling for resource verification
+```
