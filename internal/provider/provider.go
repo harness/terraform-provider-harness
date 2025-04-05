@@ -30,11 +30,13 @@ import (
 	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
+	gitops_filters "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/iacm"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/workspace"
 	"github.com/sirupsen/logrus"
 
@@ -111,7 +113,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/slo"
 	pl_token "github.com/harness/terraform-provider-harness/internal/service/platform/token"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 
 	"github.com/harness/harness-go-sdk/logging"
 	openapi_client_logging "github.com/harness/harness-openapi-go-client/logging"
@@ -255,6 +256,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_pipeline_filters":                pipeline_filters.DataSourcePipelineFilters(),
 				"harness_platform_ccm_filters":                     ccm_filters.DataSourceCCMFilters(),
 				"harness_platform_template_filters":                pipeline_template_filters.DataSourceTemplateFilters(),
+				"harness_platform_gitops_filters":                  gitops_filters.DataSourceGitOpsFilters(),
 				"harness_application":                              application.DataSourceApplication(),
 				"harness_current_account":                          account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                                 delegate.DataSourceDelegate(),
@@ -461,6 +463,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_infrastructure":                     infrastructure.ResourceChaosInfrastructure(),
 				"harness_platform_har_registry":                    har_registry.ResourceRegistry(),
 				"harness_platform_infra_variable_set":              variable_set.ResourceVariableSet(),
+				"harness_platform_gitops_filters":                  gitops_filters.ResourceGitOpsFilters(),
 			},
 		}
 
