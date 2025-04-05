@@ -19,7 +19,7 @@ resource "harness_platform_gitops_filters" "example" {
   type             = "APPLICATION"
   filter_properties = jsonencode({
     "agentIdentifiers": [
-      "account.your_agent_identifier"
+      "your_agent_identifier"
     ],
     "clusters": [
       "https://your-cluster-url"
