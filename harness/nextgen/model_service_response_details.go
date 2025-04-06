@@ -20,4 +20,5 @@ type ServiceResponseDetails struct {
 	Deleted           bool              `json:"deleted,omitempty"`
 	Tags              map[string]string `json:"tags,omitempty"`
 	Yaml              string            `json:"yaml,omitempty"`
+	EntityGitDetails  *GitEntityDetails `json:"entityGitDetails,omitempty"`
 }

@@ -14,16 +14,17 @@ the breaking change with respect to the generated code stub  # Authentication  <
 package nextgen
 
 type ServiceOverridesResponseDtov2 struct {
-	Identifier        string `json:"identifier,omitempty"`
-	AccountId         string `json:"accountId,omitempty"`
-	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	EnvironmentRef    string `json:"environmentRef,omitempty"`
-	ServiceRef        string `json:"serviceRef,omitempty"`
-	InfraIdentifier   string `json:"infraIdentifier,omitempty"`
-	ClusterIdentifier string `json:"clusterIdentifier,omitempty"`
-	Type_             string `json:"type,omitempty"`
-	YamlInternal      string `json:"yamlInternal,omitempty"`
-	NewlyCreated      bool   `json:"newlyCreated,omitempty"`
-	Yaml              string `json:"yaml,omitempty"`
+	Identifier        string         `json:"identifier,omitempty"`
+	AccountId         string         `json:"accountId,omitempty"`
+	OrgIdentifier     string         `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string         `json:"projectIdentifier,omitempty"`
+	EnvironmentRef    string         `json:"environmentRef,omitempty"`
+	ServiceRef        string         `json:"serviceRef,omitempty"`
+	InfraIdentifier   string         `json:"infraIdentifier,omitempty"`
+	ClusterIdentifier string         `json:"clusterIdentifier,omitempty"`
+	Type_             string         `json:"type,omitempty"`
+	YamlInternal      string         `json:"yamlInternal,omitempty"`
+	NewlyCreated      bool           `json:"newlyCreated,omitempty"`
+	Yaml              string         `json:"yaml,omitempty"`
+	EntityGitInfo     *EntityGitInfo `json:"entityGitInfo,omitempty"`
 }
