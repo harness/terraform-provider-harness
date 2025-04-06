@@ -15,6 +15,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"github.com/hashicorp/go-retryablehttp"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -68,9 +69,6 @@ type service struct {
 // NewAPIClient creates a new API client. Requires a userAgent string describing your application.
 // optionally a custom http.Client to allow for advanced features such as caching.
 func NewAPIClient(cfg *Configuration) *APIClient {
-	if cfg.HTTPClient == nil {
-		cfg.HTTPClient = http.DefaultClient
-	}
 
 	c := &APIClient{}
 	c.cfg = cfg
@@ -164,7 +162,7 @@ func parameterToString(obj interface{}, collectionFormat string) string {
 }
 
 // callAPI do the request.
-func (c *APIClient) callAPI(request *http.Request) (*http.Response, error) {
+func (c *APIClient) callAPI(request *retryablehttp.Request) (*http.Response, error) {
 	return c.cfg.HTTPClient.Do(request)
 }
 
@@ -182,7 +180,7 @@ func (c *APIClient) prepareRequest(
 	queryParams url.Values,
 	formParams url.Values,
 	fileName string,
-	fileBytes []byte) (localVarRequest *http.Request, err error) {
+	fileBytes []byte) (localVarRequest *retryablehttp.Request, err error) {
 
 	var body *bytes.Buffer
 
@@ -269,9 +267,9 @@ func (c *APIClient) prepareRequest(
 
 	// Generate a new request
 	if body != nil {
-		localVarRequest, err = http.NewRequest(method, url.String(), body)
+		localVarRequest, err = retryablehttp.NewRequest(method, url.String(), body)
 	} else {
-		localVarRequest, err = http.NewRequest(method, url.String(), nil)
+		localVarRequest, err = retryablehttp.NewRequest(method, url.String(), nil)
 	}
 	if err != nil {
 		return nil, err
@@ -308,7 +306,7 @@ func (c *APIClient) prepareRequest(
 				return nil, err
 			}
 
-			latestToken.SetAuthHeader(localVarRequest)
+			latestToken.SetAuthHeader(localVarRequest.Request)
 		}
 
 		// Basic HTTP Authentication
@@ -330,17 +328,17 @@ func (c *APIClient) prepareRequest(
 }
 
 func (c *APIClient) decode(v interface{}, b []byte, contentType string) (err error) {
-		if strings.Contains(contentType, "application/xml") {
-			if err = xml.Unmarshal(b, v); err != nil {
-				return err
-			}
-			return nil
-		} else if strings.Contains(contentType, "application/json") {
-			if err = json.Unmarshal(b, v); err != nil {
-				return err
-			}
-			return nil
+	if strings.Contains(contentType, "application/xml") {
+		if err = xml.Unmarshal(b, v); err != nil {
+			return err
 		}
+		return nil
+	} else if strings.Contains(contentType, "application/json") {
+		if err = json.Unmarshal(b, v); err != nil {
+			return err
+		}
+		return nil
+	}
 	return errors.New("undefined response type")
 }
 

@@ -9,7 +9,13 @@
 package policymgmt
 
 import (
-	"net/http"
+	"fmt"
+	"github.com/harness/harness-go-sdk/harness"
+	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/logging"
+	"github.com/hashicorp/go-retryablehttp"
+	log "github.com/sirupsen/logrus"
 )
 
 // contextKeys are used to identify the type of value in the context.
@@ -54,14 +60,23 @@ type Configuration struct {
 	Scheme        string            `json:"scheme,omitempty"`
 	DefaultHeader map[string]string `json:"defaultHeader,omitempty"`
 	UserAgent     string            `json:"userAgent,omitempty"`
-	HTTPClient    *http.Client
+	HTTPClient    *retryablehttp.Client
+	Logger        *log.Logger
+	DebugLogging  bool
 }
 
 func NewConfiguration() *Configuration {
+	logger := logging.NewLogger()
+	if helpers.EnvVars.TfLog.Get() == "DEBUG" {
+		logger.SetLevel(log.DebugLevel)
+	}
+
 	cfg := &Configuration{
 		BasePath:      "https://app.harness.io/gateway/pm/",
 		DefaultHeader: make(map[string]string),
-		UserAgent:     "Swagger-Codegen/1.0.0/go",
+		HTTPClient:    utils.GetDefaultHttpClient(logger),
+		Logger:        logger,
+		UserAgent:     fmt.Sprintf("%s-%s", harness.SDKName, harness.SDKVersion),
 	}
 	return cfg
 }
