@@ -1,10 +1,11 @@
 ---
-page_title: "Harness: harness_platform_gitops_filters"
+page_title: "harness_platform_gitops_filters Data Source - terraform-provider-harness"
+subcategory: "Next Gen"
 description: |-
   Data source for retrieving a Harness GitOps Filter.
 ---
 
-# harness_platform_gitops_filters
+# harness_platform_gitops_filters (Data Source)
 
 Data source for retrieving a Harness GitOps Filter.
 
