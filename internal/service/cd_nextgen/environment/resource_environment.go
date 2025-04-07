@@ -305,6 +305,41 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	if d.Get("yaml").(string) != "" {
 		d.Set("yaml", env.Yaml)
 	}
+
+	var store_type = helpers.BuildField(d, "git_details.0.store_type")
+	var base_branch = helpers.BuildField(d, "git_details.0.base_branch")
+	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
+	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
+
+	if env.EntityGitDetails != nil {
+		d.Set("git_details", []interface{}{readGitDetails(env, store_type, base_branch, commit_message, connector_ref)})
+	}
+}
+
+func readGitDetails(env *nextgen.EnvironmentResponseDetails, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
+	git_details := map[string]interface{}{
+		"branch_name":    env.EntityGitDetails.Branch,
+		"file_path":      env.EntityGitDetails.FilePath,
+		"repo_name":      env.EntityGitDetails.RepoName,
+		"last_commit_id": env.EntityGitDetails.CommitId,
+		"last_object_id": env.EntityGitDetails.ObjectId,
+	}
+	if store_type.IsSet() {
+		git_details["store_type"] = store_type.Value()
+	}
+	if base_branch.IsSet() {
+		git_details["base_branch"] = base_branch.Value()
+	}
+	if commit_message.IsSet() {
+		git_details["commit_message"] = commit_message.Value()
+	}
+	if connector_ref.IsSet() {
+		git_details["connector_ref"] = connector_ref.Value()
+	}
+	if connector_ref.Value() == "" {
+		git_details["is_harness_code_repo"] = true
+	}
+	return git_details
 }
 
 func getEnvParams(d *schema.ResourceData) *nextgen.EnvironmentsApiGetEnvironmentV2Opts {

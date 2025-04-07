@@ -345,6 +345,41 @@ func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrides
 	d.Set("type", so.Type_)
 	d.Set("yaml", so.YamlInternal)
 	d.Set("identifier", so.Identifier)
+
+	var store_type = helpers.BuildField(d, "git_details.0.store_type")
+	var base_branch = helpers.BuildField(d, "git_details.0.base_branch")
+	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
+	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
+
+	if so.EntityGitInfo != nil {
+		d.Set("git_details", []interface{}{readGitDetails(so, store_type, base_branch, commit_message, connector_ref)})
+	}
+}
+
+func readGitDetails(so *nextgen.ServiceOverridesResponseDtov2, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
+	git_details := map[string]interface{}{
+		"branch_name":    so.EntityGitInfo.Branch,
+		"file_path":      so.EntityGitInfo.FilePath,
+		"repo_name":      so.EntityGitInfo.RepoName,
+		"last_commit_id": so.EntityGitInfo.CommitId,
+		"last_object_id": so.EntityGitInfo.ObjectId,
+	}
+	if store_type.IsSet() {
+		git_details["store_type"] = store_type.Value()
+	}
+	if base_branch.IsSet() {
+		git_details["base_branch"] = base_branch.Value()
+	}
+	if commit_message.IsSet() {
+		git_details["commit_message"] = commit_message.Value()
+	}
+	if connector_ref.IsSet() {
+		git_details["connector_ref"] = connector_ref.Value()
+	}
+	if connector_ref.Value() == "" {
+		git_details["is_harness_code_repo"] = true
+	}
+	return git_details
 }
 
 func readImportServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrideImportResponseDto) {
