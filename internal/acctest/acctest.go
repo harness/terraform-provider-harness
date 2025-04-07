@@ -323,6 +323,17 @@ func OrgResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFun
 	}
 }
 
+func GitOpsFilterProjectLevelImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		filterType := primary.Attributes["type"]
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, id, filterType), nil
+	}
+}
+
 func OrgFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
@@ -393,7 +404,6 @@ func TestAccResourceInfraDefEnvironment(name string) string {
 }
 
 func TestAccResourceGitConnector_default(name string) string {
-
 	return fmt.Sprintf(`
 		data "harness_secret_manager" "test" {
 			default = true
