@@ -40,12 +40,12 @@ func DataSourceGitOpsFilters() *schema.Resource {
 			"org_id": {
 				Description: "Organization Identifier for the Entity.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"project_id": {
 				Description: "Project Identifier for the Entity.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"filter_properties": {
 				Description: "Properties of the filters entity defined in Harness as a JSON string. All values should be arrays of strings. Example: jsonencode({\"healthStatus\": [\"Healthy\", \"Degraded\"], \"syncStatus\": [\"Synced\"]})",
@@ -53,10 +53,9 @@ func DataSourceGitOpsFilters() *schema.Resource {
 				Computed:    true,
 			},
 			"filter_visibility": {
-				Description:  "This indicates visibility of filters, by default it is Everyone.",
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validation.StringInSlice([]string{"EveryOne", "OnlyCreator"}, false),
+				Description: "This indicates visibility of filters, by default it is Everyone.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 		},
 	}
@@ -113,7 +112,7 @@ func dataSourceGitOpsFiltersRead(ctx context.Context, d *schema.ResourceData, me
 					props[k] = []interface{}{}
 				}
 			}
-			
+
 			// Convert to JSON string
 			jsonBytes, err := json.Marshal(props)
 			if err == nil {
