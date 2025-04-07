@@ -349,7 +349,7 @@ func (a *FiltersApiService) FilterServiceGet(ctx context.Context, identifier str
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier, ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -501,7 +501,7 @@ func (a *FiltersApiService) FilterServiceList(ctx context.Context, localVarOptio
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier, ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -650,7 +650,7 @@ func (a *FiltersApiService) FilterServiceUpdate(ctx context.Context, body V1Filt
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier, ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
