@@ -28,9 +28,8 @@ output "filter_properties" {
 
 * `identifier` - (Required) Unique identifier of the GitOps filter to retrieve.
 * `type` - (Required) Type of GitOps filter. Currently, only "APPLICATION" is supported.
-* `org_id` - (Optional) Organization identifier for the GitOps filter.
-* `project_id` - (Optional) Project identifier for the GitOps filter.
-* `filter_visibility` - (Optional) Use this to filter by visibility. Valid values are "EveryOne" and "OnlyCreator".
+* `org_id` - (Required) Organization identifier for the GitOps filter.
+* `project_id` - (Required) Project identifier for the GitOps filter.
 
 ## Attribute Reference
 

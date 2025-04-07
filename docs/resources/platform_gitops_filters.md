@@ -1,10 +1,11 @@
 ---
-page_title: "Harness: harness_platform_gitops_filters"
+page_title: "harness_platform_gitops_filters Resource - terraform-provider-harness"
+subcategory: "Next Gen"
 description: |-
   Resource for creating Harness GitOps Filters.
 ---
 
-# harness_platform_gitops_filters
+# harness_platform_gitops_filters (Resource)
 
 Resource for creating and managing Harness GitOps Filters.
 
