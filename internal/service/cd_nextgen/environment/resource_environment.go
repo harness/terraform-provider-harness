@@ -214,12 +214,12 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		// If any of the Git-related fields have changed, we set the flag.
 		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
 
+		envParams := envUpdateParam(env, d)
+		resp, httpResp, err = c.EnvironmentsApi.UpdateEnvironmentV2(ctx, c.AccountId, &envParams)
+
 		if shouldUpdateGitDetails {
 			resourceEnviornmentEditGitDetials(ctx, c, d)
 		}
-
-		envParams := envUpdateParam(env, d)
-		resp, httpResp, err = c.EnvironmentsApi.UpdateEnvironmentV2(ctx, c.AccountId, &envParams)
 	}
 
 	if err != nil {
@@ -318,7 +318,7 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 
 func readGitDetails(env *nextgen.EnvironmentResponseDetails, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
 	git_details := map[string]interface{}{
-		"branch_name":    env.EntityGitDetails.Branch,
+		"branch":         env.EntityGitDetails.Branch,
 		"file_path":      env.EntityGitDetails.FilePath,
 		"repo_name":      env.EntityGitDetails.RepoName,
 		"last_commit_id": env.EntityGitDetails.CommitId,

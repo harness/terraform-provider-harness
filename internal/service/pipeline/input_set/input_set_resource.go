@@ -286,10 +286,6 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		// If any of the Git-related fields have changed, we set the flag.
 		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
 
-		if shouldUpdateGitDetails {
-			resourceInputSetEditGitDetials(ctx, d, meta)
-		}
-
 		inputSet := buildUpdateInputSet(d)
 		if inputSet.GitDetails != nil {
 			base_branch = optional.NewString(inputSet.GitDetails.BaseBranch)
@@ -312,6 +308,10 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		resp, httpResp, err = c.InputSetsApi.UpdateInputSet(ctx, inputSet, pipelineIdentifier, orgIdentifier, projectIdentifier, id, &nextgen.InputSetsApiUpdateInputSetOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 		})
+
+		if shouldUpdateGitDetails {
+			resourceInputSetEditGitDetials(ctx, d, meta)
+		}
 	}
 
 	if err != nil {

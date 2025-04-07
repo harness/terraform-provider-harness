@@ -227,12 +227,12 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 		// If any of the Git-related fields have changed, we set the flag.
 		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
 
+		svcUpdateParam := svcOverrideUpdateParam(env, d)
+		resp, httpResp, err = c.ServiceOverridesApi.UpdateServiceOverrideV2(ctx, c.AccountId, svcUpdateParam)
+
 		if shouldUpdateGitDetails {
 			resourceServiceOverridesEditGitDetials(ctx, c, d)
 		}
-
-		svcUpdateParam := svcOverrideUpdateParam(env, d)
-		resp, httpResp, err = c.ServiceOverridesApi.UpdateServiceOverrideV2(ctx, c.AccountId, svcUpdateParam)
 	}
 
 	if err != nil {
@@ -358,7 +358,7 @@ func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrides
 
 func readGitDetails(so *nextgen.ServiceOverridesResponseDtov2, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
 	git_details := map[string]interface{}{
-		"branch_name":    so.EntityGitInfo.Branch,
+		"branch":         so.EntityGitInfo.Branch,
 		"file_path":      so.EntityGitInfo.FilePath,
 		"repo_name":      so.EntityGitInfo.RepoName,
 		"last_commit_id": so.EntityGitInfo.CommitId,

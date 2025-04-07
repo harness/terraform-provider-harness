@@ -229,12 +229,12 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 		// If any of the Git-related fields have changed, we set the flag.
 		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
 
+		infraParams := infraUpdateParam(infra, d)
+		resp, httpResp, err = c.InfrastructuresApi.UpdateInfrastructure(ctx, c.AccountId, &infraParams)
+
 		if shouldUpdateGitDetails {
 			resourceInfrastructureEditGitDetials(ctx, c, d)
 		}
-
-		infraParams := infraUpdateParam(infra, d)
-		resp, httpResp, err = c.InfrastructuresApi.UpdateInfrastructure(ctx, c.AccountId, &infraParams)
 	}
 
 	if err != nil {
@@ -334,7 +334,7 @@ func readInfrastructure(d *schema.ResourceData, infra *nextgen.InfrastructureRes
 
 func readGitDetails(infra *nextgen.InfrastructureResponse, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
 	git_details := map[string]interface{}{
-		"branch_name":    infra.Infrastructure.EntityGitDetails.Branch,
+		"branch":         infra.Infrastructure.EntityGitDetails.Branch,
 		"file_path":      infra.Infrastructure.EntityGitDetails.FilePath,
 		"repo_name":      infra.Infrastructure.EntityGitDetails.RepoName,
 		"last_commit_id": infra.Infrastructure.EntityGitDetails.CommitId,

@@ -269,10 +269,6 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		// If any of the Git-related fields have changed, we set the flag.
 		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
 
-		if shouldUpdateGitDetails {
-			resourcePipelineEditGitDetials(ctx, d, meta)
-		}
-
 		if pipeline.GitDetails != nil {
 			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
 			branch_name = pipeline.GitDetails.BranchName
@@ -287,6 +283,10 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		}
 		_, httpResp, err = c.PipelinesApi.UpdatePipeline(ctx, pipeline, org_id, project_id, id,
 			&nextgen.PipelinesApiUpdatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
+
+		if shouldUpdateGitDetails {
+			resourcePipelineEditGitDetials(ctx, d, meta)
+		}
 	}
 
 	if err != nil {

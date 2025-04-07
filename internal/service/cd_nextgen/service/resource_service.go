@@ -197,12 +197,12 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 		// If any of the Git-related fields have changed, we set the flag.
 		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
 
+		svcParams := svcUpdateParam(svc, d)
+		resp, httpResp, err = c.ServicesApi.UpdateServiceV2(ctx, c.AccountId, &svcParams)
+
 		if shouldUpdateGitDetails {
 			resourceServiceEditGitDetials(ctx, c, d)
 		}
-
-		svcParams := svcUpdateParam(svc, d)
-		resp, httpResp, err = c.ServicesApi.UpdateServiceV2(ctx, c.AccountId, &svcParams)
 	}
 
 	if err != nil {
@@ -294,7 +294,7 @@ func readService(d *schema.ResourceData, project *nextgen.ServiceResponseDetails
 
 func readGitDetails(service *nextgen.ServiceResponseDetails, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
 	git_details := map[string]interface{}{
-		"branch_name":    service.EntityGitDetails.Branch,
+		"branch":         service.EntityGitDetails.Branch,
 		"file_path":      service.EntityGitDetails.FilePath,
 		"repo_name":      service.EntityGitDetails.RepoName,
 		"last_commit_id": service.EntityGitDetails.CommitId,
