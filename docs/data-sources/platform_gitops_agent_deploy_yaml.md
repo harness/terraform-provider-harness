@@ -33,6 +33,7 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 ### Optional
 
 - `account_id` (String, Deprecated) Account identifier of the GitOps agent.
+- `argocd_settings` (Block List, Max: 1) Argocd settings for the GitOps agent. Values set here will be overridden by the values set in the argocd settings in case of complete installation of agent + argocd. Each param contains as a description about what it will enable. (see [below for nested schema](#nestedblock--argocd_settings))
 - `ca_data` (String) CA data of the GitOps agent, base64 encoded content of ca chain.
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `private_key` (String) Private key for the GitOps agent. If provided authentication token will not be regenerated. Must be base64 encoded.
@@ -44,6 +45,14 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 
 - `id` (String) The ID of this resource.
 - `yaml` (String) The deployment manifest YAML of the GitOps agent.
+
+<a id="nestedblock--argocd_settings"></a>
+### Nested Schema for `argocd_settings`
+
+Optional:
+
+- `enable_helm_path_traversal` (Boolean) Controls the Environment variable HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL to allow or deny dot-dot-slash values file paths. Disabled by default for security reasons. This config is pushed as an env variable to the repo-server.
+
 
 <a id="nestedblock--proxy"></a>
 ### Nested Schema for `proxy`

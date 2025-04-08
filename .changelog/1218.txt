@@ -1,0 +1,4 @@
+```release-note:enhancement
+data-source/platform_gitops_agent_deploy_yaml: adding support for section argocd_settings for variables and settings to be used in argocd if installing complete
+agent including argocd.
+```
