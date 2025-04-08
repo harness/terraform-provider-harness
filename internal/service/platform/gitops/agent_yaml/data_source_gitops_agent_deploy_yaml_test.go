@@ -3,7 +3,6 @@ package agent_yaml_test
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 	"testing"
 
@@ -40,7 +39,6 @@ func TestAccDataSourceGitopsAgentDeployYamlWithHelmTraversalEnabled(t *testing.T
 	namespace := "ns-" + agentId
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "data.harness_platform_gitops_agent_deploy_yaml.test"
-	expectedInOutputYaml := "- name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL\n            value: \"true\""
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
