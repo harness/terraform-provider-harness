@@ -210,6 +210,7 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 	var httpResp *http.Response
 	id := d.Id()
 	infra := buildInfrastructure(d)
+	shouldUpdateGitDetails := false
 
 	if id == "" {
 		if d.Get("git_details.0.import_from_git").(bool) {
@@ -227,7 +228,7 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 		reponame_changed := d.HasChange("git_details.0.repo_name")
 
 		// If any of the Git-related fields have changed, we set the flag.
-		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
+		shouldUpdateGitDetails = connector_ref_changed || filepath_changed || reponame_changed
 
 		infraParams := infraUpdateParam(infra, d)
 		resp, httpResp, err = c.InfrastructuresApi.UpdateInfrastructure(ctx, c.AccountId, &infraParams)
@@ -245,6 +246,17 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 		readImportRes(d, importResp.Data.Identifier)
 	} else {
 		readInfrastructure(d, resp.Data)
+
+		if shouldUpdateGitDetails {
+			env_id := d.Get("env_id").(string)
+			infraParams := getInfraParams(d)
+			resp, httpResp, err = c.InfrastructuresApi.GetInfrastructure(ctx, d.Id(), c.AccountId, env_id, infraParams)
+
+			if err != nil {
+				return helpers.HandleReadApiError(err, d, httpResp)
+			}
+			readInfrastructure(d, resp.Data)
+		}
 	}
 
 	return nil
