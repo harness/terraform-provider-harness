@@ -251,6 +251,7 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var base_branch optional.String
 	var commit_message optional.String
 	var connector_ref optional.String
+	shouldUpdateGitDetails := false
 
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
@@ -284,7 +285,7 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		reponame_changed := d.HasChange("git_details.0.repo_name")
 
 		// If any of the Git-related fields have changed, we set the flag.
-		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
+		shouldUpdateGitDetails = connector_ref_changed || filepath_changed || reponame_changed
 
 		inputSet := buildUpdateInputSet(d)
 		if inputSet.GitDetails != nil {
@@ -318,13 +319,13 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	branch_name := helpers.BuildField(d, "git_import_info.0.branch_name")
+	parent_entity_connector_ref := helpers.BuildField(d, "git_import_info.0.connector_ref")
+	parent_entity_repo_name := helpers.BuildField(d, "git_import_info.0.repo_name")
+
 	if d.Get("import_from_git").(bool) {
 
 		inputSet_id = response.Identifier
-
-		branch_name := helpers.BuildField(d, "git_import_info.0.branch_name")
-		parent_entity_connector_ref := helpers.BuildField(d, "git_import_info.0.connector_ref")
-		parent_entity_repo_name := helpers.BuildField(d, "git_import_info.0.repo_name")
 
 		resp, httpResp, err := c.InputSetsApi.GetInputSet(ctx, orgIdentifier, projectIdentifier, inputSet_id, pipelineIdentifier, &nextgen.InputSetsApiGetInputSetOpts{
 			HarnessAccount:           optional.NewString(c.AccountId),
@@ -342,6 +343,17 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		return nil
 	}
 
+	if shouldUpdateGitDetails {
+		resp, httpResp, err = c.InputSetsApi.GetInputSet(ctx, orgIdentifier, projectIdentifier, id, pipelineIdentifier, &nextgen.InputSetsApiGetInputSetOpts{
+			HarnessAccount:           optional.NewString(c.AccountId),
+			BranchName:               branch_name,
+			ParentEntityConnectorRef: parent_entity_connector_ref,
+			ParentEntityRepoName:     parent_entity_repo_name,
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+	}
 	readInputSet(d, &resp, pipelineIdentifier, store_type, base_branch, commit_message, connector_ref)
 
 	return nil

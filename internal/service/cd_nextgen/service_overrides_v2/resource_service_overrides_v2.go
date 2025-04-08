@@ -206,6 +206,7 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	var importResp nextgen.ResponseServiceOverrideImportResponseDto
 	var httpResp *http.Response
 	env := buildServiceOverrideV2(d)
+	shouldUpdateGitDetails := false
 
 	id := d.Id()
 
@@ -225,7 +226,7 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 		reponame_changed := d.HasChange("git_details.0.repo_name")
 
 		// If any of the Git-related fields have changed, we set the flag.
-		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
+		shouldUpdateGitDetails = connector_ref_changed || filepath_changed || reponame_changed
 
 		svcUpdateParam := svcOverrideUpdateParam(env, d)
 		resp, httpResp, err = c.ServiceOverridesApi.UpdateServiceOverrideV2(ctx, c.AccountId, svcUpdateParam)
@@ -250,6 +251,13 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	if d.Get("import_from_git").(bool) {
 		readImportServiceOverridesV2(d, importResp.Data)
 	} else {
+		if shouldUpdateGitDetails {
+			svcGetParams := getSvcOverrideParams(d)
+			resp, httpResp, err = c.ServiceOverridesApi.GetServiceOverridesV2(ctx, id, c.AccountId, svcGetParams)
+			if err != nil {
+				return helpers.HandleApiError(err, d, httpResp)
+			}
+		}
 		readServiceOverridesV2(d, resp.Data)
 	}
 

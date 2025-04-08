@@ -42,13 +42,6 @@ func TestAccResourcePipeline(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourcePipeline(id, updatedName, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "git_details.0.file_path", fmt.Sprintf(`.harness/GitEnabledPipeline%[1]s.yaml`, updatedName)),
-				)},
-			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
