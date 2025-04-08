@@ -196,6 +196,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	var httpResp *http.Response
 	id := d.Id()
 	env := buildEnvironment(d)
+	shouldUpdateGitDetails := false
 
 	if id == "" {
 		if d.Get("git_details.0.import_from_git").(bool) {
@@ -212,7 +213,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		reponame_changed := d.HasChange("git_details.0.repo_name")
 
 		// If any of the Git-related fields have changed, we set the flag.
-		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
+		shouldUpdateGitDetails = connector_ref_changed || filepath_changed || reponame_changed
 
 		envParams := envUpdateParam(env, d)
 		resp, httpResp, err = c.EnvironmentsApi.UpdateEnvironmentV2(ctx, c.AccountId, &envParams)
@@ -230,6 +231,16 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		readImportRes(d, importResp.Data.EnvIdentifier)
 	} else {
 		readEnvironment(d, resp.Data.Environment)
+
+		if shouldUpdateGitDetails {
+			envParams := getEnvParams(d)
+			resp, httpResp, err = c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Id(), c.AccountId, envParams)
+
+			if err != nil {
+				return helpers.HandleReadApiError(err, d, httpResp)
+			}
+			readEnvironment(d, resp.Data.Environment)
+		}
 	}
 
 	return nil
@@ -339,6 +350,15 @@ func readGitDetails(env *nextgen.EnvironmentResponseDetails, store_type optional
 	if connector_ref.Value() == "" {
 		git_details["is_harness_code_repo"] = true
 	}
+
+	if store_type.Value() == "REMOTE" {
+		git_details["import_from_git"] = true
+		git_details["is_force_import"] = true
+	} else {
+		git_details["import_from_git"] = false
+		git_details["is_force_import"] = false
+	}
+
 	return git_details
 }
 
