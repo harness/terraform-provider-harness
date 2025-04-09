@@ -16,9 +16,11 @@ import (
 )
 
 func TestAccResourcePipeline(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", id)
+	baseId1 := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name1 := baseId1
+	updatedName1 := fmt.Sprintf("%s_updated", baseId1)
+
+	filePath := fmt.Sprintf("pipeline-%s", utils.RandStringBytes(6))
 
 	resourceName := "harness_platform_pipeline.test"
 
@@ -28,26 +30,21 @@ func TestAccResourcePipeline(t *testing.T) {
 		CheckDestroy:      testAccPipelineDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourcePipeline(id, name, id),
+				Config: testAccResourcePipeline(baseId1, name1, filePath),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "id", baseId1),
+					resource.TestCheckResourceAttr(resourceName, "name", name1),
+					resource.TestCheckResourceAttr(resourceName, "git_details.0.file_path", fmt.Sprintf(".harness/GitEnabledPipeline%s.yaml", filePath)),
 				),
 			},
 			{
-				Config: testAccResourcePipeline(id, updatedName, id),
+				Config: testAccResourcePipeline(baseId1, updatedName1, filePath),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "id", baseId1),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName1),
+					resource.TestCheckResourceAttr(resourceName, "git_details.0.file_path", fmt.Sprintf(".harness/GitEnabledPipeline%s.yaml", filePath)),
 				),
 			},
-			{
-				Config: testAccResourcePipeline(id, updatedName, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "git_details.0.file_path", fmt.Sprintf(`.harness/GitEnabledPipeline%[1]s.yaml`, updatedName)),
-				)},
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,

@@ -196,6 +196,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	var httpResp *http.Response
 	id := d.Id()
 	env := buildEnvironment(d)
+	shouldUpdateGitDetails := false
 
 	if id == "" {
 		if d.Get("git_details.0.import_from_git").(bool) {
@@ -212,7 +213,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		reponame_changed := d.HasChange("git_details.0.repo_name")
 
 		// If any of the Git-related fields have changed, we set the flag.
-		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
+		shouldUpdateGitDetails = connector_ref_changed || filepath_changed || reponame_changed
 
 		envParams := envUpdateParam(env, d)
 		resp, httpResp, err = c.EnvironmentsApi.UpdateEnvironmentV2(ctx, c.AccountId, &envParams)
@@ -230,6 +231,16 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		readImportRes(d, importResp.Data.EnvIdentifier)
 	} else {
 		readEnvironment(d, resp.Data.Environment)
+
+		if shouldUpdateGitDetails {
+			envParams := getEnvParams(d)
+			resp, httpResp, err = c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Id(), c.AccountId, envParams)
+
+			if err != nil {
+				return helpers.HandleReadApiError(err, d, httpResp)
+			}
+			readEnvironment(d, resp.Data.Environment)
+		}
 	}
 
 	return nil
@@ -311,8 +322,24 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
 	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 
+	var import_from_git bool
+	var is_force_import bool
+
+	if v, ok := d.GetOk("git_details.0.import_from_git"); ok {
+		import_from_git = v.(bool)
+	}
+
+	if v, ok := d.GetOk("git_details.0.is_force_import"); ok {
+		is_force_import = v.(bool)
+	}
+
 	if env.EntityGitDetails != nil {
-		d.Set("git_details", []interface{}{readGitDetails(env, store_type, base_branch, commit_message, connector_ref)})
+		gitDetails := readGitDetails(env, store_type, base_branch, commit_message, connector_ref)
+
+		gitDetails["import_from_git"] = import_from_git
+		gitDetails["is_force_import"] = is_force_import
+
+		d.Set("git_details", []interface{}{gitDetails})
 	}
 }
 
@@ -339,6 +366,7 @@ func readGitDetails(env *nextgen.EnvironmentResponseDetails, store_type optional
 	if connector_ref.Value() == "" {
 		git_details["is_harness_code_repo"] = true
 	}
+
 	return git_details
 }
 

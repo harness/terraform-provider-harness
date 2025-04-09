@@ -179,6 +179,7 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 	var httpResp *http.Response
 	svc := buildService(d)
 	id := d.Id()
+	shouldUpdateGitDetails := false
 
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
@@ -195,7 +196,7 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 		reponame_changed := d.HasChange("git_details.0.repo_name")
 
 		// If any of the Git-related fields have changed, we set the flag.
-		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
+		shouldUpdateGitDetails = connector_ref_changed || filepath_changed || reponame_changed
 
 		svcParams := svcUpdateParam(svc, d)
 		resp, httpResp, err = c.ServicesApi.UpdateServiceV2(ctx, c.AccountId, &svcParams)
@@ -213,6 +214,16 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 		readImportRes(d, importResp.Data.Identifier)
 	} else {
 		readService(d, resp.Data.Service)
+
+		if shouldUpdateGitDetails {
+			svcParams := getSvcParams(d)
+			resp, httpResp, err = c.ServicesApi.GetServiceV2(ctx, id, c.AccountId, svcParams)
+
+			if err != nil {
+				return helpers.HandleReadApiError(err, d, httpResp)
+			}
+			readService(d, resp.Data.Service)
+		}
 	}
 
 	return nil
