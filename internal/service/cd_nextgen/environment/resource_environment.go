@@ -322,8 +322,24 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
 	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 
+	var import_from_git bool
+	var is_force_import bool
+
+	if v, ok := d.GetOk("git_details.0.import_from_git"); ok {
+		import_from_git = v.(bool)
+	}
+
+	if v, ok := d.GetOk("git_details.0.is_force_import"); ok {
+		is_force_import = v.(bool)
+	}
+
 	if env.EntityGitDetails != nil {
-		d.Set("git_details", []interface{}{readGitDetails(env, store_type, base_branch, commit_message, connector_ref)})
+		gitDetails := readGitDetails(env, store_type, base_branch, commit_message, connector_ref)
+
+		gitDetails["import_from_git"] = import_from_git
+		gitDetails["is_force_import"] = is_force_import
+
+		d.Set("git_details", []interface{}{gitDetails})
 	}
 }
 
@@ -349,14 +365,6 @@ func readGitDetails(env *nextgen.EnvironmentResponseDetails, store_type optional
 	}
 	if connector_ref.Value() == "" {
 		git_details["is_harness_code_repo"] = true
-	}
-
-	if store_type.Value() == "REMOTE" {
-		git_details["import_from_git"] = true
-		git_details["is_force_import"] = true
-	} else {
-		git_details["import_from_git"] = false
-		git_details["is_force_import"] = false
 	}
 
 	return git_details
