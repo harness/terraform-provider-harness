@@ -50,3 +50,14 @@ Read-Only:
 - `location` (String)
 - `repo` (String)
 - `archive_path` (String)
+
+
+<a id="nestedblock--changelog_script"></a>
+### Nested Schema for `changelog_script`
+
+Read-Only:
+
+- `image` (String) The fully-qualified name (FQN) of the image
+- `location` (String) Path to changeLog file
+- `command` (String) Script to clone changeSets
+- `shell` (String) Type of the shell. For example Sh or Bash
