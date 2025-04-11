@@ -21,9 +21,43 @@ resource "harness_platform_db_schema" "test" {
   service    = "service1"
   tags       = ["foo:bar", "bar:foo"]
   schema_source {
-    connector = "gitConnector"
-    repo      = "TestRepo"
-    location  = "db/example-changelog.yaml"
+    connector    = "gitConnector"
+    repo         = "TestRepo"
+    location     = "db/example-changelog.yaml"
+    archive_path = "path/to/archive.zip"
+  }
+}
+
+resource "harness_platform_db_schema" "test" {
+  identifier = "identifier"
+  org_id     = "org_id"
+  project_id = "project_id"
+  name       = "name"
+  service    = "service1"
+  type       = "Repository"
+  tags       = ["foo:bar", "bar:foo"]
+  schema_source {
+    connector    = "gitConnector"
+    repo         = "TestRepo"
+    location     = "db/example-changelog.yaml"
+    archive_path = "path/to/archive.zip"
+  }
+}
+
+
+resource "harness_platform_db_schema" "test" {
+  identifier = "identifier"
+  org_id     = "org_id"
+  project_id = "project_id"
+  name       = "name"
+  service    = "service1"
+  type       = "Script"
+  tags       = ["foo:bar", "bar:foo"]
+  changelog_script {
+    image    = "plugins/image"
+    command  = "echo \\\"hello dbops\\\""
+    shell    = "Sh/Bash"
+    location = "db/example-changelog.yaml"
   }
 }
 ```
@@ -42,12 +76,16 @@ resource "harness_platform_db_schema" "test" {
 ### Optional
 
 - `description` (String) Description of the resource.
-- `service` (String) The service associated with schema
+- `service` (String) The service associated with schema.
+- `type` (String) Type of the database schema (repository/script).
 - `tags` (Set of String) Tags to associate with the resource.
+- `changelog_script` (Block List, Max: 1) Changelog script details (see [below for nested schema](#nestedblock--changelog_script))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `schema_source_type` (String) Type of the schema source.
+- `instance_count` (Number) Number of database instances corresponding to database schema.
 
 <a id="nestedblock--schema_source"></a>
 ### Nested Schema for `schema_source`
@@ -62,6 +100,16 @@ Optional:
 - `repo` (String) If connector url is of account, which repository to connect to using the connector
 - `archive_path` (String) If connector type is artifactory, path to the archive file which contains the changeLog
 
+<a id="nestedblock--changelog_script"></a>
+### Nested Schema for `changelog_script`
+
+Required:
+
+- `image` (String) The fully-qualified name (FQN) of the image
+- `location` (String) Path to changeLog file
+- `command` (String) Script to clone changeSets
+- `shell` (String) Type of the shell. For example Sh or Bash
+
 ## Import
 
 Import is supported using the following syntax:
@@ -69,4 +117,3 @@ Import is supported using the following syntax:
 ```shell
 # Import project level db schema
 terraform import harness_platform_db_schema.example <org_id>/<project_id>/<db_schema_id>
-```
