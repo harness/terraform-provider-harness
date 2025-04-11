@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
 	"net/http"
+	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
@@ -16,6 +17,34 @@ import (
 
 func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
 	return handleApiError(err, d, httpResp, false)
+}
+
+// HandleGitApiError handles API errors specifically related to Git operations
+// This provides more specific error messages for common Git-related errors
+func HandleGitApiError(err error, d *schema.ResourceData, httpResp *http.Response, connectorRef string, repoName string) diag.Diagnostics {
+	if httpResp != nil && httpResp.StatusCode == 400 && err != nil {
+		errMsg := err.Error()
+
+		if strings.Contains(errMsg, "No connector found") && strings.Contains(errMsg, connectorRef) {
+			return diag.Errorf("Invalid connector reference: %s. Please check if the connector exists and you have the correct permissions.", connectorRef)
+		}
+
+		if strings.Contains(errMsg, "Please check the requested file path") && strings.Contains(errMsg, repoName) {
+			return diag.Errorf("Invalid repository name: %s. Please check if the repository exists and is accessible.", repoName)
+		}
+	}
+
+	return HandleApiError(err, d, httpResp)
+}
+
+// HandleGitApiErrorWithResourceData extracts Git details from the resource data and handles Git-related API errors
+func HandleGitApiErrorWithResourceData(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	connectorRef, hasConnector := d.GetOk("git_details.0.connector_ref")
+	repoName, hasRepo := d.GetOk("git_details.0.repo_name")
+	if hasConnector && hasRepo {
+		return HandleGitApiError(err, d, httpResp, connectorRef.(string), repoName.(string))
+	}
+	return HandleApiError(err, d, httpResp)
 }
 
 func HandleDBOpsApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {

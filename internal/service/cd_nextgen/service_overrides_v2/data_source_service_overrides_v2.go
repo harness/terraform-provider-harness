@@ -115,7 +115,7 @@ func dataSourceServiceOverridesRead(ctx context.Context, d *schema.ResourceData,
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if &resp == nil || resp.Data == nil {
+	if resp.Data == nil {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
