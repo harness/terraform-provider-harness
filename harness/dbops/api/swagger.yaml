@@ -85,38 +85,38 @@ paths:
         schema:
           type: string
       requestBody:
-        $ref: '#/components/requestBodies/LogIngestRequest'
+        $ref: "#/components/requestBodies/LogIngestRequest"
       responses:
         "201":
           description: Response body for Log Event
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ParsedLogOut'
+                $ref: "#/components/schemas/ParsedLogOut"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-internal: true
       x-stoplight:
         id: n6q91b59w1kld
@@ -184,31 +184,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ParsedLogOut'
+                $ref: "#/components/schemas/ParsedLogOut"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: 9o2dqka7km06p
   /v1/orgs/{org}/projects/{project}/dbschema:
@@ -284,11 +284,11 @@ paths:
         explode: true
         schema:
           type: string
-          default: created
           enum:
           - name
           - updated
           - created
+          default: created
       - name: order
         in: query
         description: Order on the basis of which sorting is done.
@@ -297,10 +297,10 @@ paths:
         explode: true
         schema:
           type: string
-          default: DESC
           enum:
           - ASC
           - DESC
+          default: DESC
       responses:
         "200":
           description: Response body for List Database Schema
@@ -329,26 +329,26 @@ paths:
                 type: array
                 description: Response body for List Schema
                 items:
-                  $ref: '#/components/schemas/DBSchemaOut'
+                  $ref: "#/components/schemas/DBSchemaOut"
                 x-content-type: application/json
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-internal: false
       x-stoplight:
         id: nhhnhieu7jo8u
@@ -386,38 +386,38 @@ paths:
         schema:
           type: string
       requestBody:
-        $ref: '#/components/requestBodies/DBSchemaCreateRequest'
+        $ref: "#/components/requestBodies/DBSchemaCreateRequest"
       responses:
         "201":
           description: Response body for Database Schema
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DBSchemaOut'
+                $ref: "#/components/schemas/DBSchemaOut"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: 1ip5gikvmqezd
   /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/migrationstate:
@@ -494,7 +494,7 @@ paths:
         schema:
           type: string
       requestBody:
-        $ref: '#/components/requestBodies/MigrationStateGetRequest'
+        $ref: "#/components/requestBodies/MigrationStateGetRequest"
       responses:
         "200":
           description: Response body for migration state of a schema
@@ -520,25 +520,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MigrationStateOut'
+                $ref: "#/components/schemas/MigrationStateOut"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-internal: false
       x-stoplight:
         id: esgkki234aa1u
@@ -591,31 +591,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DBSchemaOut'
+                $ref: "#/components/schemas/DBSchemaOut"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: 78fzlqtzyti7q
     put:
@@ -661,38 +661,38 @@ paths:
         schema:
           type: string
       requestBody:
-        $ref: '#/components/requestBodies/DBSchemaUpdateRequest'
+        $ref: "#/components/requestBodies/DBSchemaUpdateRequest"
       responses:
         "200":
           description: Response body for Database Schema
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DBSchemaOut'
+                $ref: "#/components/schemas/DBSchemaOut"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: ngsm9f0c6fvq5
     delete:
@@ -745,25 +745,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: ek4jolzg7diy6
   /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instance:
@@ -810,38 +810,38 @@ paths:
         schema:
           type: string
       requestBody:
-        $ref: '#/components/requestBodies/DBInstanceCreateRequest'
+        $ref: "#/components/requestBodies/DBInstanceCreateRequest"
       responses:
         "201":
           description: Response body for Database Instance
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DBInstanceOut'
+                $ref: "#/components/schemas/DBInstanceOut"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: ooxjel6o3ya8y
   /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instancelist:
@@ -926,11 +926,11 @@ paths:
         explode: true
         schema:
           type: string
-          default: created
           enum:
           - name
           - updated
           - created
+          default: created
       - name: order
         in: query
         description: Order on the basis of which sorting is done.
@@ -939,12 +939,12 @@ paths:
         explode: true
         schema:
           type: string
-          default: DESC
           enum:
           - ASC
           - DESC
+          default: DESC
       requestBody:
-        $ref: '#/components/requestBodies/DBInstanceFilterRequest'
+        $ref: "#/components/requestBodies/DBInstanceFilterRequest"
       responses:
         "200":
           description: Response body for List Database Schema
@@ -973,32 +973,32 @@ paths:
                 type: array
                 description: Response body for List Schema
                 items:
-                  $ref: '#/components/schemas/DBInstanceOut'
+                  $ref: "#/components/schemas/DBInstanceOut"
                 x-content-type: application/json
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: uwxyv5tgwu2w9
   /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instance/{dbinstance}:
@@ -1058,31 +1058,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DBInstanceOut'
+                $ref: "#/components/schemas/DBInstanceOut"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: tcua2vmx132hm
     put:
@@ -1136,38 +1136,38 @@ paths:
         schema:
           type: string
       requestBody:
-        $ref: '#/components/requestBodies/DBInstanceUpdateRequest'
+        $ref: "#/components/requestBodies/DBInstanceUpdateRequest"
       responses:
         "200":
           description: Response body for Database Instance
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DBInstanceOut'
+                $ref: "#/components/schemas/DBInstanceOut"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: e17endbbc7uha
     delete:
@@ -1228,25 +1228,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: hx4uvpfwg2w2c
   /v1/step/plugin-inputs:
@@ -1268,14 +1268,14 @@ paths:
         schema:
           type: string
       requestBody:
-        $ref: '#/components/requestBodies/PluginStepInputsRequest'
+        $ref: "#/components/requestBodies/PluginStepInputsRequest"
       responses:
         "200":
           description: Plugin Inputs Create Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                $ref: "#/components/schemas/inline_response_200"
               examples:
                 Example 1:
                   value:
@@ -1294,19 +1294,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-internal: true
   /v1/step/plugin-response:
     post:
@@ -1327,7 +1327,7 @@ paths:
         schema:
           type: string
       requestBody:
-        $ref: '#/components/requestBodies/ConsumePluginRespRequest'
+        $ref: "#/components/requestBodies/ConsumePluginRespRequest"
       responses:
         "204":
           description: The plugin execution response was acknowledged
@@ -1336,19 +1336,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-internal: true
   /v1/orgs/{org}/projects/{project}/dbschema/overview:
     get:
@@ -1391,31 +1391,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_1'
+                $ref: "#/components/schemas/inline_response_200_1"
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: 9r5etj2feldxk
   /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instance/{dbinstance}/deployedState:
@@ -1495,7 +1495,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeployedStateInput'
+              $ref: "#/components/schemas/DeployedStateInput"
       responses:
         "200":
           description: Response
@@ -1523,32 +1523,32 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DeployedStateOutput'
+                  $ref: "#/components/schemas/DeployedStateOutput"
                 x-content-type: application/json
         "400":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "403":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "404":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         "500":
           description: Error Response body
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
       x-stoplight:
         id: 5rj6sci8d41op
 components:
@@ -1556,7 +1556,6 @@ components:
     DBSchemaIn:
       title: Database Schema Request
       required:
-      - changelog
       - identifier
       - name
       type: object
@@ -1582,13 +1581,17 @@ components:
           description: tags attached to the database schema
           x-go-type-skip-optional-pointer: true
         changelog:
-          $ref: '#/components/schemas/Changelog'
+          $ref: "#/components/schemas/Changelog"
         service:
           minLength: 1
           type: string
           description: |
             harness service corresponding to database schema
           example: harness_service
+        type:
+          $ref: "#/components/schemas/DBSchemaType"
+        changeLogScript:
+          $ref: "#/components/schemas/ChangeLogScript"
       description: 'Database Schema Request '
       x-examples:
         Example 1:
@@ -1605,11 +1608,11 @@ components:
     DBSchemaOut:
       title: Database Schema Response
       required:
-      - changelog
       - created
       - identifier
       - instanceCount
       - name
+      - type
       type: object
       properties:
         identifier:
@@ -1633,7 +1636,7 @@ components:
           description: tags attached to the database schema
           x-go-type-skip-optional-pointer: true
         changelog:
-          $ref: '#/components/schemas/Changelog'
+          $ref: "#/components/schemas/Changelog"
         service:
           type: string
           description: harness service corresponding to database schema
@@ -1647,11 +1650,21 @@ components:
           enum:
           - Git
           - Artifactory
+          - custom
           x-stoplight:
             id: 802m1r25ghm6l
+        changeLogScript:
+          $ref: "#/components/schemas/ChangeLogScript"
+        type:
+          $ref: "#/components/schemas/DBSchemaType"
       description: Database Schema Response
       example:
         identifier: identifier
+        changeLogScript:
+          image: plugins/image:latest
+          shell: "Sh, Bash, <+pipeline.variables.shell>"
+          location: folder/changelog.yaml
+          command: curl -X -o changeLog.yaml https://www.filestore.com/changeLog.yaml
         created: 0
         service: service
         instanceCount: 1
@@ -1662,11 +1675,10 @@ components:
           location: folder/changelog.yaml
           archivePath: archivePath
         schemaSourceType: Git
+        type: ""
         updated: 6
         tags:
           key: tags
-      x-stoplight:
-        id: 1y01syuq8w851
     ParsedLogOut:
       title: Ingest Log
       required:
@@ -1892,13 +1904,13 @@ components:
         changeSets:
           type: array
           items:
-            $ref: '#/components/schemas/MigrationStateChangeSet'
+            $ref: "#/components/schemas/MigrationStateChangeSet"
           x-stoplight:
             id: nur8lhmmq4k80
         instances:
           type: array
           items:
-            $ref: '#/components/schemas/InstanceDetail'
+            $ref: "#/components/schemas/InstanceDetail"
           x-stoplight:
             id: c4j467g3ps0hq
       description: Change Set deployment info for a schema
@@ -1953,7 +1965,7 @@ components:
           x-stoplight:
             id: 0v28kt08qg9bv
         status:
-          $ref: '#/components/schemas/ChangeSetDeploymentStatus'
+          $ref: "#/components/schemas/ChangeSetDeploymentStatus"
         updated:
           type: integer
           description: 'Time of last Change Set Deployment/Rollback attempt '
@@ -1997,7 +2009,7 @@ components:
         instances:
           type: array
           items:
-            $ref: '#/components/schemas/MigrationStateInstance'
+            $ref: "#/components/schemas/MigrationStateInstance"
           x-stoplight:
             id: k3xi8j4pkqn48
         updated:
@@ -2036,7 +2048,7 @@ components:
       type: object
       properties:
         instanceFilter:
-          $ref: '#/components/schemas/MigrationStateInstanceIn'
+          $ref: "#/components/schemas/MigrationStateInstanceIn"
       description: Get migration state request input
       x-stoplight:
         id: h52h1mz8ooyrq
@@ -2097,17 +2109,17 @@ components:
         filterType:
           type: string
           description: "filter criteria type. Example: Equals, NotEquals"
-          default: Equals
           enum:
           - Equals
           - NotEquals
+          default: Equals
           x-stoplight:
             id: wh3jb1x9a4mvl
         instanceTags:
           type: array
           description: an array on db instance key value pairs used against the filter
           items:
-            $ref: '#/components/schemas/NGTag'
+            $ref: "#/components/schemas/NGTag"
           x-stoplight:
             id: y26ejs0un3e5p
       description: DB Instance Filter Request
@@ -2144,9 +2156,9 @@ components:
           x-stoplight:
             id: xgfy8jpfw9mll
         sort:
-          $ref: '#/components/schemas/SortInstance'
+          $ref: "#/components/schemas/SortInstance"
         order:
-          $ref: '#/components/schemas/OrderInstance'
+          $ref: "#/components/schemas/OrderInstance"
       description: Get migration state request instance input
       x-stoplight:
         id: 7mrokzsmxkufd
@@ -2154,22 +2166,22 @@ components:
       title: SortInstance
       type: string
       description: sort for instance entity
-      default: identifier
       enum:
       - name
       - updated
       - created
       - identifier
+      default: identifier
       x-stoplight:
         id: zhl6a0ksg19p2
     OrderInstance:
       title: OrderInstance
       type: string
       description: order of instance entity
-      default: ASC
       enum:
       - DESC
       - ASC
+      default: ASC
       x-stoplight:
         id: l0hdqldkwdms9
     InstanceDetail:
@@ -2211,7 +2223,7 @@ components:
           x-stoplight:
             id: uyjy3losyw3wv
         stepType:
-          $ref: '#/components/schemas/DBStepType'
+          $ref: "#/components/schemas/DBStepType"
         pipeline:
           type: string
           description: identifier of the pipeline
@@ -2240,7 +2252,7 @@ components:
       type: object
       properties:
         status:
-          $ref: '#/components/schemas/CommandExecutionStatus'
+          $ref: "#/components/schemas/CommandExecutionStatus"
         changeSetId:
           type: string
           x-stoplight:
@@ -2263,9 +2275,9 @@ components:
           x-stoplight:
             id: eg643qgsnus6y
         command:
-          $ref: '#/components/schemas/Command'
+          $ref: "#/components/schemas/Command"
         metadata:
-          $ref: '#/components/schemas/ExecutionMetadata'
+          $ref: "#/components/schemas/ExecutionMetadata"
         deployedInCurrentExecution:
           type: boolean
           description: if changeset run as part of current step execution
@@ -2339,9 +2351,9 @@ components:
           additionalProperties:
             type: string
         schema:
-          $ref: '#/components/schemas/DBSchemaOut'
+          $ref: "#/components/schemas/DBSchemaOut"
         instance:
-          $ref: '#/components/schemas/DBInstanceOut'
+          $ref: "#/components/schemas/DBInstanceOut"
         propertiesResult:
           type: object
           additionalProperties:
@@ -2351,21 +2363,6 @@ components:
           x-stoplight:
             id: fyjz8vfzb4jcs
       example:
-        schema:
-          identifier: identifier
-          created: 0
-          service: service
-          instanceCount: 1
-          name: name
-          changelog:
-            connector: harness_git
-            repo: folder/changelog.yaml
-            location: folder/changelog.yaml
-            archivePath: archivePath
-          schemaSourceType: Git
-          updated: 6
-          tags:
-            key: tags
         propertiesResult:
           key: propertiesResult
         image: image
@@ -2398,7 +2395,7 @@ components:
           maxItems: 5
           type: array
           items:
-            $ref: '#/components/schemas/OverviewResponseOutput'
+            $ref: "#/components/schemas/OverviewResponseOutput"
           x-stoplight:
             id: a3qanidk29h47
         dbInstanceCount:
@@ -2438,6 +2435,59 @@ components:
           dbInstanceName: dbInstanceName
           dbSchemaName: dbSchemaName
           lastDeployed: 0
+    ChangeLogScript:
+      title: ChangeLogScript
+      required:
+      - command
+      - image
+      - location
+      - shell
+      type: object
+      properties:
+        image:
+          minLength: 1
+          type: string
+          description: The fully-qualified name (FQN) of the image
+          example: plugins/image:latest
+          x-stoplight:
+            id: rle73dx5q6cq7
+        command:
+          type: string
+          description: command script used to download the changelog file
+          example: curl -X -o changeLog.yaml https://www.filestore.com/changeLog.yaml
+          x-stoplight:
+            id: 1bl2w7wf6exlr
+        shell:
+          type: string
+          description: shell type
+          example: "Sh, Bash, <+pipeline.variables.shell>"
+          x-stoplight:
+            id: t5zcqpt6l784x
+        location:
+          type: string
+          description: location of the changelog file
+          example: folder/changelog.yaml
+          x-stoplight:
+            id: sn916ihq297p3
+      description: if schemaType is Script location of the changelog file after using
+        a custom script to download
+      example:
+        image: plugins/image:latest
+        shell: "Sh, Bash, <+pipeline.variables.shell>"
+        location: folder/changelog.yaml
+        command: curl -X -o changeLog.yaml https://www.filestore.com/changeLog.yaml
+      x-stoplight:
+        id: lamjk17e0b56z
+      x-examples: {}
+    DBSchemaType:
+      title: DBSchemaType
+      type: string
+      description: db schema type
+      enum:
+      - Repository
+      - Script
+      x-stoplight:
+        id: 21ikm27shlnsf
   responses:
     DBSchemaListResponse:
       description: Response body for List Database Schema
@@ -2466,7 +2516,7 @@ components:
             type: array
             description: Response body for List Schema
             items:
-              $ref: '#/components/schemas/DBSchemaOut'
+              $ref: "#/components/schemas/DBSchemaOut"
             x-content-type: application/json
     MigrationStateResponse:
       description: Response body for migration state of a schema
@@ -2492,31 +2542,31 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/MigrationStateOut'
+            $ref: "#/components/schemas/MigrationStateOut"
     DBSchemaResponse:
       description: Response body for Database Schema
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DBSchemaOut'
+            $ref: "#/components/schemas/DBSchemaOut"
     DBInstanceResponse:
       description: Response body for Database Instance
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DBInstanceOut'
+            $ref: "#/components/schemas/DBInstanceOut"
     ParsedLogResponse:
       description: Response body for Log Event
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ParsedLogOut'
+            $ref: "#/components/schemas/ParsedLogOut"
     ErrorResponse:
       description: Error Response body
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     DBInstanceListResponse:
       description: Response body for List Database Schema
       headers:
@@ -2544,14 +2594,14 @@ components:
             type: array
             description: Response body for List Schema
             items:
-              $ref: '#/components/schemas/DBInstanceOut'
+              $ref: "#/components/schemas/DBInstanceOut"
             x-content-type: application/json
     PluginInputsResponse:
       description: Plugin Inputs Create Response
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/inline_response_200'
+            $ref: "#/components/schemas/inline_response_200"
           examples:
             Example 1:
               value:
@@ -2570,7 +2620,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/inline_response_200_1'
+            $ref: "#/components/schemas/inline_response_200_1"
   parameters:
     Limit:
       name: limit
@@ -2592,11 +2642,11 @@ components:
       explode: true
       schema:
         type: string
-        default: created
         enum:
         - name
         - updated
         - created
+        default: created
     Order:
       name: order
       in: query
@@ -2606,10 +2656,10 @@ components:
       explode: true
       schema:
         type: string
-        default: DESC
         enum:
         - ASC
         - DESC
+        default: DESC
     PageIndex:
       name: page
       in: query
@@ -2702,7 +2752,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DBSchemaIn'
+            $ref: "#/components/schemas/DBSchemaIn"
       required: true
     DBSchemaUpdateRequest:
       description: Database schema update request
@@ -2754,12 +2804,38 @@ components:
                 description: |
                   harness service corresponding to database schema
                 example: harness_service
+              type:
+                $ref: "#/components/schemas/DBSchemaType"
+              changeLogScript:
+                type: object
+                properties:
+                  image:
+                    type: string
+                    example: plugins/image:latest
+                    x-stoplight:
+                      id: cv9o3n6qslm1z
+                  command:
+                    type: string
+                    example: curl -X -o changeLog.yaml https://www.filestore.com/changeLog.yaml
+                    x-stoplight:
+                      id: 0wjp0e0ejveun
+                  shell:
+                    type: string
+                    example: "Sh, Bash, <+pipeline.variables.shell>"
+                    x-stoplight:
+                      id: u1kw59fil84i8
+                  location:
+                    type: string
+                    x-stoplight:
+                      id: 91yj4mcke8jds
+                x-stoplight:
+                  id: 3g0zmfv118ub8
       required: true
     DBInstanceCreateRequest:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DBInstanceIn'
+            $ref: "#/components/schemas/DBInstanceIn"
       required: true
     DBInstanceUpdateRequest:
       description: Database instance update request
@@ -2841,7 +2917,7 @@ components:
                 x-stoplight:
                   id: p0fia99dekvt4
               command:
-                $ref: '#/components/schemas/Command'
+                $ref: "#/components/schemas/Command"
               directory:
                 type: string
               Org:
@@ -2937,14 +3013,14 @@ components:
                 x-stoplight:
                   id: 8lr1r6lycw0fj
               status:
-                $ref: '#/components/schemas/CommandExecutionStatus'
+                $ref: "#/components/schemas/CommandExecutionStatus"
               data:
                 type: object
                 description: Data associated with command execution
                 x-stoplight:
                   id: x106nmejwdkgl
               command:
-                $ref: '#/components/schemas/Command'
+                $ref: "#/components/schemas/Command"
               pipeline:
                 type: string
                 description: Identifier of the pipeline
@@ -2984,12 +3060,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/MigrationStateIn'
+            $ref: "#/components/schemas/MigrationStateIn"
     DBInstanceFilterRequest:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DBInstanceFilterIn'
+            $ref: "#/components/schemas/DBInstanceFilterIn"
   securitySchemes:
     Authorization:
       type: http

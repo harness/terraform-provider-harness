@@ -41,6 +41,7 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [ChangeLogScript](docs/ChangeLogScript.md)
  - [ChangeSetDeploymentStatus](docs/ChangeSetDeploymentStatus.md)
  - [Changelog](docs/Changelog.md)
  - [Command](docs/Command.md)
@@ -50,6 +51,7 @@ Class | Method | HTTP request | Description
  - [DbInstanceOut](docs/DbInstanceOut.md)
  - [DbSchemaIn](docs/DbSchemaIn.md)
  - [DbSchemaOut](docs/DbSchemaOut.md)
+ - [DbSchemaType](docs/DbSchemaType.md)
  - [DbStepType](docs/DbStepType.md)
  - [DeployedStateInput](docs/DeployedStateInput.md)
  - [DeployedStateOutput](docs/DeployedStateOutput.md)

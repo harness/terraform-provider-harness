@@ -21,10 +21,12 @@ type DbSchemaOut struct {
 	Updated int64 `json:"updated,omitempty"`
 	// tags attached to the database schema
 	Tags      map[string]string `json:"tags,omitempty"`
-	Changelog *Changelog        `json:"changelog"`
+	Changelog *Changelog        `json:"changelog,omitempty"`
 	// harness service corresponding to database schema
 	Service string `json:"service,omitempty"`
 	// number of database instances corresponding to database schema
-	InstanceCount    int64  `json:"instanceCount"`
-	SchemaSourceType string `json:"schemaSourceType,omitempty"`
+	InstanceCount    int64            `json:"instanceCount"`
+	SchemaSourceType string           `json:"schemaSourceType,omitempty"`
+	ChangeLogScript  *ChangeLogScript `json:"changeLogScript,omitempty"`
+	Type_            *DbSchemaType    `json:"type"`
 }

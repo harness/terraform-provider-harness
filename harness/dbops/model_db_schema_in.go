@@ -17,7 +17,9 @@ type DbSchemaIn struct {
 	Name string `json:"name"`
 	// tags attached to the database schema
 	Tags      map[string]string `json:"tags,omitempty"`
-	Changelog *Changelog        `json:"changelog"`
+	Changelog *Changelog        `json:"changelog,omitempty"`
 	// harness service corresponding to database schema
-	Service string `json:"service,omitempty"`
+	Service         string           `json:"service,omitempty"`
+	Type_           *DbSchemaType    `json:"type,omitempty"`
+	ChangeLogScript *ChangeLogScript `json:"changeLogScript,omitempty"`
 }
