@@ -27,4 +27,5 @@ type ServiceOverridesResponseDtov2 struct {
 	NewlyCreated      bool           `json:"newlyCreated,omitempty"`
 	Yaml              string         `json:"yaml,omitempty"`
 	EntityGitInfo     *EntityGitInfo `json:"entityGitInfo,omitempty"`
+	ConnectorRef      string         `json:"connectorRef,omitempty"`
 }

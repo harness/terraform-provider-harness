@@ -23,5 +23,6 @@ type EnvironmentResponseDetails struct {
 	Tags              map[string]string `json:"tags,omitempty"`
 	Version           int64             `json:"version,omitempty"`
 	Yaml              string            `json:"yaml,omitempty"`
+	ConnectorRef      string            `json:"connectorRef,omitempty"`
 	EntityGitDetails  *GitEntityDetails `json:"entityGitDetails,omitempty"`
 }

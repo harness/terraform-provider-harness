@@ -23,4 +23,5 @@ type InfrastructureResponseDto struct {
 	DeploymentType    string            `json:"deploymentType,omitempty"`
 	Yaml              string            `json:"yaml,omitempty"`
 	EntityGitDetails  *GitEntityDetails `json:"entityGitDetails,omitempty"`
+	ConnectorRef      string            `json:"connectorRef,omitempty"`
 }
