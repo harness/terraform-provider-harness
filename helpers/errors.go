@@ -37,6 +37,16 @@ func HandleGitApiError(err error, d *schema.ResourceData, httpResp *http.Respons
 	return HandleApiError(err, d, httpResp)
 }
 
+// HandleGitApiErrorWithResourceData extracts Git details from the resource data and handles Git-related API errors
+func HandleGitApiErrorWithResourceData(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	connectorRef, hasConnector := d.GetOk("git_details.0.connector_ref")
+	repoName, hasRepo := d.GetOk("git_details.0.repo_name")
+	if hasConnector && hasRepo {
+		return HandleGitApiError(err, d, httpResp, connectorRef.(string), repoName.(string))
+	}
+	return HandleApiError(err, d, httpResp)
+}
+
 func HandleDBOpsApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
 	erro, ok := err.(dbops.GenericSwaggerError)
 	if ok && httpResp != nil {

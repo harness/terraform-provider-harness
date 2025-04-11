@@ -234,12 +234,15 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 		resp, httpResp, err = c.InfrastructuresApi.UpdateInfrastructure(ctx, c.AccountId, &infraParams)
 
 		if shouldUpdateGitDetails {
-			resourceInfrastructureEditGitDetials(ctx, c, d)
+			diags := resourceInfrastructureEditGitDetails(ctx, c, d)
+			if diags.HasError() {
+				return diags
+			}
 		}
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
 	if d.Get("git_details.0.import_from_git").(bool) {
@@ -260,14 +263,11 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func resourceInfrastructureEditGitDetials(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
+func resourceInfrastructureEditGitDetails(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
 	id := d.Id()
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
 	env_id := d.Get("env_id").(string)
-
-	connectorRef := d.Get("git_details.0.connector_ref").(string)
-	repoName := d.Get("git_details.0.repo_name").(string)
 
 	gitDetails := &nextgen.InfrastructuresApiEditGitDetailsMetadataOpts{
 		ConnectorRef: helpers.BuildField(d, "git_details.0.connector_ref"),
@@ -277,7 +277,7 @@ func resourceInfrastructureEditGitDetials(ctx context.Context, c *nextgen.APICli
 	resp, httpResp, err := c.InfrastructuresApi.EditGitDetailsForInfrastructure(ctx, c.AccountId, org_id, project_id, env_id, id, gitDetails)
 
 	if err != nil {
-		return helpers.HandleGitApiError(err, d, httpResp, connectorRef, repoName)
+		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
 	d.SetId(resp.Data.Identifier)

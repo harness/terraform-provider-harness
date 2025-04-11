@@ -232,17 +232,20 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 		resp, httpResp, err = c.ServiceOverridesApi.UpdateServiceOverrideV2(ctx, c.AccountId, svcUpdateParam)
 
 		if shouldUpdateGitDetails {
-			resourceServiceOverridesEditGitDetials(ctx, c, d)
+			diags := resourceServiceOverridesEditGitDetails(ctx, c, d)
+			if diags.HasError() {
+				return diags
+			}
 		}
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if (&resp == nil || resp.Data == nil) && !d.Get("import_from_git").(bool) {
+	if (resp.Data == nil) && !d.Get("import_from_git").(bool) {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
@@ -264,13 +267,10 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	return nil
 }
 
-func resourceServiceOverridesEditGitDetials(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
+func resourceServiceOverridesEditGitDetails(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
 	id := d.Id()
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
-
-	connectorRef := d.Get("git_details.0.connector_ref").(string)
-	repoName := d.Get("git_details.0.repo_name").(string)
 
 	gitUpdateRequest := &nextgen.ServiceOverrideGitUpdateRequestDTO{
 		// Core service override identification fields
@@ -290,7 +290,7 @@ func resourceServiceOverridesEditGitDetials(ctx context.Context, c *nextgen.APIC
 	resp, httpResp, err := c.ServiceOverridesApi.EditGitDetialsForServiceOverridesV2(ctx, c.AccountId, org_id, project_id, id, gitUpdateRequest)
 
 	if err != nil {
-		return helpers.HandleGitApiError(err, d, httpResp, connectorRef, repoName)
+		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
 	d.SetId(resp.Data.Identifier)
