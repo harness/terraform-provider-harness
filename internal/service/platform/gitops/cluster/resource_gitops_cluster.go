@@ -519,7 +519,7 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 			resp.Cluster.Config.BearerToken = attr.(string)
 		}
 	}
-	
+
 	setClusterDetails(d, &resp)
 	return nil
 }
