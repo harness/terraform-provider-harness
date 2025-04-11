@@ -268,6 +268,10 @@ func resourceServiceOverridesEditGitDetials(ctx context.Context, c *nextgen.APIC
 	id := d.Id()
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
+
+	connectorRef := d.Get("git_details.0.connector_ref").(string)
+	repoName := d.Get("git_details.0.repo_name").(string)
+
 	gitUpdateRequest := &nextgen.ServiceOverrideGitUpdateRequestDTO{
 		// Core service override identification fields
 		Identifier:           d.Id(),                              // Service override identifier
@@ -286,7 +290,7 @@ func resourceServiceOverridesEditGitDetials(ctx context.Context, c *nextgen.APIC
 	resp, httpResp, err := c.ServiceOverridesApi.EditGitDetialsForServiceOverridesV2(ctx, c.AccountId, org_id, project_id, id, gitUpdateRequest)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleGitApiError(err, d, httpResp, connectorRef, repoName)
 	}
 
 	d.SetId(resp.Data.Identifier)

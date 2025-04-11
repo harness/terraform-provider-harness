@@ -231,6 +231,10 @@ func resourceServiceEditGitDetials(ctx context.Context, c *nextgen.APIClient, d 
 	id := d.Id()
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
+
+	connectorRef := d.Get("git_details.0.connector_ref").(string)
+	repoName := d.Get("git_details.0.repo_name").(string)
+
 	gitDetails := &nextgen.ServiceApiEditGitDetailsMetadataOpts{
 		ConnectorRef: helpers.BuildField(d, "git_details.0.connector_ref"),
 		RepoName:     helpers.BuildField(d, "git_details.0.repo_name"),
@@ -239,7 +243,7 @@ func resourceServiceEditGitDetials(ctx context.Context, c *nextgen.APIClient, d 
 	resp, httpResp, err := c.ServicesApi.EditGitDetailsForService(ctx, c.AccountId, org_id, project_id, id, gitDetails)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleGitApiError(err, d, httpResp, connectorRef, repoName)
 	}
 
 	d.SetId(resp.Data.Identifier)
