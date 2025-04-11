@@ -318,12 +318,6 @@ func resourcePipelineEditGitDetials(ctx context.Context, d *schema.ResourceData,
 	}
 	resp, httpResp, err := c.PipelinesApi.EditGitDetialsForPipeline(ctx, c.AccountId, org_id, project_id, id, gitDetails)
 
-	if httpResp.StatusCode == 404 {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
-
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}

@@ -251,16 +251,14 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	if d.Get("import_from_git").(bool) {
 		readImportServiceOverridesV2(d, importResp.Data)
 	} else {
-		readServiceOverridesV2(d, resp.Data)
-
 		if shouldUpdateGitDetails {
 			svcGetParams := getSvcOverrideParams(d)
 			resp, httpResp, err = c.ServiceOverridesApi.GetServiceOverridesV2(ctx, id, c.AccountId, svcGetParams)
 			if err != nil {
 				return helpers.HandleApiError(err, d, httpResp)
 			}
-			readServiceOverridesV2(d, resp.Data)
 		}
+		readServiceOverridesV2(d, resp.Data)
 	}
 
 	return nil
@@ -286,12 +284,6 @@ func resourceServiceOverridesEditGitDetials(ctx context.Context, c *nextgen.APIC
 		},
 	}
 	resp, httpResp, err := c.ServiceOverridesApi.EditGitDetialsForServiceOverridesV2(ctx, c.AccountId, org_id, project_id, id, gitUpdateRequest)
-
-	if httpResp.StatusCode == 404 {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -359,20 +351,21 @@ func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrides
 	var store_type = helpers.BuildField(d, "git_details.0.store_type")
 	var base_branch = helpers.BuildField(d, "git_details.0.base_branch")
 	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
-	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
+	var connector_ref = so.ConnectorRef
 
 	if so.EntityGitInfo != nil {
 		d.Set("git_details", []interface{}{readGitDetails(so, store_type, base_branch, commit_message, connector_ref)})
 	}
 }
 
-func readGitDetails(so *nextgen.ServiceOverridesResponseDtov2, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
+func readGitDetails(so *nextgen.ServiceOverridesResponseDtov2, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref string) map[string]interface{} {
 	git_details := map[string]interface{}{
 		"branch":         so.EntityGitInfo.Branch,
 		"file_path":      so.EntityGitInfo.FilePath,
 		"repo_name":      so.EntityGitInfo.RepoName,
 		"last_commit_id": so.EntityGitInfo.CommitId,
 		"last_object_id": so.EntityGitInfo.ObjectId,
+		"connector_ref":  connector_ref,
 	}
 	if store_type.IsSet() {
 		git_details["store_type"] = store_type.Value()
@@ -383,10 +376,7 @@ func readGitDetails(so *nextgen.ServiceOverridesResponseDtov2, store_type option
 	if commit_message.IsSet() {
 		git_details["commit_message"] = commit_message.Value()
 	}
-	if connector_ref.IsSet() {
-		git_details["connector_ref"] = connector_ref.Value()
-	}
-	if connector_ref.Value() == "" {
+	if connector_ref == "" {
 		git_details["is_harness_code_repo"] = true
 	}
 	return git_details

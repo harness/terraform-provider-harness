@@ -230,8 +230,6 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	if d.Get("git_details.0.import_from_git").(bool) {
 		readImportRes(d, importResp.Data.EnvIdentifier)
 	} else {
-		readEnvironment(d, resp.Data.Environment)
-
 		if shouldUpdateGitDetails {
 			envParams := getEnvParams(d)
 			resp, httpResp, err = c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Id(), c.AccountId, envParams)
@@ -239,8 +237,8 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 			if err != nil {
 				return helpers.HandleReadApiError(err, d, httpResp)
 			}
-			readEnvironment(d, resp.Data.Environment)
 		}
+		readEnvironment(d, resp.Data.Environment)
 	}
 
 	return nil
@@ -256,12 +254,6 @@ func resourceEnviornmentEditGitDetials(ctx context.Context, c *nextgen.APIClient
 		FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
 	}
 	resp, httpResp, err := c.EnvironmentsApi.EditGitDetailsForEnviornment(ctx, c.AccountId, org_id, project_id, id, gitDetails)
-
-	if httpResp.StatusCode == 404 {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -320,7 +312,7 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	var store_type = helpers.BuildField(d, "git_details.0.store_type")
 	var base_branch = helpers.BuildField(d, "git_details.0.base_branch")
 	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
-	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
+	var connector_ref = env.ConnectorRef
 
 	var import_from_git bool
 	var is_force_import bool
@@ -343,13 +335,14 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	}
 }
 
-func readGitDetails(env *nextgen.EnvironmentResponseDetails, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
+func readGitDetails(env *nextgen.EnvironmentResponseDetails, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref string) map[string]interface{} {
 	git_details := map[string]interface{}{
 		"branch":         env.EntityGitDetails.Branch,
 		"file_path":      env.EntityGitDetails.FilePath,
 		"repo_name":      env.EntityGitDetails.RepoName,
 		"last_commit_id": env.EntityGitDetails.CommitId,
 		"last_object_id": env.EntityGitDetails.ObjectId,
+		"connector_ref":  connector_ref,
 	}
 	if store_type.IsSet() {
 		git_details["store_type"] = store_type.Value()
@@ -360,10 +353,7 @@ func readGitDetails(env *nextgen.EnvironmentResponseDetails, store_type optional
 	if commit_message.IsSet() {
 		git_details["commit_message"] = commit_message.Value()
 	}
-	if connector_ref.IsSet() {
-		git_details["connector_ref"] = connector_ref.Value()
-	}
-	if connector_ref.Value() == "" {
+	if connector_ref == "" {
 		git_details["is_harness_code_repo"] = true
 	}
 
