@@ -14,15 +14,20 @@ Resource for creating a Harness DBDevOps Instance.
 
 ```terraform
 resource "harness_platform_db_instance" "test" {
-  identifier = "identifier"
-  org_id     = "org_id"
-  project_id = "project_id"
-  name       = "name"
-  tags       = ["foo:bar", "bar:foo"]
-  schema     = "schema1"
-  branch     = "main"
-  connector  = "jdbcConnector"
-  context    = "ctx"
+  identifier  = "identifier"
+  org_id      = "org_id"
+  project_id  = "project_id"
+  name        = "name"
+  tags        = ["foo:bar", "bar:foo"]
+  schema      = "schema1"
+  branch      = "main"
+  connector   = "jdbcConnector"
+  context     = "ctx"
+
+  liquibase_substitute_properties = {
+    "key1" = "value1"
+    "key2" = "value2"
+  }
 }
 ```
 
@@ -44,6 +49,7 @@ resource "harness_platform_db_instance" "test" {
 - `context` (String) The liquibase context
 - `description` (String) Description of the resource.
 - `tags` (Set of String) Tags to associate with the resource.
+- `liquibaseSubstituteProperties` (Map of String) Properties to substitute in liquibase changelog.
 
 ### Read-Only
 

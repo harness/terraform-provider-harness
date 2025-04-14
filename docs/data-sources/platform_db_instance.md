@@ -43,3 +43,4 @@ data "harness_platform_db_instance" "example" {
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
+- `liquibaseSubstituteProperties` (Map of String) Properties to substitute in liquibase changelog.
