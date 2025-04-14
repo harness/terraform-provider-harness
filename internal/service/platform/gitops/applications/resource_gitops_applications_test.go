@@ -793,20 +793,3 @@ func testAccResourceGitopsApplicationGitSkipRepoValidation(id string, accountId 
 		}
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, skipRepoValidation)
 }
-
-// func cleanupGitOpsResources(t *testing.T, id string, accountId string, orgId string, projectId string, agentId string) {
-// 	endpoint := os.Getenv("HARNESS_ENDPOINT")
-// 	apiKey := os.Getenv("HARNESS_PLATFORM_API_KEY")
-
-// 	deleteAppURL := fmt.Sprintf("%s/gitops/api/v1/agents/%s/applications/%s?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
-// 		endpoint, agentId, id, accountId, orgId, projectId)
-
-// 	deleteCmd := fmt.Sprintf("curl -s -X DELETE '%s' -H 'x-api-key: %s'", deleteAppURL, apiKey)
-// 	exec.Command("bash", "-c", deleteCmd).Run()
-
-// 	deleteRepoURL := fmt.Sprintf("%s/gitops/api/v1/agents/%s/repositories/%s?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
-// 		endpoint, agentId, id, accountId, orgId, projectId)
-
-// 	deleteRepoCmd := fmt.Sprintf("curl -s -X DELETE '%s' -H 'x-api-key: %s'", deleteRepoURL, apiKey)
-// 	exec.Command("bash", "-c", deleteRepoCmd).Run()
-// }
