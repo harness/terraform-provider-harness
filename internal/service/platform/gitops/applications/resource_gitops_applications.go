@@ -762,6 +762,26 @@ func ResourceGitopsApplication() *schema.Resource {
 																	},
 																},
 															},
+															"ignore_missing_value_files": {
+																Description: "Prevents 'helm template' from failing when value_files do not exist locally.",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_crds": {
+																Description: "Indicates if to skip CRDs during helm template. Corresponds to helm --skip-crds",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_tests": {
+																Description: "Indicates if to skip tests during helm template. Corresponds to helm --skip-tests",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_schema_validation": {
+																Description: "Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
 														},
 													},
 												},
@@ -1418,11 +1438,8 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) e
 				spec["source"] = []interface{}{source}
 			}
 			if len(app.App.Spec.Sources) > 0 {
-				var sourcesList = []interface{}{}
-				for _, source := range app.App.Spec.Sources {
-					sourcesList = append(sourcesList, source)
-				}
-				spec["sources"] = sourcesList
+				sources := getSourcesForState(app.App.Spec)
+				spec["sources"] = sources
 			}
 			//destination
 			if app.App.Spec.Destination != nil {
@@ -1803,6 +1820,172 @@ func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]
 		source["plugin"] = pluginList
 	}
 	return source
+}
+
+func getSourcesForState(appSpec *nextgen.ApplicationsApplicationSpec) []interface{} {
+	var sources []interface{}
+
+	if appSpec.Sources == nil || len(appSpec.Sources) == 0 {
+		return sources
+	}
+
+	for _, sourceSpec := range appSpec.Sources {
+		source := map[string]interface{}{}
+
+		source["repo_url"] = sourceSpec.RepoURL
+		source["path"] = sourceSpec.Path
+		source["target_revision"] = sourceSpec.TargetRevision
+		source["chart"] = sourceSpec.Chart
+		source["ref"] = sourceSpec.Ref
+
+		if sourceSpec.Helm != nil {
+			var helmList = []interface{}{}
+			var helm = map[string]interface{}{}
+
+			if sourceSpec.Helm.ValueFiles != nil && len(sourceSpec.Helm.ValueFiles) > 0 {
+				helm["value_files"] = sourceSpec.Helm.ValueFiles
+			}
+			helm["release_name"] = sourceSpec.Helm.ReleaseName
+			helm["values"] = sourceSpec.Helm.Values
+			helm["version"] = sourceSpec.Helm.Version
+			helm["pass_credentials"] = sourceSpec.Helm.PassCredentials
+
+			if sourceSpec.Helm.Parameters != nil && len(sourceSpec.Helm.Parameters) > 0 {
+				var helmParametersList = []interface{}{}
+				for _, v := range sourceSpec.Helm.Parameters {
+					var helmParam = map[string]interface{}{}
+					helmParam["name"] = v.Name
+					helmParam["value"] = v.Value
+					helmParam["force_string"] = v.ForceString
+					helmParametersList = append(helmParametersList, helmParam)
+				}
+				helm["parameters"] = helmParametersList
+			}
+
+			if sourceSpec.Helm.FileParameters != nil && len(sourceSpec.Helm.FileParameters) > 0 {
+				var helmFileParametersList = []interface{}{}
+				for _, v := range sourceSpec.Helm.FileParameters {
+					var helmParam = map[string]interface{}{}
+					helmParam["name"] = v.Name
+					helmParam["path"] = v.Path
+					helmFileParametersList = append(helmFileParametersList, helmParam)
+				}
+				helm["file_parameters"] = helmFileParametersList
+			}
+
+			helm["ignore_missing_value_files"] = sourceSpec.Helm.IgnoreMissingValueFiles
+			helm["skip_crds"] = sourceSpec.Helm.SkipCrds
+			helm["skip_tests"] = sourceSpec.Helm.SkipTests
+			helm["skip_schema_validation"] = sourceSpec.Helm.SkipSchemaValidation
+
+			helmList = append(helmList, helm)
+			source["helm"] = helmList
+		}
+
+		if sourceSpec.Kustomize != nil {
+			var kustomizeList = []interface{}{}
+			var kustomize = map[string]interface{}{}
+
+			kustomize["name_prefix"] = sourceSpec.Kustomize.NamePrefix
+			kustomize["name_suffix"] = sourceSpec.Kustomize.NameSuffix
+			kustomize["images"] = sourceSpec.Kustomize.Images
+			kustomize["common_labels"] = sourceSpec.Kustomize.CommonLabels
+			kustomize["version"] = sourceSpec.Kustomize.Version
+			kustomize["common_annotations"] = sourceSpec.Kustomize.CommonAnnotations
+			kustomize["force_common_labels"] = sourceSpec.Kustomize.ForceCommonLabels
+			kustomize["force_common_annotations"] = sourceSpec.Kustomize.ForceCommonAnnotations
+
+			kustomizeList = append(kustomizeList, kustomize)
+			source["kustomize"] = kustomizeList
+		}
+
+		if sourceSpec.Ksonnet != nil {
+			var ksonnetList = []interface{}{}
+			var ksonnet = map[string]interface{}{}
+
+			ksonnet["environment"] = sourceSpec.Ksonnet.Environment
+			var ksonnetParamList = []interface{}{}
+			for _, v := range sourceSpec.Ksonnet.Parameters {
+				var ksonnetParam = map[string]interface{}{}
+				ksonnetParam["component"] = v.Component
+				ksonnetParam["name"] = v.Name
+				ksonnetParam["value"] = v.Value
+				ksonnetParamList = append(ksonnetParamList, ksonnetParam)
+			}
+			ksonnet["parameters"] = ksonnetParamList
+
+			ksonnetList = append(ksonnetList, ksonnet)
+			source["ksonnet"] = ksonnetList
+		}
+
+		if sourceSpec.Directory != nil {
+			var directoryList = []interface{}{}
+			var directory = map[string]interface{}{}
+
+			directory["recurse"] = sourceSpec.Directory.Recurse
+			directory["exclude"] = sourceSpec.Directory.Exclude
+			directory["include"] = sourceSpec.Directory.Include
+
+			if sourceSpec.Directory.Jsonnet != nil {
+				var jsonnetList = []interface{}{}
+				var jsonnet = map[string]interface{}{}
+
+				jsonnet["libs"] = sourceSpec.Directory.Jsonnet.Libs
+
+				if sourceSpec.Directory.Jsonnet.ExtVars != nil {
+					var jsonnetExtVarsList = []interface{}{}
+					for _, v := range sourceSpec.Directory.Jsonnet.ExtVars {
+						var jsonnetExtVars = map[string]interface{}{}
+						jsonnetExtVars["name"] = v.Name
+						jsonnetExtVars["value"] = v.Value
+						jsonnetExtVars["code"] = v.Code
+						jsonnetExtVarsList = append(jsonnetExtVarsList, jsonnetExtVars)
+					}
+					jsonnet["ext_vars"] = jsonnetExtVarsList
+				}
+
+				if sourceSpec.Directory.Jsonnet.Tlas != nil {
+					var jsonnetTlasList = []interface{}{}
+					for _, v := range sourceSpec.Directory.Jsonnet.Tlas {
+						var jsonnetTlas = map[string]interface{}{}
+						jsonnetTlas["name"] = v.Name
+						jsonnetTlas["value"] = v.Value
+						jsonnetTlas["code"] = v.Code
+						jsonnetTlasList = append(jsonnetTlasList, jsonnetTlas)
+					}
+					jsonnet["tlas"] = jsonnetTlasList
+				}
+
+				jsonnetList = append(jsonnetList, jsonnet)
+				directory["jsonnet"] = jsonnetList
+			}
+
+			directoryList = append(directoryList, directory)
+			source["directory"] = directoryList
+		}
+
+		if sourceSpec.Plugin != nil {
+			var pluginList = []interface{}{}
+			var plugin = map[string]interface{}{}
+
+			plugin["name"] = sourceSpec.Plugin.Name
+			var pluginEnvList = []interface{}{}
+			for _, v := range sourceSpec.Plugin.Env {
+				var pluginEnv = map[string]interface{}{}
+				pluginEnv["name"] = v.Name
+				pluginEnv["value"] = v.Value
+				pluginEnvList = append(pluginEnvList, pluginEnv)
+			}
+			plugin["env"] = pluginEnvList
+
+			pluginList = append(pluginList, plugin)
+			source["plugin"] = pluginList
+		}
+
+		sources = append(sources, source)
+	}
+
+	return sources
 }
 
 func setSpecSourceForRequest(source map[string]interface{}) *nextgen.ApplicationsApplicationSource {
