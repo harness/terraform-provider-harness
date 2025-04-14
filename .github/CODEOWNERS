@@ -9,3 +9,6 @@ internal/service/platform/** ritek.rounak@harness.io imran.khan@harness.io
 go.mod ritek.rounak@harness.io
 tools/** ritek.rounak@harness.io
 helpers/** ritek.rounak@harness.io
+internal/service/platform/db_instance/** abhishek.abhishek@harness.io archit.singla@harness.io hemanth.sridhar@harness.io ritek.rounak@harness.io
+internal/service/platform/db_schema/** abhishek.abhishek@harness.io archit.singla@harness.io hemanth.sridhar@harness.io ritek.rounak@harness.io
+internal/service/platform/gitops/** ashin.sabu@harness.io manish.singh@harness.io mirko.teodorovic@harness.io alexandru.casian@harness.io ritek.rounak@harness.io
