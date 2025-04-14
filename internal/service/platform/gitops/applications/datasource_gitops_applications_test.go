@@ -181,6 +181,75 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 			agent_id = "%[4]s"
 			name = "%[3]s"
 		}
+
+		resource "harness_platform_gitops_applications" "testmultisource" {
+			depends_on = [harness_platform_gitops_repository.test, harness_platform_gitops_cluster.test]
+			application {
+				metadata {
+					annotations = {}
+					labels = {
+						"harness.io/serviceRef" = harness_platform_service.test.id
+						"harness.io/envRef" = harness_platform_environment.test.id
+					}
+					name = "%[1]s-ms"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					sources {
+							repo_url = "%[9]s"
+							target_revision = "master"
+							ref = "val"
+					}
+					sources {
+							repo_url = "%[9]s"
+							target_revision = "master"
+							path = "helm-guestbook"
+							helm {
+							  value_files = [
+								"$val/helm-guestbook/values.yaml"
+							  ]
+							}
+					}
+					destination {
+						namespace = "%[6]s"
+						server = "%[7]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]s-ms"
+			name = "%[3]s-ms"
+			cluster_id = "%[8]s"
+			repo_ids = [
+				"%[1]s",
+				"%[1]s"
+			]
+			agent_id = "%[4]s"
+		}
+
+		data "harness_platform_gitops_applications" "testms"{
+			depends_on = [harness_platform_gitops_applications.testmultisource]
+			identifier = "%[1]s-ms"
+			account_id = "%[2]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[4]s"
+			name = "%[3]s-ms"
+		}
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId, clusterToken)
 
 }

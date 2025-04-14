@@ -2,7 +2,6 @@ package applications
 
 import (
 	"context"
-
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -53,6 +52,14 @@ func DataSourceGitopsApplications() *schema.Resource {
 				Description: "Repository identifier of the GitOps application.",
 				Type:        schema.TypeString,
 				Computed:    true,
+			},
+			"repo_ids": {
+				Description: "List of repository identifiers of the GitOps for Multi-Source application. Not required if skipRepoValidation is set to true.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 			"upsert": {
 				Description: "Indicates if the GitOps application should be updated if existing and inserted if not.",
@@ -740,6 +747,26 @@ func DataSourceGitopsApplications() *schema.Resource {
 																		},
 																	},
 																},
+															},
+															"ignore_missing_value_files": {
+																Description: "Prevents 'helm template' from failing when value_files do not exist locally.",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_crds": {
+																Description: "Indicates if to skip CRDs during helm template. Corresponds to helm --skip-crds",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_tests": {
+																Description: "Indicates if to skip tests during helm template. Corresponds to helm --skip-tests",
+																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"skip_schema_validation": {
+																Description: "Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation",
+																Type:        schema.TypeBool,
+																Optional:    true,
 															},
 														},
 													},
