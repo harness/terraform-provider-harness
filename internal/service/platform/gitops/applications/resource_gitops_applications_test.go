@@ -18,31 +18,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/joho/godotenv"
 )
-
-// Load environment variables from .env file
-func init() {
-	// Try several possible locations for the .env file
-	locations := []string{
-		"../../../../../../.env", // If running from package dir
-		"../../../../../.env",    // One level up
-		"../../../../.env",       // Two levels up
-		"../../../.env",          // Three levels up
-		"../../.env",             // Four levels up
-		"../.env",                // Five levels up
-		".env",                   // Current directory
-		"/Users/ivanbalan/IdeaProjects/terraform-provider-harness/.env", // Absolute path as fallback
-	}
-
-	for _, location := range locations {
-		err := godotenv.Load(location)
-		if err == nil {
-			log.Printf("Successfully loaded .env from %s", location)
-			break
-		}
-	}
-}
 
 func TestAccResourceGitopsApplication_HelmApp(t *testing.T) {
 	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
