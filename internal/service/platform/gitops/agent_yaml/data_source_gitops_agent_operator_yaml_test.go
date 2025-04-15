@@ -62,7 +62,6 @@ func testAccDataSourceGitopsAgentOperatorYaml(agentId string, accountId string, 
 		data "harness_platform_gitops_agent_operator_yaml" "test" {
 			depends_on = [harness_platform_gitops_agent.test]
 			identifier = "%[1]s"
-			account_id = "%[2]s"
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
 			namespace = "%[4]s"
