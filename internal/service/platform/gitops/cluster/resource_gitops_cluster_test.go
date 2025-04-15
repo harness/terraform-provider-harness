@@ -3,6 +3,7 @@ package cluster_test
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"testing"
@@ -14,7 +15,24 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/joho/godotenv"
 )
+
+// Load environment variables from .env file - put in the beginning of the file
+func init() {
+	// Try several possible locations for the .env file
+	locations := []string{
+		"/Users/ivanbalan/IdeaProjects/terraform-provider-harness/.env",
+	}
+
+	for _, location := range locations {
+		err := godotenv.Load(location)
+		if err == nil {
+			log.Printf("Successfully loaded .env from %s", location)
+			break
+		}
+	}
+}
 
 func TestAccResourceGitopsCluster(t *testing.T) {
 
@@ -51,7 +69,7 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info", "request.0.cluster.0.config.0.bearer_token"},
 				ImportStateIdFunc:       acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
@@ -86,7 +104,7 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info", "request.0.cluster.0.config.0.bearer_token"},
 				ImportStateIdFunc:       acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
@@ -121,7 +139,7 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info", "request.0.cluster.0.config.0.bearer_token"},
 				ImportStateIdFunc:       acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
@@ -164,7 +182,7 @@ func TestAccResourceGitopsClusterIAMProject(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info", "request.0.cluster.0.config.0.bearer_token"},
 				ImportStateIdFunc:       acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
