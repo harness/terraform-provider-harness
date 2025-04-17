@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **Branch** | **string** | branch where the instance is stored  | [optional] [default to null]
 **Connector** | **string** | DB Connector | [default to null]
 **Context** | **string** | Liquibase context | [optional] [default to null]
+**LiquibaseSubstituteProperties** | **map[string]string** | properties to substitute in liquibase changelog | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

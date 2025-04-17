@@ -284,11 +284,11 @@ paths:
         explode: true
         schema:
           type: string
+          default: created
           enum:
           - name
           - updated
           - created
-          default: created
       - name: order
         in: query
         description: Order on the basis of which sorting is done.
@@ -297,10 +297,10 @@ paths:
         explode: true
         schema:
           type: string
+          default: DESC
           enum:
           - ASC
           - DESC
-          default: DESC
       responses:
         "200":
           description: Response body for List Database Schema
@@ -926,11 +926,11 @@ paths:
         explode: true
         schema:
           type: string
+          default: created
           enum:
           - name
           - updated
           - created
-          default: created
       - name: order
         in: query
         description: Order on the basis of which sorting is done.
@@ -939,10 +939,10 @@ paths:
         explode: true
         schema:
           type: string
+          default: DESC
           enum:
           - ASC
           - DESC
-          default: DESC
       requestBody:
         $ref: "#/components/requestBodies/DBInstanceFilterRequest"
       responses:
@@ -1675,7 +1675,7 @@ components:
           location: folder/changelog.yaml
           archivePath: archivePath
         schemaSourceType: Git
-        type: ""
+        type: Repository
         updated: 6
         tags:
           key: tags
@@ -1740,6 +1740,15 @@ components:
         context:
           type: string
           description: Liquibase context
+        liquibaseSubstituteProperties:
+          type: object
+          additionalProperties:
+            type: string
+            x-stoplight:
+              id: lq57gp08jqckf
+          description: properties to substitute in liquibase changelog
+          x-stoplight:
+            id: ylfffbh8lhcwr
       description: Database Instance Request
       x-stoplight:
         id: 1li73zi9bs5oi
@@ -1794,6 +1803,15 @@ components:
           description: Tag on last deployed changeSet
           x-stoplight:
             id: dlbvh5adtk2de
+        liquibaseSubstituteProperties:
+          type: object
+          additionalProperties:
+            type: string
+            x-stoplight:
+              id: szxsmt48sj6o2
+          description: properties to substitute in liquibase changelog
+          x-stoplight:
+            id: zk5v0mxn7p4ns
       description: Database Instance Response
       example:
         identifier: identifier
@@ -2109,10 +2127,10 @@ components:
         filterType:
           type: string
           description: "filter criteria type. Example: Equals, NotEquals"
+          default: Equals
           enum:
           - Equals
           - NotEquals
-          default: Equals
           x-stoplight:
             id: wh3jb1x9a4mvl
         instanceTags:
@@ -2166,22 +2184,22 @@ components:
       title: SortInstance
       type: string
       description: sort for instance entity
+      default: identifier
       enum:
       - name
       - updated
       - created
       - identifier
-      default: identifier
       x-stoplight:
         id: zhl6a0ksg19p2
     OrderInstance:
       title: OrderInstance
       type: string
       description: order of instance entity
+      default: ASC
       enum:
       - DESC
       - ASC
-      default: ASC
       x-stoplight:
         id: l0hdqldkwdms9
     InstanceDetail:
@@ -2642,11 +2660,11 @@ components:
       explode: true
       schema:
         type: string
+        default: created
         enum:
         - name
         - updated
         - created
-        default: created
     Order:
       name: order
       in: query
@@ -2656,10 +2674,10 @@ components:
       explode: true
       schema:
         type: string
+        default: DESC
         enum:
         - ASC
         - DESC
-        default: DESC
     PageIndex:
       name: page
       in: query
@@ -2869,6 +2887,15 @@ components:
               version:
                 type: string
                 description: version of the changelog applied to the database
+              liquibaseSubstituteProperties:
+                type: object
+                additionalProperties:
+                  type: string
+                  x-stoplight:
+                    id: j2at4cjqe9em3
+                description: properties to substitute in liquibase changelog
+                x-stoplight:
+                  id: 411rxl6wqmjnm
           examples:
             example-1:
               value:

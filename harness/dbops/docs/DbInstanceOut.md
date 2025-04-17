@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **LastAppliedTag** | **string** | Most recent tag applied to the database | [optional] [default to null]
 **ToOnboard** | **bool** |  | [optional] [default to null]
 **LastDeployedChangeSetTag** | **string** | Tag on last deployed changeSet | [default to null]
+**LiquibaseSubstituteProperties** | **map[string]string** | properties to substitute in liquibase changelog | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

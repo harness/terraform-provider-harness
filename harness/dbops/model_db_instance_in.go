@@ -23,4 +23,6 @@ type DbInstanceIn struct {
 	Connector string `json:"connector"`
 	// Liquibase context
 	Context string `json:"context,omitempty"`
+	// properties to substitute in liquibase changelog
+	LiquibaseSubstituteProperties map[string]string `json:"liquibaseSubstituteProperties,omitempty"`
 }
