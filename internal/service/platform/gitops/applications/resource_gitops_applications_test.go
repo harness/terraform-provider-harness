@@ -28,10 +28,10 @@ func TestAccResourceGitopsApplication_HelmApp(t *testing.T) {
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
 	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
-	repoId := os.Getenv("HARNESS_TEST_GITOPS_REPO_ID")
+	repoId := id
 	clusterName := id
 	namespace := "test"
-	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
+	repo := "https://github.com/harness-apps/hosted-gitops-example-apps"
 	namespaceUpdated := namespace + "_updated"
 	resourceName := "harness_platform_gitops_applications.test"
 	resource.UnitTest(t, resource.TestCase{
