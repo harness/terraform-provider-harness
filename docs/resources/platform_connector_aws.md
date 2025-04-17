@@ -104,9 +104,9 @@ resource "harness_platform_connector_aws" "aws" {
   tags        = ["foo:bar"]
 
   oidc_authentication {
-    iam_role_arn       = "test"
-    delegate_selectors = ["harness-delegate"]
-    region             = "aws_region"
+    iam_role_arn       = "test"                    # Required: The IAM Role to assume the credentials
+    delegate_selectors = ["harness-delegate"]      # Optional: The delegates to inherit the credentials
+    region             = "aws_region"              # Optional: AWS Region for connection test
   }
 }
 ```
@@ -130,7 +130,7 @@ resource "harness_platform_connector_aws" "aws" {
 - `inherit_from_delegate` (Block List, Max: 1) Inherit credentials from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `irsa` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--irsa))
 - `manual` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--manual))
-- `oidc_authentication` (List of Object) Authentication using harness oidc. (see [below for nested schema](#nestedatt--oidc_authentication))
+- `oidc_authentication` (Block List, Max: 1) Authentication using Harness OIDC. (see [below for nested schema](#nestedblock--oidc_authentication))
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -220,14 +220,17 @@ Optional:
 - `region` (String) Test Region to perform Connection test of AWS Connector.
 
 
-<a id="nestedatt--oidc_authentication"></a>
-### Nested Schema for `oidc authentication`
+<a id="nestedblock--oidc_authentication"></a>
+### Nested Schema for `oidc_authentication`
 
-Read-Only:
+Required:
 
 - `iam_role_arn` (String) The IAM Role to assume the credentials from.
+
+Optional:
+
 - `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
-- `region` AWS Region to perform Connection test of Connector.
+- `region` (String) AWS Region to perform Connection test of Connector.
 
 ## Import
 

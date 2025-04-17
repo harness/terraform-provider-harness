@@ -36,6 +36,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
+	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/workspace"
 	"github.com/sirupsen/logrus"
@@ -112,7 +113,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/slo"
 	pl_token "github.com/harness/terraform-provider-harness/internal/service/platform/token"
-	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 
 	"github.com/harness/harness-go-sdk/logging"
 	openapi_client_logging "github.com/harness/harness-openapi-go-client/logging"
