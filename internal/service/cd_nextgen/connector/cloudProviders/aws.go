@@ -167,7 +167,7 @@ func ResourceConnectorAws() *schema.Resource {
 						"delegate_selectors": {
 							Description: "The delegates to inherit the credentials from.",
 							Type:        schema.TypeSet,
-							Required:    true,
+							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
 						"region": {
