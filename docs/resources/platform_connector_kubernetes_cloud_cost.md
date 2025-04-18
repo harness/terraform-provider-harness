@@ -10,7 +10,7 @@ description: |-
 
 Resource for creating a Kubernetes Cloud Cost connector.
 
-These conectors need to be created at the account level in Harness.
+These connectors need to be created at the account level in Harness.
 
 ## Example Usage
 
