@@ -84,8 +84,6 @@ resource "harness_platform_db_schema" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `schema_source_type` (String) Type of the schema source.
-- `instance_count` (Number) Number of database instances corresponding to database schema.
 
 <a id="nestedblock--schema_source"></a>
 ### Nested Schema for `schema_source`

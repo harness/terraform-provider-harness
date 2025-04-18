@@ -37,11 +37,12 @@ func ResourceDBSchema() *schema.Resource {
 				Optional:     true,
 			},
 			"schema_source": {
-				Description:  "Provides a connector and path at which to find the database schema representation",
-				Type:         schema.TypeList,
-				MaxItems:     1,
-				Optional:     true,
-				AtLeastOneOf: []string{"schema_source", "changelog_script"},
+				Description:   "Provides a connector and path at which to find the database schema representation",
+				Type:          schema.TypeList,
+				MaxItems:      1,
+				Optional:      true,
+				ConflictsWith: []string{"changelog_script"},
+				AtLeastOneOf:  []string{"schema_source", "changelog_script"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connector": {
@@ -68,11 +69,12 @@ func ResourceDBSchema() *schema.Resource {
 				},
 			},
 			"changelog_script": {
-				Description:  "Configuration to clone changeSets using script",
-				Type:         schema.TypeList,
-				Optional:     true,
-				MaxItems:     1,
-				AtLeastOneOf: []string{"schema_source", "changelog_script"},
+				Description:   "Configuration to clone changeSets using script",
+				Type:          schema.TypeList,
+				Optional:      true,
+				MaxItems:      1,
+				ConflictsWith: []string{"schema_source"},
+				AtLeastOneOf:  []string{"schema_source", "changelog_script"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"image": {
