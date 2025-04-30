@@ -42,7 +42,7 @@ func DatasourceConnectorAzureRepo() *schema.Resource {
 				Computed:    true,
 			},
 			"api_authentication": {
-				Description: "Configuration for using the gitlab api. API Access is Computed for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
+				Description: "Configuration for using the azure repo api. API Access is Computed for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Resource{
