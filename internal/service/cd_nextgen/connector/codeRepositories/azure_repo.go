@@ -32,7 +32,7 @@ func ResourceConnectorAzureRepo() *schema.Resource {
 				Description:  fmt.Sprintf("Whether the connection we're making is to a azure repository or a azure account. Valid values are %s.", strings.Join(nextgen.GitConnectorTypeValues, ", ")),
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice(nextgen.GitConnectorTypeValues, false),
+				ValidateFunc: validation.StringInSlice(nextgen.AzureRepoConnectorTypeValues, false),
 			},
 			"validation_repo": {
 				Description: "Repository to test the connection with. This is only used when `connection_type` is `Account`.",
@@ -195,11 +195,11 @@ func buildConnectorAzureRepo(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 		if attr := credConfig["http"].([]interface{}); len(attr) > 0 {
 			httpConfig := attr[0].(map[string]interface{})
-			connector.AzureRepo.Authentication.Type_ = nextgen.GitAuthTypes.Http.String()
+			connector.AzureRepo.Authentication.Type_ = nextgen.GitAuthTypes.Http
 			connector.AzureRepo.Authentication.Http = &nextgen.AzureRepoHttpCredentials{}
 
 			if attr := httpConfig["token_ref"].(string); attr != "" {
-				connector.AzureRepo.Authentication.Http.Type_ = nextgen.AzureRepoHttpCredentialTypes.UsernameToken.String()
+				connector.AzureRepo.Authentication.Http.Type_ = nextgen.AzureRepoHttpCredentialTypes.UsernameToken
 				connector.AzureRepo.Authentication.Http.UsernameToken = &nextgen.AzureRepoUsernameToken{
 					TokenRef: attr,
 				}
@@ -216,7 +216,7 @@ func buildConnectorAzureRepo(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 		if attr := credConfig["ssh"].([]interface{}); len(attr) > 0 {
 			sshConfig := attr[0].(map[string]interface{})
-			connector.AzureRepo.Authentication.Type_ = nextgen.GitAuthTypes.Ssh.String()
+			connector.AzureRepo.Authentication.Type_ = nextgen.GitAuthTypes.Ssh
 			connector.AzureRepo.Authentication.Ssh = &nextgen.AzureRepoSshCredentials{}
 
 			if attr := sshConfig["ssh_key_ref"].(string); attr != "" {
@@ -249,9 +249,9 @@ func readConnectorAzureRepo(d *schema.ResourceData, connector *nextgen.Connector
 
 	if connector.AzureRepo.Authentication != nil {
 		switch connector.AzureRepo.Authentication.Type_ {
-		case nextgen.GitAuthTypes.Http.String():
+		case nextgen.GitAuthTypes.Http:
 			switch connector.AzureRepo.Authentication.Http.Type_ {
-			case nextgen.AzureRepoHttpCredentialTypes.UsernameToken.String():
+			case nextgen.AzureRepoHttpCredentialTypes.UsernameToken:
 				d.Set("credentials", []map[string]interface{}{
 					{
 						"http": []map[string]interface{}{
@@ -267,7 +267,7 @@ func readConnectorAzureRepo(d *schema.ResourceData, connector *nextgen.Connector
 				return fmt.Errorf("unsupported azure repo http authentication type: %s", connector.AzureRepo.Authentication.Type_)
 			}
 
-		case nextgen.GitAuthTypes.Ssh.String():
+		case nextgen.GitAuthTypes.Ssh:
 			d.Set("credentials", []map[string]interface{}{
 				{
 					"ssh": []map[string]interface{}{
