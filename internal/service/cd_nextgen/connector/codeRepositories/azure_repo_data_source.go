@@ -21,7 +21,7 @@ func DatasourceConnectorAzureRepo() *schema.Resource {
 				Computed:    true,
 			},
 			"connection_type": {
-				Description: fmt.Sprintf("Whether the connection we're making is to a azure repository or a azure account. Valid values are %s.", strings.Join(nextgen.GitConnectorTypeValues, ", ")),
+				Description: fmt.Sprintf("Whether the connection we're making is to a azure repository or a azure account. Valid values are %s.", strings.Join(nextgen.AzureRepoConnectorTypeValues, ", ")),
 				Type:        schema.TypeString,
 				Computed:    true,
 			},

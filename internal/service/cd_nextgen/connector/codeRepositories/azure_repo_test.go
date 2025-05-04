@@ -32,7 +32,7 @@ func TestAccResourceConnectorAzureRepo_Http_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://dev.azure.com/your_organization"),
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Project"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
@@ -81,7 +81,7 @@ func TestAccResourceConnectorAzureRepo_Ssh(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://dev.azure.com/your_organization"),
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Project"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
@@ -119,7 +119,7 @@ func TestAccResourceConnectorAzureRepo_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://gitlab.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://dev.azure.com/your_organization"),
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Project"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
@@ -165,7 +165,7 @@ func testAccResourceConnectorAzureRepo_http_token(id string, name string) string
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://gitlab.com/account"
+			url = "https://dev.azure.com/your_organization"
 			connection_type = "Project"
 			validation_repo = "some_repo"
 			delegate_selectors = ["harness-delegate"]
@@ -204,7 +204,7 @@ func testAccResourceConnectorAzureRepo_token(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://gitlab.com/account"
+			url = "https://dev.azure.com/your_organization"
 			connection_type = "Project"
 			validation_repo = "some_repo"
 			delegate_selectors = ["harness-delegate"]
@@ -246,7 +246,7 @@ func testAccResourceConnectorAzureRepo_ssh(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://gitlab.com/account"
+			url = "https://dev.azure.com/your_organization"
 			connection_type = "Project"
 			validation_repo = "some_repo"
 			delegate_selectors = ["harness-delegate"]

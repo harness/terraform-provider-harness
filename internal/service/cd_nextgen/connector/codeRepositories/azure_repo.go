@@ -29,7 +29,7 @@ func ResourceConnectorAzureRepo() *schema.Resource {
 				Required:    true,
 			},
 			"connection_type": {
-				Description:  fmt.Sprintf("Whether the connection we're making is to a azure repository or a azure account. Valid values are %s.", strings.Join(nextgen.GitConnectorTypeValues, ", ")),
+				Description:  fmt.Sprintf("Whether the connection we're making is to a azure repository or a azure account. Valid values are %s.", strings.Join(nextgen.AzureRepoConnectorTypeValues, ", ")),
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice(nextgen.AzureRepoConnectorTypeValues, false),
@@ -186,7 +186,7 @@ func buildConnectorAzureRepo(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	}
 
 	if attr, ok := d.GetOk("connection_type"); ok {
-		connector.AzureRepo.Type_ = attr.(string)
+		connector.AzureRepo.Type_ = nextgen.AzureRepoConnectorType(attr.(string))
 	}
 
 	if attr, ok := d.GetOk("credentials"); ok {
@@ -228,7 +228,7 @@ func buildConnectorAzureRepo(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	if attr, ok := d.GetOk("api_authentication"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.AzureRepo.ApiAccess = &nextgen.AzureRepoApiAccess{
-			Type_: nextgen.AzureRepoApiAuthTypes.Token.String(),
+			Type_: nextgen.AzureRepoApiAuthTypes.Token,
 			Token: &nextgen.AzureRepoTokenSpec{},
 		}
 
@@ -284,7 +284,7 @@ func readConnectorAzureRepo(d *schema.ResourceData, connector *nextgen.Connector
 
 	if connector.AzureRepo.ApiAccess != nil {
 		switch connector.AzureRepo.ApiAccess.Type_ {
-		case nextgen.AzureRepoApiAuthTypes.Token.String():
+		case nextgen.AzureRepoApiAuthTypes.Token:
 			d.Set("api_authentication", []map[string]interface{}{
 				{
 					"token_ref": connector.AzureRepo.ApiAccess.Token.TokenRef,
