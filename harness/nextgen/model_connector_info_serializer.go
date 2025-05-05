@@ -111,6 +111,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.Pdc)
 	case ConnectorTypes.CustomSecretManager:
 		err = json.Unmarshal(aux.Spec, &a.CustomSecretManager)
+	case ConnectorTypes.GcpKms:
+		err = json.Unmarshal(aux.Spec, &a.GcpKms)
 	default:
 		panic(fmt.Sprintf("unknown connector type %s", a.Type_))
 	}
