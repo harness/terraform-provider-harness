@@ -75,4 +75,5 @@ type ConnectorInfo struct {
 	Rancher             *RancherConnector               `json:"-"`
 	CustomHealth        *CustomHealthConnectorDto       `json:"-"`
 	Pdc                 *PhysicalDataCenterConnectorDto `json:"-"`
+	AzureRepo           *AzureRepoConfig                `json:"-"`
 }

@@ -19,6 +19,7 @@ type AzureRepoConfig struct {
 	ApiAccess      *AzureRepoApiAccess      `json:"apiAccess,omitempty"`
 	// Selected Connectivity Modes
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	ExecuteOnDelegate bool     `json:"executeOnDelegate"`
 	// Organization | Repository connector type
-	Type_ string `json:"type"`
+	Type_ AzureRepoConnectorType `json:"type"`
 }

@@ -9,8 +9,11 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This contains details of the AzureRepo credentials used via HTTP connections
 type AzureRepoHttpCredentials struct {
-	Type_ string                        `json:"type"`
-	Spec  *AzureRepoHttpCredentialsSpec `json:"spec"`
+	Type_         AzureRepoHttpCredentialType `json:"type"`
+	UsernameToken *AzureRepoUsernameToken     `json:"-"`
+	Spec          json.RawMessage             `json:"spec"`
 }

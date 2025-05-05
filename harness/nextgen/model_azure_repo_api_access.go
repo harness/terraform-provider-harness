@@ -9,8 +9,11 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This contains details of the information needed for Azure Repo API access
 type AzureRepoApiAccess struct {
-	Type_ string                  `json:"type"`
-	Spec  *AzureRepoApiAccessSpec `json:"spec,omitempty"`
+	Type_ AzureRepoApiAuthType `json:"type"`
+	Token *AzureRepoTokenSpec  `json:"-"`
+	Spec  json.RawMessage      `json:"spec,omitempty"`
 }
