@@ -133,7 +133,7 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 							Type:        schema.TypeList,
 							Required:    true,
 							MinItems:    1,
-							Elem:        generatorResourceSchema(GENERATOR_RESOURCE_SCHEMA_LEVEL_MAX),
+							Elem:        resourceGenerator(GENERATOR_RESOURCE_SCHEMA_LEVEL_MAX),
 						},
 						"template": {
 							Description: "Application Set template. The template fields of the ApplicationSet spec are used to generate Gitops Applications.",
@@ -141,7 +141,7 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 							Required:    true,
 							MinItems:    1,
 							MaxItems:    1,
-							Elem:        applicationSetTemplateResource(false),
+							Elem:        resourceApplicationsetTemplate(false),
 						},
 						"go_template": {
 							Description: "Enable Go templating for the template field.",
@@ -246,7 +246,7 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 	}
 }
 
-func generatorResourceSchema(level int) *schema.Resource {
+func resourceGenerator(level int) *schema.Resource {
 	if level > 1 {
 		return &schema.Resource{
 			Schema: map[string]*schema.Schema{
@@ -292,6 +292,71 @@ func generatorResourceSchema(level int) *schema.Resource {
 	}
 }
 
+func resourceApplicationsetTemplate(allOptional bool) *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"metadata": {
+				Type:        schema.TypeList,
+				Description: "Kubernetes object metadata for templated Application.",
+				Optional:    allOptional,
+				Required:    !allOptional,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"annotations": {
+							Type:        schema.TypeMap,
+							Description: "An unstructured key value map that may be used to store arbitrary metadata for the resulting Application.",
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"labels": {
+							Type:        schema.TypeMap,
+							Description: "Map of string keys and values that can be used to organize and categorize (scope and select) the resulting Application.",
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"name": {
+							Type:        schema.TypeString,
+							Description: "Name of the resulting Application",
+							Optional:    allOptional,
+							Required:    !allOptional,
+						},
+						"namespace": {
+							Type:        schema.TypeString,
+							Description: "Namespace of the resulting Application",
+							Optional:    true,
+						},
+						"finalizers": {
+							Type:        schema.TypeList,
+							Description: "List of finalizers to apply to the resulting Application.",
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+					},
+				},
+			},
+			"spec": gitops.ArgoAppSpecSchemaV2(allOptional),
+		},
+	}
+}
+
+func resourceSecretRef() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"key": {
+				Type:        schema.TypeString,
+				Description: "Key containing information in Kubernetes `Secret`.",
+				Required:    true,
+			},
+			"secret_name": {
+				Type:        schema.TypeString,
+				Description: "Name of Kubernetes `Secret`.",
+				Required:    true,
+			},
+		},
+	}
+}
+
 // generator schemas
 func applicationSetClustersGeneratorSchema() *schema.Schema {
 	return &schema.Schema{
@@ -314,7 +379,7 @@ func applicationSetClustersGeneratorSchema() *schema.Schema {
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
 					MaxItems:    1,
-					Elem:        applicationSetTemplateResource(true),
+					Elem:        resourceApplicationsetTemplate(true),
 				},
 				"values": {
 					Type:        schema.TypeMap,
@@ -369,7 +434,7 @@ func applicationSetClusterDecisionResourceGeneratorSchema() *schema.Schema {
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
 					MaxItems:    1,
-					Elem:        applicationSetTemplateResource(true),
+					Elem:        resourceApplicationsetTemplate(true),
 				},
 				"values": {
 					Type:        schema.TypeMap,
@@ -443,7 +508,7 @@ func applicationSetGitGeneratorSchema() *schema.Schema {
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
 					MaxItems:    1,
-					Elem:        applicationSetTemplateResource(true),
+					Elem:        resourceApplicationsetTemplate(true),
 				},
 			},
 		},
@@ -471,7 +536,7 @@ func applicationSetListGeneratorSchema() *schema.Schema {
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
 					MaxItems:    1,
-					Elem:        applicationSetTemplateResource(true),
+					Elem:        resourceApplicationsetTemplate(true),
 				},
 			},
 		},
@@ -491,14 +556,14 @@ func applicationSetMatrixGeneratorSchema(level int) *schema.Schema {
 					Required:    true,
 					MinItems:    2,
 					MaxItems:    2,
-					Elem:        generatorResourceSchema(level - 1),
+					Elem:        resourceGenerator(level - 1),
 				},
 				"template": {
 					Type:        schema.TypeList,
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
 					MaxItems:    1,
-					Elem:        applicationSetTemplateResource(true),
+					Elem:        resourceApplicationsetTemplate(true),
 				},
 			},
 		},
@@ -523,14 +588,14 @@ func applicationSetMergeGeneratorSchema(level int) *schema.Schema {
 					Description: "Child generator. Generators are responsible for generating parameters, which are then combined by the parent merge generator.",
 					Required:    true,
 					MinItems:    2,
-					Elem:        generatorResourceSchema(level - 1),
+					Elem:        resourceGenerator(level - 1),
 				},
 				"template": {
 					Type:        schema.TypeList,
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
 					MaxItems:    1,
-					Elem:        applicationSetTemplateResource(true),
+					Elem:        resourceApplicationsetTemplate(true),
 				},
 			},
 		},
@@ -561,7 +626,7 @@ func applicationSetSCMProviderGeneratorSchema() *schema.Schema {
 								Description: "The Personal Access Token (PAT) to use when connecting.",
 								Optional:    true,
 								MaxItems:    1,
-								Elem:        secretRefResource(),
+								Elem:        resourceSecretRef(),
 							},
 							"api": {
 								Type:        schema.TypeString,
@@ -598,7 +663,7 @@ func applicationSetSCMProviderGeneratorSchema() *schema.Schema {
 								Description: "The app password to use for the user. See: https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/.",
 								Optional:    true,
 								MaxItems:    1,
-								Elem:        secretRefResource(),
+								Elem:        resourceSecretRef(),
 							},
 							"owner": {
 								Type:        schema.TypeString,
@@ -647,7 +712,7 @@ func applicationSetSCMProviderGeneratorSchema() *schema.Schema {
 											Description: "Password (or personal access token) reference.",
 											Optional:    true,
 											MaxItems:    1,
-											Elem:        secretRefResource(),
+											Elem:        resourceSecretRef(),
 										},
 									},
 								},
@@ -733,7 +798,7 @@ func applicationSetSCMProviderGeneratorSchema() *schema.Schema {
 								Description: "Authentication token reference.",
 								Optional:    true,
 								MaxItems:    1,
-								Elem:        secretRefResource(),
+								Elem:        resourceSecretRef(),
 							},
 						},
 					},
@@ -770,7 +835,7 @@ func applicationSetSCMProviderGeneratorSchema() *schema.Schema {
 								Description: "Authentication token reference.",
 								Optional:    true,
 								MaxItems:    1,
-								Elem:        secretRefResource(),
+								Elem:        resourceSecretRef(),
 							},
 						},
 					},
@@ -807,7 +872,7 @@ func applicationSetSCMProviderGeneratorSchema() *schema.Schema {
 								Description: "Authentication token reference.",
 								Optional:    true,
 								MaxItems:    1,
-								Elem:        secretRefResource(),
+								Elem:        resourceSecretRef(),
 							},
 						},
 					},
@@ -822,7 +887,7 @@ func applicationSetSCMProviderGeneratorSchema() *schema.Schema {
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
 					MaxItems:    1,
-					Elem:        applicationSetTemplateResource(true),
+					Elem:        resourceApplicationsetTemplate(true),
 				},
 			},
 		},
@@ -865,7 +930,7 @@ func applicationSetPullRequestGeneratorSchema() *schema.Schema {
 											Description: "Password (or personal access token) reference.",
 											Optional:    true,
 											MaxItems:    1,
-											Elem:        secretRefResource(),
+											Elem:        resourceSecretRef(),
 										},
 									},
 								},
@@ -929,7 +994,7 @@ func applicationSetPullRequestGeneratorSchema() *schema.Schema {
 								Description: "Authentication token reference.",
 								Optional:    true,
 								MaxItems:    1,
-								Elem:        secretRefResource(),
+								Elem:        resourceSecretRef(),
 							},
 						},
 					},
@@ -972,7 +1037,7 @@ func applicationSetPullRequestGeneratorSchema() *schema.Schema {
 								Description: "Authentication token reference.",
 								Optional:    true,
 								MaxItems:    1,
-								Elem:        secretRefResource(),
+								Elem:        resourceSecretRef(),
 							},
 						},
 					},
@@ -1010,7 +1075,7 @@ func applicationSetPullRequestGeneratorSchema() *schema.Schema {
 								Description: "Authentication token reference.",
 								Optional:    true,
 								MaxItems:    1,
-								Elem:        secretRefResource(),
+								Elem:        resourceSecretRef(),
 							},
 						},
 					},
@@ -1025,74 +1090,8 @@ func applicationSetPullRequestGeneratorSchema() *schema.Schema {
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
 					MaxItems:    1,
-					Elem:        applicationSetTemplateResource(true),
+					Elem:        resourceApplicationsetTemplate(true),
 				},
-			},
-		},
-	}
-}
-
-func applicationSetTemplateResource(allOptional bool) *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"metadata": {
-				Type:        schema.TypeList,
-				Description: "Kubernetes object metadata for templated Application.",
-				Optional:    allOptional,
-				Required:    !allOptional,
-				MaxItems:    1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"annotations": {
-							Type:        schema.TypeMap,
-							Description: "An unstructured key value map that may be used to store arbitrary metadata for the resulting Application.",
-							Optional:    true,
-							Elem:        &schema.Schema{Type: schema.TypeString},
-						},
-						"labels": {
-							Type:        schema.TypeMap,
-							Description: "Map of string keys and values that can be used to organize and categorize (scope and select) the resulting Application.",
-							Optional:    true,
-							Elem:        &schema.Schema{Type: schema.TypeString},
-						},
-						"name": {
-							Type:        schema.TypeString,
-							Description: "Name of the resulting Application",
-							Optional:    allOptional,
-							Required:    !allOptional,
-						},
-						"namespace": {
-							Type:        schema.TypeString,
-							Description: "Namespace of the resulting Application",
-							Optional:    true,
-						},
-						"finalizers": {
-							Type:        schema.TypeList,
-							Description: "List of finalizers to apply to the resulting Application.",
-							Optional:    true,
-							Elem:        &schema.Schema{Type: schema.TypeString},
-						},
-					},
-				},
-			},
-			"spec": gitops.ArgoAppSpecSchemaV2(allOptional),
-		},
-	}
-}
-
-// misc reusable schemas
-func secretRefResource() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"key": {
-				Type:        schema.TypeString,
-				Description: "Key containing information in Kubernetes `Secret`.",
-				Required:    true,
-			},
-			"secret_name": {
-				Type:        schema.TypeString,
-				Description: "Name of Kubernetes `Secret`.",
-				Required:    true,
 			},
 		},
 	}
