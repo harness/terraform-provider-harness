@@ -1030,7 +1030,7 @@ func applicationSetPullRequestGeneratorSchema() *schema.Schema {
 			},
 		},
 	}
-}""
+}
 
 func applicationSetTemplateResource(allOptional bool) *schema.Resource {
 	return &schema.Resource{
