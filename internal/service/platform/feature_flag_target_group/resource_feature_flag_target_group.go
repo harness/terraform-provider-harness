@@ -205,6 +205,7 @@ func resourceFeatureFlagTargetCreate(ctx context.Context, d *schema.ResourceData
 		d.MarkNewResource()
 	}
 
+	httpResp, err = c.TargetGroupsApi.CreateSegment(ctx, segmentRequest, c.AccountId, qp.OrgID)
 	if err != nil {
 		// handle conflict
 		if httpResp != nil && httpResp.StatusCode == 409 {
