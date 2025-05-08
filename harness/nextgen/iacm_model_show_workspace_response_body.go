@@ -73,4 +73,6 @@ type IacmShowWorkspaceResponseBody struct {
 	Updated int64 `json:"updated"`
 	// Optional Variable Sets as references
 	VariableSets []string `json:"variable_sets,omitempty"`
+	// define an array of provider connectors that belong to Workspace
+	ProviderConnectors []VariableSetConnector `json:"provider_connectors"`
 }

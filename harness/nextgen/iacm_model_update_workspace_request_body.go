@@ -45,4 +45,6 @@ type IacmUpdateWorkspaceRequestBody struct {
 	TerraformVariables map[string]IacmVariable `json:"terraform_variables"`
 	// Optional Variable Sets as references
 	VariableSets []string `json:"variable_sets,omitempty"`
+	// define an array of provider connectors that belong to Workspace
+	ProviderConnectors []VariableSetConnector `json:"provider_connectors"`
 }
