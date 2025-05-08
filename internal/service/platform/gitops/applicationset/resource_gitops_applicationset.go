@@ -72,6 +72,11 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"upsert": {
+				Description: "Indicates if the GitOps application should be updated if existing and inserted if not.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"metadata": {
 				Description: "Standard Kubernetes object metadata.",
 				Type:        schema.TypeList,
