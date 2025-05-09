@@ -9,16 +9,68 @@
  */
 package nextgen
 
+import "time"
+
 type ClusterOrchDistributionSelector string
 type ClusterOrchNodeDistributionStrategy string
+type ConsolidationPolicy string
+type replacementWindowType string
+type podEvictor struct {
+	Enabled             bool    `json:"enabled"`
+	EvictSingleReplicas bool    `json:"evict_single_replicas"`
+	MinCPU              float64 `json:"minimum_cpu"`
+	MinMem              float64 `json:"minimum_memory"`
+}
 
+type DisruptionBudget struct {
+	Reasons  []string `json:"reasons,omitempty"`
+	Nodes    string   `json:"nodes" hash:"ignore"`
+	Schedule *string  `json:"schedule,omitempty" hash:"ignore"`
+	Duration string   `json:"duration,omitempty" hash:"ignore"`
+}
+
+type consolidation struct {
+	ConsolidationPolicy ConsolidationPolicy `json:"policy"`
+	ConsolidateAfter    string              `json:"after"`
+	Budgets             []DisruptionBudget  `json:"budgets"`
+	NodeExpiry          *string             `json:"node_expiry"`
+	EnableSpotToSpot    bool                `json:"enable_spot_to_spot"`
+	PodEvictor          podEvictor          `json:"pod_evictor"`
+}
+type ReverseFallback struct {
+	Enabled       bool   `json:"enabled"`
+	RetryInterval string `json:"retry_interval"`
+}
+type commitmentIntegration struct {
+	Enabled        bool   `json:"enabled"`
+	CloudAccountID string `json:"cloud_account_id"`
+}
+type windowAppliesTo struct {
+	HarnessPodEviction bool `json:"harness_pod_eviction"`
+}
+type windowDetails struct {
+	Days      []time.Weekday `json:"days"`
+	AllDay    bool           `json:"all_day"`
+	StartTime *TimeInDay     `json:"start_time"`
+	EndTime   *TimeInDay     `json:"end_time"`
+	TimeZone  string         `json:"time_zone"`
+}
+type replacementWindow struct {
+	AppliesTo             *windowAppliesTo      `json:"applies_to"`
+	ReplacementWindowType replacementWindowType `json:"replacement_window_type"`
+	WindowDetails         *windowDetails        `json:"window_details,omitempty"`
+}
 type ClusterOrchConfig struct {
-	SpotDistribution     ClusterOrchDistributionSelector     `json:"spot_distribution"`
-	NodeDeletionDelay    int                                 `json:"node_deletion_delay"`
-	DistributionStrategy ClusterOrchNodeDistributionStrategy `json:"distribution_strategy"`
-	BaseOnDemandCapacity int                                 `json:"base_on_demand_capacity"`
-	SpotSplit            int                                 `json:"spot_split"`
-	OnDemandSplit        int                                 `json:"on_demand_split"`
+	SpotDistribution      ClusterOrchDistributionSelector     `json:"spot_distribution"`
+	NodeDeletionDelay     int                                 `json:"node_deletion_delay"`
+	DistributionStrategy  ClusterOrchNodeDistributionStrategy `json:"distribution_strategy"`
+	BaseOnDemandCapacity  int                                 `json:"base_on_demand_capacity"`
+	SpotSplit             int                                 `json:"spot_split"`
+	OnDemandSplit         int                                 `json:"on_demand_split"`
+	Consolidation         consolidation                       `json:"consolidation"`
+	ReverseFallback       *ReverseFallback                    `json:"reverse_fallback"`
+	CommitmentIntegration *commitmentIntegration              `json:"commitment_integration"`
+	ReplacementWindow     *replacementWindow                  `json:"replacement_window"`
 }
 
 type ClusterOrchestratorUserConfig struct {
