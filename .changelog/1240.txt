@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_cluster_orchestrator_config: Added the terraform support for updating configuration for cluster orchestrator
+```
