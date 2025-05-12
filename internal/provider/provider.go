@@ -85,7 +85,6 @@ import (
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
 	gitops_project_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/app_project"
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
-	gitops_applicationset "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applicationset"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	gitops_gnupg "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/gnupg"
 	gitops_project "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/project"
@@ -368,7 +367,6 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
-				"harness_platform_gitops_applicationset":           gitops_applicationset.ResourceGitopsApplicationSet(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.ResourceGitopsCluster(),
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.ResourceGitopsGnupg(),
 				"harness_platform_gitops_app_project_mapping":      gitops_project_mapping.ResourceGitopsAppProjectMapping(),
