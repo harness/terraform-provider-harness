@@ -19,8 +19,6 @@ func TestAccResourceFeatureFlagTargetGroup(t *testing.T) {
 	targetName := name
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_environment.test"
-	environment := "qa"
-	environmentId := fmt.Sprintf("%s_%s", "env", utils.RandStringBytes(5))
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -28,7 +26,7 @@ func TestAccResourceFeatureFlagTargetGroup(t *testing.T) {
 		CheckDestroy:      testAccResourceFeatureFlagTargetGroupDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceFeatureFlagTarget(id, name, targetName, environmentId, environment),
+				Config: testAccResourceFeatureFlagTargetGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -37,7 +35,7 @@ func TestAccResourceFeatureFlagTargetGroup(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceFeatureFlagTarget(id, name, name, environmentId, environment),
+				Config: testAccResourceFeatureFlagTargetGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -56,7 +54,7 @@ func TestAccResourceFeatureFlagTargetGroup(t *testing.T) {
 	})
 }
 
-func testAccResourceFeatureFlagTarget(id string, name string, updatedName string, environmentId string, environment string) string {
+func testAccResourceFeatureFlagTargetGroup(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -153,7 +151,7 @@ func testAccResourceFeatureFlagTarget(id string, name string, updatedName string
 				values    = [harness_platform_feature_flag_target.target.id]
 			}
 		}
-`, id, name, updatedName, environmentId, environment)
+`, id, name)
 }
 
 func testAccResourceFeatureFlagTargetGroupDestroy(resourceName string) resource.TestCheckFunc {
