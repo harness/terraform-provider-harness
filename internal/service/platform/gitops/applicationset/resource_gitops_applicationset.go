@@ -4,8 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/antihax/optional"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/terraform-provider-harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops"
 	"github.com/harness/terraform-provider-harness/internal/utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -17,10 +22,10 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 	return &schema.Resource{
 		Description:   "Resource for managing a Harness Gitops Applicationset.",
 		SchemaVersion: 0,
-		CreateContext: nil,
-		ReadContext:   nil,
-		UpdateContext: nil,
-		DeleteContext: nil,
+		CreateContext: resourceGitopsApplicationsetCreate,
+		ReadContext:   resourceGitopsApplicationsetRead,
+		UpdateContext: resourceGitopsApplicationsetUpdate,
+		DeleteContext: resourceGitopsApplicationsetDelete,
 		Importer:      nil,
 
 		CustomizeDiff: func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
@@ -160,7 +165,7 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"json_pointers": {
-										Type:        schema.TypeSet,
+										Type:        schema.TypeList,
 										Description: "Json pointers to ignore differences",
 										Optional:    true,
 										Elem: &schema.Schema{
@@ -168,7 +173,7 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 										},
 									},
 									"jq_path_expressions": {
-										Type:        schema.TypeSet,
+										Type:        schema.TypeList,
 										Description: "jq path to ignore differences",
 										Optional:    true,
 										Elem: &schema.Schema{
@@ -248,6 +253,166 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 				},
 			},
 		},
+	}
+}
+
+func resourceGitopsApplicationsetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	createAppsetRequest := buildCreateApplicationsetRequest(d)
+	var agentIdentifier, orgIdentifier, projectIdentifier string
+	if attr, ok := d.GetOk("agent_id"); ok {
+		agentIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	resp, httpResp, err := c.ApplicationsetApiService.ApplicationSetServiceCreate(ctx, createAppsetRequest, &nextgen.ApplicationSetApiApplicationSetServiceCreateOpts{
+		AccountIdentifier: optional.NewString(c.AccountId),
+		OrgIdentifier:     optional.NewString(orgIdentifier),
+		ProjectIdentifier: optional.NewString(projectIdentifier),
+		AgentIdentifier:   optional.NewString(agentIdentifier),
+	})
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+	// Soft delete lookup error handling
+	// https://harness.atlassian.net/browse/PL-23765
+	if &resp == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+	//err = setApplication(d, &resp)
+	//if err != nil {
+	//	return diag.FromErr(err)
+	//}
+
+	return nil
+}
+
+func resourceGitopsApplicationsetRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return nil
+}
+
+func resourceGitopsApplicationsetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	// TODO: Test each field incrementally to make sure everything from schema being set
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	createAppsetRequest := buildCreateApplicationsetRequest(d)
+	var agentIdentifier, orgIdentifier, projectIdentifier string
+	if attr, ok := d.GetOk("agent_id"); ok {
+		agentIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	resp, httpResp, err := c.ApplicationsetApiService.ApplicationSetServiceCreate(ctx, createAppsetRequest, &nextgen.ApplicationSetApiApplicationSetServiceCreateOpts{
+		AccountIdentifier: optional.NewString(c.AccountId),
+		OrgIdentifier:     optional.NewString(orgIdentifier),
+		ProjectIdentifier: optional.NewString(projectIdentifier),
+		AgentIdentifier:   optional.NewString(agentIdentifier),
+	})
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+	// Soft delete lookup error handling
+	// https://harness.atlassian.net/browse/PL-23765
+	if &resp == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+	//err = setApplication(d, &resp)
+	//if err != nil {
+	//	return diag.FromErr(err)
+	//}
+
+	return nil
+}
+
+func resourceGitopsApplicationsetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return nil
+}
+
+// object builders and flatteners
+
+// buildCreateApplicationsetRequest will build the request to create an applicationset. used for update as well
+func buildCreateApplicationsetRequest(d *schema.ResourceData) nextgen.ApplicationsApplicationSetCreateRequest {
+	var upsert bool
+	if attr, ok := d.GetOk("upsert"); ok {
+		upsert = attr.(bool)
+	}
+	x := buildApplicationSet(d) // for debugger testing TODO: remove
+	return nextgen.ApplicationsApplicationSetCreateRequest{
+		Upsert:         upsert,
+		Applicationset: x,
+	}
+}
+
+func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicationSet {
+	var appsetMD nextgen.V1ObjectMeta
+	var appsetSpec nextgen.ApplicationsApplicationSetSpec
+	var applicationSet map[string]interface{}
+
+	if attr, ok := d.GetOk("applicationset"); ok {
+		if attr != nil && len(attr.([]interface{})) > 0 {
+			applicationSet = attr.([]interface{})[0].(map[string]interface{})
+
+			// metadata
+			if applicationSet["metadata"] != nil && len(applicationSet["metadata"].([]interface{})) > 0 {
+				var meta = applicationSet["metadata"].([]interface{})[0].(map[string]interface{})
+				if meta["name"] != nil && len(meta["name"].(string)) > 0 {
+					appsetMD.Name = meta["name"].(string)
+				}
+				if meta["namespace"] != nil && len(meta["namespace"].(string)) > 0 {
+					appsetMD.Namespace = meta["namespace"].(string)
+				}
+				if meta["labels"] != nil && len(meta["labels"].(map[string]interface{})) > 0 {
+					appsetMD.Labels = make(map[string]string)
+					for k, v := range meta["labels"].(map[string]interface{}) {
+						appsetMD.Labels[k] = v.(string)
+					}
+				}
+				if meta["annotations"] != nil && len(meta["annotations"].(map[string]interface{})) > 0 {
+					appsetMD.Annotations = make(map[string]string)
+					for k, v := range meta["annotations"].(map[string]interface{}) {
+						appsetMD.Annotations[k] = v.(string)
+					}
+				}
+			}
+
+			//// spec
+			//if applicationSet["spec"] != nil && len(applicationSet["spec"].([]interface{})) > 0 {
+			//	var spec = applicationSet["spec"].([]interface{})[0].(map[string]interface{})
+			//	if spec["go_template"] != nil {
+			//		appsetSpec.GoTemplate = spec["go_template"].(bool)
+			//	}
+			//	if spec["ignore_application_differences"] != nil && len(spec["ignore_application_differences"].([]interface{})) > 0 {
+			//		var ignoreApplicationDifferences []nextgen.ApplicationsApplicationSetResourceIgnoreDifferences
+			//		for _, v := range spec["ignore_application_differences"].([]interface{}) {
+			//			var ignoreAppDiff nextgen.ApplicationsApplicationSetResourceIgnoreDifferences
+			//			if v != nil {
+			//				var ignoreAppDiffMap = v.(map[string]interface{})
+			//				if ignoreAppDiffMap["name"] != nil && len(ignoreAppDiffMap["name"].(string)) > 0 {
+			//					ignoreAppDiff.Name = ignoreAppDiffMap["name"].(string)
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+
+		}
+	}
+	return &nextgen.ApplicationsApplicationSet{
+		Metadata: &appsetMD,
+		Spec:     &appsetSpec,
 	}
 }
 
@@ -1131,7 +1296,7 @@ func matchExpressionsSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"values": {
-					Type:        schema.TypeSet,
+					Type:        schema.TypeList,
 					Description: "An array of string values. If the operator is `In` or `NotIn`, the values array must be non-empty. If the operator is `Exists` or `DoesNotExist`, the values array must be empty. This array is replaced during a strategic merge patch.",
 					Optional:    true,
 					Elem:        &schema.Schema{Type: schema.TypeString},
