@@ -309,9 +309,12 @@ func resourceGitopsApplicationsetCreate(ctx context.Context, d *schema.ResourceD
 func resourceGitopsApplicationsetRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	var agentIdentifier, orgIdentifier, projectIdentifier string
-	var identifier string = d.Id()
-
+	var agentIdentifier, orgIdentifier, projectIdentifier, identifier string
+	if attr, ok := d.GetOk("identifier"); ok {
+		identifier = attr.(string)
+	} else {
+		return diag.FromErr(fmt.Errorf("identifier is required"))
+	}
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
@@ -1657,7 +1660,6 @@ func matchExpressionsSchema() *schema.Schema {
 					Description: "An array of string values. If the operator is `In` or `NotIn`, the values array must be non-empty. If the operator is `Exists` or `DoesNotExist`, the values array must be empty. This array is replaced during a strategic merge patch.",
 					Optional:    true,
 					Elem:        &schema.Schema{Type: schema.TypeString},
-					Set:         schema.HashString,
 				},
 			},
 		},
