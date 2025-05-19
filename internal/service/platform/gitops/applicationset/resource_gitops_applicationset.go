@@ -21,7 +21,7 @@ const (
 
 func ResourceGitopsApplicationSet() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for managing a Harness Gitops Applicationset.",
+		Description:   "Resource for managing a Harness Gitops Applicationset. Please note this resource is in an alpha/experimental state and is subject to change.",
 		SchemaVersion: 0,
 		CreateContext: resourceGitopsApplicationsetCreate,
 		ReadContext:   resourceGitopsApplicationsetRead,
@@ -313,7 +313,7 @@ func resourceGitopsApplicationsetRead(ctx context.Context, d *schema.ResourceDat
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
 	} else {
-		return diag.FromErr(fmt.Errorf("identifier is required"))
+		return diag.FromErr(fmt.Errorf("applicationset identifier is missing from terraform state"))
 	}
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
@@ -357,6 +357,9 @@ func resourceGitopsApplicationsetUpdate(ctx context.Context, d *schema.ResourceD
 
 	// Proceed with update
 	createAppsetRequest := buildCreateApplicationsetRequest(d)
+	if attr, ok := d.GetOk("applicationset.0.metadata.0.uid"); ok {
+		createAppsetRequest.Applicationset.Metadata.Uid = attr.(string)
+	}
 	var agentIdentifier, orgIdentifier, projectIdentifier string
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
@@ -484,11 +487,17 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 						if generator.List.Elements != nil {
 							listMap["elements"] = generator.List.Elements
 						}
+						if generator.List.Template != nil {
+							var templateList = []interface{}{}
+							templateList = append(templateList, buildTemplateMapForState(generator.List.Template))
+							listMap["template"] = templateList
+						}
 						generatorMap["list"] = []interface{}{listMap}
 					}
 
 					if generator.Clusters != nil {
 						var clustersMap = map[string]interface{}{}
+						clustersMap["enabled"] = true
 						if generator.Clusters.Selector != nil {
 							var selectorMap = map[string]interface{}{}
 							if generator.Clusters.Selector.MatchLabels != nil {
@@ -496,8 +505,66 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 							}
 							clustersMap["selector"] = []interface{}{selectorMap}
 						}
+						if generator.Clusters.Values != nil { //values is map of string string
+							var valuesList = []interface{}{}
+							for k, v := range generator.Clusters.Values {
+								var valueMap = map[string]interface{}{}
+								valueMap["key"] = k
+								valueMap["value"] = v
+								valuesList = append(valuesList, valueMap)
+							}
+							clustersMap["values"] = valuesList
+						}
+						if generator.Clusters.Template != nil {
+							var templateList = []interface{}{}
+							templateList = append(templateList, buildTemplateMapForState(generator.Clusters.Template))
+							clustersMap["template"] = templateList
+						}
 						generatorMap["clusters"] = []interface{}{clustersMap}
 					}
+
+					if generator.Git != nil {
+						var gitMap = map[string]interface{}{}
+						if generator.Git.RepoURL != "" {
+							gitMap["repo_url"] = generator.Git.RepoURL
+						}
+						if generator.Git.Revision != "" {
+							gitMap["revision"] = generator.Git.Revision
+						}
+						if generator.Git.PathParamPrefix != "" {
+							gitMap["path_param_prefix"] = generator.Git.PathParamPrefix
+						}
+						if generator.Git.Directories != nil {
+							var directoriesList = []interface{}{}
+							for _, dir := range generator.Git.Directories {
+								var directoryMap = map[string]interface{}{}
+								if dir.Path != "" {
+									directoryMap["path"] = dir.Path
+								}
+								directoryMap["exclude"] = dir.Exclude
+								directoriesList = append(directoriesList, directoryMap)
+							}
+							gitMap["directories"] = directoriesList
+						}
+						if generator.Git.Files != nil {
+							var filesList = []interface{}{}
+							for _, file := range generator.Git.Files {
+								var fileMap = map[string]interface{}{}
+								if file.Path != "" {
+									fileMap["path"] = file.Path
+								}
+								filesList = append(filesList, fileMap)
+							}
+							gitMap["files"] = filesList
+						}
+						if generator.Git.Template != nil {
+							var templateList = []interface{}{}
+							templateList = append(templateList, buildTemplateMapForState(generator.Git.Template))
+							gitMap["template"] = templateList
+						}
+						generatorMap["git"] = []interface{}{gitMap}
+					}
+					// TODO: add less used generators
 
 					generatorsList = append(generatorsList, generatorMap)
 				}
@@ -507,39 +574,7 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 			//  template
 			if appset.Appset.Spec.Template != nil {
 				var templateList = []interface{}{}
-				var template = map[string]interface{}{}
-
-				if appset.Appset.Spec.Template.Metadata != nil {
-					var templateMetadataList = []interface{}{}
-					var templateMetadata = map[string]interface{}{}
-					tmplMeta := appset.Appset.Spec.Template.Metadata
-
-					if tmplMeta.Name != "" {
-						templateMetadata["name"] = tmplMeta.Name
-					}
-					if tmplMeta.Namespace != "" {
-						templateMetadata["namespace"] = tmplMeta.Namespace
-					}
-					if tmplMeta.Annotations != nil {
-						templateMetadata["annotations"] = tmplMeta.Annotations
-					}
-					if tmplMeta.Labels != nil {
-						templateMetadata["labels"] = tmplMeta.Labels
-					}
-
-					templateMetadataList = append(templateMetadataList, templateMetadata)
-					template["metadata"] = templateMetadataList
-				}
-
-				//  template spec
-				if appset.Appset.Spec.Template.Spec != nil {
-					var templateSpecList = []interface{}{}
-					templateSpec := applications.BuildAppSpecMap(appset.Appset.Spec.Template.Spec)
-					templateSpecList = append(templateSpecList, templateSpec)
-					template["spec"] = templateSpecList
-				}
-
-				templateList = append(templateList, template)
+				templateList = append(templateList, buildTemplateMapForState(appset.Appset.Spec.Template))
 				spec["template"] = templateList
 			}
 
@@ -552,6 +587,41 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 	}
 
 	return nil
+}
+
+func buildTemplateMapForState(templ *nextgen.ApplicationsApplicationSetTemplate) map[string]interface{} {
+	var template = map[string]interface{}{}
+
+	if templ.Metadata != nil {
+		var templateMetadataList = []interface{}{}
+		var templateMetadata = map[string]interface{}{}
+		tmplMeta := templ.Metadata
+
+		if tmplMeta.Name != "" {
+			templateMetadata["name"] = tmplMeta.Name
+		}
+		if tmplMeta.Namespace != "" {
+			templateMetadata["namespace"] = tmplMeta.Namespace
+		}
+		if tmplMeta.Annotations != nil {
+			templateMetadata["annotations"] = tmplMeta.Annotations
+		}
+		if tmplMeta.Labels != nil {
+			templateMetadata["labels"] = tmplMeta.Labels
+		}
+
+		templateMetadataList = append(templateMetadataList, templateMetadata)
+		template["metadata"] = templateMetadataList
+	}
+
+	//  template spec
+	if templ.Spec != nil {
+		var templateSpecList = []interface{}{}
+		templateSpec := applications.BuildAppSpecMap(templ.Spec)
+		templateSpecList = append(templateSpecList, templateSpec)
+		template["spec"] = templateSpecList
+	}
+	return template
 }
 
 // buildCreateApplicationsetRequest will build the request to create an applicationset. used for update as well
