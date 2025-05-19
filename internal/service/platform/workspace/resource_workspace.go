@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/harness/terraform-provider-harness/internal/utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -67,7 +68,7 @@ func ResourceWorkspace() *schema.Resource {
 			"provider_connector": {
 				Description: "Provider connector is the reference to the connector for the infrastructure provider",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"repository": {
 				Description: "Repository is the name of the repository to fetch the code from.",
@@ -206,6 +207,26 @@ func ResourceWorkspace() *schema.Resource {
 				Optional:    true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
+				},
+			},
+			"connector": {
+				Description: "Provider connectors configured on the Workspace. Only one connector of a type is supported",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"connector_ref": {
+							Description: "Connector Ref is the reference to the connector",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"type": {
+							Description:  "Type is the connector type of the connector. Supported types: aws, azure, gcp",
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"aws", "azure", "gcp"}, false),
+						},
+					},
 				},
 			},
 		},
@@ -367,6 +388,15 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 		}
 	}
 	d.Set("default_pipelines", defaultPipelines)
+
+	var providerConnectors []interface{}
+	for _, c := range ws.ProviderConnectors {
+		providerConnectors = append(providerConnectors, map[string]string{
+			"connector_ref": c.ConnectorRef,
+			"type":          c.Type_,
+		})
+	}
+	d.Set("connector", providerConnectors)
 }
 
 func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRequestBody, error) {
@@ -377,8 +407,11 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 		Repository:            d.Get("repository").(string),
 		RepositoryPath:        d.Get("repository_path").(string),
 		RepositoryConnector:   d.Get("repository_connector").(string),
-		ProviderConnector:     d.Get("provider_connector").(string),
 		CostEstimationEnabled: d.Get("cost_estimation_enabled").(bool),
+	}
+
+	if providerConnector, ok := d.GetOk("provider_connector"); ok {
+		ws.ProviderConnector = providerConnector.(string)
 	}
 
 	if desc, ok := d.GetOk("description"); ok {
@@ -424,6 +457,12 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 	if varSets := d.Get("variable_sets").([]interface{}); len(varSets) > 0 {
 		ws.VariableSets = utils.InterfaceSliceToStringSlice(varSets)
 	}
+
+	providerConnectors, err := buildProviderConnectors(d)
+	if err != nil {
+		return nextgen.IacmUpdateWorkspaceRequestBody{}, err
+	}
+	ws.ProviderConnectors = providerConnectors
 
 	return ws, nil
 }
@@ -437,8 +476,11 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 		Repository:            d.Get("repository").(string),
 		RepositoryPath:        d.Get("repository_path").(string),
 		RepositoryConnector:   d.Get("repository_connector").(string),
-		ProviderConnector:     d.Get("provider_connector").(string),
 		CostEstimationEnabled: d.Get("cost_estimation_enabled").(bool),
+	}
+
+	if providerConnector, ok := d.GetOk("provider_connector"); ok {
+		ws.ProviderConnector = providerConnector.(string)
 	}
 
 	if desc, ok := d.GetOk("description"); ok {
@@ -484,6 +526,12 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 	if varSets := d.Get("variable_sets").([]interface{}); len(varSets) > 0 {
 		ws.VariableSets = utils.InterfaceSliceToStringSlice(varSets)
 	}
+
+	providerConnectors, err := buildProviderConnectors(d)
+	if err != nil {
+		return nextgen.IacmCreateWorkspaceRequestBody{}, err
+	}
+	ws.ProviderConnectors = providerConnectors
 
 	return ws, nil
 }
@@ -538,6 +586,33 @@ func buildDefaultPipelines(d *schema.ResourceData) (map[string]nextgen.IacmDefau
 		}
 	}
 	return defaultPipelines, nil
+}
+
+func buildProviderConnectors(d *schema.ResourceData) ([]nextgen.VariableSetConnector, error) {
+	connectors := []nextgen.VariableSetConnector{}
+	seen := make(map[string]struct{}) // Map to track seen combinations
+
+	if _, ok := d.GetOk("connector"); ok {
+		for _, v := range d.Get("connector").(*schema.Set).List() {
+			if con, ok := v.(map[string]interface{}); ok {
+				connectorType := con["type"].(string)
+
+				// Check if the type already exists
+				if _, exists := seen[connectorType]; exists {
+					return connectors, fmt.Errorf("%s types must be unique for connectors", connectorType)
+				}
+
+				// Mark the type as seen
+				seen[connectorType] = struct{}{}
+
+				connectors = append(connectors, nextgen.VariableSetConnector{
+					ConnectorRef: con["connector_ref"].(string),
+					Type_:        connectorType,
+				})
+			}
+		}
+	}
+	return connectors, nil
 }
 
 // iacm errors are in a different format from other harness services

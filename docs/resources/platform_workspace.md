@@ -89,7 +89,6 @@ resource "harness_platform_workspace" "example" {
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `provider_connector` (String) Provider connector is the reference to the connector for the infrastructure provider
 - `provisioner_type` (String) Provisioner type defines the provisioning tool to use (terraform or opentofu)
 - `provisioner_version` (String) Provisioner version defines the provisioner version to use. The latest version of Opentofu should always be supported, Terraform is only supported up to version 1.5.7.
 - `repository` (String) Repository is the name of the repository to fetch the code from.
@@ -98,6 +97,7 @@ resource "harness_platform_workspace" "example" {
 
 ### Optional
 
+- `provider_connector` (String) Provider connector is the reference to the connector for the infrastructure provider
 - `default_pipelines` (Map of String) Default pipelines associated with this workspace
 - `description` (String) Description of the resource.
 - `environment_variable` (Block Set) Environment variables configured on the workspace (see [below for nested schema](#nestedblock--environment_variable))
@@ -108,6 +108,7 @@ resource "harness_platform_workspace" "example" {
 - `terraform_variable` (Block Set) Terraform variables configured on the workspace. Terraform variable keys must be unique within the workspace. (see [below for nested schema](#nestedblock--terraform_variable))
 - `terraform_variable_file` (Block Set) Terraform variables files configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable_file))
 - `variable_sets` (List of String) Variable sets to use.
+- `connector` (Block Set) Provider connector configured on the workspace (see [below for nested schema](#nestedblock--connector))
 
 ### Read-Only
 
@@ -147,6 +148,14 @@ Optional:
 - `repository_commit` (String) Repository commit is tag to fetch the variables from. This cannot be set if repository branch or sha is set.
 - `repository_path` (String) Repository path is the path in which the variables reside.
 - `repository_sha` (String) Repository commit is SHA to fetch the variables from. This cannot be set if repository branch or commit is set.
+
+<a id="nestedblock--connector"></a>
+### Nested Schema for `connector`
+
+Required:
+
+- `connector_ref` (String) Unique identifier of the connector.
+- `type` (String) Type indicates the type of the connector. Currently we support aws, azure, gcp.
 
 ## Import
 

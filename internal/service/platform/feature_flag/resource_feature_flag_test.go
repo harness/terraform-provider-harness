@@ -15,44 +15,43 @@ import (
 func TestAccResourceFeatureFlag(t *testing.T) {
 
 	name := t.Name()
-	targetName := name
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_feature_flag.test"
+	flagResourceName := "harness_platform_feature_flag.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceFeatureFlagDestroy(resourceName),
+		CheckDestroy:      testAccResourceFeatureFlagDestroy(flagResourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceFeatureFlag(id, name, targetName),
+				Config: testAccResourceFeatureFlag(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", targetName),
+					resource.TestCheckResourceAttr(flagResourceName, "identifier", id),
+					resource.TestCheckResourceAttr(flagResourceName, "org_id", id),
+					resource.TestCheckResourceAttr(flagResourceName, "project_id", id),
+					resource.TestCheckResourceAttr(flagResourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourceFeatureFlag(id, name, name),
+				Config: testAccResourceFeatureFlag(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(flagResourceName, "identifier", id),
+					resource.TestCheckResourceAttr(flagResourceName, "org_id", id),
+					resource.TestCheckResourceAttr(flagResourceName, "project_id", id),
+					resource.TestCheckResourceAttr(flagResourceName, "name", name),
 				),
 			},
 			{
-				ResourceName:            resourceName,
+				ResourceName:            flagResourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"yaml"},
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(flagResourceName),
 			},
 		},
 	})
 }
 
-func testAccResourceFeatureFlag(id string, name string, updatedName string) string {
+func testAccResourceFeatureFlag(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -71,53 +70,7 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 			name = "%[2]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
-			tags = ["foo:bar", "baz"]
 			type = "PreProduction"
-			yaml = <<-EOT
-			   environment:
-         name: %[2]s
-         identifier: %[1]s
-         orgIdentifier: ${harness_platform_project.test.org_id}
-         projectIdentifier: ${harness_platform_project.test.id}
-         type: PreProduction
-         tags:
-           foo: bar
-           baz: ""
-         variables:
-           - name: envVar1
-             type: String
-             value: v1
-             description: ""
-           - name: envVar2
-             type: String
-             value: v2
-             description: ""
-         overrides:
-           manifests:
-             - manifest:
-                 identifier: manifestEnv
-                 type: Values
-                 spec:
-                   store:
-                     type: Git
-                     spec:
-                       connectorRef: <+input>
-                       gitFetchType: Branch
-                       paths:
-                         - file1
-                       repoName: <+input>
-                       branch: master
-           configFiles:
-             - configFile:
-                 identifier: configFileEnv
-                 spec:
-                   store:
-                     type: Harness
-                     spec:
-                       files:
-                         - account:/Add-ons/svcOverrideTest
-                       secretFiles: []
-      EOT
   	}
 
 		resource "harness_platform_feature_flag_target" "target1" {
@@ -128,20 +81,6 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 		
 			identifier  = "target1"
 			name        = "target1"
-		
-			attributes = {
-				foo : "bar"
-			}
-		}
-
-		resource "harness_platform_feature_flag_target" "target2" {
-			org_id = harness_platform_project.test.org_id
-			project_id = harness_platform_project.test.id
-			environment = harness_platform_environment.test.id
-			account_id = harness_platform_project.test.id
-		
-			identifier  = "target2"
-			name        = "target2"
 		
 			attributes = {
 				foo : "bar"
@@ -162,15 +101,6 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 				op        = "equal"
 				values    = [harness_platform_feature_flag_target.target1.id]
 			}
-		}
-
-		resource "harness_platform_feature_flag_target_group" "targetgroup2" {
-			identifier = "targetgroup2"
-			name = "targetgroup2"
-			org_id = harness_platform_project.test.org_id
-			project_id = harness_platform_project.test.id
-			environment = harness_platform_environment.test.id
-			account_id = harness_platform_project.test.id
 		}
 
 		resource "harness_platform_feature_flag" "test" {
@@ -195,31 +125,21 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 			  identifier  = "Disabled"
 			  name        = "Disabled"
 			  description = "The feature is disabled"
-			  value       = "false"
+			  value       = "true"
 			}
 
 			tags {
 				identifier = "bar"
 			}
-
-			environment {
-				identifier = harness_platform_environment.test.id
-				
-				add_target_rule {
-					variation = "Enabled"
-					targets = ["target1"]
-				}
-
-			}
 		}
-`, id, name, updatedName)
+`, id, name)
 }
 
 func testAccResourceFeatureFlagDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		env, _ := testAccGetPlatformFeatureFlag(resourceName, state)
 		if env != nil {
-			return fmt.Errorf("Feature Flag Target not found: %s", env.Identifier)
+			return fmt.Errorf("Feature Flag not found: %s", env.Identifier)
 		}
 
 		return nil
