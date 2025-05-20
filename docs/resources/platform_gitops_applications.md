@@ -370,9 +370,13 @@ Optional:
 Optional:
 
 - `file_parameters` (Block List) File parameters to the helm template. (see [below for nested schema](#nestedblock--application--spec--sources--helm--file_parameters))
+- `ignore_missing_value_files` (Boolean) Prevents 'helm template' from failing when value_files do not exist locally.
 - `parameters` (Block List) List of helm parameters which are passed to the helm template command upon manifest generation. (see [below for nested schema](#nestedblock--application--spec--sources--helm--parameters))
 - `pass_credentials` (Boolean) Indicates if to pass credentials to all domains (helm's --pass-credentials)
 - `release_name` (String) Helm release name to use. If omitted it will use the GitOps application name.
+- `skip_crds` (Boolean) Indicates if to skip CRDs during helm template. Corresponds to helm --skip-crds
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to helm template, typically defined as a block.
 - `version` (String) Helm version to use for templating (either "2" or "3")

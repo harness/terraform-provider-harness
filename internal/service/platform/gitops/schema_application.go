@@ -873,8 +873,7 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 				"sources": {
 					Type:        schema.TypeList,
 					Description: "Location of the application's manifests or chart. Use when specifying multiple fields",
-					Optional:    allOptional,
-					Required:    !allOptional,
+					Optional:    true,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"repo_url": {
@@ -1619,7 +1618,6 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 							"json_pointers": {
 								Type:        schema.TypeList,
 								Description: "List of JSONPaths strings targeting the field(s) to ignore.",
-								Set:         schema.HashString,
 								Optional:    true,
 								Elem: &schema.Schema{
 									Type: schema.TypeString,
@@ -1628,7 +1626,6 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 							"jq_path_expressions": {
 								Type:        schema.TypeList,
 								Description: "List of JQ path expression strings targeting the field(s) to ignore.",
-								Set:         schema.HashString,
 								Optional:    true,
 								Elem: &schema.Schema{
 									Type: schema.TypeString,
@@ -1660,7 +1657,6 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 					Type:        schema.TypeInt,
 					Description: "Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.",
 					Optional:    true,
-					Default:     10,
 				},
 			},
 		},
