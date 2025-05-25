@@ -147,6 +147,12 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, meta
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
+	// This tells TF the resource-group no longer exists
+	if httpResp != nil && httpResp.StatusCode == 404 {
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
@@ -158,7 +164,6 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, meta
 	readResourceGroup(d, resp.Data.ResourceGroup)
 
 	return nil
-
 }
 
 func resourceResourceGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
