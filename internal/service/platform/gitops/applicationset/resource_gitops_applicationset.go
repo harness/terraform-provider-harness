@@ -27,7 +27,7 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 		ReadContext:   resourceGitopsApplicationsetRead,
 		UpdateContext: resourceGitopsApplicationsetUpdate,
 		DeleteContext: resourceGitopsApplicationsetDelete,
-		Importer:      nil,
+		Importer:      helpers.GitopsAgentApplicationsetImporter,
 
 		CustomizeDiff: func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
 			var e error
