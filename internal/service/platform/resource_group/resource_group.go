@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"log"
 )
 
 func ResourceResourceGroup() *schema.Resource {
@@ -147,6 +148,13 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, meta
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
+	// This tells TF the resource-group no longer exists
+	if httpResp != nil && httpResp.StatusCode == 404 {
+		log.Printf("Resource group with ID '%s' not found (HTTP 404). Clearing resource ID.", id)
+		d.SetId("")
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
@@ -158,7 +166,6 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, meta
 	readResourceGroup(d, resp.Data.ResourceGroup)
 
 	return nil
-
 }
 
 func resourceResourceGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
