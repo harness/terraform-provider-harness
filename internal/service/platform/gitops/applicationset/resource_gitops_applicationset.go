@@ -583,7 +583,10 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 		}
 
 		applicationsetList = append(applicationsetList, applicationsetMap)
-		d.Set("applicationset", applicationsetList)
+		err := d.Set("applicationset", applicationsetList)
+		if err != nil {
+			return fmt.Errorf("error setting applicationset: %w", err)
+		}
 	}
 
 	return nil
