@@ -605,64 +605,7 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) e
 
 		if app.App.Spec != nil {
 			var specList = []interface{}{}
-			var spec = map[string]interface{}{}
-			fmt.Println("app.App.Spec: ", app.App.Spec)
-			if app.App.Spec.Project != "" {
-				spec["project"] = app.App.Spec.Project
-			}
-			if app.App.Spec.Source != nil {
-				source := getSourceForState(app.App.Spec)
-				spec["source"] = []interface{}{source}
-			}
-			if len(app.App.Spec.Sources) > 0 {
-				sources := getSourcesForState(app.App.Spec)
-				spec["sources"] = sources
-			}
-			//destination
-			if app.App.Spec.Destination != nil {
-				var destinationList = []interface{}{}
-				var destination = map[string]interface{}{}
-				destination["name"] = app.App.Spec.Destination.Name
-				destination["namespace"] = app.App.Spec.Destination.Namespace
-				destination["server"] = app.App.Spec.Destination.Server
-				destinationList = append(destinationList, destination)
-				spec["destination"] = destinationList
-			}
-			//sync policy
-			if app.App.Spec.SyncPolicy != nil {
-				var syncPolicyList = []interface{}{}
-				var syncPolicy = map[string]interface{}{}
-				syncPolicy["sync_options"] = app.App.Spec.SyncPolicy.SyncOptions
-				if app.App.Spec.SyncPolicy.Automated != nil {
-					var syncPolicyAutomatedList = []interface{}{}
-					var syncPolicyAutomated = map[string]interface{}{}
-					syncPolicyAutomated["prune"] = app.App.Spec.SyncPolicy.Automated.Prune
-					syncPolicyAutomated["self_heal"] = app.App.Spec.SyncPolicy.Automated.SelfHeal
-					syncPolicyAutomated["allow_empty"] = app.App.Spec.SyncPolicy.Automated.AllowEmpty
-					syncPolicyAutomatedList = append(syncPolicyAutomatedList, syncPolicyAutomated)
-					syncPolicy["automated"] = syncPolicyAutomatedList
-				}
-				if app.App.Spec.SyncPolicy.Retry != nil {
-					var syncPolicyRetryList = []interface{}{}
-					var syncPolicyRetry = map[string]interface{}{}
-					syncPolicyRetry["limit"] = app.App.Spec.SyncPolicy.Retry.Limit
-					if app.App.Spec.SyncPolicy.Retry.Backoff != nil {
-						var syncPolicyRetryBackoffList = []interface{}{}
-						var syncPolicyRetryBackoff = map[string]interface{}{}
-						syncPolicyRetryBackoff["duration"] = app.App.Spec.SyncPolicy.Retry.Backoff.Duration
-						syncPolicyRetryBackoff["factor"] = app.App.Spec.SyncPolicy.Retry.Backoff.Factor
-						syncPolicyRetryBackoff["max_duration"] = app.App.Spec.SyncPolicy.Retry.Backoff.MaxDuration
-						syncPolicyRetryBackoffList = append(syncPolicyRetryBackoffList, syncPolicyRetryBackoff)
-						syncPolicyRetry["backoff"] = syncPolicyRetryBackoffList
-					}
-					syncPolicyRetryList = append(syncPolicyRetryList, syncPolicyRetry)
-					syncPolicy["retry"] = syncPolicyRetryList
-				}
-
-				syncPolicyList = append(syncPolicyList, syncPolicy)
-				spec["sync_policy"] = syncPolicyList
-			}
-
+			spec := BuildAppSpecMap(app.App.Spec)
 			specList = append(specList, spec)
 			application["spec"] = specList
 		}
@@ -674,6 +617,66 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) e
 		}
 	}
 	return nil
+}
+
+func BuildAppSpecMap(appSpec *nextgen.ApplicationsApplicationSpec) map[string]interface{} {
+	var spec = map[string]interface{}{}
+	if appSpec.Project != "" {
+		spec["project"] = appSpec.Project
+	}
+	if appSpec.Source != nil {
+		source := getSourceForState(appSpec)
+		spec["source"] = []interface{}{source}
+	}
+	if len(appSpec.Sources) > 0 {
+		sources := getSourcesForState(appSpec)
+		spec["sources"] = sources
+	}
+	//destination
+	if appSpec.Destination != nil {
+		var destinationList = []interface{}{}
+		var destination = map[string]interface{}{}
+		destination["name"] = appSpec.Destination.Name
+		destination["namespace"] = appSpec.Destination.Namespace
+		destination["server"] = appSpec.Destination.Server
+		destinationList = append(destinationList, destination)
+		spec["destination"] = destinationList
+	}
+	//sync policy
+	if appSpec.SyncPolicy != nil {
+		var syncPolicyList = []interface{}{}
+		var syncPolicy = map[string]interface{}{}
+		syncPolicy["sync_options"] = appSpec.SyncPolicy.SyncOptions
+		if appSpec.SyncPolicy.Automated != nil {
+			var syncPolicyAutomatedList = []interface{}{}
+			var syncPolicyAutomated = map[string]interface{}{}
+			syncPolicyAutomated["prune"] = appSpec.SyncPolicy.Automated.Prune
+			syncPolicyAutomated["self_heal"] = appSpec.SyncPolicy.Automated.SelfHeal
+			syncPolicyAutomated["allow_empty"] = appSpec.SyncPolicy.Automated.AllowEmpty
+			syncPolicyAutomatedList = append(syncPolicyAutomatedList, syncPolicyAutomated)
+			syncPolicy["automated"] = syncPolicyAutomatedList
+		}
+		if appSpec.SyncPolicy.Retry != nil {
+			var syncPolicyRetryList = []interface{}{}
+			var syncPolicyRetry = map[string]interface{}{}
+			syncPolicyRetry["limit"] = appSpec.SyncPolicy.Retry.Limit
+			if appSpec.SyncPolicy.Retry.Backoff != nil {
+				var syncPolicyRetryBackoffList = []interface{}{}
+				var syncPolicyRetryBackoff = map[string]interface{}{}
+				syncPolicyRetryBackoff["duration"] = appSpec.SyncPolicy.Retry.Backoff.Duration
+				syncPolicyRetryBackoff["factor"] = appSpec.SyncPolicy.Retry.Backoff.Factor
+				syncPolicyRetryBackoff["max_duration"] = appSpec.SyncPolicy.Retry.Backoff.MaxDuration
+				syncPolicyRetryBackoffList = append(syncPolicyRetryBackoffList, syncPolicyRetryBackoff)
+				syncPolicyRetry["backoff"] = syncPolicyRetryBackoffList
+			}
+			syncPolicyRetryList = append(syncPolicyRetryList, syncPolicyRetry)
+			syncPolicy["retry"] = syncPolicyRetryList
+		}
+
+		syncPolicyList = append(syncPolicyList, syncPolicy)
+		spec["sync_policy"] = syncPolicyList
+	}
+	return spec
 }
 
 func buildCreateApplicationRequest(d *schema.ResourceData) nextgen.ApplicationsApplicationCreateRequest {
@@ -776,89 +779,9 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 			}
 
 			if application["spec"] != nil && len(application["spec"].([]interface{})) > 0 {
-				var specData map[string]interface{}
-				specData = application["spec"].([]interface{})[0].(map[string]interface{})
+				specData := application["spec"].([]interface{})[0].(map[string]interface{})
 				//Spec Source
-				project := specData["project"].(string)
-				spec.Project = project
-				if specData["source"] != nil && len(specData["source"].([]interface{})) > 0 {
-					sourceMap := specData["source"].([]interface{})[0].(map[string]interface{})
-					source := setSpecSourceForRequest(sourceMap)
-					spec.Source = source
-				}
-				if specData["sources"] != nil && len(specData["sources"].([]interface{})) > 0 {
-					var sources []nextgen.ApplicationsApplicationSource
-					for _, v := range specData["sources"].([]interface{}) {
-						source := setSpecSourceForRequest(v.(map[string]interface{}))
-						sources = append(sources, *source)
-					}
-					spec.Sources = sources
-				}
-
-				//Destination
-				if specData["destination"] != nil && len(specData["destination"].([]interface{})) > 0 {
-					var specDestinationData nextgen.ApplicationsApplicationDestination
-					var specDestination = specData["destination"].([]interface{})[0].(map[string]interface{})
-					if specDestination["name"] != nil && len(specDestination["name"].(string)) > 0 {
-						specDestinationData.Name = specDestination["name"].(string)
-					}
-					if specDestination["namespace"] != nil && len(specDestination["namespace"].(string)) > 0 {
-						specDestinationData.Namespace = specDestination["namespace"].(string)
-					}
-					if specDestination["server"] != nil && len(specDestination["server"].(string)) > 0 {
-						specDestinationData.Server = specDestination["server"].(string)
-					}
-					spec.Destination = &specDestinationData
-				}
-				//sync policy
-				if specData["sync_policy"] != nil && len(specData["sync_policy"].([]interface{})) > 0 {
-					var syncPolicyData nextgen.ApplicationsSyncPolicy
-					var syncPolicy = specData["sync_policy"].([]interface{})[0].(map[string]interface{})
-					if syncPolicy["sync_options"] != nil && len(syncPolicy["sync_options"].([]interface{})) > 0 {
-						var syncOptions []string
-						for _, v := range syncPolicy["sync_options"].([]interface{}) {
-							syncOptions = append(syncOptions, v.(string))
-						}
-						syncPolicyData.SyncOptions = syncOptions
-					}
-					if syncPolicy["automated"] != nil && len(syncPolicy["automated"].([]interface{})) > 0 {
-						var automatedSyncPolicyData nextgen.ApplicationsSyncPolicyAutomated
-						var automatedSyncPolicy = syncPolicy["automated"].([]interface{})[0].(map[string]interface{})
-						if automatedSyncPolicy["prune"] != nil {
-							automatedSyncPolicyData.Prune = automatedSyncPolicy["prune"].(bool)
-						}
-						if automatedSyncPolicy["self_heal"] != nil {
-							automatedSyncPolicyData.SelfHeal = automatedSyncPolicy["self_heal"].(bool)
-						}
-						if automatedSyncPolicy["allow_empty"] != nil {
-							automatedSyncPolicyData.AllowEmpty = automatedSyncPolicy["allow_empty"].(bool)
-						}
-						syncPolicyData.Automated = &automatedSyncPolicyData
-					}
-					if syncPolicy["retry"] != nil && len(syncPolicy["retry"].([]interface{})) > 0 {
-						var retrySync = syncPolicy["retry"].([]interface{})[0].(map[string]interface{})
-						var retrySyncData nextgen.ApplicationsRetryStrategy
-						if retrySync["limit"] != nil && len(retrySync["limit"].(string)) > 0 {
-							retrySyncData.Limit = retrySync["limit"].(string)
-						}
-						if retrySync["backoff"] != nil && len(retrySync["backoff"].([]interface{})) > 0 {
-							var syncBackoff = retrySync["backoff"].([]interface{})[0].(map[string]interface{})
-							var syncBackoffData nextgen.ApplicationsBackoff
-							if syncBackoff["duration"] != nil && len(syncBackoff["duration"].(string)) > 0 {
-								syncBackoffData.Duration = syncBackoff["duration"].(string)
-							}
-							if syncBackoff["factor"] != nil && len(syncBackoff["factor"].(string)) > 0 {
-								syncBackoffData.Factor = syncBackoff["factor"].(string)
-							}
-							if syncBackoff["max_duration"] != nil && len(syncBackoff["max_duration"].(string)) > 0 {
-								syncBackoffData.MaxDuration = syncBackoff["max_duration"].(string)
-							}
-							retrySyncData.Backoff = &syncBackoffData
-						}
-						syncPolicyData.Retry = &retrySyncData
-					}
-					spec.SyncPolicy = &syncPolicyData
-				}
+				spec = BuildApplicationSpecFromMap(specData)
 			}
 		}
 	}
@@ -866,6 +789,91 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 		Metadata: &metaData,
 		Spec:     &spec,
 	}
+}
+
+func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.ApplicationsApplicationSpec {
+	var spec nextgen.ApplicationsApplicationSpec
+	project := specData["project"].(string)
+	spec.Project = project
+	if specData["source"] != nil && len(specData["source"].([]interface{})) > 0 {
+		sourceMap := specData["source"].([]interface{})[0].(map[string]interface{})
+		source := setSpecSourceForRequest(sourceMap)
+		spec.Source = source
+	}
+	if specData["sources"] != nil && len(specData["sources"].([]interface{})) > 0 {
+		var sources []nextgen.ApplicationsApplicationSource
+		for _, v := range specData["sources"].([]interface{}) {
+			source := setSpecSourceForRequest(v.(map[string]interface{}))
+			sources = append(sources, *source)
+		}
+		spec.Sources = sources
+	}
+
+	//Destination
+	if specData["destination"] != nil && len(specData["destination"].([]interface{})) > 0 {
+		var specDestinationData nextgen.ApplicationsApplicationDestination
+		var specDestination = specData["destination"].([]interface{})[0].(map[string]interface{})
+		if specDestination["name"] != nil && len(specDestination["name"].(string)) > 0 {
+			specDestinationData.Name = specDestination["name"].(string)
+		}
+		if specDestination["namespace"] != nil && len(specDestination["namespace"].(string)) > 0 {
+			specDestinationData.Namespace = specDestination["namespace"].(string)
+		}
+		if specDestination["server"] != nil && len(specDestination["server"].(string)) > 0 {
+			specDestinationData.Server = specDestination["server"].(string)
+		}
+		spec.Destination = &specDestinationData
+	}
+	//sync policy
+	if specData["sync_policy"] != nil && len(specData["sync_policy"].([]interface{})) > 0 {
+		var syncPolicyData nextgen.ApplicationsSyncPolicy
+		var syncPolicy = specData["sync_policy"].([]interface{})[0].(map[string]interface{})
+		if syncPolicy["sync_options"] != nil && len(syncPolicy["sync_options"].([]interface{})) > 0 {
+			var syncOptions []string
+			for _, v := range syncPolicy["sync_options"].([]interface{}) {
+				syncOptions = append(syncOptions, v.(string))
+			}
+			syncPolicyData.SyncOptions = syncOptions
+		}
+		if syncPolicy["automated"] != nil && len(syncPolicy["automated"].([]interface{})) > 0 {
+			var automatedSyncPolicyData nextgen.ApplicationsSyncPolicyAutomated
+			var automatedSyncPolicy = syncPolicy["automated"].([]interface{})[0].(map[string]interface{})
+			if automatedSyncPolicy["prune"] != nil {
+				automatedSyncPolicyData.Prune = automatedSyncPolicy["prune"].(bool)
+			}
+			if automatedSyncPolicy["self_heal"] != nil {
+				automatedSyncPolicyData.SelfHeal = automatedSyncPolicy["self_heal"].(bool)
+			}
+			if automatedSyncPolicy["allow_empty"] != nil {
+				automatedSyncPolicyData.AllowEmpty = automatedSyncPolicy["allow_empty"].(bool)
+			}
+			syncPolicyData.Automated = &automatedSyncPolicyData
+		}
+		if syncPolicy["retry"] != nil && len(syncPolicy["retry"].([]interface{})) > 0 {
+			var retrySync = syncPolicy["retry"].([]interface{})[0].(map[string]interface{})
+			var retrySyncData nextgen.ApplicationsRetryStrategy
+			if retrySync["limit"] != nil && len(retrySync["limit"].(string)) > 0 {
+				retrySyncData.Limit = retrySync["limit"].(string)
+			}
+			if retrySync["backoff"] != nil && len(retrySync["backoff"].([]interface{})) > 0 {
+				var syncBackoff = retrySync["backoff"].([]interface{})[0].(map[string]interface{})
+				var syncBackoffData nextgen.ApplicationsBackoff
+				if syncBackoff["duration"] != nil && len(syncBackoff["duration"].(string)) > 0 {
+					syncBackoffData.Duration = syncBackoff["duration"].(string)
+				}
+				if syncBackoff["factor"] != nil && len(syncBackoff["factor"].(string)) > 0 {
+					syncBackoffData.Factor = syncBackoff["factor"].(string)
+				}
+				if syncBackoff["max_duration"] != nil && len(syncBackoff["max_duration"].(string)) > 0 {
+					syncBackoffData.MaxDuration = syncBackoff["max_duration"].(string)
+				}
+				retrySyncData.Backoff = &syncBackoffData
+			}
+			syncPolicyData.Retry = &retrySyncData
+		}
+		spec.SyncPolicy = &syncPolicyData
+	}
+	return spec
 }
 
 func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]interface{} {
