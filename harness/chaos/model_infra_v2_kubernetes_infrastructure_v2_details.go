@@ -28,6 +28,7 @@ type InfraV2KubernetesInfrastructureV2Details struct {
 	InfraType *InfraV2InfraType `json:"infraType,omitempty"`
 	InsecureSkipVerify bool `json:"insecureSkipVerify,omitempty"`
 	InstallationType *InfraV2InstallationType `json:"installationType,omitempty"`
+	IsAIEnabled bool `json:"isAIEnabled,omitempty"`
 	IsChaosEnabled bool `json:"isChaosEnabled,omitempty"`
 	K8sConnectorID string `json:"k8sConnectorID,omitempty"`
 	Label map[string]string `json:"label,omitempty"`

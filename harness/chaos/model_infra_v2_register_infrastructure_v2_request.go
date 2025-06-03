@@ -9,6 +9,7 @@
 package chaos
 
 type InfraV2RegisterInfrastructureV2Request struct {
+	AiEnabled bool `json:"aiEnabled,omitempty"`
 	Annotation map[string]string `json:"annotation,omitempty"`
 	Containers string `json:"containers,omitempty"`
 	CorrelationId string `json:"correlationId,omitempty"`

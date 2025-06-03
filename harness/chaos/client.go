@@ -45,9 +45,14 @@ type APIClient struct {
 	AccountId string
 	ApiKey    string
 	Endpoint  string
+
 	// API Services
 
 	ChaosSdkApi *ChaosSdkApiService
+
+	DefaultApi *DefaultApiService
+
+	ListExperimentsMinimalNotificationApi *ListExperimentsMinimalNotificationApiService
 }
 
 type service struct {
@@ -67,11 +72,11 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 
 	// Api Config
 	c.ApiKey = cfg.ApiKey
-	c.AccountId = cfg.AccountId
-	c.Endpoint = cfg.BasePath
 
 	// API Services
 	c.ChaosSdkApi = (*ChaosSdkApiService)(&c.common)
+	c.DefaultApi = (*DefaultApiService)(&c.common)
+	c.ListExperimentsMinimalNotificationApi = (*ListExperimentsMinimalNotificationApiService)(&c.common)
 
 	return c
 }
@@ -172,6 +177,7 @@ func (c *APIClient) prepareRequest(
 	fileBytes []byte) (localVarRequest *http.Request, err error) {
 
 	var body *bytes.Buffer
+
 	// Detect postBody type and post.
 	if postBody != nil {
 		contentType := headerParams["Content-Type"]
@@ -179,6 +185,7 @@ func (c *APIClient) prepareRequest(
 			contentType = detectContentType(postBody)
 			headerParams["Content-Type"] = contentType
 		}
+
 		body, err = setBody(postBody, contentType)
 		if err != nil {
 			return nil, err
@@ -251,6 +258,7 @@ func (c *APIClient) prepareRequest(
 
 	// Encode the parameters.
 	url.RawQuery = query.Encode()
+
 	// Generate a new request
 	if body != nil {
 		localVarRequest, err = http.NewRequest(method, url.String(), body)
@@ -373,6 +381,7 @@ func setBody(body interface{}, contentType string) (bodyBuf *bytes.Buffer, err e
 	if err != nil {
 		return nil, err
 	}
+
 	if bodyBuf.Len() == 0 {
 		err = fmt.Errorf("Invalid body type %s\n", contentType)
 		return nil, err

@@ -10,10 +10,11 @@ package chaos
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/utils"
-	"net/http"
 )
 
 // contextKeys are used to identify the type of value in the context.

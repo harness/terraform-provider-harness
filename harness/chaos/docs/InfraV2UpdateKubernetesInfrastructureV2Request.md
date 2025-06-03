@@ -3,6 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**AiEnabled** | **bool** |  | [optional] [default to null]
 **Annotation** | **map[string]string** |  | [optional] [default to null]
 **Containers** | **string** |  | [optional] [default to null]
 **CorrelationId** | **string** |  | [optional] [default to null]

@@ -22,6 +22,7 @@ Name | Type | Description | Notes
 **InfraType** | [***InfraV2InfraType**](infra_v2.InfraType.md) |  | [optional] [default to null]
 **InsecureSkipVerify** | **bool** |  | [optional] [default to null]
 **InstallationType** | [***InfraV2InstallationType**](infra_v2.InstallationType.md) |  | [optional] [default to null]
+**IsAIEnabled** | **bool** |  | [optional] [default to null]
 **IsChaosEnabled** | **bool** |  | [optional] [default to null]
 **K8sConnectorID** | **string** |  | [optional] [default to null]
 **Label** | **map[string]string** |  | [optional] [default to null]

@@ -1,0 +1,10 @@
+# ExperimentTargets
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**Application** | [***ExperimentApplication**](experiment.Application.md) |  | [optional] [default to null]
+**Selectors** | [***ExperimentSelector**](experiment.Selector.md) |  | [optional] [default to null]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+

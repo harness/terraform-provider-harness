@@ -1,6 +1,6 @@
 # {{classname}}
 
-All URIs are relative to */chaos/manager/api*
+All URIs are relative to */api/manager*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
