@@ -72,6 +72,8 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 
 	// Api Config
 	c.ApiKey = cfg.ApiKey
+	c.AccountId = cfg.AccountId
+	c.Endpoint = cfg.BasePath
 
 	// API Services
 	c.ChaosSdkApi = (*ChaosSdkApiService)(&c.common)

@@ -24,9 +24,10 @@ var (
 	orgIdentifier   = "<replace-with-your-org-identifier>"
 	projectID       = "<replace-with-your-project-identifier>"
 	envID           = "<replace-with-your-env-identifier>"
+	connectorRef    = "<replace-with-your-connector-ref>"
 	infraNamespace  = "<replace-with-your-infra-namespace>"
 	serviceAccount  = "<replace-with-your-service-account>"
-	testInfraPrefix = "<replace-with-your-test-infra-prefix>"
+	testInfraPrefix = "test-sdk"
 )
 
 // TestMain handles setup and teardown
@@ -325,7 +326,7 @@ func createPlatformInfrastructure(t *testing.T, client *chaos.APIClient, ctx con
   deploymentType: Kubernetes
   type: KubernetesDirect
   spec:
-    connectorRef: org.workshop
+    connectorRef: %s
     namespace: %s
     releaseName: release-<+INFRA_KEY>
   allowSimultaneousDeployments: false`,
@@ -334,6 +335,7 @@ func createPlatformInfrastructure(t *testing.T, client *chaos.APIClient, ctx con
 		orgIdentifier,
 		projectID,
 		envID,
+		connectorRef,
 		infraNamespace,
 	)
 
