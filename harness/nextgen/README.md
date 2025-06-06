@@ -122,6 +122,16 @@ Class | Method | HTTP request | Description
 *ConnectorsApi* | [**ListConnectorByFQN**](docs/ConnectorsApi.md#listconnectorbyfqn) | **Post** /ng/api/connectors/listbyfqn | Get the list of connectors by FQN satisfying the criteria (if any) in the request
 *ConnectorsApi* | [**UpdateConnector**](docs/ConnectorsApi.md#updateconnector) | **Put** /ng/api/connectors | Updates the Connector
 *ConnectorsApi* | [**ValidateTheIdentifierIsUnique**](docs/ConnectorsApi.md#validatetheidentifierisunique) | **Get** /ng/api/connectors/validateUniqueIdentifier | Validate the Connector by Account Identifier and Connector Identifier
+*DashboardsApi* | [**CloneDashboard**](docs/DashboardsApi.md#clonedashboard) | **Post** /dashboard/clone | Clones a Dashboard
+*DashboardsApi* | [**DeleteDashboard**](docs/DashboardsApi.md#deletedashboard) | **Delete** /dashboard/remove | Deletes a Dashboard
+*DashboardsApi* | [**GetDashboard**](docs/DashboardsApi.md#getdashboard) | **Get** /dashboard/dashboards/{dashboard_id} | Gets details of a Dashboard
+*DashboardsApi* | [**UpdateDashboard**](docs/DashboardsApi.md#updatedashboard) | **Patch** /dashboard/ | Updates a Dashboard
+*DashboardsFilterApi* | [**GetDashboardFilters**](docs/DashboardsFilterApi.md#getdashboardfilters) | **Get** /dashboard/dashboards/{dashboard_id}/filters | Gets all the filters within a Dashboard
+*DashboardsFilterApi* | [**UpdateDashboardFilter**](docs/DashboardsFilterApi.md#updatedashboardfilter) | **Patch** /dashboard/dashboards/{dashboard_id}/filters/{filter_id} | Updates a specified Dashboard filter
+*DashboardsFolderApi* | [**CreateFolder**](docs/DashboardsFolderApi.md#createfolder) | **Post** /dashboard/folders | Create a Folder that can hold Custom Dashboards
+*DashboardsFolderApi* | [**DeleteFolder**](docs/DashboardsFolderApi.md#deletefolder) | **Delete** /dashboard/folders/{folder_id} | Deletes a Dashboard Folder 
+*DashboardsFolderApi* | [**GetFolder**](docs/DashboardsFolderApi.md#getfolder) | **Get** /dashboard/folders/{folder_id} | Gets a Dashboard Folder
+*DashboardsFolderApi* | [**UpdateFolder**](docs/DashboardsFolderApi.md#updatefolder) | **Patch** /dashboard/folders/{folder_id} | Updates a Dashboard Folder
 *DelegateGroupTagsResourceApi* | [**AddTagsToDelegateGroup**](docs/DelegateGroupTagsResourceApi.md#addtagstodelegategroup) | **Post** /ng/api/delegate-group-tags/{groupIdentifier} | Add given list of tags to the Delegate group
 *DelegateGroupTagsResourceApi* | [**DeleteTagsFromDelegateGroup**](docs/DelegateGroupTagsResourceApi.md#deletetagsfromdelegategroup) | **Delete** /ng/api/delegate-group-tags/{groupIdentifier} | Deletes all tags from the Delegate group
 *DelegateGroupTagsResourceApi* | [**ListTagsForDelegateGroup**](docs/DelegateGroupTagsResourceApi.md#listtagsfordelegategroup) | **Get** /ng/api/delegate-group-tags/{groupIdentifier} | Retrieves list of tags attached with Delegate group
@@ -581,6 +591,9 @@ Class | Method | HTTP request | Description
  - [CiLicenseSummary](docs/CiLicenseSummary.md)
  - [CiModuleLicense](docs/CiModuleLicense.md)
  - [Clause](docs/Clause.md)
+ - [CloneDashboardRequestBody](docs/CloneDashboardRequestBody.md)
+ - [ClonedDashboard](docs/ClonedDashboard.md)
+ - [ClonedDashboardResponse](docs/ClonedDashboardResponse.md)
  - [CloudWatchMetricDefinition](docs/CloudWatchMetricDefinition.md)
  - [CloudWatchMetricsHealthSourceSpec](docs/CloudWatchMetricsHealthSourceSpec.md)
  - [ClusterBudgetScope](docs/ClusterBudgetScope.md)
@@ -610,6 +623,8 @@ Class | Method | HTTP request | Description
  - [CostDetailsQueryParams](docs/CostDetailsQueryParams.md)
  - [CostOverview](docs/CostOverview.md)
  - [CreateAccessPointResponse](docs/CreateAccessPointResponse.md)
+ - [CreateDashboardRequest](docs/CreateDashboardRequest.md)
+ - [CreateFolderRequestBody](docs/CreateFolderRequestBody.md)
  - [CreateInvite](docs/CreateInvite.md)
  - [CrossAccountAccess](docs/CrossAccountAccess.md)
  - [CumulativeSavings](docs/CumulativeSavings.md)
@@ -623,8 +638,12 @@ Class | Method | HTTP request | Description
  - [CustomHealthSourceMetricSpec](docs/CustomHealthSourceMetricSpec.md)
  - [CvLicenseSummary](docs/CvLicenseSummary.md)
  - [CvModuleLicense](docs/CvModuleLicense.md)
+ - [Dashboard](docs/Dashboard.md)
+ - [DashboardFolder](docs/DashboardFolder.md)
  - [DashboardPipelineExecution](docs/DashboardPipelineExecution.md)
  - [DashboardPipelineHealth](docs/DashboardPipelineHealth.md)
+ - [DashboardFilter](docs/DashboardFilter.md)
+ - [DashboardsErrorResponse](docs/DashboardsErrorResponse.md)
  - [DataPoint](docs/DataPoint.md)
  - [DatadogConnectorDto](docs/DatadogConnectorDto.md)
  - [DatadogLogHealthSourceSpec](docs/DatadogLogHealthSourceSpec.md)
@@ -641,6 +660,9 @@ Class | Method | HTTP request | Description
  - [DelegateInsightsDetails](docs/DelegateInsightsDetails.md)
  - [DelegateTokenDetails](docs/DelegateTokenDetails.md)
  - [DeleteAccessPointPayload](docs/DeleteAccessPointPayload.md)
+ - [DeleteDashboardRequest](docs/DeleteDashboardRequest.md)
+ - [DeleteDashboardResponse](docs/DeleteDashboardResponse.md)
+ - [DeleteDashboardResponseResource](docs/DeleteDashboardResponseResource.md)
  - [DeploymentVerificationDto](docs/DeploymentVerificationDto.md)
  - [Descriptor](docs/Descriptor.md)
  - [DescriptorProto](docs/DescriptorProto.md)
@@ -735,6 +757,8 @@ Class | Method | HTTP request | Description
  - [FixedSchedulesListResponse](docs/FixedSchedulesListResponse.md)
  - [FlagBasicInfo](docs/FlagBasicInfo.md)
  - [FlagBasicInfos](docs/FlagBasicInfos.md)
+ - [Folder](docs/Folder.md)
+ - [FolderChildren](docs/FolderChildren.md)
  - [FolderNode](docs/FolderNode.md)
  - [FormDataContentDisposition](docs/FormDataContentDisposition.md)
  - [GatewayAccountRequest](docs/GatewayAccountRequest.md)
@@ -746,6 +770,10 @@ Class | Method | HTTP request | Description
  - [GcpKmsConnector](docs/GcpKmsConnector.md)
  - [GcpManualDetails](docs/GcpManualDetails.md)
  - [GetAccessPointResponse](docs/GetAccessPointResponse.md)
+ - [GetDashboardFilterResponse](docs/GetDashboardFilterResponse.md)
+ - [GetDashboardFiltersResponse](docs/GetDashboardFiltersResponse.md)
+ - [GetDashboardResponse](docs/GetDashboardResponse.md)
+ - [GetFolderResponse](docs/GetFolderResponse.md)
  - [GitAuthentication](docs/GitAuthentication.md)
  - [GitBranch](docs/GitBranch.md)
  - [GitBranchList](docs/GitBranchList.md)
@@ -1447,6 +1475,10 @@ Class | Method | HTTP request | Description
  - [UninterpretedOptionOrBuilder](docs/UninterpretedOptionOrBuilder.md)
  - [UnitProgress](docs/UnitProgress.md)
  - [UnknownFieldSet](docs/UnknownFieldSet.md)
+ - [UpdateDashboardFilterRequest](docs/UpdateDashboardFilterRequest.md)
+ - [UpdateDashboardResponse](docs/UpdateDashboardResponse.md)
+ - [UpdateDashboardResponseResource](docs/UpdateDashboardResponseResource.md)
+ - [UpdateFolderRequestBody](docs/UpdateFolderRequestBody.md)
  - [UsageDataDto](docs/UsageDataDto.md)
  - [UserAggregate](docs/UserAggregate.md)
  - [UserFilter](docs/UserFilter.md)
