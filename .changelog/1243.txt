@@ -1,0 +1,5 @@
+```release-note:new-resource
+harness_platform_gitops_applicationset: This new resource allows you to manage GitOps applicationsets in Harness Platform.
+Applicationsets are behind the feature flag "GITOPS_APPLICATIONSET_FIRST_CLASS_SUPPORT" and must be enabled.
+This resource is new and in alpha and may contain minor breaking change in future releases.
+```
