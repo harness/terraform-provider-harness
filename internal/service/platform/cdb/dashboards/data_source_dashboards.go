@@ -20,7 +20,7 @@ func DataSourceDashboard() *schema.Resource {
 		ReadContext: dataSourceDashboardRead,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
+			"id": {
 				Description: "Identifier of the dashboard.",
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -40,6 +40,7 @@ func DataSourceDashboard() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Type:        schema.TypeList,
 				Computed:    true,
+				ForceNew:    true,
 			},
 			"description": {
 				Description: "Description of the Dashboard.",
@@ -50,6 +51,7 @@ func DataSourceDashboard() *schema.Resource {
 				Description: "Unique identifier of the Folder.",
 				Type:        schema.TypeString,
 				Computed:    true,
+				ForceNew:    true,
 			},
 			"models": {
 				Description: "Data Models within the Dashboard.",

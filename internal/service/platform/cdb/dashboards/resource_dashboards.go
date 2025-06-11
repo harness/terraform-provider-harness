@@ -23,7 +23,7 @@ func ResourceDashboards() *schema.Resource {
 		Importer:      helpers.OrgResourceImporter,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
+			"id": {
 				Description: "Identifier of the dashboard.",
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -31,17 +31,20 @@ func ResourceDashboards() *schema.Resource {
 			"created_at": {
 				Description: "Created at timestamp of the Dashboard.",
 				Type:        schema.TypeString,
+				Computed:    true,
 				Optional:    true,
 			},
 			"dashboard_id": {
-				Description: "Unique identifier of the Dashboard.",
+				Description: "Unique identifier of the Template Dashboard to create from.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"data_source": {
 				Description: "Data Sources within the Dashboard.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
 			},
 			"description": {
@@ -50,7 +53,7 @@ func ResourceDashboards() *schema.Resource {
 				Optional:    true,
 			},
 			"folder_id": {
-				Description: "Unique identifier of the Folder.",
+				Description: "The Folder ID that the Dashboard belongs to.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -58,6 +61,7 @@ func ResourceDashboards() *schema.Resource {
 				Description: "Data Models within the Dashboard.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Type:        schema.TypeList,
+				Computed:    true,
 				Optional:    true,
 			},
 			"name": {
@@ -66,9 +70,10 @@ func ResourceDashboards() *schema.Resource {
 				Optional:    true,
 			},
 			"resource_identifier": {
-				Description: "Resource identifier of the dashboard.",
+				Description: "The Folder ID that the Dashboard belongs to.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"title": {
 				Description: "Title of the Dashboard.",
@@ -76,13 +81,15 @@ func ResourceDashboards() *schema.Resource {
 				Optional:    true,
 			},
 			"type": {
-				Description: "Resource identifier of the dashboard.",
+				Description: "Type of the dashboard.",
 				Type:        schema.TypeString,
+				Computed:    true,
 				Optional:    true,
 			},
 			"view_count": {
 				Description: "View count of the dashboard.",
 				Type:        schema.TypeInt,
+				Computed:    true,
 				Optional:    true,
 			},
 		},
@@ -95,8 +102,8 @@ func resourceDashboardRead(ctx context.Context, d *schema.ResourceData, meta int
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
-	if id == "" {
-		d.MarkNewResource()
+	if id == "" || id == "0" {
+		d.SetId("")
 		return nil
 	}
 
@@ -105,6 +112,11 @@ func resourceDashboardRead(ctx context.Context, d *schema.ResourceData, meta int
 	})
 
 	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			// Dashboard not found, remove from state
+			d.SetId("")
+			return nil
+		}
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
@@ -121,7 +133,7 @@ func resourceDashboardRead(ctx context.Context, d *schema.ResourceData, meta int
 func resourceDashboardUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	updateRequestBody := buildDashboardCreateRequest(d)
+	updateRequestBody := buildDashboardUpdateRequest(d)
 
 	resp, httpResp, err := c.DashboardsApi.UpdateDashboard(ctx, *updateRequestBody, &nextgen.DashboardsApiUpdateDashboardOpts{
 		AccountId: optional.NewString(c.AccountId),
@@ -158,7 +170,7 @@ func resourceDashboardDelete(ctx context.Context, d *schema.ResourceData, meta i
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	deleteRequest := buildDashboardDeleteRequest(d)
-	folderId := d.Get("folderId").(string)
+	folderId := d.Get("resource_identifier").(string)
 
 	_, httpResp, err := c.DashboardsApi.DeleteDashboard(ctx, *deleteRequest, folderId, &nextgen.DashboardsApiDeleteDashboardOpts{
 		AccountId: optional.NewString(c.AccountId),
@@ -171,26 +183,66 @@ func resourceDashboardDelete(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func buildDashboardCloneRequest(d *schema.ResourceData) *nextgen.CloneDashboardRequestBody {
-	return &nextgen.CloneDashboardRequestBody{
-		DashboardId: d.Get("dashboard_id").(string),
-		FolderId:    d.Get("folder_id").(string),
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
+	req := &nextgen.CloneDashboardRequestBody{}
+
+	if v, ok := d.GetOk("dashboard_id"); ok {
+		req.DashboardId = v.(string)
 	}
+
+	// Use resource_identifier as folderId if provided, otherwise use folder_id
+	if v, ok := d.GetOk("resource_identifier"); ok {
+		req.FolderId = v.(string)
+	} else if v, ok := d.GetOk("folder_id"); ok {
+		req.FolderId = v.(string)
+	}
+
+	// Use title as name if name is not provided
+	if v, ok := d.GetOk("name"); ok {
+		req.Name = v.(string)
+	} else if v, ok := d.GetOk("title"); ok {
+		req.Name = v.(string)
+	}
+
+	if v, ok := d.GetOk("description"); ok {
+		req.Description = v.(string)
+	}
+
+	return req
 }
 
-func buildDashboardCreateRequest(d *schema.ResourceData) *nextgen.CreateDashboardRequest {
-	return &nextgen.CreateDashboardRequest{
-		DashboardId: d.Get("dashboard_id").(int32),
-		FolderId:    d.Get("folder_id").(string),
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
+func buildDashboardUpdateRequest(d *schema.ResourceData) *nextgen.CreateDashboardRequest {
+	req := &nextgen.CreateDashboardRequest{}
+
+	if v, ok := d.GetOk("id"); ok {
+		if id, err := strconv.ParseInt(v.(string), 10, 32); err == nil {
+			req.DashboardId = int32(id)
+		}
 	}
+
+	// Use resource_identifier as folderId if provided, otherwise use folder_id
+	if v, ok := d.GetOk("resource_identifier"); ok {
+		req.FolderId = v.(string)
+	} else if v, ok := d.GetOk("folder_id"); ok {
+		req.FolderId = v.(string)
+	}
+
+	// Use title as name if name is not provided
+	if v, ok := d.GetOk("name"); ok {
+		req.Name = v.(string)
+	} else if v, ok := d.GetOk("title"); ok {
+		req.Name = v.(string)
+	}
+
+	if v, ok := d.GetOk("description"); ok {
+		req.Description = v.(string)
+	}
+
+	return req
 }
 
 func buildDashboardDeleteRequest(d *schema.ResourceData) *nextgen.DeleteDashboardRequest {
 	return &nextgen.DeleteDashboardRequest{
-		DashboardId: d.Get("dashboard_id").(string),
+		DashboardId: d.Id(),
 	}
 }
 
@@ -205,19 +257,30 @@ func readDashboard(d *schema.ResourceData, dashboard *nextgen.Dashboard) {
 	d.Set("data_source", dashboard.DataSource)
 	d.Set("models", dashboard.Models)
 	d.Set("last_accessed_at", dashboard.LastAccessedAt)
-	d.Set("resource_identifier", dashboard.ResourceIdentifier)
-	d.Set("folder_id", dashboard.Folder.Id)
+
+	if dashboard.ResourceIdentifier != "" {
+		d.Set("resource_identifier", dashboard.ResourceIdentifier)
+	}
+
+	if v, ok := d.GetOk("resource_identifier"); ok && v.(string) == dashboard.Folder.Id {
+	} else if _, ok := d.GetOk("folder_id"); ok {
+		d.Set("folder_id", dashboard.Folder.Id)
+	}
 }
 
 func readClonedDashboard(d *schema.ResourceData, dashboard *nextgen.ClonedDashboard) {
-	d.SetId(dashboard.Id)
+	if dashboard.Id != "" && dashboard.Id != "0" {
+		d.SetId(dashboard.Id)
+	}
 	d.Set("description", dashboard.Description)
 	d.Set("title", dashboard.Title)
 	d.Set("resource_identifier", dashboard.ResourceIdentifier)
 }
 
 func readUpdateDashboard(d *schema.ResourceData, dashboard *nextgen.UpdateDashboardResponseResource) {
-	d.SetId(strconv.FormatInt(int64(dashboard.Id), 10))
+	if dashboard.Id != "" && dashboard.Id != "0" {
+		d.SetId(dashboard.Id)
+	}
 	d.Set("description", dashboard.Description)
 	d.Set("title", dashboard.Title)
 	d.Set("resource_identifier", dashboard.ResourceIdentifier)

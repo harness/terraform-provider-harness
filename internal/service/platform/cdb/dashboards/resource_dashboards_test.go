@@ -14,10 +14,12 @@ import (
 
 func TestAccResourceDashboard(t *testing.T) {
 
+	description := "test_description"
 	title := t.Name()
-	id := fmt.Sprintf("%s_%s", title, utils.RandStringBytes(5))
+	dashboard_id := fmt.Sprintf("%s_%s", title, utils.RandStringBytes(5))
+	folder_id := fmt.Sprintf("%s_%s", title, utils.RandStringBytes(5))
 	updatedTitle := fmt.Sprintf("%s_updated", title)
-	resourceName := "harness_platform_dashboard.test"
+	resourceName := "harness_platform_dashboards.dashboard"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -25,17 +27,21 @@ func TestAccResourceDashboard(t *testing.T) {
 		CheckDestroy:      testAccDashboardDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceDashboard(id, title),
+				Config: testAccResourceDashboard(dashboard_id, description, folder_id, title),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dashboard_id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", title),
+					resource.TestCheckResourceAttr(resourceName, "dashboard_id", dashboard_id),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "folder_id", folder_id),
+					resource.TestCheckResourceAttr(resourceName, "title", title),
 				),
 			},
 			{
-				Config: testAccResourceDashboard(id, updatedTitle),
+				Config: testAccResourceDashboard(dashboard_id, description, folder_id, updatedTitle),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dashboard_id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedTitle),
+					resource.TestCheckResourceAttr(resourceName, "dashboard_id", dashboard_id),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "folder_id", folder_id),
+					resource.TestCheckResourceAttr(resourceName, "title", updatedTitle),
 				),
 			},
 			{
@@ -73,11 +79,13 @@ func testAccDashboardDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAccResourceDashboard(id string, title string) string {
+func testAccResourceDashboard(dashboard_id string, description string, folder_id string, title string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_dashboard" "test" {
-			dashboard_id = "%[1]s"
-			name = "%[2]s"
-		}
-`, id, title)
+	resource "harness_platform_dashboards" "dashboard" {
+		dashboard_id = "%[1]s"
+		description = "%[2]s"
+		resource_identifier = "%[3]s"
+		title = "%[4]s"
+	}
+	`, dashboard_id, description, folder_id, title)
 }
