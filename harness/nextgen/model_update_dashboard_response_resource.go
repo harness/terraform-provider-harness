@@ -10,7 +10,7 @@
 package nextgen
 
 type UpdateDashboardResponseResource struct {
-	Id                 int32  `json:"id"`
+	Id                 string `json:"id"`
 	Title              string `json:"title"`
 	ResourceIdentifier string `json:"resourceIdentifier"`
 	Description        string `json:"description"`

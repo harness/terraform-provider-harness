@@ -3,7 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Id** | **int32** |  | [default to null]
+**Id** | **string** |  | [default to null]
 **Title** | **string** |  | [default to null]
 **ResourceIdentifier** | **string** |  | [default to null]
 **Description** | **string** |  | [default to null]

@@ -91,6 +91,7 @@ func (a *DashboardsFilterApiService) GetDashboardFilters(ctx context.Context, da
 
 		}
 	}
+	addAPIKeyToHeaders(ctx, localVarHeaderParams)
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -216,6 +217,7 @@ func (a *DashboardsFilterApiService) UpdateDashboardFilter(ctx context.Context, 
 
 		}
 	}
+	addAPIKeyToHeaders(ctx, localVarHeaderParams)
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err

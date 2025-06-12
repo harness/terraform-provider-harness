@@ -79,19 +79,7 @@ func (a *DashboardsFolderApiService) CreateFolder(ctx context.Context, body Crea
 	}
 	// body params
 	localVarPostBody = &body
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
+	addAPIKeyToHeaders(ctx, localVarHeaderParams)
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -198,6 +186,7 @@ func (a *DashboardsFolderApiService) DeleteFolder(ctx context.Context, folderId 
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	addAPIKeyToHeaders(ctx, localVarHeaderParams)
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -304,6 +293,7 @@ func (a *DashboardsFolderApiService) GetFolder(ctx context.Context, folderId str
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	addAPIKeyToHeaders(ctx, localVarHeaderParams)
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -413,6 +403,7 @@ func (a *DashboardsFolderApiService) UpdateFolder(ctx context.Context, body Upda
 	}
 	// body params
 	localVarPostBody = &body
+	addAPIKeyToHeaders(ctx, localVarHeaderParams)
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
