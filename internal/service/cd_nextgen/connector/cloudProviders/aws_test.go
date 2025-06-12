@@ -127,14 +127,12 @@ func TestAccResourceConnectorAws_Irsa(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "irsa.0.delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "irsa.0.region", "us-east-1"),
-					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"execute_on_delegate"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -167,10 +165,9 @@ func TestAccResourceConnectorAws_Manual(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"execute_on_delegate"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -191,7 +188,7 @@ func TestAccResourceConnectorAws_executeOnDelegateTrue(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorAws_manual(id, name),
+				Config: testAccResourceConnectorAws_manual_delegate(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -204,10 +201,9 @@ func TestAccResourceConnectorAws_executeOnDelegateTrue(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"execute_on_delegate"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -240,10 +236,9 @@ func TestAccResourceConnectorAws_executeOnDelegateFalse(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"execute_on_delegate"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -453,7 +448,7 @@ func testAccResourceConnectorAws_irsa(id string, name string) string {
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
-            execute_on_delegate = true
+
 			irsa {
 				delegate_selectors = ["harness-delegate"]
 				region = "us-east-1"
@@ -480,6 +475,42 @@ func testAccResourceConnectorAws_manual(id string, name string) string {
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
+
+			manual {
+				access_key_ref = "account.${harness_platform_secret_text.test.id}"
+				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+				session_token_ref = "account.${harness_platform_secret_text.test.id}"
+				delegate_selectors = ["harness-delegate"]
+				region = "us-east-1"
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorAws_manual_delegate(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+		resource "harness_platform_connector_aws" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
             execute_on_delegate = true
 			manual {
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
@@ -487,6 +518,11 @@ func testAccResourceConnectorAws_manual(id string, name string) string {
 				session_token_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
 				region = "us-east-1"
+			}
+            equal_jitter_backoff_strategy {
+				base_delay = 10
+				max_backoff_time = 65
+				retry_count = 3
 			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
@@ -517,11 +553,17 @@ func testAccResourceConnectorAws_manual_platform(id string, name string) string 
 			description = "test"
 			tags = ["foo:bar"]
             execute_on_delegate = false
+
 			manual {
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
 				session_token_ref = "account.${harness_platform_secret_text.test.id}"
 				region = "us-east-1"
+			}
+            equal_jitter_backoff_strategy {
+				base_delay = 10
+				max_backoff_time = 65
+				retry_count = 3
 			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
