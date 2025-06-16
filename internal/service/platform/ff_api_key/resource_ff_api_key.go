@@ -150,7 +150,7 @@ func resourceFFApiKeyCreate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("API key creation failed: %v", err)
 	}
 
-	d.SetId(resp.Identifier)
+	readFFApiKey(d, &resp, qp)
 
 	return nil
 }
