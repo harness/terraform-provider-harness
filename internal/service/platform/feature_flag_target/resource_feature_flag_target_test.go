@@ -17,15 +17,13 @@ func TestAccResourceFeatureFlagTarget(t *testing.T) {
 	targetName := name
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_environment.test"
-	environment := "qa"
-	environmentId := fmt.Sprintf("%s_%s", "env", utils.RandStringBytes(5))
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccResourceFeatureFlagTargetDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceFeatureFlagTarget(id, name, targetName, environmentId, environment),
+				Config: testAccResourceFeatureFlagTarget(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -34,7 +32,7 @@ func TestAccResourceFeatureFlagTarget(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceFeatureFlagTarget(id, name, name, environmentId, environment),
+				Config: testAccResourceFeatureFlagTarget(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -53,7 +51,7 @@ func TestAccResourceFeatureFlagTarget(t *testing.T) {
 	})
 }
 
-func testAccResourceFeatureFlagTarget(id string, name string, updatedName string, environmentId string, environment string) string {
+func testAccResourceFeatureFlagTarget(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -134,7 +132,7 @@ func testAccResourceFeatureFlagTarget(id string, name string, updatedName string
 				foo : "bar"
 			}
 		}
-`, id, name, updatedName, environmentId, environment)
+`, id, name)
 }
 
 func testAccResourceFeatureFlagTargetDestroy(resourceName string) resource.TestCheckFunc {

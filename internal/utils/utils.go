@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"hash/crc32"
+	"regexp"
 	"strings"
 )
 
@@ -95,4 +96,19 @@ func StringHashcode(s string) int {
 	}
 	// v == MinInt
 	return 0
+}
+
+// validator funcs
+
+// ValidateIntOrStringPercentage validates that the input is a string that is either a positive integer or a percentage.
+func ValidateIntOrStringPercentage(value interface{}, key string) (ws []string, es []error) {
+	v := value.(string)
+
+	positiveIntegerOrPercentageRegexp := regexp.MustCompile(`^[+]?\d+?%?$`)
+
+	if !positiveIntegerOrPercentageRegexp.MatchString(v) {
+		es = append(es, fmt.Errorf("%s: invalid input '%s'. String input must match a positive integer (e.g. '100') or percentage (e.g. '20%%')", key, v))
+	}
+
+	return
 }

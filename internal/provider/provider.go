@@ -85,6 +85,7 @@ import (
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
 	gitops_project_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/app_project"
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
+	gitops_applicationsets "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applicationset"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	gitops_gnupg "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/gnupg"
 	gitops_project "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/project"
@@ -180,6 +181,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_aws":                   cdng_connector_cloudProviders.DatasourceConnectorAws(),
 				"harness_platform_connector_awscc":                 connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                pl_secretManagers.DatasourceConnectorAwsKms(),
+				"harness_platform_connector_azure_repo":            cdng_connector_codeRepositories.DatasourceConnectorAzureRepo(),
 				"harness_platform_connector_bitbucket":             cdng_connector_codeRepositories.DatasourceConnectorBitbucket(),
 				"harness_platform_connector_customhealthsource":    connector.DatasourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.DatasourceConnectorDatadog(),
@@ -306,6 +308,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_governance_rule":                          governance_rule.DatasourceRule(),
 				"harness_governance_rule_set":                      governance_rule_set.DatasourceRuleSet(),
 				"harness_cluster_orchestrator":                     cluster_orchestrator.DataSourceClusterOrchestrator(),
+				"harness_cluster_orchestrator_config":              cluster_orchestrator.DataSourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                    module_registry.DataSourceInfraModule(),
 				"harness_chaos_infrastructure":                     infrastructure.DataSourceChaosInfrastructureService(),
 				"harness_platform_har_registry":                    har_registry.DataSourceRegistry(),
@@ -325,6 +328,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_aws":                   cdng_connector_cloudProviders.ResourceConnectorAws(),
 				"harness_platform_connector_awscc":                 connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                pl_secretManagers.ResourceConnectorAwsKms(),
+				"harness_platform_connector_azure_repo":            cdng_connector_codeRepositories.ResourceConnectorAzureRepo(),
 				"harness_platform_connector_bitbucket":             cdng_connector_codeRepositories.ResourceConnectorBitbucket(),
 				"harness_platform_connector_customhealthsource":    connector.ResourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.ResourceConnectorDatadog(),
@@ -367,6 +371,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
+				"harness_platform_gitops_applicationset":           gitops_applicationsets.ResourceGitopsApplicationSet(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.ResourceGitopsCluster(),
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.ResourceGitopsGnupg(),
 				"harness_platform_gitops_app_project_mapping":      gitops_project_mapping.ResourceGitopsAppProjectMapping(),
@@ -459,6 +464,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_governance_rule":                          governance_rule.ResourceRule(),
 				"harness_governance_rule_set":                      governance_rule_set.ResourceRuleSet(),
 				"harness_cluster_orchestrator":                     cluster_orchestrator.ResourceClusterOrchestrator(),
+				"harness_cluster_orchestrator_config":              cluster_orchestrator.ResourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                    module_registry.ResourceInfraModule(),
 				"harness_chaos_infrastructure":                     infrastructure.ResourceChaosInfrastructure(),
 				"harness_platform_har_registry":                    har_registry.ResourceRegistry(),

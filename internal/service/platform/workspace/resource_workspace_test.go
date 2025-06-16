@@ -235,5 +235,32 @@ func testAccResourceWorkspace(id string, name string, repositoryType string) str
   			}			
 			variable_sets = [harness_platform_infra_variable_set.test.id]
   		}
+
+		resource "harness_platform_workspace" "withMuptipleConnectors" {
+			identifier = "w%[1]s"
+			name = "w%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			description = "description"
+			provisioner_type        = "terraform"
+			provisioner_version     = "1.5.6"
+			repository              = "https://github.com/org/repo"
+			%[3]s
+			repository_path         = "tf/aws/basic"
+			cost_estimation_enabled = true
+			repository_connector    = "account.${harness_platform_connector_github.test.id}"
+			connector {
+				connector_ref = "con1"
+				type = "aws"
+			}
+			connector {
+				connector_ref = "con2"
+				type = "azure"
+			}
+			connector {
+				connector_ref = "con3"
+				type = "gcp"
+			}
+  		}
 `, id, name, repositoryX)
 }
