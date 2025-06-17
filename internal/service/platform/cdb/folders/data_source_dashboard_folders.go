@@ -28,8 +28,7 @@ func DataSourceDashboardFolders() *schema.Resource {
 			"name": {
 				Description: "Name of the folder.",
 				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
+				Computed:    true,
 			},
 			"created_at": {
 				Description: "Created DateTime of the folder.",

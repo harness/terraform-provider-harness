@@ -13,13 +13,12 @@ import (
 
 func ResourceDashboardFolders() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for a Harness Custom Folder Folder.",
+		Description: "Resource for a Harness Custom Dashboard Folder.",
 
 		CreateContext: resourceFolderCreate,
 		ReadContext:   resourceFolderRead,
 		UpdateContext: resourceFolderUpdate,
 		DeleteContext: resourceFolderDelete,
-		Importer:      helpers.OrgResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -31,7 +30,6 @@ func ResourceDashboardFolders() *schema.Resource {
 				Description: "Name of the folder.",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 			},
 			"created_at": {
 				Description: "Created DateTime of the folder.",
