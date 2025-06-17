@@ -209,6 +209,47 @@ func TestAccResourceConnectorAws_executeOnDelegateTrue(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorAws_executeOnDelegate_UpdateConnector(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_aws.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAws_inherit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorAws_inherit(id, name+"_test"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name+"_test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceConnectorAws_executeOnDelegateFalse(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -399,10 +440,17 @@ func testAccResourceConnectorAws_inherit(id string, name string) string {
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
+            execute_on_delegate = true
 
 			inherit_from_delegate {
 				delegate_selectors = ["harness-delegate"]
 				region = "us-east-1"
+			}
+
+            equal_jitter_backoff_strategy {
+				base_delay = 10
+				max_backoff_time = 65
+				retry_count = 3
 			}
 		}
 `, id, name)
