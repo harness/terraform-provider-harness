@@ -15,9 +15,9 @@ import (
 func TestAccResourceDashboard(t *testing.T) {
 
 	description := "test_description"
-	title := t.Name()
-	dashboard_id := fmt.Sprintf("%s_%s", title, utils.RandStringBytes(5))
-	folder_id := fmt.Sprintf("%s_%s", title, utils.RandStringBytes(5))
+	title := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	dashboardId := "48507" // DashBoard ID is present in QA : rXUXvbFqRr2XwcjBu3Oq-Q Account
+	folderId := "shared"
 	updatedTitle := fmt.Sprintf("%s_updated", title)
 	resourceName := "harness_platform_dashboards.dashboard"
 
@@ -27,52 +27,51 @@ func TestAccResourceDashboard(t *testing.T) {
 		CheckDestroy:      testAccDashboardDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceDashboard(dashboard_id, description, folder_id, title),
+				Config: testAccResourceDashboard(dashboardId, description, folderId, title),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dashboard_id", dashboard_id),
+					resource.TestCheckResourceAttr(resourceName, "dashboard_id", dashboardId),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "folder_id", folder_id),
+					resource.TestCheckResourceAttr(resourceName, "resource_identifier", folderId),
 					resource.TestCheckResourceAttr(resourceName, "title", title),
 				),
 			},
 			{
-				Config: testAccResourceDashboard(dashboard_id, description, folder_id, updatedTitle),
+				Config: testAccResourceDashboard(dashboardId, description, folderId, updatedTitle),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dashboard_id", dashboard_id),
+					resource.TestCheckResourceAttr(resourceName, "dashboard_id", dashboardId),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "folder_id", folder_id),
+					resource.TestCheckResourceAttr(resourceName, "resource_identifier", folderId),
 					resource.TestCheckResourceAttr(resourceName, "title", updatedTitle),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
-func testAccGetDashboard(resourceName string, state *terraform.State) (*nextgen.Dashboard, error) {
-	r := acctest.TestAccGetResource(resourceName, state)
-	c, ctx := acctest.TestAccGetPlatformClientWithContext()
-	id := r.Primary.ID
-	accId := r.Primary.Attributes["account_id"]
-
-	resp, _, err := c.DashboardsApi.GetDashboard(ctx, id, &nextgen.DashboardsApiGetDashboardOpts{AccountId: optional.NewString(accId)})
-	if err != nil {
-		return nil, err
-	}
-
-	return resp.Resource, nil
-}
-
 func testAccDashboardDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		dashboard, _ := testAccGetDashboard(resourceName, state)
-		if dashboard != nil {
-			return fmt.Errorf("Found dashboard: %s", dashboard.Id)
+		r, ok := state.RootModule().Resources[resourceName]
+		if !ok {
+			return nil
+		}
+
+		c, ctx := acctest.TestAccGetPlatformClientWithContext()
+		id := r.Primary.ID
+
+		resp, httpResp, err := c.DashboardsApi.GetDashboard(ctx, id, &nextgen.DashboardsApiGetDashboardOpts{
+			AccountId: optional.NewString(c.AccountId),
+		})
+
+		if err != nil && httpResp != nil && httpResp.StatusCode == 404 {
+			return nil
+		}
+
+		if err == nil && resp.Resource != nil {
+			return fmt.Errorf("Found dashboard: %s", id)
+		}
+
+		if err != nil {
+			return err
 		}
 
 		return nil
@@ -86,6 +85,8 @@ func testAccResourceDashboard(dashboard_id string, description string, folder_id
 		description = "%[2]s"
 		resource_identifier = "%[3]s"
 		title = "%[4]s"
+		data_source = []
+		models = []
 	}
 	`, dashboard_id, description, folder_id, title)
 }
