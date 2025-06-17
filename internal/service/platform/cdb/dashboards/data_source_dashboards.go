@@ -23,7 +23,7 @@ func DataSourceDashboard() *schema.Resource {
 			"id": {
 				Description: "Identifier of the dashboard.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 			"created_at": {
 				Description: "Created at timestamp of the Dashboard.",
@@ -95,10 +95,10 @@ func DataSourceDashboard() *schema.Resource {
 func dataSourceDashboardRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	id := d.Get("identifier").(string)
+	id := d.Get("id").(string)
 
 	if id == "" {
-		return diag.FromErr(errors.New("identifier must be specified"))
+		return diag.FromErr(errors.New("Id must be specified"))
 	}
 
 	var err error
