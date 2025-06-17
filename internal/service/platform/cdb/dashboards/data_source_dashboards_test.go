@@ -11,36 +11,47 @@ import (
 
 func TestAccDataSourceDashboards(t *testing.T) {
 
-	dashboard_id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	dashboardId := "48507" // DashBoard ID is present in QA : rXUXvbFqRr2XwcjBu3Oq-Q Account
 	description := "test_description"
-	folder_id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-	title := "test_title"
+	title := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	folderId := "shared"
 	resourceName := "data.harness_platform_dashboards.dashboard"
+	resourceNameCreated := "harness_platform_dashboards.dashboard"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceDashboard(dashboard_id, description, folder_id, title),
+				Config: testAccDataSourceDashboard(dashboardId, description, folderId, title),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "dashboard_id", dashboard_id),
-					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "resource_identifier", folder_id),
-					resource.TestCheckResourceAttr(resourceName, "title", title),
+					resource.TestCheckResourceAttrPair(resourceName, "id", resourceNameCreated, "id"),
+					resource.TestCheckResourceAttrPair(resourceName, "description", resourceNameCreated, "description"),
+					resource.TestCheckResourceAttrPair(resourceName, "resource_identifier", resourceNameCreated, "resource_identifier"),
+					resource.TestCheckResourceAttrPair(resourceName, "title", resourceNameCreated, "title"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "type"),
+					resource.TestCheckResourceAttrSet(resourceName, "view_count"),
 				),
 			},
 		},
 	})
 }
 
-func testAccDataSourceDashboard(dashboard_id string, description string, folder_id string, title string) string {
+func testAccDataSourceDashboard(dashboardId string, description string, folderId string, title string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_dashboards" "dashboard" {
 		dashboard_id = "%[1]s"
 		description = "%[2]s"
 		resource_identifier = "%[3]s"
 		title = "%[4]s"
+		data_source = []
+		models = []
 	}
-	`, dashboard_id, description, folder_id, title)
+
+	data "harness_platform_dashboards" "dashboard" {
+		id = harness_platform_dashboards.dashboard.id
+		depends_on = [harness_platform_dashboards.dashboard]
+	}
+	`, dashboardId, description, folderId, title)
 }

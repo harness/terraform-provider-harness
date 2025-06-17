@@ -20,7 +20,6 @@ func ResourceDashboards() *schema.Resource {
 		ReadContext:   resourceDashboardRead,
 		UpdateContext: resourceDashboardUpdate,
 		DeleteContext: resourceDashboardDelete,
-		Importer:      helpers.OrgResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -91,6 +90,16 @@ func ResourceDashboards() *schema.Resource {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Optional:    true,
+			},
+			"favorite_count": {
+				Description: "Favorite count of the dashboard.",
+				Type:        schema.TypeInt,
+				Computed:    true,
+			},
+			"last_accessed_at": {
+				Description: "Last accessed at timestamp of the Dashboard.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 		},
 	}
