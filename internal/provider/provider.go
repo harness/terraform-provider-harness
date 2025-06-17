@@ -12,6 +12,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/dashboards"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/folders"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/variable_set"
@@ -215,6 +216,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_user":                            pl_user.DataSourceUser(),
 				"harness_platform_environment":                     cdng_environment.DataSourceEnvironment(),
 				"harness_platform_dashboards":                      dashboards.DataSourceDashboard(),
+				"harness_platform_dashboard_folders":               folders.DataSourceDashboardFolders(),
 				"harness_platform_db_schema":                       dbschema.DataSourceDBSchema(),
 				"harness_platform_db_instance":                     dbinstance.DataSourceDBInstance(),
 				"harness_platform_environment_list":                cdng_environment.DataSourceEnvironmentList(),
@@ -360,6 +362,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_pdc":                   cdng_connector_cloudProviders.ResourceConnectorPdc(),
 				"harness_platform_environment":                     cdng_environment.ResourceEnvironment(),
 				"harness_platform_dashboards":                      dashboards.ResourceDashboards(),
+				"harness_platform_dashboard_folders":               folders.ResourceDashboardFolders(),
 				"harness_platform_db_schema":                       dbschema.ResourceDBSchema(),
 				"harness_platform_db_instance":                     dbinstance.ResourceDBInstance(),
 				"harness_platform_environment_group":               cdng_environment_group.ResourceEnvironmentGroup(),
