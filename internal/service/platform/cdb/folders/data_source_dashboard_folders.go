@@ -2,6 +2,7 @@ package folders
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -22,7 +23,7 @@ func DataSourceDashboardFolders() *schema.Resource {
 			"id": {
 				Description: "Identifier of the folder.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 			"name": {
 				Description: "Name of the folder.",
@@ -46,12 +47,18 @@ func DataSourceDashboardFolders() *schema.Resource {
 func dataSourceFolderRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
+	id := d.Get("id").(string)
+
+	if id == "" {
+		return diag.FromErr(errors.New("Id must be specified"))
+	}
+
 	var err error
 	var folder *nextgen.Folder
 	var httpResp *http.Response
 	var resp nextgen.GetFolderResponse
 
-	resp, httpResp, err = c.DashboardsFolderApi.GetFolder(ctx, d.Id(), &nextgen.DashboardsFoldersApiGetFolderOpts{
+	resp, httpResp, err = c.DashboardsFolderApi.GetFolder(ctx, id, &nextgen.DashboardsFoldersApiGetFolderOpts{
 		AccountId: optional.NewString(c.AccountId),
 	})
 	folder = resp.Resource
