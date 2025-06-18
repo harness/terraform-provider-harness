@@ -173,6 +173,118 @@ func TestAccResourceConnectorAws_Manual(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorAws_executeOnDelegateTrue(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_aws.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAws_manual_delegate(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "manual.0.region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccResourceConnectorAws_executeOnDelegate_UpdateConnector(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_aws.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAws_inherit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorAws_inherit(id, name+"_test"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name+"_test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "true"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccResourceConnectorAws_executeOnDelegateFalse(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_aws.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAws_manual_platform(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "manual.0.region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceConnectorAws_Manual_Equal_Jitter(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -328,10 +440,17 @@ func testAccResourceConnectorAws_inherit(id string, name string) string {
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
+            execute_on_delegate = true
 
 			inherit_from_delegate {
 				delegate_selectors = ["harness-delegate"]
 				region = "us-east-1"
+			}
+
+            equal_jitter_backoff_strategy {
+				base_delay = 10
+				max_backoff_time = 65
+				retry_count = 3
 			}
 		}
 `, id, name)
@@ -411,6 +530,88 @@ func testAccResourceConnectorAws_manual(id string, name string) string {
 				session_token_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
 				region = "us-east-1"
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorAws_manual_delegate(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+		resource "harness_platform_connector_aws" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+            execute_on_delegate = true
+			manual {
+				access_key_ref = "account.${harness_platform_secret_text.test.id}"
+				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+				session_token_ref = "account.${harness_platform_secret_text.test.id}"
+				delegate_selectors = ["harness-delegate"]
+				region = "us-east-1"
+			}
+            equal_jitter_backoff_strategy {
+				base_delay = 10
+				max_backoff_time = 65
+				retry_count = 3
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorAws_manual_platform(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+		resource "harness_platform_connector_aws" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+            execute_on_delegate = false
+
+			manual {
+				access_key_ref = "account.${harness_platform_secret_text.test.id}"
+				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+				session_token_ref = "account.${harness_platform_secret_text.test.id}"
+				region = "us-east-1"
+			}
+            equal_jitter_backoff_strategy {
+				base_delay = 10
+				max_backoff_time = 65
+				retry_count = 3
 			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
