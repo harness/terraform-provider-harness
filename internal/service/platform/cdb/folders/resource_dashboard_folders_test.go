@@ -17,7 +17,7 @@ func TestAccResourceDashboardFolder(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_dashboard_folders.dashboard"
+	resourceName := "harness_platform_dashboard_folders.folder"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },

@@ -143,5 +143,6 @@ func buildFolderUpdateRequest(d *schema.ResourceData) *nextgen.UpdateFolderReque
 
 func readFolder(d *schema.ResourceData, folder *nextgen.Folder) {
 	d.SetId(folder.Id)
-	d.Set("Name", folder.Name)
+	d.Set("name", folder.Name)
+	d.Set("created_at", folder.CreatedAt)
 }
