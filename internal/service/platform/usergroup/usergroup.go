@@ -3,7 +3,6 @@ package usergroup
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"reflect"
 	"sort"
@@ -159,7 +158,6 @@ func ResourceUserGroup() *schema.Resource {
 
 func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	log.Println("[DEBUG] Entering resourceUserGroupRead for UserGroup: ", d.Id())
 	ug := buildUserGroupV2(d)
 	id := d.Id()
 	// Migrate to GetUserGroupv2 once it is available in all environments including SMP customers
@@ -186,7 +184,6 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		d.Set("users", []string{})
 	}
 	readUserGroupV2(d, resp.Data, ug.Users)
-	// readUserGroup(d, resp.Data)
 
 	return nil
 }
