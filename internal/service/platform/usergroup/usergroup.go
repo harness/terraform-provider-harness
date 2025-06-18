@@ -3,6 +3,7 @@ package usergroup
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"reflect"
 	"sort"
@@ -158,10 +159,11 @@ func ResourceUserGroup() *schema.Resource {
 
 func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-
+	log.Println("[DEBUG] Entering resourceUserGroupRead for UserGroup: ", d.Id())
+	ug := buildUserGroupV2(d)
 	id := d.Id()
 	// Migrate to GetUserGroupv2 once it is available in all environments including SMP customers
-	resp, httpResp, err := c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
+	resp, httpResp, err := c.UserGroupApi.GetUserGroupV2(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
@@ -183,7 +185,8 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	} else if isSsoLinked {
 		d.Set("users", []string{})
 	}
-	readUserGroup(d, resp.Data)
+	readUserGroupV2(d, resp.Data, ug.Users)
+	// readUserGroup(d, resp.Data)
 
 	return nil
 }
