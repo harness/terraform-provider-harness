@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_channel"
 	"log"
 
 	"github.com/harness/harness-go-sdk/harness/har"
@@ -274,6 +275,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_service":                                  service.DataSourceService(),
 				"harness_platform_slo":                             slo.DataSourceSloService(),
 				"harness_platform_notification_rule":               notification_rule.DataSourceNotificationRuleService(),
+				"harness_platform_notification_channel":            notification_channel.DataSourceNotificationRuleService(),
 				"harness_ssh_credential":                           secrets.DataSourceSshCredential(),
 				"harness_sso_provider":                             sso.DataSourceSSOProvider(),
 				"harness_user_group":                               user.DataSourceUserGroup(),
@@ -388,6 +390,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_infrastructure":                  cdng_infrastructure.ResourceInfrastructure(),
 				"harness_platform_input_set":                       pipeline_input_set.ResourceInputSet(),
 				"harness_platform_monitored_service":               monitored_service.ResourceMonitoredService(),
+				"harness_platform_notification_channel":            notification_channel.ResourceNotificationChannel(),
 				"harness_platform_organization":                    organization.ResourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.ResourcePipeline(),
 				"harness_platform_project":                         project.ResourceProject(),
