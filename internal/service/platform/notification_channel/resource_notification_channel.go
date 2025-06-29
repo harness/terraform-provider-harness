@@ -28,11 +28,11 @@ func ResourceNotificationChannel() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"org": {
+			"org_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"project": {
+			"project_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
