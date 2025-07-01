@@ -132,7 +132,7 @@ resource "harness_platform_connector_github" "test" {
 - `credentials` (Block List, Min: 1, Max: 1) Credentials to use for the connection. (see [below for nested schema](#nestedblock--credentials))
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `url` (String) URL of the Githubhub repository or account.
+- `url` (String) URL of the Github repository or account.
 
 ### Optional
 

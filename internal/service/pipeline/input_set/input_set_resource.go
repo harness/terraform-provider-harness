@@ -286,10 +286,6 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		// If any of the Git-related fields have changed, we set the flag.
 		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
 
-		if shouldUpdateGitDetails {
-			resourceInputSetEditGitDetials(ctx, d, meta)
-		}
-
 		inputSet := buildUpdateInputSet(d)
 		if inputSet.GitDetails != nil {
 			base_branch = optional.NewString(inputSet.GitDetails.BaseBranch)
@@ -312,6 +308,10 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		resp, httpResp, err = c.InputSetsApi.UpdateInputSet(ctx, inputSet, pipelineIdentifier, orgIdentifier, projectIdentifier, id, &nextgen.InputSetsApiUpdateInputSetOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 		})
+
+		if shouldUpdateGitDetails {
+			resourceInputSetEditGitDetials(ctx, d, meta)
+		}
 	}
 
 	if err != nil {
@@ -355,17 +355,11 @@ func resourceInputSetEditGitDetials(ctx context.Context, d *schema.ResourceData,
 	project_id := d.Get("project_id").(string)
 	pipelineIdentifier := d.Get("pipeline_id").(string)
 	gitDetails := &input_set_go_sdk.InputSetApiEditGitDetailsOpts{
-		ConnectorRef: helpers.BuildField(d, "git_details.0.branch_name"),
-		RepoName:     helpers.BuildField(d, "git_details.0.connector_ref"),
+		ConnectorRef: helpers.BuildField(d, "git_details.0.connector_ref"),
+		RepoName:     helpers.BuildField(d, "git_details.0.repo_name"),
 		FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
 	}
 	resp, httpResp, err := c.InputSetsApi.EditGitDetailsForInputSet(ctx, c.AccountId, org_id, project_id, pipelineIdentifier, id, gitDetails)
-
-	if httpResp.StatusCode == 404 {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)

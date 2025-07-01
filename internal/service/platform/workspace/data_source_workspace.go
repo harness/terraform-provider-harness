@@ -2,6 +2,7 @@ package workspace
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func DataSourceWorkspace() *schema.Resource {
@@ -192,6 +193,26 @@ func DataSourceWorkspace() *schema.Resource {
 				Computed:    true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
+				},
+			},
+			"connector": {
+				Description: "Provider connectors configured on the Workspace. Only one connector of a type is supported",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"connector_ref": {
+							Description: "Connector Ref is the reference to the connector",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"type": {
+							Description:  "Type is the connector type of the connector. Supported types: aws, azure, gcp",
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"aws", "azure", "gcp"}, false),
+						},
+					},
 				},
 			},
 		},

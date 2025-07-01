@@ -348,6 +348,8 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	var err error
 	var httpResp *http.Response
 
+	httpResp, err = c.FeatureFlagsApi.CreateFeatureFlag(ctx, c.AccountId, qp.OrganizationId, opts)
+
 	if err != nil {
 		// handle conflict
 		if httpResp != nil && httpResp.StatusCode == 409 {

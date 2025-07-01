@@ -179,6 +179,7 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 	var httpResp *http.Response
 	svc := buildService(d)
 	id := d.Id()
+	shouldUpdateGitDetails := false
 
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
@@ -195,48 +196,54 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 		reponame_changed := d.HasChange("git_details.0.repo_name")
 
 		// If any of the Git-related fields have changed, we set the flag.
-		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
-
-		if shouldUpdateGitDetails {
-			resourceServiceEditGitDetials(ctx, c, d)
-		}
+		shouldUpdateGitDetails = connector_ref_changed || filepath_changed || reponame_changed
 
 		svcParams := svcUpdateParam(svc, d)
 		resp, httpResp, err = c.ServicesApi.UpdateServiceV2(ctx, c.AccountId, &svcParams)
+
+		if shouldUpdateGitDetails {
+			diags := resourceServiceEditGitDetails(ctx, c, d)
+			if diags.HasError() {
+				return diags
+			}
+		}
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
 	if d.Get("import_from_git").(bool) {
 		readImportRes(d, importResp.Data.Identifier)
 	} else {
+		if shouldUpdateGitDetails {
+			svcParams := getSvcParams(d)
+			resp, httpResp, err = c.ServicesApi.GetServiceV2(ctx, id, c.AccountId, svcParams)
+
+			if err != nil {
+				return helpers.HandleReadApiError(err, d, httpResp)
+			}
+		}
 		readService(d, resp.Data.Service)
 	}
 
 	return nil
 }
 
-func resourceServiceEditGitDetials(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
+func resourceServiceEditGitDetails(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
 	id := d.Id()
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
+
 	gitDetails := &nextgen.ServiceApiEditGitDetailsMetadataOpts{
-		ConnectorRef: helpers.BuildField(d, "git_details.0.branch_name"),
-		RepoName:     helpers.BuildField(d, "git_details.0.connector_ref"),
+		ConnectorRef: helpers.BuildField(d, "git_details.0.connector_ref"),
+		RepoName:     helpers.BuildField(d, "git_details.0.repo_name"),
 		FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
 	}
 	resp, httpResp, err := c.ServicesApi.EditGitDetailsForService(ctx, c.AccountId, org_id, project_id, id, gitDetails)
 
-	if httpResp.StatusCode == 404 {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
-
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
 	d.SetId(resp.Data.Identifier)
@@ -281,6 +288,39 @@ func readService(d *schema.ResourceData, project *nextgen.ServiceResponseDetails
 	d.Set("description", project.Description)
 	d.Set("tags", helpers.FlattenTags(project.Tags))
 	d.Set("yaml", project.Yaml)
+
+	var store_type = helpers.BuildField(d, "git_details.0.store_type")
+	var base_branch = helpers.BuildField(d, "git_details.0.base_branch")
+	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
+	var connector_ref = project.ConnectorRef
+
+	if project.EntityGitDetails != nil {
+		d.Set("git_details", []interface{}{readGitDetails(project, store_type, base_branch, commit_message, connector_ref)})
+	}
+}
+
+func readGitDetails(service *nextgen.ServiceResponseDetails, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref string) map[string]interface{} {
+	git_details := map[string]interface{}{
+		"branch":         service.EntityGitDetails.Branch,
+		"file_path":      service.EntityGitDetails.FilePath,
+		"repo_name":      service.EntityGitDetails.RepoName,
+		"last_commit_id": service.EntityGitDetails.CommitId,
+		"last_object_id": service.EntityGitDetails.ObjectId,
+		"connector_ref":  connector_ref,
+	}
+	if store_type.IsSet() {
+		git_details["store_type"] = store_type.Value()
+	}
+	if base_branch.IsSet() {
+		git_details["base_branch"] = base_branch.Value()
+	}
+	if commit_message.IsSet() {
+		git_details["commit_message"] = commit_message.Value()
+	}
+	if connector_ref == "" {
+		git_details["is_harness_code_repo"] = true
+	}
+	return git_details
 }
 
 func readImportRes(d *schema.ResourceData, identifier string) {

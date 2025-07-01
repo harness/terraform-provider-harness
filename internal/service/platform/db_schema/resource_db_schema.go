@@ -2,6 +2,7 @@ package dbschema
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -28,11 +29,20 @@ func ResourceDBSchema() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"type": {
+				Description:  "Type of the database schema. Valid values are: SCRIPT, REPOSITORY",
+				Type:         schema.TypeString,
+				Default:      string(dbops.REPOSITORY_DbSchemaType),
+				ValidateFunc: validation.StringInSlice([]string{string(dbops.REPOSITORY_DbSchemaType), string(dbops.SCRIPT_DbSchemaType)}, false),
+				Optional:     true,
+			},
 			"schema_source": {
-				Description: "Provides a connector and path at which to find the database schema representation",
-				Type:        schema.TypeList,
-				MaxItems:    1,
-				Required:    true,
+				Description:   "Provides a connector and path at which to find the database schema representation",
+				Type:          schema.TypeList,
+				MaxItems:      1,
+				Optional:      true,
+				ConflictsWith: []string{"changelog_script"},
+				AtLeastOneOf:  []string{"schema_source", "changelog_script"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connector": {
@@ -52,6 +62,38 @@ func ResourceDBSchema() *schema.Resource {
 						},
 						"archive_path": {
 							Description: "If connector type is artifactory, path to the archive file which contains the changeLog",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"changelog_script": {
+				Description:   "Configuration to clone changeSets using script",
+				Type:          schema.TypeList,
+				Optional:      true,
+				MaxItems:      1,
+				ConflictsWith: []string{"schema_source"},
+				AtLeastOneOf:  []string{"schema_source", "changelog_script"},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"image": {
+							Description: "The fully-qualified name (FQN) of the image",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"command": {
+							Description: "Script to clone changeSets",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"shell": {
+							Description: "Type of the shell. For example Sh or Bash",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"location": {
+							Description: "Path to changeLog file",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -130,18 +172,38 @@ func resourceDBSchemaDelete(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func buildDbSchema(d *schema.ResourceData) *dbops.DbSchemaIn {
-	return &dbops.DbSchemaIn{
+	schemaIn := &dbops.DbSchemaIn{
 		Identifier: d.Get("identifier").(string),
 		Name:       d.Get("name").(string),
 		Tags:       helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
 		Service:    d.Get("service").(string),
-		Changelog: &dbops.Changelog{
+	}
+	if v, ok := d.GetOk("type"); ok {
+		dbSchemaType := dbops.DbSchemaType(v.(string))
+		schemaIn.Type_ = &dbSchemaType
+	}
+
+	if _, ok := d.GetOk("changelog_script"); ok {
+		changelogScript := &dbops.ChangeLogScript{
+			Image:    d.Get("changelog_script.0.image").(string),
+			Command:  d.Get("changelog_script.0.command").(string),
+			Shell:    d.Get("changelog_script.0.shell").(string),
+			Location: d.Get("changelog_script.0.location").(string),
+		}
+		schemaIn.ChangeLogScript = changelogScript
+	}
+
+	if _, ok := d.GetOk("schema_source"); ok {
+		Changelog := &dbops.Changelog{
 			Repo:        d.Get("schema_source.0.repo").(string),
 			Connector:   d.Get("schema_source.0.connector").(string),
 			Location:    d.Get("schema_source.0.location").(string),
 			ArchivePath: d.Get("schema_source.0.archive_path").(string),
-		},
+		}
+		schemaIn.Changelog = Changelog
 	}
+
+	return schemaIn
 }
 
 func readDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut) {
@@ -150,8 +212,28 @@ func readDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut) {
 	d.Set("name", dbSchema.Name)
 	d.Set("tags", helpers.FlattenTags(dbSchema.Tags))
 	d.Set("service", dbSchema.Service)
-	d.Set("schema_source.0.location", dbSchema.Changelog.Location)
-	d.Set("schema_source.0.repo", dbSchema.Changelog.Repo)
-	d.Set("schema_source.0.connector", dbSchema.Changelog.Connector)
-	d.Set("schema_source.0.archive_path", dbSchema.Changelog.ArchivePath)
+
+	if dbSchema.Type_ != nil {
+		d.Set("type", string(*dbSchema.Type_))
+	} else {
+		d.Set("type", nil)
+	}
+
+	if dbSchema.Changelog != nil {
+		d.Set("schema_source.0.location", dbSchema.Changelog.Location)
+		d.Set("schema_source.0.repo", dbSchema.Changelog.Repo)
+		d.Set("schema_source.0.connector", dbSchema.Changelog.Connector)
+		d.Set("schema_source.0.archive_path", dbSchema.Changelog.ArchivePath)
+
+		d.Set("changelog_script", nil)
+	}
+
+	if dbSchema.ChangeLogScript != nil {
+		d.Set("changelog_script.0.image", dbSchema.ChangeLogScript.Image)
+		d.Set("changelog_script.0.command", dbSchema.ChangeLogScript.Command)
+		d.Set("changelog_script.0.shell", dbSchema.ChangeLogScript.Shell)
+		d.Set("changelog_script.0.location", dbSchema.ChangeLogScript.Location)
+
+		d.Set("schema_source", nil)
+	}
 }

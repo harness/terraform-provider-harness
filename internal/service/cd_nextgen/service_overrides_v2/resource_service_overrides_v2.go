@@ -206,6 +206,7 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	var importResp nextgen.ResponseServiceOverrideImportResponseDto
 	var httpResp *http.Response
 	env := buildServiceOverrideV2(d)
+	shouldUpdateGitDetails := false
 
 	id := d.Id()
 
@@ -225,23 +226,26 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 		reponame_changed := d.HasChange("git_details.0.repo_name")
 
 		// If any of the Git-related fields have changed, we set the flag.
-		shouldUpdateGitDetails := connector_ref_changed || filepath_changed || reponame_changed
-
-		if shouldUpdateGitDetails {
-			resourceServiceOverridesEditGitDetials(ctx, c, d)
-		}
+		shouldUpdateGitDetails = connector_ref_changed || filepath_changed || reponame_changed
 
 		svcUpdateParam := svcOverrideUpdateParam(env, d)
 		resp, httpResp, err = c.ServiceOverridesApi.UpdateServiceOverrideV2(ctx, c.AccountId, svcUpdateParam)
+
+		if shouldUpdateGitDetails {
+			diags := resourceServiceOverridesEditGitDetails(ctx, c, d)
+			if diags.HasError() {
+				return diags
+			}
+		}
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if (&resp == nil || resp.Data == nil) && !d.Get("import_from_git").(bool) {
+	if (resp.Data == nil) && !d.Get("import_from_git").(bool) {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
@@ -250,41 +254,43 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	if d.Get("import_from_git").(bool) {
 		readImportServiceOverridesV2(d, importResp.Data)
 	} else {
+		if shouldUpdateGitDetails {
+			svcGetParams := getSvcOverrideParams(d)
+			resp, httpResp, err = c.ServiceOverridesApi.GetServiceOverridesV2(ctx, id, c.AccountId, svcGetParams)
+			if err != nil {
+				return helpers.HandleApiError(err, d, httpResp)
+			}
+		}
 		readServiceOverridesV2(d, resp.Data)
 	}
 
 	return nil
 }
 
-func resourceServiceOverridesEditGitDetials(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
+func resourceServiceOverridesEditGitDetails(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData) diag.Diagnostics {
 	id := d.Id()
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
+
 	gitUpdateRequest := &nextgen.ServiceOverrideGitUpdateRequestDTO{
 		// Core service override identification fields
 		Identifier:           d.Id(),                              // Service override identifier
-		EnvironmentRef:       d.Get("environment_id").(string),    // Environment reference
-		ServiceRef:           d.Get("service_id").(string),        // Service reference
-		InfraIdentifier:      d.Get("infrastructure_id").(string), // Infrastructure identifier
+		EnvironmentRef:       d.Get("env_id").(string),            // Environment reference
+		ServiceRef:           helpers.BuildField(d, "service_id"), // Service reference
+		InfraIdentifier:      helpers.BuildField(d, "infra_id"),   // Infrastructure identifier
 		ServiceOverridesType: d.Get("type").(string),              // Type of service override
 
 		// Git metadata details
 		GitMetadataUpdateRequestInfo: nextgen.GitMetadataUpdateRequestInfoDTO{
-			ConnectorRef: helpers.BuildField(d, "git_details.0.branch_name"),
-			RepoName:     helpers.BuildField(d, "git_details.0.connector_ref"),
+			ConnectorRef: helpers.BuildField(d, "git_details.0.connector_ref"),
+			RepoName:     helpers.BuildField(d, "git_details.0.repo_name"),
 			FilePath:     helpers.BuildField(d, "git_details.0.file_path"),
 		},
 	}
 	resp, httpResp, err := c.ServiceOverridesApi.EditGitDetialsForServiceOverridesV2(ctx, c.AccountId, org_id, project_id, id, gitUpdateRequest)
 
-	if httpResp.StatusCode == 404 {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
-
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
 	d.SetId(resp.Data.Identifier)
@@ -345,6 +351,39 @@ func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrides
 	d.Set("type", so.Type_)
 	d.Set("yaml", so.YamlInternal)
 	d.Set("identifier", so.Identifier)
+
+	var store_type = helpers.BuildField(d, "git_details.0.store_type")
+	var base_branch = helpers.BuildField(d, "git_details.0.base_branch")
+	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
+	var connector_ref = so.ConnectorRef
+
+	if so.EntityGitInfo != nil {
+		d.Set("git_details", []interface{}{readGitDetails(so, store_type, base_branch, commit_message, connector_ref)})
+	}
+}
+
+func readGitDetails(so *nextgen.ServiceOverridesResponseDtov2, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref string) map[string]interface{} {
+	git_details := map[string]interface{}{
+		"branch":         so.EntityGitInfo.Branch,
+		"file_path":      so.EntityGitInfo.FilePath,
+		"repo_name":      so.EntityGitInfo.RepoName,
+		"last_commit_id": so.EntityGitInfo.CommitId,
+		"last_object_id": so.EntityGitInfo.ObjectId,
+		"connector_ref":  connector_ref,
+	}
+	if store_type.IsSet() {
+		git_details["store_type"] = store_type.Value()
+	}
+	if base_branch.IsSet() {
+		git_details["base_branch"] = base_branch.Value()
+	}
+	if commit_message.IsSet() {
+		git_details["commit_message"] = commit_message.Value()
+	}
+	if connector_ref == "" {
+		git_details["is_harness_code_repo"] = true
+	}
+	return git_details
 }
 
 func readImportServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrideImportResponseDto) {

@@ -2,6 +2,7 @@ package agent_yaml
 
 import (
 	"context"
+
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -92,6 +93,21 @@ func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 					},
 				},
 			},
+			"argocd_settings": {
+				Description: "Argocd settings for the GitOps agent. Values set here will be overridden by the values set in the argocd settings in case of complete installation of agent + argocd. Each param contains as a description about what it will enable.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enable_helm_path_traversal": {
+							Description: "Controls the Environment variable HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL to allow or deny dot-dot-slash values file paths. Disabled by default for security reasons. This config is pushed as an env variable to the repo-server.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 	return resource
@@ -142,6 +158,19 @@ func dataSourceGitopsAgentDeployYamlRead(ctx context.Context, d *schema.Resource
 					v1Proxy.Password = p["password"].(string)
 				}
 				yamlQuery.Proxy = &v1Proxy
+			}
+		}
+
+		if attr, ok := d.GetOk("argocd_settings"); ok {
+			argocdSettings := attr.([]interface{})
+			if attr != nil && len(argocdSettings) > 0 {
+				if argocd, ok := argocdSettings[0].(map[string]interface{}); ok {
+					var v1ArgoCdSettings nextgen.V1ArgoCdSettings
+					if argocd["enable_helm_path_traversal"] != nil {
+						v1ArgoCdSettings.EnableHelmPathTraversal = argocd["enable_helm_path_traversal"].(bool)
+					}
+					yamlQuery.ArgocdSettings = &v1ArgoCdSettings
+				}
 			}
 		}
 		return yamlQuery

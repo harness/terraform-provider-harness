@@ -10,6 +10,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -291,811 +292,7 @@ func ResourceGitopsApplication() *schema.Resource {
 								},
 							},
 						},
-						"spec": {
-							Description: "Specifications of the GitOps application. This includes the repository URL, application definition, source, destination and sync policy.",
-							Type:        schema.TypeList,
-							Optional:    true,
-							MaxItems:    1,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"project": {
-										Description: "The ArgoCD project name corresponding to this GitOps application. Value must match mappings of ArgoCD projects to harness project.",
-										Type:        schema.TypeString,
-										Optional:    true,
-										Computed:    true,
-									},
-									"source": {
-										Description:   "Contains all information about the source of the GitOps application.",
-										Type:          schema.TypeList,
-										Optional:      true,
-										ConflictsWith: []string{"application.0.spec.0.sources"},
-										MaxItems:      1,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"repo_url": {
-													Description: "URL to the repository (git or helm) that contains the GitOps application manifests.",
-													Type:        schema.TypeString,
-													Required:    true,
-												},
-												"path": {
-													Description: "Directory path within the git repository, and is only valid for the GitOps applications sourced from git.",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-												"target_revision": {
-													Description: "Revision of the source to sync the GitOps application to. In case of git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag of the chart's version.",
-													Type:        schema.TypeString,
-													Required:    true,
-												},
-												"chart": {
-													Description: "Helm chart name, and must be specified for the GitOps applications sourced from a helm repo.",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-												"helm": {
-													Description: "Holds helm specific options.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"value_files": {
-																Description: "List of helm value files to use when generating a template.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Schema{
-																	Type: schema.TypeString,
-																},
-															},
-															"release_name": {
-																Description: "Helm release name to use. If omitted it will use the GitOps application name.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"values": {
-																Description: "Helm values to be passed to helm template, typically defined as a block.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"version": {
-																Description: "Helm version to use for templating (either \"2\" or \"3\")",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"pass_credentials": {
-																Description: "Indicates if to pass credentials to all domains (helm's --pass-credentials)",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"parameters": {
-																Description: "List of helm parameters which are passed to the helm template command upon manifest generation.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"name": {
-																			Description: "Name of the helm parameter.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"value": {
-																			Description: "Value of the Helm parameter.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"force_string": {
-																			Description: "Indicates if helm should interpret booleans and numbers as strings.",
-																			Type:        schema.TypeBool,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-															"file_parameters": {
-																Description: "File parameters to the helm template.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"name": {
-																			Description: "Name of the helm parameter.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"path": {
-																			Description: "Path to the file containing the values of the helm parameter.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-															"ignore_missing_value_files": {
-																Description: "Prevents 'helm template' from failing when value_files do not exist locally.",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"skip_crds": {
-																Description: "Indicates if to skip CRDs during helm template. Corresponds to helm --skip-crds",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"skip_tests": {
-																Description: "Indicates if to skip tests during helm template. Corresponds to helm --skip-tests",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"skip_schema_validation": {
-																Description: "Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-														},
-													},
-												},
-												"kustomize": {
-													Description: "Options specific to a GitOps application source specific to Kustomize.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"name_prefix": {
-																Description: "Prefix prepended to resources for kustomize apps.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"name_suffix": {
-																Description: "Suffix appended to resources for kustomize apps.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"images": {
-																Description: "List of kustomize image override specifications.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Schema{
-																	Type: schema.TypeString,
-																},
-															},
-															"common_labels": {
-																Description: "List of additional labels to add to rendered manifests.",
-																Type:        schema.TypeMap,
-																Optional:    true,
-																Elem: &schema.Schema{
-																	Type: schema.TypeString,
-																},
-															},
-															"version": {
-																Description: "Version of kustomize to use for rendering manifests.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"common_annotations": {
-																Description: "List of additional annotations to add to rendered manifests.",
-																Type:        schema.TypeMap,
-																Optional:    true,
-																Elem: &schema.Schema{
-																	Type: schema.TypeString,
-																},
-															},
-															"force_common_labels": {
-																Description: "Indicates if to force apply common labels to resources for kustomize apps.",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"force_common_annotations": {
-																Description: "Indicates if to force applying common annotations to resources for kustomize apps.",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-														},
-													},
-												},
-												"ksonnet": {
-													Description: "Ksonnet specific options.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"environment": {
-																Description: "Ksonnet application environment name.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"parameters": {
-																Description: "List of ksonnet component parameter override values.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"component": {
-																			Description: "Component of the parameter of the ksonnet application.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"name": {
-																			Description: "Name of the parameter of the ksonnet application.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"value": {
-																			Description: "Value of the parameter of the ksonnet application.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-												"directory": {
-													Description: "Options for applications of type plain YAML or Jsonnet.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"recurse": {
-																Description: "Indicates to scan a directory recursively for manifests.",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"exclude": {
-																Description: "Glob pattern to match paths against that should be explicitly excluded from being used during manifest generation.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"include": {
-																Description: "Glob pattern to match paths against that should be explicitly included during manifest generation.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"jsonnet": {
-																Description: "Options specific to applications of type Jsonnet.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"libs": {
-																			Description: "Additional library search dirs.",
-																			Type:        schema.TypeList,
-																			Optional:    true,
-																			Elem: &schema.Schema{
-																				Type: schema.TypeString,
-																			},
-																		},
-																		"ext_vars": {
-																			Description: "List of jsonnet external variables.",
-																			Type:        schema.TypeList,
-																			Optional:    true,
-																			Elem: &schema.Resource{
-																				Schema: map[string]*schema.Schema{
-																					"name": {
-																						Description: "Name of the external variables of jsonnet application.",
-																						Type:        schema.TypeString,
-																						Optional:    true,
-																					},
-																					"value": {
-																						Description: "Value of the external variables of jsonnet application.",
-																						Type:        schema.TypeString,
-																						Optional:    true,
-																					},
-																					"code": {
-																						Description: "Code of the external variables of jsonnet application.",
-																						Type:        schema.TypeBool,
-																						Optional:    true,
-																					},
-																				},
-																			},
-																		},
-																		"tlas": {
-																			Description: "List of jsonnet top-level arguments(TLAS).",
-																			Type:        schema.TypeList,
-																			Optional:    true,
-																			Elem: &schema.Resource{
-																				Schema: map[string]*schema.Schema{
-																					"name": {
-																						Description: "Name of the TLAS of the jsonnet application.",
-																						Type:        schema.TypeString,
-																						Optional:    true,
-																					},
-																					"value": {
-																						Description: "Value of the TLAS of the jsonnet application.",
-																						Type:        schema.TypeString,
-																						Optional:    true,
-																					},
-																					"code": {
-																						Description: "Code of the TLAS of the jsonnet application.",
-																						Type:        schema.TypeBool,
-																						Optional:    true,
-																					},
-																				},
-																			},
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-												"plugin": {
-													Description: "Options specific to config management plugins.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"name": {
-																Description: "Name of the plugin.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"env": {
-																Description: "Entry in the GitOps application's environment.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"name": {
-																			Description: "Name of the variable, usually expressed in uppercase.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"value": {
-																			Description: "Value of the variable.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-									"sources": {
-										Description:   "List of sources for the GitOps application. Multi Source support",
-										Type:          schema.TypeList,
-										Optional:      true,
-										ConflictsWith: []string{"application.0.spec.0.source"},
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"repo_url": {
-													Description: "URL to the repository (git or helm) that contains the GitOps application manifests.",
-													Type:        schema.TypeString,
-													Required:    true,
-												},
-												"path": {
-													Description: "Directory path within the git repository, and is only valid for the GitOps applications sourced from git.",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-												"target_revision": {
-													Description: "Revision of the source to sync the GitOps application to. In case of git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag of the chart's version.",
-													Type:        schema.TypeString,
-													Required:    true,
-												},
-												"chart": {
-													Description: "Helm chart name, and must be specified for the GitOps applications sourced from a helm repo.",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-												"ref": {
-													Description: "Reference name to be used in other source spec, used for multi-source applications.",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-												"helm": {
-													Description: "Holds helm specific options.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"value_files": {
-																Description: "List of helm value files to use when generating a template.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Schema{
-																	Type: schema.TypeString,
-																},
-															},
-															"release_name": {
-																Description: "Helm release name to use. If omitted it will use the GitOps application name.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"values": {
-																Description: "Helm values to be passed to helm template, typically defined as a block.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"version": {
-																Description: "Helm version to use for templating (either \"2\" or \"3\")",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"pass_credentials": {
-																Description: "Indicates if to pass credentials to all domains (helm's --pass-credentials)",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"parameters": {
-																Description: "List of helm parameters which are passed to the helm template command upon manifest generation.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"name": {
-																			Description: "Name of the helm parameter.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"value": {
-																			Description: "Value of the Helm parameter.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"force_string": {
-																			Description: "Indicates if helm should interpret booleans and numbers as strings.",
-																			Type:        schema.TypeBool,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-															"file_parameters": {
-																Description: "File parameters to the helm template.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"name": {
-																			Description: "Name of the helm parameter.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"path": {
-																			Description: "Path to the file containing the values of the helm parameter.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-												"kustomize": {
-													Description: "Options specific to a GitOps application source specific to Kustomize.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"name_prefix": {
-																Description: "Prefix prepended to resources for kustomize apps.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"name_suffix": {
-																Description: "Suffix appended to resources for kustomize apps.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"images": {
-																Description: "List of kustomize image override specifications.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Schema{
-																	Type: schema.TypeString,
-																},
-															},
-															"common_labels": {
-																Description: "List of additional labels to add to rendered manifests.",
-																Type:        schema.TypeMap,
-																Optional:    true,
-																Elem: &schema.Schema{
-																	Type: schema.TypeString,
-																},
-															},
-															"version": {
-																Description: "Version of kustomize to use for rendering manifests.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"common_annotations": {
-																Description: "List of additional annotations to add to rendered manifests.",
-																Type:        schema.TypeMap,
-																Optional:    true,
-																Elem: &schema.Schema{
-																	Type: schema.TypeString,
-																},
-															},
-															"force_common_labels": {
-																Description: "Indicates if to force apply common labels to resources for kustomize apps.",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"force_common_annotations": {
-																Description: "Indicates if to force applying common annotations to resources for kustomize apps.",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-														},
-													},
-												},
-												"ksonnet": {
-													Description: "Ksonnet specific options.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"environment": {
-																Description: "Ksonnet application environment name.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"parameters": {
-																Description: "List of ksonnet component parameter override values.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"component": {
-																			Description: "Component of the parameter of the ksonnet application.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"name": {
-																			Description: "Name of the parameter of the ksonnet application.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"value": {
-																			Description: "Value of the parameter of the ksonnet application.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-												"directory": {
-													Description: "Options for applications of type plain YAML or Jsonnet.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"recurse": {
-																Description: "Indicates to scan a directory recursively for manifests.",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"exclude": {
-																Description: "Glob pattern to match paths against that should be explicitly excluded from being used during manifest generation.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"include": {
-																Description: "Glob pattern to match paths against that should be explicitly included during manifest generation.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"jsonnet": {
-																Description: "Options specific to applications of type Jsonnet.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"libs": {
-																			Description: "Additional library search dirs.",
-																			Type:        schema.TypeList,
-																			Optional:    true,
-																			Elem: &schema.Schema{
-																				Type: schema.TypeString,
-																			},
-																		},
-																		"ext_vars": {
-																			Description: "List of jsonnet external variables.",
-																			Type:        schema.TypeList,
-																			Optional:    true,
-																			Elem: &schema.Resource{
-																				Schema: map[string]*schema.Schema{
-																					"name": {
-																						Description: "Name of the external variables of jsonnet application.",
-																						Type:        schema.TypeString,
-																						Optional:    true,
-																					},
-																					"value": {
-																						Description: "Value of the external variables of jsonnet application.",
-																						Type:        schema.TypeString,
-																						Optional:    true,
-																					},
-																					"code": {
-																						Description: "Code of the external variables of jsonnet application.",
-																						Type:        schema.TypeBool,
-																						Optional:    true,
-																					},
-																				},
-																			},
-																		},
-																		"tlas": {
-																			Description: "List of jsonnet top-level arguments(TLAS).",
-																			Type:        schema.TypeList,
-																			Optional:    true,
-																			Elem: &schema.Resource{
-																				Schema: map[string]*schema.Schema{
-																					"name": {
-																						Description: "Name of the TLAS of the jsonnet application.",
-																						Type:        schema.TypeString,
-																						Optional:    true,
-																					},
-																					"value": {
-																						Description: "Value of the TLAS of the jsonnet application.",
-																						Type:        schema.TypeString,
-																						Optional:    true,
-																					},
-																					"code": {
-																						Description: "Code of the TLAS of the jsonnet application.",
-																						Type:        schema.TypeBool,
-																						Optional:    true,
-																					},
-																				},
-																			},
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-												"plugin": {
-													Description: "Options specific to config management plugins.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"name": {
-																Description: "Name of the plugin.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"env": {
-																Description: "Entry in the GitOps application's environment.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"name": {
-																			Description: "Name of the variable, usually expressed in uppercase.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"value": {
-																			Description: "Value of the variable.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-									"destination": {
-										Description: "Information about the GitOps application's destination.",
-										Type:        schema.TypeList,
-										Optional:    true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"name": {
-													Description: "URL of the target cluster and must be set to the kubernetes control plane API.",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-												"namespace": {
-													Description: "Target namespace of the GitOps application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace.",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-												"server": {
-													Description: "URL of the target cluster server for the GitOps application.",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-											},
-										},
-									},
-									"sync_policy": {
-										Description: "Controls when a sync will be performed in response to updates in git.",
-										Type:        schema.TypeList,
-										Optional:    true,
-										MaxItems:    1,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"sync_options": {
-													Description: "Options allow you to specify whole app sync-options.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Schema{
-														Type: schema.TypeString,
-													},
-												},
-												"automated": {
-													Description: "Controls the behavior of an automated sync.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													MaxItems:    1,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"prune": {
-																Description: "Indicates whether to delete resources from the cluster that are not found in the sources anymore as part of automated sync (default: false).",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"self_heal": {
-																Description: "Indicates whether to revert resources back to their desired state upon modification in the cluster (default: false).",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-															"allow_empty": {
-																Description: "Indicates to allows apps to have zero live resources (default: false).",
-																Type:        schema.TypeBool,
-																Optional:    true,
-															},
-														},
-													},
-												},
-												"retry": {
-													Description: "Contains information about the strategy to apply when a sync failed.",
-													Type:        schema.TypeList,
-													Optional:    true,
-													MaxItems:    1,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"limit": {
-																Description: "Limit is the maximum number of attempts for retrying a failed sync. If set to 0, no retries will be performed.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"backoff": {
-																Description: "Backoff strategy to use on subsequent retries for failing syncs.",
-																Type:        schema.TypeList,
-																Optional:    true,
-																MaxItems:    1,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"duration": {
-																			Description: "Amount to back off. Default unit is seconds, but could also be a duration (e.g. \"2m\", \"1h\").",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"factor": {
-																			Description: "Factor to multiply the base duration after each failed retry.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"max_duration": {
-																			Description: "Maximum amount of time allowed of the backoff strategy.",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
+						"spec": gitops.ArgoAppSpecSchemaV1(),
 					},
 				},
 			},
@@ -1408,67 +605,7 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) e
 
 		if app.App.Spec != nil {
 			var specList = []interface{}{}
-			var spec = map[string]interface{}{}
-			fmt.Println("app.App.Spec: ", app.App.Spec)
-			if app.App.Spec.Project != "" {
-				spec["project"] = app.App.Spec.Project
-			}
-			if app.App.Spec.Source != nil {
-				source := getSourceForState(app.App.Spec)
-				spec["source"] = []interface{}{source}
-			}
-			if len(app.App.Spec.Sources) > 0 {
-				var sourcesList = []interface{}{}
-				for _, source := range app.App.Spec.Sources {
-					sourcesList = append(sourcesList, source)
-				}
-				spec["sources"] = sourcesList
-			}
-			//destination
-			if app.App.Spec.Destination != nil {
-				var destinationList = []interface{}{}
-				var destination = map[string]interface{}{}
-				destination["name"] = app.App.Spec.Destination.Name
-				destination["namespace"] = app.App.Spec.Destination.Namespace
-				destination["server"] = app.App.Spec.Destination.Server
-				destinationList = append(destinationList, destination)
-				spec["destination"] = destinationList
-			}
-			//sync policy
-			if app.App.Spec.SyncPolicy != nil {
-				var syncPolicyList = []interface{}{}
-				var syncPolicy = map[string]interface{}{}
-				syncPolicy["sync_options"] = app.App.Spec.SyncPolicy.SyncOptions
-				if app.App.Spec.SyncPolicy.Automated != nil {
-					var syncPolicyAutomatedList = []interface{}{}
-					var syncPolicyAutomated = map[string]interface{}{}
-					syncPolicyAutomated["prune"] = app.App.Spec.SyncPolicy.Automated.Prune
-					syncPolicyAutomated["self_heal"] = app.App.Spec.SyncPolicy.Automated.SelfHeal
-					syncPolicyAutomated["allow_empty"] = app.App.Spec.SyncPolicy.Automated.AllowEmpty
-					syncPolicyAutomatedList = append(syncPolicyAutomatedList, syncPolicyAutomated)
-					syncPolicy["automated"] = syncPolicyAutomatedList
-				}
-				if app.App.Spec.SyncPolicy.Retry != nil {
-					var syncPolicyRetryList = []interface{}{}
-					var syncPolicyRetry = map[string]interface{}{}
-					syncPolicyRetry["limit"] = app.App.Spec.SyncPolicy.Retry.Limit
-					if app.App.Spec.SyncPolicy.Retry.Backoff != nil {
-						var syncPolicyRetryBackoffList = []interface{}{}
-						var syncPolicyRetryBackoff = map[string]interface{}{}
-						syncPolicyRetryBackoff["duration"] = app.App.Spec.SyncPolicy.Retry.Backoff.Duration
-						syncPolicyRetryBackoff["factor"] = app.App.Spec.SyncPolicy.Retry.Backoff.Factor
-						syncPolicyRetryBackoff["max_duration"] = app.App.Spec.SyncPolicy.Retry.Backoff.MaxDuration
-						syncPolicyRetryBackoffList = append(syncPolicyRetryBackoffList, syncPolicyRetryBackoff)
-						syncPolicyRetry["backoff"] = syncPolicyRetryBackoffList
-					}
-					syncPolicyRetryList = append(syncPolicyRetryList, syncPolicyRetry)
-					syncPolicy["retry"] = syncPolicyRetryList
-				}
-
-				syncPolicyList = append(syncPolicyList, syncPolicy)
-				spec["sync_policy"] = syncPolicyList
-			}
-
+			spec := BuildAppSpecMap(app.App.Spec)
 			specList = append(specList, spec)
 			application["spec"] = specList
 		}
@@ -1480,6 +617,66 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) e
 		}
 	}
 	return nil
+}
+
+func BuildAppSpecMap(appSpec *nextgen.ApplicationsApplicationSpec) map[string]interface{} {
+	var spec = map[string]interface{}{}
+	if appSpec.Project != "" {
+		spec["project"] = appSpec.Project
+	}
+	if appSpec.Source != nil {
+		source := getSourceForState(appSpec)
+		spec["source"] = []interface{}{source}
+	}
+	if len(appSpec.Sources) > 0 {
+		sources := getSourcesForState(appSpec)
+		spec["sources"] = sources
+	}
+	//destination
+	if appSpec.Destination != nil {
+		var destinationList = []interface{}{}
+		var destination = map[string]interface{}{}
+		destination["name"] = appSpec.Destination.Name
+		destination["namespace"] = appSpec.Destination.Namespace
+		destination["server"] = appSpec.Destination.Server
+		destinationList = append(destinationList, destination)
+		spec["destination"] = destinationList
+	}
+	//sync policy
+	if appSpec.SyncPolicy != nil {
+		var syncPolicyList = []interface{}{}
+		var syncPolicy = map[string]interface{}{}
+		syncPolicy["sync_options"] = appSpec.SyncPolicy.SyncOptions
+		if appSpec.SyncPolicy.Automated != nil {
+			var syncPolicyAutomatedList = []interface{}{}
+			var syncPolicyAutomated = map[string]interface{}{}
+			syncPolicyAutomated["prune"] = appSpec.SyncPolicy.Automated.Prune
+			syncPolicyAutomated["self_heal"] = appSpec.SyncPolicy.Automated.SelfHeal
+			syncPolicyAutomated["allow_empty"] = appSpec.SyncPolicy.Automated.AllowEmpty
+			syncPolicyAutomatedList = append(syncPolicyAutomatedList, syncPolicyAutomated)
+			syncPolicy["automated"] = syncPolicyAutomatedList
+		}
+		if appSpec.SyncPolicy.Retry != nil {
+			var syncPolicyRetryList = []interface{}{}
+			var syncPolicyRetry = map[string]interface{}{}
+			syncPolicyRetry["limit"] = appSpec.SyncPolicy.Retry.Limit
+			if appSpec.SyncPolicy.Retry.Backoff != nil {
+				var syncPolicyRetryBackoffList = []interface{}{}
+				var syncPolicyRetryBackoff = map[string]interface{}{}
+				syncPolicyRetryBackoff["duration"] = appSpec.SyncPolicy.Retry.Backoff.Duration
+				syncPolicyRetryBackoff["factor"] = appSpec.SyncPolicy.Retry.Backoff.Factor
+				syncPolicyRetryBackoff["max_duration"] = appSpec.SyncPolicy.Retry.Backoff.MaxDuration
+				syncPolicyRetryBackoffList = append(syncPolicyRetryBackoffList, syncPolicyRetryBackoff)
+				syncPolicyRetry["backoff"] = syncPolicyRetryBackoffList
+			}
+			syncPolicyRetryList = append(syncPolicyRetryList, syncPolicyRetry)
+			syncPolicy["retry"] = syncPolicyRetryList
+		}
+
+		syncPolicyList = append(syncPolicyList, syncPolicy)
+		spec["sync_policy"] = syncPolicyList
+	}
+	return spec
 }
 
 func buildCreateApplicationRequest(d *schema.ResourceData) nextgen.ApplicationsApplicationCreateRequest {
@@ -1582,89 +779,9 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 			}
 
 			if application["spec"] != nil && len(application["spec"].([]interface{})) > 0 {
-				var specData map[string]interface{}
-				specData = application["spec"].([]interface{})[0].(map[string]interface{})
+				specData := application["spec"].([]interface{})[0].(map[string]interface{})
 				//Spec Source
-				project := specData["project"].(string)
-				spec.Project = project
-				if specData["source"] != nil && len(specData["source"].([]interface{})) > 0 {
-					sourceMap := specData["source"].([]interface{})[0].(map[string]interface{})
-					source := setSpecSourceForRequest(sourceMap)
-					spec.Source = source
-				}
-				if specData["sources"] != nil && len(specData["sources"].([]interface{})) > 0 {
-					var sources []nextgen.ApplicationsApplicationSource
-					for _, v := range specData["sources"].([]interface{}) {
-						source := setSpecSourceForRequest(v.(map[string]interface{}))
-						sources = append(sources, *source)
-					}
-					spec.Sources = sources
-				}
-
-				//Destination
-				if specData["destination"] != nil && len(specData["destination"].([]interface{})) > 0 {
-					var specDestinationData nextgen.ApplicationsApplicationDestination
-					var specDestination = specData["destination"].([]interface{})[0].(map[string]interface{})
-					if specDestination["name"] != nil && len(specDestination["name"].(string)) > 0 {
-						specDestinationData.Name = specDestination["name"].(string)
-					}
-					if specDestination["namespace"] != nil && len(specDestination["namespace"].(string)) > 0 {
-						specDestinationData.Namespace = specDestination["namespace"].(string)
-					}
-					if specDestination["server"] != nil && len(specDestination["server"].(string)) > 0 {
-						specDestinationData.Server = specDestination["server"].(string)
-					}
-					spec.Destination = &specDestinationData
-				}
-				//sync policy
-				if specData["sync_policy"] != nil && len(specData["sync_policy"].([]interface{})) > 0 {
-					var syncPolicyData nextgen.ApplicationsSyncPolicy
-					var syncPolicy = specData["sync_policy"].([]interface{})[0].(map[string]interface{})
-					if syncPolicy["sync_options"] != nil && len(syncPolicy["sync_options"].([]interface{})) > 0 {
-						var syncOptions []string
-						for _, v := range syncPolicy["sync_options"].([]interface{}) {
-							syncOptions = append(syncOptions, v.(string))
-						}
-						syncPolicyData.SyncOptions = syncOptions
-					}
-					if syncPolicy["automated"] != nil && len(syncPolicy["automated"].([]interface{})) > 0 {
-						var automatedSyncPolicyData nextgen.ApplicationsSyncPolicyAutomated
-						var automatedSyncPolicy = syncPolicy["automated"].([]interface{})[0].(map[string]interface{})
-						if automatedSyncPolicy["prune"] != nil {
-							automatedSyncPolicyData.Prune = automatedSyncPolicy["prune"].(bool)
-						}
-						if automatedSyncPolicy["self_heal"] != nil {
-							automatedSyncPolicyData.SelfHeal = automatedSyncPolicy["self_heal"].(bool)
-						}
-						if automatedSyncPolicy["allow_empty"] != nil {
-							automatedSyncPolicyData.AllowEmpty = automatedSyncPolicy["allow_empty"].(bool)
-						}
-						syncPolicyData.Automated = &automatedSyncPolicyData
-					}
-					if syncPolicy["retry"] != nil && len(syncPolicy["retry"].([]interface{})) > 0 {
-						var retrySync = syncPolicy["retry"].([]interface{})[0].(map[string]interface{})
-						var retrySyncData nextgen.ApplicationsRetryStrategy
-						if retrySync["limit"] != nil && len(retrySync["limit"].(string)) > 0 {
-							retrySyncData.Limit = retrySync["limit"].(string)
-						}
-						if retrySync["backoff"] != nil && len(retrySync["backoff"].([]interface{})) > 0 {
-							var syncBackoff = retrySync["backoff"].([]interface{})[0].(map[string]interface{})
-							var syncBackoffData nextgen.ApplicationsBackoff
-							if syncBackoff["duration"] != nil && len(syncBackoff["duration"].(string)) > 0 {
-								syncBackoffData.Duration = syncBackoff["duration"].(string)
-							}
-							if syncBackoff["factor"] != nil && len(syncBackoff["factor"].(string)) > 0 {
-								syncBackoffData.Factor = syncBackoff["factor"].(string)
-							}
-							if syncBackoff["max_duration"] != nil && len(syncBackoff["max_duration"].(string)) > 0 {
-								syncBackoffData.MaxDuration = syncBackoff["max_duration"].(string)
-							}
-							retrySyncData.Backoff = &syncBackoffData
-						}
-						syncPolicyData.Retry = &retrySyncData
-					}
-					spec.SyncPolicy = &syncPolicyData
-				}
+				spec = BuildApplicationSpecFromMap(specData)
 			}
 		}
 	}
@@ -1672,6 +789,91 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 		Metadata: &metaData,
 		Spec:     &spec,
 	}
+}
+
+func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.ApplicationsApplicationSpec {
+	var spec nextgen.ApplicationsApplicationSpec
+	project := specData["project"].(string)
+	spec.Project = project
+	if specData["source"] != nil && len(specData["source"].([]interface{})) > 0 {
+		sourceMap := specData["source"].([]interface{})[0].(map[string]interface{})
+		source := setSpecSourceForRequest(sourceMap)
+		spec.Source = source
+	}
+	if specData["sources"] != nil && len(specData["sources"].([]interface{})) > 0 {
+		var sources []nextgen.ApplicationsApplicationSource
+		for _, v := range specData["sources"].([]interface{}) {
+			source := setSpecSourceForRequest(v.(map[string]interface{}))
+			sources = append(sources, *source)
+		}
+		spec.Sources = sources
+	}
+
+	//Destination
+	if specData["destination"] != nil && len(specData["destination"].([]interface{})) > 0 {
+		var specDestinationData nextgen.ApplicationsApplicationDestination
+		var specDestination = specData["destination"].([]interface{})[0].(map[string]interface{})
+		if specDestination["name"] != nil && len(specDestination["name"].(string)) > 0 {
+			specDestinationData.Name = specDestination["name"].(string)
+		}
+		if specDestination["namespace"] != nil && len(specDestination["namespace"].(string)) > 0 {
+			specDestinationData.Namespace = specDestination["namespace"].(string)
+		}
+		if specDestination["server"] != nil && len(specDestination["server"].(string)) > 0 {
+			specDestinationData.Server = specDestination["server"].(string)
+		}
+		spec.Destination = &specDestinationData
+	}
+	//sync policy
+	if specData["sync_policy"] != nil && len(specData["sync_policy"].([]interface{})) > 0 {
+		var syncPolicyData nextgen.ApplicationsSyncPolicy
+		var syncPolicy = specData["sync_policy"].([]interface{})[0].(map[string]interface{})
+		if syncPolicy["sync_options"] != nil && len(syncPolicy["sync_options"].([]interface{})) > 0 {
+			var syncOptions []string
+			for _, v := range syncPolicy["sync_options"].([]interface{}) {
+				syncOptions = append(syncOptions, v.(string))
+			}
+			syncPolicyData.SyncOptions = syncOptions
+		}
+		if syncPolicy["automated"] != nil && len(syncPolicy["automated"].([]interface{})) > 0 {
+			var automatedSyncPolicyData nextgen.ApplicationsSyncPolicyAutomated
+			var automatedSyncPolicy = syncPolicy["automated"].([]interface{})[0].(map[string]interface{})
+			if automatedSyncPolicy["prune"] != nil {
+				automatedSyncPolicyData.Prune = automatedSyncPolicy["prune"].(bool)
+			}
+			if automatedSyncPolicy["self_heal"] != nil {
+				automatedSyncPolicyData.SelfHeal = automatedSyncPolicy["self_heal"].(bool)
+			}
+			if automatedSyncPolicy["allow_empty"] != nil {
+				automatedSyncPolicyData.AllowEmpty = automatedSyncPolicy["allow_empty"].(bool)
+			}
+			syncPolicyData.Automated = &automatedSyncPolicyData
+		}
+		if syncPolicy["retry"] != nil && len(syncPolicy["retry"].([]interface{})) > 0 {
+			var retrySync = syncPolicy["retry"].([]interface{})[0].(map[string]interface{})
+			var retrySyncData nextgen.ApplicationsRetryStrategy
+			if retrySync["limit"] != nil && len(retrySync["limit"].(string)) > 0 {
+				retrySyncData.Limit = retrySync["limit"].(string)
+			}
+			if retrySync["backoff"] != nil && len(retrySync["backoff"].([]interface{})) > 0 {
+				var syncBackoff = retrySync["backoff"].([]interface{})[0].(map[string]interface{})
+				var syncBackoffData nextgen.ApplicationsBackoff
+				if syncBackoff["duration"] != nil && len(syncBackoff["duration"].(string)) > 0 {
+					syncBackoffData.Duration = syncBackoff["duration"].(string)
+				}
+				if syncBackoff["factor"] != nil && len(syncBackoff["factor"].(string)) > 0 {
+					syncBackoffData.Factor = syncBackoff["factor"].(string)
+				}
+				if syncBackoff["max_duration"] != nil && len(syncBackoff["max_duration"].(string)) > 0 {
+					syncBackoffData.MaxDuration = syncBackoff["max_duration"].(string)
+				}
+				retrySyncData.Backoff = &syncBackoffData
+			}
+			syncPolicyData.Retry = &retrySyncData
+		}
+		spec.SyncPolicy = &syncPolicyData
+	}
+	return spec
 }
 
 func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]interface{} {
@@ -1803,6 +1005,172 @@ func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]
 		source["plugin"] = pluginList
 	}
 	return source
+}
+
+func getSourcesForState(appSpec *nextgen.ApplicationsApplicationSpec) []interface{} {
+	var sources []interface{}
+
+	if appSpec.Sources == nil || len(appSpec.Sources) == 0 {
+		return sources
+	}
+
+	for _, sourceSpec := range appSpec.Sources {
+		source := map[string]interface{}{}
+
+		source["repo_url"] = sourceSpec.RepoURL
+		source["path"] = sourceSpec.Path
+		source["target_revision"] = sourceSpec.TargetRevision
+		source["chart"] = sourceSpec.Chart
+		source["ref"] = sourceSpec.Ref
+
+		if sourceSpec.Helm != nil {
+			var helmList = []interface{}{}
+			var helm = map[string]interface{}{}
+
+			if sourceSpec.Helm.ValueFiles != nil && len(sourceSpec.Helm.ValueFiles) > 0 {
+				helm["value_files"] = sourceSpec.Helm.ValueFiles
+			}
+			helm["release_name"] = sourceSpec.Helm.ReleaseName
+			helm["values"] = sourceSpec.Helm.Values
+			helm["version"] = sourceSpec.Helm.Version
+			helm["pass_credentials"] = sourceSpec.Helm.PassCredentials
+
+			if sourceSpec.Helm.Parameters != nil && len(sourceSpec.Helm.Parameters) > 0 {
+				var helmParametersList = []interface{}{}
+				for _, v := range sourceSpec.Helm.Parameters {
+					var helmParam = map[string]interface{}{}
+					helmParam["name"] = v.Name
+					helmParam["value"] = v.Value
+					helmParam["force_string"] = v.ForceString
+					helmParametersList = append(helmParametersList, helmParam)
+				}
+				helm["parameters"] = helmParametersList
+			}
+
+			if sourceSpec.Helm.FileParameters != nil && len(sourceSpec.Helm.FileParameters) > 0 {
+				var helmFileParametersList = []interface{}{}
+				for _, v := range sourceSpec.Helm.FileParameters {
+					var helmParam = map[string]interface{}{}
+					helmParam["name"] = v.Name
+					helmParam["path"] = v.Path
+					helmFileParametersList = append(helmFileParametersList, helmParam)
+				}
+				helm["file_parameters"] = helmFileParametersList
+			}
+
+			helm["ignore_missing_value_files"] = sourceSpec.Helm.IgnoreMissingValueFiles
+			helm["skip_crds"] = sourceSpec.Helm.SkipCrds
+			helm["skip_tests"] = sourceSpec.Helm.SkipTests
+			helm["skip_schema_validation"] = sourceSpec.Helm.SkipSchemaValidation
+
+			helmList = append(helmList, helm)
+			source["helm"] = helmList
+		}
+
+		if sourceSpec.Kustomize != nil {
+			var kustomizeList = []interface{}{}
+			var kustomize = map[string]interface{}{}
+
+			kustomize["name_prefix"] = sourceSpec.Kustomize.NamePrefix
+			kustomize["name_suffix"] = sourceSpec.Kustomize.NameSuffix
+			kustomize["images"] = sourceSpec.Kustomize.Images
+			kustomize["common_labels"] = sourceSpec.Kustomize.CommonLabels
+			kustomize["version"] = sourceSpec.Kustomize.Version
+			kustomize["common_annotations"] = sourceSpec.Kustomize.CommonAnnotations
+			kustomize["force_common_labels"] = sourceSpec.Kustomize.ForceCommonLabels
+			kustomize["force_common_annotations"] = sourceSpec.Kustomize.ForceCommonAnnotations
+
+			kustomizeList = append(kustomizeList, kustomize)
+			source["kustomize"] = kustomizeList
+		}
+
+		if sourceSpec.Ksonnet != nil {
+			var ksonnetList = []interface{}{}
+			var ksonnet = map[string]interface{}{}
+
+			ksonnet["environment"] = sourceSpec.Ksonnet.Environment
+			var ksonnetParamList = []interface{}{}
+			for _, v := range sourceSpec.Ksonnet.Parameters {
+				var ksonnetParam = map[string]interface{}{}
+				ksonnetParam["component"] = v.Component
+				ksonnetParam["name"] = v.Name
+				ksonnetParam["value"] = v.Value
+				ksonnetParamList = append(ksonnetParamList, ksonnetParam)
+			}
+			ksonnet["parameters"] = ksonnetParamList
+
+			ksonnetList = append(ksonnetList, ksonnet)
+			source["ksonnet"] = ksonnetList
+		}
+
+		if sourceSpec.Directory != nil {
+			var directoryList = []interface{}{}
+			var directory = map[string]interface{}{}
+
+			directory["recurse"] = sourceSpec.Directory.Recurse
+			directory["exclude"] = sourceSpec.Directory.Exclude
+			directory["include"] = sourceSpec.Directory.Include
+
+			if sourceSpec.Directory.Jsonnet != nil {
+				var jsonnetList = []interface{}{}
+				var jsonnet = map[string]interface{}{}
+
+				jsonnet["libs"] = sourceSpec.Directory.Jsonnet.Libs
+
+				if sourceSpec.Directory.Jsonnet.ExtVars != nil {
+					var jsonnetExtVarsList = []interface{}{}
+					for _, v := range sourceSpec.Directory.Jsonnet.ExtVars {
+						var jsonnetExtVars = map[string]interface{}{}
+						jsonnetExtVars["name"] = v.Name
+						jsonnetExtVars["value"] = v.Value
+						jsonnetExtVars["code"] = v.Code
+						jsonnetExtVarsList = append(jsonnetExtVarsList, jsonnetExtVars)
+					}
+					jsonnet["ext_vars"] = jsonnetExtVarsList
+				}
+
+				if sourceSpec.Directory.Jsonnet.Tlas != nil {
+					var jsonnetTlasList = []interface{}{}
+					for _, v := range sourceSpec.Directory.Jsonnet.Tlas {
+						var jsonnetTlas = map[string]interface{}{}
+						jsonnetTlas["name"] = v.Name
+						jsonnetTlas["value"] = v.Value
+						jsonnetTlas["code"] = v.Code
+						jsonnetTlasList = append(jsonnetTlasList, jsonnetTlas)
+					}
+					jsonnet["tlas"] = jsonnetTlasList
+				}
+
+				jsonnetList = append(jsonnetList, jsonnet)
+				directory["jsonnet"] = jsonnetList
+			}
+
+			directoryList = append(directoryList, directory)
+			source["directory"] = directoryList
+		}
+
+		if sourceSpec.Plugin != nil {
+			var pluginList = []interface{}{}
+			var plugin = map[string]interface{}{}
+
+			plugin["name"] = sourceSpec.Plugin.Name
+			var pluginEnvList = []interface{}{}
+			for _, v := range sourceSpec.Plugin.Env {
+				var pluginEnv = map[string]interface{}{}
+				pluginEnv["name"] = v.Name
+				pluginEnv["value"] = v.Value
+				pluginEnvList = append(pluginEnvList, pluginEnv)
+			}
+			plugin["env"] = pluginEnvList
+
+			pluginList = append(pluginList, plugin)
+			source["plugin"] = pluginList
+		}
+
+		sources = append(sources, source)
+	}
+
+	return sources
 }
 
 func setSpecSourceForRequest(source map[string]interface{}) *nextgen.ApplicationsApplicationSource {

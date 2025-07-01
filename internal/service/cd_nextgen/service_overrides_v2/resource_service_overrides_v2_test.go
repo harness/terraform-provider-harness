@@ -121,6 +121,55 @@ func TestAccRemoteServiceOverrides(t *testing.T) {
 	})
 }
 
+func TestAccServiceOverridesEditGitDetails(t *testing.T) {
+	baseId1 := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	baseId2 := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	name1 := baseId1
+	name2 := baseId2
+
+	resourceName1 := "harness_platform_service_overrides_v2.test1"
+	resourceName2 := "harness_platform_service_overrides_v2.test2"
+	identifier1 := baseId1 + "_override1"
+	identifier2 := baseId2 + "_override2"
+
+	path1 := fmt.Sprintf("test-path-%s-1", utils.RandStringBytes(6))
+	path2 := fmt.Sprintf("test-path-%s-2", utils.RandStringBytes(6))
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccServiceOverridesDestroy(resourceName1),
+		Steps: []resource.TestStep{
+			{
+				Config:             testAccServiceOverridesGitDetailsWithIdentifier(baseId1, name1, "main", path1, identifier1, "test1"),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName1, "org_id", baseId1),
+					resource.TestCheckResourceAttr(resourceName1, "project_id", baseId1),
+					resource.TestCheckResourceAttr(resourceName1, "identifier", identifier1),
+					resource.TestCheckResourceAttr(resourceName1, "git_details.0.file_path", fmt.Sprintf(".harness/automation/overrides/%s.yaml", path1)),
+				),
+			},
+			{
+				Config: testAccServiceOverridesGitDetailsWithIdentifier(baseId1, name1, "main", path1, identifier1, "test1") + "\n" +
+					testAccServiceOverridesGitDetailsWithIdentifier(baseId2, name2, "main", path2, identifier2, "test2"),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName1, "org_id", baseId1),
+					resource.TestCheckResourceAttr(resourceName1, "project_id", baseId1),
+					resource.TestCheckResourceAttr(resourceName1, "identifier", identifier1),
+					resource.TestCheckResourceAttr(resourceName1, "git_details.0.file_path", fmt.Sprintf(".harness/automation/overrides/%s.yaml", path1)),
+
+					resource.TestCheckResourceAttr(resourceName2, "org_id", baseId2),
+					resource.TestCheckResourceAttr(resourceName2, "project_id", baseId2),
+					resource.TestCheckResourceAttr(resourceName2, "identifier", identifier2),
+					resource.TestCheckResourceAttr(resourceName2, "git_details.0.file_path", fmt.Sprintf(".harness/automation/overrides/%s.yaml", path2)),
+				),
+			},
+		},
+	})
+}
+
 func testAccGetPlatformServiceOverrides(resourceName string, state *terraform.State) (*nextgen.ServiceOverridesResponseDtov2, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
@@ -559,4 +608,137 @@ configFiles:
               EOT
 		}
 `, id, name)
+}
+
+func testAccServiceOverridesGitDetails(id string, name string, branch string, filePath string) string {
+	return testAccServiceOverridesGitDetailsWithIdentifier(id, name, branch, filePath, id+"_override", "test")
+}
+
+func testAccServiceOverridesGitDetailsWithIdentifier(id string, name string, branch string, filePath string, identifier string, resourceName string) string {
+	// Create unique names for supporting resources to avoid conflicts
+	orgResourceName := "org_" + resourceName
+	projResourceName := "proj_" + resourceName
+	envResourceName := "env_" + resourceName
+	svcResourceName := "svc_" + resourceName
+
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "%[7]s" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "%[8]s" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.%[7]s.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_environment" "%[9]s" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.%[7]s.id
+			project_id = harness_platform_project.%[8]s.id
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
+		}
+
+		resource "harness_platform_service" "%[10]s" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.%[7]s.id
+			project_id = harness_platform_project.%[8]s.id
+			git_details {
+				store_type = "REMOTE"
+				connector_ref = "account.TF_GitX_connector"  
+				repo_name = "pcf_practice"
+				file_path = ".harness/automation/service/%[1]s.yaml"
+				branch = "main"
+			}
+			yaml = <<-EOT
+        service:
+          name: %[1]s
+          identifier: %[2]s
+          serviceDefinition:
+            spec:
+              manifests:
+                - manifest:
+                    identifier: manifest1
+                    type: Values
+                    spec:
+                      store:
+                        type: Github
+                        spec:
+                          connectorRef: <+input>
+                          gitFetchType: Branch
+                          paths:
+                            - files1
+                          repoName: <+input>
+                          branch: master
+                      skipResourceVersioning: false
+              configFiles:
+                - configFile:
+                    identifier: configFile1
+                    spec:
+                      store:
+                        type: Harness
+                        spec:
+                          files:
+                            - <+org.description>
+            type: Kubernetes
+          gitOpsEnabled: false
+		EOT
+		}
+
+		resource "harness_platform_service_overrides_v2" "%[6]s" {
+			identifier = "%[5]s"
+			org_id     = harness_platform_organization.%[7]s.id
+			project_id = harness_platform_project.%[8]s.id
+			env_id     = harness_platform_environment.%[9]s.id
+			service_id = harness_platform_service.%[10]s.id
+			type       = "ENV_SERVICE_OVERRIDE"
+			git_details {
+				store_type = "REMOTE"
+				connector_ref = "account.TF_GitX_connector"  
+				repo_name = "pcf_practice"
+				file_path = ".harness/automation/overrides/%[3]s.yaml"
+				branch = "%[4]s"
+				commit_message = "Update service override for %[5]s"
+			}
+			yaml = <<-EOT
+        variables:
+          - name: v1
+            type: String
+            value: val1
+            required: false
+        manifests:
+          - manifest:
+              identifier: manifest1
+              type: Values
+              spec:
+                store:
+                  type: Github
+                  spec:
+                    connectorRef: <+input>
+                    gitFetchType: Branch
+                    branch: master
+                    commitId: null
+                    paths:
+                      - files1
+                    folderPath: null
+                    repoName: <+input>
+                  optionalValuesYaml: null
+                skipResourceVersioning: false
+        configFiles:
+          - configFile:
+              identifier: configFile1
+              spec:
+                store:
+                  type: Harness
+                  spec:
+                    files:
+                      - <+org.description>
+                    secretFiles: null
+			EOT
+		}`, id, name, filePath, branch, identifier, resourceName, orgResourceName, projResourceName, envResourceName, svcResourceName)
 }
