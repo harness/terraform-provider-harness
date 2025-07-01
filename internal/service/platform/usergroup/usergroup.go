@@ -168,34 +168,9 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	})
 
 	if err != nil {
-		log.Println("Error getting user group v2. Falling back to v1: ", err)
+		log.Printf("Error getting user group v2. Falling back to v1: %v", err)
 		// Fallback to V1 API
-		resp, httpResp, err := c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
-			OrgIdentifier:     helpers.BuildField(d, "org_id"),
-			ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		})
-
-		if err != nil {
-			return helpers.HandleReadApiError(err, d, httpResp)
-		}
-
-		emails, emails_present := d.GetOk("user_emails")
-		if emails_present {
-			d.Set("user_emails", emails)
-		}
-
-		isSsoLinked := resp.Data.SsoLinked
-
-		users := resp.Data.Users
-		if users != nil && !isSsoLinked && !emails_present {
-			d.Set("users", users)
-		} else if isSsoLinked {
-			d.Set("users", []string{})
-		}
-		readUserGroup(d, resp.Data)
-
-		return nil
-
+		return handleReadUserGroupV1(ctx, d, meta)
 	}
 
 	users := resp.Data.Users
@@ -203,8 +178,8 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	_, emails_present := d.GetOk("user_emails")
 	_, users_present := d.GetOk("users")
-	if emails_present || (!emails_present && !users_present) {
-		// If email is present or email is not present and users is not present then use only email
+	if emails_present || !users_present {
+		// If email is present or users is not present then use only email
 		d.Set("user_emails", ignoreOrderIfAllElementsMatch(ug.Users, flattenUserInfo(users)))
 	} else if users_present || (users != nil && !isSsoLinked && !emails_present) {
 		// If users is present (Explicitly set by user for import) and email is not present (using old api) then use users
@@ -213,6 +188,37 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		d.Set("users", []string{})
 	}
 	readUserGroupV2(d, resp.Data, ug.Users, false)
+
+	return nil
+}
+
+func handleReadUserGroupV1(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	id := d.Id()
+
+	resp, httpResp, err := c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+	})
+
+	if err != nil {
+		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
+	emails, emails_present := d.GetOk("user_emails")
+	if emails_present {
+		d.Set("user_emails", emails)
+	}
+
+	isSsoLinked := resp.Data.SsoLinked
+
+	users := resp.Data.Users
+	if users != nil && !isSsoLinked && !emails_present {
+		d.Set("users", users)
+	} else if isSsoLinked {
+		d.Set("users", []string{})
+	}
+	readUserGroup(d, resp.Data)
 
 	return nil
 }
