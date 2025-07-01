@@ -22,7 +22,7 @@ type UserGroupResponseV2 struct {
 	// Name of the UserGroup.
 	Name string `json:"name"`
 	// List of users emails in the UserGroup.
-	Users []UserInfo `json:"users,omitempty"`
+	Users []UserBasicInfo `json:"users,omitempty"`
 	// List of notification settings.
 	NotificationConfigs []NotificationSettingConfigDto `json:"notificationConfigs,omitempty"`
 	IsSsoLinked         bool                           `json:"isSsoLinked,omitempty"`

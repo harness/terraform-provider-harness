@@ -28,3 +28,8 @@ type UserInfo struct {
 	UtmInfo                        *UtmInfo                `json:"utmInfo,omitempty"`
 	ExternallyManaged              bool                    `json:"externallyManaged,omitempty"`
 }
+
+type UserBasicInfo struct {
+	Id    string `json:"id,omitempty"`
+	Email string `json:"email,omitempty"`
+}
