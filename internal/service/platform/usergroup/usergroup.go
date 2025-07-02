@@ -3,6 +3,7 @@ package usergroup
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"reflect"
 	"sort"
@@ -158,9 +159,43 @@ func ResourceUserGroup() *schema.Resource {
 
 func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-
+	ug := buildUserGroupV2(d)
 	id := d.Id()
 	// Migrate to GetUserGroupv2 once it is available in all environments including SMP customers
+	resp, _, err := c.UserGroupApi.GetUserGroupV2(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupV2Opts{
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+	})
+
+	if err != nil {
+		log.Printf("Error getting user group v2. Falling back to v1: %v", err)
+		// Fallback to V1 API
+		return handleReadUserGroupV1(ctx, d, meta)
+	}
+
+	users := resp.Data.Users
+	isSsoLinked := resp.Data.SsoLinked
+
+	_, emails_present := d.GetOk("user_emails")
+	_, users_present := d.GetOk("users")
+	if emails_present || !users_present {
+		// If email is present or users is not present then use only email
+		d.Set("user_emails", ignoreOrderIfAllElementsMatch(ug.Users, flattenUserInfo(users)))
+	} else if users_present || (users != nil && !isSsoLinked && !emails_present) {
+		// If users is present (Explicitly set by user for import) and email is not present (using old api) then use users
+		d.Set("users", flattenUserIds(users))
+	} else if isSsoLinked {
+		d.Set("users", []string{})
+	}
+	readUserGroupV2(d, resp.Data, ug.Users, false)
+
+	return nil
+}
+
+func handleReadUserGroupV1(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	id := d.Id()
+
 	resp, httpResp, err := c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
@@ -249,7 +284,7 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readUserGroupV2(d, resp.Data, ug.Users)
+	readUserGroupV2(d, resp.Data, ug.Users, true)
 
 	return nil
 }
@@ -424,7 +459,7 @@ func ignoreOrderIfAllElementsMatch(input []string, output []string) []string {
 	return output
 }
 
-func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2, user_emails []string) {
+func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2, user_emails []string, setUserEmail bool) {
 	d.SetId(env.Identifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("org_id", env.OrgIdentifier)
@@ -432,7 +467,6 @@ func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2, u
 	d.Set("name", env.Name)
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
-	d.Set("user_emails", ignoreOrderIfAllElementsMatch(user_emails, flattenUserInfo(env.Users)))
 	d.Set("notification_configs", flattenNotificationConfig(env.NotificationConfigs))
 	d.Set("linked_sso_id", env.LinkedSsoId)
 	d.Set("linked_sso_display_name", env.LinkedSsoDisplayName)
@@ -441,6 +475,11 @@ func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2, u
 	d.Set("linked_sso_type", env.LinkedSsoType)
 	d.Set("externally_managed", env.ExternallyManaged)
 	d.Set("sso_linked", env.SsoLinked)
+
+	if setUserEmail {
+		d.Set("user_emails", ignoreOrderIfAllElementsMatch(user_emails, flattenUserInfo(env.Users)))
+	}
+
 }
 
 func readUserGroup(d *schema.ResourceData, env *nextgen.UserGroup) {
@@ -461,11 +500,11 @@ func readUserGroup(d *schema.ResourceData, env *nextgen.UserGroup) {
 	d.Set("sso_linked", env.SsoLinked)
 }
 
-func fetchUserIds(userInfos []nextgen.UserInfo) []string {
+func flattenUserIds(userInfos []nextgen.UserBasicInfo) []string {
 	var result []string
 
 	for _, userInfo := range userInfos {
-		result = append(result, userInfo.Uuid)
+		result = append(result, userInfo.Id)
 	}
 
 	return result
@@ -496,7 +535,7 @@ func expandNotificationConfig(notificationConfigs []interface{}) []nextgen.Notif
 	return result
 }
 
-func flattenUserInfo(userInfos []nextgen.UserInfo) []string {
+func flattenUserInfo(userInfos []nextgen.UserBasicInfo) []string {
 	var result []string
 	for _, userInfo := range userInfos {
 		result = append(result, userInfo.Email)
