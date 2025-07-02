@@ -107,7 +107,7 @@ func resourceNotificationChannelCreate(ctx context.Context, d *schema.ResourceDa
 		projectIdentifier = attr.(string)
 	}
 
-	req := buildNotificationChannelRequest(d)
+	req := buildNotificationChannelRequest(d, accountIdentifier)
 	var resp nextgen.NotificationChannelDto
 	var httpResp *http.Response
 	var err error
@@ -217,7 +217,7 @@ func resourceNotificationChannelDelete(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func buildNotificationChannelRequest(d *schema.ResourceData) *nextgen.NotificationChannelDto {
+func buildNotificationChannelRequest(d *schema.ResourceData, accountIdentifier string) *nextgen.NotificationChannelDto {
 	channelData := d.Get("channel").([]interface{})[0].(map[string]interface{})
 
 	channelDTO := nextgen.ChannelDto{
@@ -240,10 +240,11 @@ func buildNotificationChannelRequest(d *schema.ResourceData) *nextgen.Notificati
 	}
 
 	return &nextgen.NotificationChannelDto{
+		Account:    accountIdentifier,
 		Identifier: d.Get("identifier").(string),
 		Name:       d.Get("name").(string),
-		Org:        d.Get("org").(string),
-		Project:    d.Get("project").(string),
+		Org:        d.Get("org_id").(string),
+		Project:    d.Get("project_id").(string),
 		NotificationChannelType: func() *nextgen.ChannelType {
 			s := nextgen.ChannelType(d.Get("notification_channel_type").(string))
 			return &s
