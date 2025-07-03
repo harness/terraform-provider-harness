@@ -54,6 +54,8 @@ type APIClient struct {
 
 	AccessControlListApi *AccessControlListApiService
 
+	AccountDefaultNotificationTemplateSetApi *AccountDefaultNotificationTemplateSetApiService
+
 	AccountSettingApi *AccountSettingApiService
 
 	AccountsApi *AccountsApiService
@@ -155,6 +157,12 @@ type APIClient struct {
 	LicensesApi *LicensesApiService
 
 	MonitoredServiceApi *MonitoredServiceApiService
+
+	NotificationAttachmentsApi               *NotificationAttachmentsApiService
+	NotificationChannelsApi                  *NotificationChannelsApiService
+	NotificationRulesApi                     *NotificationRulesApiService
+	OrgDefaultNotificationTemplateSetApi     *OrgDefaultNotificationTemplateSetApiService
+	ProjectDefaultNotificationTemplateSetApi *ProjectDefaultNotificationTemplateSetApiService
 
 	OrganizationApi *OrganizationApiService
 
@@ -261,6 +269,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	// API Services
 	c.APIKeysApi = (*APIKeysApiService)(&c.common)
 	c.AccessControlListApi = (*AccessControlListApiService)(&c.common)
+	c.AccountDefaultNotificationTemplateSetApi = (*AccountDefaultNotificationTemplateSetApiService)(&c.common)
 	c.AccountSettingApi = (*AccountSettingApiService)(&c.common)
 	c.AccountsApi = (*AccountsApiService)(&c.common)
 	c.AgentApi = (*AgentsApiService)(&c.common)
@@ -312,11 +321,17 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.InviteApi = (*InviteApiService)(&c.common)
 	c.LicensesApi = (*LicensesApiService)(&c.common)
 	c.MonitoredServiceApi = (*MonitoredServiceApiService)(&c.common)
+	c.NotificationAttachmentsApi = (*NotificationAttachmentsApiService)(&c.common)
+	c.NotificationChannelsApi = (*NotificationChannelsApiService)(&c.common)
+	c.NotificationRulesApi = (*NotificationRulesApiService)(&c.common)
 	c.OrganizationApi = (*OrganizationApiService)(&c.common)
+	c.OrgDefaultNotificationTemplateSetApi = (*OrgDefaultNotificationTemplateSetApiService)(&c.common)
+
 	c.PermissionsApi = (*PermissionsApiService)(&c.common)
 	c.PipelinesApi = (*PipelinesApiService)(&c.common)
 	c.PipelinesDashboardApi = (*PipelinesDashboardApiService)(&c.common)
 	c.ProjectApi = (*ProjectApiService)(&c.common)
+	c.ProjectDefaultNotificationTemplateSetApi = (*ProjectDefaultNotificationTemplateSetApiService)(&c.common)
 	c.ProjectGitOpsApi = (*ProjectsApiService)(&c.common)
 	c.ProjectMappingsApi = (*ProjectMappingsApiService)(&c.common)
 	c.RepositoriesApiService = (*RepositoriesApiService)(&c.common)
