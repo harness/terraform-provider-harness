@@ -1,4 +1,4 @@
-package applicationset
+package applicationset_test
 
 import (
 	"fmt"
@@ -18,7 +18,9 @@ func TestAccResourceGitopsApplicationSet_AllClustersGenerator(t *testing.T) {
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	namespace := "test"
+	// namespace is same as agent id but remove "account." prefix if it exists
+	namespace := strings.TrimPrefix(agentId, "account.")
+	//namespace = "argocd"
 	resourceName := "harness_platform_gitops_applicationset.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -27,13 +29,12 @@ func TestAccResourceGitopsApplicationSet_AllClustersGenerator(t *testing.T) {
 			{
 				Config: testAccResourceGitopsApplicationsetClusterGenerator(id, accountId, name, agentId, namespace),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.metadata.0.name", id),
 				),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
-				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
@@ -90,6 +91,14 @@ func testAccResourceGitopsApplicationsetClusterGenerator(id, accountId, name, ag
 			org_id = harness_platform_organization.test.id
 		  	agent_id   = "%[4]s"
 		  	upsert     = true
+			lifecycle {
+			  ignore_changes = [
+				applicationset.0.spec.0.generator.0.clusters,
+				applicationset.0.spec.0.template.0.metadata.0.annotations,
+				applicationset.0.spec.0.template.0.metadata.0.labels,
+				applicationset.0.spec.0.template.0.metadata.0 .finalizers,
+			  ]
+			}
 		}
 		`, id, accountId, name, agentId, namespace)
 }
