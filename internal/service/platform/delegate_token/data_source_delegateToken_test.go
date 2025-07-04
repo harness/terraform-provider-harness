@@ -76,10 +76,30 @@ func TestAccDataSourceDelegateTokenProjectLevel(t *testing.T) {
 	})
 }
 
+func TestAccDataSourceDelegateTokenWithRevokeAfter(t *testing.T) {
+	name := utils.RandStringBytes(5)
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resourceName := "data.harness_platform_delegatetoken.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: tesAccDataSourceDelegateTokenWithRevokeAfter(name, account_id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "token_status", "ACTIVE"),
+				),
+			},
+		},
+	})
+}
+
 func tesAccDataSourceDelegateToken(name string, accountId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_delegatetoken" "test" {
-			identifier = "%[1]s"
 			name = "%[1]s"
 			account_id = "%[2]s"
 		}
@@ -138,6 +158,21 @@ func tesAccDataSourceDelegateTokenProjectLevel(name string, accountId string) st
 			account_id = harness_platform_delegatetoken.test.account_id
 			org_id = harness_platform_delegatetoken.test.org_id
 			project_id = harness_platform_delegatetoken.test.project_id
+		}
+	`, name, accountId)
+}
+
+func tesAccDataSourceDelegateTokenWithRevokeAfter(name string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_delegatetoken" "test" {
+			name = "%[1]s"
+			account_id = "%[2]s"
+			revoke_after = 1765689600000
+		}
+
+		data "harness_platform_delegatetoken" "test" {
+			name = harness_platform_delegatetoken.test.name
+			account_id = harness_platform_delegatetoken.test.account_id
 		}
 	`, name, accountId)
 }
