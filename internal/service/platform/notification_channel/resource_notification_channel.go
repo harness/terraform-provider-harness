@@ -30,11 +30,11 @@ func ResourceNotificationChannel() *schema.Resource {
 			},
 			"org_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"project_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -303,6 +303,8 @@ func expandHeaders(raw []interface{}) []nextgen.WebHookHeaders {
 func readNotificationChannel(d *schema.ResourceData, notificationChannelDto nextgen.NotificationChannelDto) diag.Diagnostics {
 	// Implement read logic as needed
 	d.SetId(notificationChannelDto.Identifier)
+	d.Set("org_id", notificationChannelDto.Org)
+	d.Set("project_id", notificationChannelDto.Project)
 	d.Set("identifier", notificationChannelDto.Identifier)
 	d.Set("name", notificationChannelDto.Name)
 	return nil
