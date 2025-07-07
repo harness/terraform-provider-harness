@@ -73,7 +73,7 @@ func testAccDataSourceCentralNotificationChannel(id string, name string) string 
 			 }
 			}
 
-		data "harness_platform_notification_channel" "test" {
+		data "harness_platform_central_notification_channel" "test" {
 			identifier = harness_platform_central_notification_channel.test.identifier
 			org_id     = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
