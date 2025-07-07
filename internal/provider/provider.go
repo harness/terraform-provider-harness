@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_channel"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_channel"
 	"log"
 
 	"github.com/harness/harness-go-sdk/harness/har"
