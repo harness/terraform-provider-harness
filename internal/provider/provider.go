@@ -275,7 +275,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_service":                                  service.DataSourceService(),
 				"harness_platform_slo":                             slo.DataSourceSloService(),
 				"harness_platform_notification_rule":               notification_rule.DataSourceNotificationRuleService(),
-				"harness_platform_central_notification_channel":    central_notification_channel.DataSourceCentralNotificationRuleService(),
+				"harness_platform_central_notification_channel":    central_notification_channel.DataSourceCentralNotificationChannelService(),
 				"harness_ssh_credential":                           secrets.DataSourceSshCredential(),
 				"harness_sso_provider":                             sso.DataSourceSSOProvider(),
 				"harness_user_group":                               user.DataSourceUserGroup(),

@@ -11,25 +11,25 @@ import (
 	"net/http"
 )
 
-func DataSourceCentralNotificationRuleService() *schema.Resource {
+func DataSourceCentralNotificationChannelService() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Notification Rule.",
+		Description: "Data source for retrieving a Central Notification Channel.",
 
 		ReadContext: dataCentralNotificationChannelRead,
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {
-				Description: "Identifier of the organization in which the Notification Rule is configured.",
+				Description: "Identifier of the organization in which the Central Notification Channel is configured.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Identifier of the project in which the Notification Rule is configured.",
+				Description: "Identifier of the project in which the Central Notification Channel is configured.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"identifier": {
-				Description: "Identifier of the Notification Rule.",
+				Description: "Identifier of the Central Notification Channel.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
