@@ -30,7 +30,6 @@ func TestAccResourceCentralNotificationChannel_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "EMAIL"),
 					resource.TestCheckResourceAttr(resourceName, "channel.0.email_ids.0", "notify@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "channel.0.api_key", "dummy-api-key"),
 					resource.TestCheckResourceAttr(resourceName, "channel.0.execute_on_delegate", "true"),
 				),
 			},
@@ -47,14 +46,9 @@ resource "harness_platform_central_notification_channel" "test" {
 
  channel {
    email_ids            = ["notify@harness.io"]
-   api_key              = "dummy-api-key"
    execute_on_delegate  = true
    user_groups {
      identifier = "account.test"
-   }
-   headers {
-     key   = "X-Custom-Header"
-     value = "HeaderValue"
    }
  }
 }

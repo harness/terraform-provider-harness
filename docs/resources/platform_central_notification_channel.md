@@ -24,13 +24,16 @@ Resource for managing Harness Notification Channels.
 
 ### Optional
 
-- `org_id` (String)
-- `project_id` (String)
+- `org` (String)
+- `project` (String)
 - `status` (String)
 
 ### Read-Only
 
+- `account` (String) Account identifier associated with this notification channel.
+- `created` (Number) Timestamp when the notification channel was created.
 - `id` (String) The ID of this resource.
+- `last_modified` (Number) Timestamp when the notification channel was last modified.
 
 <a id="nestedblock--channel"></a>
 ### Nested Schema for `channel`

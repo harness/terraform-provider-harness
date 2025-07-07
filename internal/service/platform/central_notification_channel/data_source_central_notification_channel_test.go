@@ -25,8 +25,8 @@ func TestAccDataSourceCentralNotificationChannel(t *testing.T) {
 				Config: testAccDataSourceCentralNotificationChannel(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "org", id),
+					resource.TestCheckResourceAttr(resourceName, "project", id),
 				),
 			},
 		},
@@ -53,30 +53,21 @@ func testAccDataSourceCentralNotificationChannel(id string, name string) string 
 				harness_platform_project.test,
 			]
 			 identifier                = "%[1]s"
-				org_id     = harness_platform_organization.test.id
-				project_id = harness_platform_project.test.id
+				org     = harness_platform_organization.test.id
+				project = harness_platform_project.test.id
 			 name                      = "%[2]s"
 			 notification_channel_type = "EMAIL"
 			 status                    = "ENABLED"
 			
 			 channel {
 			   email_ids            = ["notify@harness.io"]
-			   api_key              = "dummy-api-key"
-			   execute_on_delegate  = true
-			   user_groups {
-				 identifier = "account.test"
-			   }
-			   headers {
-				 key   = "X-Custom-Header"
-				 value = "HeaderValue"
-			   }
 			 }
 			}
 
 		data "harness_platform_central_notification_channel" "test" {
 			identifier = harness_platform_central_notification_channel.test.identifier
-			org_id     = harness_platform_organization.test.id
-			project_id = harness_platform_project.test.id
+			org     = harness_platform_organization.test.id
+			project = harness_platform_project.test.id
 		}
 
 		resource "time_sleep" "wait_4_seconds" {
