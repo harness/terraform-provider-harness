@@ -1,0 +1,1 @@
+package central_notification_rule
