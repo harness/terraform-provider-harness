@@ -1,4 +1,4 @@
-package notification_channel
+package central_notification_channel
 
 import (
 	"context"
@@ -14,14 +14,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func ResourceNotificationChannel() *schema.Resource {
+func ResourceCentralNotificationChannel() *schema.Resource {
 	return &schema.Resource{
 		Description: "Resource for managing Harness Notification Channels.",
 
-		CreateContext: resourceNotificationChannelCreate,
-		ReadContext:   resourceNotificationChannelRead,
-		UpdateContext: resourceNotificationChannelUpdate,
-		DeleteContext: resourceNotificationChannelDelete,
+		CreateContext: resourceCentralNotificationChannelCreate,
+		ReadContext:   resourceCentralNotificationChannelRead,
+		UpdateContext: resourceCentralNotificationChannelUpdate,
+		DeleteContext: resourceCentralNotificationChannelDelete,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -95,7 +95,7 @@ func ResourceNotificationChannel() *schema.Resource {
 	}
 }
 
-func resourceNotificationChannelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCentralNotificationChannelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier, orgIdentifier, projectIdentifier string
@@ -107,7 +107,7 @@ func resourceNotificationChannelCreate(ctx context.Context, d *schema.ResourceDa
 		projectIdentifier = attr.(string)
 	}
 
-	req := buildNotificationChannelRequest(d, accountIdentifier)
+	req := buildCentralNotificationChannelRequest(d, accountIdentifier)
 	var resp nextgen.NotificationChannelDto
 	var httpResp *http.Response
 	var err error
@@ -134,10 +134,10 @@ func resourceNotificationChannelCreate(ctx context.Context, d *schema.ResourceDa
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 	d.SetId(resp.Identifier)
-	return readNotificationChannel(d, resp)
+	return readCentralNotificationChannel(d, resp)
 }
 
-func resourceNotificationChannelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCentralNotificationChannelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var accountIdentifier, orgIdentifier, projectIdentifier string
 	accountIdentifier = c.AccountId
@@ -177,16 +177,16 @@ func resourceNotificationChannelRead(ctx context.Context, d *schema.ResourceData
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readNotificationChannel(d, resp)
+	readCentralNotificationChannel(d, resp)
 
 	return nil
 }
 
-func resourceNotificationChannelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return resourceNotificationChannelCreate(ctx, d, meta) // assuming PUT-like behavior
+func resourceCentralNotificationChannelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return resourceCentralNotificationChannelCreate(ctx, d, meta) // assuming PUT-like behavior
 }
 
-func resourceNotificationChannelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCentralNotificationChannelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	accountIdentifier := c.AccountId
@@ -217,7 +217,7 @@ func resourceNotificationChannelDelete(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func buildNotificationChannelRequest(d *schema.ResourceData, accountIdentifier string) *nextgen.NotificationChannelDto {
+func buildCentralNotificationChannelRequest(d *schema.ResourceData, accountIdentifier string) *nextgen.NotificationChannelDto {
 	channelData := d.Get("channel").([]interface{})[0].(map[string]interface{})
 
 	channelDTO := nextgen.ChannelDto{
@@ -300,7 +300,7 @@ func expandHeaders(raw []interface{}) []nextgen.WebHookHeaders {
 	return result
 }
 
-func readNotificationChannel(d *schema.ResourceData, notificationChannelDto nextgen.NotificationChannelDto) diag.Diagnostics {
+func readCentralNotificationChannel(d *schema.ResourceData, notificationChannelDto nextgen.NotificationChannelDto) diag.Diagnostics {
 	// Implement read logic as needed
 	d.SetId(notificationChannelDto.Identifier)
 	d.Set("org_id", notificationChannelDto.Org)

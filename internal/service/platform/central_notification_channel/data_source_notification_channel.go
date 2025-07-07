@@ -1,4 +1,4 @@
-package notification_channel
+package central_notification_channel
 
 import (
 	"context"
@@ -11,11 +11,11 @@ import (
 	"net/http"
 )
 
-func DataSourceNotificationRuleService() *schema.Resource {
+func DataSourceCentralNotificationRuleService() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Notification Rule.",
 
-		ReadContext: dataNotificationChannelRead,
+		ReadContext: dataCentralNotificationChannelRead,
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {
@@ -39,7 +39,7 @@ func DataSourceNotificationRuleService() *schema.Resource {
 	return resource
 }
 
-func dataNotificationChannelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataCentralNotificationChannelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var accountIdentifier, orgIdentifier, projectIdentifier, identifier string
 	accountIdentifier = c.AccountId
@@ -75,6 +75,6 @@ func dataNotificationChannelRead(ctx context.Context, d *schema.ResourceData, me
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
-	readNotificationChannel(d, resp)
+	readCentralNotificationChannel(d, resp)
 	return nil
 }

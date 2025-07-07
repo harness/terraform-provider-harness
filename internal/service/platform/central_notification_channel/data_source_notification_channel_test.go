@@ -1,4 +1,4 @@
-package notification_channel_test
+package central_notification_channel_test
 
 import (
 	"fmt"
@@ -9,10 +9,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceNotificationChannel(t *testing.T) {
+func TestAccDataSourceCentralNotificationChannel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
-	resourceName := "data.harness_platform_notification_channel.test"
+	resourceName := "data.harness_platform_central_notification_channel.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -22,7 +22,7 @@ func TestAccDataSourceNotificationChannel(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceNotificationChannel(id, name),
+				Config: testAccDataSourceCentralNotificationChannel(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -33,7 +33,7 @@ func TestAccDataSourceNotificationChannel(t *testing.T) {
 	})
 }
 
-func testAccDataSourceNotificationChannel(id string, name string) string {
+func testAccDataSourceCentralNotificationChannel(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -47,7 +47,7 @@ func testAccDataSourceNotificationChannel(id string, name string) string {
 			color      = "#472848"
 		}
 		
-		resource "harness_platform_notification_channel" "test" {
+		resource "harness_platform_central_notification_channel" "test" {
              depends_on = [
 				harness_platform_organization.test,
 				harness_platform_project.test,
@@ -74,7 +74,7 @@ func testAccDataSourceNotificationChannel(id string, name string) string {
 			}
 
 		data "harness_platform_notification_channel" "test" {
-			identifier = harness_platform_notification_channel.test.identifier
+			identifier = harness_platform_central_notification_channel.test.identifier
 			org_id     = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 		}
