@@ -28,11 +28,11 @@ func ResourceCentralNotificationChannel() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"org_id": {
+			"org": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"project_id": {
+			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -46,6 +46,21 @@ func ResourceCentralNotificationChannel() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{
 					"EMAIL", "SLACK", "PAGERDUTY", "MSTEAMS", "WEBHOOK", "DATADOG",
 				}, false),
+			},
+			"account": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Account identifier associated with this notification channel.",
+			},
+			"created": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Timestamp when the notification channel was created.",
+			},
+			"last_modified": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Timestamp when the notification channel was last modified.",
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -100,10 +115,10 @@ func resourceCentralNotificationChannelCreate(ctx context.Context, d *schema.Res
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier, orgIdentifier, projectIdentifier string
 	accountIdentifier = c.AccountId
-	if attr, ok := d.GetOk("org_id"); ok {
+	if attr, ok := d.GetOk("org"); ok {
 		orgIdentifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("project_id"); ok {
+	if attr, ok := d.GetOk("project"); ok {
 		projectIdentifier = attr.(string)
 	}
 
@@ -134,17 +149,17 @@ func resourceCentralNotificationChannelCreate(ctx context.Context, d *schema.Res
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 	d.SetId(resp.Identifier)
-	return readCentralNotificationChannel(d, resp)
+	return readCentralNotificationChannel(accountIdentifier, d, resp)
 }
 
 func resourceCentralNotificationChannelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var accountIdentifier, orgIdentifier, projectIdentifier string
 	accountIdentifier = c.AccountId
-	if attr, ok := d.GetOk("org_id"); ok {
+	if attr, ok := d.GetOk("org"); ok {
 		orgIdentifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("project_id"); ok {
+	if attr, ok := d.GetOk("project"); ok {
 		projectIdentifier = attr.(string)
 	}
 	id := d.Id()
@@ -177,13 +192,52 @@ func resourceCentralNotificationChannelRead(ctx context.Context, d *schema.Resou
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readCentralNotificationChannel(d, resp)
+	readCentralNotificationChannel(accountIdentifier, d, resp)
 
 	return nil
 }
 
 func resourceCentralNotificationChannelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return resourceCentralNotificationChannelCreate(ctx, d, meta) // assuming PUT-like behavior
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+	var accountIdentifier, orgIdentifier, projectIdentifier string
+	accountIdentifier = c.AccountId
+	if attr, ok := d.GetOk("org"); ok {
+		orgIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project"); ok {
+		projectIdentifier = attr.(string)
+	}
+	identifier := d.Get("identifier").(string)
+
+	req := buildCentralNotificationChannelRequest(d, accountIdentifier)
+	var resp nextgen.NotificationChannelDto
+	var httpResp *http.Response
+	var err error
+	if orgIdentifier != "" && projectIdentifier != "" {
+		resp, httpResp, err = c.NotificationChannelsApi.UpdateNotificationChannel(ctx, identifier, orgIdentifier, projectIdentifier,
+			&nextgen.NotificationChannelsApiUpdateNotificationChannelOpts{
+				Body:           optional.NewInterface(req),
+				HarnessAccount: optional.NewString(accountIdentifier),
+			})
+	} else if orgIdentifier != "" {
+		resp, httpResp, err = c.NotificationChannelsApi.UpdateNotificationChannelOrg(ctx, identifier, orgIdentifier,
+			&nextgen.NotificationChannelsApiUpdateNotificationChannelOrgOpts{
+				Body:           optional.NewInterface(req),
+				HarnessAccount: optional.NewString(accountIdentifier),
+			})
+	} else {
+		resp, httpResp, err = c.NotificationChannelsApi.UpdateNotificationChannelAccount(ctx, identifier,
+			&nextgen.NotificationChannelsApiUpdateNotificationChannelAccountOpts{
+				Body:           optional.NewInterface(req),
+				HarnessAccount: optional.NewString(accountIdentifier),
+			})
+	}
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+	d.SetId(resp.Identifier)
+	return readCentralNotificationChannel(accountIdentifier, d, resp)
 }
 
 func resourceCentralNotificationChannelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -191,8 +245,8 @@ func resourceCentralNotificationChannelDelete(ctx context.Context, d *schema.Res
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	accountIdentifier := c.AccountId
 	identifier := d.Get("identifier").(string)
-	orgIdentifier := d.Get("org_id").(string)
-	projectIdentifier := d.Get("project_id").(string)
+	orgIdentifier := d.Get("org").(string)
+	projectIdentifier := d.Get("project").(string)
 	var httpResp *http.Response
 	var err error
 	if orgIdentifier != "" && projectIdentifier != "" {
@@ -243,8 +297,8 @@ func buildCentralNotificationChannelRequest(d *schema.ResourceData, accountIdent
 		Account:    accountIdentifier,
 		Identifier: d.Get("identifier").(string),
 		Name:       d.Get("name").(string),
-		Org:        d.Get("org_id").(string),
-		Project:    d.Get("project_id").(string),
+		Org:        d.Get("org").(string),
+		Project:    d.Get("project").(string),
 		NotificationChannelType: func() *nextgen.ChannelType {
 			s := nextgen.ChannelType(d.Get("notification_channel_type").(string))
 			return &s
@@ -300,12 +354,54 @@ func expandHeaders(raw []interface{}) []nextgen.WebHookHeaders {
 	return result
 }
 
-func readCentralNotificationChannel(d *schema.ResourceData, notificationChannelDto nextgen.NotificationChannelDto) diag.Diagnostics {
-	// Implement read logic as needed
+func readCentralNotificationChannel(accountIdentifier string, d *schema.ResourceData, notificationChannelDto nextgen.NotificationChannelDto) diag.Diagnostics {
 	d.SetId(notificationChannelDto.Identifier)
-	d.Set("org_id", notificationChannelDto.Org)
-	d.Set("project_id", notificationChannelDto.Project)
+	d.Set("org", notificationChannelDto.Org)
+	d.Set("project", notificationChannelDto.Project)
 	d.Set("identifier", notificationChannelDto.Identifier)
 	d.Set("name", notificationChannelDto.Name)
+	d.Set("notification_channel_type", notificationChannelDto.NotificationChannelType)
+	d.Set("status", notificationChannelDto.Status)
+	d.Set("last_modified", notificationChannelDto.LastModified)
+	d.Set("created", notificationChannelDto.Created)
+	d.Set("account", accountIdentifier)
+
+	channelDTO := notificationChannelDto.Channel
+	channel := map[string]interface{}{
+		"slack_webhook_urls":          channelDTO.SlackWebhookUrls,
+		"webhook_urls":                channelDTO.WebhookUrls,
+		"email_ids":                   channelDTO.EmailIds,
+		"pager_duty_integration_keys": channelDTO.PagerDutyIntegrationKeys,
+		"ms_team_keys":                channelDTO.MsTeamKeys,
+		"datadog_urls":                channelDTO.DatadogUrls,
+		"user_groups":                 flattenUserGroups(channelDTO.UserGroups),
+		"headers":                     flattenHeaders(channelDTO.Headers),
+		"delegate_selectors":          channelDTO.DelegateSelectors,
+		"execute_on_delegate":         channelDTO.ExecuteOnDelegate,
+	}
+	if val := channelDTO.ApiKey; val != "" {
+		channel["api_key"] = val
+	}
+	d.Set("channel", []interface{}{channel})
+
 	return nil
+}
+
+func flattenUserGroups(input []nextgen.UserGroupDto) []interface{} {
+	var result []interface{}
+	for _, ug := range input {
+		result = append(result, map[string]interface{}{"identifier": ug.Identifier})
+	}
+	return result
+}
+
+func flattenHeaders(input []nextgen.WebHookHeaders) []interface{} {
+	var result []interface{}
+	for _, h := range input {
+		result = append(result, map[string]interface{}{
+			"key":   h.Key,
+			"value": h.Value,
+		})
+	}
+	return result
 }
