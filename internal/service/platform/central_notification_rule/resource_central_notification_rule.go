@@ -29,13 +29,18 @@ func ResourceCentralNotificationRule() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"org_id": {
+			"org": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"project_id": {
+			"project": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"account": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Account identifier associated with this notification channel.",
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -46,6 +51,16 @@ func ResourceCentralNotificationRule() *schema.Resource {
 				Type:     schema.TypeList,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"created": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Timestamp when the notification rule was created.",
+			},
+			"last_modified": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Timestamp when the notification rule was last modified.",
 			},
 			"notification_conditions": {
 				Type:     schema.TypeList,
@@ -130,8 +145,8 @@ func resourceCentralNotificationRuleCreate(ctx context.Context, d *schema.Resour
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	accountID := c.AccountId
-	orgID := d.Get("org_id").(string)
-	projectID := d.Get("project_id").(string)
+	orgID := d.Get("org").(string)
+	projectID := d.Get("project").(string)
 
 	rule := buildCentralNotificationRule(d, accountID)
 	resp, httpResp, err := c.NotificationRulesApi.CreateNotificationRule(ctx, orgID, projectID, &nextgen.NotificationRulesApiCreateNotificationRuleOpts{
@@ -143,15 +158,15 @@ func resourceCentralNotificationRuleCreate(ctx context.Context, d *schema.Resour
 	}
 
 	d.SetId(resp.Identifier)
-	return readCentralNotificationRule(d, resp)
+	return readCentralNotificationRule(accountID, d, resp)
 }
 
 func resourceCentralNotificationRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	accountID := c.AccountId
-	orgID := d.Get("org_id").(string)
-	projectID := d.Get("project_id").(string)
+	orgID := d.Get("org").(string)
+	projectID := d.Get("project").(string)
 	identifier := d.Id()
 	var resp nextgen.NotificationRuleDto
 	var httpResp *http.Response
@@ -177,7 +192,7 @@ func resourceCentralNotificationRuleRead(ctx context.Context, d *schema.Resource
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readCentralNotificationRule(d, resp)
+	readCentralNotificationRule(accountID, d, resp)
 
 	return nil
 }
@@ -186,8 +201,8 @@ func resourceCentralNotificationRuleUpdate(ctx context.Context, d *schema.Resour
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	accountID := c.AccountId
-	orgID := d.Get("org_id").(string)
-	projectID := d.Get("project_id").(string)
+	orgID := d.Get("org").(string)
+	projectID := d.Get("project").(string)
 	identifier := d.Get("identifier").(string)
 
 	rule := buildCentralNotificationRule(d, accountID)
@@ -219,15 +234,15 @@ func resourceCentralNotificationRuleUpdate(ctx context.Context, d *schema.Resour
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	return readCentralNotificationRule(d, resp)
+	return readCentralNotificationRule(accountID, d, resp)
 }
 
 func resourceCentralNotificationRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	accountID := c.AccountId
-	orgID := d.Get("org_id").(string)
-	projectID := d.Get("project_id").(string)
+	orgID := d.Get("org").(string)
+	projectID := d.Get("project").(string)
 	identifier := d.Get("identifier").(string)
 
 	var resp nextgen.NotificationRuleDto
@@ -252,7 +267,7 @@ func resourceCentralNotificationRuleDelete(ctx context.Context, d *schema.Resour
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	return readCentralNotificationRule(d, resp)
+	return readCentralNotificationRule(accountID, d, resp)
 }
 
 func expandStringList(raw interface{}) []string {
@@ -294,12 +309,31 @@ func expandNotificationConditions(raw []interface{}) []nextgen.NotificationCondi
 				NotificationEntity: ecMap["notification_entity"].(string),
 				NotificationEvent:  ecMap["notification_event"].(string),
 				EntityIdentifiers:  expandStringList(ecMap["entity_identifiers"]),
-				NotificationEventData: &nextgen.NotificationEventParamsDto{
-					Type_: func() *nextgen.ResourceTypeEnum {
-						val := nextgen.ResourceTypeEnum(ecMap["notification_event_data"].(map[string]interface{})["type"].(string))
-						return &val
-					}(),
-				},
+				NotificationEventData: func() *nextgen.NotificationEventParamsDto {
+					rawEventData, ok := ecMap["notification_event_data"]
+					if !ok || rawEventData == nil {
+						return nil
+					}
+
+					eventDataMap, ok := rawEventData.(map[string]interface{})
+					if !ok {
+						return nil
+					}
+
+					var typePtr *nextgen.ResourceTypeEnum
+					if typeVal, ok := eventDataMap["type"].(string); ok && typeVal != "" {
+						enumVal := nextgen.ResourceTypeEnum(typeVal)
+						typePtr = &enumVal
+					}
+
+					if typePtr == nil {
+						return nil
+					}
+
+					return &nextgen.NotificationEventParamsDto{
+						Type_: typePtr,
+					}
+				}(),
 			}
 		}
 
@@ -316,8 +350,8 @@ func buildCentralNotificationRule(d *schema.ResourceData, accountID string) next
 	rule := nextgen.NotificationRuleDto{
 		Identifier: d.Get("identifier").(string),
 		Name:       d.Get("name").(string),
-		Org:        d.Get("org_id").(string),
-		Project:    d.Get("project_id").(string),
+		Org:        d.Get("org").(string),
+		Project:    d.Get("project").(string),
 		Status: func() *nextgen.Status {
 			s := nextgen.Status(d.Get("status").(string))
 			return &s
@@ -339,15 +373,18 @@ func buildCentralNotificationRule(d *schema.ResourceData, accountID string) next
 	return rule
 }
 
-func readCentralNotificationRule(d *schema.ResourceData, notificationRuleDto nextgen.NotificationRuleDto) diag.Diagnostics {
+func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceData, notificationRuleDto nextgen.NotificationRuleDto) diag.Diagnostics {
 	// Implement read logic as needed
 	d.SetId(notificationRuleDto.Identifier)
-	d.Set("org_id", notificationRuleDto.Org)
-	d.Set("project_id", notificationRuleDto.Project)
+	d.Set("org", notificationRuleDto.Org)
+	d.Set("account", accountIdentifier)
+	d.Set("project", notificationRuleDto.Project)
 	d.Set("identifier", notificationRuleDto.Identifier)
 	d.Set("name", notificationRuleDto.Name)
 	d.Set("status", notificationRuleDto.Status)
 	d.Set("notification_channel_refs", notificationRuleDto.NotificationChannelRefs)
 	d.Set("custom_notification_template_ref", notificationRuleDto.CustomNotificationTemplateRef)
+	d.Set("created", notificationRuleDto.Created)
+	d.Set("last_modified", notificationRuleDto.LastModified)
 	return nil
 }
