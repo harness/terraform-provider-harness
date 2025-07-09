@@ -383,7 +383,6 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 	d.Set("name", notificationRuleDto.Name)
 	d.Set("status", notificationRuleDto.Status)
 	d.Set("notification_channel_refs", notificationRuleDto.NotificationChannelRefs)
-	d.Set("custom_notification_template_ref", notificationRuleDto.CustomNotificationTemplateRef)
 	d.Set("created", notificationRuleDto.Created)
 	d.Set("last_modified", notificationRuleDto.LastModified)
 	// Convert notification_conditions
@@ -401,7 +400,7 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 				"notification_entity":     cfg.NotificationEntity,
 				"notification_event":      cfg.NotificationEvent,
 				"entity_identifiers":      cfg.EntityIdentifiers,
-				"notification_event_data": []interface{}{eventData}, // wrap in list for Terraform
+				"notification_event_data": eventData,
 			})
 		}
 
@@ -411,6 +410,27 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 		})
 	}
 	d.Set("notification_conditions", conditions)
+
+	if notificationRuleDto.CustomNotificationTemplateRef != nil {
+		custom := map[string]interface{}{
+			"template_ref":  notificationRuleDto.CustomNotificationTemplateRef.TemplateRef,
+			"version_label": notificationRuleDto.CustomNotificationTemplateRef.VersionLabel,
+		}
+
+		if len(notificationRuleDto.CustomNotificationTemplateRef.Variables) > 0 {
+			var vars []map[string]interface{}
+			for _, v := range notificationRuleDto.CustomNotificationTemplateRef.Variables {
+				vars = append(vars, map[string]interface{}{
+					"name":  v.Name,
+					"value": v.Value,
+					"type":  v.Type_,
+				})
+			}
+			custom["variables"] = vars
+		}
+
+		d.Set("custom_notification_template_ref", []interface{}{custom})
+	}
 
 	return nil
 }
