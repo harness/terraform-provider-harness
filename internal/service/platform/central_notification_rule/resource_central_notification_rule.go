@@ -386,5 +386,31 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 	d.Set("custom_notification_template_ref", notificationRuleDto.CustomNotificationTemplateRef)
 	d.Set("created", notificationRuleDto.Created)
 	d.Set("last_modified", notificationRuleDto.LastModified)
+	// Convert notification_conditions
+	var conditions []map[string]interface{}
+	for _, cond := range notificationRuleDto.NotificationConditions {
+		var eventConfigs []map[string]interface{}
+		for _, cfg := range cond.NotificationEventConfigs {
+			// Safely read cfg.NotificationEventData.Type_
+			eventData := make(map[string]interface{})
+			if cfg.NotificationEventData != nil && cfg.NotificationEventData.Type_ != nil {
+				eventData["type"] = string(*cfg.NotificationEventData.Type_)
+			}
+
+			eventConfigs = append(eventConfigs, map[string]interface{}{
+				"notification_entity":     cfg.NotificationEntity,
+				"notification_event":      cfg.NotificationEvent,
+				"entity_identifiers":      cfg.EntityIdentifiers,
+				"notification_event_data": []interface{}{eventData}, // wrap in list for Terraform
+			})
+		}
+
+		conditions = append(conditions, map[string]interface{}{
+			"condition_name":             cond.ConditionName,
+			"notification_event_configs": eventConfigs,
+		})
+	}
+	d.Set("notification_conditions", conditions)
+
 	return nil
 }

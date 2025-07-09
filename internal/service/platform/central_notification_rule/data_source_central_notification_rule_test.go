@@ -12,7 +12,7 @@ import (
 func TestAccDataSourceCentralNotificationRule_basic(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
-	resourceName := "harness_platform_central_notification_rule.test"
+	resourceName := "data.harness_platform_central_notification_rule.test"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
