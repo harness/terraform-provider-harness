@@ -367,6 +367,9 @@ func readCentralNotificationChannel(accountIdentifier string, d *schema.Resource
 	d.Set("account", accountIdentifier)
 
 	channelDTO := notificationChannelDto.Channel
+	if channelDTO == nil {
+		return nil
+	}
 	channel := map[string]interface{}{
 		"slack_webhook_urls":          channelDTO.SlackWebhookUrls,
 		"webhook_urls":                channelDTO.WebhookUrls,
