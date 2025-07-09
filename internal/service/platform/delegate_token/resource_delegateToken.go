@@ -2,6 +2,7 @@ package delegatetoken
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -126,7 +127,10 @@ func resourceDelegateTokenCreate(ctx context.Context, d *schema.ResourceData, me
 
 	resp, httpResp, err = c.DelegateTokenResourceApi.CreateDelegateToken(ctx, c.AccountId, delegateToken.Name, opts)
 
-	if err != nil {
+	if err != nil && httpResp != nil {
+		log.Printf("[INFO] Failed to create delegate token %q. This may happen if a token with the same name already exists in the scope or was recently deleted (within the 30-day purge window). Enable Terraform debug logs to view the full API error response.", delegateToken.Name)
+		return helpers.HandleApiError(err, d, httpResp)
+	} else if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
