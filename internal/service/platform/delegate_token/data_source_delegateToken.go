@@ -50,12 +50,22 @@ func DataSourceDelegateToken() *schema.Resource {
 			"value": {
 				Description: "Value of the delegate token. Encoded in base64.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"created_at": {
 				Description: "Time when the delegate token is created. This is an epoch timestamp.",
 				Type:        schema.TypeInt,
-				Optional:    true,
+				Computed:    true,
+			},
+			"revoke_after": {
+				Description: "Epoch time in milliseconds after which the token will be marked as revoked. There can be a delay of up to one hour from the epoch value provided and actual revoking of the token.",
+				Type:        schema.TypeInt,
+				Computed:    true,
+			},
+			"created_by": {
+				Description: "created by details",
+				Type:        schema.TypeMap,
+				Computed:    true,
 			},
 		},
 	}
@@ -73,7 +83,7 @@ func dataSourceDelegateTokenRead(ctx context.Context, d *schema.ResourceData, me
 	if name != "" {
 		var err error
 		var httpResp *http.Response
-		resp, httpResp, err := c.DelegateTokenResourceApi.GetDelegateTokens(ctx, c.AccountId, &nextgen.DelegateTokenResourceApiGetDelegateTokensOpts{
+		resp, httpResp, err := c.DelegateTokenResourceApi.GetCgDelegateTokens(ctx, c.AccountId, &nextgen.DelegateTokenResourceApiGetCgDelegateTokensOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 			Name:              helpers.BuildField(d, "name"),
@@ -82,7 +92,7 @@ func dataSourceDelegateTokenRead(ctx context.Context, d *schema.ResourceData, me
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
-		if resp.Resource != nil {
+		if resp.Resource != nil && len(resp.Resource) > 0 {
 			delegateToken = &resp.Resource[0]
 		}
 
