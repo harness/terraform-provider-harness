@@ -94,10 +94,11 @@ func TestAccResourceDelegateTokenWithRevokeAfter(t *testing.T) {
 		CheckDestroy:      testDelegateTokenDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: tesAccResourceDelegateTokenWithRevokeAfter(name, account_id),
+				Config: testAccResourceDelegateTokenWithRevokeAfter(name, account_id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "token_status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "revoke_after", "1769689600000"),
 				),
 			},
 		},
@@ -151,7 +152,7 @@ func tesAccResourceDelegateTokenProjectLevel(name string, accountId string, org_
 		`, name, accountId, org_id, project_id)
 }
 
-func tesAccResourceDelegateTokenWithRevokeAfter(name string, accountId string) string {
+func testAccResourceDelegateTokenWithRevokeAfter(name string, accountId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_delegatetoken" "test" {			
 			name = "%[1]s"

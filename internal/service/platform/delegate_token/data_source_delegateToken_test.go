@@ -87,10 +87,11 @@ func TestAccDataSourceDelegateTokenWithRevokeAfter(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: tesAccDataSourceDelegateTokenWithRevokeAfter(name, account_id),
+				Config: testAccDataSourceDelegateTokenWithRevokeAfter(name, account_id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "token_status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "revoke_after", "1765689600000"),
 				),
 			},
 		},
@@ -162,7 +163,7 @@ func tesAccDataSourceDelegateTokenProjectLevel(name string, accountId string) st
 	`, name, accountId)
 }
 
-func tesAccDataSourceDelegateTokenWithRevokeAfter(name string, accountId string) string {
+func testAccDataSourceDelegateTokenWithRevokeAfter(name string, accountId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_delegatetoken" "test" {
 			name = "%[1]s"
