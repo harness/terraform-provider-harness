@@ -2,8 +2,10 @@ package delegatetoken
 
 import (
 	"context"
+	"log"
 	"net/http"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -14,12 +16,11 @@ import (
 
 func ResourceDelegateToken() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating delegate tokens.",
+		Description: "Resource for creating delegate tokens. Note that delegate tokens cannot be updated, they can only be created or revoked. When a delegate token is 'deleted' in Terraform, it is actually revoked in Harness. Revoked tokens immediately stop functioning and are only purged after 30 days, so you cannot recreate a token with the same name within that period.",
 
 		ReadContext:   resourceDelegateTokenRead,
-		CreateContext: resourceDelegateTokenCreateOrUpdate,
-		UpdateContext: resourceDelegateTokenCreateOrUpdate,
-		DeleteContext: resourceDelegateTokenDelete,
+		CreateContext: resourceDelegateTokenCreate,
+		DeleteContext: resourceDelegateTokenRevoke,
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
@@ -27,22 +28,26 @@ func ResourceDelegateToken() *schema.Resource {
 				Description: "Name of the delegate token",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"account_id": {
 				Description: "Account Identifier for the Entity",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Org Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description:  "Project Identifier for the Entity",
 				Type:         schema.TypeString,
 				Optional:     true,
 				RequiredWith: []string{"org_id"},
+				ForceNew:     true,
 			},
 			"token_status": {
 				Description:  "Status of Delegate Token (ACTIVE or REVOKED). If left empty both active and revoked tokens will be assumed",
@@ -63,6 +68,12 @@ func ResourceDelegateToken() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"revoke_after": {
+				Description: "Epoch time in milliseconds after which the token will be marked as revoked. There can be a delay of up to one hour from the epoch value provided and actual revoking of the token.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+			},
 			"created_by": {
 				Description: "created by details",
 				Type:        schema.TypeMap,
@@ -78,7 +89,7 @@ func ResourceDelegateToken() *schema.Resource {
 func resourceDelegateTokenRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	resp, httpResp, err := c.DelegateTokenResourceApi.GetDelegateTokens(ctx, c.AccountId, &nextgen.DelegateTokenResourceApiGetDelegateTokensOpts{
+	resp, httpResp, err := c.DelegateTokenResourceApi.GetCgDelegateTokens(ctx, c.AccountId, &nextgen.DelegateTokenResourceApiGetCgDelegateTokensOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		Name:              helpers.BuildField(d, "name"),
@@ -96,7 +107,7 @@ func resourceDelegateTokenRead(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
-func resourceDelegateTokenCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceDelegateTokenCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
@@ -105,16 +116,21 @@ func resourceDelegateTokenCreateOrUpdate(ctx context.Context, d *schema.Resource
 
 	delegateToken := buildDelegateToken(d)
 
-	if delegateToken.Value == "" {
-		resp, httpResp, err = c.DelegateTokenResourceApi.CreateDelegateToken(ctx, c.AccountId, delegateToken.Name, &nextgen.DelegateTokenResourceApiCreateDelegateTokenOpts{
-			OrgIdentifier:     helpers.BuildField(d, "org_id"),
-			ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		})
-	} else {
-		return diag.Errorf("Update operation is not allowed for Delegate Token resource.")
+	opts := &nextgen.DelegateTokenResourceApiCreateDelegateTokenOpts{
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	}
 
-	if err != nil {
+	if attr, ok := d.GetOk("revoke_after"); ok {
+		opts.RevokeAfter = optional.NewInt64(int64(attr.(int)))
+	}
+
+	resp, httpResp, err = c.DelegateTokenResourceApi.CreateDelegateToken(ctx, c.AccountId, delegateToken.Name, opts)
+
+	if err != nil && httpResp != nil {
+		log.Printf("[INFO] Failed to create delegate token %q. This may happen if a token with the same name already exists in the scope or was recently deleted (within the 30-day purge window). Enable Terraform debug logs to view the full API error response.", delegateToken.Name)
+		return helpers.HandleApiError(err, d, httpResp)
+	} else if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
@@ -123,7 +139,7 @@ func resourceDelegateTokenCreateOrUpdate(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func resourceDelegateTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceDelegateTokenRevoke(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
@@ -132,7 +148,7 @@ func resourceDelegateTokenDelete(ctx context.Context, d *schema.ResourceData, me
 
 	delegateToken := buildDelegateToken(d)
 
-	resp, httpResp, err = c.DelegateTokenResourceApi.RevokeDelegateToken(ctx, c.AccountId, delegateToken.Name, &nextgen.DelegateTokenResourceApiRevokeDelegateTokenOpts{
+	resp, httpResp, err = c.DelegateTokenResourceApi.RevokeCgDelegateToken(ctx, c.AccountId, delegateToken.Name, &nextgen.DelegateTokenResourceApiRevokeCgDelegateTokenOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
@@ -185,11 +201,9 @@ func readDelegateToken(d *schema.ResourceData, delegateTokenDetails *nextgen.Del
 
 func readCreatedByData(userType string, name_ string, details map[string]string) map[string]string {
 	var result = make(map[string]string)
-	var type_ string
-	var name string
 
-	result[type_] = userType
-	result[name] = name_
+	result["type"] = userType
+	result["name"] = name_
 
 	for key, value := range details {
 		result[key] = value
