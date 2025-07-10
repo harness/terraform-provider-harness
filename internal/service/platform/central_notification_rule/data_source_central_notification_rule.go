@@ -1,15 +1,8 @@
 package central_notification_rule
 
 import (
-	"context"
-	"github.com/antihax/optional"
-	"github.com/harness/harness-go-sdk/harness/nextgen"
-	"github.com/harness/terraform-provider-harness/helpers"
-	"github.com/harness/terraform-provider-harness/internal"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"net/http"
 )
 
 func notificationEntityEnum() []string {
@@ -27,7 +20,7 @@ func DataSourceCentralNotificationRuleService() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Notification Rule.",
 
-		ReadContext: dataCentralNotificationRuleRead,
+		ReadContext: resourceCentralNotificationRuleRead,
 
 		Schema: map[string]*schema.Schema{
 			"org": {
@@ -149,40 +142,4 @@ func DataSourceCentralNotificationRuleService() *schema.Resource {
 	}
 
 	return resource
-}
-
-func dataCentralNotificationRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-
-	accountID := c.AccountId
-	orgID := d.Get("org").(string)
-	projectID := d.Get("project").(string)
-	identifier := d.Get("identifier").(string)
-	var resp nextgen.NotificationRuleDto
-	var httpResp *http.Response
-	var err error
-	if orgID != "" && projectID != "" {
-		resp, httpResp, err = c.NotificationRulesApi.GetNotificationRule(ctx, orgID, projectID,
-			identifier,
-			&nextgen.NotificationRulesApiGetNotificationRuleOpts{
-				HarnessAccount: optional.NewString(accountID),
-			})
-	} else if orgID != "" {
-		resp, httpResp, err = c.NotificationRulesApi.GetNotificationRuleOrg(ctx, orgID, identifier,
-			&nextgen.NotificationRulesApiGetNotificationRuleOrgOpts{
-				HarnessAccount: optional.NewString(accountID),
-			})
-	} else {
-		resp, httpResp, err = c.NotificationRulesApi.GetNotificationRuleAccount(ctx, identifier,
-			&nextgen.NotificationRulesApiGetNotificationRuleAccountOpts{
-				HarnessAccount: optional.NewString(accountID),
-			})
-	}
-
-	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
-	}
-
-	readCentralNotificationRule(accountID, d, resp)
-	return nil
 }

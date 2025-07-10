@@ -27,11 +27,11 @@ func ResourceCentralNotificationRule() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"org": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -143,16 +143,34 @@ func ResourceCentralNotificationRule() *schema.Resource {
 
 func resourceCentralNotificationRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-
 	accountID := c.AccountId
-	orgID := d.Get("org").(string)
-	projectID := d.Get("project").(string)
-
+	id := d.Id()
+	if id == "" {
+		d.MarkNewResource()
+	}
+	scope := getScope(d)
 	rule := buildCentralNotificationRule(d, accountID)
-	resp, httpResp, err := c.NotificationRulesApi.CreateNotificationRule(ctx, orgID, projectID, &nextgen.NotificationRulesApiCreateNotificationRuleOpts{
-		Body:           optional.NewInterface(rule),
-		HarnessAccount: optional.NewString(accountID),
-	})
+	var resp nextgen.NotificationRuleDto
+	var httpResp *http.Response
+	var err error
+	switch scope.scope {
+	case Project:
+		resp, httpResp, err = c.NotificationRulesApi.CreateNotificationRule(ctx, scope.org, scope.project, &nextgen.NotificationRulesApiCreateNotificationRuleOpts{
+			Body:           optional.NewInterface(rule),
+			HarnessAccount: optional.NewString(accountID),
+		})
+
+	case Org:
+		resp, httpResp, err = c.NotificationRulesApi.CreateNotificationRuleOrg(ctx, scope.org, &nextgen.NotificationRulesApiCreateNotificationRuleOrgOpts{
+			Body:           optional.NewInterface(rule),
+			HarnessAccount: optional.NewString(accountID),
+		})
+	default:
+		resp, httpResp, err = c.NotificationRulesApi.CreateNotificationRuleAccount(ctx, &nextgen.NotificationRulesApiCreateNotificationRuleAccountOpts{
+			Body:           optional.NewInterface(rule),
+			HarnessAccount: optional.NewString(accountID),
+		})
+	}
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
@@ -165,24 +183,24 @@ func resourceCentralNotificationRuleRead(ctx context.Context, d *schema.Resource
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	accountID := c.AccountId
-	orgID := d.Get("org").(string)
-	projectID := d.Get("project").(string)
-	identifier := d.Id()
+	identifier := d.Get("identifier").(string)
+	scope := getScope(d)
 	var resp nextgen.NotificationRuleDto
 	var httpResp *http.Response
 	var err error
-	if orgID != "" && projectID != "" {
-		resp, httpResp, err = c.NotificationRulesApi.GetNotificationRule(ctx, orgID, projectID,
+	switch scope.scope {
+	case Project:
+		resp, httpResp, err = c.NotificationRulesApi.GetNotificationRule(ctx, scope.org, scope.project,
 			identifier,
 			&nextgen.NotificationRulesApiGetNotificationRuleOpts{
 				HarnessAccount: optional.NewString(accountID),
 			})
-	} else if orgID != "" {
-		resp, httpResp, err = c.NotificationRulesApi.GetNotificationRuleOrg(ctx, orgID, identifier,
+	case Org:
+		resp, httpResp, err = c.NotificationRulesApi.GetNotificationRuleOrg(ctx, scope.org, identifier,
 			&nextgen.NotificationRulesApiGetNotificationRuleOrgOpts{
 				HarnessAccount: optional.NewString(accountID),
 			})
-	} else {
+	default:
 		resp, httpResp, err = c.NotificationRulesApi.GetNotificationRuleAccount(ctx, identifier,
 			&nextgen.NotificationRulesApiGetNotificationRuleAccountOpts{
 				HarnessAccount: optional.NewString(accountID),
@@ -201,29 +219,29 @@ func resourceCentralNotificationRuleUpdate(ctx context.Context, d *schema.Resour
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	accountID := c.AccountId
-	orgID := d.Get("org").(string)
-	projectID := d.Get("project").(string)
 	identifier := d.Get("identifier").(string)
+	scope := getScope(d)
 
 	rule := buildCentralNotificationRule(d, accountID)
 
 	var resp nextgen.NotificationRuleDto
 	var httpResp *http.Response
 	var err error
-	if orgID != "" && projectID != "" {
-		resp, httpResp, err = c.NotificationRulesApi.UpdateNotificationRule(ctx, orgID, projectID,
+	switch scope.scope {
+	case Project:
+		resp, httpResp, err = c.NotificationRulesApi.UpdateNotificationRule(ctx, scope.org, scope.project,
 			identifier,
 			&nextgen.NotificationRulesApiUpdateNotificationRuleOpts{
 				Body:           optional.NewInterface(rule),
 				HarnessAccount: optional.NewString(accountID),
 			})
-	} else if orgID != "" {
-		resp, httpResp, err = c.NotificationRulesApi.UpdateNotificationRuleOrg(ctx, orgID, identifier,
+	case Org:
+		resp, httpResp, err = c.NotificationRulesApi.UpdateNotificationRuleOrg(ctx, scope.org, identifier,
 			&nextgen.NotificationRulesApiUpdateNotificationRuleOrgOpts{
 				Body:           optional.NewInterface(rule),
 				HarnessAccount: optional.NewString(accountID),
 			})
-	} else {
+	default:
 		resp, httpResp, err = c.NotificationRulesApi.UpdateNotificationRuleAccount(ctx, identifier,
 			&nextgen.NotificationRulesApiUpdateNotificationRuleAccountOpts{
 				Body:           optional.NewInterface(rule),
@@ -241,23 +259,23 @@ func resourceCentralNotificationRuleDelete(ctx context.Context, d *schema.Resour
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	accountID := c.AccountId
-	orgID := d.Get("org").(string)
-	projectID := d.Get("project").(string)
 	identifier := d.Get("identifier").(string)
+	scope := getScope(d)
 
 	var resp nextgen.NotificationRuleDto
 	var httpResp *http.Response
 	var err error
-	if orgID != "" && projectID != "" {
-		httpResp, err = c.NotificationRulesApi.DeleteNotificationRule(ctx, orgID, projectID, identifier, &nextgen.NotificationRulesApiDeleteNotificationRuleOpts{
+	switch scope.scope {
+	case Project:
+		httpResp, err = c.NotificationRulesApi.DeleteNotificationRule(ctx, scope.org, scope.project, identifier, &nextgen.NotificationRulesApiDeleteNotificationRuleOpts{
 			HarnessAccount: optional.NewString(accountID),
 		})
-	} else if orgID != "" {
-		httpResp, err = c.NotificationRulesApi.DeleteNotificationRuleOrg(ctx, orgID, identifier,
+	case Org:
+		httpResp, err = c.NotificationRulesApi.DeleteNotificationRuleOrg(ctx, scope.org, identifier,
 			&nextgen.NotificationRulesApiDeleteNotificationRuleOrgOpts{
 				HarnessAccount: optional.NewString(accountID),
 			})
-	} else {
+	default:
 		httpResp, err = c.NotificationRulesApi.DeleteNotificationRuleAccount(ctx, identifier,
 			&nextgen.NotificationRulesApiDeleteNotificationRuleAccountOpts{
 				HarnessAccount: optional.NewString(accountID),
@@ -433,4 +451,46 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 	}
 
 	return nil
+}
+
+type Scope struct {
+	org     string
+	project string
+	scope   ScopeLevel
+}
+
+type ScopeLevel string
+
+const (
+	Account ScopeLevel = "account"
+	Org     ScopeLevel = "org"
+	Project ScopeLevel = "project"
+)
+
+func getScope(d *schema.ResourceData) *Scope {
+	org := ""
+	project := ""
+
+	if attr, ok := d.GetOk("org"); ok {
+		org = (attr.(string))
+	}
+
+	if attr, ok := d.GetOk("project"); ok {
+		project = (attr.(string))
+	}
+
+	var scope ScopeLevel
+	if org == "" {
+		scope = Account
+	} else if project == "" {
+		scope = Org
+	} else {
+		scope = Project
+	}
+
+	return &Scope{
+		org:     org,
+		project: project,
+		scope:   scope,
+	}
 }
