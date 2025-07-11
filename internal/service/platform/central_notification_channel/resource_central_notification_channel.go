@@ -113,78 +113,69 @@ func ResourceCentralNotificationChannel() *schema.Resource {
 func resourceCentralNotificationChannelCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	var accountIdentifier, orgIdentifier, projectIdentifier string
-	accountIdentifier = c.AccountId
-	if attr, ok := d.GetOk("org"); ok {
-		orgIdentifier = attr.(string)
+	accountID := c.AccountId
+	id := d.Id()
+	if id == "" {
+		d.MarkNewResource()
 	}
-	if attr, ok := d.GetOk("project"); ok {
-		projectIdentifier = attr.(string)
-	}
+	scope := getScope(d)
 
-	req := buildCentralNotificationChannelRequest(d, accountIdentifier)
+	req := buildCentralNotificationChannelRequest(d, accountID)
 	var resp nextgen.NotificationChannelDto
 	var httpResp *http.Response
 	var err error
-	if orgIdentifier != "" && projectIdentifier != "" {
-		resp, httpResp, err = c.NotificationChannelsApi.CreateNotificationChannel(ctx, orgIdentifier, projectIdentifier,
+	switch scope.scope {
+	case Project:
+		resp, httpResp, err = c.NotificationChannelsApi.CreateNotificationChannel(ctx, scope.org, scope.project,
 			&nextgen.NotificationChannelsApiCreateNotificationChannelOpts{
 				Body:           optional.NewInterface(req),
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
-	} else if orgIdentifier != "" {
-		resp, httpResp, err = c.NotificationChannelsApi.CreateNotificationChannelOrg(ctx, orgIdentifier,
+	case Org:
+		resp, httpResp, err = c.NotificationChannelsApi.CreateNotificationChannelOrg(ctx, scope.org,
 			&nextgen.NotificationChannelsApiCreateNotificationChannelOrgOpts{
 				Body:           optional.NewInterface(req),
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
-	} else {
+	default:
+
 		resp, httpResp, err = c.NotificationChannelsApi.CreateNotificationChannelAccount(ctx,
 			&nextgen.NotificationChannelsApiCreateNotificationChannelAccountOpts{
 				Body:           optional.NewInterface(req),
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
 	}
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 	d.SetId(resp.Identifier)
-	return readCentralNotificationChannel(accountIdentifier, d, resp)
+	return readCentralNotificationChannel(accountID, d, resp)
 }
 
 func resourceCentralNotificationChannelRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var accountIdentifier, orgIdentifier, projectIdentifier string
-	accountIdentifier = c.AccountId
-	if attr, ok := d.GetOk("org"); ok {
-		orgIdentifier = attr.(string)
-	}
-	if attr, ok := d.GetOk("project"); ok {
-		projectIdentifier = attr.(string)
-	}
-	id := d.Id()
-	if id == "" {
-		d.MarkNewResource()
-		return nil
-	}
+	accountID := c.AccountId
+	identifier := d.Get("identifier").(string)
+	scope := getScope(d)
 
 	var resp nextgen.NotificationChannelDto
 	var httpResp *http.Response
 	var err error
-	if orgIdentifier != "" && projectIdentifier != "" {
-		resp, httpResp, err = c.NotificationChannelsApi.GetNotificationChannel(ctx, id, orgIdentifier, projectIdentifier,
+	switch scope.scope {
+	case Project:
+		resp, httpResp, err = c.NotificationChannelsApi.GetNotificationChannel(ctx, identifier, scope.org, scope.project,
 			&nextgen.NotificationChannelsApiGetNotificationChannelOpts{
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
-	} else if orgIdentifier != "" {
-		resp, httpResp, err = c.NotificationChannelsApi.GetNotificationChannelOrg(ctx, id, orgIdentifier,
+	case Org:
+		resp, httpResp, err = c.NotificationChannelsApi.GetNotificationChannelOrg(ctx, identifier, scope.org,
 			&nextgen.NotificationChannelsApiGetNotificationChannelOrgOpts{
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
-	} else {
-		resp, httpResp, err = c.NotificationChannelsApi.GetNotificationChannelAccount(ctx, id,
+	default:
+		resp, httpResp, err = c.NotificationChannelsApi.GetNotificationChannelAccount(ctx, identifier,
 			&nextgen.NotificationChannelsApiGetNotificationChannelAccountOpts{
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
 	}
 
@@ -192,7 +183,7 @@ func resourceCentralNotificationChannelRead(ctx context.Context, d *schema.Resou
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readCentralNotificationChannel(accountIdentifier, d, resp)
+	readCentralNotificationChannel(accountID, d, resp)
 
 	return nil
 }
@@ -200,69 +191,65 @@ func resourceCentralNotificationChannelRead(ctx context.Context, d *schema.Resou
 func resourceCentralNotificationChannelUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	var accountIdentifier, orgIdentifier, projectIdentifier string
-	accountIdentifier = c.AccountId
-	if attr, ok := d.GetOk("org"); ok {
-		orgIdentifier = attr.(string)
-	}
-	if attr, ok := d.GetOk("project"); ok {
-		projectIdentifier = attr.(string)
-	}
+	accountID := c.AccountId
 	identifier := d.Get("identifier").(string)
+	scope := getScope(d)
 
-	req := buildCentralNotificationChannelRequest(d, accountIdentifier)
+	req := buildCentralNotificationChannelRequest(d, accountID)
 	var resp nextgen.NotificationChannelDto
 	var httpResp *http.Response
 	var err error
-	if orgIdentifier != "" && projectIdentifier != "" {
-		resp, httpResp, err = c.NotificationChannelsApi.UpdateNotificationChannel(ctx, identifier, orgIdentifier, projectIdentifier,
+	switch scope.scope {
+	case Project:
+		resp, httpResp, err = c.NotificationChannelsApi.UpdateNotificationChannel(ctx, identifier, scope.org, scope.project,
 			&nextgen.NotificationChannelsApiUpdateNotificationChannelOpts{
 				Body:           optional.NewInterface(req),
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
-	} else if orgIdentifier != "" {
-		resp, httpResp, err = c.NotificationChannelsApi.UpdateNotificationChannelOrg(ctx, identifier, orgIdentifier,
+	case Org:
+		resp, httpResp, err = c.NotificationChannelsApi.UpdateNotificationChannelOrg(ctx, identifier, scope.org,
 			&nextgen.NotificationChannelsApiUpdateNotificationChannelOrgOpts{
 				Body:           optional.NewInterface(req),
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
-	} else {
+	default:
 		resp, httpResp, err = c.NotificationChannelsApi.UpdateNotificationChannelAccount(ctx, identifier,
 			&nextgen.NotificationChannelsApiUpdateNotificationChannelAccountOpts{
 				Body:           optional.NewInterface(req),
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
 	}
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 	d.SetId(resp.Identifier)
-	return readCentralNotificationChannel(accountIdentifier, d, resp)
+	return readCentralNotificationChannel(accountID, d, resp)
 }
 
 func resourceCentralNotificationChannelDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	accountIdentifier := c.AccountId
+	accountID := c.AccountId
 	identifier := d.Get("identifier").(string)
-	orgIdentifier := d.Get("org").(string)
-	projectIdentifier := d.Get("project").(string)
+	scope := getScope(d)
 	var httpResp *http.Response
 	var err error
-	if orgIdentifier != "" && projectIdentifier != "" {
-		httpResp, err = c.NotificationChannelsApi.DeleteNotificationChannel(ctx, identifier, orgIdentifier, projectIdentifier,
+	switch scope.scope {
+
+	case Project:
+		httpResp, err = c.NotificationChannelsApi.DeleteNotificationChannel(ctx, identifier, scope.org, scope.project,
 			&nextgen.NotificationChannelsApiDeleteNotificationChannelOpts{
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
-	} else if orgIdentifier != "" {
-		httpResp, err = c.NotificationChannelsApi.DeleteNotificationChannelOrg(ctx, identifier, orgIdentifier,
+	case Org:
+		httpResp, err = c.NotificationChannelsApi.DeleteNotificationChannelOrg(ctx, identifier, scope.org,
 			&nextgen.NotificationChannelsApiDeleteNotificationChannelOrgOpts{
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
-	} else {
+	default:
 		httpResp, err = c.NotificationChannelsApi.DeleteNotificationChannelAccount(ctx, identifier,
 			&nextgen.NotificationChannelsApiDeleteNotificationChannelAccountOpts{
-				HarnessAccount: optional.NewString(accountIdentifier),
+				HarnessAccount: optional.NewString(accountID),
 			})
 	}
 	if err != nil {
@@ -407,4 +394,46 @@ func flattenHeaders(input []nextgen.WebHookHeaders) []interface{} {
 		})
 	}
 	return result
+}
+
+type Scope struct {
+	org     string
+	project string
+	scope   ScopeLevel
+}
+
+type ScopeLevel string
+
+const (
+	Account ScopeLevel = "account"
+	Org     ScopeLevel = "org"
+	Project ScopeLevel = "project"
+)
+
+func getScope(d *schema.ResourceData) *Scope {
+	org := ""
+	project := ""
+
+	if attr, ok := d.GetOk("org"); ok {
+		org = (attr.(string))
+	}
+
+	if attr, ok := d.GetOk("project"); ok {
+		project = (attr.(string))
+	}
+
+	var scope ScopeLevel
+	if org == "" {
+		scope = Account
+	} else if project == "" {
+		scope = Org
+	} else {
+		scope = Project
+	}
+
+	return &Scope{
+		org:     org,
+		project: project,
+		scope:   scope,
+	}
 }
