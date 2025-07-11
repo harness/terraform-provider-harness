@@ -82,6 +82,29 @@ func TestAccResourceDelegateTokenProjectLevel(t *testing.T) {
 	})
 }
 
+func TestAccResourceDelegateTokenWithRevokeAfter(t *testing.T) {
+	name := utils.RandStringBytes(5)
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resourceName := "harness_platform_delegatetoken.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testDelegateTokenDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceDelegateTokenWithRevokeAfter(name, account_id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "token_status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "revoke_after", "1769689600000"),
+				),
+			},
+		},
+	})
+}
+
 func tesAccResourceDelegateToken(name string, accountId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_delegatetoken" "test" {			
@@ -129,11 +152,21 @@ func tesAccResourceDelegateTokenProjectLevel(name string, accountId string, org_
 		`, name, accountId, org_id, project_id)
 }
 
+func testAccResourceDelegateTokenWithRevokeAfter(name string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_delegatetoken" "test" {			
+			name = "%[1]s"
+			account_id = "%[2]s"
+			revoke_after = 1769689600000 
+		}
+		`, name, accountId)
+}
+
 func testAccGetResourceDelegateToken(resourceName string, state *terraform.State) (*nextgen.DelegateTokenDetails, error) {
 	d := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 
-	resp, _, err := c.DelegateTokenResourceApi.GetDelegateTokens(ctx, c.AccountId, &nextgen.DelegateTokenResourceApiGetDelegateTokensOpts{
+	resp, _, err := c.DelegateTokenResourceApi.GetCgDelegateTokens(ctx, c.AccountId, &nextgen.DelegateTokenResourceApiGetCgDelegateTokensOpts{
 		OrgIdentifier:     buildField(d, "org_id"),
 		ProjectIdentifier: buildField(d, "project_id"),
 		Name:              buildField(d, "name"),
@@ -155,7 +188,7 @@ func testDelegateTokenDestroy(resourceName string) resource.TestCheckFunc {
 	var token *nextgen.DelegateTokenDetails
 	return func(state *terraform.State) error {
 		token, _ = testAccGetResourceDelegateToken(resourceName, state)
-		if token.Status != "REVOKED" {
+		if token != nil && token.Status != "REVOKED" {
 			return fmt.Errorf("Token is not revoked : %s", token.Name)
 		}
 
