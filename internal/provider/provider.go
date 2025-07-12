@@ -1,32 +1,37 @@
 package provider
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_channel"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_rule"
-	"log"
 
 	"github.com/harness/harness-go-sdk/harness/har"
+	"github.com/harness/harness-go-sdk/harness/svcdiscovery"
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
+	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/dashboards"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/folders"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/variable_set"
-
-	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
 	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
 	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
 	governance_enforcement "github.com/harness/terraform-provider-harness/internal/service/platform/governance/enforcement"
 	governance_rule "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule"
 	governance_rule_set "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule_set"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_rule"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/variable_set"
+	service_discovery_agent "github.com/harness/terraform-provider-harness/internal/service/service_discovery/agent"
 
 	cdng_manual_freeze "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
@@ -319,6 +324,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator_config":              cluster_orchestrator.DataSourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                    module_registry.DataSourceInfraModule(),
 				"harness_chaos_infrastructure":                     infrastructure.DataSourceChaosInfrastructureService(),
+				"harness_service_discovery_agent":                  service_discovery_agent.DataSourceServiceDiscoveryAgent(),
+				"harness_service_discovery_agents":                 service_discovery_agent.DataSourceServiceDiscoveryAgent(),
 				"harness_platform_har_registry":                    har_registry.DataSourceRegistry(),
 				"harness_platform_infra_variable_set":              variable_set.DataSourceVariableSet(),
 			},
@@ -479,6 +486,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator_config":              cluster_orchestrator.ResourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                    module_registry.ResourceInfraModule(),
 				"harness_chaos_infrastructure":                     infrastructure.ResourceChaosInfrastructure(),
+				"harness_service_discovery_agent":                  service_discovery_agent.ResourceServiceDiscoveryAgent(),
 				"harness_platform_har_registry":                    har_registry.ResourceRegistry(),
 				"harness_platform_infra_variable_set":              variable_set.ResourceVariableSet(),
 				"harness_platform_gitops_filters":                  gitops_filters.ResourceGitOpsFilters(),
@@ -587,6 +595,83 @@ func getChaosClient(d *schema.ResourceData, version string) *chaos.APIClient {
 	return client
 }
 
+// LoggingTransport wraps an http.RoundTripper and logs the request/response
+type LoggingTransport struct {
+	Transport http.RoundTripper
+}
+
+func (t *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	// Log request
+	var reqBody []byte
+	var err error
+
+	// Log the original request headers
+	log.Printf("[DEBUG] Original Request Headers: %v", req.Header)
+
+	if req.Body != nil {
+		reqBody, err = io.ReadAll(req.Body)
+		if err != nil {
+			log.Printf("[ERROR] Failed to read request body: %v", err)
+			return nil, err
+		}
+		// Replace the body so it can be read again
+		req.Body = io.NopCloser(bytes.NewBuffer(reqBody))
+	}
+
+	log.Printf("[DEBUG] Request: %s %s\nHeaders: %v", req.Method, req.URL, req.Header)
+	if len(reqBody) > 0 {
+		log.Printf("Body: %s", string(reqBody))
+	}
+
+	// Create a copy of the request to ensure we don't modify the original
+	reqCopy := req.Clone(req.Context())
+	if len(reqBody) > 0 {
+		reqCopy.Body = io.NopCloser(bytes.NewBuffer(reqBody))
+	}
+
+	// Make the request
+	resp, err := t.Transport.RoundTrip(reqCopy)
+	if err != nil {
+		log.Printf("[ERROR] Request failed: %v", err)
+		return nil, err
+	}
+
+	// Log response
+	var respBody []byte
+	if resp.Body != nil {
+		respBody, err = io.ReadAll(resp.Body)
+		if err != nil {
+			log.Printf("[ERROR] Failed to read response body: %v", err)
+			return nil, err
+		}
+		// Replace the body so it can be read again
+		resp.Body = io.NopCloser(bytes.NewBuffer(respBody))
+	}
+
+	log.Printf("[DEBUG] Response: %s\nHeaders: %v", resp.Status, resp.Header)
+	if len(respBody) > 0 {
+		log.Printf("Body: %s", string(respBody))
+	}
+
+	return resp, nil
+}
+
+func getServiceDiscoveryClient(d *schema.ResourceData, version string) *svcdiscovery.APIClient {
+	client := svcdiscovery.NewAPIClient(&svcdiscovery.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/servicediscovery", // check if this can be taken from sdk
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)},
+		HTTPClient: &http.Client{
+			Transport: &LoggingTransport{
+				Transport: http.DefaultTransport,
+			},
+		},
+	})
+	return client
+}
+
 func getHarClient(d *schema.ResourceData, version string) *har.APIClient {
 	cfg := har.NewConfiguration()
 	client := har.NewAPIClient(&har.Configuration{
@@ -613,6 +698,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			CodeClient:  getCodeClient(d, version),
 			DBOpsClient: getDBOpsClient(d, version),
 			ChaosClient: getChaosClient(d, version),
+			SDClient:    getServiceDiscoveryClient(d, version),
 			HARClient:   getHarClient(d, version),
 		}, nil
 	}
