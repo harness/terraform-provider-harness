@@ -352,7 +352,11 @@ List Default Notification Template Sets based on filter criteria.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param org Identifier field of the organization the resource is scoped to
  * @param optional nil or *OrgDefaultNotificationTemplateSetApiListOrgDefaultNotificationTemplateSetOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of DefaultNotificationTemplateSetFilterRequestBody) -
+     * @param "SearchTerm" (optional.String) -  This would be used to filter resources having attributes matching with search term.
+     * @param "Identifiers" (optional.Interface of []string) -  Filter by default notification template set identifiers.
+     * @param "NotificationChannelTypes" (optional.Interface of []string) -  Filter by one or more notification channel types.
+     * @param "NotificationEvents" (optional.Interface of []string) -  Filter by one or more notification event types.
+     * @param "NotificationEntities" (optional.Interface of []string) -  Filter by one or more notification entities.
      * @param "HarnessAccount" (optional.String) -  Identifier field of the account the resource is scoped to. This is required for Authorization methods other than the x-api-key header. If you are using the x-api-key header, this can be skipped.
      * @param "Page" (optional.Int32) -  Pagination page number strategy: Specify the page number within the paginated collection related to the number of items in each page
      * @param "Limit" (optional.Int32) -  Number of items to return per page.
@@ -362,17 +366,21 @@ List Default Notification Template Sets based on filter criteria.
 */
 
 type OrgDefaultNotificationTemplateSetApiListOrgDefaultNotificationTemplateSetOpts struct {
-	Body           optional.Interface
-	HarnessAccount optional.String
-	Page           optional.Int32
-	Limit          optional.Int32
-	Sort           optional.String
-	Order          optional.String
+	SearchTerm               optional.String
+	Identifiers              optional.Interface
+	NotificationChannelTypes optional.Interface
+	NotificationEvents       optional.Interface
+	NotificationEntities     optional.Interface
+	HarnessAccount           optional.String
+	Page                     optional.Int32
+	Limit                    optional.Int32
+	Sort                     optional.String
+	Order                    optional.String
 }
 
 func (a *OrgDefaultNotificationTemplateSetApiService) ListOrgDefaultNotificationTemplateSet(ctx context.Context, org string, localVarOptionals *OrgDefaultNotificationTemplateSetApiListOrgDefaultNotificationTemplateSetOpts) ([]DefaultNotificationTemplateSetResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
@@ -380,13 +388,28 @@ func (a *OrgDefaultNotificationTemplateSetApiService) ListOrgDefaultNotification
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v1/orgs/{org}/default-notification-template-set/list"
+	localVarPath := a.client.cfg.BasePath + "/v1/orgs/{org}/default-notification-template-set"
 	localVarPath = strings.Replace(localVarPath, "{"+"org"+"}", fmt.Sprintf("%v", org), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if localVarOptionals != nil && localVarOptionals.SearchTerm.IsSet() {
+		localVarQueryParams.Add("search_term", parameterToString(localVarOptionals.SearchTerm.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Identifiers.IsSet() {
+		localVarQueryParams.Add("identifiers", parameterToString(localVarOptionals.Identifiers.Value(), "multi"))
+	}
+	if localVarOptionals != nil && localVarOptionals.NotificationChannelTypes.IsSet() {
+		localVarQueryParams.Add("notification_channel_types", parameterToString(localVarOptionals.NotificationChannelTypes.Value(), "multi"))
+	}
+	if localVarOptionals != nil && localVarOptionals.NotificationEvents.IsSet() {
+		localVarQueryParams.Add("notification_events", parameterToString(localVarOptionals.NotificationEvents.Value(), "multi"))
+	}
+	if localVarOptionals != nil && localVarOptionals.NotificationEntities.IsSet() {
+		localVarQueryParams.Add("notification_entities", parameterToString(localVarOptionals.NotificationEntities.Value(), "multi"))
+	}
 	if localVarOptionals != nil && localVarOptionals.Page.IsSet() {
 		localVarQueryParams.Add("page", parameterToString(localVarOptionals.Page.Value(), ""))
 	}
@@ -400,7 +423,7 @@ func (a *OrgDefaultNotificationTemplateSetApiService) ListOrgDefaultNotification
 		localVarQueryParams.Add("order", parameterToString(localVarOptionals.Order.Value(), ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"application/json"}
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -418,12 +441,6 @@ func (a *OrgDefaultNotificationTemplateSetApiService) ListOrgDefaultNotification
 	}
 	if localVarOptionals != nil && localVarOptionals.HarnessAccount.IsSet() {
 		localVarHeaderParams["Harness-Account"] = parameterToString(localVarOptionals.HarnessAccount.Value(), "")
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
 	}
 	if ctx != nil {
 		// API Key Authentication
