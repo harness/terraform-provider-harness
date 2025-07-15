@@ -36,6 +36,7 @@ func TestAccResourceWorkspace(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "default_pipelines.drift", "drift_pipeline_id"),
 					resource.TestCheckResourceAttr(resourceName, "default_pipelines.apply", "apply_pipeline_id"),
 					resource.TestCheckResourceAttr(resourceName, "default_pipelines.plan", "plan_pipeline_id"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
 				),
 			},
 			{
@@ -66,6 +67,12 @@ func TestAccResourceWorkspace(t *testing.T) {
 				Config: testAccResourceWorkspace(id3, updatedName3, "sha"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id3),
+				),
+			},
+			{
+				Config: testAccResourceWorkspace(id3, updatedName3, "sha"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
 				),
 			},
 			{
@@ -232,7 +239,8 @@ func testAccResourceWorkspace(id string, name string, repositoryType string) str
 				"drift"   = "drift_pipeline_id"
 				"plan"    = "plan_pipeline_id"
 				"apply"   = "apply_pipeline_id"
-  			}			
+  			}
+			tags = ["tag1"]			
 			variable_sets = [harness_platform_infra_variable_set.test.id]
   		}
 
