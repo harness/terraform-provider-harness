@@ -1,6 +1,7 @@
 package workspace
 
 import (
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -217,5 +218,6 @@ func DataSourceWorkspace() *schema.Resource {
 			},
 		},
 	}
+	resource.Schema["tags"] = helpers.GetTagsSchema(helpers.SchemaFlagTypes.Optional)
 	return resource
 }
