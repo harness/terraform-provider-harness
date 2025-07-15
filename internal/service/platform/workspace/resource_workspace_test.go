@@ -36,7 +36,7 @@ func TestAccResourceWorkspace(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "default_pipelines.drift", "drift_pipeline_id"),
 					resource.TestCheckResourceAttr(resourceName, "default_pipelines.apply", "apply_pipeline_id"),
 					resource.TestCheckResourceAttr(resourceName, "default_pipelines.plan", "plan_pipeline_id"),
-					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag333"),
 				),
 			},
 			{
