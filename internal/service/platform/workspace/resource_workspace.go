@@ -231,7 +231,7 @@ func ResourceWorkspace() *schema.Resource {
 			},
 		},
 	}
-
+	resource.Schema["tags"] = helpers.GetTagsSchema(helpers.SchemaFlagTypes.Optional)
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
 	return resource
 }
@@ -397,6 +397,7 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 		})
 	}
 	d.Set("connector", providerConnectors)
+	d.Set("tags", helpers.FlattenTags(ws.Tags))
 }
 
 func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRequestBody, error) {
@@ -463,6 +464,10 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 		return nextgen.IacmUpdateWorkspaceRequestBody{}, err
 	}
 	ws.ProviderConnectors = providerConnectors
+
+	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
+		ws.Tags = helpers.ExpandTags(attr)
+	}
 
 	return ws, nil
 }
@@ -532,6 +537,10 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 		return nextgen.IacmCreateWorkspaceRequestBody{}, err
 	}
 	ws.ProviderConnectors = providerConnectors
+
+	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
+		ws.Tags = helpers.ExpandTags(attr)
+	}
 
 	return ws, nil
 }
