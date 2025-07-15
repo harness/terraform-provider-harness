@@ -11,6 +11,7 @@ resource "harness_platform_workspace" "example" {
   cost_estimation_enabled = true
   provider_connector      = harness_platform_connector_github.test.id
   repository_connector    = harness_platform_connector_github.test.id
+  tags = ["tag1", "tag2"]
 
   terraform_variable {
     key        = "key1"
