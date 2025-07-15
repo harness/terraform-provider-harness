@@ -24,7 +24,7 @@ type IacmShowWorkspaceResponseBody struct {
 	CostEstimationEnabled bool `json:"cost_estimation_enabled,omitempty"`
 	// Created is the unix timestamp at which the resource was originally created in milliseconds.
 	Created int64 `json:"created"`
-	// List of default pipelines associated with this workspace and any per-workspace overrrides.
+	// List of default pipelines associated with this workspace and any per-workspace overrides.
 	DefaultPipelines map[string]IacmDefaultPipelineOverride `json:"default_pipelines,omitempty"`
 	// Description provides long-form text about the resource.
 	Description string `json:"description,omitempty"`
@@ -32,6 +32,8 @@ type IacmShowWorkspaceResponseBody struct {
 	EnvironmentVariables map[string]IacmVariableResource `json:"environment_variables"`
 	// Workspace identifier.
 	Identifier string `json:"identifier"`
+	// modules_json is the identifier of any modules metadata associated with this workspace
+	ModulesJson string `json:"modules_json,omitempty"`
 	// Name is the human readable name for the resource.
 	Name string `json:"name"`
 	// Org is the organisation identifier.
@@ -40,26 +42,42 @@ type IacmShowWorkspaceResponseBody struct {
 	Project string `json:"project"`
 	// Provider Connector is the reference to the connector for the infrastructure provider.
 	ProviderConnector string `json:"provider_connector"`
+	// define an array of provider connectors that belong to Workspace
+	ProviderConnectors []VariableSetConnector `json:"provider_connectors,omitempty"`
+	// providers_json is the identifier of any modules metadata associated with this workspace
+	ProvidersJson string `json:"providers_json,omitempty"`
 	// Provisioner defines the provisioning tool to use.
 	Provisioner     string `json:"provisioner"`
 	ProvisionerData string `json:"provisioner_data"`
 	// Provisioner Version defines the tool version to use.
 	ProvisionerVersion string `json:"provisioner_version,omitempty"`
+	// prune_sensitive_data is a flag to enable or disable pruning of sensitive data
+	PruneSensitiveData bool `json:"prune_sensitive_data,omitempty"`
 	// Repository is the name of the repository to use.
 	Repository string `json:"repository,omitempty"`
 	// Repository Branch in which the code should be accessed.
 	RepositoryBranch string `json:"repository_branch,omitempty"`
-	// Repository Tag in which the code should be accessed.
+	// Repository Commit/Tag in which the code should be accessed.
 	RepositoryCommit string `json:"repository_commit,omitempty"`
-	// Repository Commit SHA in which the code should be accessed.
-	RepositorySha string `json:"repository_sha,omitempty"`
 	// Repository Connector is the reference to the connector to use for this code.
 	RepositoryConnector string `json:"repository_connector"`
 	// Repository Path is the path in which the infra code resides.
 	RepositoryPath string `json:"repository_path,omitempty"`
+	// Repository SHA in which the code should be accessed.
+	RepositorySha string `json:"repository_sha,omitempty"`
+	// repository_submodules is the instruction about whether to clone submodules in the pipeline step
+	RepositorySubmodules string `json:"repository_submodules,omitempty"`
+	// Run-All terragrunt modules.
+	RunAll bool `json:"run_all,omitempty"`
+	// List of patterens that will be used for sparse checkout option of git clone
+	SparseCheckout string `json:"sparse_checkout,omitempty"`
+	// state_checksum is the sha-256 checksum of terraform state file
+	StateChecksum string `json:"state_checksum,omitempty"`
 	// The status of the workspace
 	Status string `json:"status"`
-	// terraform_plan_json is the identifier to the current state file onl in JSON format.
+	// Tags associated with the workspace.
+	Tags map[string]string `json:"tags"`
+	// terraform_plan_json is the identifier to the current state file only in JSON format.
 	TerraformPlanJson string `json:"terraform_plan_json,omitempty"`
 	// terraform_state is the identifier to the plan file used to create the latest state.
 	TerraformState string `json:"terraform_state,omitempty"`
@@ -69,10 +87,10 @@ type IacmShowWorkspaceResponseBody struct {
 	TerraformVariableFiles []IacmWorkspaceTerraformVariableFiles `json:"terraform_variable_files,omitempty"`
 	// list of terraform variables configured on the workspace.
 	TerraformVariables map[string]IacmVariableResource `json:"terraform_variables"`
+	// Terragrunt Version to use when provisioner is terragrunt.
+	TerragruntVersion string `json:"terragrunt_version,omitempty"`
 	// Modified is the unix timestamp at which the resource was last modified in milliseconds.
 	Updated int64 `json:"updated"`
-	// Optional Variable Sets as references
+	// Attached Variable Sets references
 	VariableSets []string `json:"variable_sets,omitempty"`
-	// define an array of provider connectors that belong to Workspace
-	ProviderConnectors []VariableSetConnector `json:"provider_connectors"`
 }

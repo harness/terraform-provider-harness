@@ -13,7 +13,7 @@ type IacmUpdateWorkspaceRequestBody struct {
 	Budget float32 `json:"budget,omitempty"`
 	// define if cost estimation operations will be performed in this workspace
 	CostEstimationEnabled bool `json:"cost_estimation_enabled,omitempty"`
-	// List of default pipelines associated with this workspace and any per-workspace overrrides.
+	// List of default pipelines associated with this workspace and any per-workspace overrides.
 	DefaultPipelines map[string]IacmDefaultPipelineOverride `json:"default_pipelines,omitempty"`
 	// Description provides long-form text about the resource.
 	Description string `json:"description,omitempty"`
@@ -27,22 +27,34 @@ type IacmUpdateWorkspaceRequestBody struct {
 	Provisioner string `json:"provisioner"`
 	// Provisioner Version defines the tool version to use.
 	ProvisionerVersion string `json:"provisioner_version,omitempty"`
+	// prune_sensitive_data is a flag to enable or disable pruning of sensitive data
+	PruneSensitiveData bool `json:"prune_sensitive_data,omitempty"`
 	// Repository is the name of the repository to use.
 	Repository string `json:"repository,omitempty"`
 	// Repository Branch in which the code should be accessed.
 	RepositoryBranch string `json:"repository_branch,omitempty"`
-	// Repository Tag in which the code should be accessed.
+	// Repository Commit/Tag in which the code should be accessed.
 	RepositoryCommit string `json:"repository_commit,omitempty"`
-	// Repository Commit SHA in which the code should be accessed.
-	RepositorySha string `json:"repository_sha,omitempty"`
 	// Repository Connector is the reference to the connector to use for this code.
 	RepositoryConnector string `json:"repository_connector,omitempty"`
 	// Repository Path is the path in which the infra code resides.
 	RepositoryPath string `json:"repository_path,omitempty"`
+	// Repository SHA in which the code should be accessed.
+	RepositorySha string `json:"repository_sha,omitempty"`
+	// repository_submodules is the instruction about whether to clone submodules in the pipeline step
+	RepositorySubmodules string `json:"repository_submodules,omitempty"`
+	// Run-All terragrunt modules.
+	RunAll bool `json:"run_all,omitempty"`
+	// List of patterens that will be used for sparse checkout option of git clone
+	SparseCheckout string `json:"sparse_checkout,omitempty"`
+	// Tags associated with the workspace.
+	Tags map[string]string `json:"tags,omitempty"`
 	// define an array of terraform variables files that belong to a different repository
 	TerraformVariableFiles []IacmWorkspaceTerraformVariableFiles `json:"terraform_variable_files,omitempty"`
 	// list of terraform variables configured on the workspace.
 	TerraformVariables map[string]IacmVariable `json:"terraform_variables"`
+	// Terragrunt Version to use when provisioner is terragrunt.
+	TerragruntVersion string `json:"terragrunt_version,omitempty"`
 	// Optional Variable Sets as references
 	VariableSets []string `json:"variable_sets,omitempty"`
 	// define an array of provider connectors that belong to Workspace
