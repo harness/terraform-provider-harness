@@ -9,7 +9,6 @@ description: |-
   
   resource "harness_service_discovery_agent" "example" {
     name                   = "ExampleAgent"
-    description            = "Example Service Discovery Agent"
     org_identifier         = "your_org_id"
     project_identifier     = "your_project_id"
     environment_identifier = "your_environment_id"
@@ -37,7 +36,6 @@ This resource allows you to create, read, update, and delete a Service Discovery
 ```hcl
 resource "harness_service_discovery_agent" "example" {
   name                   = "ExampleAgent"
-  description            = "Example Service Discovery Agent"
   org_identifier         = "your_org_id"
   project_identifier     = "your_project_id"
   environment_identifier = "your_environment_id"
@@ -95,18 +93,12 @@ resource "harness_service_discovery_agent" "node_agent" {
 // Create a new service discovery agent with full configuration
 resource "harness_service_discovery_agent" "full_config" {
   name                   = "full-config-example"
-  description            = "Example service discovery agent with full configuration"
   org_identifier         = var.org_identifier
   project_identifier     = var.project_identifier
   environment_identifier = var.environment_identifier
   infra_identifier       = "full-config-example"
   permanent_installation = false
   correlation_id         = "full-config-correlation-123"
-
-  tags = {
-    "managed-by"  = "terraform"
-    "environment" = "dev"
-  }
 
   config {
     collector_image    = "harness/service-discovery-collector:main-latest"
@@ -198,12 +190,10 @@ resource "harness_service_discovery_agent" "full_config" {
 ### Optional
 
 - `correlation_id` (String) Correlation ID for the agent.
-- `description` (String) Description of the agent.
 - `installation_type` (String) Type of installation for the agent.
 - `org_identifier` (String) The organization identifier of the agent. Must be 1-64 characters and contain only alphanumeric characters, hyphens, or underscores.
 - `permanent_installation` (Boolean) Whether this is a permanent installation.
 - `project_identifier` (String) The project identifier of the agent. Must be 1-64 characters and contain only alphanumeric characters, hyphens, or underscores.
-- `tags` (Map of String) Key-value map of resource tags for the agent.
 - `webhook_url` (String) Webhook URL for the agent.
 
 ### Read-Only

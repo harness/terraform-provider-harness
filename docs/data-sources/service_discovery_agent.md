@@ -70,7 +70,7 @@ output "agent_details_by_identity" {
 - `removed` (Boolean) Whether the agent has been removed.
 - `removed_at` (String) Timestamp when the agent was removed.
 - `service_count` (Number) Number of services managed by this agent.
-- `tags` (Map of String) Key-value map of resource tags for the agent.
+- `tags` (List of String) Key-value list of resource tags for the agent.
 - `updated_at` (String) Timestamp when the agent was last updated.
 - `updated_by` (String) User who last updated the agent.
 - `webhook_url` (String) Webhook URL for the agent.
