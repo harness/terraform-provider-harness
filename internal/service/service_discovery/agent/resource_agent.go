@@ -25,31 +25,20 @@ func ResourceServiceDiscoveryAgent() *schema.Resource {
 			"This resource allows you to create, read, update, and delete a Service Discovery Agent in Harness.\n\n" +
 			"## Example Usage\n\n" +
 			"```hcl\n" +
-			`resource "harness_platform_service_discovery_agent" "example" {
-  identifier             = "example_agent"
-  name                   = "Example Agent"
+			`resource "harness_service_discovery_agent" "example" {
+  name                   = "ExampleAgent"
   description            = "Example Service Discovery Agent"
   org_identifier         = "your_org_id"
   project_identifier     = "your_project_id"
   environment_identifier = "your_environment_id"
-  permanent_installation = false
+  infra_identifier       = "your_infra_id"
   
   config {
     collector_image    = "harness/service-discovery-collector:main-latest"
     log_watcher_image  = "harness/chaos-log-watcher:main-latest"
-    skip_secure_verify = false
     
     kubernetes {
-      resources {
-        limits {
-          cpu    = "500m"
-          memory = "512Mi"
-        }
-        requests {
-          cpu    = "250m"
-          memory = "512Mi"
-        }
-      }
+      namespace = "harness-sd"
     }
   }
 }` + "\n```",
