@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/google/uuid"
@@ -28,7 +29,6 @@ func ResourceServiceDiscoveryAgent() *schema.Resource {
   identifier             = "example_agent"
   name                   = "Example Agent"
   description            = "Example Service Discovery Agent"
-  account_identifier     = "your_account_id"
   org_identifier         = "your_org_id"
   project_identifier     = "your_project_id"
   environment_identifier = "your_environment_id"
@@ -58,25 +58,58 @@ func ResourceServiceDiscoveryAgent() *schema.Resource {
 		ReadContext:   resourceServiceDiscoveryAgentRead,
 		UpdateContext: resourceServiceDiscoveryAgentUpdate,
 		DeleteContext: resourceServiceDiscoveryAgentDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
-		},
-		Schema: AgentResourceSchema(),
+		// Importer: &schema.ResourceImporter{
+		// 	StateContext: resourceServiceDiscoveryAgentImport,
+		// },
+		Importer: MultiLevelResourceImporter,
+		Schema:   AgentResourceSchema(),
 	}
+}
+
+var MultiLevelResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		partCount := len(parts)
+
+		// Handle format: org_id/project_id/environment_identifier/infra_identifier
+		if partCount == 4 {
+			d.SetId(parts[3]) // infra_identifier
+			d.Set("org_identifier", parts[0])
+			d.Set("project_identifier", parts[1])
+			d.Set("environment_identifier", parts[2])
+			d.Set("infra_identifier", parts[3])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		// Original handling for other formats
+		isAccountConnector := partCount == 2
+		isOrgConnector := partCount == 3
+
+		if isAccountConnector {
+			d.SetId(parts[1])
+			d.Set("environment_identifier", parts[0])
+			d.Set("infra_identifier", parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if isOrgConnector {
+			d.SetId(parts[2])
+			d.Set("org_identifier", parts[0])
+			d.Set("environment_identifier", parts[1])
+			d.Set("infra_identifier", parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid import format. Expected one of:\n" +
+			"- <environment_identifier>/<infra_identifier> (account level)\n" +
+			"- <org_id>/<environment_identifier>/<infra_identifier> (org level)\n" +
+			"- <org_id>/<project_id>/<environment_identifier>/<infra_identifier> (project level)")
+	},
 }
 
 // validateAgentInput validates the required fields for agent operations
 func validateAgentInput(d *schema.ResourceData) diag.Diagnostics {
 	var diags diag.Diagnostics
-
-	// Check required fields
-	if v, ok := d.Get("account_identifier").(string); !ok || v == "" {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "Missing required argument",
-			Detail:   "account_identifier is required and cannot be empty",
-		})
-	}
 
 	if v, ok := d.Get("environment_identifier").(string); !ok || v == "" {
 		diags = append(diags, diag.Diagnostic{
@@ -140,7 +173,7 @@ func resourceServiceDiscoveryAgentCreate(ctx context.Context, d *schema.Resource
 	}
 
 	// Extract parameters from the resource data
-	accountIdentifier := d.Get("account_identifier").(string)
+	accountIdentifier := c.AccountId
 	environmentIdentifier := d.Get("environment_identifier").(string)
 	infraIdentifier := d.Get("infra_identifier").(string)
 
@@ -212,7 +245,7 @@ func resourceServiceDiscoveryAgentRead(ctx context.Context, d *schema.ResourceDa
 	}
 
 	// Set account identifier
-	accountIdentifier := d.Get("account_identifier").(string)
+	accountIdentifier := c.AccountId
 	environmentIdentifier := d.Get("environment_identifier").(string)
 	agentIdentity := d.Get("infra_identifier").(string)
 
@@ -346,7 +379,7 @@ func resourceServiceDiscoveryAgentUpdate(ctx context.Context, d *schema.Resource
 	}
 
 	// Extract parameters from the resource data
-	accountIdentifier := d.Get("account_identifier").(string)
+	accountIdentifier := c.AccountId
 	environmentIdentifier := d.Get("environment_identifier").(string)
 	agentIdentity := d.Get("infra_identifier").(string)
 
@@ -356,8 +389,8 @@ func resourceServiceDiscoveryAgentUpdate(ctx context.Context, d *schema.Resource
 	}
 
 	// Check if any of the immutable fields have changed
-	if d.HasChanges("account_identifier", "org_identifier", "project_identifier", "environment_identifier") {
-		return diag.Errorf("cannot update immutable fields: account_identifier, org_identifier, project_identifier, environment_identifier")
+	if d.HasChanges("org_identifier", "project_identifier", "environment_identifier") {
+		return diag.Errorf("cannot update immutable fields: org_identifier, project_identifier, environment_identifier")
 	}
 
 	// Read the current agent state to get the current config
@@ -437,7 +470,7 @@ func resourceServiceDiscoveryAgentDelete(ctx context.Context, d *schema.Resource
 
 	// Get the agent ID before it's removed from state
 	agentIdentity := d.Get("infra_identifier").(string)
-	accountID := d.Get("account_identifier").(string)
+	accountID := c.AccountId
 	envID := d.Get("environment_identifier").(string)
 
 	// Set up API options for delete

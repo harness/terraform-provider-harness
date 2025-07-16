@@ -13,11 +13,6 @@ func AgentResourceSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Required:    true,
 		},
-		"account_identifier": {
-			Description: "The account identifier of the agent. This is a required field.",
-			Type:        schema.TypeString,
-			Required:    true,
-		},
 		"environment_identifier": {
 			Description: "The environment identifier of the agent. This is a required field.",
 			Type:        schema.TypeString,

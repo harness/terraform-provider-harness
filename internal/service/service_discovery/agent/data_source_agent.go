@@ -30,45 +30,12 @@ func dataSourceServiceDiscoveryAgentRead(ctx context.Context, d *schema.Resource
 	client := c.SDClient
 
 	// Validate required fields
-	if v, ok := d.GetOk("account_identifier"); !ok || v.(string) == "" {
-		return diag.Errorf("account_identifier is required and cannot be empty")
-	}
-
 	if v, ok := d.GetOk("environment_identifier"); !ok || v.(string) == "" {
 		return diag.Errorf("environment_identifier is required and cannot be empty")
 	}
 
-	accountID := d.Get("account_identifier").(string)
+	accountID := c.AccountId
 	envID := d.Get("environment_identifier").(string)
-
-	// listAll := d.Get("list_all").(bool)
-	// // Handle list_all case
-	// if listAll {
-	// 	// Get all agents with enhanced pagination
-	// 	allAgents, diags := listAllAgents(
-	// 		ctx,
-	// 		client,
-	// 		accountID,
-	// 		envID,
-	// 		d.Get("search").(string),
-	// 		d.Get("org_identifier").(string),
-	// 		d.Get("project_identifier").(string),
-	// 		d.Get("max_pages").(int),
-	// 		d.Get("page_size").(int),
-	// 		d.Get("timeout_seconds").(int),
-	// 	)
-	// 	if diags.HasError() {
-	// 		return diags
-	// 	}
-
-	// 	// Set the agents list
-	// 	if err := d.Set("agents", allAgents); err != nil {
-	// 		return diag.Errorf("failed to set agents: %v", err)
-	// 	}
-
-	// 	d.SetId(fmt.Sprintf("%s/%s/agents", accountID, envID))
-	// 	return nil
-	// }
 
 	// Handle single agent lookup
 	return getSingleAgent(ctx, d, client, accountID, envID)
@@ -175,11 +142,6 @@ func getSingleAgent(ctx context.Context, d *schema.ResourceData, client *svcdisc
 	if err := convert.FlattenAgentToSchema(d, foundAgent); err != nil {
 		return diag.Errorf("failed to flatten agent: %v", err)
 	}
-
-	// // Then set it in the schema
-	// if err := d.Set("agent", []interface{}{foundAgent}); err != nil {
-	// 	return diag.Errorf("failed to set agent data: %v", err)
-	// }
 
 	d.SetId(foundAgent.Id)
 	return nil
