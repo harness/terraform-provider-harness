@@ -35,7 +35,6 @@ func DataSourceDBSchema() *schema.Resource {
 			"changelog_script": {
 				Description: "Configuration to clone changeSets using script",
 				Type:        schema.TypeList,
-				MaxItems:    1,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -65,7 +64,6 @@ func DataSourceDBSchema() *schema.Resource {
 			"schema_source": {
 				Description: "Provides a connector and path at which to find the database schema representation",
 				Type:        schema.TypeList,
-				MaxItems:    1,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
