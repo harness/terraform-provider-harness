@@ -1,12 +1,9 @@
 package provider
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_channel"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_rule"
@@ -595,67 +592,6 @@ func getChaosClient(d *schema.ResourceData, version string) *chaos.APIClient {
 	return client
 }
 
-// LoggingTransport wraps an http.RoundTripper and logs the request/response
-type LoggingTransport struct {
-	Transport http.RoundTripper
-}
-
-func (t *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	// Log request
-	var reqBody []byte
-	var err error
-
-	// Log the original request headers
-	log.Printf("[DEBUG] Original Request Headers: %v", req.Header)
-
-	if req.Body != nil {
-		reqBody, err = io.ReadAll(req.Body)
-		if err != nil {
-			log.Printf("[ERROR] Failed to read request body: %v", err)
-			return nil, err
-		}
-		// Replace the body so it can be read again
-		req.Body = io.NopCloser(bytes.NewBuffer(reqBody))
-	}
-
-	log.Printf("[DEBUG] Request: %s %s\nHeaders: %v", req.Method, req.URL, req.Header)
-	if len(reqBody) > 0 {
-		log.Printf("Body: %s", string(reqBody))
-	}
-
-	// Create a copy of the request to ensure we don't modify the original
-	reqCopy := req.Clone(req.Context())
-	if len(reqBody) > 0 {
-		reqCopy.Body = io.NopCloser(bytes.NewBuffer(reqBody))
-	}
-
-	// Make the request
-	resp, err := t.Transport.RoundTrip(reqCopy)
-	if err != nil {
-		log.Printf("[ERROR] Request failed: %v", err)
-		return nil, err
-	}
-
-	// Log response
-	var respBody []byte
-	if resp.Body != nil {
-		respBody, err = io.ReadAll(resp.Body)
-		if err != nil {
-			log.Printf("[ERROR] Failed to read response body: %v", err)
-			return nil, err
-		}
-		// Replace the body so it can be read again
-		resp.Body = io.NopCloser(bytes.NewBuffer(respBody))
-	}
-
-	log.Printf("[DEBUG] Response: %s\nHeaders: %v", resp.Status, resp.Header)
-	if len(respBody) > 0 {
-		log.Printf("Body: %s", string(respBody))
-	}
-
-	return resp, nil
-}
-
 func getServiceDiscoveryClient(d *schema.ResourceData, version string) *svcdiscovery.APIClient {
 	client := svcdiscovery.NewAPIClient(&svcdiscovery.Configuration{
 		AccountId:     d.Get("account_id").(string),
@@ -663,11 +599,6 @@ func getServiceDiscoveryClient(d *schema.ResourceData, version string) *svcdisco
 		ApiKey:        d.Get("platform_api_key").(string),
 		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
 		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)},
-		HTTPClient: &http.Client{
-			Transport: &LoggingTransport{
-				Transport: http.DefaultTransport,
-			},
-		},
 	})
 	return client
 }
