@@ -146,15 +146,15 @@ func (a *AgentApiService) CreateAgent(ctx context.Context, body ApiCreateAgentRe
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -281,15 +281,15 @@ func (a *AgentApiService) CreateInstallation(ctx context.Context, body ApiCreate
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -413,15 +413,15 @@ func (a *AgentApiService) DeleteAgent(ctx context.Context, agentIdentity string,
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -545,15 +545,15 @@ func (a *AgentApiService) GetAgent(ctx context.Context, agentIdentity string, ac
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -677,15 +677,15 @@ func (a *AgentApiService) GetAgentToken(ctx context.Context, agentIdentity strin
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -809,15 +809,15 @@ func (a *AgentApiService) GetInfrastructureForAgent(ctx context.Context, agentId
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -943,15 +943,15 @@ func (a *AgentApiService) GetInstallation(ctx context.Context, agentIdentity str
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -1084,15 +1084,15 @@ func (a *AgentApiService) ListAgent(ctx context.Context, accountIdentifier strin
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -1223,15 +1223,15 @@ func (a *AgentApiService) ListInfrastructure(ctx context.Context, accountIdentif
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -1361,15 +1361,15 @@ func (a *AgentApiService) ListInstallation(ctx context.Context, agentIdentity st
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -1495,15 +1495,15 @@ func (a *AgentApiService) StopOngoingDiscovery(ctx context.Context, agentIdentit
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -1630,15 +1630,15 @@ func (a *AgentApiService) UpdateAgent(ctx context.Context, body ApiUpdateAgentRe
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}

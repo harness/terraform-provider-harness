@@ -145,15 +145,15 @@ func (a *ApplicationmapApiService) ApplicationMapAutoGroup(ctx context.Context, 
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -280,15 +280,15 @@ func (a *ApplicationmapApiService) CreateApplicationMap(ctx context.Context, bod
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -414,15 +414,15 @@ func (a *ApplicationmapApiService) DeleteApplicationMap(ctx context.Context, age
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -548,15 +548,15 @@ func (a *ApplicationmapApiService) GetApplicationMap(ctx context.Context, agentI
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -691,15 +691,15 @@ func (a *ApplicationmapApiService) ListApplicationMap(ctx context.Context, agent
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -830,15 +830,15 @@ func (a *ApplicationmapApiService) ListDiscoveredServiceForApplicationMap(ctx co
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -967,15 +967,15 @@ func (a *ApplicationmapApiService) RemoveStaleServicesFromApplicationMap(ctx con
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -1102,15 +1102,15 @@ func (a *ApplicationmapApiService) SaveApplicationMap(ctx context.Context, body 
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -1239,15 +1239,15 @@ func (a *ApplicationmapApiService) UpdateApplicationMap(ctx context.Context, bod
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}

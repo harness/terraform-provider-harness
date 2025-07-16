@@ -137,15 +137,15 @@ func (a *SettingApiService) GetSetting(ctx context.Context, accountIdentifier st
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -268,15 +268,15 @@ func (a *SettingApiService) ResetImageRegistrySetting(ctx context.Context, body 
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -399,15 +399,15 @@ func (a *SettingApiService) SaveSetting(ctx context.Context, body ServiceSaveSet
 				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		if localVarHttpResponse.StatusCode == 500 {
+		// Handle 4xx and 5xx errors
+		if localVarHttpResponse.StatusCode >= 400 {
 			var v ApiError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
+			if err == nil {
 				newErr.model = v
-				return localVarReturnValue, localVarHttpResponse, newErr
+				newErr.error = v.Message
+			}
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
