@@ -52,9 +52,10 @@ func AgentDataSourceSchema() map[string]*schema.Schema {
 			Computed:    true,
 		},
 		"tags": {
-			Description: "Key-value map of resource tags for the agent.",
-			Type:        schema.TypeMap,
+			Description: "Key-value list of resource tags for the agent.",
+			Type:        schema.TypeList,
 			Computed:    true,
+			Elem:        &schema.Schema{Type: schema.TypeString},
 		},
 		"installation_type": {
 			Description: "Type of installation for the agent.",

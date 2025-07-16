@@ -36,18 +36,12 @@ resource "harness_service_discovery_agent" "node_agent" {
 // Create a new service discovery agent with full configuration
 resource "harness_service_discovery_agent" "full_config" {
   name                   = "full-config-example"
-  description            = "Example service discovery agent with full configuration"
   org_identifier         = var.org_identifier
   project_identifier     = var.project_identifier
   environment_identifier = var.environment_identifier
   infra_identifier       = "full-config-example"
   permanent_installation = false
   correlation_id         = "full-config-correlation-123"
-
-  tags = {
-    "managed-by"  = "terraform"
-    "environment" = "dev"
-  }
 
   config {
     collector_image    = "harness/service-discovery-collector:main-latest"

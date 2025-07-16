@@ -44,6 +44,26 @@ func ExpandKubernetesConfig(input []interface{}) (*svcdiscovery.DatabaseKubernet
 		return nil, fmt.Errorf("kubernetes.image_pull_policy: %w", err)
 	}
 
+	// Handle run_as_user
+	if v, ok := cfg["run_as_user"]; ok {
+		if v != nil {
+			// Convert to int64 first, then to int32
+			if runAsUser, ok := v.(int); ok {
+				k8s.RunAsUser = int32(runAsUser)
+			}
+		}
+	}
+
+	// Handle run_as_group
+	if v, ok := cfg["run_as_group"]; ok {
+		if v != nil {
+			// Convert to int64 first, then to int32
+			if runAsGroup, ok := v.(int); ok {
+				k8s.RunAsGroup = int32(runAsGroup)
+			}
+		}
+	}
+
 	// Handle resources
 	if resources, ok := cfg["resources"].([]interface{}); ok && len(resources) > 0 {
 		res, err := expandResources(resources[0].(map[string]interface{}))
@@ -111,6 +131,8 @@ func FlattenKubernetesConfig(k8s *svcdiscovery.DatabaseKubernetesAgentConfigurat
 		"namespace":                  k8s.Namespace,
 		"service_account":            k8s.ServiceAccount,
 		"image_pull_policy":          k8s.ImagePullPolicy,
+		"run_as_user":                int(k8s.RunAsUser),
+		"run_as_group":               int(k8s.RunAsGroup),
 	}
 
 	// Add resources

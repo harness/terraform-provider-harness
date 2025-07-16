@@ -36,7 +36,6 @@ func FlattenAgentToSchema(d *schema.ResourceData, agent *svcdiscovery.ApiGetAgen
 	setStringIfNotEmpty("updated_at", agent.UpdatedAt)
 	setStringIfNotEmpty("created_by", agent.CreatedBy)
 	setStringIfNotEmpty("updated_by", agent.UpdatedBy)
-	// setStringIfNotEmpty("infra_identifier", agent.InfraIdentifier)
 
 	d.Set("network_map_count", agent.NetworkMapCount)
 	d.Set("service_count", agent.ServiceCount)
@@ -45,10 +44,15 @@ func FlattenAgentToSchema(d *schema.ResourceData, agent *svcdiscovery.ApiGetAgen
 	d.Set("removed", agent.Removed)
 
 	// Handle tags - ensure it's never null
-	if agent.Tags != nil {
-		d.Set("tags", agent.Tags)
+	if agent.Tags != nil && len(agent.Tags) > 0 {
+		// Convert tags to a list of strings
+		tags := make([]string, len(agent.Tags))
+		for i, tag := range agent.Tags {
+			tags[i] = tag // Directly use the tag string
+		}
+		d.Set("tags", tags)
 	} else {
-		d.Set("tags", map[string]string{})
+		d.Set("tags", []string{})
 	}
 
 	// Handle config

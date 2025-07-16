@@ -41,16 +41,6 @@ func AgentResourceSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Optional:    true,
 		},
-		"description": {
-			Description: "Description of the agent.",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
-		"tags": {
-			Description: "Key-value map of resource tags for the agent.",
-			Type:        schema.TypeMap,
-			Optional:    true,
-		},
 		"installation_type": {
 			Description: "Type of installation for the agent.",
 			Type:        schema.TypeString,

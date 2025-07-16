@@ -27,7 +27,6 @@ func ResourceServiceDiscoveryAgent() *schema.Resource {
 			"```hcl\n" +
 			`resource "harness_service_discovery_agent" "example" {
   name                   = "ExampleAgent"
-  description            = "Example Service Discovery Agent"
   org_identifier         = "your_org_id"
   project_identifier     = "your_project_id"
   environment_identifier = "your_environment_id"
@@ -273,9 +272,10 @@ func resourceServiceDiscoveryAgentRead(ctx context.Context, d *schema.ResourceDa
 
 	// Handle tags
 	if len(agent.Tags) > 0 {
-		tags := make(map[string]string)
-		for _, tag := range agent.Tags {
-			tags[tag] = tag // Using the same key-value pair for simplicity
+		// Convert tags to a list of strings
+		tags := make([]string, len(agent.Tags))
+		for i, tag := range agent.Tags {
+			tags[i] = tag // Directly use the tag string
 		}
 		if err := d.Set("tags", tags); err != nil {
 			return diag.FromErr(fmt.Errorf("error setting tags: %w", err))
@@ -283,7 +283,6 @@ func resourceServiceDiscoveryAgentRead(ctx context.Context, d *schema.ResourceDa
 	} else {
 		d.Set("tags", nil)
 	}
-
 	// Handle timestamps
 	if agent.CreatedAt != "" {
 		if err := d.Set("created_at", agent.CreatedAt); err != nil {
