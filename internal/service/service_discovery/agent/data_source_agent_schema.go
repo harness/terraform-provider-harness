@@ -39,11 +39,6 @@ func AgentDataSourceSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Optional:    true,
 		},
-		"infra_identifier": {
-			Description: "The infrastructure identifier of the agent (optional).",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
 
 		// Computed fields
 		"id": {
