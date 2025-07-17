@@ -73,6 +73,17 @@ func AgentResourceSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
+		"description": {
+			Description: "Description of the agent.",
+			Type:        schema.TypeString,
+			Computed:    true,
+		},
+		"tags": {
+			Description: "List of resource tags for the agent.",
+			Type:        schema.TypeList,
+			Computed:    true,
+			Elem:        &schema.Schema{Type: schema.TypeString},
+		},
 		"network_map_count": {
 			Description: "Number of network maps associated with this agent.",
 			Type:        schema.TypeInt,

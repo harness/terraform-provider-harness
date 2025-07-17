@@ -377,8 +377,8 @@ func resourceServiceDiscoveryAgentUpdate(ctx context.Context, d *schema.Resource
 	}
 
 	// Check if any of the immutable fields have changed
-	if d.HasChanges("org_identifier", "project_identifier", "environment_identifier") {
-		return diag.Errorf("cannot update immutable fields: org_identifier, project_identifier, environment_identifier")
+	if d.HasChanges("org_identifier", "project_identifier", "environment_identifier", "infra_identifier") {
+		return diag.Errorf("cannot update immutable fields: org_identifier, project_identifier, environment_identifier, infra_identifier")
 	}
 
 	// Read the current agent state to get the current config

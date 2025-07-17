@@ -23,7 +23,7 @@ func ExpandKubernetesConfig(input []interface{}) (*svcdiscovery.DatabaseKubernet
 		return nil, fmt.Errorf("kubernetes.namespace: %w", err)
 	}
 
-	k8s.ServiceAccount, err = getString(cfg, "service_account", true)
+	k8s.ServiceAccount, err = getString(cfg, "service_account", false)
 	if err != nil {
 		return nil, fmt.Errorf("kubernetes.service_account: %w", err)
 	}
@@ -34,7 +34,7 @@ func ExpandKubernetesConfig(input []interface{}) (*svcdiscovery.DatabaseKubernet
 		return nil, fmt.Errorf("kubernetes.disable_namespace_creation: %w", err)
 	}
 
-	k8s.Namespaced, err = getBool(cfg, "namespaced", true)
+	k8s.Namespaced, err = getBool(cfg, "namespaced", false)
 	if err != nil {
 		return nil, fmt.Errorf("kubernetes.namespaced: %w", err)
 	}
