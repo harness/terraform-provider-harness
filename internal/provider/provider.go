@@ -29,6 +29,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/variable_set"
 	service_discovery_agent "github.com/harness/terraform-provider-harness/internal/service/service_discovery/agent"
+	service_discovery_setting "github.com/harness/terraform-provider-harness/internal/service/service_discovery/setting"
 
 	cdng_manual_freeze "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
@@ -322,6 +323,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_infra_module":                    module_registry.DataSourceInfraModule(),
 				"harness_chaos_infrastructure":                     infrastructure.DataSourceChaosInfrastructureService(),
 				"harness_service_discovery_agent":                  service_discovery_agent.DataSourceServiceDiscoveryAgent(),
+				"harness_service_discovery_setting":                service_discovery_setting.DataSourceSetting(),
 				"harness_platform_har_registry":                    har_registry.DataSourceRegistry(),
 				"harness_platform_infra_variable_set":              variable_set.DataSourceVariableSet(),
 			},
@@ -483,6 +485,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_infra_module":                    module_registry.ResourceInfraModule(),
 				"harness_chaos_infrastructure":                     infrastructure.ResourceChaosInfrastructure(),
 				"harness_service_discovery_agent":                  service_discovery_agent.ResourceServiceDiscoveryAgent(),
+				"harness_service_discovery_setting":                service_discovery_setting.ResourceSetting(),
 				"harness_platform_har_registry":                    har_registry.ResourceRegistry(),
 				"harness_platform_infra_variable_set":              variable_set.ResourceVariableSet(),
 				"harness_platform_gitops_filters":                  gitops_filters.ResourceGitOpsFilters(),
