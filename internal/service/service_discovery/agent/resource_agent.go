@@ -128,18 +128,27 @@ func validateAgentInput(d *schema.ResourceData) diag.Diagnostics {
 		configs := v.([]interface{})
 		if len(configs) > 0 {
 			if config, ok := configs[0].(map[string]interface{}); ok {
-				if _, ok := config["kubernetes"].([]interface{})[0].(map[string]interface{}); !ok {
+				if kubernetes, ok := config["kubernetes"].([]interface{}); ok && len(kubernetes) > 0 {
+					if kubernetesConfig, ok := kubernetes[0].(map[string]interface{}); ok {
+						if _, ok := kubernetesConfig["namespace"].(string); !ok {
+							diags = append(diags, diag.Diagnostic{
+								Severity: diag.Error,
+								Summary:  "Invalid configuration",
+								Detail:   "config.kubernetes.namespace is required when config block is specified",
+							})
+						}
+					} else {
+						diags = append(diags, diag.Diagnostic{
+							Severity: diag.Error,
+							Summary:  "Invalid configuration",
+							Detail:   "config.kubernetes must be a valid map when config block is specified",
+						})
+					}
+				} else {
 					diags = append(diags, diag.Diagnostic{
 						Severity: diag.Error,
 						Summary:  "Invalid configuration",
-						Detail:   "config.kubernetes is required when config block is specified",
-					})
-				}
-				if _, ok := config["kubernetes"].([]interface{})[0].(map[string]interface{})["namespace"].(string); !ok {
-					diags = append(diags, diag.Diagnostic{
-						Severity: diag.Error,
-						Summary:  "Invalid configuration",
-						Detail:   "config.kubernetes.namespace is required when config block is specified",
+						Detail:   "config.kubernetes is required and must contain at least one entry when config block is specified",
 					})
 				}
 			}

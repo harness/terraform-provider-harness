@@ -68,8 +68,9 @@ func ExpandDataCollectionConfig(input []interface{}) (*svcdiscovery.DatabaseData
 	}
 
 	// Handle cron
-	if cron, ok := cfg["cron"].([]interface{}); ok && len(cron) > 0 {
-		if cronMap, ok := cron[0].(map[string]interface{}); ok {
+	if cron, ok := cfg["cron"].([]interface{}); ok && len(cron) > 0 && cron[0] != nil {
+		cronElement := cron[0]
+		if cronMap, ok := cronElement.(map[string]interface{}); ok {
 			if expr, ok := cronMap["expression"].(string); ok {
 				data.Cron = &svcdiscovery.DatabaseCronConfig{
 					Expression: expr,

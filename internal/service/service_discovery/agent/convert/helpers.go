@@ -25,7 +25,11 @@ func getString(m map[string]interface{}, key string, required bool) (string, err
 		return "", &ErrInvalidType{Expected: "string", Actual: v}
 	}
 
-	return strings.TrimSpace(str), nil
+	str = strings.TrimSpace(str)
+	if required && str == "" {
+		return "", &ErrRequiredField{Field: key}
+	}
+	return str, nil
 }
 
 // getBool gets a bool value from a map with a default

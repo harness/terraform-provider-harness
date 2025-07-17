@@ -170,20 +170,29 @@ func FlattenKubernetesConfig(k8s *svcdiscovery.DatabaseKubernetesAgentConfigurat
 func expandResources(m map[string]interface{}) (*svcdiscovery.DatabaseResourceRequirements, error) {
 	res := &svcdiscovery.DatabaseResourceRequirements{}
 
-	if limits, ok := m["limits"].([]interface{}); ok && len(limits) > 0 {
-		if limitMap, ok := limits[0].(map[string]interface{}); ok {
-			res.Limits = &svcdiscovery.DatabaseResourceList{
-				Cpu:    limitMap["cpu"].(string),
-				Memory: limitMap["memory"].(string),
+	if limits, ok := m["limits"].([]interface{}); ok && len(limits) > 0 && limits[0] != nil {
+		limitElement := limits[0]
+		if firstLimit, isMap := limitElement.(map[string]interface{}); isMap {
+			if cpu, hasCpu := firstLimit["cpu"].(string); hasCpu {
+				if memory, hasMemory := firstLimit["memory"].(string); hasMemory {
+					res.Limits = &svcdiscovery.DatabaseResourceList{
+						Cpu:    cpu,
+						Memory: memory,
+					}
+				}
 			}
 		}
 	}
-
-	if requests, ok := m["requests"].([]interface{}); ok && len(requests) > 0 {
-		if reqMap, ok := requests[0].(map[string]interface{}); ok {
-			res.Requests = &svcdiscovery.DatabaseResourceList{
-				Cpu:    reqMap["cpu"].(string),
-				Memory: reqMap["memory"].(string),
+	if requests, ok := m["requests"].([]interface{}); ok && len(requests) > 0 && requests[0] != nil {
+		requestElement := requests[0]
+		if firstRequest, isMap := requestElement.(map[string]interface{}); isMap {
+			if cpu, hasCpu := firstRequest["cpu"].(string); hasCpu {
+				if memory, hasMemory := firstRequest["memory"].(string); hasMemory {
+					res.Requests = &svcdiscovery.DatabaseResourceList{
+						Cpu:    cpu,
+						Memory: memory,
+					}
+				}
 			}
 		}
 	}
