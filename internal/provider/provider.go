@@ -322,7 +322,6 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_infra_module":                    module_registry.DataSourceInfraModule(),
 				"harness_chaos_infrastructure":                     infrastructure.DataSourceChaosInfrastructureService(),
 				"harness_service_discovery_agent":                  service_discovery_agent.DataSourceServiceDiscoveryAgent(),
-				"harness_service_discovery_agents":                 service_discovery_agent.DataSourceServiceDiscoveryAgent(),
 				"harness_platform_har_registry":                    har_registry.DataSourceRegistry(),
 				"harness_platform_infra_variable_set":              variable_set.DataSourceVariableSet(),
 			},
