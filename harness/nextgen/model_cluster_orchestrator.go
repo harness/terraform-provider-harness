@@ -9,12 +9,21 @@
  */
 package nextgen
 
-import "time"
+import (
+	"time"
+)
 
 type ClusterOrchDistributionSelector string
 type ClusterOrchNodeDistributionStrategy string
 type ConsolidationPolicy string
-type replacementWindowType string
+type ReplacementWindowType string
+
+const (
+	AlwaysReplacementWindow ReplacementWindowType = "Always"
+	NeverReplacementWindow  ReplacementWindowType = "Never"
+	CustomReplacementWindow ReplacementWindowType = "Custom"
+)
+
 type podEvictor struct {
 	Enabled             bool    `json:"enabled"`
 	EvictSingleReplicas bool    `json:"evict_single_replicas"`
@@ -41,25 +50,34 @@ type ReverseFallback struct {
 	Enabled       bool   `json:"enabled"`
 	RetryInterval string `json:"retry_interval"`
 }
-type commitmentIntegration struct {
+type CommitmentIntegration struct {
 	Enabled        bool   `json:"enabled"`
 	CloudAccountID string `json:"cloud_account_id"`
 }
-type windowAppliesTo struct {
+type WindowAppliesTo struct {
 	HarnessPodEviction bool `json:"harness_pod_eviction"`
+	Consolidation      bool `json:"consolidation"`
+	ReverseFallback    bool `json:"reverse_fallback"`
 }
-type windowDetails struct {
-	Days      []time.Weekday `json:"days"`
-	AllDay    bool           `json:"all_day"`
-	StartTime *TimeInDay     `json:"start_time"`
-	EndTime   *TimeInDay     `json:"end_time"`
-	TimeZone  string         `json:"time_zone"`
+
+type TimeInDayForWindow struct {
+	Hour int `json:"hour"`
+	Min  int `json:"minute"`
 }
-type replacementWindow struct {
-	AppliesTo             *windowAppliesTo      `json:"applies_to"`
-	ReplacementWindowType replacementWindowType `json:"replacement_window_type"`
-	WindowDetails         *windowDetails        `json:"window_details,omitempty"`
+
+type WindowDetails struct {
+	Days      []time.Weekday      `json:"days"`
+	AllDay    bool                `json:"all_day"`
+	StartTime *TimeInDayForWindow `json:"start_time"`
+	EndTime   *TimeInDayForWindow `json:"end_time"`
+	TimeZone  string              `json:"time_zone"`
 }
+type ReplacementWindow struct {
+	AppliesTo             *WindowAppliesTo      `json:"applies_to"`
+	ReplacementWindowType ReplacementWindowType `json:"replacement_window_type"`
+	WindowDetails         *WindowDetails        `json:"window_details,omitempty"`
+}
+
 type ClusterOrchConfig struct {
 	SpotDistribution      ClusterOrchDistributionSelector     `json:"spot_distribution"`
 	NodeDeletionDelay     int                                 `json:"node_deletion_delay"`
@@ -69,8 +87,8 @@ type ClusterOrchConfig struct {
 	OnDemandSplit         int                                 `json:"on_demand_split"`
 	Consolidation         consolidation                       `json:"consolidation"`
 	ReverseFallback       *ReverseFallback                    `json:"reverse_fallback"`
-	CommitmentIntegration *commitmentIntegration              `json:"commitment_integration"`
-	ReplacementWindow     *replacementWindow                  `json:"replacement_window"`
+	CommitmentIntegration *CommitmentIntegration              `json:"commitment_integration"`
+	ReplacementWindow     *ReplacementWindow                  `json:"replacement_window"`
 }
 
 type ClusterOrchestratorUserConfig struct {
