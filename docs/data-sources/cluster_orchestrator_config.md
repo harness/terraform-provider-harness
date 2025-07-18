@@ -3,12 +3,12 @@
 page_title: "harness_cluster_orchestrator_config Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for ClusterOrchestrator Config.
+  Data Source for retrieving Harness CCM ClusterOrchestrator Config.
 ---
 
 # harness_cluster_orchestrator_config (Data Source)
 
-Resource for ClusterOrchestrator Config.
+Data Source for retrieving Harness CCM ClusterOrchestrator Config.
 
 ## Example Usage
 
@@ -28,8 +28,10 @@ data "harness_cluster_orchestrator_config" "example" {
 ### Optional
 
 - `binpacking` (Block List, Max: 1) Binpacking preferences for Cluster Orchestrator (see [below for nested schema](#nestedblock--binpacking))
+- `commitment_integration` (Block List, Max: 1) Commitment integration configuration for Cluster Orchestrator (see [below for nested schema](#nestedblock--commitment_integration))
 - `distribution` (Block List, Max: 1) Spot and Ondemand Distribution Preferences for workload replicas (see [below for nested schema](#nestedblock--distribution))
 - `node_preferences` (Block List, Max: 1) Node preferences for Cluster Orchestrator (see [below for nested schema](#nestedblock--node_preferences))
+- `replacement_schedule` (Block List, Max: 1) Replacement schedule for Cluster Orchestrator (see [below for nested schema](#nestedblock--replacement_schedule))
 
 ### Read-Only
 
@@ -93,6 +95,15 @@ Required:
 
 
 
+<a id="nestedblock--commitment_integration"></a>
+### Nested Schema for `commitment_integration`
+
+Required:
+
+- `enabled` (Boolean) Flag to enable Commitment Integration
+- `master_account_id` (String) Master AWS account id for commitment integration
+
+
 <a id="nestedblock--distribution"></a>
 ### Nested Schema for `distribution`
 
@@ -114,3 +125,40 @@ Optional:
 
 - `reverse_fallback_interval` (String) Reverse fallback interval
 - `ttl` (String) TTL for nodes
+
+
+<a id="nestedblock--replacement_schedule"></a>
+### Nested Schema for `replacement_schedule`
+
+Required:
+
+- `applies_to` (Block List, Min: 1, Max: 1) Defines the scope of the replacement schedule (see [below for nested schema](#nestedblock--replacement_schedule--applies_to))
+- `window_type` (String) Window type for replacement schedule
+
+Optional:
+
+- `window_details` (Block List, Max: 1) (see [below for nested schema](#nestedblock--replacement_schedule--window_details))
+
+<a id="nestedblock--replacement_schedule--applies_to"></a>
+### Nested Schema for `replacement_schedule.applies_to`
+
+Required:
+
+- `consolidation` (Boolean)
+- `harness_pod_eviction` (Boolean)
+- `reverse_fallback` (Boolean)
+
+
+<a id="nestedblock--replacement_schedule--window_details"></a>
+### Nested Schema for `replacement_schedule.window_details`
+
+Required:
+
+- `days` (List of String) List of days on which schedule need to be active. Valid values are SUN, MON, TUE, WED, THU, FRI and SAT.
+- `time_zone` (String) Time zone in which the schedule needs to be executed. Example Valid values: UTC, America/New_York, Europe/London, Asia/Kolkata, Asia/Tokyo, Asia/Hong_Kong, Asia/Singapore, Australia/Melbourne and Australia/Sydney.
+
+Optional:
+
+- `all_day` (Boolean)
+- `end_time` (String) End time of schedule in the format HH:MM. Eg : 13:15 for 01:15pm
+- `start_time` (String) Start time of schedule in the format HH:MM. Eg : 13:15 for 01:15pm
