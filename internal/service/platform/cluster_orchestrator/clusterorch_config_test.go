@@ -68,6 +68,25 @@ func testClusterOrchConfig(orchID string) string {
 			ttl = "1h"
             reverse_fallback_interval = "6h"
 		} 
+		commitment_integration {
+			enabled           = true
+			master_account_id = "dummyAccountId"
+		}
+		replacement_schedule {
+			window_type = "Custom"
+			applies_to {
+			  consolidation        = true
+			  harness_pod_eviction = true
+			  reverse_fallback     = true
+			}
+			window_details {
+			  days       = ["SUN", "WED", "SAT"]
+			  time_zone  = "Asia/Calcutta"
+			  all_day    = false
+			  start_time = "10:30"
+			  end_time   = "11:30"
+			}
+		}
 	}
 `, orchID)
 }
