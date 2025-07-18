@@ -1,6 +1,10 @@
 package cluster_orchestrator
 
 import (
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -94,6 +98,8 @@ func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 			}
 		}
 	}
+	populateCommitmentIntegrationConfig(d, config)
+	populateReplacementWindowConfig(d, config)
 	return *config
 }
 func getDisruptionBudgetReasons(b map[string]interface{}) []string {
@@ -109,6 +115,79 @@ func getDisruptionBudgetReasons(b map[string]interface{}) []string {
 	}
 	return reasonList
 }
+
+func populateCommitmentIntegrationConfig(d *schema.ResourceData, config *nextgen.ClusterOrchConfig) {
+	if _, ok := d.GetOk("commitment_integration"); ok {
+		config.CommitmentIntegration = &nextgen.CommitmentIntegration{
+			Enabled:        d.Get("commitment_integration.0.enabled").(bool),
+			CloudAccountID: d.Get("commitment_integration.0.master_account_id").(string),
+		}
+	}
+}
+
+func populateReplacementWindowConfig(d *schema.ResourceData, config *nextgen.ClusterOrchConfig) {
+	replacementWindow := nextgen.ReplacementWindow{}
+	_, ok := d.GetOk("replacement_schedule")
+	if !ok {
+		return
+	}
+	replacementWindow.AppliesTo = &nextgen.WindowAppliesTo{
+		HarnessPodEviction: d.Get("replacement_schedule.0.applies_to.0.harness_pod_eviction").(bool),
+		Consolidation:      d.Get("replacement_schedule.0.applies_to.0.consolidation").(bool),
+		ReverseFallback:    d.Get("replacement_schedule.0.applies_to.0.reverse_fallback").(bool),
+	}
+	replacementWindow.ReplacementWindowType = nextgen.ReplacementWindowType(d.Get("replacement_schedule.0.window_type").(string))
+	details, ok := d.GetOk("replacement_schedule.0.window_details")
+	if ok {
+		windowDetails := details.([]interface{})
+		days := windowDetails[0].(map[string]interface{})["days"].([]interface{})
+		var weekDays []time.Weekday
+		for _, day := range days {
+			idx, validDay := dayIndex[day.(string)]
+			if validDay {
+				weekDays = append(weekDays, idx)
+			}
+		}
+		timeZone := windowDetails[0].(map[string]interface{})["time_zone"].(string)
+		replacementWindow.WindowDetails = &nextgen.WindowDetails{
+			Days:     weekDays,
+			TimeZone: timeZone,
+		}
+		allDay, allDayOk := windowDetails[0].(map[string]interface{})["all_day"]
+		startTime, startTimeOk := windowDetails[0].(map[string]interface{})["start_time"]
+		endTime, endTimeOk := windowDetails[0].(map[string]interface{})["end_time"]
+		if allDayOk {
+			replacementWindow.WindowDetails.AllDay = allDay.(bool)
+		}
+		if startTimeOk {
+			startTimeStr, _ := startTime.(string)
+			replacementWindow.WindowDetails.StartTime = parseTimeInDay(startTimeStr, nextgen.TimeInDayForWindow{Hour: 00, Min: 00})
+		}
+		if endTimeOk {
+			endTimeStr, _ := endTime.(string)
+			replacementWindow.WindowDetails.EndTime = parseTimeInDay(endTimeStr, nextgen.TimeInDayForWindow{Hour: 23, Min: 59})
+		}
+	}
+	config.ReplacementWindow = &replacementWindow
+	return
+}
+
+func parseTimeInDay(timeInDayStr string, defaultTimeInDay nextgen.TimeInDayForWindow) *nextgen.TimeInDayForWindow {
+	timeParts := strings.Split(strings.TrimSpace(timeInDayStr), ":")
+	timeInDay := defaultTimeInDay
+	if len(timeParts) == 2 {
+		timeHr, err := strconv.ParseInt(timeParts[0], 10, 64)
+		if err == nil {
+			timeInDay.Hour = int(timeHr)
+		}
+		timeMin, err := strconv.ParseInt(timeParts[1], 10, 64)
+		if err == nil {
+			timeInDay.Min = int(timeMin)
+		}
+	}
+	return &timeInDay
+}
+
 func readClusterOrchConfig(d *schema.ResourceData, orch *nextgen.ClusterOrchestrator) {
 	d.SetId(orch.ID)
 	d.Set("distribution", []interface{}{map[string]interface{}{
