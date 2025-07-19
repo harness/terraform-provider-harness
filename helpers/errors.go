@@ -126,6 +126,14 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 					return nil
 				}
 			}
+			respErrorBody, err := ParseErrorBody(erro)
+			if err == nil {
+				if read && (respErrorBody.Code == string(nextgen.ErrorCodes.EntityNotFound) || respErrorBody.Code == string(nextgen.ErrorCodes.EntityNotFound)) {
+					d.SetId("")
+					d.MarkNewResource()
+					return nil
+				}
+			}
 			if read && !gitopsErrOk && (erro.Code() == nextgen.ErrorCodes.EntityNotFound) {
 				d.SetId("")
 				d.MarkNewResource()
@@ -167,6 +175,14 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 	}
 
 	return diag.Errorf(err.Error())
+}
+
+func ParseErrorBody(err nextgen.GenericSwaggerError) (*nextgen.ModelError, error) {
+	var parsed nextgen.ModelError
+	if err := json.Unmarshal(err.Body(), &parsed); err != nil {
+		return nil, err
+	}
+	return &parsed, nil
 }
 
 func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
