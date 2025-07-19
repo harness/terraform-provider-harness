@@ -21,37 +21,37 @@ resource "harness_chaos_infrastructure_v2" "test" {
   name           = "<name>"
   run_as_group = <run_as_group>
   run_as_user  = <run_as_user>
-  
+
   description = "<description>"
   service_account = "<service_account>"
   namespace       = "<namespace>"
   infra_type      = "<infra_type>"
-  
+
   ai_enabled  = <ai_enabled>
   insecure_skip_verify = <insecure_skip_verify>
-  
+
   # Example of node selector
   node_selector = {
     "kubernetes.io/os" = "linux"
     "kubernetes.io/arch" = "amd64"
   }
-  
+
   # Example of labels
   label = {
     <label_key> = "<label_value>"
   }
-  
+
   # Example of annotations
   annotation = {
     <annotation_key> = "<annotation_value>"
   }
-  
+
   # Example of volumes
   volumes {
     name       = "test-volume"
     size_limit = "1Gi"
   }
-  
+
   # Example of volume mounts
   volume_mounts {
     name             = "test-volume"
@@ -59,13 +59,13 @@ resource "harness_chaos_infrastructure_v2" "test" {
     read_only        = false
     mount_propagation = "None"
   }
-  
+
   # Example of environment variables
   env {
     name  = "ENV_VAR"
     value = "test-value"
   }
-  
+
   # Example of tolerations
   tolerations {
     key                = "key1"
@@ -81,7 +81,7 @@ resource "harness_chaos_infrastructure_v2" "test" {
     secret_name = "mtls-secret"
     url         = "https://mtls.example.com:8443"
   }
-    
+
   proxy  {
     http_proxy  = "http://proxy.example.com:8080"
     https_proxy = "https://proxy.example.com:8080"
@@ -97,7 +97,7 @@ resource "harness_chaos_infrastructure_v2" "test" {
     is_default = false
     is_private = true
     use_custom_images = true
-    
+
     custom_images {
       ddcr = "<ddcr_image>"
       ddcr_fault = "<ddcr_fault_image>"
