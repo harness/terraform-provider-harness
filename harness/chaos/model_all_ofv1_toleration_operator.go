@@ -9,5 +9,13 @@
 package chaos
 
 // Operator represents a key's relationship to the value. Valid operators are Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category. +optional
-type AllOfv1TolerationOperator struct {
+type AllOfv1TolerationOperator string
+
+const (
+	TolerationOpExists AllOfv1TolerationOperator = "Exists"
+	TolerationOpEqual  AllOfv1TolerationOperator = "Equal"
+)
+
+func (v AllOfv1TolerationOperator) String() string {
+	return string(v)
 }

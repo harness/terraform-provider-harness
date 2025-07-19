@@ -9,5 +9,30 @@
 package chaos
 
 // mountPropagation determines how mounts are propagated from the host to container and the other way around. When not set, MountPropagationNone is used. This field is beta in 1.10. +optional
-type AllOfv1VolumeMountMountPropagation struct {
+type AllOfv1VolumeMountMountPropagation string
+
+const (
+	// MountPropagationNone means that the volume in a container will
+	// not receive new mounts from the host or other containers, and filesystems
+	// mounted inside the container won't be propagated to the host or other
+	// containers.
+	// Note that this mode corresponds to "private" in Linux terminology.
+	MountPropagationNone AllOfv1VolumeMountMountPropagation = "None"
+	// MountPropagationHostToContainer means that the volume in a container will
+	// receive new mounts from the host or other containers, but filesystems
+	// mounted inside the container won't be propagated to the host or other
+	// containers.
+	// Note that this mode is recursively applied to all mounts in the volume
+	// ("rslave" in Linux terminology).
+	MountPropagationHostToContainer AllOfv1VolumeMountMountPropagation = "HostToContainer"
+	// MountPropagationBidirectional means that the volume in a container will
+	// receive new mounts from the host or other containers, and its own mounts
+	// will be propagated from the container to the host or other containers.
+	// Note that this mode is recursively applied to all mounts in the volume
+	// ("rshared" in Linux terminology).
+	MountPropagationBidirectional AllOfv1VolumeMountMountPropagation = "Bidirectional"
+)
+
+func (v AllOfv1VolumeMountMountPropagation) String() string {
+	return string(v)
 }
