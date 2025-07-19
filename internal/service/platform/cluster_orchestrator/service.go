@@ -161,7 +161,7 @@ func populateReplacementWindowConfig(d *schema.ResourceData, config *nextgen.Clu
 		}
 		if startTimeOk {
 			startTimeStr, _ := startTime.(string)
-			replacementWindow.WindowDetails.StartTime = parseTimeInDay(startTimeStr, nextgen.TimeInDayForWindow{Hour: 00, Min: 00})
+			replacementWindow.WindowDetails.StartTime = parseTimeInDay(startTimeStr, nextgen.TimeInDayForWindow{Hour: 0, Min: 0})
 		}
 		if endTimeOk {
 			endTimeStr, _ := endTime.(string)
