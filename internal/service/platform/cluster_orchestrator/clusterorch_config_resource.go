@@ -373,7 +373,7 @@ func timeValidation(timeVal interface{}, p cty.Path) diag.Diagnostics {
 			Summary:  "Hour value should be between 0 and 24",
 		})
 	}
-	mm, err := strconv.ParseInt(parts[0], 10, 64)
+	mm, err := strconv.ParseInt(parts[1], 10, 64)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
