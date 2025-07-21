@@ -17,6 +17,7 @@ import (
 	image_registry "github.com/harness/terraform-provider-harness/internal/service/chaos/image_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	chaos_infrastructure_v2 "github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure_v2"
+	chaos_security_governance "github.com/harness/terraform-provider-harness/internal/service/chaos/security_governance"
 	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/dashboards"
@@ -328,6 +329,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_infrastructure_v2":                  chaos_infrastructure_v2.DataSourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                     image_registry.DataSourceChaosImageRegistry(),
 				"harness_chaos_hub":                                chaos_hub.DataSourceChaosHub(),
+				"harness_chaos_security_governance_condition":      chaos_security_governance.DataSourceChaosSecurityGovernanceCondition(),
 				"harness_service_discovery_agent":                  service_discovery_agent.DataSourceServiceDiscoveryAgent(),
 				"harness_service_discovery_setting":                service_discovery_setting.DataSourceSetting(),
 				"harness_platform_har_registry":                    har_registry.DataSourceRegistry(),
@@ -494,6 +496,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_image_registry":                     image_registry.ResourceChaosImageRegistry(),
 				"harness_chaos_hub":                                chaos_hub.ResourceChaosHub(),
 				"harness_chaos_hub_sync":                           chaos_hub.ResourceChaosHubSync(),
+				"harness_chaos_security_governance_condition":      chaos_security_governance.ResourceChaosSecurityGovernanceCondition(),
 				"harness_service_discovery_agent":                  service_discovery_agent.ResourceServiceDiscoveryAgent(),
 				"harness_service_discovery_setting":                service_discovery_setting.ResourceSetting(),
 				"harness_platform_har_registry":                    har_registry.ResourceRegistry(),
