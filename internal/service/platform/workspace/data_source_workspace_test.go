@@ -21,6 +21,8 @@ func TestAccDataSourceWorkspace(t *testing.T) {
 				Config: testAccDataSourceWorkspace(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.1", "tag2"),
 				),
 			},
 		},
@@ -91,6 +93,7 @@ func testAccDataSourceWorkspace(id string, name string) string {
 			provider_connector      = "account.${harness_platform_connector_github.test.id}"
 			repository_connector    = "account.${harness_platform_connector_github.test.id}"
 			variable_sets = [harness_platform_infra_variable_set.test.id]
+			tags = ["tag1", "tag2"]
   		}
 
 		data "harness_platform_workspace" "test" {

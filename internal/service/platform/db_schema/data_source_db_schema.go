@@ -2,6 +2,8 @@ package dbschema
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -9,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"net/http"
 )
 
 func DataSourceDBSchema() *schema.Resource {
@@ -34,8 +35,7 @@ func DataSourceDBSchema() *schema.Resource {
 			"changelog_script": {
 				Description: "Configuration to clone changeSets using script",
 				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"image": {
@@ -64,8 +64,7 @@ func DataSourceDBSchema() *schema.Resource {
 			"schema_source": {
 				Description: "Provides a connector and path at which to find the database schema representation",
 				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connector": {

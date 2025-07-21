@@ -31,10 +31,12 @@ data "harness_platform_workspace" "test" {
 
 ### Optional
 
+- `connector` (Block Set) Provider connectors configured on the Workspace. Only one connector of a type is supported (see [below for nested schema](#nestedblock--connector))
 - `description` (String) Description of the Workspace
 - `repository_branch` (String) Repository Branch in which the code should be accessed
 - `repository_commit` (String) Repository Tag in which the code should be accessed
 - `repository_sha` (String) Repository Commit SHA in which the code should be accessed
+- `tags` (Set of String) Tags to associate with the resource.
 - `variable_sets` (List of String) Variable sets to use.
 
 ### Read-Only
@@ -52,7 +54,15 @@ data "harness_platform_workspace" "test" {
 - `repository_path` (String) Repository Path is the path in which the infra code resides
 - `terraform_variable` (Block Set) Terraform variables configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable))
 - `terraform_variable_file` (Block Set) Terraform variables files configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable_file))
-- `connector` (Block Set) Provider connector configured on the workspace (see [below for nested schema](#nestedblock--connector))
+
+<a id="nestedblock--connector"></a>
+### Nested Schema for `connector`
+
+Required:
+
+- `connector_ref` (String) Connector Ref is the reference to the connector
+- `type` (String) Type is the connector type of the connector. Supported types: aws, azure, gcp
+
 
 <a id="nestedblock--environment_variable"></a>
 ### Nested Schema for `environment_variable`
@@ -85,12 +95,3 @@ Read-Only:
 - `repository_connector` (String) Repository connector is the reference to the connector used to fetch the variables.
 - `repository_path` (String) Repository path is the path in which the variables reside.
 - `repository_sha` (String) Repository commit is SHA to fetch the variables from. This cannot be set if repository branch or commit is set.
-
-
-<a id="nestedblock--connector"></a>
-### Nested Schema for `connector`
-
-Read-Only:
-
-- `connector_ref` (String) Unique identifier of the connector.
-- `type` (String) Type indicates the type of the connector. Currently we support aws, azure, gcp.
