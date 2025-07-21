@@ -1,6 +1,7 @@
 package cluster_orchestrator
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -204,6 +205,68 @@ func readClusterOrchConfig(d *schema.ResourceData, orch *nextgen.ClusterOrchestr
 		"ttl":                       orch.Config.Consolidation.NodeExpiry,
 		"reverse_fallback_interval": getReverseFBInterval(orch),
 	}})
+
+	if commitmentIntegration := getCommitmentIntegrationIfExists(orch.Config); len(commitmentIntegration) > 0 {
+		d.Set("commitment_integration", commitmentIntegration)
+	}
+
+	if replacementWindow := getReplacementWindowIfExists(orch.Config); len(replacementWindow) > 0 {
+		d.Set("replacement_schedule", replacementWindow)
+	}
+}
+
+func getCommitmentIntegrationIfExists(cfg *nextgen.ClusterOrchConfig) []interface{} {
+	if cfg.CommitmentIntegration == nil {
+		return nil
+	}
+	return []interface{}{map[string]interface{}{
+		"enabled":           cfg.CommitmentIntegration.Enabled,
+		"master_account_id": cfg.CommitmentIntegration.CloudAccountID,
+	}}
+}
+
+func getReplacementWindowIfExists(cfg *nextgen.ClusterOrchConfig) []interface{} {
+	if cfg.ReplacementWindow == nil {
+		return nil
+	}
+	replacementWindow := map[string]interface{}{
+		"window_type": cfg.ReplacementWindow.ReplacementWindowType,
+		"applies_to": []interface{}{
+			map[string]interface{}{
+				"harness_pod_eviction": cfg.ReplacementWindow.AppliesTo.HarnessPodEviction,
+				"consolidation":        cfg.ReplacementWindow.AppliesTo.Consolidation,
+				"reverse_fallback":     cfg.ReplacementWindow.AppliesTo.ReverseFallback,
+			},
+		},
+	}
+	if cfg.ReplacementWindow.WindowDetails != nil {
+		replacementWindow["window_details"] = getWindowDetails(cfg)
+	}
+	return []interface{}{replacementWindow}
+}
+
+func getWindowDetails(cfg *nextgen.ClusterOrchConfig) []interface{} {
+	var windowDetailsMap map[string]interface{}
+	windowDetails := cfg.ReplacementWindow.WindowDetails
+	if windowDetails == nil {
+		return nil
+	}
+	var days []string
+	for _, day := range windowDetails.Days {
+		days = append(days, reverseDayIndex[day])
+	}
+	windowDetailsMap = map[string]interface{}{
+		"days":      days,
+		"all_day":   windowDetails.AllDay,
+		"time_zone": windowDetails.TimeZone,
+	}
+	if windowDetails.StartTime != nil {
+		windowDetailsMap["start_time"] = fmt.Sprintf("%02d:%02d", windowDetails.StartTime.Hour, windowDetails.StartTime.Min)
+	}
+	if windowDetails.EndTime != nil {
+		windowDetailsMap["end_time"] = fmt.Sprintf("%02d:%02d", windowDetails.EndTime.Hour, windowDetails.EndTime.Min)
+	}
+	return []interface{}{windowDetailsMap}
 }
 
 func getPodEvictionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
