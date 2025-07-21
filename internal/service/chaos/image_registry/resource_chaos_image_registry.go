@@ -16,9 +16,6 @@ func ResourceChaosImageRegistry() *schema.Resource {
 		ReadContext:   resourceChaosImageRegistryRead,
 		UpdateContext: resourceChaosImageRegistryUpdate,
 		DeleteContext: resourceChaosImageRegistryDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
-		},
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {

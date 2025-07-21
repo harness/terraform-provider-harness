@@ -3,6 +3,7 @@ package image_registry
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
@@ -65,9 +66,19 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 			return r
 		},
 	)
+
+	// If the registry already exists (duplicate key error), log a warning instead of erroring
 	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key error") {
+			log.Printf("[WARN] Chaos image registry already exists: %s", err)
+			// Still set the ID and read the state
+			d.SetId(generateID(identifiers))
+			return resourceChaosImageRegistryRead(ctx, d, meta)
+		}
 		return diag.Errorf("failed to create image registry: %v", err)
 	}
+
+	d.SetId(generateID(identifiers))
 
 	d.SetId(generateID(identifiers))
 	return resourceChaosImageRegistryRead(ctx, d, meta)
@@ -201,7 +212,9 @@ func resourceChaosImageRegistryUpdate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceChaosImageRegistryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return diag.Errorf("Deletion is not supported for image registry")
+	// Nothing to do here as registry configuration is reset using is_default
+	d.SetId("")
+	return nil
 }
 
 // Helper functions
@@ -236,20 +249,25 @@ func generateID(identifiers model.ScopedIdentifiersRequest) string {
 
 func parseID(id string) (*model.ScopedIdentifiersRequest, error) {
 	parts := strings.Split(id, "/")
-	if len(parts) < 1 || len(parts) > 3 {
-		return nil, fmt.Errorf("invalid ID format: %s", id)
+	if len(parts) < 2 || len(parts) > 4 {
+		return nil, fmt.Errorf("invalid ID format, expected account_id/org_id/project_id or account_id/org_id/project_id/registry_account, got: %s", id)
 	}
 
 	identifiers := &model.ScopedIdentifiersRequest{
 		AccountIdentifier: parts[0],
 	}
 
-	if len(parts) > 1 {
-		identifiers.OrgIdentifier = &parts[1]
-	}
-
+	identifiers.OrgIdentifier = &parts[1]
 	if len(parts) > 2 {
 		identifiers.ProjectIdentifier = &parts[2]
+	}
+
+	// If we have 4 parts, the last one is the registry account
+	if len(parts) == 4 {
+		registryAccount := parts[3]
+		if registryAccount == "" {
+			return nil, fmt.Errorf("registry account cannot be empty in: %s", id)
+		}
 	}
 
 	return identifiers, nil
