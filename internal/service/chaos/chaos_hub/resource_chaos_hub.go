@@ -17,10 +17,15 @@ func ResourceChaosHub() *schema.Resource {
 		UpdateContext: resourceChaosHubUpdate,
 		DeleteContext: resourceChaosHubDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceChaosHubImport,
 		},
 
 		Schema: map[string]*schema.Schema{
+			"id": {
+				Description: "ID of the chaos hub",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"org_id": {
 				Description:  "The organization ID of the chaos hub",
 				Type:         schema.TypeString,

@@ -13,6 +13,133 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+func resourceChaosHubImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	c := meta.(*internal.Session).ChaosClient
+
+	// Parse the import ID which can be in one of these formats:
+	// 1. Account level: "hub-name"
+	// 2. Org level: "org-id/hub-name"
+	// 3. Project level: "org-id/project-id/hub-name"
+	importID := d.Id()
+	parts := strings.Split(importID, "/")
+
+	var hubName, orgID, projectID string
+
+	switch len(parts) {
+	case 1:
+		// Account level: "hub-name"
+		hubName = parts[0]
+	case 2:
+		// Org level: "org-id/hub-name"
+		orgID = parts[0]
+		hubName = parts[1]
+	case 3:
+		// Project level: "org-id/project-id/hub-name"
+		orgID = parts[0]
+		projectID = parts[1]
+		hubName = parts[2]
+	default:
+		return nil, fmt.Errorf("invalid import ID format. Expected \"<hub-name>\", \"<org-id>/<hub-name>\", or \"<org-id>/<project-id>/<hub-name>\"")
+	}
+
+	if hubName == "" {
+		return nil, fmt.Errorf("hub name cannot be empty")
+	}
+
+	// Create a client for the Chaos Hub API
+	client := chaos.NewChaosHubClient(c)
+
+	// Get the account ID from the provider config
+	accountID := c.AccountId
+	if accountID == "" {
+		return nil, fmt.Errorf("account ID must be configured in the provider")
+	}
+
+	// Create identifiers for the request
+	identifiers := model.IdentifiersRequest{
+		AccountIdentifier: accountID,
+	}
+
+	// Set org and project identifiers if they exist
+	if orgID != "" {
+		identifiers.OrgIdentifier = orgID
+	}
+	if projectID != "" {
+		identifiers.ProjectIdentifier = projectID
+	}
+
+	log.Printf("[DEBUG] Importing hub with name: %s, org: %s, project: %s", hubName, orgID, projectID)
+
+	// List all chaos hubs to find the one with the matching name
+	hubs, err := client.List(ctx, identifiers)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list chaos hubs: %v", err)
+	}
+
+	// Find the hub with the matching name
+	var hubID string
+	for _, h := range hubs {
+		log.Printf("[DEBUG] Found hub: %s (ID: %s)", h.Name, h.ID)
+		if h.Name == hubName {
+			hubID = h.ID
+			break
+		}
+	}
+
+	if hubID == "" {
+		errMsg := fmt.Sprintf("no chaos hub found with name: %s", hubName)
+		if orgID != "" || projectID != "" {
+			errMsg = fmt.Sprintf("%s in the specified scope (org: %s, project: %s)",
+				errMsg, orgID, projectID)
+		}
+		return nil, fmt.Errorf(errMsg)
+	}
+
+	// Get the full hub details using the ID
+	hub, err := client.Get(ctx, identifiers, hubID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get chaos hub details: %v", err)
+	}
+
+	// Create a ScopedIdentifiersRequest for the hub
+	scopedIdentifiers := ScopedIdentifiersRequest{
+		AccountIdentifier: accountID,
+	}
+
+	// Set org and project identifiers if they exist
+	if orgID != "" {
+		scopedIdentifiers.OrgIdentifier = &orgID
+	}
+	if projectID != "" {
+		scopedIdentifiers.ProjectIdentifier = &projectID
+	}
+
+	// Set the resource ID using the hub's ID and scope information
+	d.SetId(generateID(scopedIdentifiers, hub.ID))
+
+	// Set the resource attributes
+	d.Set("name", hub.Name)
+	d.Set("description", hub.Description)
+	d.Set("connector_id", hub.ConnectorID)
+	d.Set("connector_scope", hub.ConnectorScope)
+	d.Set("repo_branch", hub.RepoBranch)
+	d.Set("repo_name", hub.RepoName)
+	d.Set("is_default", hub.IsDefault)
+	d.Set("created_at", hub.CreatedAt)
+	d.Set("updated_at", hub.UpdatedAt)
+	d.Set("last_synced_at", hub.LastSyncedAt)
+	d.Set("is_available", hub.IsAvailable)
+	d.Set("total_experiments", hub.TotalExperiments)
+	d.Set("total_faults", hub.TotalFaults)
+
+	// Set tags if they exist
+	if len(hub.Tags) > 0 {
+		d.Set("tags", hub.Tags)
+	}
+
+	return []*schema.ResourceData{d}, nil
+}
+
 // ScopedIdentifiersRequest represents the identifiers for a scoped resource
 type ScopedIdentifiersRequest struct {
 	AccountIdentifier string  `json:"accountIdentifier"`
@@ -148,6 +275,7 @@ func resourceChaosHubRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	d.Set("name", hub.Name)
+	d.Set("id", hub.ID)
 	d.Set("connector_id", hub.ConnectorID)
 	d.Set("connector_scope", hub.ConnectorScope.String())
 	d.Set("repo_branch", hub.RepoBranch)
@@ -392,45 +520,20 @@ func generateID(identifiers ScopedIdentifiersRequest, hubID string) string {
 }
 
 func parseID(id string) (ScopedIdentifiersRequest, string, error) {
-	log.Printf("[DEBUG] Parsing ID: %s", id)
-
 	parts := strings.Split(id, "/")
-	// Require exactly 4 parts
 	if len(parts) != 4 {
-		return ScopedIdentifiersRequest{}, "", fmt.Errorf("invalid ID format, expected account_id/org_id/project_id/hub_id, got: %s", id)
-	}
-
-	// Trim whitespace from all parts
-	for i := range parts {
-		parts[i] = strings.TrimSpace(parts[i])
+		return ScopedIdentifiersRequest{}, "", fmt.Errorf("invalid ID format: expected account_id/org_id/project_id/hub_id, got: %s", id)
 	}
 
 	identifiers := ScopedIdentifiersRequest{
 		AccountIdentifier: parts[0],
 	}
-
-	// Set org if not empty
 	if parts[1] != "" {
-		orgID := parts[1]
-		identifiers.OrgIdentifier = &orgID
+		identifiers.OrgIdentifier = &parts[1]
 	}
-
-	// Set project if not empty
 	if parts[2] != "" {
-		projectID := parts[2]
-		identifiers.ProjectIdentifier = &projectID
+		identifiers.ProjectIdentifier = &parts[2]
 	}
 
-	hubID := parts[3]
-	if hubID == "" {
-		return ScopedIdentifiersRequest{}, "", fmt.Errorf("hub ID cannot be empty in: %s", id)
-	}
-
-	log.Printf("[DEBUG] Parsed ID - Account: %s, Org: %v, Project: %v, HubID: %s",
-		identifiers.AccountIdentifier,
-		identifiers.OrgIdentifier,
-		identifiers.ProjectIdentifier,
-		hubID)
-
-	return identifiers, hubID, nil
+	return identifiers, parts[3], nil
 }
