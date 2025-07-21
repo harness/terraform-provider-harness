@@ -128,7 +128,7 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 			}
 			respErrorBody, err := ParseErrorBody(erro)
 			if err == nil {
-				if read && (respErrorBody.Code == string(nextgen.ErrorCodes.EntityNotFound) || respErrorBody.Code == string(nextgen.ErrorCodes.EntityNotFound)) {
+				if read && (respErrorBody.Code == string(nextgen.ErrorCodes.EntityNotFound) || respErrorBody.Code == string(nextgen.ErrorCodes.ResourceNotFound)) {
 					d.SetId("")
 					d.MarkNewResource()
 					return nil
