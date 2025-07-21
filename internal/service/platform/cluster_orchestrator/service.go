@@ -264,7 +264,7 @@ func getWindowDetails(cfg *nextgen.ClusterOrchConfig) []interface{} {
 		windowDetailsMap["start_time"] = fmt.Sprintf("%02d:%02d", windowDetails.StartTime.Hour, windowDetails.StartTime.Min)
 	}
 	if windowDetails.EndTime != nil {
-		windowDetailsMap["end_time"] = fmt.Sprintf("%02d:%02d", windowDetails.StartTime.Hour, windowDetails.StartTime.Min)
+		windowDetailsMap["end_time"] = fmt.Sprintf("%02d:%02d", windowDetails.EndTime.Hour, windowDetails.EndTime.Min)
 	}
 	return []interface{}{windowDetailsMap}
 }
