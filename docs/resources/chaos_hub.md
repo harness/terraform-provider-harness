@@ -49,9 +49,20 @@ resource "harness_chaos_hub" "example" {
 ### Read-Only
 
 - `created_at` (String) Creation timestamp
-- `id` (String) The ID of this resource.
+- `id` (String) ID of the chaos hub
 - `is_available` (Boolean) Whether the chaos hub is available
 - `last_synced_at` (String) Timestamp of the last sync
 - `total_experiments` (Number) Total number of experiments in the hub
 - `total_faults` (Number) Total number of faults in the hub
 - `updated_at` (String) Last update timestamp
+
+## Import
+
+Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+# Import Project level Chaos Hub
+terraform import harness_chaos_hub.example <org_id>/<project_id>/<hub_name>
+```
