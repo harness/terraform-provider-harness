@@ -59,6 +59,10 @@ type APIClient struct {
 	ImageRegistryApi *ImageRegistryClient
 
 	ChaosHubApi *ChaosHubClient
+
+	// Security Governance API Clients
+	SecurityGovernanceConditionApi *SecurityGovernanceConditionClient
+	SecurityGovernanceRuleApi      *SecurityGovernanceRuleClient
 }
 
 type service struct {
@@ -87,6 +91,10 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.ListExperimentsMinimalNotificationApi = (*ListExperimentsMinimalNotificationApiService)(&c.common)
 	c.ImageRegistryApi = NewImageRegistryClient(c)
 	c.ChaosHubApi = NewChaosHubClient(c)
+
+	// Security Governance API Clients
+	c.SecurityGovernanceConditionApi = NewSecurityGovernanceConditionClient(c)
+	c.SecurityGovernanceRuleApi = NewSecurityGovernanceRuleClient(c)
 
 	return c
 }
