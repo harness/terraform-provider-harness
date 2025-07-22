@@ -193,17 +193,17 @@ func apiError(operation string, err error) diag.Diagnostics {
 
 // logTrace logs a trace message with context
 func logTrace(ctx context.Context, msg string, args ...interface{}) {
-	tflog.Trace(ctx, fmt.Sprintf(msg, args...))
+	tflog.Trace(ctx, fmt.Sprintf("[TRACE] "+msg, args...))
 }
 
 // logDebug logs a debug message with context
 func logDebug(ctx context.Context, msg string, args ...interface{}) {
-	tflog.Debug(ctx, fmt.Sprintf(msg, args...))
+	tflog.Debug(ctx, fmt.Sprintf("[DEBUG] "+msg, args...))
 }
 
 // logError logs an error message with context
 func logError(ctx context.Context, msg string, args ...interface{}) {
-	tflog.Error(ctx, fmt.Sprintf(msg, args...))
+	tflog.Error(ctx, fmt.Sprintf("[ERROR] "+msg, args...))
 }
 
 func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
