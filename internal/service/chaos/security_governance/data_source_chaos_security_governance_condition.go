@@ -35,16 +35,18 @@ func DataSourceChaosSecurityGovernanceCondition() *schema.Resource {
 				Optional:    true,
 			},
 			"id": {
-				Description: "The ID of the security governance condition",
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
+				Description:  "The ID of the security governance condition. Either `id` or `name` must be specified.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				AtLeastOneOf: []string{"id", "name"},
+				Computed:     true,
 			},
 			"name": {
-				Description: "The name of the security governance condition",
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
+				Description:  "The name of the security governance condition. Either `id` or `name` must be specified.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				AtLeastOneOf: []string{"id", "name"},
+				Computed:     true,
 			},
 			"description": {
 				Description: "The description of the security governance condition",
@@ -308,7 +310,7 @@ func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *sche
 		}
 
 		// Log the request parameters for debugging
-		logDebug(ctx, "Listing conditions with request", 
+		logDebug(ctx, "Listing conditions with request",
 			"account_id", listReq.AccountIdentifier,
 			"org_id", safeString(orgID),
 			"project_id", safeString(projectID))
@@ -332,16 +334,16 @@ func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *sche
 					continue
 				}
 
-				logTrace(ctx, "Checking condition", 
-					"index", i, 
-					"condition_id", condition.ConditionID, 
+				logTrace(ctx, "Checking condition",
+					"index", i,
+					"condition_id", condition.ConditionID,
 					"name", condition.Name)
 
 				if condition.Name == nameStr {
 					conditionID = condition.ConditionID
 					found = true
-					logDebug(ctx, "Found matching condition", 
-						"condition_id", conditionID, 
+					logDebug(ctx, "Found matching condition",
+						"condition_id", conditionID,
 						"name", nameStr)
 					break
 				}
@@ -382,7 +384,7 @@ func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *sche
 	}
 
 	// Log the get request details
-	logDebug(ctx, "Fetching condition details", 
+	logDebug(ctx, "Fetching condition details",
 		"condition_id", conditionID,
 		"account_id", identifiers.AccountIdentifier,
 		"org_id", safeString(identifiers.OrgIdentifier),
@@ -412,8 +414,8 @@ func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *sche
 			d.SetId("")
 			return nil
 		}
-		logError(ctx, "Failed to get condition", 
-			"condition_id", conditionID, 
+		logError(ctx, "Failed to get condition",
+			"condition_id", conditionID,
 			"error", err.Error())
 		return apiError(fmt.Sprintf("get security governance condition %s", conditionID), err)
 	}
@@ -433,9 +435,9 @@ func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *sche
 
 	// Set the ID and other fields
 	condition := resp.Condition
-	logDebug(ctx, "Successfully retrieved condition", 
-		"condition_id", conditionID, 
-		"name", condition.Name, 
+	logDebug(ctx, "Successfully retrieved condition",
+		"condition_id", conditionID,
+		"name", condition.Name,
 		"infra_type", condition.InfraType)
 
 	d.SetId(conditionID)
@@ -495,7 +497,7 @@ func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *sche
 
 	// Set K8s spec if it exists
 	if condition.K8sSpec != nil && condition.K8sSpec.InfraSpec != nil {
-		logDebug(ctx, "Setting K8s spec", 
+		logDebug(ctx, "Setting K8s spec",
 			"operator", string(condition.K8sSpec.InfraSpec.Operator),
 			"infra_ids_count", len(condition.K8sSpec.InfraSpec.InfraIds))
 
@@ -516,7 +518,7 @@ func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *sche
 
 	// Set Machine spec if it exists
 	if condition.MachineSpec != nil && condition.MachineSpec.InfraSpec != nil {
-		logDebug(ctx, "Setting Machine spec", 
+		logDebug(ctx, "Setting Machine spec",
 			"operator", string(condition.MachineSpec.InfraSpec.Operator),
 			"infra_ids_count", len(condition.MachineSpec.InfraSpec.InfraIds))
 
