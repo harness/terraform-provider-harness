@@ -57,14 +57,6 @@ func resourceChaosHubSyncCreate(ctx context.Context, d *schema.ResourceData, met
 
 	// Parse the hub ID if it's in full path format
 	parts := strings.Split(hubID, "/")
-	if len(parts) == 4 {
-		// If hub_id is in full path format, use its components
-		accountID = parts[0]
-		orgID = parts[1]
-		projectID = parts[2]
-		hubID = parts[3]
-	}
-
 	// Convert to model.IdentifiersRequest
 	if len(parts) == 4 {
 		// If hub_id is in full path format, use its components

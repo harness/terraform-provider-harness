@@ -2,7 +2,6 @@ package security_governance
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -463,10 +462,10 @@ func generateID(identifiers ScopedIdentifiersRequest, conditionID string) string
 // parseID parses a resource ID into its components
 func parseID(id string) (ScopedIdentifiersRequest, string, error) {
 	log.Printf("[DEBUG] Parsing ID: %s", id)
-	
-	// Handle the simple format: account/org/project/condition-id
+
+	// Handle the format: account/org/project/condition-id
 	parts := strings.Split(id, "/")
-	
+
 	switch len(parts) {
 	case 4: // account/org/project/condition-id
 		result := ScopedIdentifiersRequest{
@@ -475,46 +474,22 @@ func parseID(id string) (ScopedIdentifiersRequest, string, error) {
 			ProjectIdentifier: &parts[2],
 		}
 		return result, parts[3], nil
+
 	case 3: // account/org/condition-id
 		result := ScopedIdentifiersRequest{
 			AccountIdentifier: parts[0],
 			OrgIdentifier:     &parts[1],
 		}
 		return result, parts[2], nil
+
 	case 2: // account/condition-id
 		result := ScopedIdentifiersRequest{
 			AccountIdentifier: parts[0],
 		}
 		return result, parts[1], nil
+
 	default:
-		// Try to parse as JSON as a fallback (for backward compatibility)
-		if strings.HasPrefix(id, "{") && strings.HasSuffix(id, "}") {
-			log.Printf("[DEBUG] ID appears to be a JSON object, attempting to parse")
-			var data struct {
-				Identifiers struct {
-					AccountIdentifier string  `json:"accountIdentifier"`
-					OrgIdentifier     *string `json:"orgIdentifier,omitempty"`
-					ProjectIdentifier *string `json:"projectIdentifier,omitempty"`
-				} `json:"identifiers"`
-				Condition struct {
-					ConditionID string `json:"conditionId"`
-				} `json:"condition"`
-			}
-			
-			err := json.Unmarshal([]byte(id), &data)
-			if err == nil {
-				result := ScopedIdentifiersRequest{
-					AccountIdentifier: data.Identifiers.AccountIdentifier,
-					OrgIdentifier:     data.Identifiers.OrgIdentifier,
-					ProjectIdentifier: data.Identifiers.ProjectIdentifier,
-				}
-				log.Printf("[DEBUG] Successfully parsed JSON ID, condition ID: %s", data.Condition.ConditionID)
-				return result, data.Condition.ConditionID, nil
-			}
-			log.Printf("[WARN] Failed to parse ID as JSON: %v", err)
-		}
-		
-		return ScopedIdentifiersRequest{}, "", fmt.Errorf("invalid ID format, expected account/org/project/condition-id")
+		return ScopedIdentifiersRequest{}, "", fmt.Errorf("invalid ID format, expected account/org/project/condition-id, account/org/condition-id, or account/condition-id")
 	}
 }
 

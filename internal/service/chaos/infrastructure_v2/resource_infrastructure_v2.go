@@ -181,9 +181,6 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	// Set nested objects
-	if err := setImageRegistry(d, infra.ImageRegistry); err != nil {
-		return diag.FromErr(err)
-	}
 	if err := setMtls(d, infra.Mtls); err != nil {
 		return diag.FromErr(err)
 	}

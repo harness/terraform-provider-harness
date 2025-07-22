@@ -621,9 +621,12 @@ func resourceChaosSecurityGovernanceRuleImport(ctx context.Context, d *schema.Re
 		return nil, fmt.Errorf("invalid import format, expected: 'account_id/org_id/project_id/rule_id'")
 	}
 
+	// Keep the full ID in the resource ID
+	// This matches what parseRuleID expects
+	d.SetId(d.Id())
+
 	d.Set("org_id", parts[1])
 	d.Set("project_id", parts[2])
-	d.SetId(parts[3])
 
 	return []*schema.ResourceData{d}, nil
 }
