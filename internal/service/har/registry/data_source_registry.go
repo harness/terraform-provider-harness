@@ -63,7 +63,8 @@ func DataSourceRegistry() *schema.Resource {
 									"auth_type": {
 										Description: "Type of authentication (UserPassword, Anonymous)",
 										Type:        schema.TypeString,
-										Required:    true,
+										Optional:    true,
+										Deprecated:  "This field is deprecated and will be removed in a future version. Use auth_type in config instead.",
 									},
 									"user_password": {
 										Description: "User password authentication details",
@@ -95,8 +96,14 @@ func DataSourceRegistry() *schema.Resource {
 											},
 										},
 									},
+									"access_key_secret_key": {},
 								},
 							},
+						},
+						"auth_type": {
+							Description: "Type of authentication (UserPassword, Anonymous)",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"source": {
 							Description: "Source of the upstream",

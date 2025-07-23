@@ -139,13 +139,14 @@ func ResourceRegistry() *schema.Resource {
 									"auth_type": {
 										Description: "Type of authentication (UserPassword, Anonymous)",
 										Type:        schema.TypeString,
-										Required:    true,
+										Required:    false,
 										ValidateFunc: validation.StringInSlice([]string{
 											(string)(har.USER_PASSWORD_AuthType),
 											(string)(har.ANONYMOUS_AuthType),
 											(string)(har.ACCESS_KEY_SECRET_KEY_AuthType),
 										},
 											false),
+										Deprecated: "This field is deprecated and will be removed in a future version. Use auth_type in config instead.",
 									},
 									"secret_identifier": {
 										Description: "Secret identifier for UserPassword auth type",
@@ -168,7 +169,7 @@ func ResourceRegistry() *schema.Resource {
 						"auth_type": {
 							Description: "Type of authentication for UPSTREAM registry type (UserPassword, Anonymous)",
 							Type:        schema.TypeString,
-							Optional:    true,
+							Required:    true,
 							ValidateFunc: validation.StringInSlice([]string{
 								(string)(har.USER_PASSWORD_AuthType),
 								(string)(har.ANONYMOUS_AuthType),
@@ -373,7 +374,7 @@ func buildRegistry(d *schema.ResourceData, accountID string) *har.RegistryReques
 						if authType, ok := authConfig["auth_type"].(string); ok {
 							upstreamConfig.AuthType = (*har.AuthType)(&authType)
 
-							if authType == "UserPassword" {
+							if authType == (string)(har.USER_PASSWORD_AuthType) {
 								userPassword := har.UserPassword{}
 
 								if val, ok := authConfig["user_name"].(string); ok {
@@ -391,9 +392,32 @@ func buildRegistry(d *schema.ResourceData, accountID string) *har.RegistryReques
 								}
 								*upstreamConfig.AuthType = har.USER_PASSWORD_AuthType
 
-							} else if authType == "Anonymous" {
+							} else if authType == (string)(har.ANONYMOUS_AuthType) {
 								upstreamConfig.Auth = &har.OneOfUpstreamConfigAuth{
 									Anonymous: har.Anonymous{},
+								}
+							} else if authType == (string)(har.ACCESS_KEY_SECRET_KEY_AuthType) {
+								accessKeySecretKey := har.AccessKeySecretKey{}
+								if val, ok := authConfig["access_key"].(string); ok {
+									accessKeySecretKey.AccessKey = val
+								}
+								if accessKeySecretKey.AccessKey == "" {
+									if val, ok := authConfig["access_key_identifier"].(string); ok {
+										accessKeySecretKey.AccessKeySecretIdentifier = val
+									}
+									if val, ok := authConfig["access_key_secret_path"].(string); ok {
+										accessKeySecretKey.AccessKeySecretSpacePath = val
+									}
+								}
+								if val, ok := authConfig["secret_key_identifier"].(string); ok {
+									accessKeySecretKey.SecretKeyIdentifier = val
+								}
+								if val, ok := authConfig["secret_key_secret_path"].(string); ok {
+									accessKeySecretKey.SecretKeySpacePath = val
+								}
+
+								upstreamConfig.Auth = &har.OneOfUpstreamConfigAuth{
+									AccessKeySecretKey: accessKeySecretKey,
 								}
 							}
 						}
@@ -451,16 +475,25 @@ func readRegistry(d *schema.ResourceData, registry *har.Registry) {
 			}
 
 			// Handle Authentication
-			if registry.Config.UpstreamConfig.Auth != nil {
+			if registry.Config.UpstreamConfig.AuthType != nil {
 				authMap := map[string]interface{}{}
-				if registry.Config.UpstreamConfig.Auth.UserPassword.UserName != "" {
-					authMap["auth_type"] = "UserPassword"
+
+				authMap["auth_type"] = *registry.Config.UpstreamConfig.AuthType
+				switch *registry.Config.UpstreamConfig.AuthType {
+				case har.USER_PASSWORD_AuthType:
 					authMap["user_name"] = registry.Config.UpstreamConfig.Auth.UserPassword.UserName
 					authMap["secret_identifier"] = registry.Config.UpstreamConfig.Auth.UserPassword.SecretIdentifier
 					authMap["secret_space_path"] = registry.Config.UpstreamConfig.Auth.UserPassword.SecretSpacePath
-				} else {
-					authMap["auth_type"] = "Anonymous"
+				case har.ANONYMOUS_AuthType:
+					break
+				case har.ACCESS_KEY_SECRET_KEY_AuthType:
+					authMap["access_key"] = registry.Config.UpstreamConfig.Auth.AccessKey
+					authMap["access_key_identifier"] = registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.AccessKeySecretIdentifier
+					authMap["access_key_secret_path"] = registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.AccessKeySecretSpacePath
+					authMap["secret_key_identifier"] = registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.SecretKeyIdentifier
+					authMap["secret_key_secret_path"] = registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.SecretKeySpacePath
 				}
+
 				configMap["auth"] = authMap
 			}
 		}
