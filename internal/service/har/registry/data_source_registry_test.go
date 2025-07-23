@@ -13,6 +13,8 @@ func TestAccDataSourceVirtualRegistry(t *testing.T) {
 	resourceName := "data.harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
+	println("accountId" + ":: " + accountId)
+
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
@@ -36,18 +38,18 @@ func testAccDataSourceVirtualRegistry(id string, accId string) string {
 
 	 resource "harness_platform_har_registry" "test" {
 	   identifier   = "%[1]s"
-	   space_ref    = "%[2]s"
-	   package_type = "DOCKER"
-	
+	   package_type = "NUGET"
 	   config {
 		type = "VIRTUAL"
 	   }
-	   parent_ref = "%[2]s"
+		org_id = "har_auto_orghDfwPNTfPS"
+        project_id = "har_auto_projectnQRdqPHOUj"
 	 }
 
 	data "harness_platform_har_registry" "test" {
 			identifier = harness_platform_har_registry.test.identifier
-			space_ref = "%[2]s"
+            org_id = "har_auto_orghDfwPNTfPS"
+            project_id = "har_auto_projectnQRdqPHOUj"
 	}
 `, id, accId)
 }

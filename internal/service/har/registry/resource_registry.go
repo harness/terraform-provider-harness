@@ -35,23 +35,42 @@ func ResourceRegistry() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"org_id": {
+				Description: "Unique identifier of the organization",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "Unique identifier of the project",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"parent_ref": {
 				Description: "Parent reference for the registry",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future version. Use org_id and/or project_id instead",
 			},
 			"space_ref": {
 				Description: "Space reference for the registry",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future version. Use org_id and/or project_id instead",
 			},
 			"package_type": {
-				Description: "Type of package (DOCKER, HELM, etc.)",
+				Description: "Type of package (DOCKER, HELM, MAVEN, etc.)",
 				Type:        schema.TypeString,
 				Required:    true,
 				ValidateFunc: validation.StringInSlice([]string{
-					"DOCKER",
-					"HELM",
+					(string)(har.DOCKER_PackageType),
+					(string)(har.MAVEN_PackageType),
+					(string)(har.PYTHON_PackageType),
+					(string)(har.GENERIC_PackageType),
+					(string)(har.HELM_PackageType),
+					(string)(har.NUGET_PackageType),
+					(string)(har.NPM_PackageType),
+					(string)(har.RPM_PackageType),
+					(string)(har.CARGO_PackageType),
 				}, false),
 			},
 			"config": {
@@ -66,8 +85,8 @@ func ResourceRegistry() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 							ValidateFunc: validation.StringInSlice([]string{
-								"VIRTUAL",
-								"UPSTREAM",
+								(string)(har.VIRTUAL_RegistryType),
+								(string)(har.UPSTREAM_RegistryType),
 							}, false),
 						},
 						// Virtual Config
@@ -94,7 +113,7 @@ func ResourceRegistry() *schema.Resource {
 							},
 						},
 						"url": {
-							Description: "URL of the upstream (required if type=UPSTREAM & package_type=HELM)",
+							Description: "URL of the upstream",
 							Type:        schema.TypeString,
 							Optional:    true,
 							ValidateFunc: validation.All(
@@ -118,10 +137,15 @@ func ResourceRegistry() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"auth_type": {
-										Description:  "Type of authentication (UserPassword, Anonymous)",
-										Type:         schema.TypeString,
-										Required:     true,
-										ValidateFunc: validation.StringInSlice([]string{"UserPassword", "Anonymous"}, false),
+										Description: "Type of authentication (UserPassword, Anonymous)",
+										Type:        schema.TypeString,
+										Required:    true,
+										ValidateFunc: validation.StringInSlice([]string{
+											(string)(har.USER_PASSWORD_AuthType),
+											(string)(har.ANONYMOUS_AuthType),
+											(string)(har.ACCESS_KEY_SECRET_KEY_AuthType),
+										},
+											false),
 									},
 									"secret_identifier": {
 										Description: "Secret identifier for UserPassword auth type",
@@ -142,10 +166,14 @@ func ResourceRegistry() *schema.Resource {
 							},
 						},
 						"auth_type": {
-							Description:  "Type of authentication for UPSTREAM registry type (UserPassword, Anonymous)",
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: validation.StringInSlice([]string{"UserPassword", "Anonymous"}, false),
+							Description: "Type of authentication for UPSTREAM registry type (UserPassword, Anonymous)",
+							Type:        schema.TypeString,
+							Optional:    true,
+							ValidateFunc: validation.StringInSlice([]string{
+								(string)(har.USER_PASSWORD_AuthType),
+								(string)(har.ANONYMOUS_AuthType),
+								(string)(har.ACCESS_KEY_SECRET_KEY_AuthType),
+							}, false),
 							ConflictsWith: []string{
 								"config.0.upstream_proxies",
 							},
@@ -222,7 +250,8 @@ func ResourceRegistry() *schema.Resource {
 func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetHarClientWithContext(ctx)
 
-	registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
+	registryRef := getParentRef(c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string),
+		d.Get("parent_ref").(string)) + "/" + d.Get("identifier").(string)
 	resp, httpResp, err := c.RegistriesApi.GetRegistry(ctx, registryRef)
 
 	if err != nil {
@@ -243,8 +272,9 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var resp har.InlineResponse201
 	var httpResp *http.Response
 
-	registry := buildRegistry(d)
-	spaceRef := d.Get("space_ref").(string)
+	registry := buildRegistry(d, c.AccountId)
+	spaceRef := getParentRef(c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string),
+		d.Get("space_ref").(string))
 
 	if d.Id() == "" {
 		resp, httpResp, err = c.RegistriesApi.CreateRegistry(ctx, &har.RegistriesApiCreateRegistryOpts{
@@ -267,7 +297,8 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 func resourceRegistryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetHarClientWithContext(ctx)
 
-	registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
+	registryRef := getParentRef(c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string),
+		d.Get("parent_ref").(string)) + "/" + d.Get("identifier").(string)
 
 	_, httpResp, err := c.RegistriesApi.DeleteRegistry(ctx, registryRef)
 
@@ -278,7 +309,7 @@ func resourceRegistryDelete(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
+func buildRegistry(d *schema.ResourceData, accountID string) *har.RegistryRequest {
 	registry := &har.RegistryRequest{}
 
 	if attr, ok := d.GetOk("identifier"); ok {
@@ -289,9 +320,10 @@ func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
 		registry.Description = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("parent_ref"); ok {
-		registry.ParentRef = attr.(string)
-	}
+	parentRef := getParentRef(accountID, d.Get("org_id").(string), d.Get("project_id").(string),
+		d.Get("parent_ref").(string))
+
+	registry.ParentRef = parentRef
 
 	if attr, ok := d.GetOk("package_type"); ok {
 		pt := har.PackageType(attr.(string))
@@ -356,8 +388,9 @@ func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
 
 								upstreamConfig.Auth = &har.OneOfUpstreamConfigAuth{
 									UserPassword: userPassword,
-									AuthType:     (*har.AuthType)(&authType),
 								}
+								*upstreamConfig.AuthType = har.USER_PASSWORD_AuthType
+
 							} else if authType == "Anonymous" {
 								upstreamConfig.Auth = &har.OneOfUpstreamConfigAuth{
 									Anonymous: har.Anonymous{},

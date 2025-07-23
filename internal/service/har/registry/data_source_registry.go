@@ -28,15 +28,15 @@ func DataSourceRegistry() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"parent_ref": {
-				Description: "Parent reference for the registry",
+			"org_id": {
+				Description: "Unique identifier of the organization",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"space_ref": {
-				Description: "Space reference for the registry",
+			"project_id": {
+				Description: "Unique identifier of the project",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"package_type": {
 				Description: "Type of package (DOCKER, MAVEN, etc.)",
@@ -137,6 +137,18 @@ func DataSourceRegistry() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"parent_ref": {
+				Description: "Parent reference for the registry",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future version. Use org_id and/or project_id instead",
+			},
+			"space_ref": {
+				Description: "Space reference for the registry",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future version. Use org_id and/or project_id instead",
+			},
 		},
 	}
 }
@@ -153,7 +165,8 @@ func dataSourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta in
 	var httpResp *http.Response
 
 	id := d.Get("identifier").(string)
-	registryRef := d.Get("space_ref").(string) + "/" + id
+	registryRef := getParentRef(c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string),
+		d.Get("space_ref").(string)) + "/" + id
 
 	if id != "" && registryRef != "" {
 		resp, httpResp, err = c.RegistriesApi.GetRegistry(ctx, registryRef)
