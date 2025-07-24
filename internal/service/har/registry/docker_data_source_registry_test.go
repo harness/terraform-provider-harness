@@ -8,10 +8,10 @@ import (
 	"testing"
 )
 
-func TestAccDataSourceVirtualRegistry(t *testing.T) {
+func TestAccountVirtualRegistry(t *testing.T) {
 	id := fmt.Sprintf("tf_auto_virtual_registry")
 	resourceName := "data.harness_platform_har_registry.test"
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	_ = os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -22,7 +22,7 @@ func TestAccDataSourceVirtualRegistry(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					_, _ = acctest.TestAccGetHarClientWithContext()
 				},
-				Config: testAccDataSourceVirtualRegistry(id, accountId),
+				Config: testDocAccVirtualRegistry(id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
@@ -31,23 +31,17 @@ func TestAccDataSourceVirtualRegistry(t *testing.T) {
 	})
 }
 
-func testAccDataSourceVirtualRegistry(id string, accId string) string {
+func testDocAccVirtualRegistry(id string) string {
 	return fmt.Sprintf(`
-
 	 resource "harness_platform_har_registry" "test" {
 	   identifier   = "%[1]s"
-	   space_ref    = "%[2]s"
-	   package_type = "NPM"
-	
-	   config {
-		type = "VIRTUAL"
-	   }
-	   parent_ref = "%[2]s"
+	   package_type = "DOCKER"	
+       type = "VIRTUAL"
+       virtual { }
 	 }
 
 	data "harness_platform_har_registry" "test" {
-			identifier = harness_platform_har_registry.test.identifier
-			space_ref = "%[2]s"
+        identifier = harness_platform_har_registry.test.identifier
 	}
-`, id, accId)
+`, id)
 }

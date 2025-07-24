@@ -78,7 +78,7 @@ func TestProjectResourceVirtualDockerRegistry(t *testing.T) {
 
 // Upstream Docker Registry --- UserPassword
 func TestAccResourceUpstreamDockerRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry_arvind")
+	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -100,7 +100,7 @@ func TestAccResourceUpstreamDockerRegistry(t *testing.T) {
 	})
 }
 func TestOrgResourceUpstreamDockerRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry_arvind")
+	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -122,7 +122,7 @@ func TestOrgResourceUpstreamDockerRegistry(t *testing.T) {
 	})
 }
 func TestProjectResourceUpstreamDockerRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry_arvind")
+	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -579,7 +579,7 @@ func testProjResourceUpstreamHelmRegistry(id string, accId string) string {
 
 // Upstream Docker Registry --- Anonymous
 func TestAccResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry_arvind")
+	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -602,7 +602,7 @@ func TestAccResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
 	})
 }
 func TestOrgResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry_arvind")
+	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -625,7 +625,7 @@ func TestOrgResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
 	})
 }
 func TestProjectResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry_arvind")
+	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 

@@ -14,7 +14,7 @@ func DataSourceRegistry() *schema.Resource {
 	return &schema.Resource{
 		Description: "Resource for creating and managing Harness Registries.",
 		ReadContext: dataSourceRegistryRead,
-		Schema:      resourceRegistrySchema(),
+		Schema:      resourceRegistrySchema(true),
 	}
 }
 
@@ -30,8 +30,11 @@ func dataSourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta in
 	var httpResp *http.Response
 
 	id := d.Get("identifier").(string)
-	registryRef := getParentRef(c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string),
-		d.Get("space_ref").(string)) + "/" + id
+	registryRef := getParentRef(c.AccountId,
+		d.Get("org_id").(string),
+		d.Get("project_id").(string),
+		d.Get("space_ref").(string)) +
+		"/" + id
 
 	if id != "" && registryRef != "" {
 		resp, httpResp, err = c.RegistriesApi.GetRegistry(ctx, registryRef)
