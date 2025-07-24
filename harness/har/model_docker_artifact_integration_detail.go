@@ -10,9 +10,9 @@ package har
 
 // Docker Artifact Detail
 type DockerArtifactIntegrationDetail struct {
-	BuildDetails       *BuildDetails      `json:"buildDetails,omitempty"`
+	BuildDetails *BuildDetails `json:"buildDetails,omitempty"`
 	DeploymentsDetails *DeploymentDetails `json:"deploymentsDetails,omitempty"`
-	SbomDetails        *SbomDetails       `json:"sbomDetails,omitempty"`
-	SlsaDetails        *SlsaDetails       `json:"slsaDetails,omitempty"`
-	StoDetails         *StoDetails        `json:"stoDetails,omitempty"`
+	SbomDetails *SbomDetails `json:"sbomDetails,omitempty"`
+	SlsaDetails *SlsaDetails `json:"slsaDetails,omitempty"`
+	StoDetails *StoDetails `json:"stoDetails,omitempty"`
 }

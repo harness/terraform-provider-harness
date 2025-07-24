@@ -10,7 +10,7 @@ package har
 
 // Client Setup Details
 type ClientSetupDetails struct {
-	MainHeader string               `json:"mainHeader"`
-	SecHeader  string               `json:"secHeader"`
-	Sections   []ClientSetupSection `json:"sections"`
+	MainHeader string `json:"mainHeader"`
+	SecHeader string `json:"secHeader"`
+	Sections []ClientSetupSection `json:"sections"`
 }

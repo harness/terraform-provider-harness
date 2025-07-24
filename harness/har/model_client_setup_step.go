@@ -11,6 +11,6 @@ package har
 // Client Setup Step
 type ClientSetupStep struct {
 	Commands []ClientSetupStepCommand `json:"commands,omitempty"`
-	Header   string                   `json:"header,omitempty"`
-	Type_    *ClientSetupStepType     `json:"type,omitempty"`
+	Header string `json:"header,omitempty"`
+	Type_ *ClientSetupStepType `json:"type,omitempty"`
 }

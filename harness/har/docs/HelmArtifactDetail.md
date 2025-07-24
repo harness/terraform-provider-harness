@@ -6,7 +6,6 @@ Name | Type | Description | Notes
 **Artifact** | **string** |  | [optional] [default to null]
 **CreatedAt** | **string** |  | [optional] [default to null]
 **DownloadsCount** | **int64** |  | [optional] [default to null]
-**IsLatestVersion** | **bool** |  | [optional] [default to null]
 **ModifiedAt** | **string** |  | [optional] [default to null]
 **PackageType** | [***PackageType**](PackageType.md) |  | [default to null]
 **PullCommand** | **string** |  | [optional] [default to null]

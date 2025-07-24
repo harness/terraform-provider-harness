@@ -4,7 +4,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **ImageName** | **string** |  | [default to null]
-**IsLatestVersion** | **bool** |  | [optional] [default to null]
 **Manifests** | [**[]DockerManifestDetails**](DockerManifestDetails.md) |  | [optional] [default to null]
 **Version** | **string** |  | [default to null]
 

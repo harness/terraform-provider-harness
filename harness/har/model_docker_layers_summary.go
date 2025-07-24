@@ -10,7 +10,7 @@ package har
 
 // Harness Layers Summary
 type DockerLayersSummary struct {
-	Digest string             `json:"digest"`
+	Digest string `json:"digest"`
 	Layers []DockerLayerEntry `json:"layers,omitempty"`
-	OsArch string             `json:"osArch,omitempty"`
+	OsArch string `json:"osArch,omitempty"`
 }

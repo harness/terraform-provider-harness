@@ -10,15 +10,14 @@ package har
 
 // Docker Artifact Detail
 type DockerArtifactDetail struct {
-	CreatedAt       string       `json:"createdAt,omitempty"`
-	DownloadsCount  int64        `json:"downloadsCount,omitempty"`
-	ImageName       string       `json:"imageName"`
-	IsLatestVersion bool         `json:"isLatestVersion,omitempty"`
-	ModifiedAt      string       `json:"modifiedAt,omitempty"`
-	PackageType     *PackageType `json:"packageType"`
-	PullCommand     string       `json:"pullCommand,omitempty"`
-	RegistryPath    string       `json:"registryPath"`
-	Size            string       `json:"size,omitempty"`
-	Url             string       `json:"url"`
-	Version         string       `json:"version"`
+	CreatedAt string `json:"createdAt,omitempty"`
+	DownloadsCount int64 `json:"downloadsCount,omitempty"`
+	ImageName string `json:"imageName"`
+	ModifiedAt string `json:"modifiedAt,omitempty"`
+	PackageType *PackageType `json:"packageType"`
+	PullCommand string `json:"pullCommand,omitempty"`
+	RegistryPath string `json:"registryPath"`
+	Size string `json:"size,omitempty"`
+	Url string `json:"url"`
+	Version string `json:"version"`
 }

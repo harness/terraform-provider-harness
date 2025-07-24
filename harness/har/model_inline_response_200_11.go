@@ -9,6 +9,15 @@
 package har
 
 type InlineResponse20011 struct {
-	Data   *ArtifactVersionSummary `json:"data"`
-	Status *Status                 `json:"status"`
+	// A list of Harness Artifact Files
+	Files []FileDetail `json:"files"`
+	// The total number of items
+	ItemCount int64 `json:"itemCount,omitempty"`
+	// The total number of pages
+	PageCount int64 `json:"pageCount,omitempty"`
+	// The current page
+	PageIndex int64 `json:"pageIndex,omitempty"`
+	// The number of items per page
+	PageSize int32 `json:"pageSize,omitempty"`
+	Status *Status `json:"status"`
 }

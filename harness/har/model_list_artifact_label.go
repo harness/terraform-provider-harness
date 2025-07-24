@@ -11,8 +11,8 @@ package har
 // A list of Harness Artifact Labels
 type ListArtifactLabel struct {
 	// The total number of items
-	ItemCount int64    `json:"itemCount,omitempty"`
-	Labels    []string `json:"labels"`
+	ItemCount int64 `json:"itemCount,omitempty"`
+	Labels []string `json:"labels"`
 	// The total number of pages
 	PageCount int64 `json:"pageCount,omitempty"`
 	// The current page

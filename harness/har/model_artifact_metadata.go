@@ -11,18 +11,14 @@ package har
 // Artifact Metadata
 type ArtifactMetadata struct {
 	DeploymentMetadata *DeploymentMetadata `json:"deploymentMetadata,omitempty"`
-	DownloadsCount     int64               `json:"downloadsCount,omitempty"`
-	Labels             []string            `json:"labels,omitempty"`
-	LastModified       string              `json:"lastModified,omitempty"`
-	LatestVersion      string              `json:"latestVersion"`
-	Name               string              `json:"name"`
-	PackageType        *PackageType        `json:"packageType,omitempty"`
-	PullCommand        string              `json:"pullCommand,omitempty"`
-	RegistryIdentifier string              `json:"registryIdentifier"`
-	RegistryPath       string              `json:"registryPath"`
-	ScannedDigest      []StoDigestMetadata `json:"scannedDigest,omitempty"`
-	ScannedDigestCount int64               `json:"scannedDigestCount,omitempty"`
-	StoMetadata        *StoMetadata        `json:"stoMetadata,omitempty"`
-	TotalDigestCount   int64               `json:"totalDigestCount,omitempty"`
-	Version            string              `json:"version"`
+	DownloadsCount int64 `json:"downloadsCount,omitempty"`
+	Labels []string `json:"labels,omitempty"`
+	LastModified string `json:"lastModified,omitempty"`
+	LatestVersion string `json:"latestVersion"`
+	Name string `json:"name"`
+	PackageType *PackageType `json:"packageType,omitempty"`
+	PullCommand string `json:"pullCommand,omitempty"`
+	RegistryIdentifier string `json:"registryIdentifier"`
+	RegistryPath string `json:"registryPath"`
+	Version string `json:"version"`
 }

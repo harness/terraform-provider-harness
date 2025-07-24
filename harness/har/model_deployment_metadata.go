@@ -10,5 +10,5 @@ package har
 
 type DeploymentMetadata struct {
 	NonProdEnvCount int32 `json:"nonProdEnvCount"`
-	ProdEnvCount    int32 `json:"prodEnvCount"`
+	ProdEnvCount int32 `json:"prodEnvCount"`
 }

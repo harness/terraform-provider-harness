@@ -10,20 +10,20 @@ package har
 
 // Artifact deployments Detail
 type ArtifactDeploymentsDetail struct {
-	Count                     int32            `json:"count,omitempty"`
-	EnvIdentifier             string           `json:"envIdentifier,omitempty"`
-	EnvName                   string           `json:"envName,omitempty"`
-	EnvType                   *EnvironmentType `json:"envType,omitempty"`
-	InfraIdentifier           string           `json:"infraIdentifier,omitempty"`
-	InfraName                 string           `json:"infraName,omitempty"`
-	LastDeployedAt            string           `json:"lastDeployedAt,omitempty"`
-	LastDeployedById          string           `json:"lastDeployedById,omitempty"`
-	LastDeployedByName        string           `json:"lastDeployedByName,omitempty"`
-	LastPipelineExecutionId   string           `json:"lastPipelineExecutionId,omitempty"`
-	LastPipelineExecutionName string           `json:"lastPipelineExecutionName,omitempty"`
-	OrgIdentifier             string           `json:"orgIdentifier,omitempty"`
-	PipelineId                string           `json:"pipelineId,omitempty"`
-	ProjectIdentifier         string           `json:"projectIdentifier,omitempty"`
-	ServiceIdentifier         string           `json:"serviceIdentifier,omitempty"`
-	ServiceName               string           `json:"serviceName,omitempty"`
+	Count int32 `json:"count,omitempty"`
+	EnvIdentifier string `json:"envIdentifier,omitempty"`
+	EnvName string `json:"envName,omitempty"`
+	EnvType *EnvironmentType `json:"envType,omitempty"`
+	InfraIdentifier string `json:"infraIdentifier,omitempty"`
+	InfraName string `json:"infraName,omitempty"`
+	LastDeployedAt string `json:"lastDeployedAt,omitempty"`
+	LastDeployedById string `json:"lastDeployedById,omitempty"`
+	LastDeployedByName string `json:"lastDeployedByName,omitempty"`
+	LastPipelineExecutionId string `json:"lastPipelineExecutionId,omitempty"`
+	LastPipelineExecutionName string `json:"lastPipelineExecutionName,omitempty"`
+	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	PipelineId string `json:"pipelineId,omitempty"`
+	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	ServiceIdentifier string `json:"serviceIdentifier,omitempty"`
+	ServiceName string `json:"serviceName,omitempty"`
 }

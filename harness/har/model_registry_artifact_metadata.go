@@ -10,12 +10,12 @@ package har
 
 // Artifact Metadata
 type RegistryArtifactMetadata struct {
-	DownloadsCount     int64        `json:"downloadsCount,omitempty"`
-	Labels             []string     `json:"labels,omitempty"`
-	LastModified       string       `json:"lastModified,omitempty"`
-	LatestVersion      string       `json:"latestVersion"`
-	Name               string       `json:"name"`
-	PackageType        *PackageType `json:"packageType,omitempty"`
-	RegistryIdentifier string       `json:"registryIdentifier"`
-	RegistryPath       string       `json:"registryPath"`
+	DownloadsCount int64 `json:"downloadsCount,omitempty"`
+	Labels []string `json:"labels,omitempty"`
+	LastModified string `json:"lastModified,omitempty"`
+	LatestVersion string `json:"latestVersion"`
+	Name string `json:"name"`
+	PackageType *PackageType `json:"packageType,omitempty"`
+	RegistryIdentifier string `json:"registryIdentifier"`
+	RegistryPath string `json:"registryPath"`
 }

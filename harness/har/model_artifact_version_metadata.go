@@ -11,14 +11,14 @@ package har
 // Artifact Version Metadata
 type ArtifactVersionMetadata struct {
 	DeploymentMetadata *DeploymentMetadata `json:"deploymentMetadata,omitempty"`
-	DigestCount        int64               `json:"digestCount,omitempty"`
-	DownloadsCount     int64               `json:"downloadsCount,omitempty"`
-	IslatestVersion    bool                `json:"islatestVersion,omitempty"`
-	LastModified       string              `json:"lastModified,omitempty"`
-	Name               string              `json:"name"`
-	PackageType        *PackageType        `json:"packageType,omitempty"`
-	PullCommand        string              `json:"pullCommand,omitempty"`
-	RegistryIdentifier string              `json:"registryIdentifier"`
-	RegistryPath       string              `json:"registryPath"`
-	Size               string              `json:"size,omitempty"`
+	DigestCount int64 `json:"digestCount,omitempty"`
+	DownloadsCount int64 `json:"downloadsCount,omitempty"`
+	FileCount int64 `json:"fileCount,omitempty"`
+	LastModified string `json:"lastModified,omitempty"`
+	Name string `json:"name"`
+	PackageType *PackageType `json:"packageType,omitempty"`
+	PullCommand string `json:"pullCommand,omitempty"`
+	RegistryIdentifier string `json:"registryIdentifier"`
+	RegistryPath string `json:"registryPath"`
+	Size string `json:"size,omitempty"`
 }

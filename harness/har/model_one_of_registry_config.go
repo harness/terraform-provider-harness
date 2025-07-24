@@ -9,6 +9,6 @@
 package har
 
 type OneOfRegistryConfig struct {
-	VirtualConfig
-	UpstreamConfig
+    VirtualConfig
+    UpstreamConfig
 }

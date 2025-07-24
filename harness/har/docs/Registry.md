@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **Labels** | **[]string** |  | [optional] [default to null]
 **ModifiedAt** | **string** |  | [optional] [default to null]
 **PackageType** | [***PackageType**](PackageType.md) |  | [default to null]
+**Scanners** | [**[]Scanner**](Scanner.md) |  | [optional] [default to null]
 **Url** | **string** |  | [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

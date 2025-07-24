@@ -10,7 +10,7 @@ package har
 
 type UserPassword struct {
 	SecretIdentifier string `json:"secretIdentifier,omitempty"`
-	SecretSpaceId    int32  `json:"secretSpaceId,omitempty"`
-	SecretSpacePath  string `json:"secretSpacePath,omitempty"`
-	UserName         string `json:"userName"`
+	SecretSpaceId int32 `json:"secretSpaceId,omitempty"`
+	SecretSpacePath string `json:"secretSpacePath,omitempty"`
+	UserName string `json:"userName"`
 }

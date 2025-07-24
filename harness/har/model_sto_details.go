@@ -9,14 +9,14 @@
 package har
 
 type StoDetails struct {
-	Critical    int32  `json:"critical,omitempty"`
+	Critical int32 `json:"critical,omitempty"`
 	ExecutionId string `json:"executionId,omitempty"`
-	High        int32  `json:"high,omitempty"`
-	Ignored     int32  `json:"ignored,omitempty"`
-	Info        int32  `json:"info,omitempty"`
+	High int32 `json:"high,omitempty"`
+	Ignored int32 `json:"ignored,omitempty"`
+	Info int32 `json:"info,omitempty"`
 	LastScanned string `json:"lastScanned,omitempty"`
-	Low         int32  `json:"low,omitempty"`
-	Medium      int32  `json:"medium,omitempty"`
-	PipelineId  string `json:"pipelineId,omitempty"`
-	Total       int32  `json:"total,omitempty"`
+	Low int32 `json:"low,omitempty"`
+	Medium int32 `json:"medium,omitempty"`
+	PipelineId string `json:"pipelineId,omitempty"`
+	Total int32 `json:"total,omitempty"`
 }

@@ -9,6 +9,6 @@
 package har
 
 type InlineResponse2008 struct {
-	Data   *DockerManifests `json:"data"`
-	Status *Status          `json:"status"`
+	Data *DockerArtifactManifest `json:"data"`
+	Status *Status `json:"status"`
 }

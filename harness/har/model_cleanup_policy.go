@@ -10,8 +10,8 @@ package har
 
 // Cleanup Policy for Harness Artifact Registries
 type CleanupPolicy struct {
-	ExpireDays    int32    `json:"expireDays,omitempty"`
-	Name          string   `json:"name,omitempty"`
+	ExpireDays int32 `json:"expireDays,omitempty"`
+	Name string `json:"name,omitempty"`
 	PackagePrefix []string `json:"packagePrefix,omitempty"`
 	VersionPrefix []string `json:"versionPrefix,omitempty"`
 }

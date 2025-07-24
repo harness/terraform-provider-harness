@@ -10,6 +10,6 @@ package har
 
 type DeploymentDetails struct {
 	NonProdDeployment int32 `json:"nonProdDeployment"`
-	ProdDeployment    int32 `json:"prodDeployment"`
-	TotalDeployment   int32 `json:"totalDeployment"`
+	ProdDeployment int32 `json:"prodDeployment"`
+	TotalDeployment int32 `json:"totalDeployment"`
 }

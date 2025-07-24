@@ -9,11 +9,11 @@
 package har
 
 type BuildDetails struct {
-	OrgIdentifier       string `json:"orgIdentifier,omitempty"`
+	OrgIdentifier string `json:"orgIdentifier,omitempty"`
 	PipelineDisplayName string `json:"pipelineDisplayName,omitempty"`
 	PipelineExecutionId string `json:"pipelineExecutionId,omitempty"`
-	PipelineIdentifier  string `json:"pipelineIdentifier,omitempty"`
-	ProjectIdentifier   string `json:"projectIdentifier,omitempty"`
-	StageExecutionId    string `json:"stageExecutionId,omitempty"`
-	StepExecutionId     string `json:"stepExecutionId,omitempty"`
+	PipelineIdentifier string `json:"pipelineIdentifier,omitempty"`
+	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	StageExecutionId string `json:"stageExecutionId,omitempty"`
+	StepExecutionId string `json:"stepExecutionId,omitempty"`
 }

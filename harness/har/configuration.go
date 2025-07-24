@@ -72,7 +72,6 @@ func NewConfiguration() *Configuration {
 	if helpers.EnvVars.TfLog.Get() == "DEBUG" {
 		logger.SetLevel(log.DebugLevel)
 	}
-
 	cfg := &Configuration{
 		AccountId:     helpers.EnvVars.AccountId.Get(),
 		ApiKey:        helpers.EnvVars.PlatformApiKey.Get(),

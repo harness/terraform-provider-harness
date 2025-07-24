@@ -9,6 +9,7 @@
 package har
 
 type InlineResponse20010 struct {
-	Data   *HelmArtifactManifest `json:"data"`
-	Status *Status               `json:"status"`
+	// download url of artifact
+	DownloadUrl string `json:"downloadUrl"`
+	Status *Status `json:"status"`
 }

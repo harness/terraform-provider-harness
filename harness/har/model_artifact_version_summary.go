@@ -10,12 +10,11 @@ package har
 
 // Docker Artifact Version Summary
 type ArtifactVersionSummary struct {
-	ImageName            string       `json:"imageName"`
-	IsLatestVersion      bool         `json:"isLatestVersion,omitempty"`
-	PackageType          *PackageType `json:"packageType"`
-	SscaArtifactId       string       `json:"sscaArtifactId,omitempty"`
-	SscaArtifactSourceId string       `json:"sscaArtifactSourceId,omitempty"`
-	StoExecutionId       string       `json:"stoExecutionId,omitempty"`
-	StoPipelineId        string       `json:"stoPipelineId,omitempty"`
-	Version              string       `json:"version"`
+	ImageName string `json:"imageName"`
+	PackageType *PackageType `json:"packageType"`
+	SscaArtifactId string `json:"sscaArtifactId,omitempty"`
+	SscaArtifactSourceId string `json:"sscaArtifactSourceId,omitempty"`
+	StoExecutionId string `json:"stoExecutionId,omitempty"`
+	StoPipelineId string `json:"stoPipelineId,omitempty"`
+	Version string `json:"version"`
 }

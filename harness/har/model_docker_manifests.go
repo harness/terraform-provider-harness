@@ -10,8 +10,7 @@ package har
 
 // Harness Manifests
 type DockerManifests struct {
-	ImageName       string                  `json:"imageName"`
-	IsLatestVersion bool                    `json:"isLatestVersion,omitempty"`
-	Manifests       []DockerManifestDetails `json:"manifests,omitempty"`
-	Version         string                  `json:"version"`
+	ImageName string `json:"imageName"`
+	Manifests []DockerManifestDetails `json:"manifests,omitempty"`
+	Version string `json:"version"`
 }

@@ -10,11 +10,12 @@ package har
 
 // Harness Artifact Layers
 type DockerManifestDetails struct {
-	CreatedAt      string `json:"createdAt,omitempty"`
-	Digest         string `json:"digest"`
-	DownloadsCount int64  `json:"downloadsCount,omitempty"`
-	OsArch         string `json:"osArch"`
-	Size           string `json:"size,omitempty"`
+	CreatedAt string `json:"createdAt,omitempty"`
+	Digest string `json:"digest"`
+	DownloadsCount int64 `json:"downloadsCount,omitempty"`
+	OsArch string `json:"osArch"`
+	Size string `json:"size,omitempty"`
+	StoDetails *StoDetails `json:"stoDetails,omitempty"`
 	StoExecutionId string `json:"stoExecutionId,omitempty"`
-	StoPipelineId  string `json:"stoPipelineId,omitempty"`
+	StoPipelineId string `json:"stoPipelineId,omitempty"`
 }

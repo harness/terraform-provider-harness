@@ -9,6 +9,6 @@
 package har
 
 type InlineResponse20013 struct {
-	Data   *ListArtifactLabel `json:"data"`
-	Status *Status            `json:"status"`
+	Data *HelmArtifactManifest `json:"data"`
+	Status *Status `json:"status"`
 }

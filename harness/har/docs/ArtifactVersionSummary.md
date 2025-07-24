@@ -4,7 +4,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **ImageName** | **string** |  | [default to null]
-**IsLatestVersion** | **bool** |  | [optional] [default to null]
 **PackageType** | [***PackageType**](PackageType.md) |  | [default to null]
 **SscaArtifactId** | **string** |  | [optional] [default to null]
 **SscaArtifactSourceId** | **string** |  | [optional] [default to null]

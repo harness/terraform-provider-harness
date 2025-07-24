@@ -9,14 +9,14 @@
 package har
 
 type RegistryRequest struct {
-	AllowedPattern []string        `json:"allowedPattern,omitempty"`
-	BlockedPattern []string        `json:"blockedPattern,omitempty"`
-	CleanupPolicy  []CleanupPolicy `json:"cleanupPolicy,omitempty"`
-	Config         *RegistryConfig `json:"config,omitempty"`
-	Description    string          `json:"description,omitempty"`
-	Identifier     string          `json:"identifier"`
-	Labels         []string        `json:"labels,omitempty"`
-	PackageType    *PackageType    `json:"packageType"`
-	ParentRef      string          `json:"parentRef,omitempty"`
-	Scanners       []Scanner       `json:"scanners,omitempty"`
+	AllowedPattern []string `json:"allowedPattern,omitempty"`
+	BlockedPattern []string `json:"blockedPattern,omitempty"`
+	CleanupPolicy []CleanupPolicy `json:"cleanupPolicy,omitempty"`
+	Config *RegistryConfig `json:"config,omitempty"`
+	Description string `json:"description,omitempty"`
+	Identifier string `json:"identifier"`
+	Labels []string `json:"labels,omitempty"`
+	PackageType *PackageType `json:"packageType"`
+	ParentRef string `json:"parentRef,omitempty"`
+	Scanners []Scanner `json:"scanners,omitempty"`
 }

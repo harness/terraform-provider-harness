@@ -1,14 +1,14 @@
-# har{{classname}}
+# {{classname}}
 
 All URIs are relative to */gateway/har/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**GetHelmArtifactDetails**](HelmArtifactsApi.md#GetHelmArtifactDetails) | **Get** /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/helm/details | Describe Helm Artifact Detail
-[**GetHelmArtifactManifest**](HelmArtifactsApi.md#GetHelmArtifactManifest) | **Get** /registry/{registry_ref}/+/artifact/{artifact}/version/{version}/helm/manifest | Describe Helm Artifact Manifest
+[**GetHelmArtifactDetails**](HelmArtifactsApi.md#GetHelmArtifactDetails) | **Get** /registry/{registry_ref}/+/artifact/{artifact}/+/version/{version}/helm/details | Describe Helm Artifact Detail
+[**GetHelmArtifactManifest**](HelmArtifactsApi.md#GetHelmArtifactManifest) | **Get** /registry/{registry_ref}/+/artifact/{artifact}/+/version/{version}/helm/manifest | Describe Helm Artifact Manifest
 
 # **GetHelmArtifactDetails**
-> InlineResponse2009 GetHelmArtifactDetails(ctx, registryRef, artifact, version)
+> InlineResponse20012 GetHelmArtifactDetails(ctx, registryRef, artifact, version)
 Describe Helm Artifact Detail
 
 Get Helm Artifact Details
@@ -24,11 +24,11 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**InlineResponse2009**](inline_response_200_9.md)
+[**InlineResponse20012**](inline_response_200_12.md)
 
 ### Authorization
 
-No authorization required
+[XApiKeyAuth](../README.md#XApiKeyAuth)
 
 ### HTTP request headers
 
@@ -38,7 +38,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **GetHelmArtifactManifest**
-> InlineResponse20010 GetHelmArtifactManifest(ctx, registryRef, artifact, version)
+> InlineResponse20013 GetHelmArtifactManifest(ctx, registryRef, artifact, version)
 Describe Helm Artifact Manifest
 
 Get Helm Artifact Manifest
@@ -54,11 +54,11 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**InlineResponse20010**](inline_response_200_10.md)
+[**InlineResponse20013**](inline_response_200_13.md)
 
 ### Authorization
 
-No authorization required
+[XApiKeyAuth](../README.md#XApiKeyAuth)
 
 ### HTTP request headers
 

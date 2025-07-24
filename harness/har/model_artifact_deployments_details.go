@@ -10,6 +10,6 @@ package har
 
 // Docker Artifact deployments Details
 type ArtifactDeploymentsDetails struct {
-	Deployments      *ArtifactDeploymentsList `json:"deployments"`
-	DeploymentsStats *DeploymentStats         `json:"deploymentsStats,omitempty"`
+	Deployments *ArtifactDeploymentsList `json:"deployments"`
+	DeploymentsStats *DeploymentStats `json:"deploymentsStats,omitempty"`
 }

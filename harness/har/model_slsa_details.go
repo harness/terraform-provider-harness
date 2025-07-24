@@ -10,5 +10,5 @@ package har
 
 type SlsaDetails struct {
 	ProvenanceId string `json:"provenanceId,omitempty"`
-	Status       string `json:"status,omitempty"`
+	Status string `json:"status,omitempty"`
 }

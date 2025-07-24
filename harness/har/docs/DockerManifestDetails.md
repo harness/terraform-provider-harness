@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **DownloadsCount** | **int64** |  | [optional] [default to null]
 **OsArch** | **string** |  | [default to null]
 **Size** | **string** |  | [optional] [default to null]
+**StoDetails** | [***StoDetails**](STODetails.md) |  | [optional] [default to null]
 **StoExecutionId** | **string** |  | [optional] [default to null]
 **StoPipelineId** | **string** |  | [optional] [default to null]
 

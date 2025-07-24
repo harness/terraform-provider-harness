@@ -10,8 +10,8 @@ package har
 
 // Harness Artifact Stats
 type ArtifactStats struct {
-	DownloadCount    int64 `json:"downloadCount,omitempty"`
-	DownloadSize     int64 `json:"downloadSize,omitempty"`
+	DownloadCount int64 `json:"downloadCount,omitempty"`
+	DownloadSize int64 `json:"downloadSize,omitempty"`
 	TotalStorageSize int64 `json:"totalStorageSize,omitempty"`
-	UploadSize       int64 `json:"uploadSize,omitempty"`
+	UploadSize int64 `json:"uploadSize,omitempty"`
 }

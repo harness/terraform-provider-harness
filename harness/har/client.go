@@ -56,7 +56,11 @@ type APIClient struct {
 
 	RegistriesApi *RegistriesApiService
 
+	ReplicationApi *ReplicationApiService
+
 	SpacesApi *SpacesApiService
+
+	WebhooksApi *WebhooksApiService
 }
 
 type service struct {
@@ -66,10 +70,11 @@ type service struct {
 // NewAPIClient creates a new API client. Requires a userAgent string describing your application.
 // optionally a custom http.Client to allow for advanced features such as caching.
 func NewAPIClient(cfg *Configuration) *APIClient {
-
 	c := &APIClient{}
 	c.cfg = cfg
 	c.common.client = c
+
+	// Api Config
 	c.ApiKey = cfg.ApiKey
 	c.AccountId = cfg.AccountId
 	c.Endpoint = cfg.BasePath
@@ -79,7 +84,9 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.DockerArtifactsApi = (*DockerArtifactsApiService)(&c.common)
 	c.HelmArtifactsApi = (*HelmArtifactsApiService)(&c.common)
 	c.RegistriesApi = (*RegistriesApiService)(&c.common)
+	c.ReplicationApi = (*ReplicationApiService)(&c.common)
 	c.SpacesApi = (*SpacesApiService)(&c.common)
+	c.WebhooksApi = (*WebhooksApiService)(&c.common)
 
 	return c
 }
@@ -177,7 +184,8 @@ func (c *APIClient) prepareRequest(
 	queryParams url.Values,
 	formParams url.Values,
 	fileName string,
-	fileBytes []byte) (localVarRequest *retryablehttp.Request, err error) {
+	fileBytes []byte,
+) (localVarRequest *retryablehttp.Request, err error) {
 
 	var body *bytes.Buffer
 
@@ -196,7 +204,8 @@ func (c *APIClient) prepareRequest(
 	}
 
 	// add form parameters and file if available.
-	if strings.HasPrefix(headerParams["Content-Type"], "multipart/form-data") && len(formParams) > 0 || (len(fileBytes) > 0 && fileName != "") {
+	if strings.HasPrefix(headerParams["Content-Type"],
+		"multipart/form-data") && len(formParams) > 0 || (len(fileBytes) > 0 && fileName != "") {
 		if body != nil {
 			return nil, errors.New("Cannot specify postBody and multipart form at the same time.")
 		}
@@ -226,9 +235,10 @@ func (c *APIClient) prepareRequest(
 			if err != nil {
 				return nil, err
 			}
-			// Set the Boundary in the Content-Type
-			headerParams["Content-Type"] = w.FormDataContentType()
 		}
+
+		// Set the Boundary in the Content-Type
+		headerParams["Content-Type"] = w.FormDataContentType()
 
 		// Set Content-Length
 		headerParams["Content-Length"] = fmt.Sprintf("%d", body.Len())

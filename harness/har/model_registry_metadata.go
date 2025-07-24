@@ -10,15 +10,15 @@ package har
 
 // Harness Artifact Registry Metadata
 type RegistryMetadata struct {
-	ArtifactsCount int64         `json:"artifactsCount,omitempty"`
-	Description    string        `json:"description,omitempty"`
-	DownloadsCount int64         `json:"downloadsCount,omitempty"`
-	Identifier     string        `json:"identifier"`
-	Labels         []string      `json:"labels,omitempty"`
-	LastModified   string        `json:"lastModified,omitempty"`
-	PackageType    *PackageType  `json:"packageType"`
-	Path           string        `json:"path,omitempty"`
-	RegistrySize   string        `json:"registrySize,omitempty"`
-	Type_          *RegistryType `json:"type"`
-	Url            string        `json:"url"`
+	ArtifactsCount int64 `json:"artifactsCount,omitempty"`
+	Description string `json:"description,omitempty"`
+	DownloadsCount int64 `json:"downloadsCount,omitempty"`
+	Identifier string `json:"identifier"`
+	Labels []string `json:"labels,omitempty"`
+	LastModified string `json:"lastModified,omitempty"`
+	PackageType *PackageType `json:"packageType"`
+	Path string `json:"path,omitempty"`
+	RegistrySize string `json:"registrySize,omitempty"`
+	Type_ *RegistryType `json:"type"`
+	Url string `json:"url"`
 }

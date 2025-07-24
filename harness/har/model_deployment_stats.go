@@ -11,5 +11,5 @@ package har
 // DeploymentStats
 type DeploymentStats struct {
 	PreProduction int32 `json:"PreProduction"`
-	Production    int32 `json:"Production"`
+	Production int32 `json:"Production"`
 }

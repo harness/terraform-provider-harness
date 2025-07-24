@@ -11,5 +11,5 @@ package har
 // Harness Artifact Layers
 type DockerLayerEntry struct {
 	Command string `json:"command"`
-	Size    string `json:"size,omitempty"`
+	Size string `json:"size,omitempty"`
 }
