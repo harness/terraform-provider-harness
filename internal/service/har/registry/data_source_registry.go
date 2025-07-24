@@ -30,11 +30,7 @@ func dataSourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta in
 	var httpResp *http.Response
 
 	id := d.Get("identifier").(string)
-	registryRef := getParentRef(c.AccountId,
-		d.Get("org_id").(string),
-		d.Get("project_id").(string),
-		d.Get("space_ref").(string)) +
-		"/" + id
+	registryRef := d.Get("space_ref").(string) + "/" + id
 
 	if id != "" && registryRef != "" {
 		resp, httpResp, err = c.RegistriesApi.GetRegistry(ctx, registryRef)

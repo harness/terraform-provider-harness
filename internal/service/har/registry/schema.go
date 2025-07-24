@@ -22,33 +22,15 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Optional:    true,
 		},
-		"org_id": {
-			Description: "Unique identifier of the organization",
-			Type:        schema.TypeString,
-			Optional:    true,
-			ConflictsWith: []string{
-				"parent_ref", "space_ref",
-			},
-		},
-		"project_id": {
-			Description: "Unique identifier of the project",
-			Type:        schema.TypeString,
-			Optional:    true,
-			ConflictsWith: []string{
-				"parent_ref", "space_ref",
-			},
-		},
 		"parent_ref": {
 			Description: "Parent reference for the registry",
 			Type:        schema.TypeString,
 			Optional:    true,
-			Deprecated:  "This field is deprecated and will be removed in a future version. Use org_id and/or project_id instead",
 		},
 		"space_ref": {
 			Description: "Space reference for the registry",
 			Type:        schema.TypeString,
 			Optional:    true,
-			Deprecated:  "This field is deprecated and will be removed in a future version. Use org_id and/or project_id instead",
 		},
 		"config": {
 			Description: "Configuration for the registry",
@@ -83,12 +65,12 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 
 					// Upstream Config
 					"source": {
-						Description: "Source of the upstream (only for UPSTREAM type)",
 						Type:        schema.TypeString,
 						Optional:    true,
-						ConflictsWith: []string{
-							"config.0.upstream_proxies",
-						},
+						Description: "Upstream source",
+						ValidateFunc: validation.StringInSlice([]string{
+							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates",
+						}, false),
 					},
 					"url": {
 						Description: "URL of the upstream (required if type=UPSTREAM & package_type=HELM)",
@@ -118,7 +100,11 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 									Description: "Type of authentication (UserPassword, Anonymous)",
 									Type:        schema.TypeString,
 									Required:    true,
-									ValidateFunc: validation.StringInSlice([]string{"UserPassword", "Anonymous"},
+									ValidateFunc: validation.StringInSlice([]string{
+										(string)(har.USER_PASSWORD_AuthType),
+										(string)(har.ANONYMOUS_AuthType),
+										(string)(har.ACCESS_KEY_SECRET_KEY_AuthType),
+									},
 										false),
 								},
 								"secret_identifier": {
@@ -136,14 +122,39 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 									Type:        schema.TypeString,
 									Optional:    true,
 								},
+								"access_key": {
+									Type:      schema.TypeString,
+									Optional:  true,
+									Sensitive: true,
+								},
+								"access_key_identifier": {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								"access_key_secret_path": {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								"secret_key_identifier": {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								"secret_key_secret_path": {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
 							},
 						},
 					},
 					"auth_type": {
-						Description:  "Type of authentication for UPSTREAM registry type (UserPassword, Anonymous)",
-						Type:         schema.TypeString,
-						Optional:     true,
-						ValidateFunc: validation.StringInSlice([]string{"UserPassword", "Anonymous"}, false),
+						Description: "Type of authentication for UPSTREAM registry type (UserPassword, Anonymous)",
+						Type:        schema.TypeString,
+						Optional:    true,
+						ValidateFunc: validation.StringInSlice([]string{
+							(string)(har.USER_PASSWORD_AuthType),
+							(string)(har.ANONYMOUS_AuthType),
+							(string)(har.ACCESS_KEY_SECRET_KEY_AuthType),
+						}, false),
 						ConflictsWith: []string{
 							"config.0.upstream_proxies",
 						},
@@ -202,48 +213,6 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.RPM_PackageType),
 				(string)(har.CARGO_PackageType),
 			}, false),
-		},
-		"type": {
-			Description: "Type of registry (VIRTUAL or UPSTREAM)",
-			Type:        schema.TypeString,
-			// This should be required but we have to set it to optional for now for backwards compatibility
-			Optional: true,
-			ValidateFunc: validation.StringInSlice([]string{
-				(string)(har.VIRTUAL_RegistryType),
-				(string)(har.UPSTREAM_RegistryType),
-			}, false),
-			ConflictsWith: []string{
-				"config",
-			},
-		},
-		"virtual": {
-			Type:     schema.TypeList, // or TypeSet
-			Optional: true,
-			MaxItems: 1,
-			//ExactlyOneOf: []string{"virtual", "upstream"},
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"upstream_proxies": {
-						Description: "List of upstream proxies",
-						Type:        schema.TypeSet,
-						Optional:    true,
-						Elem:        &schema.Schema{Type: schema.TypeString},
-					},
-				},
-			},
-			ConflictsWith: []string{
-				"config",
-			},
-		},
-		"upstream": {
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			//ExactlyOneOf: []string{"virtual", "upstream"},
-			Elem: getUpstreamRegistrySchema(),
-			ConflictsWith: []string{
-				"config",
-			},
 		},
 		"url": {
 			Description: "URL of the registry",

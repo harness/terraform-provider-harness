@@ -25,9 +25,7 @@ func ResourceRegistry() *schema.Resource {
 func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetHarClientWithContext(ctx)
 
-	registryRef := getParentRef(c.AccountId,
-		d.Get("org_id").(string),
-		d.Get("project_id").(string), d.Get("parent_ref").(string)) + "/" + d.Get("identifier").(string)
+	registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
 	resp, httpResp, err := c.RegistriesApi.GetRegistry(ctx, registryRef)
 
 	if err != nil {
@@ -48,9 +46,8 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var resp har.InlineResponse201
 	var httpResp *http.Response
 
-	registry := buildRegistry(d, c.AccountId)
-	spaceRef := getParentRef(c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string),
-		d.Get("parent_ref").(string))
+	registry := buildRegistry(d)
+	spaceRef := d.Get("parent_ref").(string)
 
 	if d.Id() == "" {
 		resp, httpResp, err = c.RegistriesApi.CreateRegistry(ctx, &har.RegistriesApiCreateRegistryOpts{
@@ -73,8 +70,7 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 func resourceRegistryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetHarClientWithContext(ctx)
 
-	registryRef := getParentRef(c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string),
-		d.Get("parent_ref").(string)) + "/" + d.Get("identifier").(string)
+	registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
 
 	_, httpResp, err := c.RegistriesApi.DeleteRegistry(ctx, registryRef)
 
@@ -85,7 +81,7 @@ func resourceRegistryDelete(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-func buildRegistry(d *schema.ResourceData, accountID string) *har.RegistryRequest {
+func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
 	registry := &har.RegistryRequest{}
 
 	if attr, ok := d.GetOk("identifier"); ok {
@@ -96,8 +92,7 @@ func buildRegistry(d *schema.ResourceData, accountID string) *har.RegistryReques
 		registry.Description = attr.(string)
 	}
 
-	parentRef := getParentRef(accountID, d.Get("org_id").(string), d.Get("project_id").(string),
-		d.Get("parent_ref").(string))
+	parentRef := d.Get("parent_ref").(string)
 
 	registry.ParentRef = parentRef
 
@@ -174,72 +169,37 @@ func buildRegistry(d *schema.ResourceData, accountID string) *har.RegistryReques
 								upstreamConfig.Auth = &har.OneOfUpstreamConfigAuth{
 									Anonymous: har.Anonymous{},
 								}
+							} else if authType == (string)(har.ACCESS_KEY_SECRET_KEY_AuthType) {
+								aksk := har.AccessKeySecretKey{}
+
+								if val, ok := authConfig["access_key"].(string); ok {
+									aksk.AccessKey = val
+								}
+								if val, ok := authConfig["access_key_identifier"].(string); ok {
+									aksk.AccessKeySecretIdentifier = val
+								}
+								if val, ok := authConfig["access_key_secret_path"].(string); ok {
+									aksk.AccessKeySecretSpacePath = val
+								}
+								if val, ok := authConfig["secret_key_identifier"].(string); ok {
+									aksk.SecretKeyIdentifier = val
+								}
+								if val, ok := authConfig["secret_key_secret_path"].(string); ok {
+									aksk.SecretKeySpacePath = val
+								}
+
+								upstreamConfig.Auth = &har.OneOfUpstreamConfigAuth{
+									AccessKeySecretKey: aksk,
+									AuthType:           (*har.AuthType)(&authType),
+								}
+								*upstreamConfig.AuthType = har.ACCESS_KEY_SECRET_KEY_AuthType
+
 							}
 						}
 					}
 
 					registry.Config.UpstreamConfig = *upstreamConfig
 				}
-			}
-		}
-	}
-
-	if attr, ok := d.GetOk("type"); ok {
-		config := &har.RegistryConfig{}
-		registryType := har.RegistryType(attr.(string))
-		registry.Config = config
-		registry.Config.Type_ = &registryType
-
-		if v, ok := d.GetOk("virtual"); ok {
-			config.VirtualConfig = har.VirtualConfig{}
-			if attr, ok := v.([]interface{}); ok && len(attr) > 0 && attr[0] != nil {
-				vMap := v.([]interface{})[0].(map[string]interface{})
-				if ups, ok := vMap["upstream_proxies"]; ok && ups != nil {
-					proxies := expandStringSet(ups.(*schema.Set))
-					config.VirtualConfig.UpstreamProxies = proxies
-				}
-			}
-		} else if u, ok := d.GetOk("upstream"); ok && len(u.([]interface{})) > 0 {
-			uMap := u.([]interface{})[0].(map[string]interface{})
-			uc := har.UpstreamConfig{
-				Source: uMap["source"].(string),
-			}
-			if url, ok := uMap["url"].(string); ok && url != "" {
-				uc.Url = url
-			}
-
-			// auth blocks (only one should exist)
-			if _, ok := uMap["anonymous"]; ok {
-				anonymous := har.Anonymous{}
-				uc.Auth = &har.OneOfUpstreamConfigAuth{
-					Anonymous: anonymous,
-				}
-				authType := har.ANONYMOUS_AuthType
-				uc.AuthType = &authType
-			} else if up, ok := uMap["user_password"]; ok && len(up.([]interface{})) > 0 {
-				upMap := up.([]interface{})[0].(map[string]interface{})
-				uc.Auth = &har.OneOfUpstreamConfigAuth{
-					UserPassword: har.UserPassword{
-						UserName:         upMap["username"].(string),
-						SecretIdentifier: upMap["secret_identifier"].(string),
-						SecretSpacePath:  upMap["secret_space_path"].(string),
-					},
-				}
-				authType := har.USER_PASSWORD_AuthType
-				uc.AuthType = &authType
-			} else if aksk, ok := uMap["access_key_secret_key"]; ok && len(aksk.([]interface{})) > 0 {
-				aMap := aksk.([]interface{})[0].(map[string]interface{})
-				uc.Auth = &har.OneOfUpstreamConfigAuth{
-					AccessKeySecretKey: har.AccessKeySecretKey{
-						AccessKey:                 aMap["access_key"].(string),
-						AccessKeySecretIdentifier: aMap["access_key_identifier"].(string),
-						AccessKeySecretSpacePath:  aMap["access_key_secret_path"].(string),
-						SecretKeyIdentifier:       aMap["secret_key_identifier"].(string),
-						SecretKeySpacePath:        aMap["secret_key_secret_path"].(string),
-					},
-				}
-				authType := har.ACCESS_KEY_SECRET_KEY_AuthType
-				uc.AuthType = &authType
 			}
 		}
 	}
@@ -297,6 +257,13 @@ func readRegistry(d *schema.ResourceData, registry *har.Registry) {
 					authMap["user_name"] = registry.Config.UpstreamConfig.Auth.UserPassword.UserName
 					authMap["secret_identifier"] = registry.Config.UpstreamConfig.Auth.UserPassword.SecretIdentifier
 					authMap["secret_space_path"] = registry.Config.UpstreamConfig.Auth.UserPassword.SecretSpacePath
+				} else if registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.SecretKeyIdentifier != "" {
+					authMap["auth_type"] = "AccessKeySecretKey"
+					authMap["access_key"] = registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.AccessKey
+					authMap["access_key_identifier"] = registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.AccessKeySecretIdentifier
+					authMap["access_key_secret_path"] = registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.AccessKeySecretSpacePath
+					authMap["secret_key_identifier"] = registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.SecretKeyIdentifier
+					authMap["secret_key_secret_path"] = registry.Config.UpstreamConfig.Auth.AccessKeySecretKey.SecretKeySpacePath
 				} else {
 					authMap["auth_type"] = "Anonymous"
 				}
