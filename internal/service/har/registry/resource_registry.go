@@ -47,7 +47,7 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var httpResp *http.Response
 
 	registry := buildRegistry(d)
-	spaceRef := d.Get("parent_ref").(string)
+	spaceRef := d.Get("space_ref").(string)
 
 	if d.Id() == "" {
 		resp, httpResp, err = c.RegistriesApi.CreateRegistry(ctx, &har.RegistriesApiCreateRegistryOpts{

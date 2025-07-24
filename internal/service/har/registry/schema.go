@@ -37,7 +37,6 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			Optional:    true,
 			MaxItems:    1,
-			Deprecated:  "This field is deprecated and will be removed in a future version. Use type and virtual or upstream instead at the root for new package types.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
@@ -371,30 +370,4 @@ func trimSlash(s string) string {
 		s = s[:len(s)-1]
 	}
 	return s
-}
-
-func customizeRegistryDiff(ctx context.Context, d *schema.ResourceDiff, _ interface{}) error {
-	// ensure type matches which block is set
-	rType := d.Get("type").(string)
-
-	if rType == string(har.VIRTUAL_RegistryType) {
-		if d.Get("upstream") != nil {
-			return fmt.Errorf("cannot set 'upstream' when type is VIRTUAL")
-		}
-	}
-
-	if rType == string(har.UPSTREAM_RegistryType) {
-		if d.Get("virtual") != nil {
-			return fmt.Errorf("cannot set 'virtual' when type is UPSTREAM")
-		}
-
-		// HELM requires url
-		if pt := d.Get("package_type").(string); pt == string(har.HELM_PackageType) {
-			if u, ok := d.GetOk("upstream.0.url"); !ok || u.(string) == "" {
-				return fmt.Errorf("'upstream.url' is required when package_type is HELM")
-			}
-		}
-	}
-
-	return nil
 }
