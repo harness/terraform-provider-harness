@@ -92,9 +92,9 @@ func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
 		registry.Description = attr.(string)
 	}
 
-	parentRef := d.Get("parent_ref").(string)
-
-	registry.ParentRef = parentRef
+	if attr, ok := d.GetOk("parent_ref"); ok {
+		registry.ParentRef = attr.(string)
+	}
 
 	if attr, ok := d.GetOk("package_type"); ok {
 		pt := har.PackageType(attr.(string))
