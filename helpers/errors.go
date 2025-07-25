@@ -142,10 +142,13 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 			return diag.Errorf("resource with ID %s not found: %v", d.Id(), errMessage)
 		}
 		if read && !gitopsErrOk {
-			if erro.Model() != nil && (erro.Code() == nextgen.ErrorCodes.ResourceNotFound || erro.Code() == nextgen.ErrorCodes.EntityNotFound) {
-				d.SetId("")
-				d.MarkNewResource()
-				return nil
+			respErrorBody, err := ParseErrorBody(erro)
+			if err == nil {
+				if respErrorBody.Code == string(nextgen.ErrorCodes.EntityNotFound) || respErrorBody.Code == string(nextgen.ErrorCodes.ResourceNotFound) {
+					d.SetId("")
+					d.MarkNewResource()
+					return nil
+				}
 			}
 		}
 		return diag.Errorf(errMessage)
