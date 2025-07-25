@@ -24,8 +24,11 @@ data "harness_cluster_orchestrator" "example" {
 ### Required
 
 - `cluster_endpoint` (String) Endpoint of the k8s cluster being onboarded under the orchestrator
-- `k8s_connector_id` (String) ID of the Harness Kubernetes Connector Being used
 - `name` (String) Name of the Orchestrator
+
+### Optional
+
+- `k8s_connector_id` (String) ID of the Harness Kubernetes Connector Being used
 
 ### Read-Only
 

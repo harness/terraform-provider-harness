@@ -5,33 +5,33 @@ subcategory: "Next Gen"
 description: |-
   Resource for creating a Harness User Group. Linking SSO providers with User Groups:
   
-      The following fields need to be populated for LDAP SSO Providers:
-  
-      - linked_sso_id
-  
-      - linked_sso_display_name
-  
-      - sso_group_id
-  
-      - sso_group_name
-  
-      - linked_sso_type
-  
-      - sso_linked
-  
-      The following fields need to be populated for SAML SSO Providers:
-  
-      - linked_sso_id
-  
-      - linked_sso_display_name
-  
-      - sso_group_name
-  
-      - sso_group_id // same as sso_group_name
-  
-      - linked_sso_type
-  
-      - sso_linked
+  	The following fields need to be populated for LDAP SSO Providers:
+  	
+  	- linked_sso_id
+  	
+  	- linked_sso_display_name
+  	
+  	- sso_group_id
+  	
+  	- sso_group_name
+  	
+  	- linked_sso_type
+  	
+  	- sso_linked
+  	
+  	The following fields need to be populated for SAML SSO Providers:
+  	
+  	- linked_sso_id
+  	
+  	- linked_sso_display_name
+  	
+  	- sso_group_name
+  	
+  	- sso_group_id // same as sso_group_name
+  	
+  	- linked_sso_type
+  	
+  	- sso_linked
 ---
 
 # harness_platform_usergroup (Resource)
@@ -65,11 +65,6 @@ Resource for creating a Harness User Group. Linking SSO providers with User Grou
 		- linked_sso_type
 		
 		- sso_linked
-
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand more about User Group, please see [Documentation](https://developer.harness.io/docs/platform/User-Management/add-user-groups)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/User-Group)
 
 ## Example Usage
 
@@ -195,7 +190,7 @@ resource "harness_platform_usergroup" "example" {
 - `sso_linked` (Boolean) Whether sso is linked or not.
 - `tags` (Set of String) Tags to associate with the resource.
 - `user_emails` (List of String) List of user emails in the UserGroup. Either provide list of users or list of user emails.
-- `users` (List of String) List of users in the UserGroup. Either provide list of users or list of user emails.
+- `users` (List of String) List of users in the UserGroup. Either provide list of users or list of user emails. (Should be null for SSO managed)
 
 ### Read-Only
 
@@ -216,6 +211,8 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level user group

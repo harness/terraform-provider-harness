@@ -18,15 +18,15 @@ Resource for creating a Harness Notification Rule
 ### Required
 
 - `identifier` (String)
-- `name` (String)
 - `notification_channel_refs` (List of String)
 - `notification_conditions` (Block List, Min: 1) (see [below for nested schema](#nestedblock--notification_conditions))
-- `org` (String)
 - `project` (String)
 
 ### Optional
 
 - `custom_notification_template_ref` (Block List, Max: 1) (see [below for nested schema](#nestedblock--custom_notification_template_ref))
+- `name` (String)
+- `org` (String)
 - `status` (String)
 
 ### Read-Only

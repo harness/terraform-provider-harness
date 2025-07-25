@@ -10,8 +10,6 @@ description: |-
 
 Resource for creating a Kubernetes Cloud Cost connector.
 
-These connectors need to be created at the account level in Harness.
-
 ## Example Usage
 
 ```terraform
@@ -31,7 +29,7 @@ resource "harness_platform_connector_kubernetes_cloud_cost" "example" {
 
 ### Required
 
-- `connector_ref` (String) Reference to a Kubernetes connector also at the account level.
+- `connector_ref` (String) Reference of the Connector. To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, and Visibility.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
@@ -39,6 +37,8 @@ resource "harness_platform_connector_kubernetes_cloud_cost" "example" {
 ### Optional
 
 - `description` (String) Description of the resource.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
@@ -49,7 +49,15 @@ resource "harness_platform_connector_kubernetes_cloud_cost" "example" {
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import account level kubernetes cloud cost connector 
 terraform import harness_platform_connector_kubernetes_cloud_cost.example <connector_id>
+
+# Import org level kubernetes cloud cost connector 
+terraform import harness_platform_connector_kubernetes_cloud_cost.example <ord_id>/<connector_id>
+
+# Import project level kubernetes cloud cost connector 
+terraform import harness_platform_connector_kubernetes_cloud_cost.example <org_id>/<project_id>/<connector_id>
 ```

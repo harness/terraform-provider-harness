@@ -61,18 +61,18 @@ resource "harness_platform_service" "example" {
 }
 
 ### Importing Service from Git
- resource "harness_platform_service" "test" {
-    identifier  = "id"
-    name = "name"
-    org_id = "org_id"
-    project_id = "project_id"
-    import_from_git = "true"
-    git_details {
-    store_type = "REMOTE"
+resource "harness_platform_service" "test" {
+  identifier      = "id"
+  name            = "name"
+  org_id          = "org_id"
+  project_id      = "project_id"
+  import_from_git = "true"
+  git_details {
+    store_type    = "REMOTE"
     connector_ref = "account.DoNotDeleteGitX"
-    repo_name = "pcf_practice"
-    file_path = ".harness/accountService.yaml"
-    branch = "main"
-    }
+    repo_name     = "pcf_practice"
+    file_path     = ".harness/accountService.yaml"
+    branch        = "main"
   }
+}
 

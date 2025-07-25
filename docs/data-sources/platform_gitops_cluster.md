@@ -32,12 +32,12 @@ data "harness_platform_gitops_cluster" "example" {
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps cluster.
 - `org_id` (String) Organization identifier of the cluster.
 - `project_id` (String) Project identifier of the GitOps cluster.
 
 ### Read-Only
 
-- `account_id` (String, Deprecated) Account identifier of the GitOps cluster.
 - `id` (String) The ID of this resource.
 - `request` (List of Object) Cluster create or update request. (see [below for nested schema](#nestedatt--request))
 

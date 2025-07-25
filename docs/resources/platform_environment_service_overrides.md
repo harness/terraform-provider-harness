@@ -9,96 +9,9 @@ description: |-
 # harness_platform_environment_service_overrides (Resource)
 
 Resource for creating a Harness environment service overrides.
-### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand about the Environment, please see [Documentation](https://developer.harness.io/docs/category/environments)
-- To understand what are Environment Service Override, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/environments/service-overrides/)
 
-## Example to create Environment Service Override at different levels (Org, Project, Account)
-### Account Level
-```terraform
-resource "harness_platform_environment_service_overrides" "example" {
-  env_id     = "environmentIdentifier"
-  service_id = "serviceIdentifier"
-  yaml       = <<-EOT
-        serviceOverrides:
-          environmentRef: environmentIdentifier
-          serviceRef: serviceIdentifier
-          variables:
-           - name: asda
-             type: String
-             value: asddad
-          manifests:
-             - manifest:
-                 identifier: manifestEnv
-                 type: Values
-                 spec:
-                   store:
-                     type: Git
-                     spec:
-                       connectorRef: <+input>
-                       gitFetchType: Branch
-                       paths:
-                         - file1
-                       repoName: <+input>
-                       branch: master
-          configFiles:
-             - configFile:
-                 identifier: configFileEnv
-                 spec:
-                   store:
-                     type: Harness
-                     spec:
-                       files:
-                         - account:/Add-ons/svcOverrideTest
-                       secretFiles: []
-		  EOT
-}
-```
+## Example Usage
 
-### Org Level
-```terraform
-resource "harness_platform_environment_service_overrides" "example" {
-  org_id     = "orgIdentifier"
-  env_id     = "environmentIdentifier"
-  service_id = "serviceIdentifier"
-  yaml       = <<-EOT
-        serviceOverrides:
-          environmentRef: environmentIdentifier
-          serviceRef: serviceIdentifier
-          variables:
-           - name: asda
-             type: String
-             value: asddad
-          manifests:
-             - manifest:
-                 identifier: manifestEnv
-                 type: Values
-                 spec:
-                   store:
-                     type: Git
-                     spec:
-                       connectorRef: <+input>
-                       gitFetchType: Branch
-                       paths:
-                         - file1
-                       repoName: <+input>
-                       branch: master
-          configFiles:
-             - configFile:
-                 identifier: configFileEnv
-                 spec:
-                   store:
-                     type: Harness
-                     spec:
-                       files:
-                         - account:/Add-ons/svcOverrideTest
-                       secretFiles: []
-		  EOT
-}
-```
-
-### Project Level
 ```terraform
 resource "harness_platform_environment_service_overrides" "example" {
   org_id     = "orgIdentifier"
@@ -146,8 +59,8 @@ resource "harness_platform_environment_service_overrides" "example" {
 
 ### Required
 
-- `env_id` (String) The env Id associated with the overrides. To reference an environment at the organization scope, prefix 'org' to the expression: org.{env_id}. To reference an environment at the account scope, prefix 'account' to the expression: account.{env_id}).
-- `service_id` (String) The service Id associated with the overrides. To reference a service at the organization scope, prefix 'org' to the expression: org.{service_id}. To reference a service at the account scope, prefix 'account' to the expression: account.{service_id}).
+- `env_id` (String) The env ID to which the overrides associated.
+- `service_id` (String) The service ID to which the overrides applies.
 - `yaml` (String) Environment Service Overrides YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
 ### Optional
@@ -158,11 +71,13 @@ resource "harness_platform_environment_service_overrides" "example" {
 
 ### Read-Only
 
-- `id` (String) The Id of this resource.
+- `id` (String) The ID of this resource.
 
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import list of account level service overrides using the env id associated with them

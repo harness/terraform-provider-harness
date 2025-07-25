@@ -146,5 +146,3 @@ Optional:
 
 - `app_ids` (Set of String) The application IDs to which the permission applies. Leave empty to apply to all applications.
 - `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_WORKFLOWS, PRODUCTION_WORKFLOWS, WORKFLOW_TEMPLATES.
-
-

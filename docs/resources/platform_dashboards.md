@@ -13,13 +13,11 @@ Resource for a Harness Custom Dashboard.
 ## Example Usage
 
 ```terraform
-resource "harness_platform_dashboards" "example" {
-  dashboard_id = "48507"
-  description = "Example dashboard description"
-  resource_identifier = "shared"
-  title = "Example Dashboard"
-  data_source = []
-  models = []
+resource "harness_platform_dashboards" "dashboard" {
+  dashboard_id        = "111"
+  description         = "dashboard_tag"
+  resource_identifier = "999"
+  title               = "Dashboard Title"
 }
 ```
 
@@ -41,10 +39,10 @@ resource "harness_platform_dashboards" "example" {
 - `name` (String) Name of the Dashboard.
 - `title` (String) Title of the Dashboard.
 - `type` (String) Type of the dashboard.
-- `view_count` (Int) View count of the dashboard.
+- `view_count` (Number) View count of the dashboard.
 
 ### Read-Only
 
+- `favorite_count` (Number) Favorite count of the dashboard.
 - `id` (String) Identifier of the dashboard.
-- `favorite_count` (Int) Favorite count of the dashboard.
 - `last_accessed_at` (String) Last accessed at timestamp of the Dashboard.

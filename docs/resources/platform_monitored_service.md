@@ -34,9 +34,9 @@ resource "harness_platform_monitored_service" "example" {
         connectorRef = "connectorRef"
         queryDefinitions = [
           {
-            name       = "error_4xx"
-            identifier = "error_4xx_id"
-            query      = "Bad Request"
+            name       = "name"
+            identifier = "infraquery"
+            query      = "query"
             index      = "index"
             groupName  = "Logs_Group"
             queryParams = {
@@ -48,9 +48,9 @@ resource "harness_platform_monitored_service" "example" {
             }
           },
           {
-            name       = "error_5xx"
-            identifier = "error_5xx_id"
-            query      = "Internal Server Error"
+            name       = "name2"
+            identifier = "errorquery"
+            query      = "query2"
             index      = "index2"
             groupName  = "Logs_Group"
             queryParams = {
@@ -939,6 +939,8 @@ Required:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level monitored_service

@@ -24,9 +24,7 @@ resource "harness_platform_connector_aws" "aws" {
   manual {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
-    session_token_ref  = "session_token"
     delegate_selectors = ["harness-delegate"]
-    region             = "aws_region"
   }
 }
 
@@ -41,9 +39,7 @@ resource "harness_platform_connector_aws" "aws" {
   manual {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
-    session_token_ref  = "session_token"
     delegate_selectors = ["harness-delegate"]
-    region             = "aws_region"
   }
   equal_jitter_backoff_strategy {
     base_delay       = 10
@@ -63,9 +59,7 @@ resource "harness_platform_connector_aws" "aws" {
   manual {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
-    session_token_ref  = "session_token"
     delegate_selectors = ["harness-delegate"]
-    region             = "aws_region"
   }
   full_jitter_backoff_strategy {
     base_delay       = 10
@@ -85,15 +79,14 @@ resource "harness_platform_connector_aws" "aws" {
   manual {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
-    session_token_ref  = "session_token"
     delegate_selectors = ["harness-delegate"]
-    region             = "aws_region"
   }
   fixed_delay_backoff_strategy {
     fixed_backoff = 10
     retry_count   = 3
   }
 }
+
 
 # Create Aws connector using Oidc Authentication
 
@@ -104,9 +97,9 @@ resource "harness_platform_connector_aws" "aws" {
   tags        = ["foo:bar"]
 
   oidc_authentication {
-    iam_role_arn       = "test"                    # Required: The IAM Role to assume the credentials
-    delegate_selectors = ["harness-delegate"]      # Optional: The delegates to inherit the credentials
-    region             = "aws_region"              # Optional: AWS Region for connection test
+    iam_role_arn       = "test"
+    delegate_selectors = ["harness-delegate"]
+    region             = "aws_region"
   }
 }
 ```
@@ -124,13 +117,14 @@ resource "harness_platform_connector_aws" "aws" {
 - `cross_account_access` (Block List, Max: 1) Select this option if you want to use one AWS account for the connection, but you want to deploy or build in a different AWS account. In this scenario, the AWS account used for AWS access in Credentials will assume the IAM role you specify in Cross-account role ARN setting. This option uses the AWS Security Token Service (STS) feature. (see [below for nested schema](#nestedblock--cross_account_access))
 - `description` (String) Description of the resource.
 - `equal_jitter_backoff_strategy` (Block List, Max: 1) Equal Jitter BackOff Strategy. (see [below for nested schema](#nestedblock--equal_jitter_backoff_strategy))
+- `execute_on_delegate` (Boolean) Enable this flag to execute on Delegate
 - `fixed_delay_backoff_strategy` (Block List, Max: 1) Fixed Delay BackOff Strategy. (see [below for nested schema](#nestedblock--fixed_delay_backoff_strategy))
 - `force_delete` (Boolean) Enable this flag for force deletion of connector
 - `full_jitter_backoff_strategy` (Block List, Max: 1) Full Jitter BackOff Strategy. (see [below for nested schema](#nestedblock--full_jitter_backoff_strategy))
 - `inherit_from_delegate` (Block List, Max: 1) Inherit credentials from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `irsa` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--irsa))
 - `manual` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--manual))
-- `oidc_authentication` (Block List, Max: 1) Authentication using Harness OIDC. (see [below for nested schema](#nestedblock--oidc_authentication))
+- `oidc_authentication` (Block List, Max: 1) Authentication using harness oidc. (see [below for nested schema](#nestedblock--oidc_authentication))
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -189,7 +183,7 @@ Required:
 
 Optional:
 
-- `region` (String) Test Region to perform Connection test of AWS Connector.
+- `region` (String) Test Region to perform Connection test of AWS Connector To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedblock--irsa"></a>
@@ -201,7 +195,7 @@ Required:
 
 Optional:
 
-- `region` (String) Test Region to perform Connection test of AWS Connector.
+- `region` (String) Test Region to perform Connection test of AWS Connector To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedblock--manual"></a>
@@ -215,9 +209,9 @@ Optional:
 
 - `access_key` (String) AWS access key.
 - `access_key_ref` (String) Reference to the Harness secret containing the aws access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
-- `session_token_ref` (String) Reference to the Harness secret containing the aws session token.
 - `delegate_selectors` (Set of String) Connect only use delegates with these tags.
-- `region` (String) Test Region to perform Connection test of AWS Connector.
+- `region` (String) Test Region to perform Connection test of AWS Connector To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `session_token_ref` (String) Reference to the Harness secret containing the aws session token. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedblock--oidc_authentication"></a>
@@ -230,11 +224,13 @@ Required:
 Optional:
 
 - `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
-- `region` (String) AWS Region to perform Connection test of Connector.
+- `region` (String) Test Region to perform Connection test of AWS Connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level aws connector

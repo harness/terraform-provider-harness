@@ -41,13 +41,13 @@ data "harness_platform_gitops_agent" "example" {
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps agent.
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `project_id` (String) Project identifier of the GitOps agent.
 - `with_credentials` (Boolean) Specify whether to retrieve the gitops agent's token. (The field agent_token will be populated only if the agent has never connected to Harness before). For retrieval of this information, the user associated to the token being used must have Gitops Agent Edit permissions
 
 ### Read-Only
 
-- `account_id` (String, Deprecated) Account identifier of the GitOps agent.
 - `agent_token` (String) Agent token to be used for authentication of the agent with Harness.
 - `description` (String) Description of the GitOps agent.
 - `id` (String) The ID of this resource.

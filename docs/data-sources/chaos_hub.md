@@ -14,8 +14,8 @@ Data source for retrieving a Harness Chaos Hub
 
 ```terraform
 data "harness_chaos_hub" "example" {
-  name = "<name>"
-  org_id = "<org_id>"
+  name       = "<name>"
+  org_id     = "<org_id>"
   project_id = "<project_id>"
 }
 ```

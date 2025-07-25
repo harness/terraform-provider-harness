@@ -61,6 +61,7 @@ resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
 
 - `delegate_selectors` (Set of String) Connect only using delegates with these tags.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Enable this flag to execute on delegate (default: true).
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -86,6 +87,8 @@ Required:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level Terraform Cloud provider connector 

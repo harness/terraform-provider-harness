@@ -44,5 +44,3 @@ Read-Only:
 - `name` (String)
 - `resource_type` (String)
 - `status` (String)
-
-

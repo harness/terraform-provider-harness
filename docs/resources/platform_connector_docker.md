@@ -10,13 +10,8 @@ description: |-
 
 Resource for creating a Docker connector.
 
-### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use the Connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors)
-- To understand more about Docker Connectors, please see  [Docker Connectors](https://developer.harness.io/docs/platform/connectors/cloud-providers/ref-cloud-providers/docker-registry-connector-settings-reference/)
+## Example Usage
 
-## Example to create Docker Connector at different levels (Org, Project, Account)
-### Account Level
 ```terraform
 # credentials anonymous
 resource "harness_platform_connector_docker" "test" {
@@ -36,72 +31,6 @@ resource "harness_platform_connector_docker" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
-
-  type               = "DockerHub"
-  url                = "https://hub.docker.com"
-  delegate_selectors = ["harness-delegate"]
-  credentials {
-    username     = "admin"
-    password_ref = "account.secret_id"
-  }
-}
-```
-### Org Level
-```terraform
-# credentials anonymous
-resource "harness_platform_connector_docker" "test" {
-  identifier  = "identifer"
-  name        = "name"
-  description = "test"
-  tags        = ["foo:bar"]
-  org_id      = harness_platform_project.test.org_id
-
-  type               = "DockerHub"
-  url                = "https://hub.docker.com"
-  delegate_selectors = ["harness-delegate"]
-}
-
-# credentials username password
-resource "harness_platform_connector_docker" "test" {
-  identifier  = "identifer"
-  name        = "name"
-  description = "test"
-  tags        = ["foo:bar"]
-  org_id      = harness_platform_project.test.org_id
-
-  type               = "DockerHub"
-  url                = "https://hub.docker.com"
-  delegate_selectors = ["harness-delegate"]
-  credentials {
-    username     = "admin"
-    password_ref = "account.secret_id"
-  }
-}
-```
-### Project Level
-```terraform
-# credentials anonymous
-resource "harness_platform_connector_docker" "test" {
-  identifier  = "identifer"
-  name        = "name"
-  description = "test"
-  tags        = ["foo:bar"]
-  org_id      = harness_platform_project.test.org_id
-  project_id  = harness_platform_project.test.id
-
-  type               = "DockerHub"
-  url                = "https://hub.docker.com"
-  delegate_selectors = ["harness-delegate"]
-}
-
-# credentials username password
-resource "harness_platform_connector_docker" "test" {
-  identifier  = "identifer"
-  name        = "name"
-  description = "test"
-  tags        = ["foo:bar"]
-  org_id      = harness_platform_project.test.org_id
-  project_id  = harness_platform_project.test.id
 
   type               = "DockerHub"
   url                = "https://hub.docker.com"
@@ -128,10 +57,10 @@ resource "harness_platform_connector_docker" "test" {
 - `credentials` (Block List, Max: 1) The credentials to use for the docker registry. If not specified then the connection is made to the registry anonymously. (see [below for nested schema](#nestedblock--credentials))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
-- `execute_on_delegate` (Boolean) Execute on delegate or not.
 
 ### Read-Only
 
@@ -142,7 +71,7 @@ resource "harness_platform_connector_docker" "test" {
 
 Required:
 
-- `password_ref` (String) The reference to the Harness secret containing the password to use for the docker registry. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}. To reference a secret at the project scope, use directly without any prefix.
+- `password_ref` (String) The reference to the Harness secret containing the password to use for the docker registry. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 Optional:
 
@@ -152,6 +81,8 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level docker connector 

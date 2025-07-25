@@ -10,10 +10,6 @@ description: |-
 
 Data source for retrieving service account.
 
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use Service Account, please see [Documentation](https://developer.harness.io/docs/platform/user-management/add-and-manage-service-account/)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Service-Account)
 ## Example Usage
 
 ```terraform
@@ -39,5 +35,3 @@ data "harness_platform_service_account" "example" {
 - `email` (String) Email of the Service Account.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
-
-

@@ -66,5 +66,3 @@ Read-Only:
 Read-Only:
 
 - `ssh_key_ref` (String)
-
-

@@ -20,7 +20,7 @@ resource "harness_platform_connector_elasticsearch" "token" {
   description = "test"
   tags        = ["foo:bar"]
 
-  url                = "https://elasticsearch.com/"
+  url                = "http://elk6.dev.harness.io:9200/"
   delegate_selectors = ["harness-delegate"]
   api_token {
     client_id         = "client_id"
@@ -35,7 +35,7 @@ resource "harness_platform_connector_elasticsearch" "test" {
   description = "test"
   tags        = ["foo:bar"]
 
-  url                = "https://elasticsearch.com/"
+  url                = "http://elk6.dev.harness.io:9200/"
   delegate_selectors = ["harness-delegate"]
   username_password {
     username     = "username"
@@ -43,15 +43,14 @@ resource "harness_platform_connector_elasticsearch" "test" {
   }
 }
 
-
-# Authentication mechanism as username and password
+# Authentication mechanism without authentication
 resource "harness_platform_connector_elasticsearch" "no_authentication" {
   identifier  = "identifier"
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
 
-  url                = "https://elasticsearch.com/"
+  url                = "http://elk6.dev.harness.io:9200/"
   delegate_selectors = ["harness-delegate"]
 }
 ```
@@ -63,13 +62,14 @@ resource "harness_platform_connector_elasticsearch" "no_authentication" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `url` (String) URL of the ElasticSearch controller.
+- `url` (String) URL of the elasticsearch
 
 ### Optional
 
 - `api_token` (Block List, Max: 1) Authenticate to ElasticSearch using api token. (see [below for nested schema](#nestedblock--api_token))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `no_authentication` (Block List, Max: 1) No Authentication to ElasticSearch (see [below for nested schema](#nestedblock--no_authentication))
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -84,8 +84,12 @@ resource "harness_platform_connector_elasticsearch" "no_authentication" {
 
 Required:
 
-- `client_id` (String) The client id used for connecting to ElasticSearch.
+- `client_id` (String) The API Key id used for connecting to ElasticSearch.
 - `client_secret_ref` (String) Reference to the Harness secret containing the ElasticSearch client secret. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+
+<a id="nestedblock--no_authentication"></a>
+### Nested Schema for `no_authentication`
 
 
 <a id="nestedblock--username_password"></a>
@@ -100,13 +104,15 @@ Required:
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
-# Import account level elasticsearch connector 
+# Import account level elasticsearch connector
 terraform import harness_platform_connector_elasticsearch.example <connector_id>
 
-# Import org level elasticsearch connector 
+# Import org level elasticsearch connector
 terraform import harness_platform_connector_elasticsearch.example <ord_id>/<connector_id>
 
-# Import project level elasticsearch connector 
+# Import project level elasticsearch connector
 terraform import harness_platform_connector_elasticsearch.example <org_id>/<project_id>/<connector_id>
 ```

@@ -32,32 +32,34 @@ data "harness_platform_db_schema" "example" {
 ### Optional
 
 - `name` (String) Name of the resource.
+- `type` (String) Type of the database schema. Valid values are: Repository, Script
 
 ### Read-Only
 
+- `changelog_script` (List of Object) Configuration to clone changeSets using script (see [below for nested schema](#nestedatt--changelog_script))
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `schema_source` (List of Object) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedatt--schema_source))
 - `service` (String) The service associated with schema
 - `tags` (Set of String) Tags to associate with the resource.
 
+<a id="nestedatt--changelog_script"></a>
+### Nested Schema for `changelog_script`
+
+Read-Only:
+
+- `command` (String)
+- `image` (String)
+- `location` (String)
+- `shell` (String)
+
+
 <a id="nestedatt--schema_source"></a>
 ### Nested Schema for `schema_source`
 
 Read-Only:
 
+- `archive_path` (String)
 - `connector` (String)
 - `location` (String)
 - `repo` (String)
-- `archive_path` (String)
-
-
-<a id="nestedblock--changelog_script"></a>
-### Nested Schema for `changelog_script`
-
-Read-Only:
-
-- `image` (String) The fully-qualified name (FQN) of the image
-- `location` (String) Path to changeLog file
-- `command` (String) Script to clone changeSets
-- `shell` (String) Type of the shell. For example Sh or Bash

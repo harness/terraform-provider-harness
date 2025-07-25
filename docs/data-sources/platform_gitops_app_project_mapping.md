@@ -32,8 +32,11 @@ data "harness_platform_gitops_app_project_mapping" "example" {
 - `org_id` (String) Organization identifier of the GitOps agent's Application Project.
 - `project_id` (String) Project identifier of the GitOps agent's Application Project.
 
-### Read-Only
+### Optional
 
 - `account_id` (String, Deprecated) Account identifier of the GitOps agent's Application Project.
+
+### Read-Only
+
 - `id` (String) The ID of this resource.
 - `identifier` (String) Identifier of the GitOps Application Project.

@@ -51,4 +51,3 @@ output "serversdkkey" {
 
 - `api_key` (String, Sensitive) The value of the SDK API Key
 - `id` (String) The ID of this resource.
-

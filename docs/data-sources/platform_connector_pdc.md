@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_pdc Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for looking up a Physical data center connector.
+  Datasource for looking up a Pdc connector.
 ---
 
 # harness_platform_connector_pdc (Data Source)
 
-Datasource for looking up a Physical data center connector.
+Datasource for looking up a Pdc connector.
 
 ## Example Usage
 
@@ -33,9 +33,9 @@ data "harness_platform_connector_pdc" "example" {
 
 ### Read-Only
 
-- `host` (List of Object) Hosts to be provided. (see [below for nested schema](#nestedatt--host))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `host` (Set of Object) Host of the Physical data centers. (see [below for nested schema](#nestedatt--host))
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
 
@@ -44,7 +44,5 @@ data "harness_platform_connector_pdc" "example" {
 
 Read-Only:
 
-- `hostname` (String) Hostname e.g. 87.23.66.11:80
-- `attributes` (Object) Host attributes with values. e.g. type, region, name, ip, etc.
-
-
+- `attributes` (Map of String)
+- `hostname` (String)

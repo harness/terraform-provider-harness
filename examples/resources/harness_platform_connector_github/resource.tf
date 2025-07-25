@@ -75,19 +75,19 @@ resource "harness_platform_connector_github" "test" {
   credentials {
     http {
       github_app {
-      installation_id = "installation_id"
-      application_id  = "application_id"
-      private_key_ref = "account.secret_id"
+        installation_id = "installation_id"
+        application_id  = "application_id"
+        private_key_ref = "account.secret_id"
+      }
+    }
+    api_authentication {
+      github_app {
+        installation_id = "installation_id"
+        application_id  = "application_id"
+        private_key_ref = "account.secret_id"
+      }
     }
   }
-  api_authentication {
-    github_app {
-      installation_id = "installation_id"
-      application_id  = "application_id"
-      private_key_ref = "account.secret_id"
-    }
-  }
- }
 }
 
 # http anonymous credentials
@@ -103,7 +103,7 @@ resource "harness_platform_connector_github" "test" {
   delegate_selectors = ["harness-delegate"]
   credentials {
     http {
-      anonymous  {}
+      anonymous {}
     }
   }
 }

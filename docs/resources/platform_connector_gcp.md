@@ -38,7 +38,7 @@ resource "harness_platform_connector_gcp" "test" {
   }
 }
 
-# Credentials oidc_authentication
+# Create Gcp connector using Oidc Authentication
 
 resource "harness_platform_connector_gcp" "test" {
   identifier  = "identifier"
@@ -47,11 +47,11 @@ resource "harness_platform_connector_gcp" "test" {
   tags        = ["foo:bar"]
 
   oidc_authentication {
-    workload_pool_id   = "samplePoolId"
-    provider_id        = "testProviderId"     
-    gcp_project_id        = "12345"     
-    service_account_email  = "test@sample.iam.gserviceaccount.com"     
-    delegate_selectors = ["harness-delegate"]
+    workload_pool_id      = "harness-pool-test"
+    provider_id           = "harness"
+    gcp_project_id        = "1234567"
+    service_account_email = "harness.sample.iam.gserviceaccount.com"
+    delegate_selectors    = ["harness-delegate"]
   }
 }
 ```
@@ -71,7 +71,7 @@ resource "harness_platform_connector_gcp" "test" {
 - `force_delete` (Boolean) Enable this flag for force deletion of connector
 - `inherit_from_delegate` (Block List) Inherit configuration from delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `manual` (Block List, Max: 1) Manual credential configuration. (see [below for nested schema](#nestedblock--manual))
-- `oidc_authentication` (List of Object) Authentication using harness oidc. (see [below for nested schema](#nestedatt--oidc_authentication))
+- `oidc_authentication` (Block List) Authentication using harness oidc. (see [below for nested schema](#nestedblock--oidc_authentication))
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -99,20 +99,26 @@ Optional:
 
 - `delegate_selectors` (Set of String) The delegates to connect with.
 
-<a id="nestedatt--oidc_authentication"></a>
-### Nested Schema for `oidc authentication`
 
-Read-Only:
+<a id="nestedblock--oidc_authentication"></a>
+### Nested Schema for `oidc_authentication`
 
-- `workload_pool_id` (String) The workload pool ID value created in GCP.
+Required:
+
+- `gcp_project_id` (String) The project number of the GCP project that is used to create the workload identity.
 - `provider_id` (String) The OIDC provider ID value configured in GCP.
-- `gcp_project_id` (String) The project number of the GCP project that is used to create the workload identity federation.
 - `service_account_email` (String) The service account linked to workload identity pool while setting GCP workload identity provider.
-- `delegate_selectors` (Set of String)
+- `workload_pool_id` (String) The workload pool ID value created in GCP.
+
+Optional:
+
+- `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
 
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level gcp connector 

@@ -37,5 +37,3 @@ data "harness_platform_environment_group" "example" {
 
 - `id` (String) The ID of this resource.
 - `yaml` (String) Input Set YAML
-
-

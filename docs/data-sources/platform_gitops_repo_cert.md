@@ -31,10 +31,10 @@ data "harness_platform_gitops_repo_cert" "test" {
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps repository certificate.
 - `org_id` (String) Organization identifier of the GitOps repository certificate.
 - `project_id` (String) Project identifier of the GitOps repository certificate.
 
 ### Read-Only
 
-- `account_id` (String, Deprecated) Account identifier of the GitOps repository certificate.
 - `id` (String) The ID of this resource.

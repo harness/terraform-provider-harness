@@ -200,6 +200,7 @@ resource "harness_service_discovery_agent" "full_config" {
 
 - `created_at` (String) Timestamp when the agent was created.
 - `created_by` (String) User who created the agent.
+- `description` (String) Description of the agent.
 - `id` (String) The unique identifier of the agent.
 - `identity` (String) The unique identity of the agent.
 - `installation_details` (List of Object) Installation details of the agent. (see [below for nested schema](#nestedatt--installation_details))
@@ -207,6 +208,7 @@ resource "harness_service_discovery_agent" "full_config" {
 - `removed` (Boolean) Whether the agent has been removed.
 - `removed_at` (String) Timestamp when the agent was removed.
 - `service_count` (Number) Number of services managed by this agent.
+- `tags` (List of String) List of resource tags for the agent.
 - `updated_at` (String) Timestamp when the agent was last updated.
 - `updated_by` (String) User who last updated the agent.
 
@@ -388,12 +390,7 @@ Import is supported using the following syntax:
 The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
-# Import account level Service Discovery Agent
-terraform import harness_service_discovery_agent.example <environment_identifier>/<infra_identifier>
-
-# Import organization level Service Discovery Agent
-terraform import harness_service_discovery_agent.example <org_identifier>/<environment_identifier>/<infra_identifier>
-
-# Import project level Service Discovery Agent
+# Import Project level Service Discovery Agent
+# Account and Org level agents are not supported yet
 terraform import harness_service_discovery_agent.example <org_identifier>/<project_identifier>/<environment_identifier>/<infra_identifier>
 ```

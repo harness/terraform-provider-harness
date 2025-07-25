@@ -38,5 +38,3 @@ data "harness_platform_connector_kubernetes_cloud_cost" "example" {
 - `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, and Visibility.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
-
-

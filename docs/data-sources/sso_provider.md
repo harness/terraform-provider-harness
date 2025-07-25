@@ -23,5 +23,3 @@ Data source for retrieving an SSO providers
 ### Read-Only
 
 - `type` (String) The type of SSO provider.
-
-

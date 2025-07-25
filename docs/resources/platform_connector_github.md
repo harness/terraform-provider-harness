@@ -95,16 +95,17 @@ resource "harness_platform_connector_github" "test" {
         private_key_ref = "account.secret_id"
       }
     }
-  }
-  api_authentication {
-    github_app {
-      installation_id = "installation_id"
-      application_id  = "application_id"
-      private_key_ref = "account.secret_id"
+    api_authentication {
+      github_app {
+        installation_id = "installation_id"
+        application_id  = "application_id"
+        private_key_ref = "account.secret_id"
+      }
     }
   }
 }
 
+# http anonymous credentials
 resource "harness_platform_connector_github" "test" {
   identifier  = "identifier"
   name        = "name"
@@ -140,7 +141,7 @@ resource "harness_platform_connector_github" "test" {
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `execute_on_delegate` (Boolean) Execute on delegate or not.
-- `force_delete` (String) Enable this flag for force deletion of github connector
+- `force_delete` (Boolean) Enable this flag for force deletion of service
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -161,16 +162,33 @@ Optional:
 <a id="nestedblock--credentials--http"></a>
 ### Nested Schema for `credentials.http`
 
+Optional:
+
+- `anonymous` (Block List) Configuration for using the github http anonymous for interacting with the github api. (see [below for nested schema](#nestedblock--credentials--http--anonymous))
+- `github_app` (Block List, Max: 1) Configuration for using the github app for interacting with the github api. (see [below for nested schema](#nestedblock--credentials--http--github_app))
+- `token_ref` (String) Reference to a secret containing the personal access to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `username` (String) Username to use for authentication.
+- `username_ref` (String) Reference to a secret containing the username to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+<a id="nestedblock--credentials--http--anonymous"></a>
+### Nested Schema for `credentials.http.anonymous`
+
+
+<a id="nestedblock--credentials--http--github_app"></a>
+### Nested Schema for `credentials.http.github_app`
+
 Required:
 
-- `token_ref` (String) Reference to a secret containing the personal access to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `private_key_ref` (String) Reference to the secret containing the private key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 Optional:
 
-- `username` (String) Username to use for authentication.
-- `username_ref` (String) Reference to a secret containing the username to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
-- `github_app` (Block List, Max: 1) Configuration for using the github app for interacting with the github api. (see [below for nested schema](#nestedblock--api_authentication--github_app))
-- `anonymous` (Block, Max: 1) Configuration for using the http anonymous github for interacting with the github api.
+- `application_id` (String) Enter the GitHub App ID from the GitHub App General tab.
+- `application_id_ref` (String) Reference to the secret containing application id To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `installation_id` (String) Enter the Installation ID located in the URL of the installed GitHub App.
+- `installation_id_ref` (String) Reference to the secret containing installation id. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+
 
 <a id="nestedblock--credentials--ssh"></a>
 ### Nested Schema for `credentials.ssh`
@@ -206,6 +224,8 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level github connector 

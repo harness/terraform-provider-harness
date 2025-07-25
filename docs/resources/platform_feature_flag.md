@@ -205,6 +205,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
 
 ### Optional
 
+- `archived` (Boolean) Whether or not the flag is archived.
 - `description` (String) Description of the Feature Flag
 - `environment` (Block List) Environment Identifier (see [below for nested schema](#nestedblock--environment))
 - `owner` (String) The owner of the flag
@@ -244,8 +245,8 @@ Optional:
 
 Optional:
 
-- `targets` (List of String) The targets of the rule
-- `variation` (String) The identifier of the variation. Valid values are `enabled`, `disabled`
+- `targets` (List of String) The targets that should be served this variation
+- `variation` (String) The identifier of the variation
 
 
 

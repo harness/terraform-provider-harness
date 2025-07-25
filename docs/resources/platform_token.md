@@ -10,8 +10,6 @@ description: |-
 
 Resource for creating tokens.
 
-Note: Please add TF_LOG=DEBUG to your environment if you want the token value in response as Terraform state does not store this value. If this is not possible, please use the UI/API to create the token and view the token value.
-
 ## Example Usage
 
 ```terraform
@@ -83,6 +81,8 @@ resource "harness_platform_token" "test" {
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level token

@@ -10,11 +10,6 @@ description: |-
 
 Datasource for looking up an AWS Secret Manager connector.
 
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use the AWS Secret Manager, please see [Documentation](https://developer.harness.io/docs/platform/Secrets/Secrets-Management/add-an-aws-secret-manager)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
-
 ## Example Usage
 
 ```terraform
@@ -32,9 +27,11 @@ data "harness_platform_connector_aws_secret_manager" "example" {
 
 ### Optional
 
+- `force_delete_without_recovery` (Boolean) Whether to force delete secret value or not.
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
+- `recovery_window_in_days` (Number) Recovery duration in days in AWS Secrets Manager.
 
 ### Read-Only
 
@@ -48,8 +45,6 @@ data "harness_platform_connector_aws_secret_manager" "example" {
 - `secret_name_prefix` (String) A prefix to be added to all secrets.
 - `tags` (Set of String) Tags to associate with the resource.
 - `use_put_secret` (Boolean) Whether to update secret value using putSecretValue action.
-- `force_delete_without_recovery` (Boolean) Whether to force delete secret value or not.
-- `recovery_window_in_days` (Long)  recovery duration in days in AWS Secrets Manager.
 
 <a id="nestedatt--credentials"></a>
 ### Nested Schema for `credentials`

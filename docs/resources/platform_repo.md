@@ -15,7 +15,6 @@ Resource for creating a Harness Repo.
 ```terraform
 resource "harness_platform_repo" "test" {
   identifier     = "test_repo_123"
-  name           = "test_repo_123"
   org_id         = "test_org_123"
   project_id     = "test_project_123"
   default_branch = "main"
@@ -69,6 +68,8 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import

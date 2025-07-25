@@ -38,6 +38,7 @@ data "harness_platform_connector_github" "example" {
 - `credentials` (List of Object) Credentials to use for the connection. (see [below for nested schema](#nestedatt--credentials))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
 - `url` (String) URL of the github repository or account.
@@ -77,9 +78,30 @@ Read-Only:
 
 Read-Only:
 
+- `anonymous` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--http--anonymous))
+- `github_app` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--http--github_app))
 - `token_ref` (String)
 - `username` (String)
 - `username_ref` (String)
+
+<a id="nestedobjatt--credentials--http--anonymous"></a>
+### Nested Schema for `credentials.http.anonymous`
+
+Read-Only:
+
+
+
+<a id="nestedobjatt--credentials--http--github_app"></a>
+### Nested Schema for `credentials.http.github_app`
+
+Read-Only:
+
+- `application_id` (String)
+- `application_id_ref` (String)
+- `installation_id` (String)
+- `installation_id_ref` (String)
+- `private_key_ref` (String)
+
 
 
 <a id="nestedobjatt--credentials--ssh"></a>
@@ -88,5 +110,3 @@ Read-Only:
 Read-Only:
 
 - `ssh_key_ref` (String)
-
-

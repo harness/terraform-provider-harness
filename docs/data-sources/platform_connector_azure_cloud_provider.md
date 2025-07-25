@@ -66,7 +66,7 @@ Read-Only:
 - `type` (String)
 
 <a id="nestedobjatt--credentials--azure_inherit_from_delegate_details--auth--azure_msi_auth_ua"></a>
-### Nested Schema for `credentials.azure_inherit_from_delegate_details.auth.type`
+### Nested Schema for `credentials.azure_inherit_from_delegate_details.auth.azure_msi_auth_ua`
 
 Read-Only:
 
@@ -94,7 +94,7 @@ Read-Only:
 - `type` (String)
 
 <a id="nestedobjatt--credentials--azure_manual_details--auth--azure_client_key_cert"></a>
-### Nested Schema for `credentials.azure_manual_details.auth.type`
+### Nested Schema for `credentials.azure_manual_details.auth.azure_client_key_cert`
 
 Read-Only:
 
@@ -102,10 +102,8 @@ Read-Only:
 
 
 <a id="nestedobjatt--credentials--azure_manual_details--auth--azure_client_secret_key"></a>
-### Nested Schema for `credentials.azure_manual_details.auth.type`
+### Nested Schema for `credentials.azure_manual_details.auth.azure_client_secret_key`
 
 Read-Only:
 
 - `secret_ref` (String)
-
-

@@ -30,13 +30,13 @@ data "harness_platform_gitops_gnupg" "example" {
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account Identifier for the GnuPG Key.
 - `org_id` (String) Organization Identifier for the GnuPG Key.
 - `project_id` (String) Project Identifier for the GnuPG Key.
 - `request` (Block List) GnuPGPublicKey is a representation of a GnuPG public key (see [below for nested schema](#nestedblock--request))
 
 ### Read-Only
 
-- `account_id` (String, Deprecated) Account Identifier for the GnuPG Key.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--request"></a>

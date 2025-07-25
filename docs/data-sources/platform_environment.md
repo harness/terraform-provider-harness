@@ -29,6 +29,7 @@ data "harness_platform_environment" "example" {
 
 ### Optional
 
+- `git_details` (Block List, Max: 1) Contains parameters related to Git Experience for remote entities (see [below for nested schema](#nestedblock--git_details))
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
@@ -42,4 +43,11 @@ data "harness_platform_environment" "example" {
 - `type` (String) The type of environment.
 - `yaml` (String) Environment YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
+<a id="nestedblock--git_details"></a>
+### Nested Schema for `git_details`
 
+Optional:
+
+- `branch` (String) Name of the branch.
+- `load_from_fallback_branch` (Boolean) Load environment yaml from fallback branch
+- `repo_name` (String) Repo name of remote environment

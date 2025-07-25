@@ -40,6 +40,8 @@ resource "harness_delegate_approval" "test" {
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import the status of the delegate approval.
 terraform import harness_delegate_approval.example <delegate_id>

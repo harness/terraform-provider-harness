@@ -89,9 +89,9 @@ resource "harness_platform_gitops_cluster" "example" {
       name   = "name"
       config {
         tls_client_config {
-          ca_data      = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWApYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFgKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
+          ca_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWApYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFgKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
         }
-        bearer_token = "ey......X"
+        bearer_token            = "ey......X"
         cluster_connection_type = "SERVICE_ACCOUNT"
       }
 
@@ -116,9 +116,9 @@ resource "harness_platform_gitops_cluster" "example" {
 ### Optional
 
 - `account_id` (String, Deprecated) Account identifier of the GitOps cluster.
+- `force_delete` (Boolean) Indicates if the cluster should be deleted forcefully, regardless of existing applications using that cluster.
 - `org_id` (String) Organization identifier of the cluster.
 - `project_id` (String) Project identifier of the GitOps cluster.
-- `force_delete` (Boolean) Indicates if the cluster should be deleted forcefully, regardless of existing applications using that cluster.
 - `request` (Block List, Max: 1) Cluster create or update request. (see [below for nested schema](#nestedblock--request))
 
 ### Read-Only
@@ -249,6 +249,8 @@ Read-Only:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import an Account level Gitops Cluster

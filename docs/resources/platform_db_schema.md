@@ -56,7 +56,7 @@ resource "harness_platform_db_schema" "test" {
   changelog_script {
     image    = "plugins/image"
     command  = "echo \\\"hello dbops\\\""
-    shell    = "Sh/Bash"
+    shell    = "sh/bash"
     location = "db/example-changelog.yaml"
   }
 }
@@ -71,19 +71,30 @@ resource "harness_platform_db_schema" "test" {
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `schema_source` (Block List, Min: 1, Max: 1) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedblock--schema_source))
 
 ### Optional
 
+- `changelog_script` (Block List, Max: 1) Configuration to clone changeSets using script (see [below for nested schema](#nestedblock--changelog_script))
 - `description` (String) Description of the resource.
-- `service` (String) The service associated with schema.
-- `type` (String) Type of the database schema (repository/script).
+- `schema_source` (Block List, Max: 1) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedblock--schema_source))
+- `service` (String) The service associated with schema
 - `tags` (Set of String) Tags to associate with the resource.
-- `changelog_script` (Block List, Max: 1) Changelog script details (see [below for nested schema](#nestedblock--changelog_script))
+- `type` (String) Type of the database schema. Valid values are: SCRIPT, REPOSITORY
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--changelog_script"></a>
+### Nested Schema for `changelog_script`
+
+Optional:
+
+- `command` (String) Script to clone changeSets
+- `image` (String) The fully-qualified name (FQN) of the image
+- `location` (String) Path to changeLog file
+- `shell` (String) Type of the shell. For example Sh or Bash
+
 
 <a id="nestedblock--schema_source"></a>
 ### Nested Schema for `schema_source`
@@ -95,22 +106,14 @@ Required:
 
 Optional:
 
-- `repo` (String) If connector url is of account, which repository to connect to using the connector
 - `archive_path` (String) If connector type is artifactory, path to the archive file which contains the changeLog
-
-<a id="nestedblock--changelog_script"></a>
-### Nested Schema for `changelog_script`
-
-Required:
-
-- `image` (String) The fully-qualified name (FQN) of the image
-- `location` (String) Path to changeLog file
-- `command` (String) Script to clone changeSets
-- `shell` (String) Type of the shell. For example Sh or Bash
+- `repo` (String) If connector url is of account, which repository to connect to using the connector
 
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import project level db schema
