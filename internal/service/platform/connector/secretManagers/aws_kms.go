@@ -24,7 +24,12 @@ func ResourceConnectorAwsKms() *schema.Resource {
 			"arn_ref": {
 				Description: "A reference to the Harness secret containing the ARN of the AWS KMS." + secret_ref_text,
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+			},
+			"arn_plaintext": {
+				Description: "A reference to the Harness secret containing the ARN of the AWS KMS.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"region": {
 				Description: "The AWS region where the AWS Secret Manager is.",
@@ -169,7 +174,9 @@ func resourceConnectorAwsKmsRead(ctx context.Context, d *schema.ResourceData, me
 
 func resourceConnectorAwsKmsCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	conn := buildConnectorAwsKms(d)
-
+	fmt.Print("debug log")
+	fmt.Println(conn)
+	fmt.Println(d)
 	newConn, err := resourceConnectorCreateOrUpdateBase(ctx, d, meta, conn)
 	if err != nil {
 		return err
@@ -190,6 +197,10 @@ func buildConnectorAwsKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	if attr, ok := d.GetOk("arn_ref"); ok {
 		connector.AwsKms.KmsArn = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("arn_plaintext"); ok {
+		connector.AwsKms.KmsArnInPlainText = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("region"); ok {
@@ -273,6 +284,7 @@ func buildConnectorAwsKms(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 func readConnectorAwsKms(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
 	d.Set("arn_ref", connector.AwsKms.KmsArn)
+	d.Set("arn_plaintext", connector.AwsKms.KmsArnInPlainText)
 	d.Set("region", connector.AwsKms.Region)
 	d.Set("delegate_selectors", connector.AwsKms.DelegateSelectors)
 	d.Set("default", connector.AwsKms.Default_)

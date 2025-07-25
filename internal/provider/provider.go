@@ -3,9 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_channel"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_rule"
-	"log"
 
 	"github.com/harness/harness-go-sdk/harness/har"
 
