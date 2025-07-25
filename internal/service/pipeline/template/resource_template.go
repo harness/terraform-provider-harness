@@ -2,8 +2,10 @@ package template
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-openapi-go-client/nextgen"
@@ -23,6 +25,7 @@ func ResourceTemplate() *schema.Resource {
 		DeleteContext: resourceTemplateDelete,
 		CreateContext: resourceTemplateCreateOrUpdate,
 		Importer:      helpers.MultiLevelResourceImporter,
+		CustomizeDiff: validateIdentifierMatchesYaml,
 
 		Schema: map[string]*schema.Schema{
 			"template_yaml": {
@@ -123,6 +126,7 @@ func ResourceTemplate() *schema.Resource {
 				Description: "Unique identifier of the resource",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"name": {
 				Description: "Name of the Variable",
@@ -313,6 +317,7 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	version := d.Get("version").(string)
 	template_yaml := d.Get("template_yaml").(string)
 	is_stable := d.Get("is_stable").(bool)
+
 	if attr, ok := d.GetOk("git_import_details"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		if attr, ok := config["branch_name"]; ok {
@@ -703,6 +708,28 @@ func readTemplate(d *schema.ResourceData, template nextgen.TemplateWithInputsRes
 	if template.Template.GitDetails != nil {
 		d.Set("git_details", []interface{}{readGitDetails(template, store_type, base_branch, commit_message, connector_ref)})
 	}
+}
+
+// validateIdentifierMatchesYaml is a CustomizeDiff function that validates the identifier in the schema matches the identifier in the YAML template
+func validateIdentifierMatchesYaml(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+	template_yaml := d.Get("template_yaml").(string)
+	if template_yaml == "" {
+		return nil
+	}
+
+	schemaIdentifier := d.Get("identifier").(string)
+	// Extract identifier from YAML using regex
+	identifierRegex := regexp.MustCompile(`identifier:\s*["']?([^"'\s]+)["']?`)
+	matches := identifierRegex.FindStringSubmatch(template_yaml)
+	if len(matches) > 1 {
+		yamlIdentifier := matches[1]
+		if yamlIdentifier != schemaIdentifier {
+			return fmt.Errorf("identifier in schema (%s) does not match identifier in template YAML (%s)", 
+				schemaIdentifier, yamlIdentifier)
+		}
+	}
+
+	return nil
 }
 
 func readGitDetails(template nextgen.TemplateWithInputsResponse, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {

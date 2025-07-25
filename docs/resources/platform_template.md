@@ -1168,7 +1168,7 @@ resource "harness_platform_template" "test" {
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource
+- `identifier` (String) Unique identifier of the resource. Changing this will force recreation of the resource. Must match the identifier in the template_yaml.
 - `name` (String) Name of the Variable
 - `version` (String) Version Label for Template.
 
