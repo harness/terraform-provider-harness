@@ -32,7 +32,7 @@ resource "harness_platform_connector_kubernetes_cloud_cost" "example" {
 ### Required
 
 - `connector_ref` (String) Reference to a Kubernetes connector also at the account level.
-- `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, and Visibility.
+- `features_enabled` (Set of String) Indicates which feature to enable among Visibility and Optimization.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
