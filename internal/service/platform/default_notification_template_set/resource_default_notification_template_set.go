@@ -151,7 +151,7 @@ func resourceDefaultNotificationTemplateSetCreate(ctx context.Context, d *schema
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readDefaultNotificationTemplateSet(accountID, d, resp)
+	readDefaultNotificationTemplateSet(d, resp)
 
 	return nil
 }
@@ -190,7 +190,7 @@ func resourceDefaultNotificationTemplateSetUpdate(ctx context.Context, d *schema
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readDefaultNotificationTemplateSet(accountID, d, resp)
+	readDefaultNotificationTemplateSet(d, resp)
 
 	return nil
 }
@@ -257,12 +257,12 @@ func resourceDefaultNotificationTemplateSetRead(ctx context.Context, d *schema.R
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readDefaultNotificationTemplateSet(accountID, d, resp)
+	readDefaultNotificationTemplateSet(d, resp)
 
 	return nil
 }
 
-func readDefaultNotificationTemplateSet(accountIdentifier string, d *schema.ResourceData, response nextgen.DefaultNotificationTemplateSetResponse) diag.Diagnostics {
+func readDefaultNotificationTemplateSet(d *schema.ResourceData, response nextgen.DefaultNotificationTemplateSetResponse) diag.Diagnostics {
 	dto := response.DefaultNotificationTemplateSet
 
 	d.SetId(dto.Identifier)
