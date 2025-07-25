@@ -109,6 +109,11 @@ func ResourceDefaultNotificationTemplateSet() *schema.Resource {
 				Computed:    true,
 				Description: "Timestamp when the default notification template set was last modified.",
 			},
+			"created": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Timestamp when the default notification template set was created.",
+			},
 		},
 	}
 }
@@ -261,9 +266,6 @@ func readDefaultNotificationTemplateSet(accountIdentifier string, d *schema.Reso
 	dto := response.DefaultNotificationTemplateSet
 
 	d.SetId(dto.Identifier)
-	d.Set("account", accountIdentifier)
-	d.Set("org", dto.OrgIdentifier)
-	d.Set("project", dto.ProjectIdentifier)
 
 	d.Set("name", dto.Name)
 	d.Set("identifier", dto.Identifier)
