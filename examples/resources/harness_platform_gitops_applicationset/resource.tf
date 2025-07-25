@@ -14,14 +14,14 @@ resource "harness_platform_gitops_applicationset" "test_fixed" {
 
       generator {
         clusters {
-            enabled = true
+          enabled = true
         }
       }
       template {
         metadata {
           name = "{{.name}}-guestbook"
           labels = {
-            env = "dev"
+            env                     = "dev"
             "harness.io/serviceRef" = "svc1"
           }
         }

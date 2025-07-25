@@ -14,7 +14,7 @@ resource "harness_platform_infrastructure" "example" {
     store_type     = "REMOTE"
     repo_name      = "repoName"
   }
-  yaml            = <<-EOT
+  yaml = <<-EOT
         infrastructureDefinition:
          name: name
          identifier: identifier

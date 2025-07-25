@@ -32,10 +32,10 @@ resource "harness_platform_connector_gcp" "test" {
   tags        = ["foo:bar"]
 
   oidc_authentication {
-    workload_pool_id = "harness-pool-test"
-    provider_id = "harness"
-    gcp_project_id = "1234567"
+    workload_pool_id      = "harness-pool-test"
+    provider_id           = "harness"
+    gcp_project_id        = "1234567"
     service_account_email = "harness.sample.iam.gserviceaccount.com"
-    delegate_selectors = ["harness-delegate"]
+    delegate_selectors    = ["harness-delegate"]
   }
 }

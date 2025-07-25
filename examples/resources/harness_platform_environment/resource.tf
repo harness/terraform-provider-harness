@@ -67,15 +67,15 @@ resource "harness_platform_environment" "example" {
 
 ### Importing Environment from Git
 resource "harness_platform_environment" "test" {
-    identifier  = "accEnv"
-    name = "accEnv"
-	  type = "PreProduction"
-    git_details {
-      store_type = "REMOTE"
-      connector_ref = "account.DoNotDeleteGitX"
-      repo_name = "pcf_practice"
-      file_path = ".harness/accountEnvironment.yaml"
-      branch = "main"
-      import_from_git = "true"
-    }
+  identifier = "accEnv"
+  name       = "accEnv"
+  type       = "PreProduction"
+  git_details {
+    store_type      = "REMOTE"
+    connector_ref   = "account.DoNotDeleteGitX"
+    repo_name       = "pcf_practice"
+    file_path       = ".harness/accountEnvironment.yaml"
+    branch          = "main"
+    import_from_git = "true"
   }
+}
