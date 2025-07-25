@@ -31,5 +31,3 @@ Data source for retrieving the current user based on the API key.
 - `signup_action` (String) Signup action of the user.
 - `token` (String) Token used to authenticate the user.
 - `uuid` (String) Unique identifier of the user.
-
-

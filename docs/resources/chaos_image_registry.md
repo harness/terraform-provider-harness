@@ -14,16 +14,16 @@ Resource for managing a Harness Chaos Image Registry
 
 ```terraform
 resource "harness_chaos_image_registry" "example" {
-  org_id         = "<org_id>"
-  project_id     = "<project_id>"
-  
-  registry_server        = "<registry_server>"
-  registry_account       = "<registry_account>"
-  is_private             = true
-  secret_name            = "<secret_name>"
-  is_default             = false
-  is_override_allowed    = true
-  use_custom_images      = true
+  org_id     = "<org_id>"
+  project_id = "<project_id>"
+
+  registry_server     = "<registry_server>"
+  registry_account    = "<registry_account>"
+  is_private          = true
+  secret_name         = "<secret_name>"
+  is_default          = false
+  is_override_allowed = true
+  use_custom_images   = true
 
   # Custom images configuration
   custom_images {

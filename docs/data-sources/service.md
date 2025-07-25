@@ -29,5 +29,3 @@ Data source for retrieving a Harness service
 - `tags` (Map of String) Tags for the service
 - `template_uri` (String) The path of the template used for the custom deployment
 - `type` (String) The type of the deployment
-
-

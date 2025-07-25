@@ -13,8 +13,8 @@ Resource for a Harness Custom Dashboard Folder.
 ## Example Usage
 
 ```terraform
-resource "harness_platform_dashboard_folders" "example" {
-  name = "Example Folder"
+resource "harness_platform_dashboard_folders" "folder" {
+  name = "name"
 }
 ```
 
@@ -27,5 +27,5 @@ resource "harness_platform_dashboard_folders" "example" {
 
 ### Read-Only
 
-- `id` (String) Identifier of the folder.
 - `created_at` (String) Created DateTime of the folder.
+- `id` (String) Identifier of the folder.

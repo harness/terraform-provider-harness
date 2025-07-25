@@ -29,6 +29,7 @@ data "harness_platform_service" "example" {
 
 ### Optional
 
+- `git_details` (Block List, Max: 1) Contains parameters related to Git Experience for remote entities (see [below for nested schema](#nestedblock--git_details))
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
@@ -40,4 +41,11 @@ data "harness_platform_service" "example" {
 - `tags` (Set of String) Tags to associate with the resource.
 - `yaml` (String) Input Set YAML
 
+<a id="nestedblock--git_details"></a>
+### Nested Schema for `git_details`
 
+Optional:
+
+- `branch` (String) Name of the branch.
+- `load_from_fallback_branch` (Boolean) Load service yaml from fallback branch
+- `repo_name` (String) Repo name of remote service

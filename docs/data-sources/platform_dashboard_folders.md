@@ -13,8 +13,8 @@ Data source for retrieving a Harness Dashboard Folder.
 ## Example Usage
 
 ```terraform
-data "harness_platform_dashboard_folders" "example" {
-  id = "your_folder_id"
+data "harness_platform_dashboard_folders" "folder" {
+  id = "id"
 }
 ```
 
@@ -25,7 +25,13 @@ data "harness_platform_dashboard_folders" "example" {
 
 - `id` (String) Identifier of the folder.
 
+### Optional
+
+- `identifier` (String) Unique identifier of the resource.
+- `name` (String) Name of the resource.
+
 ### Read-Only
 
-- `name` (String) Name of the folder.
 - `created_at` (String) Created DateTime of the folder.
+- `description` (String) Description of the resource.
+- `tags` (Set of String) Tags to associate with the resource.

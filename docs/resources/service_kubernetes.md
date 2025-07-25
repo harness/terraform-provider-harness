@@ -68,6 +68,8 @@ Required:
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import using the Harness application id and service id
 terraform import harness_service_kubernetes.example <app_id>/<svc_id>

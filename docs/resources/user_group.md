@@ -278,6 +278,8 @@ Optional:
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import using the id of the user group
 terraform import harness_user_group.example <USER_GROUP_ID>

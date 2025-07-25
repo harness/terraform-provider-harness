@@ -32,12 +32,12 @@ data "harness_platform_gitops_repo_cred" "test" {
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the Repository Credentials.
 - `org_id` (String) Organization identifier of the Repository Credentials.
 - `project_id` (String) Project identifier of the Repository Credentials.
 
 ### Read-Only
 
-- `account_id` (String, Deprecated) Account identifier of the Repository Credentials.
 - `creds` (Block List) credential details. (see [below for nested schema](#nestedblock--creds))
 - `id` (String) The ID of this resource.
 

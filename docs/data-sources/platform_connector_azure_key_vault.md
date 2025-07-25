@@ -49,5 +49,3 @@ data "harness_platform_connector_azure_key_vault" "example" {
 - `tags` (Set of String) Tags to associate with the resource.
 - `tenant_id` (String) The Azure Active Directory (AAD) directory ID where you created your application.
 - `vault_name` (String) Name of the vault.
-
-

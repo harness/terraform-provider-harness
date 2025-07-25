@@ -41,5 +41,3 @@ data "harness_platform_connector_splunk" "example" {
 - `tags` (Set of String) Tags to associate with the resource.
 - `url` (String) URL of the Splunk server.
 - `username` (String) The username used for connecting to Splunk.
-
-

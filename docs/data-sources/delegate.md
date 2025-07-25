@@ -40,5 +40,3 @@ data "harness_delegate" "example" {
 - `polling_mode_enabled` (Boolean) Whether the delegate is in polling mode.
 - `profile_id` (String) The id of the profile assigned to the delegate.
 - `version` (String) The version of the delegate.
-
-

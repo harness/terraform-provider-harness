@@ -10,11 +10,6 @@ description: |-
 
 Resource for creating an AWS KMS connector.
 
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use AWS KMS, please see [Documentation](https://developer.harness.io/docs/platform/secrets/secrets-management/add-an-aws-kms-secrets-manager)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
-
 ## Example Usage
 
 ```terraform
@@ -191,6 +186,8 @@ Required:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level awskms connector 

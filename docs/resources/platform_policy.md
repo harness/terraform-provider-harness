@@ -85,11 +85,9 @@ REGO
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
-# Import account level policy
-terraform import harness_platform_policy.example <policy_id>
-# Import org level policy
-terraform import harness_platform_policy.example <org_id>/<policy_id>
-# Import proj level policy
-terraform import harness_platform_policy.example <org_id>/<project_id>/<policy_id>
+# Import using the organization id
+terraform import harness_platform_policy.example <organization_id>
 ```

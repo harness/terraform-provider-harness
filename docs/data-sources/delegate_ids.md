@@ -31,5 +31,3 @@ data "harness_delegate_ds" "example" {
 
 - `delegate_ids` (List of String) A list of delegate ID's matching the specified search criteria.
 - `id` (String) The ID of this resource.
-
-

@@ -9,73 +9,9 @@ description: |-
 # harness_platform_infrastructure (Resource)
 
 Resource for creating a Harness Infrastructure.
-### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand more about different Infrastructure, please see [Documentation](https://developer.harness.io/docs/continuous-integration/use-ci/set-up-build-infrastructure/which-build-infrastructure-is-right-for-me/)
-- To read specific about the Kubernetes Infrastructure, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/deploy-srv-diff-platforms/kubernetes/define-your-kubernetes-target-infrastructure/)
 
-## Example to create Infrastructure at different levels (Org, Project, Account)
+## Example Usage
 
-### Account Level
-```terraform
-resource "harness_platform_infrastructure" "example" {
-  identifier      = "identifier"
-  name            = "name"
-  env_id          = "environmentIdentifier"
-  type            = "KubernetesDirect"
-  deployment_type = "Kubernetes"
-  yaml            = <<-EOT
-        infrastructureDefinition:
-         name: name
-         identifier: identifier
-         description: ""
-         tags:
-           asda: ""
-         orgIdentifier: orgIdentifer
-         projectIdentifier: projectIdentifier
-         environmentRef: environmentIdentifier
-         deploymentType: Kubernetes
-         type: KubernetesDirect
-         spec:
-          connectorRef: account.gfgf
-          namespace: asdasdsa
-          releaseName: release-<+INFRA_KEY>
-          allowSimultaneousDeployments: false
-      EOT
-}
-```
-
-### Org Level
-```terraform
-resource "harness_platform_infrastructure" "example" {
-  identifier      = "identifier"
-  name            = "name"
-  org_id          = "orgIdentifer"
-  env_id          = "environmentIdentifier"
-  type            = "KubernetesDirect"
-  deployment_type = "Kubernetes"
-  yaml            = <<-EOT
-        infrastructureDefinition:
-         name: name
-         identifier: identifier
-         description: ""
-         tags:
-           asda: ""
-         orgIdentifier: orgIdentifer
-         projectIdentifier: projectIdentifier
-         environmentRef: environmentIdentifier
-         deploymentType: Kubernetes
-         type: KubernetesDirect
-         spec:
-          connectorRef: account.gfgf
-          namespace: asdasdsa
-          releaseName: release-<+INFRA_KEY>
-          allowSimultaneousDeployments: false
-      EOT
-}
-```
-
-### Project Level
 ```terraform
 resource "harness_platform_infrastructure" "example" {
   identifier      = "identifier"
@@ -85,7 +21,15 @@ resource "harness_platform_infrastructure" "example" {
   env_id          = "environmentIdentifier"
   type            = "KubernetesDirect"
   deployment_type = "Kubernetes"
-  yaml            = <<-EOT
+  git_details {
+    branch_name    = "branchName"
+    commit_message = "commitMessage"
+    file_path      = "filePath"
+    connector_ref  = "connectorRef"
+    store_type     = "REMOTE"
+    repo_name      = "repoName"
+  }
+  yaml = <<-EOT
         infrastructureDefinition:
          name: name
          identifier: identifier
@@ -103,55 +47,6 @@ resource "harness_platform_infrastructure" "example" {
           releaseName: release-<+INFRA_KEY>
           allowSimultaneousDeployments: false
       EOT
-}
-```
-
-### Creating Remote Infrastructure
-```terraform
-resource "harness_platform_infrastructure" "test" {
-		identifier = "identifier"
-		name = "name"
-		env_id = "env_id"
-		type = "InfrastructureType"
-		git_details {
-			store_type = "REMOTE"
-			connector_ref = "connectorRef"
-			repo_name = "repoName"
-			file_path = "filePath"
-			branch = "branch_name"
-		}
-		yaml = <<-EOT
-			   infrastructureDefinition:
-         name: "name"
-         identifier: "identifier"
-         description: ""
-         tags:
-           asda: ""
-         environmentRef: "environmentRef"
-         deploymentType: Kubernetes
-         type: KubernetesDirect
-         spec:
-          connectorRef: "<+input>"
-          namespace: "<+input>"
-          releaseName: "<+input>"
-         allowSimultaneousDeployments: false
-      EOT
-```
-
-### Importing Infrastructure From Git
-```terraform
-resource "harness_platform_infrastructure" "test" {
-		identifier  = "identifier"
-		name        = "name"
-		env_id = "env_id"
-		git_details {
-    store_type = "REMOTE"
-    connector_ref = "connector_ref"
-    repo_name = "repo_name"
-    file_path = "file_path"
-    branch = "branch"
-    import_from_git = "true"
-  }
 }
 ```
 
@@ -163,44 +58,51 @@ resource "harness_platform_infrastructure" "test" {
 - `env_id` (String) Environment Identifier.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `type` (String) Type of Infrastructure. Valid values are KubernetesDirect, KubernetesGcp, ServerlessAwsLambda, Pdc, KubernetesAzure, SshWinRmAzure, SshWinRmAws, AzureWebApp, ECS, GitOps, CustomDeployment, TAS, KubernetesRancher, AWS_SAM.
-- `yaml` (String) Infrastructure YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
 ### Optional
 
 - `deployment_type` (String) Infrastructure deployment type. Valid values are Kubernetes, NativeHelm, Ssh, WinRm, ServerlessAwsLambda, AzureWebApp, Custom, ECS.
 - `description` (String) Description of the resource.
-- `force_delete` (Boolean) When set to true, enables force deletion of infrastructure.
+- `force_delete` (Boolean) Enable this flag for force deletion of infrastructure
+- `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
-- `git_details` (Block List, Max: 1) Contains Git Information for remote entities from Git for Create/Update/Import (see [below for nested schema](#nestedblock--git_details))
+- `type` (String) Type of Infrastructure. Valid values are KubernetesDirect, KubernetesGcp, ServerlessAwsLambda, Pdc, KubernetesAzure, SshWinRmAzure, SshWinRmAws, AzureWebApp, ECS, GitOps, CustomDeployment, TAS, KubernetesRancher, AWS_SAM.
+- `yaml` (String) Infrastructure YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--git_details"></a>
 ### Nested Schema for `git_details`
 
 Optional:
 
-- `branch_name` (String) Name of the branch.
-- `connector_ref` (String) Identifier of the Harness Connector used for importing entity from Git To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `base_branch` (String) Name of the default branch (this checks out a new branch titled by branch_name).
+- `branch` (String) Name of the branch.
+- `commit_message` (String) Commit message used for the merge commit.
+- `connector_ref` (String) Identifier of the Harness Connector used for CRUD operations on the Entity. To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `file_path` (String) File path of the Entity in the repository.
+- `import_from_git` (Boolean) import infrastructure from git
+- `is_force_import` (Boolean) force import infrastructure from remote even if same file path already exist
+- `is_harnesscode_repo` (Boolean) If the gitProvider is HarnessCode
+- `is_new_branch` (Boolean) If a new branch creation is requested.
+- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating infrastructure.
+- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating infrastructure.
+- `load_from_cache` (String) If the Entity is to be fetched from cache
+- `load_from_fallback_branch` (Boolean) If the Entity is to be fetched from fallbackBranch
+- `parent_entity_connector_ref` (String) Identifier of the Harness Connector used for CRUD operations on the Parent Entity. To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `parent_entity_repo_name` (String) Name of the repository where parent entity lies.
 - `repo_name` (String) Name of the repository.
-- `store_type` (String) store type of the entity.
-- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Infrastructures.
-- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Infrastructures.
-- `is_harness_code_repo` (Boolean) If the repo is in harness code.
-- `commit_message` (String) message for the commit in Git Repo.
-- `import_from_git` (Boolean) Flag to set if importing from Git
-- `is_force_import` (Boolean) Flag to set if force importing from Git
-- `load_from_fallback_branch` Whether the file has to be get from fallback_branch.
-
-### Read-Only
-
-- `id` (String) The ID of this resource.
+- `store_type` (String) Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.
 
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level infrastructure

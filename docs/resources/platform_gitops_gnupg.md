@@ -80,6 +80,8 @@ Read-Only:
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import an Account level Gitops GnuPG Key
 terraform import harness_platform_gitops_gnupg.example <agent_id>/<key_id>

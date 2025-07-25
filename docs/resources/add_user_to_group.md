@@ -43,6 +43,8 @@ resource "harness_add_user_to_group" "example_add_user_to_groups" {
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import using the Harness user and user group id
 terraform import harness_add_user_to_group.example_admin <user_id>/<group_id>

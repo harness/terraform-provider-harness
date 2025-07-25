@@ -10,12 +10,6 @@ description: |-
 
 Resource for creating role assignments in Harness.
 
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use Role Assignments, please see [Documentation](https://developer.harness.io/docs/platform/Role-Based-Access-Control/rbac-in-harness#role-assignment)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Role-Assignments)
-
-Note: Role assignments for principal type `SERVICE` and `API_KEY` cannot be changed.
 ## Example Usage
 
 ```terraform
@@ -99,9 +93,9 @@ resource "harness_platform_role_assignments" "example2" {
 
 ### Optional
 
-- `disabled` (Boolean) The `disabled` attribute in the role assignment resource controls the status of the role assignment. Setting `disabled` to `false` activates the role and its permissions, enabling the assigned entity to perform allowed actions. Conversely, setting `disabled` to `true` deactivates the role, revoking the entity's permissions and action capabilities. Default value should be `false`.
+- `disabled` (Boolean) Disabled or not.
 - `identifier` (String) Identifier for role assignment.
-- `managed` (Boolean) Specifies whether the role assignment is managed by Harness. Setting managed to `true` means that Harness will manage the lifecycle of the role assignment, including its creation, updates, and deletion. Conversely, setting it to `false` indicates that the role assignment is not managed by Harness, and thus Harness will not perform actions on it. Default value should be `false`.
+- `managed` (Boolean) Managed or not.
 - `org_id` (String) Org identifier.
 - `project_id` (String) Project Identifier
 
@@ -124,6 +118,8 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level role assignments

@@ -15,8 +15,17 @@ Data source for retrieving Variable Sets.
 ```terraform
 data "harness_platform_infra_variable_set" "test" {
   identifier = "identifier"
-  org_id     = "org_id"
-  project_id = "project_id"
+}
+
+data "harness_platform_infra_variable_set" "testorg" {
+  identifier = "identifier"
+  org_id     = "someorg"
+}
+
+data "harness_platform_infra_variable_set" "testproj" {
+  identifier = "identifier"
+  org_id     = "someorg"
+  project_id = "someproj"
 }
 ```
 
@@ -25,60 +34,64 @@ data "harness_platform_infra_variable_set" "test" {
 
 ### Required
 
-- `identifier` (String) Identifier of the Variable Set
+- `identifier` (String) Unique identifier of the resource.
 
 ### Optional
 
-- `org_id` (String) Organization Identifier
-- `project_id` (String) Project Identifier
+- `connector` (Block Set) Provider connectors configured on the Variable Set. Only one connector of a type is supported (see [below for nested schema](#nestedblock--connector))
+- `environment_variable` (Block Set) Environment variables configured on the Variable Set (see [below for nested schema](#nestedblock--environment_variable))
+- `name` (String) Name of the resource.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `terraform_variable` (Block Set) Terraform variables configured on the Variable Set. Terraform variable keys must be unique within the Variable Set. (see [below for nested schema](#nestedblock--terraform_variable))
+- `terraform_variable_file` (Block Set) Terraform variables files configured on the Variable Set (see [below for nested schema](#nestedblock--terraform_variable_file))
 
 ### Read-Only
 
+- `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `name` (String) Name of the Variable Set
-- `description` (String) Description of the Variable Set
-- `environment_variable` (Block Set) Environment variables configured on the variable set (see [below for nested schema](#nestedblock--environment_variable))
-- `terraform_variable` (Block Set) Terraform variables configured on the variable set. Terraform variable keys must be unique within the variable set. (see [below for nested schema](#nestedblock--terraform_variable))
-- `terraform_variable_file` (Block Set) Terraform variables files configured on the variable set (see [below for nested schema](#nestedblock--terraform_variable_file))
-- `connector` (Block Set) Provider connector configured on the variable set (see [below for nested schema](#nestedblock--connector))
-
-<a id="nestedblock--environment_variable"></a>
-### Nested Schema for `environment_variable`
-
-Read-Only:
-
-- `key` (String) Key is the identifier for the variable`
-- `value` (String) value is the value of the variable
-- `value_type` (String) Value type indicates the value type of the variable, text or secret
-
-
-<a id="nestedblock--terraform_variable"></a>
-### Nested Schema for `terraform_variable`
-
-Read-Only:
-
-- `key` (String) Key is the identifier for the variable`
-- `value` (String) value is the value of the variable
-- `value_type` (String) Value type indicates the value type of the variable, text or secret
-
-
-<a id="nestedblock--terraform_variable_file"></a>
-### Nested Schema for `terraform_variable_file`
-
-Read-Only:
-
-- `repository` (String) Repository is the name of the repository to fetch the code from.
-- `repository_branch` (String) Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit or sha is set
-- `repository_commit` (String) Repository commit is tag to fetch the variables from. This cannot be set if repository branch or sha is set.
-- `repository_sha` (String) Repository commit is sha to fetch the variables from. This cannot be set if repository branch or commit is set.
-- `repository_connector` (String) Repository connector is the reference to the connector used to fetch the variables.
-- `repository_path` (String) Repository path is the path in which the variables reside.
-
+- `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedblock--connector"></a>
 ### Nested Schema for `connector`
 
 Required:
 
-- `connector_ref` (String) Unique identifier of the connector.
-- `type` (String) Type indicates the type of the connector. Currently we support aws, azure, gcp.
+- `connector_ref` (String) Connector Ref is the reference to the connector
+- `type` (String) Type is the connector type of the connector. Supported types: aws, azure, gcp
+
+
+<a id="nestedblock--environment_variable"></a>
+### Nested Schema for `environment_variable`
+
+Required:
+
+- `key` (String) Key is the identifier for the variable. Must be unique within the Variable Set.
+- `value` (String) Value is the value of the variable. For string value types this field should contain the value of the variable. For secret value types this should contain a reference to a valid harness secret.
+- `value_type` (String) Value type indicates the value type of the variable. Currently we support string and secret.
+
+
+<a id="nestedblock--terraform_variable"></a>
+### Nested Schema for `terraform_variable`
+
+Required:
+
+- `key` (String) Key is the identifier for the variable. Must be unique within the Variable Set.
+- `value` (String) Value is the value of the variable. For string value types this field should contain the value of the variable. For secret value types this should contain a reference to a valid harness secret.
+- `value_type` (String) Value type indicates the value type of the variable. Currently we support string and secret.
+
+
+<a id="nestedblock--terraform_variable_file"></a>
+### Nested Schema for `terraform_variable_file`
+
+Required:
+
+- `repository` (String) Repository is the name of the repository to fetch the code from.
+- `repository_connector` (String) Repository connector is the reference to the connector used to fetch the variables.
+
+Optional:
+
+- `repository_branch` (String) Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit or sha is set
+- `repository_commit` (String) Repository commit is tag to fetch the variables from. This cannot be set if repository branch or sha is set.
+- `repository_path` (String) Repository path is the path in which the variables reside.
+- `repository_sha` (String) Repository commit is SHA to fetch the variables from. This cannot be set if repository branch or commit is set.

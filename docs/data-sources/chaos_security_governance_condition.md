@@ -42,8 +42,8 @@ output "security_governance_condition_by_id" {
 
 ### Optional
 
-- `id` (String) The ID of the security governance condition
-- `name` (String) The name of the security governance condition
+- `id` (String) The ID of the security governance condition. Either `id` or `name` must be specified.
+- `name` (String) The name of the security governance condition. Either `id` or `name` must be specified.
 - `org_id` (String) The organization ID of the security governance condition
 - `project_id` (String) The project ID of the security governance condition
 

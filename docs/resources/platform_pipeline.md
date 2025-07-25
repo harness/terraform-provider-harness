@@ -206,7 +206,12 @@ Optional:
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
-# Import pipeline
+# Import pipeline from default branch
 terraform import harness_platform_pipeline.example <org_id>/<project_id>/<pipeline_id>
+
+# Import pipeline from non default branch
+terraform import harness_platform_pipeline.example <org_id>/<project_id>/<pipeline_id>/<branch>
 ```

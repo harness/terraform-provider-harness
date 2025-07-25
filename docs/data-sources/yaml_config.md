@@ -28,5 +28,3 @@ Data source for retrieving a yaml config.
 - `content` (String) Content of the yaml file.
 - `id` (String) Unique identifier of the yaml resource.
 - `name` (String) Name of the yaml resource.
-
-

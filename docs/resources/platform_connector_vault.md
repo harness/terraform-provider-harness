@@ -10,10 +10,6 @@ description: |-
 
 Resource for creating a HashiCorp Vault Secret Manager connector.
 
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use HashiCorp Vault, please see [Documentation](https://developer.harness.io/docs/platform/secrets/secrets-management/add-hashicorp-vault)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
 ## Example Usage
 
 ```terraform
@@ -121,6 +117,7 @@ resource "harness_platform_connector_vault" "vault_agent" {
 }
 
 
+
 resource "harness_platform_connector_vault" "token" {
   identifier  = "identifier"
   name        = "name"
@@ -190,6 +187,7 @@ resource "harness_platform_connector_vault" "jwt" {
 - `default` (Boolean) Is default or not.
 - `delegate_selectors` (Set of String) List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `is_default` (Boolean) Is default or not.
 - `is_read_only` (Boolean) Read only or not.
 - `k8s_auth_endpoint` (String) The path where Kubernetes Auth is enabled in Vault.
@@ -206,15 +204,14 @@ resource "harness_platform_connector_vault" "jwt" {
 - `sink_path` (String) The location from which the authentication token should be read.
 - `tags` (Set of String) Tags to associate with the resource.
 - `use_aws_iam` (Boolean) Boolean value to indicate if AWS IAM is used for authentication.
+- `use_jwt_auth` (Boolean) Boolean value to indicate if JWT is used for authentication.
 - `use_k8s_auth` (Boolean) Boolean value to indicate if K8s Auth is used for authentication.
 - `use_vault_agent` (Boolean) Boolean value to indicate if Vault Agent is used for authentication.
 - `vault_aws_iam_role` (String) The Vault role defined to bind to aws iam account/role being accessed.
+- `vault_jwt_auth_path` (String) Custom path at with JWT auth in enabled for Vault
+- `vault_jwt_auth_role` (String) The Vault role defined with JWT auth type for accessing Vault as per policies binded.
 - `vault_k8s_auth_role` (String) The role where K8s Auth will happen.
 - `xvault_aws_iam_server_id` (String) The AWS IAM Header Server ID that has been configured for this AWS IAM instance.
-- `use_jwt_auth` (Boolean) Boolean value to indicate if JWT is used for authentication.
-- `vault_jwt_auth_role` (String) The Vault role defined with JWT auth type for accessing Vault as per policies binded.
-- `vault_jwt_auth_path` (String) Custom path at with JWT auth in enabled for Vault.
-- `execute_on_delegate` (Boolean) Execute on delegate or not.
 
 ### Read-Only
 
@@ -223,6 +220,8 @@ resource "harness_platform_connector_vault" "jwt" {
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level vault connector 

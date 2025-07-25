@@ -34,17 +34,25 @@ resource "harness_platform_infra_module" "example" {
 
 ### Optional
 
+- `created` (Number) Timestamp when the module was created.
 - `description` (String) Description of the module.
+- `id` (String) Unique identifier of the module.
 - `repository` (String) For account connectors, the repository where the module can be found
 - `repository_branch` (String) Name of the branch to fetch the code from. This cannot be set if repository commit is set.
 - `repository_commit` (String) Tag to fetch the code from. This cannot be set if repository branch is set.
 - `repository_connector` (String) Reference to the connector to be used to fetch the code.
 - `repository_path` (String) Path to the module within the repository.
+- `repository_url` (String) URL of the repository where the module is stored.
+- `synced` (Number) Timestamp when the module was last synced.
+- `tags` (String) Git tags associated with the module.
+- `versions` (List of String) List of versions of the module.
 
 ## Import
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
-terraform import harness_platform_infra_module.example <org_id>/<module_id>
+terraform import harness_platform_infra_module.example <module_id>
 ```

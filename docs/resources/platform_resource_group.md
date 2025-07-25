@@ -10,10 +10,6 @@ description: |-
 
 Resource for creating a Harness Resource Group
 
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use Resource Group, please see [Documentation](https://developer.harness.io/docs/platform/role-based-access-control/add-resource-groups)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Harness-Resource-Group)
 ## Example Usage
 
 ```terraform
@@ -56,7 +52,7 @@ resource "harness_platform_resource_group" "test" {
 - `allowed_scope_levels` (Set of String) The scope levels at which this resource group can be used
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
-- `included_scopes` (Block Set) Included scopes. The default is selected based on the resource group scope if not specified. (Go to [nested schema](#nestedblock--included_scopes) below.)
+- `included_scopes` (Block Set) Included scopes; default selected based on resource group scope if not specified. (see [below for nested schema](#nestedblock--included_scopes))
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `resource_filter` (Block List) Contains resource filter for a resource group (see [below for nested schema](#nestedblock--resource_filter))
@@ -111,6 +107,8 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level resource group

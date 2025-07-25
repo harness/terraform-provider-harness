@@ -48,5 +48,3 @@ Read-Only:
 
 - `filter_type` (String)
 - `tags` (Set of String)
-
-

@@ -14,15 +14,15 @@ Resource for creating a Harness DBDevOps Instance.
 
 ```terraform
 resource "harness_platform_db_instance" "test" {
-  identifier  = "identifier"
-  org_id      = "org_id"
-  project_id  = "project_id"
-  name        = "name"
-  tags        = ["foo:bar", "bar:foo"]
-  schema      = "schema1"
-  branch      = "main"
-  connector   = "jdbcConnector"
-  context     = "ctx"
+  identifier = "identifier"
+  org_id     = "org_id"
+  project_id = "project_id"
+  name       = "name"
+  tags       = ["foo:bar", "bar:foo"]
+  schema     = "schema1"
+  branch     = "main"
+  connector  = "jdbcConnector"
+  context    = "ctx"
 
   liquibase_substitute_properties = {
     "key1" = "value1"
@@ -48,8 +48,8 @@ resource "harness_platform_db_instance" "test" {
 - `branch` (String) The branch of changeSet repository
 - `context` (String) The liquibase context
 - `description` (String) Description of the resource.
+- `liquibase_substitute_properties` (Map of String) The properties to substitute in liquibase changelog
 - `tags` (Set of String) Tags to associate with the resource.
-- `liquibaseSubstituteProperties` (Map of String) Properties to substitute in liquibase changelog.
 
 ### Read-Only
 
@@ -58,6 +58,8 @@ resource "harness_platform_db_instance" "test" {
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import project level db instance

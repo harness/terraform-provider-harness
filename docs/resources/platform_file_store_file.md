@@ -35,11 +35,11 @@ resource "harness_platform_file_store_file" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `parent_identifier` (String) File parent identifier on Harness File Store. If the folder is at the root level, the parent_identifier will be `Root`.
-
+- `parent_identifier` (String) File parent identifier on Harness File Store
 
 ### Optional
 
+- `content` (String) File content stored on Harness File Store
 - `description` (String) Description of the resource.
 - `file_content_path` (String) File content path to be upladed on Harness File Store
 - `file_usage` (String) File usage. Valid options are MANIFEST_FILE, CONFIG, SCRIPT
@@ -50,7 +50,6 @@ resource "harness_platform_file_store_file" "example" {
 
 ### Read-Only
 
-- `content` (String) File content stored on Harness File Store
 - `created_by` (List of Object) Created by (see [below for nested schema](#nestedatt--created_by))
 - `id` (String) The ID of this resource.
 - `last_modified_at` (Number) Last modified at
@@ -77,6 +76,8 @@ Read-Only:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level file

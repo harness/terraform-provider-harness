@@ -11,13 +11,7 @@ description: |-
 Resource for creating a Jenkins connector.
 
 ## Example Usage
-### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use the Connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors)
-- To understand more about Jenkins Connectors, please see  [Jenkins Connectors](https://developer.harness.io/docs/platform/connectors/artifact-repositories/connect-to-jenkins/)
 
-## Example to create Jenkins Connector at different levels (Org, Project, Account)
-### Account Level
 ```terraform
 # Auth mechanism username password
 resource "harness_platform_connector_jenkins" "test" {
@@ -32,11 +26,24 @@ resource "harness_platform_connector_jenkins" "test" {
     type = "UsernamePassword"
     jenkins_user_name_password {
       username     = "username"
-      password_ref = "account.secret_id"
+      password_ref = "account.${harness_platform_secret_text.test.id}"
     }
   }
 }
 
+# Auth mechanism anonymous
+resource "harness_platform_connector_jenkins" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  jenkins_url        = "https://jenkinss.com/"
+  delegate_selectors = ["harness-delegate"]
+  auth {
+    type = "Anonymous"
+  }
+}
 
 # Auth mechanism bearer token
 resource "harness_platform_connector_jenkins" "test" {
@@ -50,90 +57,7 @@ resource "harness_platform_connector_jenkins" "test" {
   auth {
     type = "Bearer Token(HTTP Header)"
     jenkins_bearer_token {
-      token_ref = "account.secret_id"
-    }
-  }
-}
-```
-### Org Level
-```terraform
-# Auth mechanism username password
-resource "harness_platform_connector_jenkins" "test" {
-  identifier  = "identifier"
-  name        = "name"
-  description = "test"
-  tags        = ["foo:bar"]
-  org_id      = harness_platform_project.test.org_id
-
-  jenkins_url        = "https://jenkinss.com/"
-  delegate_selectors = ["harness-delegate"]
-  auth {
-    type = "UsernamePassword"
-    jenkins_user_name_password {
-      username     = "username"
-      password_ref = "account.secret_id"
-    }
-  }
-}
-
-
-# Auth mechanism bearer token
-resource "harness_platform_connector_jenkins" "test" {
-  identifier  = "identifier"
-  name        = "name"
-  description = "test"
-  tags        = ["foo:bar"]
-  org_id      = harness_platform_project.test.org_id
-
-  jenkins_url        = "https://jenkinss.com/"
-  delegate_selectors = ["harness-delegate"]
-  auth {
-    type = "Bearer Token(HTTP Header)"
-    jenkins_bearer_token {
-      token_ref = "account.secret_id"
-    }
-  }
-}
-```
-
-### Project Level
-```terraform
-# Auth mechanism username password
-resource "harness_platform_connector_jenkins" "test" {
-  identifier  = "identifier"
-  name        = "name"
-  description = "test"
-  tags        = ["foo:bar"]
-  org_id      = harness_platform_project.test.org_id
-  project_id  = harness_platform_project.test.id
-
-  jenkins_url        = "https://jenkinss.com/"
-  delegate_selectors = ["harness-delegate"]
-  auth {
-    type = "UsernamePassword"
-    jenkins_user_name_password {
-      username     = "username"
-      password_ref = "account.secret_id"
-    }
-  }
-}
-
-
-# Auth mechanism bearer token
-resource "harness_platform_connector_jenkins" "test" {
-  identifier  = "identifier"
-  name        = "name"
-  description = "test"
-  tags        = ["foo:bar"]
-  org_id      = harness_platform_project.test.org_id
-  project_id  = harness_platform_project.test.id
-
-  jenkins_url        = "https://jenkinss.com/"
-  delegate_selectors = ["harness-delegate"]
-  auth {
-    type = "Bearer Token(HTTP Header)"
-    jenkins_bearer_token {
-      token_ref = "account.secret_id"
+      token_ref = "account.${harness_platform_secret_text.test.id}"
     }
   }
 }
@@ -147,11 +71,10 @@ resource "harness_platform_connector_jenkins" "test" {
 - `identifier` (String) Unique identifier of the resource.
 - `jenkins_url` (String) Jenkins Url.
 - `name` (String) Name of the resource.
-- `auth` (Block List, Max: 1) This entity contains the details for Jenkins Authentication. (see [below for nested schema](#nestedblock--auth))
-
 
 ### Optional
 
+- `auth` (Block List, Max: 1) This entity contains the details for Jenkins Authentication. (see [below for nested schema](#nestedblock--auth))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the organization.
@@ -169,7 +92,7 @@ Required:
 
 - `type` (String) Can be one of UsernamePassword, Anonymous, Bearer Token(HTTP Header)
 
-Optional(any one of the field is required):
+Optional:
 
 - `jenkins_bearer_token` (Block List, Max: 1) Authenticate to App Dynamics using bearer token. (see [below for nested schema](#nestedblock--auth--jenkins_bearer_token))
 - `jenkins_user_name_password` (Block List, Max: 1) Authenticate to App Dynamics using user name and password. (see [below for nested schema](#nestedblock--auth--jenkins_user_name_password))
@@ -187,9 +110,9 @@ Required:
 
 Required:
 
-- `password_ref` (String) Reference to a secret containing the password to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.To reference a secret at the project scope, use directly without any prefix.
+- `password_ref` (String) Reference to a secret containing the password to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
-Optional(any one of the field is required):
+Optional:
 
 - `username` (String) Username to use for authentication.
 - `username_ref` (String) Username reference to use for authentication.
@@ -197,6 +120,8 @@ Optional(any one of the field is required):
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level jenkins connector 

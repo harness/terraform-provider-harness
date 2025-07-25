@@ -62,5 +62,3 @@ Read-Only:
 - `payload` (String)
 - `webhook_token` (String)
 - `webhook_url` (String)
-
-

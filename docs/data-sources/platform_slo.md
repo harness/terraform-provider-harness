@@ -14,10 +14,9 @@ Data source for retrieving an SLO.
 
 ```terraform
 data "harness_platform_slo" "example" {
-  account_id = "account_id"
+  identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"
-  identifier = "identifier"
 }
 ```
 
@@ -33,5 +32,3 @@ data "harness_platform_slo" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-

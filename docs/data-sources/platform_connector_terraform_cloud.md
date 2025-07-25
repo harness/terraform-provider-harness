@@ -53,5 +53,3 @@ Read-Only:
 Read-Only:
 
 - `api_token_ref` (String)
-
-

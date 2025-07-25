@@ -40,5 +40,3 @@ data "harness_platform_connector_datadog" "example" {
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
 - `url` (String) URL of the Datadog server.
-
-

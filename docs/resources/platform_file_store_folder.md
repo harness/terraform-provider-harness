@@ -32,7 +32,7 @@ resource "harness_platform_file_store_folder" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `parent_identifier` (String) Folder parent identifier on Harness File Store. If the file is at the root level, the parent_identifier will be `Root`.
+- `parent_identifier` (String) Folder parent identifier on Harness File Store
 
 ### Optional
 
@@ -69,6 +69,8 @@ Read-Only:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level folder

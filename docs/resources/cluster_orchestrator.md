@@ -32,12 +32,3 @@ resource "harness_cluster_orchestrator" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-## Import
-
-Import is supported using the following syntax:
-
-```shell
-# Import using the Harness aws cloud provider id.
-terraform import harness_cluster_orchestrator.example <provider_id>
-```

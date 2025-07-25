@@ -48,5 +48,3 @@ Read-Only:
 - `execute_on_delegate` (Boolean)
 - `spot_account_id` (String)
 - `spot_account_id_ref` (String)
-
-
