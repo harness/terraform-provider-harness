@@ -126,7 +126,6 @@ func ResourceTemplate() *schema.Resource {
 				Description: "Unique identifier of the resource",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 			},
 			"name": {
 				Description: "Name of the Variable",
@@ -711,7 +710,13 @@ func readTemplate(d *schema.ResourceData, template nextgen.TemplateWithInputsRes
 }
 
 // validateIdentifierMatchesYaml is a CustomizeDiff function that validates the identifier in the schema matches the identifier in the YAML template
+// and prevents changes to the identifier once the resource is created
 func validateIdentifierMatchesYaml(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+	// Prevent changes to identifier after creation
+	if d.Id() != "" && d.HasChange("identifier") {
+		return fmt.Errorf("the identifier cannot be changed once the template is created; you must create a new resource")
+	}
+
 	template_yaml := d.Get("template_yaml").(string)
 	if template_yaml == "" {
 		return nil
