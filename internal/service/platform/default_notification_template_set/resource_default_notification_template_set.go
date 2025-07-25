@@ -104,6 +104,11 @@ func ResourceDefaultNotificationTemplateSet() *schema.Resource {
 				Description: "Key-value tags",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"last_modified": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Timestamp when the default notification template set was last modified.",
+			},
 		},
 	}
 }
@@ -113,24 +118,28 @@ func resourceDefaultNotificationTemplateSetCreate(ctx context.Context, d *schema
 
 	accountID := c.AccountId
 	scope := getScope(d)
+	defaultNotificationTemplateSetDto := buildDefaultNotificationTemplateSetRequest(d)
 	var resp nextgen.DefaultNotificationTemplateSetResponse
 	var httpResp *http.Response
 	var err error
 	switch scope.scope {
 	case Project:
 		resp, httpResp, err = c.ProjectDefaultNotificationTemplateSetApi.CreateProjectDefaultNotificationTemplateSet(ctx, scope.org, scope.project,
-			(&nextgen.ProjectDefaultNotificationTemplateSetApiCreateProjectDefaultNotificationTemplateSetOpts{
+			&nextgen.ProjectDefaultNotificationTemplateSetApiCreateProjectDefaultNotificationTemplateSetOpts{
 				HarnessAccount: optional.NewString(accountID),
-			}))
+				Body:           optional.NewInterface(defaultNotificationTemplateSetDto),
+			})
 	case Org:
 		resp, httpResp, err = c.OrgDefaultNotificationTemplateSetApi.CreateOrgDefaultNotificationTemplateSet(ctx, scope.org,
 			&nextgen.OrgDefaultNotificationTemplateSetApiCreateOrgDefaultNotificationTemplateSetOpts{
 				HarnessAccount: optional.NewString(accountID),
+				Body:           optional.NewInterface(defaultNotificationTemplateSetDto),
 			})
 	default:
 		resp, httpResp, err = c.AccountDefaultNotificationTemplateSetApi.CreateAccountDefaultNotificationTemplateSet(ctx,
 			&nextgen.AccountDefaultNotificationTemplateSetApiCreateAccountDefaultNotificationTemplateSetOpts{
 				HarnessAccount: optional.NewString(accountID),
+				Body:           optional.NewInterface(defaultNotificationTemplateSetDto),
 			})
 	}
 	if err != nil {
@@ -148,24 +157,28 @@ func resourceDefaultNotificationTemplateSetUpdate(ctx context.Context, d *schema
 	accountID := c.AccountId
 	identifier := d.Get("identifier").(string)
 	scope := getScope(d)
+	defaultNotificationTemplateSetDto := buildDefaultNotificationTemplateSetRequest(d)
 	var resp nextgen.DefaultNotificationTemplateSetResponse
 	var httpResp *http.Response
 	var err error
 	switch scope.scope {
 	case Project:
 		resp, httpResp, err = c.ProjectDefaultNotificationTemplateSetApi.UpdateProjectDefaultNotificationTemplateSet(ctx, identifier, scope.org, scope.project,
-			(&nextgen.ProjectDefaultNotificationTemplateSetApiUpdateProjectDefaultNotificationTemplateSetOpts{
+			&nextgen.ProjectDefaultNotificationTemplateSetApiUpdateProjectDefaultNotificationTemplateSetOpts{
 				HarnessAccount: optional.NewString(accountID),
-			}))
+				Body:           optional.NewInterface(defaultNotificationTemplateSetDto),
+			})
 	case Org:
 		resp, httpResp, err = c.OrgDefaultNotificationTemplateSetApi.UpdateOrgDefaultNotificationTemplateSet(ctx, identifier, scope.org,
 			&nextgen.OrgDefaultNotificationTemplateSetApiUpdateOrgDefaultNotificationTemplateSetOpts{
 				HarnessAccount: optional.NewString(accountID),
+				Body:           optional.NewInterface(defaultNotificationTemplateSetDto),
 			})
 	default:
 		resp, httpResp, err = c.AccountDefaultNotificationTemplateSetApi.UpdateAccountDefaultNotificationTemplateSet(ctx, identifier,
 			&nextgen.AccountDefaultNotificationTemplateSetApiUpdateAccountDefaultNotificationTemplateSetOpts{
 				HarnessAccount: optional.NewString(accountID),
+				Body:           optional.NewInterface(defaultNotificationTemplateSetDto),
 			})
 	}
 	if err != nil {
@@ -183,15 +196,14 @@ func resourceDefaultNotificationTemplateSetDelete(ctx context.Context, d *schema
 	accountID := c.AccountId
 	identifier := d.Get("identifier").(string)
 	scope := getScope(d)
-	var resp nextgen.DefaultNotificationTemplateSetResponse
 	var httpResp *http.Response
 	var err error
 	switch scope.scope {
 	case Project:
 		httpResp, err = c.ProjectDefaultNotificationTemplateSetApi.DeleteProjectDefaultNotificationTemplateSet(ctx, identifier, scope.org, scope.project,
-			(&nextgen.ProjectDefaultNotificationTemplateSetApiDeleteProjectDefaultNotificationTemplateSetOpts{
+			&nextgen.ProjectDefaultNotificationTemplateSetApiDeleteProjectDefaultNotificationTemplateSetOpts{
 				HarnessAccount: optional.NewString(accountID),
-			}))
+			})
 	case Org:
 		httpResp, err = c.OrgDefaultNotificationTemplateSetApi.DeleteOrgDefaultNotificationTemplateSet(ctx, identifier, scope.org,
 			&nextgen.OrgDefaultNotificationTemplateSetApiDeleteOrgDefaultNotificationTemplateSetOpts{
@@ -206,8 +218,6 @@ func resourceDefaultNotificationTemplateSetDelete(ctx context.Context, d *schema
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
-
-	readDefaultNotificationTemplateSet(accountID, d, resp)
 
 	return nil
 }
@@ -224,9 +234,9 @@ func resourceDefaultNotificationTemplateSetRead(ctx context.Context, d *schema.R
 	switch scope.scope {
 	case Project:
 		resp, httpResp, err = c.ProjectDefaultNotificationTemplateSetApi.GetProjectDefaultNotificationTemplateSet(ctx, identifier, scope.org, scope.project,
-			(&nextgen.ProjectDefaultNotificationTemplateSetApiGetProjectDefaultNotificationTemplateSetOpts{
+			&nextgen.ProjectDefaultNotificationTemplateSetApiGetProjectDefaultNotificationTemplateSetOpts{
 				HarnessAccount: optional.NewString(accountID),
-			}))
+			})
 	case Org:
 		resp, httpResp, err = c.OrgDefaultNotificationTemplateSetApi.GetOrgDefaultNotificationTemplateSet(ctx, identifier, scope.org,
 			&nextgen.OrgDefaultNotificationTemplateSetApiGetOrgDefaultNotificationTemplateSetOpts{
@@ -297,6 +307,89 @@ func readDefaultNotificationTemplateSet(accountIdentifier string, d *schema.Reso
 	d.Set("event_template_configuration_set", eventTemplates)
 
 	return nil
+}
+
+func buildDefaultNotificationTemplateSetRequest(d *schema.ResourceData) *nextgen.DefaultNotificationTemplateSetDto {
+	eventTemplateConfigsRaw := d.Get("event_template_configuration_set").([]interface{})
+	var eventTemplateConfigs []nextgen.EventTemplateConfigurationDto
+
+	for _, etc := range eventTemplateConfigsRaw {
+		etcMap := etc.(map[string]interface{})
+
+		// Parse notification events
+		events := expandStringList(etcMap["notification_events"])
+
+		// Parse template object
+		templateList := etcMap["template"].([]interface{})
+		var customTemplateDto nextgen.CustomNotificationTemplateDto
+		if len(templateList) > 0 {
+			tpl := templateList[0].(map[string]interface{})
+
+			// Parse variables if any
+			var vars []nextgen.NotificationTemplateInputsDto
+			if rawVars, ok := tpl["variables"]; ok {
+				for _, v := range rawVars.([]interface{}) {
+					vMap := v.(map[string]interface{})
+					vars = append(vars, nextgen.NotificationTemplateInputsDto{
+						Name:  vMap["name"].(string),
+						Value: vMap["value"].(string),
+						Type_: vMap["type"].(string),
+					})
+				}
+			}
+
+			customTemplateDto = nextgen.CustomNotificationTemplateDto{
+				TemplateRef:  tpl["template_ref"].(string),
+				VersionLabel: tpl["version_label"].(string),
+				Variables:    vars,
+			}
+		}
+
+		eventTemplateConfigs = append(eventTemplateConfigs, nextgen.EventTemplateConfigurationDto{
+			NotificationEvents: events,
+			Template:           &customTemplateDto,
+		})
+	}
+
+	return &nextgen.DefaultNotificationTemplateSetDto{
+		Name:                          d.Get("name").(string),
+		Identifier:                    d.Get("identifier").(string),
+		Description:                   d.Get("description").(string),
+		NotificationEntity:            ptrToNotificationEntity(d.Get("notification_entity").(string)),
+		NotificationChannelType:       ptrToChannelType(d.Get("notification_channel_type").(string)),
+		EventTemplateConfigurationSet: eventTemplateConfigs,
+		Tags:                          expandTags(d.Get("tags").(map[string]interface{})),
+	}
+}
+
+func ptrToNotificationEntity(s string) *nextgen.NotificationEntity {
+	ne := nextgen.NotificationEntity(s)
+	return &ne
+}
+
+func ptrToChannelType(s string) *nextgen.ChannelType {
+	ct := nextgen.ChannelType(s)
+	return &ct
+}
+
+func expandTags(tagMap map[string]interface{}) map[string]string {
+	tags := make(map[string]string)
+	for k, v := range tagMap {
+		tags[k] = v.(string)
+	}
+	return tags
+}
+
+func expandStringList(raw interface{}) []string {
+	if raw == nil {
+		return nil
+	}
+	rawList := raw.([]interface{})
+	strList := make([]string, len(rawList))
+	for i, val := range rawList {
+		strList[i] = val.(string)
+	}
+	return strList
 }
 
 type Scope struct {
