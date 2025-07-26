@@ -17,33 +17,33 @@ func resourceChaosHubImport(ctx context.Context, d *schema.ResourceData, meta in
 	c := meta.(*internal.Session).ChaosClient
 
 	// Parse the import ID which can be in one of these formats:
-	// 1. Account level: "hub-name"
-	// 2. Org level: "org-id/hub-name"
-	// 3. Project level: "org-id/project-id/hub-name"
+	// 1. Account level: "hub-id"
+	// 2. Org level: "org-id/hub-id"
+	// 3. Project level: "org-id/project-id/hub-id"
 	importID := d.Id()
 	parts := strings.Split(importID, "/")
 
-	var hubName, orgID, projectID string
+	var hubID, orgID, projectID string
 
 	switch len(parts) {
 	case 1:
-		// Account level: "hub-name"
-		hubName = parts[0]
+		// Account level: "hub-id"
+		hubID = parts[0]
 	case 2:
-		// Org level: "org-id/hub-name"
+		// Org level: "org-id/hub-id"
 		orgID = parts[0]
-		hubName = parts[1]
+		hubID = parts[1]
 	case 3:
-		// Project level: "org-id/project-id/hub-name"
+		// Project level: "org-id/project-id/hub-id"
 		orgID = parts[0]
 		projectID = parts[1]
-		hubName = parts[2]
+		hubID = parts[2]
 	default:
-		return nil, fmt.Errorf("invalid import ID format. Expected \"<hub-name>\", \"<org-id>/<hub-name>\", or \"<org-id>/<project-id>/<hub-name>\"")
+		return nil, fmt.Errorf("invalid import ID format. Expected \"<hub-id>\", \"<org-id>/<hub-id>\", or \"<org-id>/<project-id>/<hub-id>\"")
 	}
 
-	if hubName == "" {
-		return nil, fmt.Errorf("hub name cannot be empty")
+	if hubID == "" {
+		return nil, fmt.Errorf("hub ID cannot be empty")
 	}
 
 	// Create a client for the Chaos Hub API
@@ -68,37 +68,12 @@ func resourceChaosHubImport(ctx context.Context, d *schema.ResourceData, meta in
 		identifiers.ProjectIdentifier = projectID
 	}
 
-	log.Printf("[DEBUG] Importing hub with name: %s, org: %s, project: %s", hubName, orgID, projectID)
-
-	// List all chaos hubs to find the one with the matching name
-	hubs, err := client.List(ctx, identifiers)
-	if err != nil {
-		return nil, fmt.Errorf("failed to list chaos hubs: %v", err)
-	}
-
-	// Find the hub with the matching name
-	var hubID string
-	for _, h := range hubs {
-		log.Printf("[DEBUG] Found hub: %s (ID: %s)", h.Name, h.ID)
-		if h.Name == hubName {
-			hubID = h.ID
-			break
-		}
-	}
-
-	if hubID == "" {
-		errMsg := fmt.Sprintf("no chaos hub found with name: %s", hubName)
-		if orgID != "" || projectID != "" {
-			errMsg = fmt.Sprintf("%s in the specified scope (org: %s, project: %s)",
-				errMsg, orgID, projectID)
-		}
-		return nil, fmt.Errorf(errMsg)
-	}
+	log.Printf("[DEBUG] Importing hub with ID: %s, org: %s, project: %s", hubID, orgID, projectID)
 
 	// Get the full hub details using the ID
 	hub, err := client.Get(ctx, identifiers, hubID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get chaos hub details: %v", err)
+		return nil, fmt.Errorf("failed to get chaos hub details for ID: %s: %v", hubID, err)
 	}
 
 	// Create a ScopedIdentifiersRequest for the hub
@@ -114,11 +89,13 @@ func resourceChaosHubImport(ctx context.Context, d *schema.ResourceData, meta in
 		scopedIdentifiers.ProjectIdentifier = &projectID
 	}
 
-	// Set the resource ID using the hub's ID and scope information
-	d.SetId(generateID(scopedIdentifiers, hub.ID))
+	// Set the resource ID using the hub's ID
+	d.SetId(hub.ID)
 
 	// Set the resource attributes
 	d.Set("name", hub.Name)
+	d.Set("org_id", orgID)
+	d.Set("project_id", projectID)
 	d.Set("description", hub.Description)
 	d.Set("connector_id", hub.ConnectorID)
 	d.Set("connector_scope", hub.ConnectorScope)
@@ -232,8 +209,7 @@ func resourceChaosHubCreate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("failed to create chaos hub: %v", err)
 	}
 
-	// Use hub.ID as the identifier
-	d.SetId(generateID(identifiers, hub.ID))
+	d.SetId(hub.ID)
 	log.Printf("[DEBUG] Created Chaos Hub with ID: %s", d.Id())
 
 	return resourceChaosHubRead(ctx, d, meta)
@@ -243,12 +219,9 @@ func resourceChaosHubRead(ctx context.Context, d *schema.ResourceData, meta inte
 	log.Printf("[DEBUG] Reading Chaos Hub with ID: %s", d.Id())
 
 	c := meta.(*internal.Session).ChaosClient
-	identifiers, hubID, err := parseID(d.Id())
-	if err != nil {
-		log.Printf("[ERROR] Failed to parse ID %s: %v", d.Id(), err)
-		return diag.FromErr(err)
-	}
 
+	hubID := d.Id()
+	identifiers := getIdentifiers(d, c.AccountId)
 	hubClient := chaos.NewChaosHubClient(c)
 
 	// Convert ScopedIdentifiersRequest to model.IdentifiersRequest
@@ -275,6 +248,8 @@ func resourceChaosHubRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	d.Set("name", hub.Name)
+	d.Set("org_id", identifiers.OrgIdentifier)
+	d.Set("project_id", identifiers.ProjectIdentifier)
 	d.Set("id", hub.ID)
 	d.Set("connector_id", hub.ConnectorID)
 	d.Set("connector_scope", hub.ConnectorScope.String())
@@ -304,10 +279,8 @@ func resourceChaosHubUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	log.Printf("[DEBUG] Updating Chaos Hub with ID: %s", d.Id())
 
 	c := meta.(*internal.Session).ChaosClient
-	identifiers, hubID, err := parseID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	identifiers := getIdentifiers(d, c.AccountId)
+	hubID := d.Id()
 
 	hubClient := chaos.NewChaosHubClient(c)
 
@@ -396,9 +369,8 @@ func resourceChaosHubUpdate(ctx context.Context, d *schema.ResourceData, meta in
 
 	// Update the resource ID if the name has changed
 	if updatedHub.Name != currentHub.Name {
-		newID := generateID(identifiers, updatedHub.ID)
-		log.Printf("[DEBUG] Updating resource ID from %s to %s due to name change", d.Id(), newID)
-		d.SetId(newID)
+		log.Printf("[DEBUG] Updating resource ID from %s to %s due to name change", d.Id(), updatedHub.ID)
+		d.SetId(updatedHub.ID)
 	}
 
 	return resourceChaosHubRead(ctx, d, meta)
@@ -408,11 +380,9 @@ func resourceChaosHubDelete(ctx context.Context, d *schema.ResourceData, meta in
 	log.Printf("[DEBUG] Deleting Chaos Hub with ID: %s", d.Id())
 
 	c := meta.(*internal.Session).ChaosClient
-	identifiers, hubID, err := parseID(d.Id())
-	if err != nil {
-		log.Printf("[ERROR] Failed to parse ID %s: %v", d.Id(), err)
-		return diag.FromErr(err)
-	}
+
+	identifiers := getIdentifiers(d, c.AccountId)
+	hubID := d.Id()
 
 	log.Printf("[DEBUG] Parsed ID - Account: %s, Org: %v, Project: %v, HubID: %s",
 		identifiers.AccountIdentifier,
@@ -436,7 +406,7 @@ func resourceChaosHubDelete(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	// Try to get the hub first to check if it exists
-	_, err = hubClient.Get(ctx, modelIdentifiers, hubID)
+	_, err := hubClient.Get(ctx, modelIdentifiers, hubID)
 	if err != nil {
 		// If we get a "not found" error, the resource is already deleted
 		if strings.Contains(strings.ToLower(err.Error()), "not found") ||
@@ -519,20 +489,20 @@ func generateID(identifiers ScopedIdentifiersRequest, hubID string) string {
 	return strings.Join(parts, "/")
 }
 
-func parseID(id string) (ScopedIdentifiersRequest, string, error) {
+func parseID(id string, accountID string) (ScopedIdentifiersRequest, string, error) {
 	parts := strings.Split(id, "/")
-	if len(parts) != 4 {
-		return ScopedIdentifiersRequest{}, "", fmt.Errorf("invalid ID format: expected account_id/org_id/project_id/hub_id, got: %s", id)
+	if len(parts) != 3 {
+		return ScopedIdentifiersRequest{}, "", fmt.Errorf("invalid ID format: expected org_id/project_id/hub_id, got: %s", id)
 	}
 
 	identifiers := ScopedIdentifiersRequest{
-		AccountIdentifier: parts[0],
+		AccountIdentifier: accountID,
+	}
+	if parts[0] != "" {
+		identifiers.OrgIdentifier = &parts[0]
 	}
 	if parts[1] != "" {
-		identifiers.OrgIdentifier = &parts[1]
-	}
-	if parts[2] != "" {
-		identifiers.ProjectIdentifier = &parts[2]
+		identifiers.ProjectIdentifier = &parts[1]
 	}
 
 	return identifiers, parts[3], nil

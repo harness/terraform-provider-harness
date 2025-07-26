@@ -217,7 +217,7 @@ func dataSourceChaosInfrastructureV2Read(ctx context.Context, d *schema.Resource
 	}
 
 	// Set the ID
-	d.SetId(fmt.Sprintf("%s/%s/%s/%s", orgID, projectID, environmentID, infra.Identity))
+	d.SetId(infra.Identity)
 
 	// Set all the fields from the infrastructure
 	if err := setInfrastructureFields(d, &infra); err != nil {

@@ -84,27 +84,31 @@ func ResourceChaosImageRegistry() *schema.Resource {
 				Description: "Custom images configuration",
 				Type:        schema.TypeList,
 				Optional:    true,
-				MaxItems:    1,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"log_watcher": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							Computed:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 						},
 						"ddcr": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							Computed:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 						},
 						"ddcr_lib": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							Computed:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 						},
 						"ddcr_fault": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							Computed:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
 						},
 					},

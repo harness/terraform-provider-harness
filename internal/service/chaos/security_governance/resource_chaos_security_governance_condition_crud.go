@@ -169,16 +169,8 @@ func resourceChaosSecurityGovernanceConditionCreate(ctx context.Context, d *sche
 		return diag.Errorf("failed to create security governance condition: %v", err)
 	}
 
-	// Create a simple ID in the format: account/org/project/condition-id
-	simpleID := fmt.Sprintf("%s/%s/%s/%s", 
-		identifiers.AccountIdentifier,
-		*identifiers.OrgIdentifier,
-		*identifiers.ProjectIdentifier,
-		conditionID,
-	)
-
 	// Set the ID in the state
-	d.SetId(simpleID)
+	d.SetId(conditionID)
 
 	// Read the condition back to ensure it was created successfully
 	return resourceChaosSecurityGovernanceConditionRead(ctx, d, meta)
@@ -197,11 +189,12 @@ func resourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *schema
 	log.Printf("[DEBUG] Reading security governance condition with ID: %s", d.Id())
 
 	// Parse the ID to get the condition ID and scope information
-	_, conditionID, err := parseID(d.Id())
-	if err != nil {
-		log.Printf("[ERROR] Failed to parse ID %s: %v", d.Id(), err)
-		return diag.Errorf("failed to parse resource ID: %v", err)
-	}
+	conditionID := d.Id()
+	// _, conditionID, err := parseID(d.Id())
+	// if err != nil {
+	// 	log.Printf("[ERROR] Failed to parse ID %s: %v", d.Id(), err)
+	// 	return diag.Errorf("failed to parse resource ID: %v", err)
+	// }
 
 	// Get the identifiers from the resource data
 	identifiers := getIdentifiers(d, accountID)
@@ -217,8 +210,8 @@ func resourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *schema
 		identifiersReq.ProjectIdentifier = *identifiers.ProjectIdentifier
 	}
 
-	log.Printf("[DEBUG] Getting condition with ID: %s, Account: %s, Org: %v, Project: %v", 
-		conditionID, 
+	log.Printf("[DEBUG] Getting condition with ID: %s, Account: %s, Org: %v, Project: %v",
+		conditionID,
 		identifiersReq.AccountIdentifier,
 		identifiersReq.OrgIdentifier,
 		identifiersReq.ProjectIdentifier)
@@ -363,11 +356,7 @@ func resourceChaosSecurityGovernanceConditionUpdate(ctx context.Context, d *sche
 		return diag.Errorf("account ID must be configured in the provider")
 	}
 
-	// Parse the ID to get the condition ID and scope information
-	_, conditionID, err := parseID(d.Id())
-	if err != nil {
-		return diag.Errorf("failed to parse resource ID: %v", err)
-	}
+	conditionID := d.Id()
 
 	// Get the identifiers from the resource data
 	identifiers := getIdentifiers(d, accountID)
@@ -572,14 +561,7 @@ func resourceChaosSecurityGovernanceConditionDelete(ctx context.Context, d *sche
 		log.Printf("[ERROR] %s", err)
 		return diag.Errorf(err)
 	}
-
-	// Parse the ID to get the condition ID and scope information
-	_, conditionID, err := parseID(d.Id())
-	if err != nil {
-		errMsg := fmt.Sprintf("failed to parse resource ID: %v", err)
-		log.Printf("[ERROR] %s", errMsg)
-		return diag.Errorf(errMsg)
-	}
+	conditionID := d.Id()
 
 	// Get the identifiers from the resource data
 	identifiers := getIdentifiers(d, accountID)
@@ -602,10 +584,11 @@ func resourceChaosSecurityGovernanceConditionDelete(ctx context.Context, d *sche
 		identifiersReq.ProjectIdentifier)
 
 	// Delete the condition
-	_, err = client.Delete(ctx, identifiersReq, conditionID)
+	_, err := client.Delete(ctx, identifiersReq, conditionID)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			log.Printf("[DEBUG] Condition %s not found, assuming it's already deleted", conditionID)
+			d.SetId("")
 			return nil
 		}
 		errMsg := fmt.Sprintf("failed to delete security governance condition: %v", err)
@@ -614,5 +597,6 @@ func resourceChaosSecurityGovernanceConditionDelete(ctx context.Context, d *sche
 	}
 
 	log.Printf("[DEBUG] Successfully deleted condition with ID: %s", conditionID)
+	d.SetId("")
 	return nil
 }

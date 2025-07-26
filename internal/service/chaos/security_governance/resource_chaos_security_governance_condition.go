@@ -314,33 +314,33 @@ func resourceChaosSecurityGovernanceConditionImport(ctx context.Context, d *sche
 	c := meta.(*internal.Session).ChaosClient
 
 	// Parse the import ID which can be in one of these formats:
-	// 1. Account level: "condition-name"
-	// 2. Org level: "org-id/condition-name"
-	// 3. Project level: "org-id/project-id/condition-name"
+	// 1. Account level: "condition_id"
+	// 2. Org level: "org_id/condition_id"
+	// 3. Project level: "org_id/project_id/condition_id"
 	importID := d.Id()
 	parts := strings.Split(importID, "/")
 
-	var conditionName, orgID, projectID string
+	var conditionID, orgID, projectID string
 
 	switch len(parts) {
 	case 1:
-		// Account level: "condition-name"
-		conditionName = parts[0]
+		// Account level: "condition_id"
+		conditionID = parts[0]
 	case 2:
 		// Org level: "org-id/condition-name"
 		orgID = parts[0]
-		conditionName = parts[1]
+		conditionID = parts[1]
 	case 3:
 		// Project level: "org-id/project-id/condition-name"
 		orgID = parts[0]
 		projectID = parts[1]
-		conditionName = parts[2]
+		conditionID = parts[2]
 	default:
-		return nil, fmt.Errorf("invalid import ID format. Expected \"<condition-name>\", \"<org-id>/<condition-name>\", or \"<org-id>/<project-id>/<condition-name>\"")
+		return nil, fmt.Errorf("invalid import ID format. Expected \"<condition-id>\", \"<org-id>/<condition-id>\", or \"<org-id>/<project-id>/<condition-id>\"")
 	}
 
-	if conditionName == "" {
-		return nil, fmt.Errorf("condition name cannot be empty")
+	if conditionID == "" {
+		return nil, fmt.Errorf("condition id cannot be empty")
 	}
 
 	// Create a client for the Security Governance Condition API
@@ -365,16 +365,13 @@ func resourceChaosSecurityGovernanceConditionImport(ctx context.Context, d *sche
 		identifiers.ProjectIdentifier = projectID
 	}
 
-	log.Printf("[DEBUG] Importing condition with name: %s, org: %s, project: %s", conditionName, orgID, projectID)
+	log.Printf("[DEBUG] Importing condition with id: %s, org: %s, project: %s", conditionID, orgID, projectID)
 
-	// Get the condition by name
-	// Note: This assumes there's a way to list conditions by name. If not, you'll need to list all and filter.
-	// For now, we'll try to use the name as the ID for the import.
-	// In a real implementation, you might need to list all conditions and find the one with the matching name.
-	condition, err := client.Get(ctx, identifiers, conditionName)
+	// Get the condition by ID
+	condition, err := client.Get(ctx, identifiers, conditionID)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
-			errMsg := fmt.Sprintf("no security governance condition found with name: %s", conditionName)
+			errMsg := fmt.Sprintf("no security governance condition found with id: %s", conditionID)
 			if orgID != "" || projectID != "" {
 				errMsg = fmt.Sprintf("%s in the specified scope (org: %s, project: %s)",
 					errMsg, orgID, projectID)
@@ -398,7 +395,7 @@ func resourceChaosSecurityGovernanceConditionImport(ctx context.Context, d *sche
 	}
 
 	// Set the resource ID using the condition's ID and scope information
-	d.SetId(generateID(scopedIdentifiers, condition.Condition.ConditionID))
+	d.SetId(conditionID)
 
 	// Set the resource attributes
 	d.Set("name", condition.Condition.Name)
@@ -463,33 +460,29 @@ func generateID(identifiers ScopedIdentifiersRequest, conditionID string) string
 func parseID(id string) (ScopedIdentifiersRequest, string, error) {
 	log.Printf("[DEBUG] Parsing ID: %s", id)
 
-	// Handle the format: account/org/project/condition-id
+	// Handle the format: org/project/condition-id
 	parts := strings.Split(id, "/")
 
 	switch len(parts) {
-	case 4: // account/org/project/condition-id
+	case 3: // org/project/condition-id
 		result := ScopedIdentifiersRequest{
-			AccountIdentifier: parts[0],
-			OrgIdentifier:     &parts[1],
-			ProjectIdentifier: &parts[2],
-		}
-		return result, parts[3], nil
-
-	case 3: // account/org/condition-id
-		result := ScopedIdentifiersRequest{
-			AccountIdentifier: parts[0],
-			OrgIdentifier:     &parts[1],
+			OrgIdentifier:     &parts[0],
+			ProjectIdentifier: &parts[1],
 		}
 		return result, parts[2], nil
 
-	case 2: // account/condition-id
+	case 2: // org/condition-id
 		result := ScopedIdentifiersRequest{
-			AccountIdentifier: parts[0],
+			OrgIdentifier: &parts[0],
 		}
 		return result, parts[1], nil
 
+	case 1: // condition-id
+		result := ScopedIdentifiersRequest{}
+		return result, parts[0], nil
+
 	default:
-		return ScopedIdentifiersRequest{}, "", fmt.Errorf("invalid ID format, expected account/org/project/condition-id, account/org/condition-id, or account/condition-id")
+		return ScopedIdentifiersRequest{}, "", fmt.Errorf("invalid ID format, expected org/project/condition-id, org/condition-id, or condition-id")
 	}
 }
 

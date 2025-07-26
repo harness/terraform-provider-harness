@@ -28,9 +28,7 @@ func ResourceChaosSecurityGovernanceRule() *schema.Resource {
 		ReadContext:   resourceChaosSecurityGovernanceRuleRead,
 		UpdateContext: resourceChaosSecurityGovernanceRuleUpdate,
 		DeleteContext: resourceChaosSecurityGovernanceRuleDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: resourceChaosSecurityGovernanceRuleImport,
-		},
+		Importer:      &schema.ResourceImporter{StateContext: resourceChaosSecurityGovernanceRuleImport},
 
 		CustomizeDiff: validateTimeWindows,
 		Schema: map[string]*schema.Schema{
@@ -106,10 +104,12 @@ func ResourceChaosSecurityGovernanceRule() *schema.Resource {
 						"end_time": {
 							Type:     schema.TypeInt,
 							Optional: true,
+							Computed: true,
 						},
 						"duration": {
 							Type:         schema.TypeString,
 							Optional:     true,
+							Computed:     true,
 							ValidateFunc: validation.StringMatch(regexp.MustCompile(`^\d+[smh]$`), "must be a valid duration (e.g., 30m, 1h)"),
 						},
 						"recurrence": {
@@ -401,15 +401,7 @@ func resourceChaosSecurityGovernanceRuleCreate(ctx context.Context, d *schema.Re
 		log.Printf("[WARN] Could not extract rule ID from response, using generated ID: %s", ruleIDStr)
 	}
 
-	// Format the resource ID as account_id/org_id/project_id/rule_id
-	resourceID := fmt.Sprintf("%s/%s/%s/%s",
-		accountID,
-		identifiers.OrgIdentifier,
-		identifiers.ProjectIdentifier,
-		ruleIDStr,
-	)
-
-	d.SetId(resourceID)
+	d.SetId(ruleIDStr)
 
 	// Read the rule to populate all fields
 	return resourceChaosSecurityGovernanceRuleRead(ctx, d, meta)
@@ -419,13 +411,17 @@ func resourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Reso
 	c := meta.(*internal.Session).ChaosClient
 	client := chaos.NewSecurityGovernanceRuleClient(c)
 
-	identifiers, ruleID, err := parseRuleID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
+	ruleID := d.Id()
+	accountID := c.AccountId
+	if accountID == "" {
+		err := "account ID must be configured in the provider"
+		log.Printf("[ERROR] %s", err)
+		return diag.Errorf(err)
 	}
+	identifiers := getRuleIdentifiers(d, accountID)
 
 	log.Printf("[DEBUG] Reading rule with ID: %s, Account: %s, Org: %v, Project: %v",
-		ruleID, identifiers.AccountIdentifier, identifiers.OrgIdentifier, identifiers.ProjectIdentifier)
+		ruleID, accountID, identifiers.OrgIdentifier, identifiers.ProjectIdentifier)
 
 	resp, err := client.Get(ctx, identifiers, ruleID)
 	if err != nil {
@@ -500,19 +496,9 @@ func setRuleAttributes(d *schema.ResourceData, resp *model.RuleResponse, account
 	if len(rule.Conditions) > 0 {
 		conditionIDs := make([]string, 0, len(rule.Conditions))
 
-		// Get org and project IDs from resource data
-		orgID, _ := d.Get("org_id").(string)
-		projectID, _ := d.Get("project_id").(string)
-
 		for _, condition := range rule.Conditions {
 			if condition != nil && condition.ConditionID != "" {
-				// Format the condition ID with the full path
-				conditionID := fmt.Sprintf("%s/%s/%s/%s",
-					accountID,
-					orgID,
-					projectID,
-					condition.ConditionID,
-				)
+				conditionID := condition.ConditionID
 				conditionIDs = append(conditionIDs, conditionID)
 			}
 		}
@@ -532,6 +518,9 @@ func setRuleAttributes(d *schema.ResourceData, resp *model.RuleResponse, account
 			timeWindow := map[string]interface{}{
 				"time_zone":  tw.TimeZone,
 				"start_time": tw.StartTime,
+				"end_time":   nil,
+				"duration":   nil,
+				"recurrence": nil,
 			}
 
 			if tw.EndTime != nil {
@@ -572,10 +561,14 @@ func resourceChaosSecurityGovernanceRuleUpdate(ctx context.Context, d *schema.Re
 	c := meta.(*internal.Session).ChaosClient
 	client := chaos.NewSecurityGovernanceRuleClient(c)
 
-	identifiers, ruleID, err := parseRuleID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
+	ruleID := d.Id()
+	accountID := c.AccountId
+	if accountID == "" {
+		err := "account ID must be configured in the provider"
+		log.Printf("[ERROR] %s", err)
+		return diag.Errorf(err)
 	}
+	identifiers := getRuleIdentifiers(d, accountID)
 
 	ruleInput, err := buildRuleInput(d)
 	if err != nil {
@@ -598,15 +591,19 @@ func resourceChaosSecurityGovernanceRuleDelete(ctx context.Context, d *schema.Re
 	c := meta.(*internal.Session).ChaosClient
 	client := chaos.NewSecurityGovernanceRuleClient(c)
 
-	identifiers, ruleID, err := parseRuleID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
+	ruleID := d.Id()
+	accountID := c.AccountId
+	if accountID == "" {
+		err := "account ID must be configured in the provider"
+		log.Printf("[ERROR] %s", err)
+		return diag.Errorf(err)
 	}
+	identifiers := getRuleIdentifiers(d, accountID)
 
 	log.Printf("[DEBUG] Deleting rule with ID: %s, Account: %s, Org: %v, Project: %v",
 		ruleID, identifiers.AccountIdentifier, identifiers.OrgIdentifier, identifiers.ProjectIdentifier)
 
-	_, err = client.Delete(ctx, identifiers, ruleID)
+	_, err := client.Delete(ctx, identifiers, ruleID)
 	if err != nil {
 		return diag.Errorf("failed to delete security governance rule: %v", err)
 	}
@@ -616,30 +613,80 @@ func resourceChaosSecurityGovernanceRuleDelete(ctx context.Context, d *schema.Re
 }
 
 func resourceChaosSecurityGovernanceRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	parts := strings.Split(d.Id(), "/")
-	if len(parts) != 4 {
-		return nil, fmt.Errorf("invalid import format, expected: 'account_id/org_id/project_id/rule_id'")
+	// Parse the import ID which can be in one of these formats:
+	// 1. Account level: "rule_id"
+	// 2. Org level: "org_id/rule_id"
+	// 3. Project level: "org_id/project_id/rule_id"
+	importID := d.Id()
+	parts := strings.Split(importID, "/")
+
+	var ruleID, orgID, projectID string
+
+	switch len(parts) {
+	case 1:
+		// Account level: "rule_id"
+		ruleID = parts[0]
+	case 2:
+		// Org level: "org-id/rule_id"
+		orgID = parts[0]
+		ruleID = parts[1]
+	case 3:
+		// Project level: "org-id/project-id/rule_id"
+		orgID = parts[0]
+		projectID = parts[1]
+		ruleID = parts[2]
+	default:
+		return nil, fmt.Errorf("invalid import ID format. Expected \"<rule-id>\", \"<org-id>/<rule-id>\", or \"<org-id>/<project-id>/<rule-id>\"")
 	}
 
-	// Keep the full ID in the resource ID
-	// This matches what parseRuleID expects
-	d.SetId(d.Id())
+	if ruleID == "" {
+		return nil, fmt.Errorf("rule id cannot be empty")
+	}
+	d.SetId(ruleID)
 
-	d.Set("org_id", parts[1])
-	d.Set("project_id", parts[2])
+	// Set the required fields for the resource
+	if err := d.Set("org_id", orgID); err != nil {
+		return nil, fmt.Errorf("failed to set org_id: %w", err)
+	}
+	if err := d.Set("project_id", projectID); err != nil {
+		return nil, fmt.Errorf("failed to set project_id: %w", err)
+	}
+
+	// Read the rule to populate all other fields
+	client := meta.(*internal.Session).ChaosClient
+	sgClient := chaos.NewSecurityGovernanceRuleClient(client)
+
+	identifiers := model.IdentifiersRequest{
+		AccountIdentifier: client.AccountId,
+		OrgIdentifier:     orgID,
+		ProjectIdentifier: projectID,
+	}
+
+	resp, err := sgClient.Get(ctx, identifiers, ruleID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read security governance rule during import: %w", err)
+	}
+
+	if resp == nil || resp.Rule == nil {
+		return nil, fmt.Errorf("imported security governance rule not found: %s", ruleID)
+	}
+
+	// Set all other attributes from the API response
+	if err := setRuleAttributes(d, resp, client.AccountId); err != nil {
+		return nil, fmt.Errorf("failed to set rule attributes during import: %w", err)
+	}
 
 	return []*schema.ResourceData{d}, nil
 }
 
 func parseRuleID(id string) (model.IdentifiersRequest, string, error) {
 	parts := strings.Split(id, "/")
-	if len(parts) != 4 {
-		return model.IdentifiersRequest{}, "", fmt.Errorf("invalid rule ID format: %s, expected format: account_id/org_id/project_id/rule_id", id)
+	if len(parts) != 3 {
+		return model.IdentifiersRequest{}, "", fmt.Errorf("invalid rule ID format: %s, expected format: org_id/project_id/rule_id", id)
 	}
 
 	return model.IdentifiersRequest{
-		AccountIdentifier: parts[0],
-		OrgIdentifier:     parts[1],
-		ProjectIdentifier: parts[2],
-	}, parts[3], nil
+		OrgIdentifier:     parts[0],
+		ProjectIdentifier: parts[1],
+	}, parts[2], nil
 }

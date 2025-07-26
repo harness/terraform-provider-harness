@@ -153,8 +153,8 @@ func dataSourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Re
 		idStr := ruleID.(string)
 		parts := strings.Split(idStr, "/")
 		actualRuleID := idStr
-		if len(parts) == 4 {
-			actualRuleID = parts[3] // Extract just the rule ID part
+		if len(parts) == 3 {
+			actualRuleID = parts[2] // Extract just the rule ID part
 		}
 
 		// Look up by ID
@@ -227,7 +227,7 @@ func dataSourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Re
 	}
 
 	// Set the ID
-	d.SetId(fmt.Sprintf("%s/%s/%s/%s", accountID, orgID, projectID, rule.RuleID))
+	d.SetId(rule.RuleID)
 
 	// Set the attributes
 	if err := setRuleAttributes(d, &model.RuleResponse{Rule: rule}, accountID); err != nil {

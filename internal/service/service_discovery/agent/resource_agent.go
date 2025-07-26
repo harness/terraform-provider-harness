@@ -238,7 +238,7 @@ func resourceServiceDiscoveryAgentRead(ctx context.Context, d *schema.ResourceDa
 
 	// Set up API options
 	opts := &svcdiscovery.AgentApiGetAgentOpts{
-		CorrelationID: optional.NewString(uuid.New().String()),
+		CorrelationID: optional.NewString(d.Get("correlation_id").(string)),
 	}
 
 	// Set account identifier

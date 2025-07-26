@@ -43,7 +43,6 @@ func resourceInfrastructureV2Create(ctx context.Context, d *schema.ResourceData,
 	// Extract identifiers
 	orgID := d.Get("org_id").(string)
 	projectID := d.Get("project_id").(string)
-	environmentID := d.Get("environment_id").(string)
 
 	// Make the API call with correct parameter order
 	resp, httpResp, err := c.ChaosSdkApi.RegisterInfraV2(
@@ -61,7 +60,7 @@ func resourceInfrastructureV2Create(ctx context.Context, d *schema.ResourceData,
 	}
 
 	// Set the ID
-	d.SetId(fmt.Sprintf("%s/%s/%s/%s", orgID, projectID, environmentID, resp.Identity))
+	d.SetId(resp.Identity)
 
 	log.Printf("Created infrastructure with ID: %s", d.Id())
 
@@ -83,10 +82,14 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 
 	// Parse the ID
-	orgID, projectID, environmentID, infraID, err := parseInfrastructureV2ID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	// orgID, projectID, environmentID, infraID, err := parseInfrastructureV2ID(d.Id())
+	// if err != nil {
+	// 	return diag.FromErr(err)
+	// }
+	infraID := d.Id()
+	orgID := d.Get("org_id").(string)
+	projectID := d.Get("project_id").(string)
+	environmentID := d.Get("environment_id").(string)
 
 	// Get the infrastructure with all required parameters
 	infra, httpResp, err := c.ChaosSdkApi.GetInfraV2(
@@ -106,11 +109,24 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	// Set the fields
+	if infra.Identifier == nil {
+		return diag.FromErr(fmt.Errorf("identifier is nil"))
+	} else {
+		if err := d.Set("identifier", []map[string]interface{}{
+			{
+				"account_identifier": infra.Identifier.AccountIdentifier,
+				"org_identifier":     infra.Identifier.OrgIdentifier,
+				"project_identifier": infra.Identifier.ProjectIdentifier,
+			},
+		}); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set identifier: %v", err))
+		}
+	}
+	if err := d.Set("infra_type", infra.InfraType); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set infra_type: %v", err))
+	}
 	if err := d.Set("name", infra.Name); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set name: %v", err))
-	}
-	if err := d.Set("infra_id", infra.InfraID); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set infra_id: %v", err))
 	}
 	if err := d.Set("infra_namespace", infra.InfraNamespace); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set infra_namespace: %v", err))
@@ -207,10 +223,13 @@ func resourceInfrastructureV2Update(ctx context.Context, d *schema.ResourceData,
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 
 	// Parse the ID
-	orgID, projectID, _, infraID, err := parseInfrastructureV2ID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	// orgID, projectID, _, infraID, err := parseInfrastructureV2ID(d.Id())
+	// if err != nil {
+	// 	return diag.FromErr(err)
+	// }
+	infraID := d.Id()
+	orgID := d.Get("org_id").(string)
+	projectID := d.Get("project_id").(string)
 
 	// Build the update request
 	req, err := buildUpdateInfrastructureV2Request(d, c.AccountId)
@@ -241,10 +260,14 @@ func resourceInfrastructureV2Delete(ctx context.Context, d *schema.ResourceData,
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 
 	// Parse the ID
-	orgID, projectID, environmentID, infraID, err := parseInfrastructureV2ID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	// orgID, projectID, environmentID, infraID, err := parseInfrastructureV2ID(d.Id())
+	// if err != nil {
+	// 	return diag.FromErr(err)
+	// }
+	infraID := d.Id()
+	orgID := d.Get("org_id").(string)
+	projectID := d.Get("project_id").(string)
+	environmentID := d.Get("environment_id").(string)
 
 	// Make the API call
 	_, httpResp, err := c.ChaosSdkApi.DeleteInfraV2(
@@ -924,7 +947,7 @@ func resourceInfrastructureV2Import(ctx context.Context, d *schema.ResourceData,
 	log.Printf("[DEBUG] Importing infrastructure with ID: %s/%s/%s/%s", orgID, projectID, environmentID, infraID)
 
 	// Set the ID in the format that our Read function expects
-	d.SetId(fmt.Sprintf("%s/%s/%s/%s", orgID, projectID, environmentID, infraID))
+	d.SetId(infraID)
 
 	// Set the individual ID fields
 	if err := d.Set("org_id", orgID); err != nil {
