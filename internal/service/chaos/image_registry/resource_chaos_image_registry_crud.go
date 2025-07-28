@@ -79,6 +79,9 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 			d.SetId(generateID(identifiers))
 			return resourceChaosImageRegistryRead(ctx, d, meta)
 		}
+		log.Printf("[ERROR] Chaos image registry creation failed: %s", err)
+		d.SetId("")
+		return diag.Errorf("failed to create image registry: %v", err)
 	}
 
 	d.SetId(generateID(identifiers))
