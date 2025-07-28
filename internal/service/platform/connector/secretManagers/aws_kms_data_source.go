@@ -16,6 +16,11 @@ func DatasourceConnectorAwsKms() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"arn_plaintext": {
+				Description: "The ARN of the AWS KMS in plaintext. This is used when the ARN is not stored in a Harness secret." + secret_ref_text,
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"region": {
 				Description: "The AWS region where the AWS Secret Manager is.",
 				Type:        schema.TypeString,
