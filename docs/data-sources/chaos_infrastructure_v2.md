@@ -50,7 +50,7 @@ output "agent_details_by_identity" {
 
 ### Optional
 
-- `image_registry` (Block List, Max: 1) Configuration for the container image registry. (see [below for nested schema](#nestedblock--image_registry))
+- `image_registry` (Block List) Configuration for the container image registry. (see [below for nested schema](#nestedblock--image_registry))
 - `mtls` (Block List, Max: 1) mTLS configuration for the infrastructure. (see [below for nested schema](#nestedblock--mtls))
 - `proxy` (Block List, Max: 1) Proxy configuration for the infrastructure. (see [below for nested schema](#nestedblock--proxy))
 - `tolerations` (Block List) If specified, the pod's tolerations. (see [below for nested schema](#nestedblock--tolerations))
@@ -94,7 +94,7 @@ output "agent_details_by_identity" {
 
 Optional:
 
-- `custom_images` (Block List, Max: 1) Custom image configurations. Required when use_custom_images is true. (see [below for nested schema](#nestedblock--image_registry--custom_images))
+- `custom_images` (Block List) Custom image configurations. Required when use_custom_images is true. (see [below for nested schema](#nestedblock--image_registry--custom_images))
 - `is_default` (Boolean) Whether this is the default registry.
 - `is_override_allowed` (Boolean) Whether override is allowed for this registry.
 - `is_private` (Boolean) Whether the registry is private.
