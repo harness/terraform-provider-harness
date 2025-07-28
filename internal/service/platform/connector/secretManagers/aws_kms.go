@@ -174,9 +174,6 @@ func resourceConnectorAwsKmsRead(ctx context.Context, d *schema.ResourceData, me
 
 func resourceConnectorAwsKmsCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	conn := buildConnectorAwsKms(d)
-	fmt.Print("debug log")
-	fmt.Println(conn)
-	fmt.Println(d)
 	newConn, err := resourceConnectorCreateOrUpdateBase(ctx, d, meta, conn)
 	if err != nil {
 		return err

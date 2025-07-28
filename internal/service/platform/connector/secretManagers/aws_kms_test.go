@@ -169,6 +169,60 @@ func TestOrgResourceConnectorAwsKms_inherit(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorAwsKms_manual_arnpliantext(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_awskms.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAwsKms_manual_arnpliantext(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_plaintext", "arn in plaintext"),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", "account."+id),
+				),
+			},
+			{
+				Config: testAccResourceConnectorAwsKms_manual_arnpliantext(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "arn_plaintext", "arn in plaintext"),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-east-1"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", "account."+id),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", "account."+id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceConnectorAwsKms_manual(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -976,6 +1030,45 @@ func testAccResourceConnectorAwsKms_manual(id string, name string) string {
 
 			
 			arn_ref = "account.${harness_platform_secret_text.test.id}"
+			region = "us-east-1"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				manual {
+					secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+					access_key_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			create_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorAwsKms_manual_arnpliantext(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+		resource "harness_platform_connector_awskms" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			
+			arn_plaintext="arn in plaintext"
 			region = "us-east-1"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
