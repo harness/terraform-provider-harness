@@ -13,7 +13,9 @@ package nextgen
 type AwsKmsConnector struct {
 	Credential *AwsKmsConnectorCredential `json:"credential"`
 	// ARN for AWS KMS.
-	KmsArn string `json:"kmsArn"`
+	KmsArn string `json:"kmsArn,omitempty"`
+	//ARN as plaintext for AWS KMS
+	KmsArnInPlainText string `json:"kmsArnInPlainText,omitempty"`
 	// Region for AWS KMS.
 	Region    string `json:"region"`
 	IsDefault bool   `json:"isDefault,omitempty"`

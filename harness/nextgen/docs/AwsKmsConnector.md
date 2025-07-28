@@ -5,6 +5,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Credential** | [***AwsKmsConnectorCredential**](AwsKmsConnectorCredential.md) |  | [optional] [default to null]
 **KmsArn** | **string** |  | [default to null]
+**KmsArnInPlainText** | **string** |  | [optional] [default to null]
 **Region** | **string** |  | [optional] [default to null]
 **DelegateSelectors** | **[]string** |  | [optional] [default to null]
 **Default_** | **bool** |  | [optional] [default to null]
