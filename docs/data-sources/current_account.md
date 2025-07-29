@@ -17,11 +17,9 @@ Data source for retrieving information about the current Harness account
 
 ### Optional
 
-- `id` (String) Account Identifier of the current account.
+- `id` (String) Id of the git connector.
 
 ### Read-Only
 
 - `account_id` (String) Id of the account.
 - `endpoint` (String) The url of the Harness control plane.
-
-

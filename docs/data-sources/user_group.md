@@ -19,5 +19,3 @@ Data source for retrieving a Harness user group
 
 - `id` (String) Unique identifier of the user group
 - `name` (String) The name of the user group.
-
-

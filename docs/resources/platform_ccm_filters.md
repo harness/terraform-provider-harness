@@ -39,7 +39,7 @@ resource "harness_platform_ccm_filters" "test" {
 
 ### Optional
 
-- `filter_visibility` (String) This indicates visibility of filters. By default, everyone can view this filter..
+- `filter_visibility` (String) This indicates visibility of filters, by default it is Everyone.
 - `org_id` (String) Organization Identifier for the Entity.
 - `project_id` (String) Project Identifier for the Entity.
 
@@ -61,6 +61,8 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level ccm filter

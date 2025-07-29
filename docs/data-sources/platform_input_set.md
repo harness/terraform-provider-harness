@@ -53,5 +53,3 @@ Read-Only:
 - `parent_entity_repo_name` (String) Repository name for Parent Entity (Pipeline).
 - `repo_name` (String) Name of the repository.
 - `store_type` (String) Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.
-
-

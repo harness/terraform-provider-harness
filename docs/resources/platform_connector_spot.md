@@ -96,6 +96,8 @@ Optional:
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import using spot cloud provider connector id
 terraform import harness_platform_connector_spot.example <connector_id>

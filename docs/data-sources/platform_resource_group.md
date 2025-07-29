@@ -10,10 +10,6 @@ description: |-
 
 DataSource for looking up resource group in harness.
 
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use Resource Group, please see [Documentation](https://developer.harness.io/docs/platform/role-based-access-control/add-resource-groups)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Harness-Resource-Group)
 ## Example Usage
 
 ```terraform
@@ -81,5 +77,3 @@ Read-Only:
 
 - `attribute_name` (String)
 - `attribute_values` (Set of String)
-
-

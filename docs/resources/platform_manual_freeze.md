@@ -9,85 +9,8 @@ description: |-
 # harness_platform_manual_freeze (Resource)
 
 Resource for Manual Deployment Freeze Window.
-### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand more about Deployment Freeze, please see  [Documentation](https://developer.harness.io/docs/continuous-delivery/manage-deployments/deployment-freeze/)
 
-## Example to create Manual Freeze at different levels (Org, Project, Account)
-### Account Level
-
-```terraform
-resource "harness_platform_manual_freeze" "example" {
-  identifier = "identifier"
-  org_id     = "orgIdentifier"
-  project_id = "projectIdentifier"
-  account_id = "accountIdentifier"
-  yaml       = <<-EOT
-      freeze:
-        name: freezeName
-        identifier: identifier
-        entityConfigs:
-          - name: r1
-            entities:
-              - filterType: All
-                type: Org
-              - filterType: All
-                type: Project
-              - filterType: All
-                type: Service
-              - filterType: All
-                type: EnvType
-        status: Disabled
-        description: hi
-        windows:
-        - timeZone: Asia/Calcutta
-          startTime: 2023-05-03 04:16 PM
-          duration: 30m
-          recurrence:
-            type: Daily
-        notificationRules: []
-        tags: {}
-      EOT
-}
-```
-
-### Org Level
-
-```terraform
-resource "harness_platform_manual_freeze" "example" {
-  identifier = "identifier"
-  org_id     = "orgIdentifier"
-  account_id = "accountIdentifier"
-  yaml       = <<-EOT
-      freeze:
-        name: freezeName
-        identifier: identifier
-        entityConfigs:
-          - name: r1
-            entities:
-              - filterType: All
-                type: Org
-              - filterType: All
-                type: Project
-              - filterType: All
-                type: Service
-              - filterType: All
-                type: EnvType
-        status: Disabled
-        description: hi
-        windows:
-        - timeZone: Asia/Calcutta
-          startTime: 2023-05-03 04:16 PM
-          duration: 30m
-          recurrence:
-            type: Daily
-        notificationRules: []
-        tags: {}
-      EOT
-}
-```
-
-### Project Level
+## Example Usage
 
 ```terraform
 resource "harness_platform_manual_freeze" "example" {
@@ -155,8 +78,8 @@ resource "harness_platform_manual_freeze" "example" {
 
 Read-Only:
 
-- `end_time` (Number) End time of the freeze
-- `start_time` (Number) Start time of the freeze
+- `end_time` (Number)
+- `start_time` (Number)
 
 
 <a id="nestedatt--freeze_windows"></a>
@@ -164,11 +87,11 @@ Read-Only:
 
 Read-Only:
 
-- `duration` (String) Duration of the freeze
-- `end_time` (String) End time of the freeze
+- `duration` (String)
+- `end_time` (String)
 - `recurrence` (List of Object) (see [below for nested schema](#nestedobjatt--freeze_windows--recurrence))
-- `start_time` (String) Start time of the freeze
-- `time_zone` (String) Timezone
+- `start_time` (String)
+- `time_zone` (String)
 
 <a id="nestedobjatt--freeze_windows--recurrence"></a>
 ### Nested Schema for `freeze_windows.recurrence`
@@ -176,19 +99,21 @@ Read-Only:
 Read-Only:
 
 - `recurrence_spec` (List of Object) (see [below for nested schema](#nestedobjatt--freeze_windows--recurrence--recurrence_spec))
-- `type` (String) Recurrence type(Daily, Weekly, Monthly, Yearly)
+- `type` (String)
 
 <a id="nestedobjatt--freeze_windows--recurrence--recurrence_spec"></a>
 ### Nested Schema for `freeze_windows.recurrence.recurrence_spec`
 
 Read-Only:
 
-- `until` (String) Recurrence until timestamp
-- `value` (Number) Value of n, for n months recurrence
+- `until` (String)
+- `value` (Number)
 
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import an account level freeze

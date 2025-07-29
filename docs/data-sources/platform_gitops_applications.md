@@ -35,6 +35,7 @@ data "harness_platform_gitops_applications" "example" {
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps application.
 - `identifier` (String, Deprecated) Identifier of the GitOps application.
 
 ### Read-Only
@@ -46,6 +47,7 @@ data "harness_platform_gitops_applications" "example" {
 - `options_remove_existing_finalizers` (Boolean) Options to remove existing finalizers to delete the GitOps application.
 - `project` (String) The ArgoCD project name corresponding to this GitOps application. An empty string means that the GitOps application belongs to the default project created by Harness.
 - `repo_id` (String) Repository identifier of the GitOps application.
+- `repo_ids` (List of String) List of repository identifiers of the GitOps for Multi-Source application. Not required if skipRepoValidation is set to true.
 - `request_cascade` (Boolean) Request cascade to delete the GitOps application.
 - `request_propagation_policy` (String) Request propagation policy to delete the GitOps application.
 - `skip_repo_validation` (Boolean) Indicates if the GitOps application should skip validate repository definition exists.
@@ -320,9 +322,13 @@ Read-Only:
 Read-Only:
 
 - `file_parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--helm--file_parameters))
+- `ignore_missing_value_files` (Boolean)
 - `parameters` (List of Object) (see [below for nested schema](#nestedobjatt--application--spec--sources--helm--parameters))
 - `pass_credentials` (Boolean)
 - `release_name` (String)
+- `skip_crds` (Boolean)
+- `skip_schema_validation` (Boolean)
+- `skip_tests` (Boolean)
 - `value_files` (List of String)
 - `values` (String)
 - `version` (String)

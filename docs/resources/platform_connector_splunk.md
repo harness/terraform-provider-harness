@@ -55,6 +55,8 @@ resource "harness_platform_connector_splunk" "test" {
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import account level splunk connector 
 terraform import harness_platform_connector_splunk.example <connector_id>

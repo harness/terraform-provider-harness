@@ -10,11 +10,6 @@ description: |-
 
 Resource for creating an AWS Secret Manager connector.
 
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use AWS Secret Manager, please see [Documentation](https://developer.harness.io/docs/platform/Secrets/Secrets-Management/add-an-aws-secret-manager)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
-
 ## Example Usage
 
 ```terraform
@@ -100,12 +95,12 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
-  
-  secret_name_prefix = "test"
-  region             = "us-east-1"
-  delegate_selectors = ["harness-delegate"]
-  default            = true
-  force_delete_without_recovery     = true
+
+  secret_name_prefix            = "test"
+  region                        = "us-east-1"
+  delegate_selectors            = ["harness-delegate"]
+  default                       = true
+  force_delete_without_recovery = true
   credentials {
     assume_role {
       role_arn    = "somerolearn"
@@ -142,11 +137,11 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   description = "test"
   tags        = ["foo:bar"]
 
-  secret_name_prefix = "test"
-  region             = "us-east-1"
-  delegate_selectors = ["harness-delegate"]
-  default            = true
-  recovery_window_in_days     = 15
+  secret_name_prefix      = "test"
+  region                  = "us-east-1"
+  delegate_selectors      = ["harness-delegate"]
+  default                 = true
+  recovery_window_in_days = 15
   credentials {
     assume_role {
       role_arn    = "somerolearn"
@@ -173,13 +168,13 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `execute_on_delegate` (Boolean) Run the operation on the delegate or harness platform.
+- `force_delete_without_recovery` (Boolean) Whether to force delete secret value or not.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
+- `recovery_window_in_days` (Number) Recovery duration in days in AWS Secrets Manager.
 - `secret_name_prefix` (String) A prefix to be added to all secrets.
 - `tags` (Set of String) Tags to associate with the resource.
 - `use_put_secret` (Boolean) Whether to update secret value using putSecretValue action.
-- `force_delete_without_recovery` (Boolean) Whether to force delete secret value or not.
-- `recovery_window_in_days` (Long)  recovery duration in days in AWS Secrets Manager.
 
 ### Read-Only
 
@@ -215,11 +210,11 @@ Required:
 
 - `secret_key_ref` (String) The reference to the Harness secret containing the AWS secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
-- `access_key_ref` (String) The reference to the Harness secret containing the AWS access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
-
 Optional:
 
-- `access_key_plain_text` (String) The plain text AWS access key. This is required if the access_key_ref is not provided.
+- `access_key_plain_text` (String) The plain text AWS access key.
+- `access_key_ref` (String) The reference to the Harness secret containing the AWS access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
 
 <a id="nestedblock--credentials--oidc_authentication"></a>
 ### Nested Schema for `credentials.oidc_authentication`
@@ -231,6 +226,8 @@ Required:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level aws secret manager connector 

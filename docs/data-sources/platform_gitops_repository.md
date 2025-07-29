@@ -32,12 +32,12 @@ data "harness_platform_gitops_repository" "example" {
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps repository.
 - `org_id` (String) Organization identifier of the GitOps repository.
 - `project_id` (String) Project identifier of the GitOps repository.
 
 ### Read-Only
 
-- `account_id` (String, Deprecated) Account identifier of the GitOps repository.
 - `enable_oci` (Boolean) Indicates if helm-oci support must be enabled for this repo.
 - `id` (String) The ID of this resource.
 - `repo` (List of Object) Repo details holding application configurations. (see [below for nested schema](#nestedatt--repo))

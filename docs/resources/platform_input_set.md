@@ -163,6 +163,8 @@ Optional:
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import input set 
 terraform import harness_platform_input_set.example <org_id>/<project_id>/<pipeline_id>/<input_set_id>

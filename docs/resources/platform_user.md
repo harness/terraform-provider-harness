@@ -3,17 +3,13 @@
 page_title: "harness_platform_user Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness User. This requires your authentication mechanism to be set to SAML, LDAP, or OAuth, and the feature flag AUTOACCEPTSAMLACCOUNTINVITES to be enabled.
+  Resource for creating a Harness User. This requires your authentication mechanism to be set to SAML, LDAP, or OAuth, and the feature flag AUTO_ACCEPT_SAML_ACCOUNT_INVITES to be enabled.
 ---
 
 # harness_platform_user (Resource)
 
 Resource for creating a Harness User. This requires your authentication mechanism to be set to SAML, LDAP, or OAuth, and the feature flag AUTO_ACCEPT_SAML_ACCOUNT_INVITES to be enabled.
 
-References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand more about User, please see [Documentation](https://developer.harness.io/docs/platform/User-Management/add-users)
-- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/User)
 ## Example Usage
 
 ```terraform
@@ -66,7 +62,7 @@ resource "harness_platform_user" "example" {
 ### Required
 
 - `email` (String) The email of the user.
-- `user_groups` (Set of String) The user group of the user.
+- `user_groups` (Set of String) The user group of the user. Cannot be updated.
 
 ### Optional
 
@@ -97,6 +93,8 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level

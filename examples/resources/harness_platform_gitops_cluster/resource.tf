@@ -74,9 +74,9 @@ resource "harness_platform_gitops_cluster" "example" {
       name   = "name"
       config {
         tls_client_config {
-          ca_data      = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWApYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFgKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
+          ca_data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tClhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWApYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFgKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
         }
-        bearer_token = "ey......X"
+        bearer_token            = "ey......X"
         cluster_connection_type = "SERVICE_ACCOUNT"
       }
 

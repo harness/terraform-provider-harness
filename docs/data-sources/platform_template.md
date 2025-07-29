@@ -72,5 +72,3 @@ Optional:
 - `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Pipeline.
 - `repo_name` (String) Name of the repository.
 - `repo_url` (String) Repo url of the Entity in the repository.
-
-

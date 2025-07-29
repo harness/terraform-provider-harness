@@ -28,11 +28,11 @@ data "harness_platform_gitops_app_project" "example" {
 
 ### Optional
 
+- `account_id` (String, Deprecated) Account identifier of the GitOps Agent where argo project resides.
 - `org_id` (String) Org identifier of the GitOps Agent where argo project resides.
 - `project_id` (String) Project identifier of the Gitops Agent where argo project resides.
 - `query_name` (String) Identifier for the GitOps Argo project.
 
 ### Read-Only
 
-- `account_id` (String, Deprecated) Account identifier of the GitOps Agent where argo project resides.
 - `id` (String) The ID of this resource.

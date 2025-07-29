@@ -26,7 +26,6 @@ resource "harness_platform_connector_tas" "tas" {
       endpoint_url = "https://tas.example.com"
       username     = "admin"
       password_ref = "account.secret_id"
-      reference_token = "account.secret_reference_token"
     }
   }
 }
@@ -45,7 +44,6 @@ resource "harness_platform_connector_tas" "tas" {
       endpoint_url = "https://tas.example.com"
       username_ref = "account.username_id"
       password_ref = "account.secret_id"
-      reference_token = "account.secret_reference_token"
     }
   }
   delegate_selectors  = ["harness-delegate"]
@@ -70,8 +68,6 @@ resource "harness_platform_connector_tas" "tas" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
-- `reference_token` (String) Reference of the secret for the token. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}
-
 
 ### Read-Only
 
@@ -95,12 +91,15 @@ Required:
 
 Optional:
 
+- `reference_token` (String) Reference token for authentication.
 - `username` (String) Username to use for authentication.
 - `username_ref` (String) Reference to a secret containing the username to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import account level tas connector

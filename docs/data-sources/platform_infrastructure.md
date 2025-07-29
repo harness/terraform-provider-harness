@@ -32,6 +32,7 @@ data "harness_platform_infrastructure" "example" {
 
 ### Optional
 
+- `git_details` (Block List, Max: 1) Contains parameters related to Git Experience for remote entities (see [below for nested schema](#nestedblock--git_details))
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
@@ -44,3 +45,13 @@ data "harness_platform_infrastructure" "example" {
 - `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) Type of Infrastructure. Valid values are KubernetesDirect, KubernetesGcp, ServerlessAwsLambda, Pdc, KubernetesAzure, SshWinRmAzure, SshWinRmAws, AzureWebApp, ECS, GitOps, CustomDeployment, TAS, KubernetesRancher, AWS_SAM.
 - `yaml` (String) Infrastructure YAML
+
+<a id="nestedblock--git_details"></a>
+### Nested Schema for `git_details`
+
+Optional:
+
+- `branch` (String) Name of the branch.
+- `load_from_cache` (String) If the Entity is to be fetched from cache
+- `load_from_fallback_branch` (Boolean) Load Infrastructure yaml from fallback branch
+- `repo_name` (String) Repo name of remote Infrastructure

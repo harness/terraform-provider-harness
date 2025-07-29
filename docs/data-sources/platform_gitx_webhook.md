@@ -42,13 +42,13 @@ resource "harness_platform_gitx_webhook" "test" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 
 ### Optional
 
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource. These should match the tag value passed in the YAML; if this parameter is null or not passed, the tags specified in YAML should also be null.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 

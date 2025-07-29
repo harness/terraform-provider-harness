@@ -13,8 +13,8 @@ Data source for retrieving a Harness Dashboard.
 ## Example Usage
 
 ```terraform
-data "harness_platform_dashboards" "example" {
-  id = "48525"
+data "harness_platform_dashboards" "dashboard" {
+  id = "id"
 }
 ```
 
@@ -25,18 +25,21 @@ data "harness_platform_dashboards" "example" {
 
 - `id` (String) Identifier of the dashboard.
 
+### Optional
+
+- `identifier` (String) Unique identifier of the resource.
+- `name` (String) Name of the resource.
+
 ### Read-Only
 
 - `created_at` (String) Created at timestamp of the Dashboard.
 - `dashboard_id` (String) Unique identifier of the Dashboard.
 - `data_source` (List of String) Data Sources within the Dashboard.
-- `description` (String) Description of the Dashboard.
+- `description` (String) Description of the resource.
 - `folder_id` (String) Unique identifier of the Folder.
 - `models` (List of String) Data Models within the Dashboard.
-- `name` (String) Name of the Dashboard.
 - `resource_identifier` (String) Resource identifier of the dashboard.
+- `tags` (Set of String) Tags to associate with the resource.
 - `title` (String) Title of the Dashboard.
-- `type` (String) Type of the dashboard.
-- `view_count` (Int) View count of the dashboard.
-- `favorite_count` (Int) Favorite count of the dashboard.
-- `last_accessed_at` (String) Last accessed at timestamp of the Dashboard.
+- `type` (String) Resource identifier of the dashboard.
+- `view_count` (Number) View count of the dashboard.

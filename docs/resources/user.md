@@ -44,6 +44,8 @@ resource "harness_user" "john_doe" {
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import using the email address of the user
 terraform import harness_user.john_doe john.doe@example.com

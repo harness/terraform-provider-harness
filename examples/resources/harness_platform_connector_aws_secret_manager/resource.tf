@@ -80,12 +80,12 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
-  
-  secret_name_prefix = "test"
-  region             = "us-east-1"
-  delegate_selectors = ["harness-delegate"]
-  default            = true
-  force_delete_without_recovery     = true
+
+  secret_name_prefix            = "test"
+  region                        = "us-east-1"
+  delegate_selectors            = ["harness-delegate"]
+  default                       = true
+  force_delete_without_recovery = true
   credentials {
     assume_role {
       role_arn    = "somerolearn"
@@ -122,11 +122,11 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   description = "test"
   tags        = ["foo:bar"]
 
-  secret_name_prefix = "test"
-  region             = "us-east-1"
-  delegate_selectors = ["harness-delegate"]
-  default            = true
-  recovery_window_in_days     = 15
+  secret_name_prefix      = "test"
+  region                  = "us-east-1"
+  delegate_selectors      = ["harness-delegate"]
+  default                 = true
+  recovery_window_in_days = 15
   credentials {
     assume_role {
       role_arn    = "somerolearn"

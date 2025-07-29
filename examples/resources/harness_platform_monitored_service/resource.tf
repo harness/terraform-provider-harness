@@ -78,7 +78,7 @@ resource "harness_platform_monitored_service" "example" {
       identifier = "customff"
       type       = "CustomFF"
       enabled    = true
-      category =  "FeatureFlag"
+      category   = "FeatureFlag"
       spec = jsonencode({
         type = "FeatureFlag"
       })
@@ -88,7 +88,7 @@ resource "harness_platform_monitored_service" "example" {
       identifier = "customdeploy"
       type       = "CustomDeploy"
       enabled    = true
-      category =  "Deployment"
+      category   = "Deployment"
       spec = jsonencode({
         type = "Deployment"
       })
@@ -98,10 +98,10 @@ resource "harness_platform_monitored_service" "example" {
       identifier = "customincident"
       type       = "CustomIncident"
       enabled    = true
-      category =  "Alert"
+      category   = "Alert"
       spec = jsonencode({
-        type = "Alert"
-        authorizationToken	= "abc"
+        type               = "Alert"
+        authorizationToken = "abc"
       })
     }
     notification_rule_refs {

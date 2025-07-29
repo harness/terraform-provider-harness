@@ -56,5 +56,3 @@ Required:
 
 - `identifier` (String) Account Identifier of the account
 - `severity` (String) Policy failure response - 'warning' for continuation, 'error' for exit
-
-

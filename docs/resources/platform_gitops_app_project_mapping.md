@@ -45,6 +45,8 @@ resource "harness_platform_gitops_app_project_mapping" "example" {
 
 Import is supported using the following syntax:
 
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
 # Import a GitOps agent app project mapping
 terraform import harness_platform_gitops_app_project_mapping.example <organization_id>/<project_id>/<agent_id>/<appproject_name>

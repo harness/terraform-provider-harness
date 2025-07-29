@@ -48,5 +48,3 @@ Read-Only:
 - `password_ref` (String)
 - `username` (String)
 - `username_ref` (String)
-
-

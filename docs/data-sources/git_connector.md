@@ -42,5 +42,3 @@ Read-Only:
 - `author_email_id` (String)
 - `author_name` (String)
 - `message` (String)
-
-
