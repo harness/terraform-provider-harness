@@ -16,19 +16,19 @@ func imageRegistrySchema() *schema.Schema {
 		Description: "Configuration for the container image registry.",
 		Type:        schema.TypeList,
 		Optional:    true,
-		MaxItems:    1,
+		Computed:    true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"registry_server": {
 					Description: "The container image registry server URL (e.g., docker.io, gcr.io).",
 					Type:        schema.TypeString,
 					Optional:    true,
-					Default:     "docker.io",
+					Computed:    true,
 				},
 				"registry_account": {
 					Description: "The account name for the container registry.",
 					Type:        schema.TypeString,
-					Default:     "harness",
+					Computed:    true,
 					Optional:    true,
 				},
 				"secret_name": {
@@ -40,19 +40,19 @@ func imageRegistrySchema() *schema.Schema {
 					Description: "Whether override is allowed for this registry.",
 					Type:        schema.TypeBool,
 					Optional:    true,
-					Default:     false,
+					Computed:    true,
 				},
 				"use_custom_images": {
 					Description: "Whether to use custom images instead of default ones.",
 					Type:        schema.TypeBool,
 					Optional:    true,
-					Default:     false,
+					Computed:    true,
 				},
 				"custom_images": {
 					Description: "Custom image configurations. Required when use_custom_images is true.",
 					Type:        schema.TypeList,
 					Optional:    true,
-					MaxItems:    1,
+					Computed:    true,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"ddcr": {
@@ -86,11 +86,13 @@ func imageRegistrySchema() *schema.Schema {
 					Description: "Whether this is the default registry.",
 					Type:        schema.TypeBool,
 					Optional:    true,
+					Computed:    true,
 				},
 				"is_private": {
 					Description: "Whether the registry is private.",
 					Type:        schema.TypeBool,
 					Optional:    true,
+					Computed:    true,
 				},
 				// Computed fields
 				"infra_id": {

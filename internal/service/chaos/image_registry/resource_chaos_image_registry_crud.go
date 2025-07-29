@@ -31,9 +31,13 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 		UseCustomImages:   d.Get("use_custom_images").(bool),
 	}
 
-	if v, ok := d.GetOk("secret_name"); ok {
-		secretName := v.(string)
-		req.SecretName = &secretName
+	if req.IsPrivate {
+		if v, ok := d.GetOk("secret_name"); ok {
+			secretName := v.(string)
+			req.SecretName = &secretName
+		} else {
+			return diag.Errorf("failed to create image registry: secret_name is required when is_private is true")
+		}
 	}
 
 	if v, ok := d.GetOk("custom_images"); ok && len(v.([]interface{})) > 0 {
@@ -70,15 +74,15 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 	// If the registry already exists (duplicate key error), log a warning instead of erroring
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key error") {
-			log.Printf("[WARN] Chaos image registry already exists: %s", err)
-			// Still set the ID and read the state
+			log.Printf("[WARN] Chaos image registry already exists, reading existing state: %s", err)
+			// Set the ID and update the state
 			d.SetId(generateID(identifiers))
 			return resourceChaosImageRegistryRead(ctx, d, meta)
 		}
+		log.Printf("[ERROR] Chaos image registry creation failed: %s", err)
+		d.SetId("")
 		return diag.Errorf("failed to create image registry: %v", err)
 	}
-
-	d.SetId(generateID(identifiers))
 
 	d.SetId(generateID(identifiers))
 	return resourceChaosImageRegistryRead(ctx, d, meta)
@@ -86,10 +90,7 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 
 func resourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).ChaosClient
-	identifiers, err := parseID(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	identifiers := getIdentifiers(d, c.AccountId)
 
 	var infraID *string
 	if v, ok := d.GetOk("infra_id"); ok {
@@ -97,8 +98,12 @@ func resourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceData,
 		infraID = &infraIDVal
 	}
 
-	registry, err := c.ImageRegistryApi.Get(ctx, *identifiers, infraID)
+	registry, err := c.ImageRegistryApi.Get(ctx, identifiers, infraID)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			log.Printf("[WARN] Chaos image registry not found: %s", err)
+			return diag.Errorf("failed to read image registry: %v", err)
+		}
 		return diag.Errorf("failed to read image registry: %v", err)
 	}
 
@@ -140,7 +145,7 @@ func resourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceData,
 
 func resourceChaosImageRegistryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).ChaosClient
-	identifiers, err := parseID(d.Id())
+	identifiers, err := parseID(d.Id(), c.AccountId)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -237,7 +242,7 @@ func getIdentifiers(d *schema.ResourceData, accountID string) model.ScopedIdenti
 }
 
 func generateID(identifiers model.ScopedIdentifiersRequest) string {
-	parts := []string{identifiers.AccountIdentifier}
+	parts := []string{}
 	if identifiers.OrgIdentifier != nil {
 		parts = append(parts, *identifiers.OrgIdentifier)
 		if identifiers.ProjectIdentifier != nil {
@@ -247,27 +252,23 @@ func generateID(identifiers model.ScopedIdentifiersRequest) string {
 	return strings.Join(parts, "/")
 }
 
-func parseID(id string) (*model.ScopedIdentifiersRequest, error) {
+func parseID(id, accountID string) (*model.ScopedIdentifiersRequest, error) {
 	parts := strings.Split(id, "/")
-	if len(parts) < 2 || len(parts) > 4 {
-		return nil, fmt.Errorf("invalid ID format, expected account_id/org_id/project_id or account_id/org_id/project_id/registry_account, got: %s", id)
+	if len(parts) < 1 || len(parts) > 3 {
+		return nil,
+			fmt.Errorf("invalid ID format, expected org_id/project_id/registry_account or org_id/registry_account or registry_account, got: %s", id)
 	}
 
 	identifiers := &model.ScopedIdentifiersRequest{
-		AccountIdentifier: parts[0],
+		AccountIdentifier: accountID,
 	}
 
-	identifiers.OrgIdentifier = &parts[1]
-	if len(parts) > 2 {
-		identifiers.ProjectIdentifier = &parts[2]
-	}
-
-	// If we have 4 parts, the last one is the registry account
-	if len(parts) == 4 {
-		registryAccount := parts[3]
-		if registryAccount == "" {
-			return nil, fmt.Errorf("registry account cannot be empty in: %s", id)
-		}
+	// ignore len(parts) == 1 as it is not used, only for state migration
+	if len(parts) == 2 {
+		identifiers.OrgIdentifier = &parts[0]
+	} else if len(parts) == 3 {
+		identifiers.OrgIdentifier = &parts[0]
+		identifiers.ProjectIdentifier = &parts[1]
 	}
 
 	return identifiers, nil

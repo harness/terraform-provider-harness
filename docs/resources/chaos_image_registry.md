@@ -46,7 +46,7 @@ resource "harness_chaos_image_registry" "example" {
 
 ### Optional
 
-- `custom_images` (Block List, Max: 1) Custom images configuration (see [below for nested schema](#nestedblock--custom_images))
+- `custom_images` (Block List) Custom images configuration (see [below for nested schema](#nestedblock--custom_images))
 - `infra_id` (String) The infrastructure ID to set up the image registry
 - `is_default` (Boolean) Whether this is the default registry
 - `is_override_allowed` (Boolean) Whether override is allowed for this registry

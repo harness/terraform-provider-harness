@@ -59,6 +59,7 @@ func AgentResourceSchema() map[string]*schema.Schema {
 		"correlation_id": {
 			Description: "Correlation ID for the agent.",
 			Type:        schema.TypeString,
+			Computed:    true,
 			Optional:    true,
 		},
 
@@ -139,13 +140,11 @@ func resourceConfigSchema() *schema.Resource {
 			"collector_image": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     "harness/service-discovery-collector:main-latest",
 				Description: "Docker image for the collector.",
 			},
 			"log_watcher_image": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     "harness/chaos-log-watcher:main-latest",
 				Description: "Docker image for the log watcher.",
 			},
 			"skip_secure_verify": {
@@ -181,6 +180,7 @@ func resourceConfigSchema() *schema.Resource {
 			"data": {
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				Description: "Data collection configuration.",
 				Elem:        resourceDataSchema(),
 			},

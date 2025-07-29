@@ -2,10 +2,8 @@ package chaos_hub
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
@@ -58,15 +56,22 @@ func resourceChaosHubSyncCreate(ctx context.Context, d *schema.ResourceData, met
 	// Parse the hub ID if it's in full path format
 	parts := strings.Split(hubID, "/")
 	// Convert to model.IdentifiersRequest
-	if len(parts) == 4 {
-		// If hub_id is in full path format, use its components
-		accountID = parts[0]
-		orgID = parts[1]
-		projectID = parts[2]
-		hubID = parts[3]
-	} else {
-		// Otherwise use the provided org_id/project_id and account_id from provider
-		accountID = c.AccountId
+	switch len(parts) {
+	case 3:
+		// Project level hub ID
+		orgID = parts[0]
+		projectID = parts[1]
+		hubID = parts[2]
+	case 2:
+		// Org level hub ID
+		orgID = parts[0]
+		hubID = parts[1]
+	case 1:
+		// Account level hub ID
+		hubID = parts[0]
+	default:
+		return diag.Errorf("invalid hub ID format: expected org_id/project_id/hub_id or project_id/hub_id or hub_id got: %s",
+			hubID)
 	}
 
 	// Convert to model.IdentifiersRequest
@@ -85,9 +90,7 @@ func resourceChaosHubSyncCreate(ctx context.Context, d *schema.ResourceData, met
 		return diag.Errorf("failed to sync chaos hub: %v", err)
 	}
 
-	// Set the ID as a combination of hub ID and timestamp to force recreation on each sync
-	d.SetId(fmt.Sprintf("%s-%d", hubID, time.Now().Unix()))
-	d.Set("last_synced_at", time.Now().Format(time.RFC3339))
+	d.SetId(hubID)
 
 	log.Printf("[DEBUG] Synced Chaos Hub %s with sync ID: %s", hubID, syncID)
 	return resourceChaosHubSyncRead(ctx, d, meta)
@@ -95,10 +98,11 @@ func resourceChaosHubSyncCreate(ctx context.Context, d *schema.ResourceData, met
 
 func resourceChaosHubSyncRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).ChaosClient
-	hubID := d.Get("hub_id").(string)
+
 	accountID := c.AccountId
 	orgID := d.Get("org_id").(string)
 	projectID := d.Get("project_id").(string)
+	hubID := d.Id()
 
 	// Convert to model.IdentifiersRequest
 	modelIdentifiers := model.IdentifiersRequest{
@@ -111,11 +115,14 @@ func resourceChaosHubSyncRead(ctx context.Context, d *schema.ResourceData, meta 
 	hubClient := chaos.NewChaosHubClient(c)
 	hub, err := hubClient.Get(ctx, modelIdentifiers, hubID)
 	if err != nil {
-		return diag.Errorf("failed to get chaos hub: %v", err)
+		return diag.Errorf("failed to get chaos hub with ID %s: %v", hubID, err)
 	}
 
 	// Update the status
+	d.SetId(hubID)
 	d.Set("last_synced_at", hub.LastSyncedAt)
+	d.Set("org_id", orgID)
+	d.Set("project_id", projectID)
 
 	return nil
 }
