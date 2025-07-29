@@ -166,6 +166,8 @@ func dataSourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceDat
 
 func setImageRegistryData(d *schema.ResourceData, registry *model.ImageRegistryResponse, identifiers model.ScopedIdentifiersRequest) diag.Diagnostics {
 	d.Set("registry_server", registry.RegistryServer)
+	d.Set("org_id", identifiers.OrgIdentifier)
+	d.Set("project_id", identifiers.ProjectIdentifier)
 	d.Set("registry_account", registry.RegistryAccount)
 	d.Set("infra_id", registry.InfraID)
 	d.Set("is_private", registry.IsPrivate)
