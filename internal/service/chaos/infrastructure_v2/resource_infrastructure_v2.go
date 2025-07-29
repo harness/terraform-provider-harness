@@ -108,19 +108,20 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	// Set the fields
+	// Check if infra.Identifier is nil
 	if infra.Identifier == nil {
 		return diag.FromErr(fmt.Errorf("identifier is nil"))
-	} else {
-		if err := d.Set("identifier", []map[string]interface{}{
-			{
-				"account_identifier": infra.Identifier.AccountIdentifier,
-				"org_identifier":     infra.Identifier.OrgIdentifier,
-				"project_identifier": infra.Identifier.ProjectIdentifier,
-			},
-		}); err != nil {
-			return diag.FromErr(fmt.Errorf("failed to set identifier: %v", err))
-		}
+	}
+
+	// Set the fields
+	if err := d.Set("identifier", []map[string]interface{}{
+		{
+			"account_identifier": infra.Identifier.AccountIdentifier,
+			"org_identifier":     infra.Identifier.OrgIdentifier,
+			"project_identifier": infra.Identifier.ProjectIdentifier,
+		},
+	}); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set identifier: %v", err))
 	}
 	if err := d.Set("infra_type", infra.InfraType); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set infra_type: %v", err))
