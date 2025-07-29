@@ -34,7 +34,8 @@ resource "harness_chaos_infrastructure_v2" "test" {
 
   # Optional fields
   name         = "<name>"
-  run_as_group = "<run_as_group>"
+  # Expected to be a numeric group ID
+  run_as_group = <run_as_group>
   run_as_user  = "<run_as_user>"
 
   description     = "<description>"
@@ -144,7 +145,7 @@ resource "harness_chaos_infrastructure_v2" "test" {
 - `description` (String) Description of the infrastructure.
 - `discovery_agent_id` (String) ID of the discovery agent to use.
 - `env` (Block List) List of environment variables to set in the container. (see [below for nested schema](#nestedblock--env))
-- `image_registry` (Block List, Max: 1) Configuration for the container image registry. (see [below for nested schema](#nestedblock--image_registry))
+- `image_registry` (Block List) Configuration for the container image registry. (see [below for nested schema](#nestedblock--image_registry))
 - `infra_scope` (String) Scope of the infrastructure. Valid values: NAMESPACE, CLUSTER
 - `infra_type` (String) Type of the infrastructure. Valid values: KUBERNETES, KUBERNETESV2
 - `insecure_skip_verify` (Boolean) Skip TLS verification for the infrastructure.
@@ -192,7 +193,7 @@ Optional:
 
 Optional:
 
-- `custom_images` (Block List, Max: 1) Custom image configurations. Required when use_custom_images is true. (see [below for nested schema](#nestedblock--image_registry--custom_images))
+- `custom_images` (Block List) Custom image configurations. Required when use_custom_images is true. (see [below for nested schema](#nestedblock--image_registry--custom_images))
 - `is_default` (Boolean) Whether this is the default registry.
 - `is_override_allowed` (Boolean) Whether override is allowed for this registry.
 - `is_private` (Boolean) Whether the registry is private.

@@ -236,7 +236,7 @@ func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *sche
 	var orgID, projectID *string
 
 	if id, ok := d.GetOk("id"); ok {
-		// The ID might be in the format "account/org/project/condition-id" or just the condition ID
+		// The ID might be in the format "org/project/condition-id" or just the condition ID
 		idStr, ok := id.(string)
 		if !ok {
 			err := fmt.Errorf("expected 'id' to be a string, got %T", id)
@@ -246,23 +246,7 @@ func dataSourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *sche
 
 		logDebug(ctx, "Looking up condition by ID", "id", idStr)
 
-		if strings.Contains(idStr, "/") {
-			// Parse the full ID format: account/org/project/condition-id
-			parts := strings.Split(idStr, "/")
-			if len(parts) >= 4 {
-				// If we have a full path, use the org and project from it
-				orgID = &parts[1]
-				projectID = &parts[2]
-				conditionID = parts[3]
-				logDebug(ctx, "Parsed ID components", "org_id", *orgID, "project_id", *projectID, "condition_id", conditionID)
-			} else {
-				// Handle unexpected format
-				conditionID = parts[len(parts)-1]
-				logDebug(ctx, "Using last part of ID as condition ID", "condition_id", conditionID)
-			}
-		} else {
-			conditionID = idStr
-		}
+		conditionID = idStr
 	} else if name, ok := d.GetOk("name"); ok {
 		// For name-based lookup, use the provided org/project or default to the one in the config
 		nameStr, ok := name.(string)
