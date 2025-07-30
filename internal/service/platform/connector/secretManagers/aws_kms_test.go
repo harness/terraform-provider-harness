@@ -1009,7 +1009,7 @@ func testOrgResourceConnectorAwsKms_inherit(id string, name string) string {
 `, id, name)
 }
 
-func testAccResourceConnectorAwsKms_manual_arnpliantext(id string, name string) string {
+func testAccResourceConnectorAwsKms_manual_arn_plaintext(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
