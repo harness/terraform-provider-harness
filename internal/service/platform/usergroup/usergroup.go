@@ -182,7 +182,7 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		if emails_present || !users_present {
 			// If email is present or users is not present then use only email
 			d.Set("user_emails", ignoreOrderIfAllElementsMatch(ug.Users, flattenUserInfo(users)))
-		} else if users_present || (users != nil && !isSsoLinked && !emails_present) {
+		} else if users_present || (users != nil && !emails_present) {
 			// If users is present (Explicitly set by user for import) and email is not present (using old api) then use users
 			d.Set("users", flattenUserIds(users))
 		}
