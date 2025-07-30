@@ -185,7 +185,7 @@ func TestAccResourceConnectorAwsKms_manual_arn_plaintext(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorAwsKms_manual_arnpliantext(id, name),
+				Config: testAccResourceConnectorAwsKms_manual_arn_plaintext(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
