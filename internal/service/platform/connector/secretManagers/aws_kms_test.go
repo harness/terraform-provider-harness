@@ -200,7 +200,7 @@ func TestAccResourceConnectorAwsKms_manual_arn_plaintext(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceConnectorAwsKms_manual_arnpliantext(id, updatedName),
+				Config: testAccResourceConnectorAwsKms_manual_arn_plaintext(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
