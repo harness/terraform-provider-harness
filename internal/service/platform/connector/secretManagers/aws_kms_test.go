@@ -169,7 +169,7 @@ func TestOrgResourceConnectorAwsKms_inherit(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnectorAwsKms_manual_arnpliantext(t *testing.T) {
+func TestAccResourceConnectorAwsKms_manual_arn_plaintext(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
