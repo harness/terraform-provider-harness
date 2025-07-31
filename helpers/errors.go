@@ -69,8 +69,19 @@ func HandleDBOpsApiError(err error, d *schema.ResourceData, httpResp *http.Respo
 }
 
 func HandlePolicyApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
-	_, ok := err.(policymgmt.GenericSwaggerError)
+	se, ok := err.(policymgmt.GenericSwaggerError)
 	if ok && httpResp != nil {
+		if httpResp.StatusCode == 400 {
+			// Extract error message from SDK error object instead of re-reading response body
+			errorBody := se.Body()
+			var jsonMap map[string]interface{}
+			if err := json.Unmarshal(errorBody, &jsonMap); err == nil {
+				if message, exists := jsonMap["message"]; exists {
+					return diag.Errorf("Bad Request: %s", message)
+				}
+			}
+			return diag.Errorf("Bad Request: %s", string(errorBody))
+		}
 		if httpResp.StatusCode == 401 {
 			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
 				"1) Please check if token has expired or is wrong.\n" +
@@ -87,7 +98,7 @@ func HandlePolicyApiError(err error, d *schema.ResourceData, httpResp *http.Resp
 		}
 	}
 
-	return diag.Errorf(err.Error())
+	return handleApiError(err, d, httpResp, false)
 }
 
 func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, read bool) diag.Diagnostics {

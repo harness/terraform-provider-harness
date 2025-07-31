@@ -126,9 +126,9 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		if d.Get("org_id").(string) != "" {
 			localVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 		}
-		createPolicySet, _, createErr := c.PolicysetsApi.PolicysetsCreate(ctx, body, &localVarOptionals)
+		createPolicySet, createHttpResp, createErr := c.PolicysetsApi.PolicysetsCreate(ctx, body, &localVarOptionals)
 		if createErr != nil {
-			return helpers.HandleApiError(createErr, d, httpResp)
+			return helpers.HandlePolicyApiError(createErr, d, createHttpResp)
 		}
 		id = createPolicySet.Identifier
 	}
@@ -170,7 +170,7 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandlePolicyApiError(err, d, httpResp)
 	}
 
 	readPolicyset(d, responsePolicyset)
