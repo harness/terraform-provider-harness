@@ -691,6 +691,7 @@ type ClustersApiAgentClusterServiceUpdateOpts struct {
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
+	ForceUpdate optional.Bool
 }
 
 func (a *ClustersApiService) AgentClusterServiceUpdate(ctx context.Context, body ClustersClusterUpdateRequest, agentIdentifier string, identifier string, localVarOptionals *ClustersApiAgentClusterServiceUpdateOpts) (Servicev1Cluster, *http.Response, error) {
@@ -720,6 +721,9 @@ func (a *ClustersApiService) AgentClusterServiceUpdate(ctx context.Context, body
 	}
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ForceUpdate.IsSet() {
+		localVarQueryParams.Add("forceUpdate", parameterToString(localVarOptionals.ForceUpdate.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
@@ -960,6 +964,7 @@ Checks for whether the cluster exists
  * @param optional nil or *ClustersApiClusterServiceExistsOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "ForceUpdate" (optional.Bool) -  ForceUpdate allows updating the cluster name even if it is currently referenced by applications.
      * @param "AgentIdentifier" (optional.String) -  Agent identifier for entity.
      * @param "Server" (optional.String) -
 @return bool

@@ -223,6 +223,7 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.**| Project Identifier for the Entity. | 
+ **forceUpdate** | **optional.**| forceUpdate allows updating the cluster name even if it is currently referenced by applications. |  
 
 ### Return type
 
