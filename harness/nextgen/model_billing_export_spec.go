@@ -16,4 +16,5 @@ type BillingExportSpec struct {
 	DirectoryName      string `json:"directoryName"`
 	ReportName         string `json:"reportName"`
 	SubscriptionId     string `json:"subscriptionId"`
+	BillingType        string `json:"billingType"`
 }

@@ -15,4 +15,5 @@ type CeAzureConnector struct {
 	TenantId          string             `json:"tenantId"`
 	SubscriptionId    string             `json:"subscriptionId"`
 	BillingExportSpec *BillingExportSpec `json:"billingExportSpec,omitempty"`
+	BillingExportSpec2 *BillingExportSpec `json:"billingExportSpec2,omitempty"`
 }
