@@ -117,6 +117,7 @@ resource "harness_platform_gitops_cluster" "example" {
 
 - `account_id` (String, Deprecated) Account identifier of the GitOps cluster.
 - `force_delete` (Boolean) Indicates if the cluster should be deleted forcefully, regardless of existing applications using that cluster.
+- `force_update` (Boolean) Indicates if the cluster should be updated forcefully, regardless of existing applications using that cluster.
 - `org_id` (String) Organization identifier of the cluster.
 - `project_id` (String) Project identifier of the GitOps cluster.
 - `request` (Block List, Max: 1) Cluster create or update request. (see [below for nested schema](#nestedblock--request))

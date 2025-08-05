@@ -46,7 +46,7 @@ cp terraform-provider-harness ~/.terraform.d/plugins/$source/$version/$platform/
 5. Run the Bash Script `./local.sh`
 
 ## Point terraform script to local terraform-provider-harness build
-1. Update the .terraform.rc file
+1. Update the Terraform CLI configuration file (.terraformrc on macOS/Linux,terraform.rc on Windows).
 ```
 provider_installation {
   dev_overrides {

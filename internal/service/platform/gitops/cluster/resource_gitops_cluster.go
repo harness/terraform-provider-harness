@@ -61,6 +61,11 @@ func ResourceGitopsCluster() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
+			"force_update": {
+				Description: "Indicates if the cluster should be updated forcefully, regardless of existing applications using that cluster.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"request": {
 				Description: "Cluster create or update request.",
 				Type:        schema.TypeList,
@@ -501,6 +506,7 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 			AccountIdentifier: optional.NewString(c.AccountId),
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		  ForceUpdate:       optional.NewBool(d.Get("force_update").(bool)),
 		})
 
 	if err != nil {
