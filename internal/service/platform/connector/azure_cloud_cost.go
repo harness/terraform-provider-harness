@@ -71,6 +71,51 @@ func ResourceConnectorAzureCloudCost() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 						},
+						"billing_type": {
+							Description: "Billing type.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+					},
+				},
+			},
+			"billing_export_spec2": {
+				Description: "Returns billing details for the Azure account.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"storage_account_name": {
+							Description: "Name of the storage account.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"container_name": {
+							Description: "Name of the container.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"directory_name": {
+							Description: "Name of the directory.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"report_name": {
+							Description: "Name of the report.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"subscription_id": {
+							Description: "Subsription Id.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"billing_type": {
+							Description: "Billing type.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
 					},
 				},
 			},
@@ -155,8 +200,39 @@ func buildConnectorAzureCloudCost(d *schema.ResourceData) *nextgen.ConnectorInfo
 		if attr, ok := config["directory_name"]; ok {
 			connector.AzureCloudCost.BillingExportSpec.DirectoryName = attr.(string)
 		}
-	}
 
+		if attr, ok := config["billing_type"]; ok {
+			connector.AzureCloudCost.BillingExportSpec.BillingType = attr.(string)
+		}
+	}
+	if attr, ok := d.GetOk("billing_export_spec2"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+
+		connector.AzureCloudCost.BillingExportSpec2 = &nextgen.BillingExportSpec{}
+		if attr, ok := config["container_name"]; ok {
+			connector.AzureCloudCost.BillingExportSpec2.ContainerName = attr.(string)
+		}
+
+		if attr, ok := config["report_name"]; ok {
+			connector.AzureCloudCost.BillingExportSpec2.ReportName = attr.(string)
+		}
+
+		if attr, ok := config["storage_account_name"]; ok {
+			connector.AzureCloudCost.BillingExportSpec2.StorageAccountName = attr.(string)
+		}
+
+		if attr, ok := config["subscription_id"]; ok {
+			connector.AzureCloudCost.BillingExportSpec2.SubscriptionId = attr.(string)
+		}
+
+		if attr, ok := config["directory_name"]; ok {
+			connector.AzureCloudCost.BillingExportSpec2.DirectoryName = attr.(string)
+		}
+
+		if attr, ok := config["billing_type"]; ok {
+			connector.AzureCloudCost.BillingExportSpec2.BillingType = attr.(string)
+		}
+	}
 	return connector
 }
 
@@ -172,6 +248,17 @@ func readConnectorAzureCloudCost(d *schema.ResourceData, connector *nextgen.Conn
 				"directory_name":       connector.AzureCloudCost.BillingExportSpec.DirectoryName,
 				"report_name":          connector.AzureCloudCost.BillingExportSpec.ReportName,
 				"subscription_id":      connector.AzureCloudCost.BillingExportSpec.SubscriptionId,
+				"billing_type":         connector.AzureCloudCost.BillingExportSpec.BillingType,
+			},
+		})
+		d.Set("billing_export_spec2", []interface{}{
+			map[string]interface{}{
+				"storage_account_name": connector.AzureCloudCost.BillingExportSpec2.StorageAccountName,
+				"container_name":       connector.AzureCloudCost.BillingExportSpec2.ContainerName,
+				"directory_name":       connector.AzureCloudCost.BillingExportSpec2.DirectoryName,
+				"report_name":          connector.AzureCloudCost.BillingExportSpec2.ReportName,
+				"subscription_id":      connector.AzureCloudCost.BillingExportSpec2.SubscriptionId,
+				"billing_type":         connector.AzureCloudCost.BillingExportSpec2.BillingType,
 			},
 		})
 	}

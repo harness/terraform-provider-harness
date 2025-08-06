@@ -60,6 +60,50 @@ func DataSourceConnectorAzureCloudCost() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
+						"billing_type": {
+							Description: "Billing type.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"billing_export_spec2": {
+				Description: "Returns billing details for the Azure account.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"storage_account_name": {
+							Description: "Name of the storage account.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"container_name": {
+							Description: "Name of the container.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"directory_name": {
+							Description: "Name of the directory.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"report_name": {
+							Description: "Name of the report.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"subscription_id": {
+							Description: "Subsription Id.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"billing_type": {
+							Description: "Billing type. ",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
 					},
 				},
 			},
