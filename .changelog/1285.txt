@@ -1,0 +1,3 @@
+```release-note:new-resource
+resource: Added billing_export_spec2 field and inside both of the billing_export_spec field, added BillingType column
+```
