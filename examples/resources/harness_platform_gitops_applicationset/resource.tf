@@ -10,7 +10,8 @@ resource "harness_platform_gitops_applicationset" "test_fixed" {
       namespace = "argocd"
     }
     spec {
-      go_template = true
+      go_template         = true
+      go_template_options = ["missingkey=error"]
 
       generator {
         clusters {
