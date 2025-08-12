@@ -1032,6 +1032,17 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 											Optional:    true,
 											Elem:        &schema.Schema{Type: schema.TypeString},
 										},
+										"force_common_labels": {
+											Type:        schema.TypeBool,
+											Description: "Indicates if to force apply common labels to resources for kustomize apps.",
+											Optional:    true,
+										},
+										"force_common_annotations": {
+											Type:        schema.TypeBool,
+											Description: "Indicates if to force applying common annotations to resources for kustomize apps.",
+											Optional:    true,
+										},
+
 									},
 								},
 							},
