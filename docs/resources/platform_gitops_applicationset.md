@@ -450,6 +450,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -841,6 +843,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -1238,6 +1242,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -1611,6 +1617,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -2033,6 +2041,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -2424,6 +2434,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -2821,6 +2833,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -3194,6 +3208,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -3614,6 +3630,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -4005,6 +4023,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -4402,6 +4422,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -4775,6 +4797,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -5263,6 +5287,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -5804,6 +5830,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -6186,6 +6214,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -6607,6 +6637,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -6998,6 +7030,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -7395,6 +7429,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -7768,6 +7804,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -8256,6 +8294,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -8797,6 +8837,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -9179,6 +9221,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -9667,6 +9711,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -10208,6 +10254,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -10590,6 +10638,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -11013,6 +11063,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -11404,6 +11456,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -11801,6 +11855,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -12174,6 +12230,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -12594,6 +12652,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -12985,6 +13045,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -13382,6 +13444,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -13755,6 +13819,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -14243,6 +14309,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -14784,6 +14852,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -15166,6 +15236,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -15587,6 +15659,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -15978,6 +16052,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -16375,6 +16451,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -16748,6 +16826,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -17236,6 +17316,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -17777,6 +17859,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -18159,6 +18243,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -18647,6 +18733,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -19188,6 +19276,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -19570,6 +19660,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -20058,6 +20150,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -20599,6 +20693,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -20993,6 +21089,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
