@@ -170,6 +170,9 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 										Description: "Optional list of go templating options, see https://pkg.go.dev/text/template#Template.Optional. This is only relevant if `goTemplate` is true",
 										Type:        schema.TypeList,
 										Optional:    true,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
 									},
 									"ignore_application_differences": {
 										Type:        schema.TypeList,
@@ -479,7 +482,7 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 
 			//  go_template
 			spec["go_template"] = appset.Appset.Spec.GoTemplate
-      spec["go_template_options"] = appset.Appset.Spec.GoTemplateOptions
+			spec["go_template_options"] = appset.Appset.Spec.GoTemplateOptions
 
 			//  generators
 			if len(appset.Appset.Spec.Generators) > 0 {
@@ -685,7 +688,11 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 			}
 
 			if goTemplateOptions, ok := specData["go_template_options"]; ok {
-				appsetSpec.GoTemplateOptions = goTemplateOptions.([]string)
+				opts := make([]string, len(goTemplateOptions.([]interface{})))
+				for i, v := range goTemplateOptions.([]interface{}) {
+					opts[i] = v.(string)
+				}
+				appsetSpec.GoTemplateOptions = opts
 			}
 			//  generators
 			if generators, ok := specData["generator"]; ok && len(generators.([]interface{})) > 0 {
