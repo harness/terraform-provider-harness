@@ -62,7 +62,8 @@ func testAccResourceGitopsApplicationsetClusterGenerator(id, accountId, name, ag
 				}
 				spec {
 				  go_template = true
-				  
+				  go_template_options = ["missingkey=error"]
+
 				  generator {
 					clusters {
 						enabled = true
