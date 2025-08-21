@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-openapi-go-client/nextgen"
@@ -14,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"gopkg.in/yaml.v3"
 )
 
 func ResourceTemplate() *schema.Resource {
@@ -723,15 +723,37 @@ func validateIdentifierMatchesYaml(ctx context.Context, d *schema.ResourceDiff, 
 	}
 
 	schemaIdentifier := d.Get("identifier").(string)
-	// Extract identifier from YAML using regex
-	identifierRegex := regexp.MustCompile(`identifier:\s*["']?([^"'\s]+)["']?`)
-	matches := identifierRegex.FindStringSubmatch(template_yaml)
-	if len(matches) > 1 {
-		yamlIdentifier := matches[1]
-		if yamlIdentifier != schemaIdentifier {
-			return fmt.Errorf("identifier in schema (%s) does not match identifier in template YAML (%s)", 
-				schemaIdentifier, yamlIdentifier)
-		}
+
+	// Parse YAML to extract the correct identifier from template.identifier
+	var yamlData map[string]any
+	if err := yaml.Unmarshal([]byte(template_yaml), &yamlData); err != nil {
+		return fmt.Errorf("failed to parse template YAML: %w", err)
+	}
+
+	// Navigate to template.identifier in the YAML structure
+	template, ok := yamlData["template"]
+	if !ok {
+		return fmt.Errorf("template YAML must contain a 'template' key")
+	}
+
+	templateMap, ok := template.(map[string]any)
+	if !ok {
+		return fmt.Errorf("template key must be a map")
+	}
+
+	yamlIdentifier, ok := templateMap["identifier"]
+	if !ok {
+		return fmt.Errorf("template YAML must contain 'template.identifier' field")
+	}
+
+	yamlIdentifierStr, ok := yamlIdentifier.(string)
+	if !ok {
+		return fmt.Errorf("template.identifier must be a string")
+	}
+
+	if yamlIdentifierStr != schemaIdentifier {
+		return fmt.Errorf("identifier in schema (%s) does not match identifier in template YAML (%s)",
+			schemaIdentifier, yamlIdentifierStr)
 	}
 
 	return nil
