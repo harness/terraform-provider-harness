@@ -34,6 +34,7 @@ data "harness_platform_connector_azure_cloud_cost" "example" {
 ### Read-Only
 
 - `billing_export_spec` (List of Object) Returns billing details for the Azure account. (see [below for nested schema](#nestedatt--billing_export_spec))
+- `billing_export_spec2` (List of Object) Returns billing details for the Azure account. (see [below for nested schema](#nestedatt--billing_export_spec2))
 - `description` (String) Description of the resource.
 - `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, Visibility and Governance.
 - `id` (String) The ID of this resource.
@@ -46,6 +47,20 @@ data "harness_platform_connector_azure_cloud_cost" "example" {
 
 Read-Only:
 
+- `billing_type` (String)
+- `container_name` (String)
+- `directory_name` (String)
+- `report_name` (String)
+- `storage_account_name` (String)
+- `subscription_id` (String)
+
+
+<a id="nestedatt--billing_export_spec2"></a>
+### Nested Schema for `billing_export_spec2`
+
+Read-Only:
+
+- `billing_type` (String)
 - `container_name` (String)
 - `directory_name` (String)
 - `report_name` (String)
