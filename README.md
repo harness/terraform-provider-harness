@@ -36,7 +36,7 @@ Full, comprehensive documentation is available on the Terraform website:
 
 version=0.40.2 #specify in this format 
 source=registry.terraform.io/harness/harness
-platform=darwin_amd64
+platform=darwin_amd64 #darwin_arm64 for Apple Silicon based Mac
 
 mkdir -p ~/.terraform.d/plugins/$source/$version/$platform/
 

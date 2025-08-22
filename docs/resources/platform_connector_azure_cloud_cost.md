@@ -28,6 +28,15 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
     directory_name       = "directory_name"
     report_name          = "report_name"
     subscription_id      = "subscription_id"
+    billing_type         = "billing_type"
+  }
+  billing_export_spec2 {
+    storage_account_name = "storage_account_name"
+    container_name       = "container_name"
+    directory_name       = "directory_name"
+    report_name          = "report_name"
+    subscription_id      = "subscription_id"
+    billing_type         = "billing_type"
   }
 }
 ```
@@ -46,6 +55,7 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
 ### Optional
 
 - `billing_export_spec` (Block List, Max: 1) Returns billing details for the Azure account. (see [below for nested schema](#nestedblock--billing_export_spec))
+- `billing_export_spec2` (Block List, Max: 1) Returns billing details for the Azure account. (see [below for nested schema](#nestedblock--billing_export_spec2))
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
@@ -60,6 +70,20 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
 
 Required:
 
+- `billing_type` (String) Billing type.
+- `container_name` (String) Name of the container.
+- `directory_name` (String) Name of the directory.
+- `report_name` (String) Name of the report.
+- `storage_account_name` (String) Name of the storage account.
+- `subscription_id` (String) Subsription Id.
+
+
+<a id="nestedblock--billing_export_spec2"></a>
+### Nested Schema for `billing_export_spec2`
+
+Required:
+
+- `billing_type` (String) Billing type.
 - `container_name` (String) Name of the container.
 - `directory_name` (String) Name of the directory.
 - `report_name` (String) Name of the report.
