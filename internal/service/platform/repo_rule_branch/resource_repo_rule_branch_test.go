@@ -95,6 +95,7 @@ func testProjResourceRepoRule(identifier, description string) string {
 				require_status_checks = [
 					"check-stage1"
 				]
+				allow_merge_strategies          = ["merge"]
 			}
 			bypass  {}
 		}
