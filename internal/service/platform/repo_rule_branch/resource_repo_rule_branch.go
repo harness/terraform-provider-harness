@@ -233,14 +233,14 @@ func buildRepoBranchRuleDef(d *schema.ResourceData) (*code.OpenapiRuleDefinition
 func convertToEnumMergeMethod(s []interface{}) ([]code.EnumMergeMethod, error) {
 	list := make([]code.EnumMergeMethod, len(s))
 
-	for _, v := range s {
+	for i, v := range s {
 		switch strings.ToLower(v.(string)) {
 		case "merge":
-			list = append(list, code.MERGE_EnumMergeMethod)
+			list[i] = code.MERGE_EnumMergeMethod
 		case "rebase":
-			list = append(list, code.REBASE_EnumMergeMethod)
+			list[i] = code.REBASE_EnumMergeMethod
 		case "squash":
-			list = append(list, code.SQUASH_EnumMergeMethod)
+			list[i] = code.SQUASH_EnumMergeMethod
 		default:
 			return list, fmt.Errorf("invalid merge method encountered %s", v)
 		}
