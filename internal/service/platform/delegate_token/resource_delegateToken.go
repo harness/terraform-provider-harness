@@ -20,6 +20,7 @@ func ResourceDelegateToken() *schema.Resource {
 
 		ReadContext:   resourceDelegateTokenRead,
 		CreateContext: resourceDelegateTokenCreate,
+		UpdateContext: resourceDelegateTokenRevoke,
 		DeleteContext: resourceDelegateTokenRevoke,
 		Importer:      helpers.MultiLevelResourceImporter,
 
