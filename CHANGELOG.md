@@ -1,3 +1,6 @@
+# v0.38.5 (August 22, 2025)
+Release Page : https://github.com/harness/terraform-provider-harness/releases/tag/v0.38.5
+
 # v0.36.2 (March 24, 2025)
 Reverted the Go version upgrade.
 
