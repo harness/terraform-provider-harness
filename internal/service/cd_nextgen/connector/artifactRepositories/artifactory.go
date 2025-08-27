@@ -35,7 +35,7 @@ func ResourceConnectorArtifactory() *schema.Resource {
 				Description: "Execute on delegate or not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     true,
+				Default:     false,
 			},
 			"credentials": {
 				Description: "Credentials to use for authentication.",
