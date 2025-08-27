@@ -1,5 +1,9 @@
 # Harness SDK for Go
 
+[![Latest Release](https://img.shields.io/github/v/release/harness/harness-go-sdk)](https://github.com/harness/harness-go-sdk/releases/latest)
+[![Go Reference](https://pkg.go.dev/badge/github.com/harness/harness-go-sdk.svg)](https://pkg.go.dev/github.com/harness/harness-go-sdk)
+[![License](https://img.shields.io/github/license/harness/harness-go-sdk)](LICENSE.md)
+
 This project is a Harness SDK for the go programming language. It provides go client for interacting with the current gen GraphQL and Config-as-Code API's.
 
 ## Disclaimer
