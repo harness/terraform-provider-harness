@@ -14,4 +14,5 @@ type ArtifactoryConnector struct {
 	ArtifactoryServerUrl string                     `json:"artifactoryServerUrl"`
 	Auth                 *ArtifactoryAuthentication `json:"auth,omitempty"`
 	DelegateSelectors    []string                   `json:"delegateSelectors,omitempty"`
+	ExecuteOnDelegate    bool                       `json:"executeOnDelegate"`
 }
