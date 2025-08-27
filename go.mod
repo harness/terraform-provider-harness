@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go v1.46.4
 	github.com/docker/docker v28.3.2+incompatible
 	github.com/google/uuid v1.6.0
-	github.com/harness/harness-go-sdk v0.5.13
+	github.com/harness/harness-go-sdk v0.5.14-0.20250827041321-2379890985fd
 	github.com/harness/harness-openapi-go-client v0.0.25
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
@@ -99,6 +99,7 @@ require (
 	google.golang.org/protobuf v1.36.5 // indirect
 	gotest.tools/v3 v3.3.0 // indirect
 )
+
 
 //replace github.com/harness/harness-go-sdk => ../harness-go-sdk
 
