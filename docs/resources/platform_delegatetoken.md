@@ -3,12 +3,14 @@
 page_title: "harness_platform_delegatetoken Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating delegate tokens. Note that delegate tokens cannot be updated, they can only be created or revoked. When a delegate token is 'deleted' in Terraform, it is actually revoked in Harness. Revoked tokens immediately stop functioning and are only purged after 30 days, so you cannot recreate a token with the same name within that period.
+  Resource for creating delegate tokens. Delegate tokens can be created and revoked. Revoked tokens immediately stop functioning and are only purged after 30 days, meaning you cannot recreate a token with the same name within that period.
+  To revoke a token, set token_status field to "REVOKED".
 ---
 
 # harness_platform_delegatetoken (Resource)
 
-Resource for creating delegate tokens. Note that delegate tokens cannot be updated, they can only be created or revoked. When a delegate token is 'deleted' in Terraform, it is actually revoked in Harness. Revoked tokens immediately stop functioning and are only purged after 30 days, so you cannot recreate a token with the same name within that period.
+Resource for creating delegate tokens. Delegate tokens can be created and revoked. Revoked tokens immediately stop functioning and are only purged after 30 days, meaning you cannot recreate a token with the same name within that period.
+To revoke a token, set token_status field to "REVOKED".
 
 ## Example Usage
 
