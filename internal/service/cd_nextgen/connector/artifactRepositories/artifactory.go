@@ -31,6 +31,12 @@ func ResourceConnectorArtifactory() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
 			"credentials": {
 				Description: "Credentials to use for authentication.",
 				Type:        schema.TypeList,
@@ -136,12 +142,17 @@ func buildConnectorArtifactory(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		}
 	}
 
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Artifactory.ExecuteOnDelegate = attr.(bool)
+	}
+
 	return connector
 }
 
 func readConnectorArtifactory(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
 	d.Set("url", connector.Artifactory.ArtifactoryServerUrl)
 	d.Set("delegate_selectors", connector.Artifactory.DelegateSelectors)
+	d.Set("execute_on_delegate", connector.Artifactory.ExecuteOnDelegate)
 
 	switch connector.Artifactory.Auth.Type_ {
 	case nextgen.ArtifactoryAuthTypes.UsernamePassword:
