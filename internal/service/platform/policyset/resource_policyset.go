@@ -139,7 +139,7 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 
 		createPolicySet, _, createErr := c.PolicysetsApi.PolicysetsCreate(ctx, body, &localVarOptionals)
 		if createErr != nil {
-			return helpers.HandleApiError(createErr, d, httpResp)
+			return helpers.HandlePolicyApiError(createErr, d, httpResp)
 		}
 		id = createPolicySet.Identifier
 	}
@@ -181,7 +181,7 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandlePolicyApiError(err, d, httpResp)
 	}
 
 	readPolicyset(d, responsePolicyset)
