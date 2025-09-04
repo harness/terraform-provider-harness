@@ -1,7 +1,10 @@
 package policyset
 
 import (
+	"bytes"
 	"context"
+	"fmt"
+	"hash/fnv"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -41,11 +44,18 @@ func ResourcePolicyset() *schema.Resource {
 				Optional:    true,
 			},
 			"policies": {
-				Description: "List of policy identifiers / severity for the policyset.",
-				Type:        schema.TypeList,
+				Description: "Set of policy identifiers / severity for the policyset. Order is not significant.",
+				Type:        schema.TypeSet,
 				Computed:    true,
 				Optional:    true,
 				MinItems:    1,
+				Set: func(v interface{}) int {
+					var buf bytes.Buffer
+					m := v.(map[string]interface{})
+					buf.WriteString(fmt.Sprintf("%s-", m["identifier"].(string)))
+					buf.WriteString(fmt.Sprintf("%s-", m["severity"].(string)))
+					return hashcode(buf.String())
+				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
@@ -126,9 +136,10 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		if d.Get("org_id").(string) != "" {
 			localVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 		}
-		createPolicySet, createHttpResp, createErr := c.PolicysetsApi.PolicysetsCreate(ctx, body, &localVarOptionals)
+
+		createPolicySet, _, createErr := c.PolicysetsApi.PolicysetsCreate(ctx, body, &localVarOptionals)
 		if createErr != nil {
-			return helpers.HandlePolicyApiError(createErr, d, createHttpResp)
+			return helpers.HandleApiError(createErr, d, httpResp)
 		}
 		id = createPolicySet.Identifier
 	}
@@ -170,7 +181,7 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 	}
 
 	if err != nil {
-		return helpers.HandlePolicyApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readPolicyset(d, responsePolicyset)
@@ -179,13 +190,15 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 
 func buildPolicies(d *schema.ResourceData) []policymgmt.Linkedpolicyidentifier {
 	policies := []policymgmt.Linkedpolicyidentifier{}
-	rawPolicies := d.Get("policies").([]interface{})
-	for _, policy := range rawPolicies {
-		policy := policy.(map[string]interface{})
-		policies = append(policies, policymgmt.Linkedpolicyidentifier{
-			Identifier: policy["identifier"].(string),
-			Severity:   policy["severity"].(string),
-		})
+	if v, ok := d.GetOk("policies"); ok {
+		policySet := v.(*schema.Set)
+		for _, policy := range policySet.List() {
+			policyMap := policy.(map[string]interface{})
+			policies = append(policies, policymgmt.Linkedpolicyidentifier{
+				Identifier: policyMap["identifier"].(string),
+				Severity:   policyMap["severity"].(string),
+			})
+		}
 	}
 	return policies
 }
@@ -223,6 +236,13 @@ func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet) {
 	_ = d.Set("type", policy.Type_)
 	_ = d.Set("enabled", policy.Enabled)
 	_ = d.Set("policies", flattenPolicies(policy.Policies))
+}
+
+// hashcode calculates a hash of the identifier and severity to use as a unique key for the set
+func hashcode(s string) int {
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	return int(h.Sum32())
 }
 
 func flattenPolicies(policies []policymgmt.LinkedPolicy) []map[string]interface{} {
