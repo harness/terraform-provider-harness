@@ -44,14 +44,36 @@ func DataSourcePolicyset() *schema.Resource {
 				Computed:    false,
 			},
 			"policies": {
+				Description: "List of policy identifiers / severity for the policyset. Deprecated: Use 'policies_set' instead.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				MinItems:    1,
+				Deprecated:  "Use 'policies_set' instead. This field will be removed in a future version.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"identifier": {
+							Description: "Unique identifier of the policy",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"severity": {
+							Description: "Policy failure response - 'warning' for continuation, 'error' for exit",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+					},
+				},
+			},
+			"policies_set": {
 				Description: "Set of policy identifiers / severity for the policyset. Order is not significant.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Optional:    true,
 				MinItems:    1,
 				Set: func(v interface{}) int {
-					var buf bytes.Buffer
 					m := v.(map[string]interface{})
+					var buf bytes.Buffer
 					buf.WriteString(fmt.Sprintf("%s-", m["identifier"].(string)))
 					buf.WriteString(fmt.Sprintf("%s-", m["severity"].(string)))
 					return hashcode(buf.String())
@@ -59,15 +81,13 @@ func DataSourcePolicyset() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
-							Description: "Account Identifier of the account",
+							Description: "Unique identifier of the policy",
 							Type:        schema.TypeString,
-							Optional:    false,
 							Required:    true,
 						},
 						"severity": {
 							Description: "Policy failure response - 'warning' for continuation, 'error' for exit",
 							Type:        schema.TypeString,
-							Optional:    false,
 							Required:    true,
 						},
 					},

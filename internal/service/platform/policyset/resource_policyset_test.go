@@ -79,6 +79,7 @@ func testAccResourcePolicyset(id, name, action, policyType string, policyFirstId
 			name = "%[6]s"
 			rego = "some text"
 		}
+
 		resource "harness_platform_policy" "second" {
 			identifier = "%[7]s"
 			name = "%[7]s"
@@ -91,13 +92,13 @@ func testAccResourcePolicyset(id, name, action, policyType string, policyFirstId
 			type = "%[4]s"
 			enabled = %[5]t
 			policies {
-				identifier = "harness_platform_policy.first.identifier"
-				severity = "warning"
+				identifier = harness_platform_policy.first.identifier
+			  severity = "warning"
 			}
 
 			policies {
-				identifier = "harness_platform_policy.second.identifier"
-				severity = "warning"
+				identifier = harness_platform_policy.second.identifier
+			  severity = "warning"
 			}
 		}
 `, id, name, action, policyType, enabled, policyFirstIdentifier, policySecondIdentifier)
@@ -110,6 +111,7 @@ func testAccResourcePolicysetUpdate(id, name, action, policyType string, policyF
 			name = "%[6]s"
 			rego = "some text"
 		}
+
 		resource "harness_platform_policy" "second" {
 			identifier = "%[7]s"
 			name = "%[7]s"
@@ -121,13 +123,13 @@ func testAccResourcePolicysetUpdate(id, name, action, policyType string, policyF
 			action = "%[3]s"
 			type = "%[4]s"
 			enabled = %[5]t
-			policies {
-				identifier = "harness_platform_policy.second.identifier"
-				severity = "warning"
+			policies_set {
+				identifier = harness_platform_policy.first.identifier
+			  	severity = "warning"
 			}
 
-			policies {
-				identifier = "harness_platform_policy.first.identifier"
+			policies_set {
+				identifier = harness_platform_policy.second.identifier
 				severity = "warning"
 			}
 		}
