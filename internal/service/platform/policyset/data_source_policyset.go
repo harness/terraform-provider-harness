@@ -1,8 +1,10 @@
 package policyset
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -42,12 +44,18 @@ func DataSourcePolicyset() *schema.Resource {
 				Computed:    false,
 			},
 			"policies": {
-				Description: "List of policy identifiers / severity for the policyset.",
-				Type:        schema.TypeList,
-				Computed:    false,
+				Description: "Set of policy identifiers / severity for the policyset. Order is not significant.",
+				Type:        schema.TypeSet,
+				Computed:    true,
 				Optional:    true,
-				Required:    false,
 				MinItems:    1,
+				Set: func(v interface{}) int {
+					var buf bytes.Buffer
+					m := v.(map[string]interface{})
+					buf.WriteString(fmt.Sprintf("%s-", m["identifier"].(string)))
+					buf.WriteString(fmt.Sprintf("%s-", m["severity"].(string)))
+					return hashcode(buf.String())
+				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
