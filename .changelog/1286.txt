@@ -1,0 +1,3 @@
+```release-note:enha
+resource: Updated harness_platform_policyset to use policies_set instead of policies
+```

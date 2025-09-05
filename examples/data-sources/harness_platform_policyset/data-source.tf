@@ -4,7 +4,7 @@ data "harness_platform_policyset" "test" {
   action     = "onrun"
   type       = "pipeline"
   enabled    = true
-  policies {
+  policies_set {
     identifier = "always_run"
     severity   = "warning"
   }
