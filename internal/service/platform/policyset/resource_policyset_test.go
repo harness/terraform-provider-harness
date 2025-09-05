@@ -123,12 +123,12 @@ func testAccResourcePolicysetUpdate(id, name, action, policyType string, policyF
 			action = "%[3]s"
 			type = "%[4]s"
 			enabled = %[5]t
-			policies_set {
+			policy_references {
 				identifier = harness_platform_policy.first.identifier
 			  	severity = "warning"
 			}
 
-			policies_set {
+			policy_references {
 				identifier = harness_platform_policy.second.identifier
 				severity = "warning"
 			}

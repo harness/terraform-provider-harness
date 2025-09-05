@@ -44,12 +44,12 @@ func DataSourcePolicyset() *schema.Resource {
 				Computed:    false,
 			},
 			"policies": {
-				Description: "List of policy identifiers / severity for the policyset. Deprecated: Use 'policies_set' instead.",
+				Description: "List of policy identifiers / severity for the policyset. Deprecated: Use 'policy_references' instead.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
 				MinItems:    1,
-				Deprecated:  "Use 'policies_set' instead. This field will be removed in a future version.",
+				Deprecated:  "Use 'policy_references' instead. This field will be removed in a future version.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
@@ -65,7 +65,7 @@ func DataSourcePolicyset() *schema.Resource {
 					},
 				},
 			},
-			"policies_set": {
+			"policy_references": {
 				Description: "Set of policy identifiers / severity for the policyset. Order is not significant.",
 				Type:        schema.TypeSet,
 				Computed:    true,

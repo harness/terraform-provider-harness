@@ -67,7 +67,7 @@ func ResourcePolicyset() *schema.Resource {
 					},
 				},
 			},
-			"policies_set": {
+			"policy_references": {
 				Description: "Set of policy identifiers / severity for the policyset. Order is not significant.",
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -212,7 +212,7 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 func buildPolicies(d *schema.ResourceData) []policymgmt.Linkedpolicyidentifier {
 	policies := []policymgmt.Linkedpolicyidentifier{}
 
-	if v, ok := d.GetOk("policies_set"); ok {
+	if v, ok := d.GetOk("policy_references"); ok {
 		policySet := v.(*schema.Set)
 		for _, policy := range policySet.List() {
 			policyMap := policy.(map[string]interface{})
@@ -268,7 +268,7 @@ func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet) {
 	_ = d.Set("type", policy.Type_)
 	_ = d.Set("enabled", policy.Enabled)
 	_ = d.Set("policies", flattenPolicies(policy.Policies))
-	_ = d.Set("policies_set", flattenPoliciesForSet(policy.Policies))
+	_ = d.Set("policy_references", flattenPoliciesForSet(policy.Policies))
 }
 
 func flattenPolicies(policies []policymgmt.LinkedPolicy) []map[string]interface{} {
