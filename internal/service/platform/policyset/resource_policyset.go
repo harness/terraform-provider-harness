@@ -1,8 +1,12 @@
 package policyset
 
 import (
+	"bytes"
 	"context"
+	"fmt"
 	"net/http"
+
+	"hash/fnv"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
@@ -58,6 +62,34 @@ func ResourcePolicyset() *schema.Resource {
 							Description: "Policy failure response - 'warning' for continuation, 'error' for exit",
 							Type:        schema.TypeString,
 							Optional:    false,
+							Required:    true,
+						},
+					},
+				},
+			},
+			"policy_references": {
+				Description: "Set of policy identifiers / severity for the policyset. Order is not significant.",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Computed:    true,
+				MinItems:    1,
+				Set: func(v interface{}) int {
+					var buf bytes.Buffer
+					m := v.(map[string]interface{})
+					buf.WriteString(fmt.Sprintf("%s-", m["identifier"].(string)))
+					buf.WriteString(fmt.Sprintf("%s-", m["severity"].(string)))
+					return hashcode(buf.String())
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"identifier": {
+							Description: "Unique identifier of the policy",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"severity": {
+							Description: "Policy failure response - 'warning' for continuation, 'error' for exit",
+							Type:        schema.TypeString,
 							Required:    true,
 						},
 					},
@@ -179,14 +211,27 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 
 func buildPolicies(d *schema.ResourceData) []policymgmt.Linkedpolicyidentifier {
 	policies := []policymgmt.Linkedpolicyidentifier{}
-	rawPolicies := d.Get("policies").([]interface{})
-	for _, policy := range rawPolicies {
-		policy := policy.(map[string]interface{})
-		policies = append(policies, policymgmt.Linkedpolicyidentifier{
-			Identifier: policy["identifier"].(string),
-			Severity:   policy["severity"].(string),
-		})
+
+	if v, ok := d.GetOk("policy_references"); ok {
+		policySet := v.(*schema.Set)
+		for _, policy := range policySet.List() {
+			policyMap := policy.(map[string]interface{})
+			policies = append(policies, policymgmt.Linkedpolicyidentifier{
+				Identifier: policyMap["identifier"].(string),
+				Severity:   policyMap["severity"].(string),
+			})
+		}
+	} else if v, ok := d.GetOk("policies"); ok {
+		// Fall back to deprecated policies field for backward compatibility
+		for _, policy := range v.([]interface{}) {
+			policyMap := policy.(map[string]interface{})
+			policies = append(policies, policymgmt.Linkedpolicyidentifier{
+				Identifier: policyMap["identifier"].(string),
+				Severity:   policyMap["severity"].(string),
+			})
+		}
 	}
+
 	return policies
 }
 
@@ -223,6 +268,7 @@ func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet) {
 	_ = d.Set("type", policy.Type_)
 	_ = d.Set("enabled", policy.Enabled)
 	_ = d.Set("policies", flattenPolicies(policy.Policies))
+	_ = d.Set("policy_references", flattenPoliciesForSet(policy.Policies))
 }
 
 func flattenPolicies(policies []policymgmt.LinkedPolicy) []map[string]interface{} {
@@ -234,4 +280,37 @@ func flattenPolicies(policies []policymgmt.LinkedPolicy) []map[string]interface{
 		})
 	}
 	return policyList
+}
+
+func flattenPoliciesForSet(policies []policymgmt.LinkedPolicy) *schema.Set {
+	set := &schema.Set{
+		F: schema.HashResource(&schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"identifier": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"severity": {
+					Type:     schema.TypeString,
+					Required: true,
+				},
+			},
+		}),
+	}
+
+	for _, policy := range policies {
+		set.Add(map[string]interface{}{
+			"identifier": policy.Identifier,
+			"severity":   policy.Severity,
+		})
+	}
+
+	return set
+}
+
+// hashcode calculates a hash of the identifier and severity to use as a unique key for the set
+func hashcode(s string) int {
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	return int(h.Sum32())
 }

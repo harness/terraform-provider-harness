@@ -4,7 +4,7 @@ resource "harness_platform_policyset" "test" {
   action     = "onrun"
   type       = "pipeline"
   enabled    = true
-  policies {
+  policy_references {
     identifier = "policy_identifier"
     severity   = "warning"
   }
@@ -19,11 +19,11 @@ resource "harness_platform_policyset" "test" {
   enabled    = true
   org_id     = "terraform_example_org"
   project_id = "terraform_test_project"
-  policies {
+  policy_references {
     identifier = "policy_identifier1"
     severity   = "warning"
   }
-  policies {
+  policy_references {
     identifier = "policy_identifier2"
     severity   = "warning"
   }
