@@ -74,6 +74,16 @@ func TestAccResourcePolicyset(t *testing.T) {
 
 func testAccResourcePolicyset(id, name, action, policyType string, policyFirstIdentifier, policySecondIdentifier string, enabled bool) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_policy" "first" {
+			identifier = "%[6]s"
+			name = "%[6]s"
+			rego = "some text"
+		}
+		resource "harness_platform_policy" "second" {
+			identifier = "%[7]s"
+			name = "%[7]s"
+			rego = "some text"
+		}
 		resource "harness_platform_policyset" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -81,13 +91,13 @@ func testAccResourcePolicyset(id, name, action, policyType string, policyFirstId
 			type = "%[4]s"
 			enabled = %[5]t
 			policies {
-				identifier = "%[6]s"
-			  severity = "warning"
+				identifier = "harness_platform_policy.first.identifier"
+				severity = "warning"
 			}
 
 			policies {
-				identifier = "%[7]s"
-			  severity = "warning"
+				identifier = "harness_platform_policy.second.identifier"
+				severity = "warning"
 			}
 		}
 `, id, name, action, policyType, enabled, policyFirstIdentifier, policySecondIdentifier)
@@ -95,6 +105,16 @@ func testAccResourcePolicyset(id, name, action, policyType string, policyFirstId
 
 func testAccResourcePolicysetUpdate(id, name, action, policyType string, policyFirstIdentifier, policySecondIdentifier string, enabled bool) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_policy" "first" {
+			identifier = "%[6]s"
+			name = "%[6]s"
+			rego = "some text"
+		}
+		resource "harness_platform_policy" "second" {
+			identifier = "%[7]s"
+			name = "%[7]s"
+			rego = "some text"
+		}
 		resource "harness_platform_policyset" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -102,13 +122,13 @@ func testAccResourcePolicysetUpdate(id, name, action, policyType string, policyF
 			type = "%[4]s"
 			enabled = %[5]t
 			policies {
-				identifier = "%[7]s"
-			  severity = "warning"
+				identifier = "harness_platform_policy.second.identifier"
+				severity = "warning"
 			}
 
 			policies {
-				identifier = "%[6]s"
-			  severity = "warning"
+				identifier = "harness_platform_policy.first.identifier"
+				severity = "warning"
 			}
 		}
 `, id, name, action, policyType, enabled, policyFirstIdentifier, policySecondIdentifier)
