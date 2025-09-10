@@ -2,7 +2,6 @@ package security_governance_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -11,11 +10,6 @@ import (
 )
 
 func TestAccDataSourceChaosSecurityGovernanceCondition(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
 
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -41,25 +35,20 @@ func TestAccDataSourceChaosSecurityGovernanceCondition(t *testing.T) {
 	})
 }
 
+// Terraform Configurations
+
 func testAccDataSourceChaosSecurityGovernanceConditionConfig(name, id, infraType string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
 
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[2]s"
 		name       = "%[1]s"
-		account_id = "%[4]s"
 	}
 
 	resource "harness_platform_project" "test" {
 		identifier  = "%[2]s"
 		name        = "%[1]s"
 		org_id      = harness_platform_organization.test.id
-		account_id  = "%[4]s"
 		color       = "#0063F7"
 		description = "Test project for Chaos Security Governance"
 		tags        = ["foo:bar", "baz:qux"]
@@ -75,7 +64,28 @@ func testAccDataSourceChaosSecurityGovernanceConditionConfig(name, id, infraType
 
 		fault_spec {
 			operator = "EQUAL_TO"
-			faults   = ["pod-delete"]
+			faults {
+				fault_type = "FAULT"
+				name       = "pod-delete"
+			}
+		}
+
+		k8s_spec {
+			infra_spec {
+				operator = "EQUAL_TO"
+				infra_ids = ["infra1", "infra2"]
+			}
+			application_spec {
+				operator = "EQUAL_TO"
+				workloads {
+					label = "sdsdsd"
+					namespace = "sdsd"
+				}
+			}
+			chaos_service_account_spec {
+				operator = "EQUAL_TO"
+				service_accounts = ["service_account1", "service_account2"]
+			}
 		}
 	}
 
@@ -84,5 +94,5 @@ func testAccDataSourceChaosSecurityGovernanceConditionConfig(name, id, infraType
 		org_id     = harness_platform_organization.test.id
 		project_id = harness_platform_project.test.id
 	}
-	`, name, id, infraType, accountId)
+	`, name, id, infraType)
 }

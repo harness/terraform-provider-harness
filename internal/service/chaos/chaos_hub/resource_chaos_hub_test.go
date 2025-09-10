@@ -2,7 +2,6 @@ package chaos_hub_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -12,11 +11,6 @@ import (
 )
 
 func TestAccResourceChaosHub(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
 
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -48,11 +42,6 @@ func TestAccResourceChaosHub(t *testing.T) {
 }
 
 func TestAccResourceChaosHub_Update(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
 
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -84,6 +73,8 @@ func TestAccResourceChaosHub_Update(t *testing.T) {
 	})
 }
 
+// Helpers for Destroy & Import State
+
 func testAccChaosHubDestroy(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Implement the logic to verify the resource is properly destroyed
@@ -98,12 +89,9 @@ func testAccResourceChaosHubImportStateIdFunc(resourceName string) resource.Impo
 	}
 }
 
+// Terraform Configurations
+
 func testAccResourceChaosHubConfigBasic(name, id, branch, repoUrl string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
 
 	return fmt.Sprintf(`
 	resource "harness_platform_connector_github" "test" {
@@ -134,11 +122,6 @@ func testAccResourceChaosHubConfigBasic(name, id, branch, repoUrl string) string
 }
 
 func testAccResourceChaosHubConfigUpdate(name, id, branch, repoUrl string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
 
 	return fmt.Sprintf(`
 	resource "harness_platform_connector_github" "test" {

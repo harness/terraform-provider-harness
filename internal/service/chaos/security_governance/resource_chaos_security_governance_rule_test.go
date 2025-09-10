@@ -2,7 +2,6 @@ package security_governance_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -12,12 +11,6 @@ import (
 )
 
 func TestAccResourceChaosSecurityGovernanceRule(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
-
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
@@ -42,6 +35,7 @@ func TestAccResourceChaosSecurityGovernanceRule(t *testing.T) {
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 				ImportStateVerify: true,
 			},
 		},
@@ -49,12 +43,6 @@ func TestAccResourceChaosSecurityGovernanceRule(t *testing.T) {
 }
 
 func TestAccResourceChaosSecurityGovernanceRule_Update(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
-
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
@@ -75,14 +63,16 @@ func TestAccResourceChaosSecurityGovernanceRule_Update(t *testing.T) {
 				Config: testAccResourceChaosSecurityGovernanceRuleConfigUpdate(rName, id, "Kubernetes"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "description", "Updated test rule"),
-					resource.TestCheckResourceAttr(resourceName, "is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0", "updated"),
-					resource.TestCheckResourceAttr(resourceName, "user_group_ids.0", "test-group-1"),
+					resource.TestCheckResourceAttr(resourceName, "user_group_ids.0", "account.Account_Admin"),
 				),
 			},
 		},
 	})
 }
+
+// Helpers for Destroy & Import State
 
 func testAccSecurityGovernanceRuleDestroy(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -91,25 +81,20 @@ func testAccSecurityGovernanceRuleDestroy(resourceName string) resource.TestChec
 	}
 }
 
+// Terraform Configurations
+
 func testAccResourceChaosSecurityGovernanceRuleConfig(name, id, infraType string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
 
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[2]s"
 		name       = "%[1]s"
-		account_id = "%[4]s"
 	}
 
 	resource "harness_platform_project" "test" {
 		identifier  = "%[2]s"
 		name        = "%[1]s"
 		org_id      = harness_platform_organization.test.id
-		account_id  = "%[4]s"
 		color       = "#0063F7"
 		description = "Test project for Chaos Security Governance"
 		tags        = ["foo:bar", "baz:qux"]
@@ -124,8 +109,29 @@ func testAccResourceChaosSecurityGovernanceRuleConfig(name, id, infraType string
 		tags       = ["test"]
 
 		fault_spec {
-			operator = "EQUAL_TO"
-			faults   = ["pod-delete"]
+			operator = "NOT_EQUAL_TO"
+			faults {
+				fault_type = "FAULT"
+				name       = "container-kill"
+			}
+		}
+
+		k8s_spec {
+			infra_spec {
+				operator = "EQUAL_TO"
+				infra_ids = ["infra1", "infra2"]
+			}
+			application_spec {
+				operator = "EQUAL_TO"
+				workloads {
+					label = "sdsdsd"
+					namespace = "sdsd"
+				}
+			}
+			chaos_service_account_spec {
+				operator = "EQUAL_TO"
+				service_accounts = ["service_account1", "service_account2"]
+			}
 		}
 	}
 
@@ -139,35 +145,32 @@ func testAccResourceChaosSecurityGovernanceRuleConfig(name, id, infraType string
 
 		condition_ids = [harness_chaos_security_governance_condition.test.id]
 
+		user_group_ids = ["account.Account_Admin"]
+
 		time_windows {
 			time_zone = "UTC"
-			start_time = "00:00"
-			end_time   = "23:59"
-			days       = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
+			start_time = 1756616940000
+			duration = "30m"
+			recurrence {
+				type = "None"
+				until = -1
+			}
 		}
 	}
-	`, name, id, infraType, accountId)
+	`, name, id, infraType)
 }
 
 func testAccResourceChaosSecurityGovernanceRuleConfigUpdate(name, id, infraType string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
-
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[2]s"
 		name       = "%[1]s"
-		account_id = "%[4]s"
 	}
 
 	resource "harness_platform_project" "test" {
 		identifier  = "%[2]s"
 		name        = "%[1]s"
 		org_id      = harness_platform_organization.test.id
-		account_id  = "%[4]s"
 		color       = "#0063F7"
 		description = "Test project for Chaos Security Governance"
 		tags        = ["foo:bar", "baz:qux"]
@@ -182,8 +185,29 @@ func testAccResourceChaosSecurityGovernanceRuleConfigUpdate(name, id, infraType 
 		tags       = ["test"]
 
 		fault_spec {
-			operator = "EQUAL_TO"
-			faults   = ["pod-delete"]
+			operator = "NOT_EQUAL_TO"
+			faults {
+				fault_type = "FAULT"
+				name       = "container-kill"
+			}
+		}
+
+		k8s_spec {
+			infra_spec {
+				operator = "EQUAL_TO"
+				infra_ids = ["infra1", "infra2"]
+			}
+			application_spec {
+				operator = "EQUAL_TO"
+				workloads {
+					label = "sdsdsd"
+					namespace = "sdsd"
+				}
+			}
+			chaos_service_account_spec {
+				operator = "EQUAL_TO"
+				service_accounts = ["service_account1", "service_account2"]
+			}
 		}
 	}
 
@@ -192,18 +216,21 @@ func testAccResourceChaosSecurityGovernanceRuleConfigUpdate(name, id, infraType 
 		project_id = harness_platform_project.test.id
 		name       = "%[1]s"
 		description = "Updated test rule"
-		is_enabled = false
+		is_enabled = true
 		tags       = ["updated"]
-		user_group_ids = ["test-group-1"]
+		user_group_ids = ["account.Account_Admin"]
 
 		condition_ids = [harness_chaos_security_governance_condition.test.id]
 
 		time_windows {
 			time_zone = "UTC"
-			start_time = "00:00"
-			end_time   = "23:59"
-			days       = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+			start_time = 1756616940000
+			end_time = 1756616940020
+			recurrence {
+				type = "None"
+				until = -1
+			}
 		}
 	}
-	`, name, id, infraType, accountId)
+	`, name, id, infraType)
 }

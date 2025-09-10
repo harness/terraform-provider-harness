@@ -2,7 +2,6 @@ package image_registry_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -12,11 +11,6 @@ import (
 )
 
 func TestAccResourceChaosImageRegistry(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
 
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -48,11 +42,6 @@ func TestAccResourceChaosImageRegistry(t *testing.T) {
 }
 
 func TestAccResourceChaosImageRegistry_Update(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
 
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -85,12 +74,6 @@ func TestAccResourceChaosImageRegistry_Update(t *testing.T) {
 }
 
 func TestAccResourceChaosImageRegistry_WithCustomImages(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
-
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
@@ -115,6 +98,8 @@ func TestAccResourceChaosImageRegistry_WithCustomImages(t *testing.T) {
 	})
 }
 
+// Helpers for Destroy & Import State
+
 func testAccChaosImageRegistryDestroy(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Implement actual destroy check if needed
@@ -122,12 +107,9 @@ func testAccChaosImageRegistryDestroy(resourceName string) resource.TestCheckFun
 	}
 }
 
+// Terraform Configurations
+
 func testAccResourceChaosImageRegistryConfigBasic(name, id, server, account string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
 
 	return fmt.Sprintf(`
 	resource "harness_chaos_image_registry" "test" {
@@ -140,11 +122,6 @@ func testAccResourceChaosImageRegistryConfigBasic(name, id, server, account stri
 }
 
 func testAccResourceChaosImageRegistryConfigUpdate(name, id, server, account string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
 
 	return fmt.Sprintf(`
 	resource "harness_chaos_image_registry" "test" {
@@ -159,11 +136,6 @@ func testAccResourceChaosImageRegistryConfigUpdate(name, id, server, account str
 }
 
 func testAccResourceChaosImageRegistryWithCustomImages(name, id, server, account string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
 
 	return fmt.Sprintf(`
 	resource "harness_chaos_image_registry" "test" {

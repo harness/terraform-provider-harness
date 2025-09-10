@@ -2,7 +2,6 @@ package chaos_hub_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -11,11 +10,6 @@ import (
 )
 
 func TestAccDataSourceChaosHub(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
 
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -44,11 +38,6 @@ func TestAccDataSourceChaosHub(t *testing.T) {
 }
 
 func TestAccDataSourceChaosHub_ProjectLevel(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
 
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -74,12 +63,9 @@ func TestAccDataSourceChaosHub_ProjectLevel(t *testing.T) {
 	})
 }
 
+// Terraform Configurations
+
 func testAccDataSourceChaosHubConfig(name, id, branch string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
 
 	return fmt.Sprintf(`
 	resource "harness_platform_connector_github" "test" {
@@ -87,7 +73,7 @@ func testAccDataSourceChaosHubConfig(name, id, branch string) string {
 		name        = "%[1]s"
 		description = "Test connector"
 		url         = "https://github.com"
-		connection_type = "Account"
+		connection_type = "Repo"
 		validation_repo = "harness/chaos-hub"
 	
 		credentials {
@@ -114,24 +100,16 @@ func testAccDataSourceChaosHubConfig(name, id, branch string) string {
 }
 
 func testAccDataSourceChaosHubProjectLevelConfig(name, id, branch string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
-
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[2]s"
 		name       = "%[1]s"
-		account_id = "%[4]s"
 	}
 
 	resource "harness_platform_project" "test" {
 		identifier  = "%[2]s"
 		name        = "%[1]s"
 		org_id      = harness_platform_organization.test.id
-		account_id  = "%[4]s"
 		color       = "#0063F7"
 		description = "Test project for Chaos Hub"
 		tags        = ["foo:bar", "baz:qux"]
@@ -142,7 +120,7 @@ func testAccDataSourceChaosHubProjectLevelConfig(name, id, branch string) string
 		name        = "%[1]s"
 		description = "Test connector"
 		url         = "https://github.com"
-		connection_type = "Project"
+		connection_type = "Repo"
 		validation_repo = "harness/chaos-hub"
 		project_id  = harness_platform_project.test.id
 		org_id      = harness_platform_organization.test.id
@@ -171,5 +149,5 @@ func testAccDataSourceChaosHubProjectLevelConfig(name, id, branch string) string
 		org_id     = harness_platform_organization.test.id
 		project_id = harness_platform_project.test.id
 	}
-	`, name, id, branch, accountId)
+	`, name, id, branch)
 }
