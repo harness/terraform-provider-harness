@@ -9,9 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+// TestAccDataSourceChaosSecurityGovernanceRule verifies the basic data source functionality for Chaos Security Governance Rule.
 func TestAccDataSourceChaosSecurityGovernanceRule(t *testing.T) {
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	dataSourceName := "data.harness_chaos_security_governance_rule.test"
@@ -35,9 +34,8 @@ func TestAccDataSourceChaosSecurityGovernanceRule(t *testing.T) {
 	})
 }
 
+// TestAccDataSourceChaosSecurityGovernanceRule_ByName verifies the data source lookup by name for Chaos Security Governance Rule.
 func TestAccDataSourceChaosSecurityGovernanceRule_ByName(t *testing.T) {
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	dataSourceName := "data.harness_chaos_security_governance_rule.test"

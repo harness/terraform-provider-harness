@@ -37,9 +37,8 @@ func SanitizeK8sResourceName(name string) string {
 	return name
 }
 
+// TestAccResourceChaosInfrastructureV2_basic verifies the basic resource functionality for Chaos Infrastructure V2.
 func TestAccResourceChaosInfrastructureV2_basic(t *testing.T) {
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "harness_chaos_infrastructure_v2.test"
@@ -72,9 +71,9 @@ func TestAccResourceChaosInfrastructureV2_basic(t *testing.T) {
 	})
 }
 
+// TestAccResourceChaosInfrastructureV2_Update verifies update functionality for the Chaos Infrastructure V2 resource.
+// TestAccResourceChaosInfrastructureV2_Update verifies update functionality for the Chaos Infrastructure V2 resource.
 func TestAccResourceChaosInfrastructureV2_Update(t *testing.T) {
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "harness_chaos_infrastructure_v2.test"
@@ -106,9 +105,8 @@ func TestAccResourceChaosInfrastructureV2_Update(t *testing.T) {
 	})
 }
 
+// TestAccResourceChaosInfrastructureV2_KubernetesType verifies the resource for Kubernetes infra type.
 func TestAccResourceChaosInfrastructureV2_KubernetesType(t *testing.T) {
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "harness_chaos_infrastructure_v2.test"
@@ -129,9 +127,8 @@ func TestAccResourceChaosInfrastructureV2_KubernetesType(t *testing.T) {
 	})
 }
 
+// TestAccResourceChaosInfrastructureV2_Import verifies import functionality for the Chaos Infrastructure V2 resource.
 func TestAccResourceChaosInfrastructureV2_Import(t *testing.T) {
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "harness_chaos_infrastructure_v2.test"

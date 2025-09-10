@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// TestAccResourceChaosSecurityGovernanceRule verifies the basic resource functionality for Chaos Security Governance Rule.
 func TestAccResourceChaosSecurityGovernanceRule(t *testing.T) {
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "harness_chaos_security_governance_rule.test"
@@ -42,8 +42,8 @@ func TestAccResourceChaosSecurityGovernanceRule(t *testing.T) {
 	})
 }
 
+// TestAccResourceChaosSecurityGovernanceRule_Update verifies update functionality for the Chaos Security Governance Rule resource.
 func TestAccResourceChaosSecurityGovernanceRule_Update(t *testing.T) {
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "harness_chaos_security_governance_rule.test"

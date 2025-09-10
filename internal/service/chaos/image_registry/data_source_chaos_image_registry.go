@@ -160,11 +160,11 @@ func dataSourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("failed to read image registry: %v", err)
 	}
 
-	d.SetId(generateID(identifiers))
 	return setImageRegistryData(d, registry, identifiers)
 }
 
 func setImageRegistryData(d *schema.ResourceData, registry *model.ImageRegistryResponse, identifiers model.ScopedIdentifiersRequest) diag.Diagnostics {
+	d.SetId(generateID(identifiers, registry.RegistryAccount))
 	d.Set("registry_server", registry.RegistryServer)
 	d.Set("org_id", identifiers.OrgIdentifier)
 	d.Set("project_id", identifiers.ProjectIdentifier)

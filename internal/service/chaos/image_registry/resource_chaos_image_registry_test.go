@@ -10,9 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// TestAccResourceChaosImageRegistry verifies create, read, and import functionality for the Chaos Image Registry resource.
 func TestAccResourceChaosImageRegistry(t *testing.T) {
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "harness_chaos_image_registry.test"
@@ -36,14 +35,14 @@ func TestAccResourceChaosImageRegistry(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
+// TestAccResourceChaosImageRegistry_Update verifies update functionality for the Chaos Image Registry resource.
 func TestAccResourceChaosImageRegistry_Update(t *testing.T) {
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "harness_chaos_image_registry.test"
@@ -73,6 +72,7 @@ func TestAccResourceChaosImageRegistry_Update(t *testing.T) {
 	})
 }
 
+// TestAccResourceChaosImageRegistry_WithCustomImages verifies the resource with custom images enabled.
 func TestAccResourceChaosImageRegistry_WithCustomImages(t *testing.T) {
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -116,7 +116,7 @@ func testAccResourceChaosImageRegistryConfigBasic(name, id, server, account stri
 		registry_server   = "%s"
 		registry_account  = "%s"
 		is_private       = false
-		is_default       = false
+		is_default       = true
 	}
 	`, server, account)
 }

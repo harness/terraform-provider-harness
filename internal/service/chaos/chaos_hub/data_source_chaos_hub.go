@@ -151,7 +151,7 @@ func dataSourceChaosHubRead(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func setChaosHubData(d *schema.ResourceData, hub *model.ChaosHubStatus, identifiers ScopedIdentifiersRequest) diag.Diagnostics {
-	d.SetId(hub.Identity)
+	d.SetId(hub.ID)
 	d.Set("org_id", identifiers.OrgIdentifier)
 	d.Set("project_id", identifiers.ProjectIdentifier)
 	d.Set("name", hub.Name)

@@ -9,9 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+// TestAccDataSourceChaosSecurityGovernanceCondition verifies the basic data source functionality for Chaos Security Governance Condition.
 func TestAccDataSourceChaosSecurityGovernanceCondition(t *testing.T) {
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	dataSourceName := "data.harness_chaos_security_governance_condition.test"

@@ -36,8 +36,8 @@ func sanitizeK8sResourceName(name string) string {
 	return name
 }
 
+// TestAccDataSourceChaosInfrastructureV2_basic verifies the basic data source functionality for Chaos Infrastructure V2.
 func TestAccDataSourceChaosInfrastructureV2_basic(t *testing.T) {
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "data.harness_chaos_infrastructure_v2.test"
@@ -64,8 +64,8 @@ func TestAccDataSourceChaosInfrastructureV2_basic(t *testing.T) {
 	})
 }
 
+// TestAccDataSourceChaosInfrastructureV2_WithAllOptions verifies the data source with all possible options set.
 func TestAccDataSourceChaosInfrastructureV2_WithAllOptions(t *testing.T) {
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "data.harness_chaos_infrastructure_v2.test"
@@ -94,8 +94,8 @@ func TestAccDataSourceChaosInfrastructureV2_WithAllOptions(t *testing.T) {
 	})
 }
 
+// TestAccDataSourceChaosInfrastructureV2_KubernetesType verifies the data source for Kubernetes infra type.
 func TestAccDataSourceChaosInfrastructureV2_KubernetesType(t *testing.T) {
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "data.harness_chaos_infrastructure_v2.test"
@@ -115,8 +115,8 @@ func TestAccDataSourceChaosInfrastructureV2_KubernetesType(t *testing.T) {
 	})
 }
 
+// TestAccDataSourceChaosInfrastructureV2_NotFound verifies the behavior when the infra does not exist.
 func TestAccDataSourceChaosInfrastructureV2_NotFound(t *testing.T) {
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 
