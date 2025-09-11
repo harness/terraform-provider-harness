@@ -1,8 +1,10 @@
 package policyset
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -42,24 +44,50 @@ func DataSourcePolicyset() *schema.Resource {
 				Computed:    false,
 			},
 			"policies": {
-				Description: "List of policy identifiers / severity for the policyset.",
+				Description: "List of policy identifiers / severity for the policyset. Deprecated: Use 'policy_references' instead.",
 				Type:        schema.TypeList,
-				Computed:    false,
+				Computed:    true,
 				Optional:    true,
-				Required:    false,
 				MinItems:    1,
+				Deprecated:  "Use 'policy_references' instead. This field will be removed in a future version.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
-							Description: "Account Identifier of the account",
+							Description: "Unique identifier of the policy",
 							Type:        schema.TypeString,
-							Optional:    false,
 							Required:    true,
 						},
 						"severity": {
 							Description: "Policy failure response - 'warning' for continuation, 'error' for exit",
 							Type:        schema.TypeString,
-							Optional:    false,
+							Required:    true,
+						},
+					},
+				},
+			},
+			"policy_references": {
+				Description: "Set of policy identifiers / severity for the policyset. Order is not significant.",
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Optional:    true,
+				MinItems:    1,
+				Set: func(v interface{}) int {
+					m := v.(map[string]interface{})
+					var buf bytes.Buffer
+					buf.WriteString(fmt.Sprintf("%s-", m["identifier"].(string)))
+					buf.WriteString(fmt.Sprintf("%s-", m["severity"].(string)))
+					return hashcode(buf.String())
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"identifier": {
+							Description: "Unique identifier of the policy",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"severity": {
+							Description: "Policy failure response - 'warning' for continuation, 'error' for exit",
+							Type:        schema.TypeString,
 							Required:    true,
 						},
 					},

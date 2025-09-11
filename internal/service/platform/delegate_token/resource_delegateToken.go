@@ -16,7 +16,7 @@ import (
 
 func ResourceDelegateToken() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating delegate tokens. Note that delegate tokens cannot be updated, they can only be created or revoked. When a delegate token is 'deleted' in Terraform, it is actually revoked in Harness. Revoked tokens immediately stop functioning and are only purged after 30 days, so you cannot recreate a token with the same name within that period.",
+		Description: "Resource for creating delegate tokens. Delegate tokens can be created and revoked. Revoked tokens immediately stop functioning and are only purged after 30 days, meaning you cannot recreate a token with the same name within that period.\nTo revoke a token, set token_status field to \"REVOKED\".",
 
 		ReadContext:   resourceDelegateTokenRead,
 		CreateContext: resourceDelegateTokenCreate,

@@ -53,6 +53,16 @@ func TestAccResourcePolicyset(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccResourcePolicysetUpdate(id, name, action, policyType, policyFirstIdentifier, policySecondIdentifier, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "action", action),
+					resource.TestCheckResourceAttr(resourceName, "type", policyType),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
+			},
+			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -89,6 +99,38 @@ func testAccResourcePolicyset(id, name, action, policyType string, policyFirstId
 			policies {
 				identifier = harness_platform_policy.second.identifier
 			  severity = "warning"
+			}
+		}
+`, id, name, action, policyType, enabled, policyFirstIdentifier, policySecondIdentifier)
+}
+
+func testAccResourcePolicysetUpdate(id, name, action, policyType string, policyFirstIdentifier, policySecondIdentifier string, enabled bool) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_policy" "first" {
+			identifier = "%[6]s"
+			name = "%[6]s"
+			rego = "some text"
+		}
+
+		resource "harness_platform_policy" "second" {
+			identifier = "%[7]s"
+			name = "%[7]s"
+			rego = "some text"
+		}
+		resource "harness_platform_policyset" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			action = "%[3]s"
+			type = "%[4]s"
+			enabled = %[5]t
+			policy_references {
+				identifier = harness_platform_policy.first.identifier
+			  	severity = "warning"
+			}
+
+			policy_references {
+				identifier = harness_platform_policy.second.identifier
+				severity = "warning"
 			}
 		}
 `, id, name, action, policyType, enabled, policyFirstIdentifier, policySecondIdentifier)

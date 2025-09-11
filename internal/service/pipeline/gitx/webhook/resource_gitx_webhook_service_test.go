@@ -162,7 +162,7 @@ func testGitXProjectOrgLevel(webhook_identifier string, webhook_name string) str
 			identifier= "%[1]s"
 			name = "%[2]s"
 			org_id = "default"
-			repo_name =  "GitXTest2"
+			repo_name =  "AutoCreate"
 			connector_ref = "account.TF_github_account_level_connector"
 		}
 	`, webhook_identifier, webhook_name)
