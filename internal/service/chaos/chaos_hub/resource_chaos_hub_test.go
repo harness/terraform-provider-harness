@@ -2,6 +2,7 @@ package chaos_hub_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -12,6 +13,10 @@ import (
 
 // TestAccResourceChaosHub verifies basic create, read, and import functionality for the Chaos Hub resource.
 func TestAccResourceChaosHub(t *testing.T) {
+	chaosGithubToken := os.Getenv("CHAOS_GITHUB_TOKEN")
+	if chaosGithubToken == "" {
+		t.Skip("Skipping test because CHAOS_GITHUB_TOKEN is not set")
+	}
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	resourceName := "harness_chaos_hub.test"
@@ -25,7 +30,7 @@ func TestAccResourceChaosHub(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceChaosHubConfigBasic(rName, id, "master", "https://github.com/litmuschaos/chaos-charts.git"),
+				Config: testAccResourceChaosHubConfigBasic(rName, id, "master", "https://github.com/litmuschaos/chaos-charts.git", chaosGithubToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
 					resource.TestCheckResourceAttr(resourceName, "repo_branch", "master"),
@@ -44,6 +49,10 @@ func TestAccResourceChaosHub(t *testing.T) {
 
 // TestAccResourceChaosHub_Update verifies update functionality for the Chaos Hub resource.
 func TestAccResourceChaosHub_Update(t *testing.T) {
+	chaosGithubToken := os.Getenv("CHAOS_GITHUB_TOKEN")
+	if chaosGithubToken == "" {
+		t.Skip("Skipping test because CHAOS_GITHUB_TOKEN is not set")
+	}
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	updatedName := fmt.Sprintf("%s_updated", rName)
@@ -58,13 +67,13 @@ func TestAccResourceChaosHub_Update(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceChaosHubConfigBasic(rName, id, "master", "https://github.com/litmuschaos/chaos-charts.git"),
+				Config: testAccResourceChaosHubConfigBasic(rName, id, "master", "https://github.com/litmuschaos/chaos-charts.git", chaosGithubToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
 				),
 			},
 			{
-				Config: testAccResourceChaosHubConfigUpdate(updatedName, id, "v3.20.x", "https://github.com/litmuschaos/chaos-charts.git"),
+				Config: testAccResourceChaosHubConfigUpdate(updatedName, id, "v3.20.x", "https://github.com/litmuschaos/chaos-charts.git", chaosGithubToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "repo_branch", "v3.20.x"),
@@ -94,7 +103,7 @@ func testAccResourceChaosHubImportStateIdFunc(resourceName string) resource.Impo
 
 // Terraform Configurations
 
-func testAccResourceChaosHubConfigBasic(name, id, branch, repoUrl string) string {
+func testAccResourceChaosHubConfigBasic(name, id, branch, repoUrl, chaosGithubToken string) string {
 
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
@@ -119,7 +128,7 @@ func testAccResourceChaosHubConfigBasic(name, id, branch, repoUrl string) string
 
 		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Inline"
-		value = "ghp_dummy_secret"
+		value = "%[5]s"
 	}
 
 	resource "harness_platform_connector_github" "test" {
@@ -155,10 +164,10 @@ func testAccResourceChaosHubConfigBasic(name, id, branch, repoUrl string) string
 		description   = "Test chaos hub in project"
 		tags          = ["test:true", "chaos:true"]
 	}
-	`, name, id, branch, repoUrl)
+	`, name, id, branch, repoUrl, chaosGithubToken)
 }
 
-func testAccResourceChaosHubConfigUpdate(name, id, branch, repoUrl string) string {
+func testAccResourceChaosHubConfigUpdate(name, id, branch, repoUrl, chaosGithubToken string) string {
 
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
@@ -183,7 +192,7 @@ func testAccResourceChaosHubConfigUpdate(name, id, branch, repoUrl string) strin
 
 		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Inline"
-		value = "ghp_dummy_secret"
+		value = "%[5]s"
 	}
 
 	resource "harness_platform_connector_github" "test" {
@@ -219,5 +228,5 @@ func testAccResourceChaosHubConfigUpdate(name, id, branch, repoUrl string) strin
 		description   = "Updated test chaos hub"
 		tags          = ["test:true", "chaos:true"]
 	}
-	`, name, id, branch, repoUrl)
+	`, name, id, branch, repoUrl, chaosGithubToken)
 }

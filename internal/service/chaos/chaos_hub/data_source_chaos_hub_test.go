@@ -2,6 +2,7 @@ package chaos_hub_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -10,6 +11,10 @@ import (
 )
 
 func TestAccDataSourceChaosHub_ProjectLevel(t *testing.T) {
+	chaosGithubToken := os.Getenv("CHAOS_GITHUB_TOKEN")
+	if chaosGithubToken == "" {
+		t.Skip("Skipping test because CHAOS_GITHUB_TOKEN is not set")
+	}
 
 	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -25,7 +30,7 @@ func TestAccDataSourceChaosHub_ProjectLevel(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceChaosHubProjectLevelConfig(rName, id, "master"),
+				Config: testAccDataSourceChaosHubProjectLevelConfig(rName, id, "master", chaosGithubToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(dataSourceName, "name", rName),
 					resource.TestCheckResourceAttrPair(dataSourceName, "project_id", resourceName, "project_id"),
@@ -46,7 +51,7 @@ func TestAccDataSourceChaosHub_ProjectLevel(t *testing.T) {
 
 // Terraform Configurations
 
-func testAccDataSourceChaosHubProjectLevelConfig(name, id, branch string) string {
+func testAccDataSourceChaosHubProjectLevelConfig(name, id, branch, githubToken string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[2]s"
@@ -70,7 +75,7 @@ func testAccDataSourceChaosHubProjectLevelConfig(name, id, branch string) string
 
 		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Inline"
-		value = "ghp_dummy_secret"
+		value = "%[4]s"
 	}
 
 	resource "harness_platform_connector_github" "test" {
@@ -112,5 +117,5 @@ func testAccDataSourceChaosHubProjectLevelConfig(name, id, branch string) string
 		org_id     = harness_platform_organization.test.id
 		project_id = harness_platform_project.test.id
 	}
-	`, name, id, branch)
+	`, name, id, branch, githubToken)
 }
