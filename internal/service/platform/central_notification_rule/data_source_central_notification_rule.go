@@ -93,7 +93,61 @@ func DataSourceCentralNotificationRuleService() *schema.Resource {
 									"notification_event_data": {
 										Type:     schema.TypeMap,
 										Optional: true,
-										Elem:     &schema.Schema{Type: schema.TypeString},
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"type": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"scope_identifiers": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem:     &schema.Schema{Type: schema.TypeString},
+												},
+												"delegate_group_ids": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem:     &schema.Schema{Type: schema.TypeString},
+												},
+												"frequency": {
+													Type:     schema.TypeMap,
+													Optional: true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"type": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"value": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+														},
+													},
+												},
+												"chaos_experiment_ids": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem:     &schema.Schema{Type: schema.TypeString},
+												},
+												"error_budget_remaining_percentage": {
+													Type:     schema.TypeFloat,
+													Optional: true,
+												},
+												"error_budget_remaining_minutes": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"error_budget_burn_rate_percentage": {
+													Type:     schema.TypeFloat,
+													Optional: true,
+												},
+												"error_budget_burn_rate_lookback_duration": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+											},
+										},
 									},
 								},
 							},
