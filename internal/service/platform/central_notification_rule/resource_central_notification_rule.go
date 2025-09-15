@@ -2,13 +2,15 @@ package central_notification_rule
 
 import (
 	"context"
+	"encoding/json"
+	"net/http"
+
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"net/http"
 )
 
 func ResourceCentralNotificationRule() *schema.Resource {
@@ -90,7 +92,7 @@ func ResourceCentralNotificationRule() *schema.Resource {
 										Elem:     &schema.Schema{Type: schema.TypeString},
 									},
 									"notification_event_data": {
-										Type:     schema.TypeMap,
+										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -109,7 +111,7 @@ func ResourceCentralNotificationRule() *schema.Resource {
 													Elem:     &schema.Schema{Type: schema.TypeString},
 												},
 												"frequency": {
-													Type:     schema.TypeMap,
+													Type:     schema.TypeList,
 													Optional: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -228,7 +230,6 @@ func resourceCentralNotificationRuleCreate(ctx context.Context, d *schema.Resour
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
-
 	d.SetId(resp.Identifier)
 	return readCentralNotificationRule(accountID, d, resp)
 }
@@ -305,7 +306,6 @@ func resourceCentralNotificationRuleUpdate(ctx context.Context, d *schema.Resour
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
-
 	return readCentralNotificationRule(accountID, d, resp)
 }
 
@@ -344,7 +344,7 @@ func resourceCentralNotificationRuleDelete(ctx context.Context, d *schema.Resour
 
 func expandStringList(raw interface{}) []string {
 	if raw == nil {
-		return nil
+		return []string{}
 	}
 	rawList := raw.([]interface{})
 	strList := make([]string, len(rawList))
@@ -369,7 +369,6 @@ func expandNotificationTemplateVariables(raw []interface{}) []nextgen.Notificati
 
 func expandNotificationConditions(raw []interface{}) []nextgen.NotificationConditionDto {
 	result := make([]nextgen.NotificationConditionDto, len(raw))
-
 	for i, cond := range raw {
 		condition := cond.(map[string]interface{})
 		eventConfigsRaw := condition["notification_event_configs"].([]interface{})
@@ -377,35 +376,89 @@ func expandNotificationConditions(raw []interface{}) []nextgen.NotificationCondi
 
 		for j, ec := range eventConfigsRaw {
 			ecMap := ec.(map[string]interface{})
+
 			eventConfigs[j] = nextgen.NotificationEventConfigDto{
 				NotificationEntity: ecMap["notification_entity"].(string),
 				NotificationEvent:  ecMap["notification_event"].(string),
 				EntityIdentifiers:  expandStringList(ecMap["entity_identifiers"]),
-				NotificationEventData: func() *nextgen.NotificationEventParamsDto {
-					rawEventData, ok := ecMap["notification_event_data"]
-					if !ok || rawEventData == nil {
-						return nil
+			}
+
+			// If notification_event_data provided, marshal raw and also set typed DTO
+			if eventDataList, ok := ecMap["notification_event_data"].([]interface{}); ok && len(eventDataList) > 0 {
+				if eventData, ok := eventDataList[0].(map[string]interface{}); ok {
+					// Marshal raw for debugging/round-trip
+					if jsonBytes, err := json.Marshal(eventData); err == nil {
+						eventConfigs[j].NotificationEventData = jsonBytes
 					}
 
-					eventDataMap, ok := rawEventData.(map[string]interface{})
-					if !ok {
-						return nil
-					}
+					// After setting eventConfigs[j].NotificationEventData = jsonBytes
+					if t, ok := eventData["type"].(string); ok {
+						switch nextgen.ResourceTypeEnum(t) {
+						case nextgen.PIPELINE_ResourceTypeEnum:
+							rt := nextgen.PIPELINE_ResourceTypeEnum
+							eventConfigs[j].PipelineEventNotificationParamsDto = &nextgen.PipelineEventNotificationParamsDto{
+								Type_:            &rt,
+								ScopeIdentifiers: expandStringList(eventData["scope_identifiers"]),
+							}
 
-					var typePtr *nextgen.ResourceTypeEnum
-					if typeVal, ok := eventDataMap["type"].(string); ok && typeVal != "" {
-						enumVal := nextgen.ResourceTypeEnum(typeVal)
-						typePtr = &enumVal
-					}
+						case nextgen.DELEGATE_ResourceTypeEnum:
+							rt := nextgen.DELEGATE_ResourceTypeEnum
+							dto := &nextgen.DelegateEventNotificationParamsDto{
+								Type_:            &rt,
+								DelegateGroupIds: expandStringList(eventData["delegate_group_ids"]),
+							}
+							// frequency { type,value } -> FrequencyDto { Key,Value }
+							if freqRaw, ok := eventData["frequency"].([]interface{}); ok && len(freqRaw) > 0 {
+								if f, ok := freqRaw[0].(map[string]interface{}); ok {
+									key, _ := f["type"].(string)
+									val, _ := f["value"].(string)
+									dto.Frequency = &nextgen.FrequencyDto{Key: key, Value: val}
+								}
+							}
+							eventConfigs[j].DelegateEventNotificationParamsDto = dto
 
-					if typePtr == nil {
-						return nil
-					}
+						case nextgen.CHAOS_EXPERIMENT_ResourceTypeEnum:
+							rt := nextgen.CHAOS_EXPERIMENT_ResourceTypeEnum
+							eventConfigs[j].ChaosExperimentEventNotificationParamsDto = &nextgen.ChaosExperimentEventNotificationParamsDto{
+								Type_:              &rt,
+								ChaosExperimentIds: expandStringList(eventData["chaos_experiment_ids"]),
+							}
 
-					return &nextgen.NotificationEventParamsDto{
-						Type_: typePtr,
+						case nextgen.SERVICE_LEVEL_OBJECTIVE_ResourceTypeEnum:
+							rt := nextgen.SERVICE_LEVEL_OBJECTIVE_ResourceTypeEnum
+							dto := &nextgen.SloEventNotificationParamsDto{
+								Type_:                               &rt,
+								ErrorBudgetRemainingPercentage:      0,
+								ErrorBudgetRemainingMinutes:         0,
+								ErrorBudgetBurnRatePercentage:       0,
+								ErrorBudgetBurnRateLookbackDuration: 0,
+							}
+							if v, ok := eventData["error_budget_remaining_percentage"].(float64); ok {
+								dto.ErrorBudgetRemainingPercentage = float32(v)
+							}
+							if v, ok := eventData["error_budget_remaining_minutes"].(float64); ok {
+								dto.ErrorBudgetRemainingMinutes = int32(v)
+							}
+							if v, ok := eventData["error_budget_burn_rate_percentage"].(float64); ok {
+								dto.ErrorBudgetBurnRatePercentage = float32(v)
+							}
+							if v, ok := eventData["error_budget_burn_rate_lookback_duration"].(float64); ok {
+								dto.ErrorBudgetBurnRateLookbackDuration = int32(v)
+							}
+							eventConfigs[j].SloEventNotificationParamsDto = dto
+
+						case nextgen.STO_EXEMPTION_ResourceTypeEnum:
+							rt := nextgen.STO_EXEMPTION_ResourceTypeEnum
+							eventConfigs[j].StoExemptionEventNotificationParamsDto = &nextgen.StoExemptionEventNotificationParamsDto{
+								Type_:            &rt,
+								ScopeIdentifiers: expandStringList(eventData["scope_identifiers"]),
+							}
+
+						default:
+							// leave typed DTOs nil; serializer will fallback to null
+						}
 					}
-				}(),
+				}
 			}
 		}
 
@@ -414,7 +467,6 @@ func expandNotificationConditions(raw []interface{}) []nextgen.NotificationCondi
 			NotificationEventConfigs: eventConfigs,
 		}
 	}
-
 	return result
 }
 
@@ -441,7 +493,6 @@ func buildCentralNotificationRule(d *schema.ResourceData, accountID string) next
 		}
 		rule.CustomNotificationTemplateRef = &templateRef
 	}
-
 	return rule
 }
 
@@ -457,23 +508,39 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 	d.Set("notification_channel_refs", notificationRuleDto.NotificationChannelRefs)
 	d.Set("created", notificationRuleDto.Created)
 	d.Set("last_modified", notificationRuleDto.LastModified)
+
 	// Convert notification_conditions
 	var conditions []map[string]interface{}
 	for _, cond := range notificationRuleDto.NotificationConditions {
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
-			// Safely read cfg.NotificationEventData.Type_
-			eventData := make(map[string]interface{})
-			if cfg.NotificationEventData != nil && cfg.NotificationEventData.Type_ != nil {
-				eventData["type"] = string(*cfg.NotificationEventData.Type_)
+			eventConfig := map[string]interface{}{
+				"notification_entity": cfg.NotificationEntity,
+				"notification_event":  cfg.NotificationEvent,
 			}
 
-			eventConfigs = append(eventConfigs, map[string]interface{}{
-				"notification_entity":     cfg.NotificationEntity,
-				"notification_event":      cfg.NotificationEvent,
-				"entity_identifiers":      cfg.EntityIdentifiers,
-				"notification_event_data": eventData,
-			})
+			// Always set entity_identifiers, even if empty array
+			eventConfig["entity_identifiers"] = cfg.EntityIdentifiers
+
+			// Handle notification event data if present
+			if len(cfg.NotificationEventData) > 0 {
+				var eventData map[string]interface{}
+				if err := json.Unmarshal(cfg.NotificationEventData, &eventData); err == nil && eventData != nil {
+					// Ensure scope_identifiers is always present as an array, even if empty
+					if _, exists := eventData["scope_identifiers"]; !exists {
+						eventData["scope_identifiers"] = []interface{}{}
+					}
+					eventConfig["notification_event_data"] = []interface{}{eventData}
+				} else {
+					// If unmarshaling failed or eventData is nil, set empty structure
+					eventConfig["notification_event_data"] = []interface{}{}
+				}
+			} else {
+				// Set empty notification_event_data structure if not present
+				eventConfig["notification_event_data"] = []interface{}{}
+			}
+			// Append the eventConfig to eventConfigs slice
+			eventConfigs = append(eventConfigs, eventConfig)
 		}
 
 		conditions = append(conditions, map[string]interface{}{

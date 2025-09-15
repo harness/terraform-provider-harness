@@ -1,17 +1,113 @@
 package central_notification_rule_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"testing"
+
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"net/http"
-	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
+
+func TestNotificationEventDataHandling(t *testing.T) {
+	// Test the JSON handling with the response structure provided
+	responseJSON := `{
+		"identifier": "testing",
+		"account": "kmpySmUISimoRrJL6NL73w",
+		"org": "default",
+		"project": "proj0",
+		"status": "ENABLED",
+		"last_modified": 1757839756852,
+		"created": 1757839756852,
+		"name": "testing",
+		"notification_conditions": [
+			{
+				"condition_name": "all",
+				"notification_event_configs": [
+					{
+						"notification_entity": "PIPELINE",
+						"notification_event_data": {
+							"type": "PIPELINE",
+							"scope_identifiers": []
+						},
+						"notification_event": "PIPELINE_START",
+						"entity_identifiers": []
+					},
+					{
+						"notification_entity": "PIPELINE",
+						"notification_event_data": {
+							"type": "PIPELINE",
+							"scope_identifiers": []
+						},
+						"notification_event": "PIPELINE_FAILED",
+						"entity_identifiers": []
+					}
+				]
+			}
+		],
+		"notification_channel_refs": [
+			"channelExpression12323e"
+		],
+		"custom_notification_template_ref": null
+	}`
+
+	var response nextgen.NotificationRuleDto
+	err := json.Unmarshal([]byte(responseJSON), &response)
+	if err != nil {
+		t.Fatalf("Failed to unmarshal response JSON: %v", err)
+	}
+
+	// Verify the structure is correctly parsed
+	if response.Identifier != "testing" {
+		t.Errorf("Expected identifier 'testing', got '%s'", response.Identifier)
+	}
+
+	if len(response.NotificationConditions) != 1 {
+		t.Errorf("Expected 1 notification condition, got %d", len(response.NotificationConditions))
+	}
+
+	condition := response.NotificationConditions[0]
+	if condition.ConditionName != "all" {
+		t.Errorf("Expected condition name 'all', got '%s'", condition.ConditionName)
+	}
+
+	if len(condition.NotificationEventConfigs) != 2 {
+		t.Errorf("Expected 2 notification event configs, got %d", len(condition.NotificationEventConfigs))
+	}
+
+	// Test that empty arrays are handled correctly
+	eventConfig := condition.NotificationEventConfigs[0]
+	if len(eventConfig.EntityIdentifiers) != 0 {
+		t.Errorf("Expected empty entity_identifiers array, got %v", eventConfig.EntityIdentifiers)
+	}
+
+	// Test notification event data parsing
+	if len(eventConfig.NotificationEventData) > 0 {
+		var eventData map[string]interface{}
+		err := json.Unmarshal(eventConfig.NotificationEventData, &eventData)
+		if err != nil {
+			t.Errorf("Failed to unmarshal notification event data: %v", err)
+		}
+
+		if eventData["type"] != "PIPELINE" {
+			t.Errorf("Expected type 'PIPELINE', got '%s'", eventData["type"])
+		}
+
+		scopeIdentifiers, ok := eventData["scope_identifiers"].([]interface{})
+		if !ok {
+			t.Errorf("Expected scope_identifiers to be an array")
+		}
+		if len(scopeIdentifiers) != 0 {
+			t.Errorf("Expected empty scope_identifiers array, got %v", scopeIdentifiers)
+		}
+	}
+}
 
 func TestAccResourceCentralNotificationRule(t *testing.T) {
 	name := t.Name()
@@ -79,7 +175,7 @@ resource "harness_platform_central_notification_rule" "test" {
     notification_event_configs {
       notification_entity = "PIPELINE"
       notification_event  = "PIPELINE_FAILED"
-      notification_event_data = {
+      notification_event_data {
         type = "PIPELINE"
       }
     }

@@ -2,9 +2,10 @@ package central_notification_rule_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
-	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -83,8 +84,8 @@ func testAccDataSourceCentralNotificationRuleConfig(name, id string) string {
 		notification_event_configs {
 		  notification_entity = "PIPELINE"
 		  notification_event  = "PIPELINE_FAILED"
-		  notification_event_data = {
-			foo = "bar"
+		  notification_event_data {
+			type = "PIPELINE"
 		  }
 		}
 	  }

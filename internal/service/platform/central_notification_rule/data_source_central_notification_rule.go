@@ -91,7 +91,7 @@ func DataSourceCentralNotificationRuleService() *schema.Resource {
 										Required: true,
 									},
 									"notification_event_data": {
-										Type:     schema.TypeMap,
+										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -110,7 +110,7 @@ func DataSourceCentralNotificationRuleService() *schema.Resource {
 													Elem:     &schema.Schema{Type: schema.TypeString},
 												},
 												"frequency": {
-													Type:     schema.TypeMap,
+													Type:     schema.TypeList,
 													Optional: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
