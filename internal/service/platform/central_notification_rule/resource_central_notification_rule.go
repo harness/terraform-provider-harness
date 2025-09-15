@@ -22,6 +22,27 @@ func ResourceCentralNotificationRule() *schema.Resource {
 		UpdateContext: resourceCentralNotificationRuleUpdate,
 		DeleteContext: resourceCentralNotificationRuleDelete,
 
+		Schema:        ResourceCentralNotificationRuleV1().Schema,
+		SchemaVersion: 1, // bump this from 0 → 1
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Version: 0,
+				Type:    ResourceCentralNotificationRuleV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: upgradeCentralNotificationRuleV0toV1,
+			},
+		},
+	}
+}
+
+func ResourceCentralNotificationRuleV1() *schema.Resource {
+	return &schema.Resource{
+		Description: "Resource for creating a Harness Notification Rule",
+
+		CreateContext: resourceCentralNotificationRuleCreate,
+		ReadContext:   resourceCentralNotificationRuleRead,
+		UpdateContext: resourceCentralNotificationRuleUpdate,
+		DeleteContext: resourceCentralNotificationRuleDelete,
+
 		Schema: map[string]*schema.Schema{
 			"identifier": {
 				Type:     schema.TypeString,
@@ -194,6 +215,245 @@ func ResourceCentralNotificationRule() *schema.Resource {
 				},
 			},
 		},
+	}
+}
+
+func ResourceCentralNotificationRuleV0() *schema.Resource {
+	return &schema.Resource{
+		Description: "Resource for creating a Harness Notification Rule",
+
+		CreateContext: resourceCentralNotificationRuleCreate,
+		ReadContext:   resourceCentralNotificationRuleRead,
+		UpdateContext: resourceCentralNotificationRuleUpdate,
+		DeleteContext: resourceCentralNotificationRuleDelete,
+
+		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"org": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"project": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"account": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Account identifier associated with this notification channel.",
+			},
+			"status": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "ENABLED",
+			},
+			"notification_channel_refs": {
+				Type:     schema.TypeList,
+				Required: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+			"created": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Timestamp when the notification rule was created.",
+			},
+			"last_modified": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Timestamp when the notification rule was last modified.",
+			},
+			"notification_conditions": {
+				Type:     schema.TypeList,
+				Required: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"condition_name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"notification_event_configs": {
+							Type:     schema.TypeList,
+							Required: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"notification_entity": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"notification_event": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"entity_identifiers": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+									},
+									"notification_event_data": {
+										Type:     schema.TypeMap,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			"custom_notification_template_ref": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"template_ref": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"version_label": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"variables": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"value": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func upgradeCentralNotificationRuleV0toV1(
+	ctx context.Context,
+	rawState map[string]interface{},
+	meta interface{},
+) (map[string]interface{}, error) {
+
+	conds, ok := rawState["notification_conditions"].([]interface{})
+	if !ok {
+		// nothing to upgrade
+		return rawState, nil
+	}
+
+	for _, c := range conds {
+		cMap, ok := c.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		cfgs, ok := cMap["notification_event_configs"].([]interface{})
+		if !ok {
+			continue
+		}
+
+		for _, cfg := range cfgs {
+			cfgMap, ok := cfg.(map[string]interface{})
+			if !ok {
+				continue
+			}
+
+			// old value: map[string]string
+			oldData, ok := cfgMap["notification_event_data"].(map[string]interface{})
+			if !ok {
+				continue
+			}
+
+			// new structured block
+			newBlock := map[string]interface{}{}
+
+			// ---------- Direct fields ----------
+			if v, ok := oldData["type"]; ok {
+				newBlock["type"] = v
+			}
+
+			if v, ok := oldData["error_budget_remaining_percentage"]; ok {
+				newBlock["error_budget_remaining_percentage"] = v
+			}
+
+			if v, ok := oldData["error_budget_remaining_minutes"]; ok {
+				newBlock["error_budget_remaining_minutes"] = v
+			}
+
+			if v, ok := oldData["error_budget_burn_rate_percentage"]; ok {
+				newBlock["error_budget_burn_rate_percentage"] = v
+			}
+
+			if v, ok := oldData["error_budget_burn_rate_lookback_duration"]; ok {
+				newBlock["error_budget_burn_rate_lookback_duration"] = v
+			}
+
+			// ---------- List fields ----------
+			if v, ok := oldData["scope_identifiers"]; ok {
+				newBlock["scope_identifiers"] = toList(v)
+			}
+
+			if v, ok := oldData["delegate_group_ids"]; ok {
+				newBlock["delegate_group_ids"] = toList(v)
+			}
+
+			if v, ok := oldData["chaos_experiment_ids"]; ok {
+				newBlock["chaos_experiment_ids"] = toList(v)
+			}
+
+			// ---------- Nested object: frequency ----------
+			if v, ok := oldData["frequency"]; ok {
+				// If old was a plain string like "DAILY", wrap into new block
+				newBlock["frequency"] = []interface{}{
+					map[string]interface{}{
+						"type":  v,
+						"value": "",
+					},
+				}
+			}
+
+			// replace old map with new structured list
+			cfgMap["notification_event_data"] = []interface{}{newBlock}
+		}
+	}
+
+	return rawState, nil
+}
+
+// helper to normalize values into []interface{}
+func toList(v interface{}) []interface{} {
+	switch val := v.(type) {
+	case []interface{}:
+		return val
+	case []string:
+		out := make([]interface{}, len(val))
+		for i, s := range val {
+			out[i] = s
+		}
+		return out
+	case string:
+		return []interface{}{val}
+	default:
+		return []interface{}{}
 	}
 }
 
