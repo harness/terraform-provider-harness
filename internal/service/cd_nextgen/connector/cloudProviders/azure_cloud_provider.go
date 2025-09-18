@@ -29,18 +29,18 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Description:  "Type can either be InheritFromDelegate or ManualConfig.",
+							Description:  "Type can be InheritFromDelegate, ManualConfig or OidcAuthentication",
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"InheritFromDelegate", "ManualConfig"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"InheritFromDelegate", "ManualConfig", "OidcAuthentication"}, false),
 						},
 						"azure_manual_details": {
 							Description:   "Authenticate to Azure Cloud Provider using manual details.",
 							Type:          schema.TypeList,
 							Optional:      true,
 							MaxItems:      1,
-							ConflictsWith: []string{"credentials.0.azure_inherit_from_delegate_details"},
-							AtLeastOneOf:  []string{"credentials.0.azure_manual_details", "credentials.0.azure_inherit_from_delegate_details"},
+							ConflictsWith: []string{"credentials.0.azure_inherit_from_delegate_details", "credentials.0.azure_oidc_spec"},
+							AtLeastOneOf:  []string{"credentials.0.azure_manual_details", "credentials.0.azure_inherit_from_delegate_details", "credentials.0.azure_oidc_spec"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"application_id": {
@@ -107,8 +107,8 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 							Type:          schema.TypeList,
 							Optional:      true,
 							MaxItems:      1,
-							ConflictsWith: []string{"credentials.0.azure_manual_details"},
-							AtLeastOneOf:  []string{"credentials.0.azure_manual_details", "credentials.0.azure_inherit_from_delegate_details"},
+							ConflictsWith: []string{"credentials.0.azure_manual_details", "credentials.0.azure_oidc_spec"},
+							AtLeastOneOf:  []string{"credentials.0.azure_manual_details", "credentials.0.azure_inherit_from_delegate_details", "credentials.0.azure_oidc_spec"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"auth": {
@@ -141,6 +141,33 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 												},
 											},
 										},
+									},
+								},
+							},
+						},
+						"azure_oidc_spec": {
+							Description:   "Authenticate to Azure Cloud Provider using OIDC.",
+							Type:          schema.TypeList,
+							Optional:      true,
+							MaxItems:      1,
+							ConflictsWith: []string{"credentials.0.azure_inherit_from_delegate_details", "credentials.0.azure_manual_details"},
+							AtLeastOneOf:  []string{"credentials.0.azure_manual_details", "credentials.0.azure_inherit_from_delegate_details", "credentials.0.azure_oidc_spec"},
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"application_id": {
+										Description: "Application ID of the Azure App.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"tenant_id": {
+										Description: "The Azure Active Directory (AAD) directory ID where you created your application.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"audience": {
+										Description: "The Azure Audience.",
+										Type:        schema.TypeString,
+										Optional:    true,
 									},
 								},
 							},
@@ -300,6 +327,22 @@ func buildConnectorAzureCloudProvider(d *schema.ResourceData) *nextgen.Connector
 					}
 				}
 			}
+			if attr.(string) == nextgen.AzureCredentialTypes.OidcAuthentication.String() {
+				if attr, ok := config["azure_oidc_spec"]; ok {
+					configCredentials := attr.([]interface{})[0].(map[string]interface{})
+
+					connector.Azure.Credential.AzureOidcSpec = &nextgen.AzureOidcSpec{}
+					if attr, ok := configCredentials["application_id"]; ok {
+						connector.Azure.Credential.AzureOidcSpec.ApplicationId = attr.(string)
+					}
+					if attr, ok := configCredentials["tenant_id"]; ok {
+						connector.Azure.Credential.AzureOidcSpec.TenantId = attr.(string)
+					}
+					if attr, ok := configCredentials["audience"]; ok {
+						connector.Azure.Credential.AzureOidcSpec.Audience = attr.(string)
+					}
+				}
+			}
 		}
 	}
 
@@ -326,6 +369,7 @@ func readConnectorAzureCloudProvider(d *schema.ResourceData, connector *nextgen.
 			"type":                                connector.Azure.Credential.Type_,
 			"azure_manual_details":                readAzureManualDetails(connector),
 			"azure_inherit_from_delegate_details": readAzureInheritFromDelegateDetails(connector),
+			"azure_oidc_spec":                     readAzureOidcSpec(connector),
 		},
 	})
 	d.Set("delegate_selectors", connector.Azure.DelegateSelectors)
@@ -340,6 +384,8 @@ func readAzureInheritFromDelegateDetails(connector *nextgen.ConnectorInfo) []map
 
 	switch connector.Azure.Credential.Type_ {
 	case nextgen.AzureCredentialTypes.ManualConfig:
+		// noop
+	case nextgen.AzureCredentialTypes.OidcAuthentication:
 		// noop
 	case nextgen.AzureCredentialTypes.InheritFromDelegate:
 		spec = []map[string]interface{}{
@@ -368,6 +414,28 @@ func readAzureManualDetails(connector *nextgen.ConnectorInfo) []map[string]inter
 			},
 		}
 	case nextgen.AzureCredentialTypes.InheritFromDelegate:
+		//noop
+	case nextgen.AzureCredentialTypes.OidcAuthentication:
+		//noop
+	}
+
+	return spec
+}
+
+func readAzureOidcSpec(connector *nextgen.ConnectorInfo) []map[string]interface{} {
+	var spec []map[string]interface{}
+	switch connector.Azure.Credential.Type_ {
+	case nextgen.AzureCredentialTypes.OidcAuthentication:
+		spec = []map[string]interface{}{
+			{
+				"application_id": connector.Azure.Credential.AzureOidcSpec.ApplicationId,
+				"tenant_id":      connector.Azure.Credential.AzureOidcSpec.TenantId,
+				"audience":       connector.Azure.Credential.AzureOidcSpec.Audience,
+			},
+		}
+	case nextgen.AzureCredentialTypes.InheritFromDelegate:
+		//noop
+	case nextgen.AzureCredentialTypes.ManualConfig:
 		//noop
 	}
 
