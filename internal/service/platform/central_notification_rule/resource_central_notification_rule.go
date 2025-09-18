@@ -2,13 +2,14 @@ package central_notification_rule
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"net/http"
 )
 
 func ResourceCentralNotificationRule() *schema.Resource {
@@ -35,7 +36,7 @@ func ResourceCentralNotificationRule() *schema.Resource {
 			},
 			"project": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"account": {
 				Type:        schema.TypeString,
