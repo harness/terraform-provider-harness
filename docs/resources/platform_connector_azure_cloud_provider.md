@@ -8,7 +8,8 @@ description: |-
 
 # harness_platform_connector_azure_cloud_provider (Resource)
 
-Resource for creating an Azure Cloud Provider in Harness.
+Resource for creating an Azure Cloud Provider in Harness. 
+Note: OIDC authentication support for azure connector is behind a Feature Flag CDS_AZURE_OIDC_AUTHENTICATION. 
 
 ## Example Usage
 
