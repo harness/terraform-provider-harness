@@ -8,4 +8,9 @@ resource "harness_platform_db_instance" "test" {
   branch     = "main"
   connector  = "jdbcConnector"
   context    = "ctx"
+
+  substitute_properties = {
+    "key1" = "value1"
+    "key2" = "value2"
+  }
 }
