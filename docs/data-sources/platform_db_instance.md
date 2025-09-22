@@ -33,7 +33,6 @@ data "harness_platform_db_instance" "example" {
 
 ### Optional
 
-- `liquibase_substitute_properties` (Map of String) The properties to substitute in liquibase changelog
 - `name` (String) Name of the resource.
 
 ### Read-Only

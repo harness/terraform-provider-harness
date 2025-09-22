@@ -43,11 +43,6 @@ func ResourceDBInstance() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"liquibase_substitute_properties": {
-				Description: "The properties to substitute in liquibase changelog",
-				Type:        schema.TypeMap,
-				Optional:    true,
-			},
 		},
 	}
 
@@ -135,13 +130,12 @@ func buildDbInstance(d *schema.ResourceData) *dbops.DbInstanceIn {
 	}
 
 	return &dbops.DbInstanceIn{
-		Identifier:                    d.Get("identifier").(string),
-		Name:                          d.Get("name").(string),
-		Tags:                          helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
-		Branch:                        d.Get("branch").(string),
-		Connector:                     d.Get("connector").(string),
-		Context:                       d.Get("context").(string),
-		LiquibaseSubstituteProperties: liquibaseSubstituteProperties,
+		Identifier: d.Get("identifier").(string),
+		Name:       d.Get("name").(string),
+		Tags:       helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
+		Branch:     d.Get("branch").(string),
+		Connector:  d.Get("connector").(string),
+		Context:    d.Get("context").(string),
 	}
 }
 
@@ -153,6 +147,4 @@ func readDBInstance(d *schema.ResourceData, dbInstance *dbops.DbInstanceOut) {
 	d.Set("branch", dbInstance.Branch)
 	d.Set("connector", dbInstance.Connector)
 	d.Set("context", dbInstance.Context)
-
-	d.Set("liquibase_substitute_properties", dbInstance.LiquibaseSubstituteProperties)
 }

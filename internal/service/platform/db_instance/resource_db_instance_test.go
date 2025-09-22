@@ -72,8 +72,6 @@ func TestAccResourceDBInstanceWithLiquibaseProps(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "branch", "feature/test"),
 					resource.TestCheckResourceAttr(resourceName, "context", "test-context"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_user", "testuser"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_password", "testpass"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 				),
 			},
@@ -86,8 +84,6 @@ func TestAccResourceDBInstanceWithLiquibaseProps(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "branch", "feature/test"),
 					resource.TestCheckResourceAttr(resourceName, "context", "test-context"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_user", "testuser"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_password", "testpass"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 				),
 			},
@@ -299,10 +295,6 @@ func testAccResourceDBInstanceWithLiquibaseProps(id string, name string) string 
 			connector = harness_platform_connector_jdbc.test.id
 			schema = harness_platform_db_schema.test.id
 			context = "test-context"
-			liquibase_substitute_properties = {
-				db_user = "testuser"
-				db_password = "testpass"
-			}
 			depends_on = [harness_platform_db_schema.test]
 		}
         `, id, name)
