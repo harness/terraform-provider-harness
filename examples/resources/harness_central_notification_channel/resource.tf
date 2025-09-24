@@ -8,13 +8,13 @@ resource "harness_central_notification_channel" "email_channel" {
   # Email channel configuration
   email_config {
     recipients         = ["team@example.com", "alerts@example.com"]
-    subject           = "[ALERT] Harness Notification"
+    subject            = "[ALERT] Harness Notification"
     send_to_all_admins = false
   }
 
   # Notification preferences
   notification_method = "EMAIL"
-  enabled            = true
+  enabled             = true
 
   tags = {
     environment = "production"

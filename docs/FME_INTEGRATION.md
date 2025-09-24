@@ -117,7 +117,7 @@ provider "harness" {
 - **Base URL**: `https://api.split.io/internal/api/v2` (most resources)
 - **Flag Sets URL**: `https://api.split.io/api/v3/flag-sets` (flag sets use different API version)
 - **Authentication**: `X-API-Key` header
-- **Rate Limiting**: 2-second retry on 429 responses
+- **Rate Limiting**: 5-second retry on 429 responses
 
 ## Complete Example
 

@@ -7,9 +7,9 @@ resource "harness_default_notification_template_set" "default_set" {
 
   # Email template configuration
   email_templates {
-    type = "PIPELINE_START"
+    type    = "PIPELINE_START"
     subject = "[${var.env}] Pipeline Started: ${pipeline.name}"
-    body = <<-EOT
+    body    = <<-EOT
     <!DOCTYPE html>
     <html>
     <body>
@@ -25,7 +25,7 @@ resource "harness_default_notification_template_set" "default_set" {
 
   # Slack template configuration
   slack_templates {
-    type = "PIPELINE_SUCCESS"
+    type    = "PIPELINE_SUCCESS"
     message = "✅ *${pipeline.name}* succeeded!\n*Environment*: ${env.name}\n*Duration*: ${pipeline.duration}\n<${pipeline.execution_url}|View Details>"
   }
 
