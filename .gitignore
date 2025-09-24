@@ -42,3 +42,7 @@ terraform-provider-harness
 
 .terraform.lock.hcl
 local.sh
+terraform-provider-harness-fme-beta_0919.zip
+terraform-provider-harness-fme-beta.zip
+terraform-provider-harness-fme-beta/*
+terraform-provider-harness-fme-beta.zip

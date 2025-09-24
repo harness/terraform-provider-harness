@@ -41,6 +41,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
 	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/fme"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	gitops_filters "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/iacm"
@@ -304,6 +305,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_rule_vm":                       as_rule.DataSourceVMRule(),
 				"harness_autostopping_rule_rds":                      as_rule.DataSourceRDSRule(),
 				"harness_autostopping_rule_ecs":                      as_rule.DataSourceECSRule(),
+				"harness_fme_workspace":                              fme.DataSourceFMEWorkspace(),
+				"harness_fme_environment":                            fme.DataSourceFMEEnvironment(),
+				"harness_fme_flag_set":                               fme.DataSourceFMEFlagSet(),
+				"harness_fme_split_definition":                       fme.DataSourceFMESplitDefinition(),
+				"harness_fme_traffic_type":                           fme.DataSourceFMETrafficType(),
 				"harness_platform_file_store_file":                   cdng_file_store.DataSourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":                 cdng_file_store.DataSourceFileStoreNodeFolder(),
 				"harness_autostopping_azure_proxy":                   load_balancer.DataSourceAzureProxy(),
@@ -392,6 +398,16 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_feature_flag":                      feature_flag.ResourceFeatureFlag(),
 				"harness_platform_feature_flag_target_group":         feature_flag_target_group.ResourceFeatureFlagTargetGroup(),
 				"harness_platform_feature_flag_target":               feature_flag_target.ResourceFeatureFlagTarget(),
+				"harness_fme_environment":                           fme.ResourceFMEEnvironment(),
+				"harness_fme_environment_segment_keys":               fme.ResourceFMEEnvironmentSegmentKeys(),
+				"harness_fme_api_key":                                fme.ResourceFMEApiKey(),
+				"harness_fme_split":                                  fme.ResourceFMESplit(),
+				"harness_fme_split_definition":                       fme.ResourceFMESplitDefinition(),
+				"harness_fme_segment":                                fme.ResourceFMESegment(),
+				"harness_fme_segment_environment_association":        fme.ResourceFMESegmentEnvironmentAssociation(),
+				"harness_fme_traffic_type":                           fme.ResourceFMETrafficType(),
+				"harness_fme_traffic_type_attribute":                 fme.ResourceFMETrafficTypeAttribute(),
+				"harness_fme_flag_set":                               fme.ResourceFMEFlagSet(),
 				"harness_platform_service_overrides_v2":              cdng_service_overrides_v2.ResourceServiceOverrides(),
 				"harness_platform_provider":                          pl_provider.ResourceProvider(),
 				"harness_platform_overrides":                         cdng_overrides.ResourceOverrides(),
@@ -637,6 +653,21 @@ func getHarClient(d *schema.ResourceData, version string) *har.APIClient {
 	return client
 }
 
+func getFMEClient(d *schema.ResourceData, version string) *fme.FMEConfig {
+	apiKey := d.Get("platform_api_key").(string)
+	if apiKey == "" {
+		return nil
+	}
+
+	client, err := fme.NewFMEConfig(apiKey)
+	if err != nil {
+		log.Printf("[WARN] error creating FME client: %s", err)
+		return nil
+	}
+
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
@@ -651,6 +682,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			ChaosClient: getChaosClient(d, version),
 			SDClient:    getServiceDiscoveryClient(d, version),
 			HARClient:   getHarClient(d, version),
+			FMEClient:   getFMEClient(d, version),
 		}, nil
 	}
 }

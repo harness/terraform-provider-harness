@@ -15,6 +15,7 @@ The Terraform provider for Harness allows you to manage resources in Harness CD 
 - **GitOps Integration**: Configure GitOps applications, repositories, and clusters
 - **Policy Management**: Define and enforce governance policies and policy sets
 - **Feature Flag Management**: Configure and manage feature flags for your applications
+- **FME Integration**: Manage FME feature flags, environments, and Segments through the Harness provider
 - **AutoStopping Rules**: Set up cost optimization with AutoStopping rules for various cloud providers
 
 ## Documentation

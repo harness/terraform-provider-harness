@@ -50,6 +50,18 @@ func TestAccPreCheck(t *testing.T) {
 	TestAccConfigureProvider()
 }
 
+func TestAccPreCheckFME(t *testing.T) {
+	TestAccConfigureProvider()
+
+	if helpers.EnvVars.PlatformApiKey.Get() == "" {
+		t.Fatal("HARNESS_PLATFORM_API_KEY must be set for FME acceptance tests")
+	}
+}
+
+func TestAccGetSession() *internal.Session {
+	return TestAccProvider.Meta().(*internal.Session)
+}
+
 var TestAccProvider *schema.Provider
 var TestAccProviderConfigure sync.Once
 

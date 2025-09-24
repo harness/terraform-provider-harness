@@ -25,6 +25,7 @@ type Session struct {
 	ChaosClient *chaos.APIClient
 	SDClient    *svcdiscovery.APIClient
 	HARClient   *har.APIClient
+	FMEClient   interface{}
 }
 
 func (s *Session) GetPlatformClient() (*nextgen.APIClient, context.Context) {
