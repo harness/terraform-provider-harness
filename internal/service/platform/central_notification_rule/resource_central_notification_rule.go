@@ -36,7 +36,7 @@ func ResourceCentralNotificationRule() *schema.Resource {
 			},
 			"project": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"account": {
 				Type:        schema.TypeString,
@@ -439,9 +439,9 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 		for _, cfg := range cond.NotificationEventConfigs {
 			// Safely read cfg.NotificationEventData.Type_
 			eventData := make(map[string]interface{})
-			//if cfg.NotificationEventData != nil && cfg.NotificationEventData.Type_ != nil {
-			//	eventData["type"] = string(*cfg.NotificationEventData.Type_)
-			//}
+			// if cfg.NotificationEventData != nil && cfg.NotificationEventData.Type_ != nil {
+			// 	eventData["type"] = string(*cfg.NotificationEventData.Type_)
+			// }
 
 			eventConfigs = append(eventConfigs, map[string]interface{}{
 				"notification_entity":     cfg.NotificationEntity,
