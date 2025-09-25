@@ -2,6 +2,7 @@ package central_notification_rule
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -14,12 +15,12 @@ import (
 
 func ResourcePipelineCentralNotificationRule() *schema.Resource {
 	return &schema.Resource{
-		Description: "Resource for creating a Harness Notification Rule for Pipeline",
-
-		CreateContext: resourcePipelineCentralNotificationRuleCreate,
-		ReadContext:   resourcePipelineCentralNotificationRuleRead,
-		UpdateContext: resourcePipelineCentralNotificationRuleUpdate,
-		DeleteContext: resourcePipelineCentralNotificationRuleDelete,
+		Description:        "Resource for creating a Harness Notification Rule for Pipeline",
+		DeprecationMessage: "This data source is deprecated. Please use resource-type specific central notification rule data sources.",
+		CreateContext:      resourcePipelineCentralNotificationRuleCreate,
+		ReadContext:        resourcePipelineCentralNotificationRuleRead,
+		UpdateContext:      resourcePipelineCentralNotificationRuleUpdate,
+		DeleteContext:      resourcePipelineCentralNotificationRuleDelete,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -93,6 +94,7 @@ func ResourcePipelineCentralNotificationRule() *schema.Resource {
 									"notification_event_data": {
 										Type:     schema.TypeList,
 										Optional: true,
+										MaxItems: 1, // TODO: remove this once we support multiple custom notification templates
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"type": {
@@ -116,7 +118,7 @@ func ResourcePipelineCentralNotificationRule() *schema.Resource {
 			"custom_notification_template_ref": {
 				Type:     schema.TypeList,
 				Optional: true,
-				MaxItems: 1,
+				MaxItems: 1, // TODO: remove this once we support multiple custom notification templates
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"template_ref": {
@@ -189,7 +191,7 @@ func resourcePipelineCentralNotificationRuleCreate(ctx context.Context, d *schem
 	}
 
 	d.SetId(resp.Identifier)
-	return readCentralNotificationRule(accountID, d, resp)
+	return readPipelineCentralNotificationRule(accountID, d, resp)
 }
 
 func resourcePipelineCentralNotificationRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -223,7 +225,9 @@ func resourcePipelineCentralNotificationRuleRead(ctx context.Context, d *schema.
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readCentralNotificationRule(accountID, d, resp)
+	fmt.Println("resp", resp)
+
+	readPipelineCentralNotificationRule(accountID, d, resp)
 
 	return nil
 }
@@ -235,7 +239,7 @@ func resourcePipelineCentralNotificationRuleUpdate(ctx context.Context, d *schem
 	identifier := d.Get("identifier").(string)
 	scope := getScope(d)
 
-	rule := buildCentralNotificationRule(d, accountID)
+	rule := buildPipelineCentralNotificationRule(d)
 
 	var resp nextgen.NotificationRuleDto
 	var httpResp *http.Response
@@ -265,7 +269,7 @@ func resourcePipelineCentralNotificationRuleUpdate(ctx context.Context, d *schem
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	return readCentralNotificationRule(accountID, d, resp)
+	return readPipelineCentralNotificationRule(accountID, d, resp)
 }
 
 func resourcePipelineCentralNotificationRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -298,7 +302,7 @@ func resourcePipelineCentralNotificationRuleDelete(ctx context.Context, d *schem
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	return readCentralNotificationRule(accountID, d, resp)
+	return readPipelineCentralNotificationRule(accountID, d, resp)
 }
 
 func expandPipelineStringList(raw interface{}) []string {
@@ -336,37 +340,29 @@ func expandPipelineNotificationConditions(raw []interface{}) []nextgen.Notificat
 
 		for j, ec := range eventConfigsRaw {
 			ecMap := ec.(map[string]interface{})
-			eventConfigs[j] = nextgen.NotificationEventConfigDto{
+			evtCfg := nextgen.NotificationEventConfigDto{
 				NotificationEntity: ecMap["notification_entity"].(string),
 				NotificationEvent:  ecMap["notification_event"].(string),
-				EntityIdentifiers:  expandStringList(ecMap["entity_identifiers"]),
-				NotificationEventData: func() *nextgen.NotificationEventParamsDto {
-					rawEventData, ok := ecMap["notification_event_data"]
-					if !ok || rawEventData == nil {
-						return nil
-					}
-
-					eventDataMap, ok := rawEventData.(map[string]interface{})
-					if !ok {
-						return nil
-					}
-
-					var typePtr *nextgen.ResourceTypeEnum
-					if typeVal, ok := eventDataMap["type"].(string); ok && typeVal != "" {
-						enumVal := nextgen.ResourceTypeEnum(typeVal)
-						typePtr = &enumVal
-					}
-					_ = expandPipelineStringList(eventDataMap["scope_identifiers"])
-
-					if typePtr == nil {
-						return nil
-					}
-
-					return &nextgen.NotificationEventParamsDto{
-						Type_: typePtr,
-					}
-				}(),
+				EntityIdentifiers:  expandPipelineStringList(ecMap["entity_identifiers"]),
 			}
+			if rawEventData, ok := ecMap["notification_event_data"]; ok && rawEventData != nil {
+				if eventDataList, ok := rawEventData.([]interface{}); ok && len(eventDataList) > 0 {
+					eventDataMap, _ := eventDataList[0].(map[string]interface{})
+					if typeStr, ok := eventDataMap["type"].(string); ok && typeStr != "" {
+						t := nextgen.ResourceTypeEnum(typeStr)
+						switch t {
+						case nextgen.PIPELINE_ResourceTypeEnum:
+							evtCfg.PipelineEventNotificationParamsDto = &nextgen.PipelineEventNotificationParamsDto{
+								Type_:            &t,
+								ScopeIdentifiers: expandPipelineStringList(eventDataMap["scope_identifiers"]),
+							}
+						default:
+							panic(fmt.Sprintf("unsupported resource type: %s", t))
+						}
+					}
+				}
+			}
+			eventConfigs[j] = evtCfg
 		}
 
 		result[i] = nextgen.NotificationConditionDto{
@@ -388,7 +384,7 @@ func buildPipelineCentralNotificationRule(d *schema.ResourceData) nextgen.Notifi
 			s := nextgen.Status(d.Get("status").(string))
 			return &s
 		}(),
-		NotificationChannelRefs: expandStringList(d.Get("notification_channel_refs")),
+		NotificationChannelRefs: expandPipelineStringList(d.Get("notification_channel_refs")),
 		NotificationConditions:  expandPipelineNotificationConditions(d.Get("notification_conditions").([]interface{})),
 	}
 
@@ -397,7 +393,7 @@ func buildPipelineCentralNotificationRule(d *schema.ResourceData) nextgen.Notifi
 		templateRef := nextgen.CustomNotificationTemplateDto{
 			TemplateRef:  ref["template_ref"].(string),
 			VersionLabel: ref["version_label"].(string),
-			Variables:    expandNotificationTemplateVariables(ref["variables"].([]interface{})),
+			Variables:    expandPipelineNotificationTemplateVariables(ref["variables"].([]interface{})),
 		}
 		rule.CustomNotificationTemplateRef = &templateRef
 	}
@@ -407,10 +403,15 @@ func buildPipelineCentralNotificationRule(d *schema.ResourceData) nextgen.Notifi
 
 func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.ResourceData, notificationRuleDto nextgen.NotificationRuleDto) diag.Diagnostics {
 	// Implement read logic as needed
+	fmt.Println("notificationRuleDto", notificationRuleDto)
 	d.SetId(notificationRuleDto.Identifier)
-	d.Set("org", notificationRuleDto.Org)
+	if notificationRuleDto.Org != "" {
+		d.Set("org", notificationRuleDto.Org)
+	}
+	if notificationRuleDto.Project != "" {
+		d.Set("project", notificationRuleDto.Project)
+	}
 	d.Set("account", accountIdentifier)
-	d.Set("project", notificationRuleDto.Project)
 	d.Set("identifier", notificationRuleDto.Identifier)
 	d.Set("name", notificationRuleDto.Name)
 	d.Set("status", notificationRuleDto.Status)
@@ -422,17 +423,23 @@ func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.Res
 	for _, cond := range notificationRuleDto.NotificationConditions {
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
+			eventDataList := []interface{}{}
 			// Safely read cfg.NotificationEventData.Type_
-			eventData := make(map[string]interface{})
-			if cfg.NotificationEventData != nil && cfg.NotificationEventData.Type_ != nil {
-				eventData["type"] = string(*cfg.NotificationEventData.Type_)
+			if cfg.PipelineEventNotificationParamsDto != nil && cfg.PipelineEventNotificationParamsDto.Type_ != nil {
+				eventData := make(map[string]interface{})
+
+				eventData["type"] = string(*cfg.PipelineEventNotificationParamsDto.Type_)
+				eventData["scope_identifiers"] = cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers
+				eventDataList = []interface{}{eventData}
+			} else {
+				panic(fmt.Sprintf("unsupported notification event data in read: %+v", cfg))
 			}
 
 			eventConfigs = append(eventConfigs, map[string]interface{}{
 				"notification_entity":     cfg.NotificationEntity,
 				"notification_event":      cfg.NotificationEvent,
 				"entity_identifiers":      cfg.EntityIdentifiers,
-				"notification_event_data": eventData,
+				"notification_event_data": eventDataList,
 			})
 		}
 

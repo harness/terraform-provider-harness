@@ -2,23 +2,24 @@ package central_notification_rule
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"net/http"
 )
 
 func ResourceCentralNotificationRule() *schema.Resource {
 	return &schema.Resource{
-		Description: "Resource for creating a Harness Notification Rule",
-
-		CreateContext: resourceCentralNotificationRuleCreate,
-		ReadContext:   resourceCentralNotificationRuleRead,
-		UpdateContext: resourceCentralNotificationRuleUpdate,
-		DeleteContext: resourceCentralNotificationRuleDelete,
+		Description:        "Resource for creating a Harness Notification Rule",
+		DeprecationMessage: "This resource is deprecated. Please migrate to resource-type specific central notification rule resources (e.g., pipeline, delegate, chaos_experiment, service_level_objective, sto_exemption).",
+		CreateContext:      resourceCentralNotificationRuleCreate,
+		ReadContext:        resourceCentralNotificationRuleRead,
+		UpdateContext:      resourceCentralNotificationRuleUpdate,
+		DeleteContext:      resourceCentralNotificationRuleDelete,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -323,36 +324,59 @@ func expandNotificationConditions(raw []interface{}) []nextgen.NotificationCondi
 
 		for j, ec := range eventConfigsRaw {
 			ecMap := ec.(map[string]interface{})
-			eventConfigs[j] = nextgen.NotificationEventConfigDto{
+			evtCfg := nextgen.NotificationEventConfigDto{
 				NotificationEntity: ecMap["notification_entity"].(string),
 				NotificationEvent:  ecMap["notification_event"].(string),
 				EntityIdentifiers:  expandStringList(ecMap["entity_identifiers"]),
-				NotificationEventData: func() *nextgen.NotificationEventParamsDto {
-					rawEventData, ok := ecMap["notification_event_data"]
-					if !ok || rawEventData == nil {
-						return nil
-					}
-
-					eventDataMap, ok := rawEventData.(map[string]interface{})
-					if !ok {
-						return nil
-					}
-
-					var typePtr *nextgen.ResourceTypeEnum
-					if typeVal, ok := eventDataMap["type"].(string); ok && typeVal != "" {
-						enumVal := nextgen.ResourceTypeEnum(typeVal)
-						typePtr = &enumVal
-					}
-
-					if typePtr == nil {
-						return nil
-					}
-
-					return &nextgen.NotificationEventParamsDto{
-						Type_: typePtr,
-					}
-				}(),
 			}
+			if rawEventData, ok := ecMap["notification_event_data"]; ok && rawEventData != nil {
+				if eventDataList, ok := rawEventData.([]interface{}); ok && len(eventDataList) > 0 {
+					eventDataMap, _ := eventDataList[0].(map[string]interface{})
+					if typeStr, ok := eventDataMap["type"].(string); ok && typeStr != "" {
+						t := nextgen.ResourceTypeEnum(typeStr)
+						switch t {
+						case nextgen.PIPELINE_ResourceTypeEnum:
+							evtCfg.PipelineEventNotificationParamsDto = &nextgen.PipelineEventNotificationParamsDto{
+								Type_:            &t,
+								ScopeIdentifiers: expandStringList(eventDataMap["scope_identifiers"]),
+							}
+						case nextgen.CHAOS_EXPERIMENT_ResourceTypeEnum:
+							evtCfg.ChaosExperimentEventNotificationParamsDto = &nextgen.ChaosExperimentEventNotificationParamsDto{
+								Type_: &t,
+							}
+						case nextgen.SERVICE_LEVEL_OBJECTIVE_ResourceTypeEnum:
+							dto := nextgen.SloEventNotificationParamsDto{
+								Type_:                               &t,
+								ErrorBudgetRemainingPercentage:      float32(getFloat(eventDataMap["error_budget_remaining_percentage"])),
+								ErrorBudgetRemainingMinutes:         int32(getInt(eventDataMap["error_budget_remaining_minutes"])),
+								ErrorBudgetBurnRatePercentage:       float32(getFloat(eventDataMap["error_budget_burn_rate_percentage"])),
+								ErrorBudgetBurnRateLookbackDuration: int32(getInt(eventDataMap["error_budget_burn_rate_lookback_duration"])),
+							}
+							evtCfg.SloEventNotificationParamsDto = &dto
+						case nextgen.STO_EXEMPTION_ResourceTypeEnum:
+							evtCfg.StoExemptionEventNotificationParamsDto = &nextgen.StoExemptionEventNotificationParamsDto{
+								Type_:            &t,
+								ScopeIdentifiers: expandStringList(eventDataMap["scope_identifiers"]),
+							}
+						case nextgen.DELEGATE_ResourceTypeEnum:
+							var freq *nextgen.FrequencyDto
+							if fRaw, ok := eventDataMap["frequency"].([]interface{}); ok && len(fRaw) > 0 {
+								if fMap, ok := fRaw[0].(map[string]interface{}); ok {
+									freq = &nextgen.FrequencyDto{
+										Key:   getString(fMap["key"]),
+										Value: getString(fMap["value"]),
+									}
+								}
+							}
+							evtCfg.DelegateEventNotificationParamsDto = &nextgen.DelegateEventNotificationParamsDto{
+								Type_:     &t,
+								Frequency: freq,
+							}
+						}
+					}
+				}
+			}
+			eventConfigs[j] = evtCfg
 		}
 
 		result[i] = nextgen.NotificationConditionDto{
@@ -395,13 +419,8 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 	// Implement read logic as needed
 	d.SetId(notificationRuleDto.Identifier)
 	d.Set("account", accountIdentifier)
-	if notificationRuleDto.Org != "" {
-		d.Set("org", notificationRuleDto.Org)
-	}
-
-	if notificationRuleDto.Project != "" {
-		d.Set("project", notificationRuleDto.Project)
-	}
+	d.Set("org", notificationRuleDto.Org)
+	d.Set("project", notificationRuleDto.Project)
 	d.Set("identifier", notificationRuleDto.Identifier)
 	d.Set("name", notificationRuleDto.Name)
 	d.Set("status", notificationRuleDto.Status)
@@ -415,9 +434,9 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 		for _, cfg := range cond.NotificationEventConfigs {
 			// Safely read cfg.NotificationEventData.Type_
 			eventData := make(map[string]interface{})
-			if cfg.NotificationEventData != nil && cfg.NotificationEventData.Type_ != nil {
-				eventData["type"] = string(*cfg.NotificationEventData.Type_)
-			}
+			// if cfg.NotificationEventData != nil && cfg.NotificationEventData.Type_ != nil {
+			// 	eventData["type"] = string(*cfg.NotificationEventData.Type_)
+			// }
 
 			eventConfigs = append(eventConfigs, map[string]interface{}{
 				"notification_entity":     cfg.NotificationEntity,
@@ -456,6 +475,42 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 	}
 
 	return nil
+}
+
+func getString(v interface{}) string {
+	if v == nil {
+		return ""
+	}
+	if s, ok := v.(string); ok {
+		return s
+	}
+	return ""
+}
+
+func getInt(v interface{}) int {
+	if v == nil {
+		return 0
+	}
+	if i, ok := v.(int); ok {
+		return i
+	}
+	if f, ok := v.(float64); ok {
+		return int(f)
+	}
+	return 0
+}
+
+func getFloat(v interface{}) float64 {
+	if v == nil {
+		return 0
+	}
+	if f, ok := v.(float64); ok {
+		return f
+	}
+	if i, ok := v.(int); ok {
+		return float64(i)
+	}
+	return 0
 }
 
 type Scope struct {
