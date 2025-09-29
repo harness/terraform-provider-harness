@@ -36,7 +36,7 @@ func ResourceCentralNotificationRule() *schema.Resource {
 			},
 			"project": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"account": {
 				Type:        schema.TypeString,
