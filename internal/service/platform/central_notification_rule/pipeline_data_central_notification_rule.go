@@ -8,9 +8,7 @@ import (
 func DataSourcePipelineCentralNotificationRuleService() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Notification Rule.",
-
 		ReadContext: resourcePipelineCentralNotificationRuleRead,
-
 		Schema: map[string]*schema.Schema{
 			"org": {
 				Description: "Identifier of the organization in which the Notification Rule is configured.",

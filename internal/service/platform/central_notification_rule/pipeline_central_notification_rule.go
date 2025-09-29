@@ -15,12 +15,11 @@ import (
 
 func ResourcePipelineCentralNotificationRule() *schema.Resource {
 	return &schema.Resource{
-		Description:        "Resource for creating a Harness Notification Rule for Pipeline",
-		DeprecationMessage: "This data source is deprecated. Please use resource-type specific central notification rule data sources.",
-		CreateContext:      resourcePipelineCentralNotificationRuleCreate,
-		ReadContext:        resourcePipelineCentralNotificationRuleRead,
-		UpdateContext:      resourcePipelineCentralNotificationRuleUpdate,
-		DeleteContext:      resourcePipelineCentralNotificationRuleDelete,
+		Description:   "Resource for creating a Harness Notification Rule for Pipeline",
+		CreateContext: resourcePipelineCentralNotificationRuleCreate,
+		ReadContext:   resourcePipelineCentralNotificationRuleRead,
+		UpdateContext: resourcePipelineCentralNotificationRuleUpdate,
+		DeleteContext: resourcePipelineCentralNotificationRuleDelete,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
