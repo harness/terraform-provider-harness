@@ -1,4 +1,4 @@
-resource "harness_platform_central_notification_rule" "example" {
+resource "harness_platform_pipeline_central_notification_rule" "example" {
   identifier                = "identifier"
   name                      = "name"
   status                    = "ENABLED"
@@ -13,7 +13,7 @@ resource "harness_platform_central_notification_rule" "example" {
       notification_entity = "PIPELINE"
       notification_event  = "PIPELINE_START"
 
-      notification_event_data = {
+      notification_event_data {
         type              = "PIPELINE"
         scope_identifiers = ["scope_identifier"]
       }
