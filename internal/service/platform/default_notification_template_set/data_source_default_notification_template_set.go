@@ -7,6 +7,16 @@ func DataDefaultNotificationTemplateSet() *schema.Resource {
 		Description: "Data source for retrieving a Default Notification Template Set.",
 		ReadContext: resourceDefaultNotificationTemplateSetRead,
 		Schema: map[string]*schema.Schema{
+			"org": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Organization identifier",
+			},
+			"project": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Project identifier",
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
