@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceCentralNotificationChannel(t *testing.T) {
+func TestAccDataSourceCentralNotificationChannel_email(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	resourceName := "data.harness_platform_central_notification_channel.test"
@@ -53,7 +53,7 @@ func TestAccDataSourceCentralNotificationChannel_slack(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "SLACK"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
-					resource.TestCheckResourceAttr(resourceName, "channel.0.webhook_url", "https://hooks.slack.com/services/test"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.slack_webhook_urls.0", "https://hooks.slack.com/services/test"),
 				),
 			},
 		},
@@ -78,7 +78,7 @@ func TestAccDataSourceCentralNotificationChannel_msteams(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "MSTEAMS"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
-					resource.TestCheckResourceAttr(resourceName, "channel.0.webhook_url", "https://outlook.office.com/webhook/test"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.ms_team_keys.0", "https://outlook.office.com/webhook/test"),
 				),
 			},
 		},
@@ -103,7 +103,7 @@ func TestAccDataSourceCentralNotificationChannel_pagerduty(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "PAGERDUTY"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
-					resource.TestCheckResourceAttr(resourceName, "channel.0.integration_key", "test-integration-key"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.pager_duty_integration_keys.0", "test-integration-key"),
 				),
 			},
 		},
@@ -128,7 +128,7 @@ func TestAccDataSourceCentralNotificationChannel_webhook(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "WEBHOOK"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
-					resource.TestCheckResourceAttr(resourceName, "channel.0.webhook_url", "https://webhook.example.com/test"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.webhook_urls.0", "https://webhook.example.com/test"),
 				),
 			},
 		},
@@ -205,7 +205,7 @@ func testAccDataSourceCentralNotificationChannelSlack(id string, name string) st
 			 status                    = "ENABLED"
 			
 			 channel {
-			   webhook_url = "https://hooks.slack.com/services/test"
+			   slack_webhook_urls = ["https://hooks.slack.com/services/test"]
 			 }
 		}
 
@@ -248,7 +248,7 @@ func testAccDataSourceCentralNotificationChannelMSTeams(id string, name string) 
 			 status                    = "ENABLED"
 			
 			 channel {
-			   webhook_url = "https://outlook.office.com/webhook/test"
+			   ms_team_keys = ["https://outlook.office.com/webhook/test"]
 			 }
 		}
 
@@ -291,7 +291,7 @@ func testAccDataSourceCentralNotificationChannelPagerDuty(id string, name string
 			 status                    = "ENABLED"
 			
 			 channel {
-			   integration_key = "test-integration-key"
+			   pager_duty_integration_keys = ["test-integration-key"]
 			 }
 		}
 
@@ -334,7 +334,7 @@ func testAccDataSourceCentralNotificationChannelWebhook(id string, name string) 
 			 status                    = "ENABLED"
 			
 			 channel {
-			   webhook_url = "https://webhook.example.com/test"
+			   webhook_urls = ["https://webhook.example.com/test"]
 			 }
 		}
 
