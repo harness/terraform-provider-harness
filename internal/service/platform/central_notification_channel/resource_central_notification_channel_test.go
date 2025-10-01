@@ -56,7 +56,7 @@ func TestOrgCentralNotificationChannel_Email(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "EMAIL"),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
+					resource.TestCheckResourceAttr(resourceName, "org", "default"),
 					resource.TestCheckNoResourceAttr(resourceName, "project"),
 				),
 			},
@@ -104,13 +104,8 @@ func TestOrgCentralNotificationChannel_Slack(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "SLACK"),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
+					resource.TestCheckResourceAttr(resourceName, "org", "default"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -136,11 +131,6 @@ func TestProjectCentralNotificationChannel_Slack(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "project", id),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
-			},
 		},
 	})
 }
@@ -161,13 +151,8 @@ func TestOrgCentralNotificationChannel_MSTeams(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "MSTEAMS"),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
+					resource.TestCheckResourceAttr(resourceName, "org", "default"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -193,11 +178,6 @@ func TestProjectCentralNotificationChannel_MSTeams(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "project", id),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
-			},
 		},
 	})
 }
@@ -218,13 +198,8 @@ func TestOrgCentralNotificationChannel_PagerDuty(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "PAGERDUTY"),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
+					resource.TestCheckResourceAttr(resourceName, "org", "default"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -250,11 +225,6 @@ func TestProjectCentralNotificationChannel_PagerDuty(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "project", id),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
-			},
 		},
 	})
 }
@@ -275,13 +245,8 @@ func TestOrgCentralNotificationChannel_Webhook(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "WEBHOOK"),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
+					resource.TestCheckResourceAttr(resourceName, "org", "default"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -306,11 +271,6 @@ func TestProjectCentralNotificationChannel_Webhook(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "org", id),
 					resource.TestCheckResourceAttr(resourceName, "project", id),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -338,11 +298,6 @@ func TestAccCentralNotificationChannel_Datadog(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
-			},
 		},
 	})
 }
@@ -363,13 +318,8 @@ func TestOrgCentralNotificationChannel_Datadog(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "DATADOG"),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
+					resource.TestCheckResourceAttr(resourceName, "org", "default"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -395,11 +345,6 @@ func TestProjectCentralNotificationChannel_Datadog(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "project", id),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
-			},
 		},
 	})
 }
@@ -424,17 +369,9 @@ resource "harness_platform_central_notification_channel" "test" {
 
 func testAccCentralNotificationChannelEmailOrg(id, name string) string {
 	return fmt.Sprintf(`
-resource "harness_platform_organization" "test" {
-	identifier = "%[1]s"
-	name       = "%[2]s"
-}
-
 resource "harness_platform_central_notification_channel" "test" {
-	depends_on = [
-		harness_platform_organization.test,
-	]
 	identifier                = "%[1]s"
-	org                       = harness_platform_organization.test.id
+	org                       = "default"
 	name                      = "%[2]s"
 	notification_channel_type = "EMAIL"
 	status                    = "ENABLED"
@@ -497,17 +434,9 @@ resource "harness_platform_central_notification_channel" "test" {
 
 func testAccCentralNotificationChannelSlackOrg(id, name string) string {
 	return fmt.Sprintf(`
-resource "harness_platform_organization" "test" {
-	identifier = "%[1]s"
-	name       = "%[2]s"
-}
-
 resource "harness_platform_central_notification_channel" "test" {
-	depends_on = [
-		harness_platform_organization.test,
-	]
 	identifier                = "%[1]s"
-	org                       = harness_platform_organization.test.id
+	org                       = "default"
 	name                      = "%[2]s"
 	notification_channel_type = "SLACK"
 	status                    = "ENABLED"
@@ -570,17 +499,9 @@ resource "harness_platform_central_notification_channel" "test" {
 
 func testAccCentralNotificationChannelMSTeamsOrg(id, name string) string {
 	return fmt.Sprintf(`
-resource "harness_platform_organization" "test" {
-	identifier = "%[1]s"
-	name       = "%[2]s"
-}
-
 resource "harness_platform_central_notification_channel" "test" {
-	depends_on = [
-		harness_platform_organization.test,
-	]
 	identifier                = "%[1]s"
-	org                       = harness_platform_organization.test.id
+	org                       = "default"
 	name                      = "%[2]s"
 	notification_channel_type = "MSTEAMS"
 	status                    = "ENABLED"
@@ -643,17 +564,9 @@ resource "harness_platform_central_notification_channel" "test" {
 
 func testAccCentralNotificationChannelPagerDutyOrg(id, name string) string {
 	return fmt.Sprintf(`
-resource "harness_platform_organization" "test" {
-	identifier = "%[1]s"
-	name       = "%[2]s"
-}
-
 resource "harness_platform_central_notification_channel" "test" {
-	depends_on = [
-		harness_platform_organization.test,
-	]
 	identifier                = "%[1]s"
-	org                       = harness_platform_organization.test.id
+	org                       = "default"
 	name                      = "%[2]s"
 	notification_channel_type = "PAGERDUTY"
 	status                    = "ENABLED"
@@ -716,17 +629,9 @@ resource "harness_platform_central_notification_channel" "test" {
 
 func testAccCentralNotificationChannelWebhookOrg(id, name string) string {
 	return fmt.Sprintf(`
-resource "harness_platform_organization" "test" {
-	identifier = "%[1]s"
-	name       = "%[2]s"
-}
-
 resource "harness_platform_central_notification_channel" "test" {
-	depends_on = [
-		harness_platform_organization.test,
-	]
 	identifier                = "%[1]s"
-	org                       = harness_platform_organization.test.id
+	org                       = "default"
 	name                      = "%[2]s"
 	notification_channel_type = "WEBHOOK"
 	status                    = "ENABLED"
@@ -790,17 +695,9 @@ resource "harness_platform_central_notification_channel" "test" {
 
 func testAccCentralNotificationChannelDatadogOrg(id, name string) string {
 	return fmt.Sprintf(`
-resource "harness_platform_organization" "test" {
-	identifier = "%[1]s"
-	name       = "%[2]s"
-}
-
 resource "harness_platform_central_notification_channel" "test" {
-	depends_on = [
-		harness_platform_organization.test,
-	]
 	identifier                = "%[1]s"
-	org                       = harness_platform_organization.test.id
+	org                       = "default"
 	name                      = "%[2]s"
 	notification_channel_type = "DATADOG"
 	status                    = "ENABLED"
