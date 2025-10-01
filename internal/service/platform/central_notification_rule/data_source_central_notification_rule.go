@@ -19,7 +19,7 @@ func notificationEntityEnum() []string {
 func DataSourceCentralNotificationRuleService() *schema.Resource {
 	resource := &schema.Resource{
 		Description:        "Data source for retrieving a Notification Rule.",
-		DeprecationMessage: "This data source is deprecated. Please migrate to resource-type specific central notification rule resources (e.g., pipeline, delegate, chaos_experiment, service_level_objective, sto_exemption).",
+		DeprecationMessage: "This data source is deprecated. Please use `data.harness_platform_pipeline_central_notification_rule`.",
 		ReadContext:        resourceCentralNotificationRuleRead,
 
 		Schema: map[string]*schema.Schema{

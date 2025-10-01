@@ -15,7 +15,7 @@ import (
 func ResourceCentralNotificationRule() *schema.Resource {
 	return &schema.Resource{
 		Description:        "Resource for creating a Harness Notification Rule",
-		DeprecationMessage: "This resource is deprecated. Please migrate to resource-type specific central notification rule resources (e.g., pipeline, delegate, chaos_experiment, service_level_objective, sto_exemption).",
+		DeprecationMessage: "This resource is deprecated. Please migrate to `harness_platform_pipeline_central_notification_rule`.",
 		CreateContext:      resourceCentralNotificationRuleCreate,
 		ReadContext:        resourceCentralNotificationRuleRead,
 		UpdateContext:      resourceCentralNotificationRuleUpdate,
@@ -416,7 +416,6 @@ func buildCentralNotificationRule(d *schema.ResourceData, accountID string) next
 }
 
 func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceData, notificationRuleDto nextgen.NotificationRuleDto) diag.Diagnostics {
-	// Implement read logic as needed
 	d.SetId(notificationRuleDto.Identifier)
 	d.Set("account", accountIdentifier)
 	if notificationRuleDto.Org != "" {
@@ -437,11 +436,7 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 	for _, cond := range notificationRuleDto.NotificationConditions {
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
-			// Safely read cfg.NotificationEventData.Type_
 			eventData := make(map[string]interface{})
-			// if cfg.NotificationEventData != nil && cfg.NotificationEventData.Type_ != nil {
-			// 	eventData["type"] = string(*cfg.NotificationEventData.Type_)
-			// }
 
 			eventConfigs = append(eventConfigs, map[string]interface{}{
 				"notification_entity":     cfg.NotificationEntity,

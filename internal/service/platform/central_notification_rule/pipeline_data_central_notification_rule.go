@@ -27,7 +27,7 @@ func DataSourcePipelineCentralNotificationRuleService() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"account": {
 				Type:        schema.TypeString,
