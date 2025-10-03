@@ -302,6 +302,110 @@ func TestAccCentralNotificationChannel_Datadog(t *testing.T) {
 	})
 }
 
+func TestAccCentralNotificationChannel_Slack(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_central_notification_channel.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccCheckCentralNotificationChannelDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCentralNotificationChannelSlackAccount(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "SLACK"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.slack_webhook_urls.0", "https://hooks.slack.com/services/test"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
+					resource.TestCheckNoResourceAttr(resourceName, "org"),
+					resource.TestCheckNoResourceAttr(resourceName, "project"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCentralNotificationChannel_MSTeams(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_central_notification_channel.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccCheckCentralNotificationChannelDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCentralNotificationChannelMSTeamsAccount(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "MSTEAMS"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.ms_team_keys.0", "https://outlook.office.com/webhook/test"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
+					resource.TestCheckNoResourceAttr(resourceName, "org"),
+					resource.TestCheckNoResourceAttr(resourceName, "project"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCentralNotificationChannel_PagerDuty(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_central_notification_channel.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccCheckCentralNotificationChannelDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCentralNotificationChannelPagerDutyAccount(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "PAGERDUTY"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.pager_duty_integration_keys.0", "test-integration-key"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
+					resource.TestCheckNoResourceAttr(resourceName, "org"),
+					resource.TestCheckNoResourceAttr(resourceName, "project"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccCentralNotificationChannel_Webhook(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_central_notification_channel.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccCheckCentralNotificationChannelDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCentralNotificationChannelWebhookAccount(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "WEBHOOK"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.webhook_urls.0", "https://webhook.example.com/test"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
+					resource.TestCheckNoResourceAttr(resourceName, "org"),
+					resource.TestCheckNoResourceAttr(resourceName, "project"),
+				),
+			},
+		},
+	})
+}
+
 func TestOrgCentralNotificationChannel_Datadog(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))

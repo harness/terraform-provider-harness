@@ -349,3 +349,74 @@ func testAccDataSourceCentralNotificationChannelWebhook(id string, name string) 
 		}
 	`, id, name)
 }
+
+func TestAccDataSourceCentralNotificationChannel_datadog(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_central_notification_channel.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceCentralNotificationChannelDatadog(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "DATADOG"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.datadog_urls.0", "https://api.datadoghq.com/api/v1/events"),
+					resource.TestCheckResourceAttr(resourceName, "channel.0.api_key", "test-api-key"),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSourceCentralNotificationChannelDatadog(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name       = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name       = "%[2]s"
+			org_id     = harness_platform_organization.test.id
+			color      = "#472848"
+		}
+		
+		resource "harness_platform_central_notification_channel" "test" {
+            depends_on = [
+			harness_platform_organization.test,
+			harness_platform_project.test,
+		]
+		 identifier                = "%[1]s"
+		 org                       = harness_platform_organization.test.id
+		 project                   = harness_platform_project.test.id
+		 name                      = "%[2]s"
+		 notification_channel_type = "DATADOG"
+		 status                    = "ENABLED"
+		 
+		 channel {
+		   datadog_urls = ["https://api.datadoghq.com/api/v1/events"]
+		   api_key = "test-api-key"
+		 }
+		}
+
+		data "harness_platform_central_notification_channel" "test" {
+			identifier = harness_platform_central_notification_channel.test.identifier
+			org        = harness_platform_organization.test.id
+			project    = harness_platform_project.test.id
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			destroy_duration = "4s"
+		}
+	`, id, name)
+}
+
