@@ -5,23 +5,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func notificationEntityEnum() []string {
-	return []string{
-		"PIPELINE",
-		"DELEGATE",
-		"CONNECTOR",
-		"CHAOS_EXPERIMENT",
-		"SERVICE_LEVEL_OBJECTIVE",
-		"STO_EXEMPTION",
-	}
-}
-
-func DataSourceCentralNotificationRuleService() *schema.Resource {
+func DataSourcePipelineCentralNotificationRuleService() *schema.Resource {
 	resource := &schema.Resource{
-		Description:        "Data source for retrieving a Notification Rule.",
-		DeprecationMessage: "This data source is deprecated. Please use `data.harness_platform_pipeline_central_notification_rule`.",
-		ReadContext:        resourceCentralNotificationRuleRead,
-
+		Description: "Data source for retrieving a Notification Rule.",
+		ReadContext: resourcePipelineCentralNotificationRuleRead,
 		Schema: map[string]*schema.Schema{
 			"org": {
 				Description: "Identifier of the organization in which the Notification Rule is configured.",
@@ -40,7 +27,7 @@ func DataSourceCentralNotificationRuleService() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"account": {
 				Type:        schema.TypeString,
@@ -91,9 +78,21 @@ func DataSourceCentralNotificationRuleService() *schema.Resource {
 										Required: true,
 									},
 									"notification_event_data": {
-										Type:     schema.TypeMap,
+										Type:     schema.TypeList,
 										Optional: true,
-										Elem:     &schema.Schema{Type: schema.TypeString},
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"type": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"scope_identifiers": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem:     &schema.Schema{Type: schema.TypeString},
+												},
+											},
+										},
 									},
 								},
 							},
