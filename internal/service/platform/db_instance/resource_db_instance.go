@@ -43,8 +43,8 @@ func ResourceDBInstance() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"liquibase_substitute_properties": {
-				Description: "The properties to substitute in liquibase changelog",
+			"substitute_properties": {
+				Description: "The properties to substitute in changelog migration script",
 				Type:        schema.TypeMap,
 				Optional:    true,
 			},
@@ -121,13 +121,13 @@ func resourceDBInstanceDelete(ctx context.Context, d *schema.ResourceData, meta 
 
 func buildDbInstance(d *schema.ResourceData) *dbops.DbInstanceIn {
 
-	liquibaseSubstituteProperties := make(map[string]string)
-	if props, ok := d.GetOk("liquibase_substitute_properties"); ok {
+	substituteProperties := make(map[string]string)
+	if props, ok := d.GetOk("substitute_properties"); ok {
 		if propsMap, isMap := props.(map[string]interface{}); isMap {
 			if propsMap != nil && len(propsMap) > 0 {
 				for k, v := range propsMap {
 					if strVal, isStr := v.(string); isStr {
-						liquibaseSubstituteProperties[k] = strVal
+						substituteProperties[k] = strVal
 					}
 				}
 			}
@@ -135,13 +135,13 @@ func buildDbInstance(d *schema.ResourceData) *dbops.DbInstanceIn {
 	}
 
 	return &dbops.DbInstanceIn{
-		Identifier:                    d.Get("identifier").(string),
-		Name:                          d.Get("name").(string),
-		Tags:                          helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
-		Branch:                        d.Get("branch").(string),
-		Connector:                     d.Get("connector").(string),
-		Context:                       d.Get("context").(string),
-		LiquibaseSubstituteProperties: liquibaseSubstituteProperties,
+		Identifier:           d.Get("identifier").(string),
+		Name:                 d.Get("name").(string),
+		Tags:                 helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
+		Branch:               d.Get("branch").(string),
+		Connector:            d.Get("connector").(string),
+		Context:              d.Get("context").(string),
+		SubstituteProperties: substituteProperties,
 	}
 }
 
@@ -154,5 +154,5 @@ func readDBInstance(d *schema.ResourceData, dbInstance *dbops.DbInstanceOut) {
 	d.Set("connector", dbInstance.Connector)
 	d.Set("context", dbInstance.Context)
 
-	d.Set("liquibase_substitute_properties", dbInstance.LiquibaseSubstituteProperties)
+	d.Set("substitute_properties", dbInstance.SubstituteProperties)
 }
