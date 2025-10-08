@@ -53,6 +53,12 @@ func ResourceClusterOrchestratorConfig() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"disabled": {
+				Description: "Whether the cluster orchestrator is disabled",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
 			"distribution": {
 				Description: "Spot and Ondemand Distribution Preferences for workload replicas",
 				Type:        schema.TypeList,
@@ -403,10 +409,24 @@ func resourceClusterOrchestratorConfigCreateOrUpdate(ctx context.Context, d *sch
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	if resp.Success != true {
+	if !resp.Success {
 		return diag.Errorf(strings.Join(resp.Errors, ","))
 	}
+
+	disabled := d.Get("disabled").(bool)
+	if diags := updateClusterOrchestratorStatus(ctx, c, orchID, disabled); diags.HasError() {
+		return diags
+	}
+
 	d.SetId(orchID)
+	return nil
+}
+
+func updateClusterOrchestratorStatus(ctx context.Context, c *nextgen.APIClient, orchID string, disabled bool) diag.Diagnostics {
+	_, httpResp, err := c.CloudCostClusterOrchestratorApi.ToggleClusterOrchestratorState(ctx, c.AccountId, orchID, disabled)
+	if err != nil {
+		return helpers.HandleApiError(err, nil, httpResp)
+	}
 	return nil
 }
 

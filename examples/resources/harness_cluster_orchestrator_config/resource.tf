@@ -1,5 +1,6 @@
 resource "harness_cluster_orchestrator_config" "example" {
   orchestrator_id = "orch-cvifpfl9rbg8neldj97g"
+  disabled        = false # Set to true to disable the orchestrator
   distribution {
     base_ondemand_capacity      = 2
     ondemand_replica_percentage = 50
