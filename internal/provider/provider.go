@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry_testing"
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/default_notification_template_set"
@@ -329,6 +330,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator":                        cluster_orchestrator.DataSourceClusterOrchestrator(),
 				"harness_cluster_orchestrator_config":                 cluster_orchestrator.DataSourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                       module_registry.DataSourceInfraModule(),
+				"harness_platform_infra_modules":                      module_registry.DataSourceInfraModules(),
+				"harness_platform_infra_module_testing":               module_registry_testing.DataSourceInfraModuleTesting(),
 				"harness_chaos_infrastructure":                        infrastructure.DataSourceChaosInfrastructureService(),
 				"harness_chaos_infrastructure_v2":                     chaos_infrastructure_v2.DataSourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                        image_registry.DataSourceChaosImageRegistry(),
@@ -498,6 +501,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator":                        cluster_orchestrator.ResourceClusterOrchestrator(),
 				"harness_cluster_orchestrator_config":                 cluster_orchestrator.ResourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                       module_registry.ResourceInfraModule(),
+				"harness_platform_infra_module_testing":               module_registry_testing.ResourceInfraModuleTesting(),
 				"harness_chaos_infrastructure":                        infrastructure.ResourceChaosInfrastructure(),
 				"harness_chaos_infrastructure_v2":                     chaos_infrastructure_v2.ResourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                        image_registry.ResourceChaosImageRegistry(),
