@@ -182,21 +182,29 @@ func setModuleId(d *schema.ResourceData, module *nextgen.CreateModuleResponseBod
 	d.SetId(module.Id)
 }
 
-func readModule(d *schema.ResourceData, module *nextgen.ModuleResource2) {
+func readModule(d *schema.ResourceData, module *nextgen.ModuleResource) {
 	d.SetId(module.Id)
-	d.Set("id", module.Id)
+	d.Set("account", module.Account)
+	d.Set("created", module.Created)
 	d.Set("description", module.Description)
+	d.Set("git_tag_style", module.GitTagStyle)
+	d.Set("id", module.Id)
+	d.Set("module_error", module.ModuleError)
 	d.Set("name", module.Name)
-	d.Set("system", module.System)
+	d.Set("org", module.Org)
+	d.Set("project", module.Project)
 	d.Set("repository", module.Repository)
 	d.Set("repository_branch", module.RepositoryBranch)
 	d.Set("repository_commit", module.RepositoryCommit)
 	d.Set("repository_connector", module.RepositoryConnector)
 	d.Set("repository_path", module.RepositoryPath)
-	d.Set("created", module.Created)
 	d.Set("repository_url", module.RepositoryUrl)
 	d.Set("synced", module.Synced)
+	d.Set("system", module.System)
 	d.Set("tags", module.Tags)
+	d.Set("testing_enabled", module.TestingEnabled)
+	d.Set("testing_metadata", module.TestingMetadata)
+	d.Set("updated", module.Updated)
 	d.Set("versions", module.Versions)
 }
 
