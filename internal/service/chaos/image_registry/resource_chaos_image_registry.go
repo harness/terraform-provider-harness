@@ -12,7 +12,7 @@ const (
 func ResourceChaosImageRegistry() *schema.Resource {
 	return &schema.Resource{
 		Description:   "Resource for managing a Harness Chaos Image Registry",
-		CreateContext: resourceChaosImageRegistryCreate,
+		CreateContext: resourceChaosImageRegistryUpdate,
 		ReadContext:   resourceChaosImageRegistryRead,
 		UpdateContext: resourceChaosImageRegistryUpdate,
 		DeleteContext: resourceChaosImageRegistryDelete,
