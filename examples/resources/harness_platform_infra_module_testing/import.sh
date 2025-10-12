@@ -1,0 +1,1 @@
+terraform import harness_platform_infra_module_testing.example <module_id>

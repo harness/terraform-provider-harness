@@ -24,7 +24,7 @@ resource "harness_platform_db_instance" "test" {
   connector  = "jdbcConnector"
   context    = "ctx"
 
-  liquibase_substitute_properties = {
+  substitute_properties = {
     "key1" = "value1"
     "key2" = "value2"
   }
@@ -48,7 +48,7 @@ resource "harness_platform_db_instance" "test" {
 - `branch` (String) The branch of changeSet repository
 - `context` (String) The liquibase context
 - `description` (String) Description of the resource.
-- `liquibase_substitute_properties` (Map of String) The properties to substitute in liquibase changelog
+- `substitute_properties` (Map of String) The properties to substitute in changelog/migration script
 - `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only

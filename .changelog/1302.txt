@@ -1,0 +1,5 @@
+```release-note:new-resource
+  harness_platform_infra_module_testing - added a new resource for iacm module registry testing
+  harness_platform_infra_module_testing - added a new data source for iacm module registry testing
+  harness_platform_infra_modules - added a new data source for iacm module registry
+```
