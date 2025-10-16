@@ -27,8 +27,7 @@ Data source for retrieving a Notification Rule.
 - `notification_conditions` (Block List) (see [below for nested schema](#nestedblock--notification_conditions))
 - `org` (String) Identifier of the organization in which the Notification Rule is configured.
 - `project` (String) Identifier of the project in which the Notification Rule is configured.
-- `status` (String)
-
+- `status` (String) Status of the notification rule. Supported values: `ENABLED`, `DISABLED`. Default: `ENABLED`.
 ### Read-Only
 
 - `account` (String) Account identifier associated with this notification channel.
@@ -76,7 +75,7 @@ Required:
 Required:
 
 - `notification_entity` (String)
-- `notification_event` (String)
+- `notification_event` (String) The pipeline event that triggers the notification. Supported values: `PIPELINE_START`, `PIPELINE_SUCCESS`, `PIPELINE_FAILED`, `STAGE_START`, `STAGE_SUCCESS`, `STAGE_FAILED`.
 
 Optional:
 
