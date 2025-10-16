@@ -27,7 +27,7 @@ Resource for creating a Harness Notification Rule for Pipeline
 - `name` (String)
 - `org` (String)
 - `project` (String)
-- `status` (String)
+- `status` (String) Status of the notification rule. Supported values: `ENABLED`, `DISABLED`. Default: `ENABLED`.
 
 ### Read-Only
 
@@ -50,7 +50,7 @@ Required:
 Required:
 
 - `notification_entity` (String)
-- `notification_event` (String)
+- `notification_event` (String) The pipeline event that triggers the notification. Supported values: `PIPELINE_START`, `PIPELINE_SUCCESS`, `PIPELINE_FAILED`, `STAGE_START`, `STAGE_SUCCESS`, `STAGE_FAILED`.
 
 Optional:
 

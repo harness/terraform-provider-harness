@@ -93,8 +93,6 @@ func TestAccResourcePipelineInline(t *testing.T) {
 }
 
 func TestAccResourcePipelineImportFromGit(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-	name := id
 
 	resourceName := "harness_platform_pipeline.test"
 
@@ -104,7 +102,7 @@ func TestAccResourcePipelineImportFromGit(t *testing.T) {
 		CheckDestroy:      testAccPipelineDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourcePipelineImportFromGit(id, name),
+				Config: testAccResourcePipelineImportFromGit(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", "gitx"),
 					resource.TestCheckResourceAttr(resourceName, "name", "gitx"),
@@ -411,12 +409,8 @@ func testAccResourcePipelineInline(id string, name string) string {
         `, id, name)
 }
 
-func testAccResourcePipelineImportFromGit(id string, name string) string {
+func testAccResourcePipelineImportFromGit() string {
 	return fmt.Sprintf(`
-        resource "harness_platform_organization" "test" {
-					identifier = "%[1]s"
-					name = "%[2]s"
-				}
 		resource "harness_platform_project" "Project_Test" {
 				identifier = "TF_GitX_Pipeline_Test"
 				name = "TF_GitX_Pipeline_Test"
@@ -425,8 +419,8 @@ func testAccResourcePipelineImportFromGit(id string, name string) string {
 		}
         resource "harness_platform_pipeline" "test" {
                         identifier = "gitx"
-                        org_id = "default"
-						project_id = "TF_GitX_Pipeline_Test"
+                        org_id = harness_platform_project.Project_Test.org_id
+						project_id = harness_platform_project.Project_Test.id
                         name = "gitx"
                         import_from_git = true
                         git_import_info {
@@ -440,7 +434,7 @@ func testAccResourcePipelineImportFromGit(id string, name string) string {
                             pipeline_description = "Pipeline Description"
                         }
                 }
-        `, id, name)
+        `)
 }
 
 func testAccResourcePipelineHC(id string, name string) string {
