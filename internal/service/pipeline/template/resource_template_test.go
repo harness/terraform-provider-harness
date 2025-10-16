@@ -178,8 +178,6 @@ func TestAccResourceTemplate_OrgScopeInline(t *testing.T) {
 }
 
 func TestAccResourceTemplate_OrgScopeImportFromGit(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-	name := id
 
 	resourceName := "harness_platform_template.test"
 
@@ -193,10 +191,10 @@ func TestAccResourceTemplate_OrgScopeImportFromGit(t *testing.T) {
 		CheckDestroy: testAccTemplateDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceTemplateOrgScopeImportFromGit(id, name),
+				Config: testAccResourceTemplateOrgScopeImportFromGit(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", "orgtemplate"),
-					resource.TestCheckResourceAttr(resourceName, "name", "orgtemplate"),
+					resource.TestCheckResourceAttr(resourceName, "id", "orgtemplate2"),
+					resource.TestCheckResourceAttr(resourceName, "name", "orgtemplate2"),
 				),
 			},
 			{
@@ -1399,26 +1397,22 @@ func testAccResourceTemplateProjectScopeInline(id string, name string) string {
 	`, id, name)
 }
 
-func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string {
+func testAccResourceTemplateOrgScopeImportFromGit() string {
 	return fmt.Sprintf(`
-        resource "harness_platform_organization" "test" {
-					identifier = "%[1]sorg"
-					name = "%[2]s"
-				}
         resource "harness_platform_template" "test" {
-                        identifier = "orgtemplate"
+                        identifier = "orgtemplate2"
                         org_id = "default"
-                        name = "orgtemplate"
+                        name = "orgtemplate2"
 						version = "v2"
                         import_from_git = true
                         git_import_details {
                             branch_name = "main"
-                            file_path = ".harness/orgtemplate.yaml"
+                            file_path = ".harness/orgtemplate2.yaml"
                             connector_ref = "account.TF_open_repo_github_connector"
                             repo_name = "open-repo"
                         }
                         template_import_request {
-                            template_name = "orgtemplate"
+                            template_name = "orgtemplate2"
 							template_version = "v2"
                             template_description = ""
                         }
@@ -1432,7 +1426,7 @@ func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string
 		resource "null_resource" "next" {
   			depends_on = [time_sleep.wait_4_seconds]
 		}
-        `, id, name)
+        `)
 }
 
 func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) string {
