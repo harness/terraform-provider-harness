@@ -509,10 +509,26 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 						clustersMap["enabled"] = true
 						if generator.Clusters.Selector != nil {
 							var selectorMap = map[string]interface{}{}
-							if generator.Clusters.Selector.MatchLabels != nil {
+							hasSelector := false
+							if generator.Clusters.Selector.MatchLabels != nil && len(generator.Clusters.Selector.MatchLabels) > 0 {
 								selectorMap["match_labels"] = generator.Clusters.Selector.MatchLabels
+								hasSelector = true
 							}
-							clustersMap["selector"] = []interface{}{selectorMap}
+							if len(generator.Clusters.Selector.MatchExpressions) > 0 {
+								var expressions []interface{}
+								for _, expr := range generator.Clusters.Selector.MatchExpressions {
+									expressions = append(expressions, map[string]interface{}{
+										"key":      expr.Key,
+										"operator": expr.Operator,
+										"values":   expr.Values,
+									})
+								}
+								selectorMap["match_expressions"] = expressions
+								hasSelector = true
+							}
+							if hasSelector {
+								clustersMap["selector"] = []interface{}{selectorMap}
+							}
 						}
 						if generator.Clusters.Values != nil { //values is map of string string
 							var valuesList = []interface{}{}
@@ -525,9 +541,10 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 							clustersMap["values"] = valuesList
 						}
 						if generator.Clusters.Template != nil {
-							var templateList = []interface{}{}
-							templateList = append(templateList, buildTemplateMapForState(generator.Clusters.Template))
-							clustersMap["template"] = templateList
+							tmpl := buildTemplateMapForState(generator.Clusters.Template)
+							if len(tmpl) > 0 {
+								clustersMap["template"] = []interface{}{tmpl}
+							}
 						}
 						generatorMap["clusters"] = []interface{}{clustersMap}
 					}
@@ -567,9 +584,10 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 							gitMap["files"] = filesList
 						}
 						if generator.Git.Template != nil {
-							var templateList = []interface{}{}
-							templateList = append(templateList, buildTemplateMapForState(generator.Git.Template))
-							gitMap["template"] = templateList
+							tmpl := buildTemplateMapForState(generator.Git.Template)
+							if len(tmpl) > 0 {
+								gitMap["template"] = []interface{}{tmpl}
+							}
 						}
 						generatorMap["git"] = []interface{}{gitMap}
 					}
@@ -582,9 +600,10 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 
 			//  template
 			if appset.Appset.Spec.Template != nil {
-				var templateList = []interface{}{}
-				templateList = append(templateList, buildTemplateMapForState(appset.Appset.Spec.Template))
-				spec["template"] = templateList
+				tmpl := buildTemplateMapForState(appset.Appset.Spec.Template)
+				if len(tmpl) > 0 {
+					spec["template"] = []interface{}{tmpl}
+				}
 			}
 
 			specList = append(specList, spec)
@@ -605,7 +624,6 @@ func buildTemplateMapForState(templ *nextgen.ApplicationsApplicationSetTemplate)
 	var template = map[string]interface{}{}
 
 	if templ.Metadata != nil {
-		var templateMetadataList = []interface{}{}
 		var templateMetadata = map[string]interface{}{}
 		tmplMeta := templ.Metadata
 
@@ -615,23 +633,24 @@ func buildTemplateMapForState(templ *nextgen.ApplicationsApplicationSetTemplate)
 		if tmplMeta.Namespace != "" {
 			templateMetadata["namespace"] = tmplMeta.Namespace
 		}
-		if tmplMeta.Annotations != nil {
+		if len(tmplMeta.Annotations) > 0 {
 			templateMetadata["annotations"] = tmplMeta.Annotations
 		}
-		if tmplMeta.Labels != nil {
+		if len(tmplMeta.Labels) > 0 {
 			templateMetadata["labels"] = tmplMeta.Labels
 		}
 
-		templateMetadataList = append(templateMetadataList, templateMetadata)
-		template["metadata"] = templateMetadataList
+		if len(templateMetadata) > 0 {
+			template["metadata"] = []interface{}{templateMetadata}
+		}
 	}
 
 	//  template spec
 	if templ.Spec != nil {
-		var templateSpecList = []interface{}{}
 		templateSpec := applications.BuildAppSpecMap(templ.Spec)
-		templateSpecList = append(templateSpecList, templateSpec)
-		template["spec"] = templateSpecList
+		if len(templateSpec) > 0 {
+			template["spec"] = []interface{}{templateSpec}
+		}
 	}
 	return template
 }
@@ -1052,6 +1071,7 @@ func applicationSetClusterDecisionResourceGeneratorSchema() *schema.Schema {
 					Type:        schema.TypeList,
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
+					Computed:    true,
 					MaxItems:    1,
 					Elem:        resourceApplicationsetTemplate(true),
 				},
@@ -1126,6 +1146,7 @@ func applicationSetGitGeneratorSchema() *schema.Schema {
 					Type:        schema.TypeList,
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
+					Computed:    true,
 					MaxItems:    1,
 					Elem:        resourceApplicationsetTemplate(true),
 				},
@@ -1154,6 +1175,7 @@ func applicationSetListGeneratorSchema() *schema.Schema {
 					Type:        schema.TypeList,
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
+					Computed:    true,
 					MaxItems:    1,
 					Elem:        resourceApplicationsetTemplate(true),
 				},
@@ -1181,6 +1203,7 @@ func applicationSetMatrixGeneratorSchema(level int) *schema.Schema {
 					Type:        schema.TypeList,
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
+					Computed:    true,
 					MaxItems:    1,
 					Elem:        resourceApplicationsetTemplate(true),
 				},
@@ -1213,6 +1236,7 @@ func applicationSetMergeGeneratorSchema(level int) *schema.Schema {
 					Type:        schema.TypeList,
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
+					Computed:    true,
 					MaxItems:    1,
 					Elem:        resourceApplicationsetTemplate(true),
 				},
@@ -1505,6 +1529,7 @@ func applicationSetSCMProviderGeneratorSchema() *schema.Schema {
 					Type:        schema.TypeList,
 					Description: "Generator template. Used to override the values of the spec-level template.",
 					Optional:    true,
+					Computed:    true,
 					MaxItems:    1,
 					Elem:        resourceApplicationsetTemplate(true),
 				},
