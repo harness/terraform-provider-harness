@@ -2,6 +2,8 @@ package applicationset
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 
 	"github.com/antihax/optional"
@@ -493,13 +495,28 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 					//  different generator types
 					if generator.List != nil {
 						var listMap = map[string]interface{}{}
-						if generator.List.Elements != nil {
-							listMap["elements"] = generator.List.Elements
-						}
+						// Note: The API returns empty Raw fields for list elements, so we skip reading them
+						// and rely on Terraform config as source of truth. This is a known SDK/API limitation.
 						if generator.List.Template != nil {
 							var templateList = []interface{}{}
 							templateList = append(templateList, buildTemplateMapForState(generator.List.Template))
 							listMap["template"] = templateList
+						}
+
+						if generator.List.Elements != nil && len(generator.List.Elements) > 0 {
+							fmt.Printf("DEBUG buildApplicationSet: Found %d elements\n", len(generator.List.Elements))
+
+							var elementsList []interface{}
+							for _, elem := range generator.List.Elements {
+								fmt.Printf("DEBUG buildApplicationSet: Element: %v\n", elem)
+								var elemMap map[string]interface{}
+								if err := json.Unmarshal([]byte(elem.Raw), &elemMap); err == nil {
+									elementsList = append(elementsList, elemMap)
+								}
+							}
+							if len(elementsList) > 0 {
+								listMap["elements"] = elementsList
+							}
 						}
 						generatorMap["list"] = []interface{}{listMap}
 					}
@@ -570,7 +587,7 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 								directoryMap["exclude"] = dir.Exclude
 								directoriesList = append(directoriesList, directoryMap)
 							}
-							gitMap["directories"] = directoriesList
+							gitMap["directory"] = directoriesList
 						}
 						if generator.Git.Files != nil {
 							var filesList = []interface{}{}
@@ -581,7 +598,7 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 								}
 								filesList = append(filesList, fileMap)
 							}
-							gitMap["files"] = filesList
+							gitMap["file"] = filesList
 						}
 						if generator.Git.Template != nil {
 							tmpl := buildTemplateMapForState(generator.Git.Template)
@@ -723,11 +740,64 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 
 					// list generator
 					if list, ok := generatorMap["list"]; ok && len(list.([]interface{})) > 0 {
-						_, ok := list.([]interface{})[0].(map[string]interface{})
+						listData, ok := list.([]interface{})[0].(map[string]interface{})
 						if !ok {
 							return nil
 						}
 						var listGen nextgen.ApplicationsListGenerator
+
+						if elements, ok := listData["elements"]; ok && len(elements.([]interface{})) > 0 {
+							var elementsList []nextgen.V1Json
+							for _, elem := range elements.([]interface{}) {
+								elemBytes, _ := json.Marshal(elem)
+								// Base64 encode the JSON string as the API expects it
+								encoded := base64.StdEncoding.EncodeToString(elemBytes)
+								elementsList = append(elementsList, nextgen.V1Json{Raw: encoded})
+							}
+							listGen.Elements = elementsList
+						}
+
+						if template, ok := listData["template"]; ok && len(template.([]interface{})) > 0 {
+							templateData := template.([]interface{})[0].(map[string]interface{})
+							var appSetTemplate nextgen.ApplicationsApplicationSetTemplate
+
+							if metadata, ok := templateData["metadata"]; ok && len(metadata.([]interface{})) > 0 {
+								metaData, ok := metadata.([]interface{})[0].(map[string]interface{})
+								if ok {
+									var templateMeta nextgen.ApplicationsApplicationSetTemplateMeta
+									if name, ok := metaData["name"]; ok && len(name.(string)) > 0 {
+										templateMeta.Name = name.(string)
+									}
+									if namespace, ok := metaData["namespace"]; ok && len(namespace.(string)) > 0 {
+										templateMeta.Namespace = namespace.(string)
+									}
+									if labels, ok := metaData["labels"]; ok && len(labels.(map[string]interface{})) > 0 {
+										templateMeta.Labels = make(map[string]string)
+										for k, v := range labels.(map[string]interface{}) {
+											templateMeta.Labels[k] = v.(string)
+										}
+									}
+									if annotations, ok := metaData["annotations"]; ok && len(annotations.(map[string]interface{})) > 0 {
+										templateMeta.Annotations = make(map[string]string)
+										for k, v := range annotations.(map[string]interface{}) {
+											templateMeta.Annotations[k] = v.(string)
+										}
+									}
+									appSetTemplate.Metadata = &templateMeta
+								}
+							}
+
+							if spec, ok := templateData["spec"]; ok && len(spec.([]interface{})) > 0 {
+								templateSpecData, ok := spec.([]interface{})[0].(map[string]interface{})
+								if ok {
+									appSpec := applications.BuildApplicationSpecFromMap(templateSpecData)
+									appSetTemplate.Spec = &appSpec
+								}
+							}
+
+							listGen.Template = &appSetTemplate
+						}
+
 						generator.List = &listGen
 					}
 
@@ -804,7 +874,7 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 							gitGen.Revision = revision.(string)
 						}
 
-						if directories, ok := gitData["directories"]; ok && len(directories.([]interface{})) > 0 {
+						if directories, ok := gitData["directory"]; ok && len(directories.([]interface{})) > 0 {
 							var dirList []nextgen.ApplicationsGitDirectoryGeneratorItem
 							for _, dir := range directories.([]interface{}) {
 								dirData := dir.(map[string]interface{})
@@ -821,6 +891,22 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 							}
 							gitGen.Directories = dirList
 						}
+
+						if files, ok := gitData["file"]; ok && len(files.([]interface{})) > 0 {
+							var fileList []nextgen.ApplicationsGitFileGeneratorItem
+							for _, file := range files.([]interface{}) {
+								fileData := file.(map[string]interface{})
+								var fileItem nextgen.ApplicationsGitFileGeneratorItem
+
+								if path, ok := fileData["path"]; ok && len(path.(string)) > 0 {
+									fileItem.Path = path.(string)
+								}
+
+								fileList = append(fileList, fileItem)
+							}
+							gitGen.Files = fileList
+						}
+
 						generator.Git = &gitGen
 					}
 					generatorsList = append(generatorsList, generator)
@@ -1164,7 +1250,7 @@ func applicationSetListGeneratorSchema() *schema.Schema {
 			Schema: map[string]*schema.Schema{
 				"elements": {
 					Type:        schema.TypeList,
-					Description: "List of key/value pairs to pass as parameters into the template",
+					Description: "List of key/value pairs to pass as parameters into the template. Note: Due to API limitations, changes to elements may not be detected.",
 					Required:    true,
 					Elem: &schema.Schema{
 						Type: schema.TypeMap,
