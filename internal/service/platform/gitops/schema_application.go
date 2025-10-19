@@ -399,106 +399,12 @@ func ArgoAppSpecSchemaV1() *schema.Schema {
 								Type:        schema.TypeString,
 								Optional:    true,
 							},
-							"helm": {
-								Description: "Holds helm specific options.",
-								Type:        schema.TypeList,
+							"name": {
+								Type:        schema.TypeString,
+								Description: "Name is used to refer to a source and is displayed in the UI. It is used in multi-source Applications.",
 								Optional:    true,
-								Elem: &schema.Resource{
-									Schema: map[string]*schema.Schema{
-										"value_files": {
-											Description: "List of helm value files to use when generating a template.",
-											Type:        schema.TypeList,
-											Optional:    true,
-											Elem: &schema.Schema{
-												Type: schema.TypeString,
-											},
-										},
-										"release_name": {
-											Description: "Helm release name to use. If omitted it will use the GitOps application name.",
-											Type:        schema.TypeString,
-											Optional:    true,
-										},
-										"values": {
-											Description: "Helm values to be passed to helm template, typically defined as a block.",
-											Type:        schema.TypeString,
-											Optional:    true,
-										},
-										"version": {
-											Description: "Helm version to use for templating (either \"2\" or \"3\")",
-											Type:        schema.TypeString,
-											Optional:    true,
-										},
-										"pass_credentials": {
-											Description: "Indicates if to pass credentials to all domains (helm's --pass-credentials)",
-											Type:        schema.TypeBool,
-											Optional:    true,
-										},
-										"parameters": {
-											Description: "List of helm parameters which are passed to the helm template command upon manifest generation.",
-											Type:        schema.TypeList,
-											Optional:    true,
-											Elem: &schema.Resource{
-												Schema: map[string]*schema.Schema{
-													"name": {
-														Description: "Name of the helm parameter.",
-														Type:        schema.TypeString,
-														Optional:    true,
-													},
-													"value": {
-														Description: "Value of the Helm parameter.",
-														Type:        schema.TypeString,
-														Optional:    true,
-													},
-													"force_string": {
-														Description: "Indicates if helm should interpret booleans and numbers as strings.",
-														Type:        schema.TypeBool,
-														Optional:    true,
-													},
-												},
-											},
-										},
-										"file_parameters": {
-											Description: "File parameters to the helm template.",
-											Type:        schema.TypeList,
-											Optional:    true,
-											Elem: &schema.Resource{
-												Schema: map[string]*schema.Schema{
-													"name": {
-														Description: "Name of the helm parameter.",
-														Type:        schema.TypeString,
-														Optional:    true,
-													},
-													"path": {
-														Description: "Path to the file containing the values of the helm parameter.",
-														Type:        schema.TypeString,
-														Optional:    true,
-													},
-												},
-											},
-										},
-										"ignore_missing_value_files": {
-											Description: "Prevents 'helm template' from failing when value_files do not exist locally.",
-											Type:        schema.TypeBool,
-											Optional:    true,
-										},
-										"skip_crds": {
-											Description: "Indicates if to skip CRDs during helm template. Corresponds to helm --skip-crds",
-											Type:        schema.TypeBool,
-											Optional:    true,
-										},
-										"skip_tests": {
-											Description: "Indicates if to skip tests during helm template. Corresponds to helm --skip-tests",
-											Type:        schema.TypeBool,
-											Optional:    true,
-										},
-										"skip_schema_validation": {
-											Description: "Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation",
-											Type:        schema.TypeBool,
-											Optional:    true,
-										},
-									},
-								},
 							},
+							"helm": argoHelmSchemaForV2(true),
 							"kustomize": {
 								Description: "Options specific to a GitOps application source specific to Kustomize.",
 								Type:        schema.TypeList,
@@ -730,6 +636,7 @@ func ArgoAppSpecSchemaV1() *schema.Schema {
 								Description: "URL of the target cluster and must be set to the kubernetes control plane API.",
 								Type:        schema.TypeString,
 								Optional:    true,
+								Computed:    true,
 							},
 							"namespace": {
 								Description: "Target namespace of the GitOps application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace.",
@@ -827,6 +734,11 @@ func ArgoAppSpecSchemaV1() *schema.Schema {
 						},
 					},
 				},
+				"revision_history_limit": {
+					Description: "Revision history limit for the application.",
+					Type:        schema.TypeString,
+					Optional:    true,
+				},
 			},
 		},
 	}
@@ -866,6 +778,7 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 								Type:        schema.TypeString,
 								Description: "Name of the target cluster. Can be used instead of `server`.",
 								Optional:    true,
+								Computed:    true,
 							},
 						},
 					},
@@ -902,93 +815,7 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 								Description: "Helm chart name. Must be specified for applications sourced from a Helm repo.",
 								Optional:    true,
 							},
-							"helm": {
-								Type:        schema.TypeList,
-								Description: "Helm specific options.",
-								MaxItems:    1,
-								MinItems:    1,
-								Optional:    true,
-								Elem: &schema.Resource{
-									Schema: map[string]*schema.Schema{
-										"value_files": {
-											Type:        schema.TypeList,
-											Description: "List of Helm value files to use when generating a template.",
-											Optional:    true,
-											Elem: &schema.Schema{
-												Type: schema.TypeString,
-											},
-										},
-										"values": {
-											Type:        schema.TypeString,
-											Description: "Helm values to be passed to 'helm template', typically defined as a block.",
-											Optional:    true,
-										},
-										"ignore_missing_value_files": {
-											Type:        schema.TypeBool,
-											Description: "Prevents 'helm template' from failing when `value_files` do not exist locally by not appending them to 'helm template --values'.",
-											Optional:    true,
-										},
-										"parameters": {
-											Type:        schema.TypeList,
-											Description: "Helm parameters which are passed to the helm template command upon manifest generation.",
-											Optional:    true,
-											Elem: &schema.Resource{
-												Schema: map[string]*schema.Schema{
-													"name": {
-														Type:        schema.TypeString,
-														Description: "Name of the Helm parameter.",
-														Optional:    true,
-													},
-													"value": {
-														Type:        schema.TypeString,
-														Description: "Value of the Helm parameter.",
-														Optional:    true,
-													},
-													"force_string": {
-														Type:        schema.TypeBool,
-														Optional:    true,
-														Description: "Determines whether to tell Helm to interpret booleans and numbers as strings.",
-													},
-												},
-											},
-										},
-										"file_parameters": {
-											Type:        schema.TypeList,
-											Description: "File parameters for the helm template.",
-											Optional:    true,
-											Elem: &schema.Resource{
-												Schema: map[string]*schema.Schema{
-													"name": {
-														Type:        schema.TypeString,
-														Description: "Name of the Helm parameter.",
-														Required:    true,
-													},
-													"path": {
-														Type:        schema.TypeString,
-														Description: "Path to the file containing the values for the Helm parameter.",
-														Required:    true,
-													},
-												},
-											},
-										},
-										"release_name": {
-											Type:        schema.TypeString,
-											Description: "Helm release name. If omitted it will use the application name.",
-											Optional:    true,
-										},
-										"skip_crds": {
-											Type:        schema.TypeBool,
-											Description: "Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).",
-											Optional:    true,
-										},
-										"pass_credentials": {
-											Type:        schema.TypeBool,
-											Description: "If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.",
-											Optional:    true,
-										},
-									},
-								},
-							},
+							"helm": argoHelmSchemaForV2(allOptional),
 							"kustomize": {
 								Type:        schema.TypeList,
 								Description: "Kustomize specific options.",
@@ -1209,93 +1036,7 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 								Description: "Helm chart name. Must be specified for applications sourced from a Helm repo.",
 								Optional:    true,
 							},
-							"helm": {
-								Type:        schema.TypeList,
-								Description: "Helm specific options.",
-								MaxItems:    1,
-								MinItems:    1,
-								Optional:    true,
-								Elem: &schema.Resource{
-									Schema: map[string]*schema.Schema{
-										"value_files": {
-											Type:        schema.TypeList,
-											Description: "List of Helm value files to use when generating a template.",
-											Optional:    true,
-											Elem: &schema.Schema{
-												Type: schema.TypeString,
-											},
-										},
-										"values": {
-											Type:        schema.TypeString,
-											Description: "Helm values to be passed to 'helm template', typically defined as a block.",
-											Optional:    true,
-										},
-										"ignore_missing_value_files": {
-											Type:        schema.TypeBool,
-											Description: "Prevents 'helm template' from failing when `value_files` do not exist locally by not appending them to 'helm template --values'.",
-											Optional:    true,
-										},
-										"parameters": {
-											Type:        schema.TypeList,
-											Description: "Helm parameters which are passed to the helm template command upon manifest generation.",
-											Optional:    true,
-											Elem: &schema.Resource{
-												Schema: map[string]*schema.Schema{
-													"name": {
-														Type:        schema.TypeString,
-														Description: "Name of the Helm parameter.",
-														Optional:    true,
-													},
-													"value": {
-														Type:        schema.TypeString,
-														Description: "Value of the Helm parameter.",
-														Optional:    true,
-													},
-													"force_string": {
-														Type:        schema.TypeBool,
-														Optional:    true,
-														Description: "Determines whether to tell Helm to interpret booleans and numbers as strings.",
-													},
-												},
-											},
-										},
-										"file_parameters": {
-											Type:        schema.TypeList,
-											Description: "File parameters for the helm template.",
-											Optional:    true,
-											Elem: &schema.Resource{
-												Schema: map[string]*schema.Schema{
-													"name": {
-														Type:        schema.TypeString,
-														Description: "Name of the Helm parameter.",
-														Required:    true,
-													},
-													"path": {
-														Type:        schema.TypeString,
-														Description: "Path to the file containing the values for the Helm parameter.",
-														Required:    true,
-													},
-												},
-											},
-										},
-										"release_name": {
-											Type:        schema.TypeString,
-											Description: "Helm release name. If omitted it will use the application name.",
-											Optional:    true,
-										},
-										"skip_crds": {
-											Type:        schema.TypeBool,
-											Description: "Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).",
-											Optional:    true,
-										},
-										"pass_credentials": {
-											Type:        schema.TypeBool,
-											Description: "If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.",
-											Optional:    true,
-										},
-									},
-								},
-							},
+							"helm": argoHelmSchemaForV2(allOptional),
 							"kustomize": {
 								Type:        schema.TypeList,
 								Description: "Kustomize specific options.",
@@ -1674,8 +1415,122 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 					},
 				},
 				"revision_history_limit": {
-					Type:        schema.TypeInt,
+					Type:        schema.TypeString,
 					Description: "Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.",
+					Optional:    true,
+					Computed:    true,
+				},
+			},
+		},
+	}
+}
+
+// argoHelmSchema defines the shared Helm options schema used in both source and sources.
+func argoHelmSchemaForV2(allOptional bool) *schema.Schema {
+	return &schema.Schema{
+		Type:        schema.TypeList,
+		Description: "Helm specific options.",
+		MaxItems:    1,
+		MinItems:    1,
+		Optional:    true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"value_files": {
+					Type:        schema.TypeList,
+					Description: "List of Helm value files to use when generating a template.",
+					Optional:    true,
+					Elem:        &schema.Schema{Type: schema.TypeString},
+				},
+				"values": {
+					Type:        schema.TypeString,
+					Description: "Helm values to be passed to 'helm template', typically defined as a block.",
+					Optional:    true,
+				},
+				"ignore_missing_value_files": {
+					Type:        schema.TypeBool,
+					Description: "Prevents 'helm template' from failing when `value_files` do not exist locally by not appending them to 'helm template --values'.",
+					Optional:    true,
+				},
+				"parameters": {
+					Type:        schema.TypeList,
+					Description: "Helm parameters which are passed to the helm template command upon manifest generation.",
+					Optional:    true,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"name": {
+								Type:        schema.TypeString,
+								Description: "Name of the Helm parameter.",
+								Optional:    true,
+							},
+							"value": {
+								Type:        schema.TypeString,
+								Description: "Value of the Helm parameter.",
+								Optional:    true,
+							},
+							"force_string": {
+								Type:        schema.TypeBool,
+								Description: "Determines whether to tell Helm to interpret booleans and numbers as strings.",
+								Optional:    true,
+							},
+						},
+					},
+				},
+				"file_parameters": {
+					Type:        schema.TypeList,
+					Description: "File parameters for the helm template.",
+					Optional:    true,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"name": {
+								Type:        schema.TypeString,
+								Description: "Name of the Helm parameter.",
+								Required:    true,
+							},
+							"path": {
+								Type:        schema.TypeString,
+								Description: "Path to the file containing the values for the Helm parameter.",
+								Required:    true,
+							},
+						},
+					},
+				},
+				"release_name": {
+					Type:        schema.TypeString,
+					Description: "Helm release name. If omitted it will use the application name.",
+					Optional:    true,
+				},
+				// NOTE: Add these three for API parity and to fix state errors in read-path:
+				// "version", "skip_tests", "skip_schema_validation"
+				// You can add them here after release_name / skip_crds respectively when ready.
+				"skip_crds": {
+					Type:        schema.TypeBool,
+					Description: "Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).",
+					Optional:    true,
+				},
+				"version": {
+					Type:        schema.TypeString,
+					Description: "Helm version to use for templating (either \"2\" or \"3\").",
+					Optional:    true,
+				},
+				"skip_tests": {
+					Type:        schema.TypeBool,
+					Description: "Indicates if to skip tests during helm template. Corresponds to helm --skip-tests",
+					Optional:    true,
+				},
+				"skip_schema_validation": {
+					Type:        schema.TypeBool,
+					Description: "Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation",
+					Optional:    true,
+				},
+				"values_object": {
+					Type:        schema.TypeMap,
+					Description: "Helm values to be passed to 'helm template', typically defined as a block.",
+					Optional:    true,
+					Elem:        &schema.Schema{Type: schema.TypeString},
+				},
+				"pass_credentials": {
+					Type:        schema.TypeBool,
+					Description: "If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.",
 					Optional:    true,
 				},
 			},

@@ -32,6 +32,7 @@ func TestAccResourceGitopsApplicationSet_AllClustersGenerator(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "applicationset.0.metadata.0.name", id),
 				),
 			},
+
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
@@ -54,7 +55,7 @@ func testAccResourceGitopsApplicationsetClusterGenerator(id, accountId, name, ag
 			org_id = harness_platform_organization.test.id
 		}
 
-		resource "harness_platform_gitops_applicationset" "test" {
+		resource "harness_platform_gitops_applicationset" "test1" {
 			applicationset {
 				metadata {
 				  name      = "%[1]s"
@@ -101,5 +102,93 @@ func testAccResourceGitopsApplicationsetClusterGenerator(id, accountId, name, ag
 			  ]
 			}
 		}
+
+
+		resource "harness_platform_gitops_applicationset" "test2" {
+			applicationset {
+				metadata {
+				  name      = "%[1]s"
+				  namespace = "%[5]s"
+				}
+				spec {
+				  go_template = true
+				  go_template_options = ["missingkey=error"]
+
+				  generator {
+					git {
+						repo_url = "https://github.com/argoproj/argocd-example-apps.git"
+						path = "helm-guestbook"
+						target_revision = "HEAD"
+						enabled = true
+					}
+				  }
+				  template {
+					metadata {
+					  name = "{{.name}}-guestbook"
+					}
+					spec {
+					  project = "default"
+					  source {
+						repo_url        = "https://github.com/argoproj/argocd-example-apps.git"
+						path            = "helm-guestbook"
+						target_revision = "HEAD"
+					  }
+					  destination {
+						server    = "{{.url}}"
+						namespace = "%[5]s"
+					  }
+					}
+				  }
+				}
+				project_id = harness_platform_project.test.id
+				org_id = harness_platform_organization.test.id
+				agent_id   = "%[4]s"
+				upsert     = true
+
+			}
+		}
+
+		resource "harness_platform_gitops_applicationset" "test3" {
+			applicationset {
+				metadata {
+				  name      = "%[1]s"
+				  namespace = "%[5]s"
+				}
+				spec {
+				  go_template = true
+				  go_template_options = ["missingkey=error"]
+
+				  generator {
+					list {
+						items = ["item1", "item2", "item3"]
+					}
+				  }
+				  template {
+					metadata {
+					  name = "{{.name}}-guestbook"
+					}
+					spec {
+					  project = "default"
+					  source {
+						repo_url        = "https://github.com/argoproj/argocd-example-apps.git"
+						path            = "helm-guestbook"
+						target_revision = "HEAD"
+					  }
+					  destination {
+						server    = "{{.url}}"
+						namespace = "%[5]s"
+					  }
+					}
+				  }
+				}
+				project_id = harness_platform_project.test.id
+				org_id = harness_platform_organization.test.id
+				agent_id   = "%[4]s"
+				upsert     = true
+
+			}
+		}
+
 		`, id, accountId, name, agentId, namespace)
+
 }
