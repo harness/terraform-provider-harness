@@ -3,6 +3,7 @@ package central_notification_rule
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -437,11 +438,39 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
 			eventData := make(map[string]interface{})
+			
+			// Handle notification event data - it can be null when scope_identifiers is empty
+			if cfg.PipelineEventNotificationParamsDto != nil && cfg.PipelineEventNotificationParamsDto.Type_ != nil {
+				eventData["type"] = string(*cfg.PipelineEventNotificationParamsDto.Type_)
+				// Only set scope_identifiers if not empty, since schema expects TypeMap with string values
+				if len(cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers) > 0 {
+					// Convert slice to comma-separated string for compatibility with TypeMap
+					eventData["scope_identifiers"] = strings.Join(cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers, ",")
+				}
+			} else if cfg.ChaosExperimentEventNotificationParamsDto != nil && cfg.ChaosExperimentEventNotificationParamsDto.Type_ != nil {
+				eventData["type"] = string(*cfg.ChaosExperimentEventNotificationParamsDto.Type_)
+			} else if cfg.SloEventNotificationParamsDto != nil && cfg.SloEventNotificationParamsDto.Type_ != nil {
+				eventData["type"] = string(*cfg.SloEventNotificationParamsDto.Type_)
+				eventData["error_budget_remaining_percentage"] = cfg.SloEventNotificationParamsDto.ErrorBudgetRemainingPercentage
+				eventData["error_budget_remaining_minutes"] = cfg.SloEventNotificationParamsDto.ErrorBudgetRemainingMinutes
+			} else {
+				// When notification_event_data is null, create default structure based on entity
+				if cfg.NotificationEntity == "PIPELINE" {
+					eventData["type"] = "PIPELINE"
+					// Don't set scope_identifiers if empty to avoid schema issues
+				}
+			}
+
+			// Ensure entity_identifiers is never nil
+			entityIdentifiers := cfg.EntityIdentifiers
+			if entityIdentifiers == nil {
+				entityIdentifiers = []string{}
+			}
 
 			eventConfigs = append(eventConfigs, map[string]interface{}{
 				"notification_entity":     cfg.NotificationEntity,
 				"notification_event":      cfg.NotificationEvent,
-				"entity_identifiers":      cfg.EntityIdentifiers,
+				"entity_identifiers":      entityIdentifiers,
 				"notification_event_data": eventData,
 			})
 		}

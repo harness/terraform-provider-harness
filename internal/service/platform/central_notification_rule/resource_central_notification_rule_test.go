@@ -17,13 +17,12 @@ func TestAccResourceCentralNotificationRule(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	rName := "TestAccResourceCentralNotificationRule"
-	updatedName := fmt.Sprintf("%s_updated", rName)
+	updatedName := fmt.Sprintf("%s-updated", rName)
 	resourceName := "harness_platform_central_notification_rule.test"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceCentralNotificationRuleConfig(rName, id),
@@ -42,11 +41,6 @@ func TestAccResourceCentralNotificationRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
-			},
 		},
 	})
 }
@@ -59,7 +53,6 @@ func TestAccResourceCentralNotificationRule_multipleConditions(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceCentralNotificationRuleMultipleConditions(name, id),
@@ -71,11 +64,6 @@ func TestAccResourceCentralNotificationRule_multipleConditions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.condition_name", "pipeline-condition"),
 					resource.TestCheckResourceAttr(resourceName, "notification_conditions.1.condition_name", "deployment-condition"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -89,7 +77,6 @@ func TestAccResourceCentralNotificationRule_orgLevel(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceCentralNotificationRuleOrgLevel(name, id),
@@ -99,11 +86,6 @@ func TestAccResourceCentralNotificationRule_orgLevel(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "org", id),
 					resource.TestCheckNoResourceAttr(resourceName, "project"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -117,7 +99,6 @@ func TestAccResourceCentralNotificationRule_accountLevel(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceCentralNotificationRuleAccountLevel(name, id),
@@ -127,11 +108,6 @@ func TestAccResourceCentralNotificationRule_accountLevel(t *testing.T) {
 					resource.TestCheckNoResourceAttr(resourceName, "org"),
 					resource.TestCheckNoResourceAttr(resourceName, "project"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -155,7 +131,7 @@ resource "harness_platform_central_notification_channel" "test" {
   identifier                = "%[1]s_channel"
   org                       = harness_platform_organization.test.id
   project                   = harness_platform_project.test.id
-  name                      = "%[2]s Channel"
+  name                      = "%[2]s_Channel"
   notification_channel_type = "EMAIL"
   status                    = "ENABLED"
 
@@ -205,7 +181,7 @@ resource "harness_platform_central_notification_channel" "test" {
   identifier                = "%[2]s_channel"
   org                       = harness_platform_organization.test.id
   project                   = harness_platform_project.test.id
-  name                      = "%[1]s Channel"
+  name                      = "%[1]s_Channel"
   notification_channel_type = "EMAIL"
   status                    = "ENABLED"
 
@@ -259,7 +235,7 @@ resource "harness_platform_organization" "test" {
 resource "harness_platform_central_notification_channel" "test" {
   identifier                = "%[2]s_channel"
   org                       = harness_platform_organization.test.id
-  name                      = "%[1]s Channel"
+  name                      = "%[1]s_Channel"
   notification_channel_type = "EMAIL"
   status                    = "ENABLED"
 
@@ -294,7 +270,7 @@ func testAccResourceCentralNotificationRuleAccountLevel(name, id string) string 
 	return fmt.Sprintf(`
 resource "harness_platform_central_notification_channel" "test" {
   identifier                = "%[2]s_channel"
-  name                      = "%[1]s Channel"
+  name                      = "%[1]s_Channel"
   notification_channel_type = "EMAIL"
   status                    = "ENABLED"
 

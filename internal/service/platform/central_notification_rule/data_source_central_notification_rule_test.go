@@ -279,27 +279,27 @@ func testAccDataSourceCentralNotificationRuleMultipleChannels(name, id string) s
 			 }
 		}
 
-		resource "harness_platform_central_notification_channel" "slack_test" {
+		resource "harness_platform_central_notification_channel" "email2_test" {
              depends_on = [
 				harness_platform_organization.test,
 				harness_platform_project.test,
 			]
-			 identifier                = "%[1]s_slack"
+			 identifier                = "%[1]s_email2"
              org                       = harness_platform_organization.test.id
              project                   = harness_platform_project.test.id
-			 name                      = "%[2]s_slack"
-			 notification_channel_type = "SLACK"
+			 name                      = "%[2]s_email2"
+			 notification_channel_type = "EMAIL"
 			 status                    = "ENABLED"
 			
 			 channel {
-			   webhook_urls = ["https://hooks.slack.com/services/T1234567/B1234567/abcdefghijklmnopqrstuvwx"]
+			   email_ids = ["notify2@harness.io"]
 			 }
 		}
 
 	resource "harness_platform_central_notification_rule" "test" {
 	  depends_on = [
 					harness_platform_central_notification_channel.email_test,
-					harness_platform_central_notification_channel.slack_test
+					harness_platform_central_notification_channel.email2_test
 				]
 	  identifier                 = "%[1]s"
 	  name                       = "%[2]s"
@@ -308,7 +308,7 @@ func testAccDataSourceCentralNotificationRuleMultipleChannels(name, id string) s
 	  status                     = "ENABLED"
 	  notification_channel_refs  = [
 		harness_platform_central_notification_channel.email_test.identifier,
-		harness_platform_central_notification_channel.slack_test.identifier
+		harness_platform_central_notification_channel.email2_test.identifier
 	  ]
 
 	  notification_conditions {

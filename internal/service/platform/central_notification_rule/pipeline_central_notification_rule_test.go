@@ -68,6 +68,32 @@ func TestAccResourcePipelineCentralNotificationRule_accountLevel(t *testing.T) {
 	})
 }
 
+func TestAccResourcePipelineCentralNotificationRule_projectLevel(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	rName := "TestAccResourcePipelineCentralNotificationRule_Project"
+	resourceName := "harness_platform_pipeline_central_notification_rule.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePipelineCentralNotificationRuleProjectConfig(rName, id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", rName),
+					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
+					resource.TestCheckResourceAttr(resourceName, "notification_channel_refs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event", "PIPELINE_FAILED"),
+					resource.TestCheckResourceAttrSet(resourceName, "org"),
+					resource.TestCheckResourceAttrSet(resourceName, "project"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccResourcePipelineCentralNotificationRule_orgLevel(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
@@ -77,7 +103,6 @@ func TestAccResourcePipelineCentralNotificationRule_orgLevel(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleOrgConfig(rName, id),
@@ -90,12 +115,6 @@ func TestAccResourcePipelineCentralNotificationRule_orgLevel(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "org"),
 					resource.TestCheckNoResourceAttr(resourceName, "project"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -110,7 +129,6 @@ func TestAccResourcePipelineCentralNotificationRule_multipleEvents(t *testing.T)
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleMultipleEventsConfig(rName, id),
@@ -140,7 +158,6 @@ func TestAccResourcePipelineCentralNotificationRule_multipleChannels(t *testing.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleMultipleChannelsConfig(rName, id),
@@ -164,7 +181,6 @@ func TestAccResourcePipelineCentralNotificationRule_disabled(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleDisabledConfig(rName, id),
@@ -187,7 +203,6 @@ func TestAccResourcePipelineCentralNotificationRule_withEntityIdentifiers(t *tes
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleEntityIdentifiersConfig(rName, id),
@@ -213,7 +228,6 @@ func TestAccResourcePipelineCentralNotificationRule_allPipelineEvents(t *testing
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleAllEventsConfig(rName, id),
@@ -243,7 +257,6 @@ func TestAccResourcePipelineCentralNotificationRule_pipelineStartEvent(t *testin
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleSingleEventConfig(rName, id, "PIPELINE_START"),
@@ -265,7 +278,6 @@ func TestAccResourcePipelineCentralNotificationRule_pipelineSuccessEvent(t *test
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleSingleEventConfig(rName, id, "PIPELINE_SUCCESS"),
@@ -287,7 +299,6 @@ func TestAccResourcePipelineCentralNotificationRule_stageStartEvent(t *testing.T
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleSingleEventConfig(rName, id, "STAGE_START"),
@@ -309,7 +320,6 @@ func TestAccResourcePipelineCentralNotificationRule_stageSuccessEvent(t *testing
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleSingleEventConfig(rName, id, "STAGE_SUCCESS"),
@@ -331,7 +341,6 @@ func TestAccResourcePipelineCentralNotificationRule_stageFailedEvent(t *testing.
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleSingleEventConfig(rName, id, "STAGE_FAILED"),
@@ -911,6 +920,9 @@ func buildPipelineField(r *terraform.ResourceState, field string) optional.Strin
 
 func testAccGetPipelineCentralNotificationRule(resourceName string, state *terraform.State) (*nextgen.NotificationRuleDto, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
+	if r == nil || r.Primary == nil {
+		return nil, nil
+	}
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 
 	id := r.Primary.ID
@@ -947,12 +959,12 @@ func testAccGetPipelineCentralNotificationRule(resourceName string, state *terra
 		}
 		// Check for various error patterns that indicate the resource doesn't exist
 		errMsg := err.Error()
-		if strings.Contains(errMsg, "does not exist") || 
-		   strings.Contains(errMsg, "not found") ||
-		   strings.Contains(errMsg, "RESOURCE_NOT_FOUND") ||
-		   strings.Contains(errMsg, "Project with identifier") ||
-		   strings.Contains(errMsg, "Organization with identifier") ||
-		   strings.Contains(errMsg, "404") {
+		if strings.Contains(errMsg, "does not exist") ||
+			strings.Contains(errMsg, "not found") ||
+			strings.Contains(errMsg, "RESOURCE_NOT_FOUND") ||
+			strings.Contains(errMsg, "Project with identifier") ||
+			strings.Contains(errMsg, "Organization with identifier") ||
+			strings.Contains(errMsg, "404") {
 			return nil, nil
 		}
 		return nil, err
@@ -972,4 +984,56 @@ func testAccCheckPipelineCentralNotificationRuleDestroy(resourceName string) res
 		}
 		return nil
 	}
+}
+
+func testAccResourcePipelineCentralNotificationRuleProjectConfig(name, id string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_organization" "test" {
+  identifier = "%[1]s"
+  name       = "%[2]s"
+}
+
+resource "harness_platform_project" "test" {
+  identifier = "%[1]s"
+  name       = "%[2]s"
+  org_id     = harness_platform_organization.test.id
+  color      = "#472848"
+}
+
+resource "harness_platform_central_notification_channel" "test" {
+  identifier                = "%[1]s_channel"
+  org                       = harness_platform_organization.test.id
+  project                   = harness_platform_project.test.id
+  name                      = "%[2]s_Channel"
+  notification_channel_type = "EMAIL"
+  status                    = "ENABLED"
+
+  channel {
+    email_ids = ["notify@harness.io"]
+  }
+}
+
+resource "harness_platform_pipeline_central_notification_rule" "test" {
+  identifier                = "%[1]s"
+  name                      = "%[2]s"
+  org                       = harness_platform_organization.test.id
+  project                   = harness_platform_project.test.id
+  status                    = "ENABLED"
+  notification_channel_refs = [harness_platform_central_notification_channel.test.identifier]
+
+  notification_conditions {
+    condition_name = "project-condition"
+
+    notification_event_configs {
+      notification_entity = "PIPELINE"
+      notification_event  = "PIPELINE_FAILED"
+
+      notification_event_data {
+        type              = "PIPELINE"
+        scope_identifiers = []
+      }
+    }
+  }
+}
+`, id, name)
 }

@@ -56,7 +56,7 @@ resource "harness_platform_central_notification_channel" "test" {
   identifier                = "%[1]s_channel"
   org                       = harness_platform_organization.test.id
   project                   = harness_platform_project.test.id
-  name                      = "%[2]s Channel"
+  name                      = "%[2]s_Channel"
   notification_channel_type = "EMAIL"
   status                    = "ENABLED"
 
