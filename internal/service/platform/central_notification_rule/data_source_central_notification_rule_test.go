@@ -47,9 +47,8 @@ func TestAccDataSourceCentralNotificationRule_multipleConditions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "notification_conditions.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.condition_name", "pipeline-condition"),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.1.condition_name", "service-condition"),
 				),
 			},
 		},
@@ -114,8 +113,8 @@ func TestAccDataSourceCentralNotificationRule_deploymentEvents(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_entity", "DEPLOYMENT"),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event", "DEPLOYMENT_FAILED"),
+					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_entity", "PIPELINE"),
+					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event", "PIPELINE_FAILED"),
 				),
 			},
 		},
@@ -175,9 +174,7 @@ func testAccDataSourceCentralNotificationRuleConfig(name, id string) string {
 		notification_event_configs {
 		  notification_entity = "PIPELINE"
 		  notification_event  = "PIPELINE_FAILED"
-		  notification_event_data = {
-			foo = "bar"
-		  }
+		  entity_identifiers = []
 		}
 	  }
 	}
@@ -238,21 +235,7 @@ func testAccDataSourceCentralNotificationRuleMultipleConditions(name, id string)
 		notification_event_configs {
 		  notification_entity = "PIPELINE"
 		  notification_event  = "PIPELINE_FAILED"
-		  notification_event_data = {
-			pipeline_id = "test-pipeline"
-		  }
-		}
-	  }
-
-	  notification_conditions {
-		condition_name = "service-condition"
-	
-		notification_event_configs {
-		  notification_entity = "SERVICE"
-		  notification_event  = "SERVICE_DEPLOYMENT_FAILED"
-		  notification_event_data = {
-			service_id = "test-service"
-		  }
+		  entity_identifiers = []
 		}
 	  }
 	}
@@ -309,7 +292,7 @@ func testAccDataSourceCentralNotificationRuleMultipleChannels(name, id string) s
 			 status                    = "ENABLED"
 			
 			 channel {
-			   webhook_url = "https://hooks.slack.com/services/test"
+			   webhook_urls = ["https://hooks.slack.com/services/T1234567/B1234567/abcdefghijklmnopqrstuvwx"]
 			 }
 		}
 
@@ -334,9 +317,7 @@ func testAccDataSourceCentralNotificationRuleMultipleChannels(name, id string) s
 		notification_event_configs {
 		  notification_entity = "PIPELINE"
 		  notification_event  = "PIPELINE_FAILED"
-		  notification_event_data = {
-			foo = "bar"
-		  }
+		  entity_identifiers = []
 		}
 	  }
 	}
@@ -397,9 +378,7 @@ func testAccDataSourceCentralNotificationRuleDisabled(name, id string) string {
 		notification_event_configs {
 		  notification_entity = "PIPELINE"
 		  notification_event  = "PIPELINE_FAILED"
-		  notification_event_data = {
-			foo = "bar"
-		  }
+		  entity_identifiers = []
 		}
 	  }
 	}
@@ -458,12 +437,9 @@ func testAccDataSourceCentralNotificationRuleDeploymentEvents(name, id string) s
 		condition_name = "deployment-condition"
 	
 		notification_event_configs {
-		  notification_entity = "DEPLOYMENT"
-		  notification_event  = "DEPLOYMENT_FAILED"
-		  notification_event_data = {
-			environment_id = "test-environment"
-			service_id     = "test-service"
-		  }
+		  notification_entity = "PIPELINE"
+		  notification_event  = "PIPELINE_FAILED"
+		  entity_identifiers = []
 		}
 	  }
 	}

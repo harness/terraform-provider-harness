@@ -94,6 +94,11 @@ func DataSourcePipelineCentralNotificationRuleService() *schema.Resource {
 											},
 										},
 									},
+									"entity_identifiers": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+									},
 								},
 							},
 						},

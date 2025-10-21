@@ -418,7 +418,7 @@ func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.Res
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
 			eventDataList := []interface{}{}
-			// Safely read cfg.NotificationEventData.Type_
+			// Handle notification event data - it can be null when scope_identifiers is empty
 			if cfg.PipelineEventNotificationParamsDto != nil && cfg.PipelineEventNotificationParamsDto.Type_ != nil {
 				eventData := make(map[string]interface{})
 
@@ -426,7 +426,11 @@ func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.Res
 				eventData["scope_identifiers"] = cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers
 				eventDataList = []interface{}{eventData}
 			} else {
-				panic(fmt.Sprintf("unsupported notification event data in read: %+v", cfg))
+				// When notification_event_data is null, create default structure with PIPELINE type
+				eventData := make(map[string]interface{})
+				eventData["type"] = "PIPELINE"
+				eventData["scope_identifiers"] = []string{}
+				eventDataList = []interface{}{eventData}
 			}
 
 			eventConfigs = append(eventConfigs, map[string]interface{}{

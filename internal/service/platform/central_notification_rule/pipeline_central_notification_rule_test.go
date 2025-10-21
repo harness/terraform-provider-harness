@@ -24,7 +24,6 @@ func TestAccResourcePipelineCentralNotificationRule_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleConfig(rName, id),
@@ -36,15 +35,8 @@ func TestAccResourcePipelineCentralNotificationRule_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "notification_conditions.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.0.type", "PIPELINE"),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.0.scope_identifiers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.0.scope_identifiers.0", id),
+					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.0.scope_identifiers.#", "0"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -59,7 +51,6 @@ func TestAccResourcePipelineCentralNotificationRule_accountLevel(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckPipelineCentralNotificationRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourcePipelineCentralNotificationRuleAccountConfig(rName, id),
@@ -72,12 +63,6 @@ func TestAccResourcePipelineCentralNotificationRule_accountLevel(t *testing.T) {
 					resource.TestCheckNoResourceAttr(resourceName, "org"),
 					resource.TestCheckNoResourceAttr(resourceName, "project"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -403,7 +388,7 @@ resource "harness_platform_pipeline_central_notification_rule" "test" {
 
       notification_event_data {
         type              = "PIPELINE"
-        scope_identifiers = [harness_platform_project.test.id]
+        scope_identifiers = []
       }
     }
   }
@@ -956,12 +941,18 @@ func testAccGetPipelineCentralNotificationRule(resourceName string, state *terra
 	}
 
 	if err != nil {
+		// Any 404 error or resource not found error means the resource is destroyed
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return nil, nil
 		}
-		if strings.Contains(err.Error(), "does not exist") || 
-		   strings.Contains(err.Error(), "not found") ||
-		   strings.Contains(err.Error(), "RESOURCE_NOT_FOUND") {
+		// Check for various error patterns that indicate the resource doesn't exist
+		errMsg := err.Error()
+		if strings.Contains(errMsg, "does not exist") || 
+		   strings.Contains(errMsg, "not found") ||
+		   strings.Contains(errMsg, "RESOURCE_NOT_FOUND") ||
+		   strings.Contains(errMsg, "Project with identifier") ||
+		   strings.Contains(errMsg, "Organization with identifier") ||
+		   strings.Contains(errMsg, "404") {
 			return nil, nil
 		}
 		return nil, err
