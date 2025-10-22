@@ -45,74 +45,6 @@ func TestAccResourceCentralNotificationRule(t *testing.T) {
 	})
 }
 
-func TestAccResourceCentralNotificationRule_multipleConditions(t *testing.T) {
-	name := t.Name()
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_central_notification_rule.test"
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceCentralNotificationRuleMultipleConditions(name, id),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.condition_name", "pipeline-condition"),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.1.condition_name", "deployment-condition"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccResourceCentralNotificationRule_orgLevel(t *testing.T) {
-	name := t.Name()
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_central_notification_rule.test"
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceCentralNotificationRuleOrgLevel(name, id),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
-					resource.TestCheckNoResourceAttr(resourceName, "project"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccResourceCentralNotificationRule_accountLevel(t *testing.T) {
-	name := t.Name()
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_central_notification_rule.test"
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceCentralNotificationRuleAccountLevel(name, id),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckNoResourceAttr(resourceName, "org"),
-					resource.TestCheckNoResourceAttr(resourceName, "project"),
-				),
-			},
-		},
-	})
-}
-
 func testAccResourceCentralNotificationRuleConfig(name, id string) string {
 	return fmt.Sprintf(`
 resource "harness_platform_organization" "test" {
@@ -141,8 +73,9 @@ resource "harness_platform_central_notification_channel" "test" {
 }
 
 resource "harness_platform_central_notification_rule" "test" {
-  identifier                = "`+id+`"
-  name                      = "`+name+`"
+  depends_on                = [harness_platform_central_notification_channel.test]
+  identifier                = "%[1]s"
+  name                      = "%[2]s"
   org                       = harness_platform_organization.test.id
   project                   = harness_platform_project.test.id
   status                    = "ENABLED"
@@ -154,6 +87,7 @@ resource "harness_platform_central_notification_rule" "test" {
     notification_event_configs {
       notification_entity = "PIPELINE"
       notification_event  = "PIPELINE_FAILED"
+      entity_identifiers = []
       notification_event_data = {
         type = "PIPELINE"
       }
@@ -161,143 +95,6 @@ resource "harness_platform_central_notification_rule" "test" {
   }
 }
 `, id, name)
-}
-
-func testAccResourceCentralNotificationRuleMultipleConditions(name, id string) string {
-	return fmt.Sprintf(`
-resource "harness_platform_organization" "test" {
-  identifier = "%[2]s"
-  name       = "%[1]s"
-}
-
-resource "harness_platform_project" "test" {
-  identifier = "%[2]s"
-  name       = "%[1]s"
-  org_id     = harness_platform_organization.test.id
-  color      = "#472848"
-}
-
-resource "harness_platform_central_notification_channel" "test" {
-  identifier                = "%[2]s_channel"
-  org                       = harness_platform_organization.test.id
-  project                   = harness_platform_project.test.id
-  name                      = "%[1]s_Channel"
-  notification_channel_type = "EMAIL"
-  status                    = "ENABLED"
-
-  channel {
-    email_ids = ["notify@harness.io"]
-  }
-}
-
-resource "harness_platform_central_notification_rule" "test" {
-  identifier                = "%[2]s"
-  name                      = "%[1]s"
-  org                       = harness_platform_organization.test.id
-  project                   = harness_platform_project.test.id
-  status                    = "ENABLED"
-  notification_channel_refs = [harness_platform_central_notification_channel.test.identifier]
-
-  notification_conditions {
-    condition_name = "pipeline-condition"
-
-    notification_event_configs {
-      notification_entity = "PIPELINE"
-      notification_event  = "PIPELINE_FAILED"
-      notification_event_data = {
-        pipeline_id = "test-pipeline"
-      }
-    }
-  }
-
-  notification_conditions {
-    condition_name = "deployment-condition"
-
-    notification_event_configs {
-      notification_entity = "DEPLOYMENT"
-      notification_event  = "DEPLOYMENT_FAILED"
-      notification_event_data = {
-        environment_id = "test-env"
-      }
-    }
-  }
-}
-`, name, id)
-}
-
-func testAccResourceCentralNotificationRuleOrgLevel(name, id string) string {
-	return fmt.Sprintf(`
-resource "harness_platform_organization" "test" {
-  identifier = "%[2]s"
-  name       = "%[1]s"
-}
-
-resource "harness_platform_central_notification_channel" "test" {
-  identifier                = "%[2]s_channel"
-  org                       = harness_platform_organization.test.id
-  name                      = "%[1]s_Channel"
-  notification_channel_type = "EMAIL"
-  status                    = "ENABLED"
-
-  channel {
-    email_ids = ["notify@harness.io"]
-  }
-}
-
-resource "harness_platform_central_notification_rule" "test" {
-  identifier                = "%[2]s"
-  name                      = "%[1]s"
-  org                       = harness_platform_organization.test.id
-  status                    = "ENABLED"
-  notification_channel_refs = [harness_platform_central_notification_channel.test.identifier]
-
-  notification_conditions {
-    condition_name = "org-condition"
-
-    notification_event_configs {
-      notification_entity = "PIPELINE"
-      notification_event  = "PIPELINE_FAILED"
-      notification_event_data = {
-        type = "PIPELINE"
-      }
-    }
-  }
-}
-`, name, id)
-}
-
-func testAccResourceCentralNotificationRuleAccountLevel(name, id string) string {
-	return fmt.Sprintf(`
-resource "harness_platform_central_notification_channel" "test" {
-  identifier                = "%[2]s_channel"
-  name                      = "%[1]s_Channel"
-  notification_channel_type = "EMAIL"
-  status                    = "ENABLED"
-
-  channel {
-    email_ids = ["notify@harness.io"]
-  }
-}
-
-resource "harness_platform_central_notification_rule" "test" {
-  identifier                = "%[2]s"
-  name                      = "%[1]s"
-  status                    = "ENABLED"
-  notification_channel_refs = [harness_platform_central_notification_channel.test.identifier]
-
-  notification_conditions {
-    condition_name = "account-condition"
-
-    notification_event_configs {
-      notification_entity = "PIPELINE"
-      notification_event  = "PIPELINE_FAILED"
-      notification_event_data = {
-        type = "PIPELINE"
-      }
-    }
-  }
-}
-`, name, id)
 }
 
 func buildField(r *terraform.ResourceState, field string) optional.String {

@@ -331,8 +331,15 @@ func expandNotificationConditions(raw []interface{}) []nextgen.NotificationCondi
 				EntityIdentifiers:  expandStringList(ecMap["entity_identifiers"]),
 			}
 			if rawEventData, ok := ecMap["notification_event_data"]; ok && rawEventData != nil {
+				var eventDataMap map[string]interface{}
+				// Handle both map and list formats for backward compatibility
 				if eventDataList, ok := rawEventData.([]interface{}); ok && len(eventDataList) > 0 {
-					eventDataMap, _ := eventDataList[0].(map[string]interface{})
+					eventDataMap, _ = eventDataList[0].(map[string]interface{})
+				} else if directMap, ok := rawEventData.(map[string]interface{}); ok {
+					eventDataMap = directMap
+				}
+				
+				if eventDataMap != nil {
 					if typeStr, ok := eventDataMap["type"].(string); ok && typeStr != "" {
 						t := nextgen.ResourceTypeEnum(typeStr)
 						switch t {
@@ -454,11 +461,8 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 				eventData["error_budget_remaining_percentage"] = cfg.SloEventNotificationParamsDto.ErrorBudgetRemainingPercentage
 				eventData["error_budget_remaining_minutes"] = cfg.SloEventNotificationParamsDto.ErrorBudgetRemainingMinutes
 			} else {
-				// When notification_event_data is null, create default structure based on entity
-				if cfg.NotificationEntity == "PIPELINE" {
-					eventData["type"] = "PIPELINE"
-					// Don't set scope_identifiers if empty to avoid schema issues
-				}
+				// When notification_event_data is null, don't set default values
+				// The configuration might not expect any notification_event_data
 			}
 
 			// Ensure entity_identifiers is never nil
@@ -467,12 +471,19 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 				entityIdentifiers = []string{}
 			}
 
-			eventConfigs = append(eventConfigs, map[string]interface{}{
-				"notification_entity":     cfg.NotificationEntity,
-				"notification_event":      cfg.NotificationEvent,
-				"entity_identifiers":      entityIdentifiers,
-				"notification_event_data": eventData,
-			})
+			// Only include notification_event_data if it has content
+			eventConfig := map[string]interface{}{
+				"notification_entity": cfg.NotificationEntity,
+				"notification_event":  cfg.NotificationEvent,
+				"entity_identifiers":  entityIdentifiers,
+			}
+			
+			// Only set notification_event_data if we actually have data to set
+			if len(eventData) > 0 {
+				eventConfig["notification_event_data"] = eventData
+			}
+			
+			eventConfigs = append(eventConfigs, eventConfig)
 		}
 
 		conditions = append(conditions, map[string]interface{}{
