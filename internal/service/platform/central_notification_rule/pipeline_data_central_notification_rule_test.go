@@ -11,8 +11,8 @@ import (
 )
 
 func TestAccDataSourcePipelineCentralNotificationRule_basic(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	rName := id
+	id := fmt.Sprintf("TestAccDataSourcePipelineCentralNotificationRule_basic_%s", utils.RandStringBytes(5))
+	rName := "TestAccDataSourcePipelineCentralNotificationRule_basic"
 	resourceName := "data.harness_platform_pipeline_central_notification_rule.test"
 
 	resource.Test(t, resource.TestCase{
@@ -27,8 +27,7 @@ func TestAccDataSourcePipelineCentralNotificationRule_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", rName),
 					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.0.type", "PIPELINE"),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.0.scope_identifiers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.0.scope_identifiers.0", id),
+					resource.TestCheckResourceAttr(resourceName, "notification_conditions.0.notification_event_configs.0.notification_event_data.0.scope_identifiers.#", "0"),
 				),
 			},
 		},
@@ -57,7 +56,7 @@ resource "harness_platform_central_notification_channel" "test" {
   identifier                = "%[1]s_channel"
   org                       = harness_platform_organization.test.id
   project                   = harness_platform_project.test.id
-  name                      = "%[2]s Channel"
+  name                      = "%[2]s_Channel"
   notification_channel_type = "EMAIL"
   status                    = "ENABLED"
 
@@ -84,7 +83,7 @@ resource "harness_platform_pipeline_central_notification_rule" "test" {
 
       notification_event_data {
         type              = "PIPELINE"
-        scope_identifiers = [harness_platform_project.test.id]
+        scope_identifiers = []
       }
     }
   }
@@ -92,6 +91,7 @@ resource "harness_platform_pipeline_central_notification_rule" "test" {
 
 data "harness_platform_pipeline_central_notification_rule" "test" {
   identifier = harness_platform_pipeline_central_notification_rule.test.identifier
+  name       = harness_platform_pipeline_central_notification_rule.test.name
   org        = harness_platform_pipeline_central_notification_rule.test.org
   project    = harness_platform_pipeline_central_notification_rule.test.project
 }

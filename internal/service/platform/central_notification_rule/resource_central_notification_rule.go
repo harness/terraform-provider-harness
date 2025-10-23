@@ -3,6 +3,7 @@ package central_notification_rule
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -330,8 +331,15 @@ func expandNotificationConditions(raw []interface{}) []nextgen.NotificationCondi
 				EntityIdentifiers:  expandStringList(ecMap["entity_identifiers"]),
 			}
 			if rawEventData, ok := ecMap["notification_event_data"]; ok && rawEventData != nil {
+				var eventDataMap map[string]interface{}
+				// Handle both map and list formats for backward compatibility
 				if eventDataList, ok := rawEventData.([]interface{}); ok && len(eventDataList) > 0 {
-					eventDataMap, _ := eventDataList[0].(map[string]interface{})
+					eventDataMap, _ = eventDataList[0].(map[string]interface{})
+				} else if directMap, ok := rawEventData.(map[string]interface{}); ok {
+					eventDataMap = directMap
+				}
+				
+				if eventDataMap != nil {
 					if typeStr, ok := eventDataMap["type"].(string); ok && typeStr != "" {
 						t := nextgen.ResourceTypeEnum(typeStr)
 						switch t {
@@ -437,13 +445,45 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
 			eventData := make(map[string]interface{})
+			
+			// Handle notification event data - it can be null when scope_identifiers is empty
+			if cfg.PipelineEventNotificationParamsDto != nil && cfg.PipelineEventNotificationParamsDto.Type_ != nil {
+				eventData["type"] = string(*cfg.PipelineEventNotificationParamsDto.Type_)
+				// Only set scope_identifiers if not empty, since schema expects TypeMap with string values
+				if len(cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers) > 0 {
+					// Convert slice to comma-separated string for compatibility with TypeMap
+					eventData["scope_identifiers"] = strings.Join(cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers, ",")
+				}
+			} else if cfg.ChaosExperimentEventNotificationParamsDto != nil && cfg.ChaosExperimentEventNotificationParamsDto.Type_ != nil {
+				eventData["type"] = string(*cfg.ChaosExperimentEventNotificationParamsDto.Type_)
+			} else if cfg.SloEventNotificationParamsDto != nil && cfg.SloEventNotificationParamsDto.Type_ != nil {
+				eventData["type"] = string(*cfg.SloEventNotificationParamsDto.Type_)
+				eventData["error_budget_remaining_percentage"] = cfg.SloEventNotificationParamsDto.ErrorBudgetRemainingPercentage
+				eventData["error_budget_remaining_minutes"] = cfg.SloEventNotificationParamsDto.ErrorBudgetRemainingMinutes
+			} else {
+				// When notification_event_data is null, don't set default values
+				// The configuration might not expect any notification_event_data
+			}
 
-			eventConfigs = append(eventConfigs, map[string]interface{}{
-				"notification_entity":     cfg.NotificationEntity,
-				"notification_event":      cfg.NotificationEvent,
-				"entity_identifiers":      cfg.EntityIdentifiers,
-				"notification_event_data": eventData,
-			})
+			// Ensure entity_identifiers is never nil
+			entityIdentifiers := cfg.EntityIdentifiers
+			if entityIdentifiers == nil {
+				entityIdentifiers = []string{}
+			}
+
+			// Only include notification_event_data if it has content
+			eventConfig := map[string]interface{}{
+				"notification_entity": cfg.NotificationEntity,
+				"notification_event":  cfg.NotificationEvent,
+				"entity_identifiers":  entityIdentifiers,
+			}
+			
+			// Only set notification_event_data if we actually have data to set
+			if len(eventData) > 0 {
+				eventConfig["notification_event_data"] = eventData
+			}
+			
+			eventConfigs = append(eventConfigs, eventConfig)
 		}
 
 		conditions = append(conditions, map[string]interface{}{
