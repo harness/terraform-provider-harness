@@ -9,7 +9,7 @@ resource "harness_platform_db_instance" "test" {
   connector  = "jdbcConnector"
   context    = "ctx"
 
-  liquibase_substitute_properties = {
+  substitute_properties = {
     "key1" = "value1"
     "key2" = "value2"
   }

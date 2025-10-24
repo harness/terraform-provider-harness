@@ -54,7 +54,7 @@ func testAccResourceWorkspaceDestroy(resourceName string) resource.TestCheckFunc
 	}
 }
 
-func testAccGetPlatformModule(resourceName string, state *terraform.State) (*nextgen.ModuleResource2, error) {
+func testAccGetPlatformModule(resourceName string, state *terraform.State) (*nextgen.ModuleResource, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID

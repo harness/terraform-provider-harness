@@ -18,9 +18,9 @@ func notificationEntityEnum() []string {
 
 func DataSourceCentralNotificationRuleService() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Notification Rule.",
-
-		ReadContext: resourceCentralNotificationRuleRead,
+		Description:        "Data source for retrieving a Notification Rule.",
+		DeprecationMessage: "This data source is deprecated. Please use `data.harness_platform_pipeline_central_notification_rule`.",
+		ReadContext:        resourceCentralNotificationRuleRead,
 
 		Schema: map[string]*schema.Schema{
 			"org": {
@@ -92,6 +92,11 @@ func DataSourceCentralNotificationRuleService() *schema.Resource {
 									},
 									"notification_event_data": {
 										Type:     schema.TypeMap,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+									},
+									"entity_identifiers": {
+										Type:     schema.TypeList,
 										Optional: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 									},

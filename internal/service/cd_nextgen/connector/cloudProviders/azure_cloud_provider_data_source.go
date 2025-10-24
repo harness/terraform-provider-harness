@@ -18,7 +18,7 @@ func DataSourceConnectorAzureCloudProvider() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Description: "Type can either be InheritFromDelegate or ManualConfig.",
+							Description: "Type can be InheritFromDelegate, ManualConfig or OidcAuthentication.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -116,6 +116,30 @@ func DataSourceConnectorAzureCloudProvider() *schema.Resource {
 												},
 											},
 										},
+									},
+								},
+							},
+						},
+						"azure_oidc_spec": {
+							Description: "Authenticate to Azure Cloud Provider using OIDC Authentication.",
+							Type:        schema.TypeList,
+							Computed:    true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"application_id": {
+										Description: "Application ID of the Azure App.",
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"tenant_id": {
+										Description: "The Azure Active Directory (AAD) directory ID where you created your application.",
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"audience": {
+										Description: "The Azure Audience.",
+										Type:        schema.TypeString,
+										Computed:    true,
 									},
 								},
 							},

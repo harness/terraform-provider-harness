@@ -86,3 +86,22 @@ resource "harness_platform_connector_azure_cloud_provider" "inherit_from_delegat
   azure_environment_type = "AZURE"
   delegate_selectors     = ["harness-delegate"]
 }
+
+resource "harness_platform_connector_azure_cloud_provider" "oidc_authentication" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "example"
+  tags        = ["foo:bar"]
+
+  credentials {
+    type = "OidcAuthentication"
+    azure_oidc_spec {
+      application_id = "application_id"
+      tenant_id      = "tenant_id"
+      audience       = "audience"
+    }
+  }
+
+  azure_environment_type = "AZURE"
+  delegate_selectors     = ["harness-delegate"]
+}

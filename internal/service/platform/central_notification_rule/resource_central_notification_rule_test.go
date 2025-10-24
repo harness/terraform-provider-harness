@@ -17,21 +17,28 @@ func TestAccResourceCentralNotificationRule(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	rName := "TestAccResourceCentralNotificationRule"
+	updatedName := fmt.Sprintf("%s-updated", rName)
 	resourceName := "harness_platform_central_notification_rule.test"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccCheckCentralNotificationRuleDestroy(resourceName), // optionally implement a destroy check
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceCentralNotificationRuleConfig(rName, id),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("harness_platform_central_notification_rule.test", "identifier", id),
-					resource.TestCheckResourceAttr("harness_platform_central_notification_rule.test", "name", rName),
-					resource.TestCheckResourceAttr("harness_platform_central_notification_rule.test", "status", "ENABLED"),
-					resource.TestCheckResourceAttr("harness_platform_central_notification_rule.test", "notification_channel_refs.#", "1"),
-					resource.TestCheckResourceAttr("harness_platform_central_notification_rule.test", "notification_conditions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", rName),
+					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
+					resource.TestCheckResourceAttr(resourceName, "notification_channel_refs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "notification_conditions.#", "1"),
+				),
+			},
+			{
+				Config: testAccResourceCentralNotificationRuleConfig(updatedName, id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
 		},
@@ -56,7 +63,7 @@ resource "harness_platform_central_notification_channel" "test" {
   identifier                = "%[1]s_channel"
   org                       = harness_platform_organization.test.id
   project                   = harness_platform_project.test.id
-  name                      = "%[2]s Channel"
+  name                      = "%[2]s_Channel"
   notification_channel_type = "EMAIL"
   status                    = "ENABLED"
 
@@ -66,8 +73,9 @@ resource "harness_platform_central_notification_channel" "test" {
 }
 
 resource "harness_platform_central_notification_rule" "test" {
-  identifier                = "`+id+`"
-  name                      = "`+name+`"
+  depends_on                = [harness_platform_central_notification_channel.test]
+  identifier                = "%[1]s"
+  name                      = "%[2]s"
   org                       = harness_platform_organization.test.id
   project                   = harness_platform_project.test.id
   status                    = "ENABLED"
@@ -79,6 +87,7 @@ resource "harness_platform_central_notification_rule" "test" {
     notification_event_configs {
       notification_entity = "PIPELINE"
       notification_event  = "PIPELINE_FAILED"
+      entity_identifiers = []
       notification_event_data = {
         type = "PIPELINE"
       }

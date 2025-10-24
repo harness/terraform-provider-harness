@@ -191,6 +191,7 @@ func parseTimeInDay(timeInDayStr string, defaultTimeInDay nextgen.TimeInDayForWi
 
 func readClusterOrchConfig(d *schema.ResourceData, orch *nextgen.ClusterOrchestrator) {
 	d.SetId(orch.ID)
+	d.Set("disabled", orch.Disabled)
 	d.Set("distribution", []interface{}{map[string]interface{}{
 		"base_ondemand_capacity":      orch.Config.BaseOnDemandCapacity,
 		"ondemand_replica_percentage": orch.Config.OnDemandSplit,

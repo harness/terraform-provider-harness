@@ -52,7 +52,7 @@ func TestAccResourceDBInstance(t *testing.T) {
 	})
 }
 
-func TestAccResourceDBInstanceWithLiquibaseProps(t *testing.T) {
+func TestAccResourceDBInstanceWithSubstituteProps(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	updatedName := fmt.Sprintf("%s_updated", name)
@@ -64,7 +64,7 @@ func TestAccResourceDBInstanceWithLiquibaseProps(t *testing.T) {
 		CheckDestroy:      testAccDBInstanceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceDBInstanceWithLiquibaseProps(id, name),
+				Config: testAccResourceDBInstanceWithSubstituteProps(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -72,13 +72,13 @@ func TestAccResourceDBInstanceWithLiquibaseProps(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "branch", "feature/test"),
 					resource.TestCheckResourceAttr(resourceName, "context", "test-context"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_user", "testuser"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_password", "testpass"),
+					resource.TestCheckResourceAttr(resourceName, "substitute_properties.db_user", "testuser"),
+					resource.TestCheckResourceAttr(resourceName, "substitute_properties.db_password", "testpass"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 				),
 			},
 			{
-				Config: testAccResourceDBInstanceWithLiquibaseProps(id, updatedName),
+				Config: testAccResourceDBInstanceWithSubstituteProps(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -86,8 +86,8 @@ func TestAccResourceDBInstanceWithLiquibaseProps(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "branch", "feature/test"),
 					resource.TestCheckResourceAttr(resourceName, "context", "test-context"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_user", "testuser"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_password", "testpass"),
+					resource.TestCheckResourceAttr(resourceName, "substitute_properties.db_user", "testuser"),
+					resource.TestCheckResourceAttr(resourceName, "substitute_properties.db_password", "testpass"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 				),
 			},
@@ -218,7 +218,7 @@ func testAccResourceDBInstance(id string, name string) string {
         `, id, name)
 }
 
-func testAccResourceDBInstanceWithLiquibaseProps(id string, name string) string {
+func testAccResourceDBInstanceWithSubstituteProps(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -299,7 +299,7 @@ func testAccResourceDBInstanceWithLiquibaseProps(id string, name string) string 
 			connector = harness_platform_connector_jdbc.test.id
 			schema = harness_platform_db_schema.test.id
 			context = "test-context"
-			liquibase_substitute_properties = {
+			substitute_properties = {
 				db_user = "testuser"
 				db_password = "testpass"
 			}

@@ -48,6 +48,7 @@ Read-Only:
 
 - `azure_inherit_from_delegate_details` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--azure_inherit_from_delegate_details))
 - `azure_manual_details` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--azure_manual_details))
+- `azure_oidc_spec` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--azure_oidc_spec))
 - `type` (String)
 
 <a id="nestedobjatt--credentials--azure_inherit_from_delegate_details"></a>
@@ -107,3 +108,15 @@ Read-Only:
 Read-Only:
 
 - `secret_ref` (String)
+
+
+
+
+<a id="nestedobjatt--credentials--azure_oidc_spec"></a>
+### Nested Schema for `credentials.azure_oidc_spec`
+
+Read-Only:
+
+- `application_id` (String)
+- `audience` (String)
+- `tenant_id` (String)

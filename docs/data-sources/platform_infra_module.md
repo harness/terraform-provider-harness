@@ -25,6 +25,7 @@ data "harness_platform_infra_module" "test" {
 
 ### Required
 
+- `account` (String) Account that owns the module
 - `id` (String) Identifier of the module
 - `name` (String) Name of the module
 - `system` (String) Provider of the module
@@ -33,6 +34,10 @@ data "harness_platform_infra_module" "test" {
 
 - `created` (Number) Timestamp when the module was created
 - `description` (String) Description of the module
+- `git_tag_style` (String) Git Tag Style
+- `module_error` (String) Error while retrieving the module
+- `org` (String) Organization that owns the module
+- `project` (String) Project that owns the module
 - `repository` (String) For account connectors, the repository where the module is stored
 - `repository_branch` (String) Repository Branch in which the module should be accessed
 - `repository_commit` (String) Repository Commit in which the module should be accessed
@@ -41,3 +46,21 @@ data "harness_platform_infra_module" "test" {
 - `repository_url` (String) URL where the module is stored
 - `synced` (Number) Timestamp when the module was last synced
 - `tags` (String) Tags associated with the module
+- `testing_enabled` (Boolean) Whether testing is enabled for the module
+- `testing_metadata` (Block List, Max: 1) Testing metadata for the module (see [below for nested schema](#nestedblock--testing_metadata))
+- `updated` (Number) Timestamp when the module was last modified
+- `versions` (List of String) Versions of the module
+
+<a id="nestedblock--testing_metadata"></a>
+### Nested Schema for `testing_metadata`
+
+Optional:
+
+- `account` (String) Account is the internal customer account ID
+- `org` (String) Organization identifier
+- `pipelines` (List of String) Pipelines where the testing is enabled
+- `project` (String) Project identifier
+- `provider_connector` (String) Provider connector for testing purposes
+- `provisioner_type` (String) Provisioner type for testing purposes
+- `provisioner_version` (String) Provisioner version for testing purposes
+- `release_pipeline` (String) Release pipeline

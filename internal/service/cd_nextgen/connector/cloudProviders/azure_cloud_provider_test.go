@@ -220,6 +220,47 @@ func TestAccResourceConnectorAzure_ForceDelete(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorAzure_OidcAuthentication(t *testing.T) {
+
+	id := fmt.Sprintf("ConnectorAzure_OidcAuthentication"+"_%s", utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_azure_cloud_provider.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testaccresourceconnectorazureOidcauthentication(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				Config: testaccresourceconnectorazureOidcauthentication(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccResourceConnectorAzure_manualDetails_secret(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
@@ -368,5 +409,28 @@ func testAccResourceConnectorAzure_force_delete(id string, name string) string {
 			delegate_selectors = ["harness-delegate"]
 			force_delete = true
 		}
+`, id, name)
+}
+
+func testaccresourceconnectorazureOidcauthentication(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_connector_azure_cloud_provider" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		credentials {
+			type = "OidcAuthentication"
+			azure_oidc_spec {
+				application_id = "application_id"
+				tenant_id = "tenant_id"
+                audience = "api://AzureADTokenExchange"
+			}
+		}
+
+		azure_environment_type = "AZURE"
+		delegate_selectors = ["harness-delegate"]
+	}
 `, id, name)
 }
