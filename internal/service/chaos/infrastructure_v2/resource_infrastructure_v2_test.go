@@ -52,8 +52,6 @@ func TestAccResourceChaosInfrastructureV2_basic(t *testing.T) {
 				Config: testAccResourceChaosInfrastructureV2ConfigBasic(rName, id, "KUBERNETESV2", "NAMESPACE"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", SanitizeK8sResourceName(rName)),
-					// BUG: BE is taking infraType as KUBERNETESV2 but in GET call, sending KUBERNETES
-					// BUG: BE is sending harnessInfraType also as empty string
 					// resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
 					resource.TestCheckResourceAttr(resourceName, "infra_scope", "NAMESPACE"),
 					resource.TestCheckResourceAttr(resourceName, "namespace", "chaos"),

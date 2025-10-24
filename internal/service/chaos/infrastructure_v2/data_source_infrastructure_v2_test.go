@@ -51,11 +51,8 @@ func TestAccDataSourceChaosInfrastructureV2_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", sanitizeK8sResourceName(rName)),
-					// BUG: BE is taking infraType as KUBERNETESV2 but in GET call, sending KUBERNETES
-					// BUG: BE is sending harnessInfraType also as empty string
 					// resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
 					resource.TestCheckResourceAttr(resourceName, "infra_scope", "NAMESPACE"),
-					// BUG: BE is not sending `status` in GET Call
 					// resource.TestCheckResourceAttrSet(resourceName, "status"),
 					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
 				),
@@ -79,14 +76,11 @@ func TestAccDataSourceChaosInfrastructureV2_WithAllOptions(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", sanitizeK8sResourceName(rName)),
-					// BUG: BE is taking infraType as KUBERNETESV2 but in GET call, sending KUBERNETES
-					// BUG: BE is sending harnessInfraType also as empty string
 					// resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
 					resource.TestCheckResourceAttr(resourceName, "ai_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "insecure_skip_verify", "true"),
 					resource.TestCheckResourceAttr(resourceName, "namespace", "chaos-namespace"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "litmus-admin"),
-					// BUG: BE is not sending `status` in GET Call
 					// resource.TestCheckResourceAttrSet(resourceName, "status"),
 				),
 			},
