@@ -232,16 +232,13 @@ func setInfrastructureFields(d *schema.ResourceData, infra *chaos.InfraV2Kuberne
 	// Set basic fields
 	d.Set("name", infra.Name)
 	d.Set("description", infra.Description)
-	d.Set("infra_type", "KUBERNETESV2")
+	d.Set("infra_type", infra.InfraType)
 	d.Set("infra_scope", infra.InfraScope)
 	d.Set("service_account", infra.ServiceAccount)
 	d.Set("namespace", infra.InfraNamespace)
-	// API Changed??
 	d.Set("identifier", infra.Identity)
 	d.Set("infra_id", infra.InfraID)
 	d.Set("environment_id", infra.EnvironmentID)
-	// Getting Error Here
-	// d.Set("platform_name", infra.PlatformName)
 	d.Set("last_heartbeat", infra.LastHeartbeat)
 	d.Set("last_workflow_timestamp", infra.LastWorkflowTimestamp)
 	d.Set("no_of_schedules", infra.NoOfSchedules)
@@ -250,18 +247,14 @@ func setInfrastructureFields(d *schema.ResourceData, infra *chaos.InfraV2Kuberne
 	d.Set("tags", infra.Tags)
 	d.Set("update_status", infra.UpdateStatus)
 	d.Set("created_at", infra.CreatedAt)
-	// API Changed??
 	d.Set("created_by", infra.CreatedBy.Username)
 	d.Set("updated_at", infra.UpdatedAt)
-	// API Changed??
 	d.Set("updated_by", infra.UpdatedBy.Username)
 	d.Set("is_ai_enabled", infra.IsAIEnabled)
 	d.Set("is_chaos_enabled", infra.IsChaosEnabled)
 	d.Set("insecure_skip_verify", infra.InsecureSkipVerify)
 	d.Set("run_as_user", infra.RunAsUser)
 	d.Set("run_as_group", infra.RunAsGroup)
-	// Version is empty
-	// d.Set("version", string(infra.Version))
 	d.Set("containers", infra.Containers)
 	d.Set("identity", infra.Identity)
 
