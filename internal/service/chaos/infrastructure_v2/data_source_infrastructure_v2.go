@@ -241,7 +241,7 @@ func setInfrastructureFields(d *schema.ResourceData, infra *chaos.InfraV2Kuberne
 	d.Set("infra_id", infra.InfraID)
 	d.Set("environment_id", infra.EnvironmentID)
 	// Getting Error Here
-	// d.Set("platform_name", "dsd")
+	// d.Set("platform_name", infra.PlatformName)
 	d.Set("last_heartbeat", infra.LastHeartbeat)
 	d.Set("last_workflow_timestamp", infra.LastWorkflowTimestamp)
 	d.Set("no_of_schedules", infra.NoOfSchedules)
