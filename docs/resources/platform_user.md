@@ -34,10 +34,10 @@ resource "harness_platform_user" "example" {
   email       = "john.doe@harness.io"
   user_groups = ["_project_all_users"]
   role_bindings {
-    resource_group_identifier = "_all_project_level_resources"
-    role_identifier           = "_project_viewer"
-    role_name                 = "Project Viewer"
-    resource_group_name       = "All Project Level Resources"
+    resource_group_identifier = "_all_organization_level_resources"
+    role_identifier           = "_organization_viewer"
+    role_name                 = "Organization Viewer"
+    resource_group_name       = "All Organization Level Resources"
     managed_role              = true
   }
 }
@@ -45,12 +45,12 @@ resource "harness_platform_user" "example" {
 # Create user at account level
 resource "harness_platform_user" "example" {
   email       = "john.doe@harness.io"
-  user_groups = ["_project_all_users"]
+  user_groups = ["_account_all_users"]
   role_bindings {
-    resource_group_identifier = "_all_project_level_resources"
-    role_identifier           = "_project_viewer"
-    role_name                 = "Project Viewer"
-    resource_group_name       = "All Project Level Resources"
+    resource_group_identifier = "_all_account_level_resources"
+    role_identifier           = "_account_viewer"
+    role_name                 = "Account Viewer"
+    resource_group_name       = "All Account Level Resources"
     managed_role              = true
   }
 }
