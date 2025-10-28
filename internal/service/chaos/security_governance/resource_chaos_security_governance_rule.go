@@ -105,6 +105,7 @@ func ResourceChaosSecurityGovernanceRule() *schema.Resource {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Computed: true,
+							// ValidateFunc: validation.IntAtLeast(1),
 						},
 						"duration": {
 							Type:         schema.TypeString,
@@ -149,23 +150,23 @@ func ResourceChaosSecurityGovernanceRule() *schema.Resource {
 
 // Custom validation function for time windows
 func validateTimeWindows(_ context.Context, d *schema.ResourceDiff, _ interface{}) error {
-	if d.HasChange("time_windows") {
-		timeWindows := d.Get("time_windows").([]interface{})
+	// if d.HasChange("time_windows") {
+	// 	timeWindows := d.Get("time_windows").([]interface{})
 
-		for i, tw := range timeWindows {
-			window := tw.(map[string]interface{})
-			hasEndTime := window["end_time"] != nil && window["end_time"].(int) > 0
-			hasDuration := window["duration"] != nil && window["duration"].(string) != ""
+	// 	for i, tw := range timeWindows {
+	// 		window := tw.(map[string]interface{})
+	// 		hasEndTime := window["end_time"] != nil && window["end_time"].(int) > 0
+	// 		hasDuration := window["duration"] != nil && window["duration"].(string) != ""
 
-			if hasEndTime && hasDuration {
-				return fmt.Errorf("time_windows[%d]: only one of 'end_time' or 'duration' can be specified", i)
-			}
+	// 		if hasEndTime && hasDuration {
+	// 			return fmt.Errorf("time_windows[%d]: only one of 'end_time' or 'duration' can be specified", i)
+	// 		}
 
-			if !hasEndTime && !hasDuration {
-				return fmt.Errorf("time_windows[%d]: one of 'end_time' or 'duration' must be specified", i)
-			}
-		}
-	}
+	// 		if !hasEndTime && !hasDuration {
+	// 			return fmt.Errorf("time_windows[%d]: one of 'end_time' or 'duration' must be specified", i)
+	// 		}
+	// 	}
+	// }
 
 	return nil
 }

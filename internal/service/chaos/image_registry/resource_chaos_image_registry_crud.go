@@ -76,7 +76,7 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 		if strings.Contains(err.Error(), "duplicate key error") {
 			log.Printf("[WARN] Chaos image registry already exists, reading existing state: %s", err)
 			// Set the ID and update the state
-			d.SetId(generateID(identifiers))
+			d.SetId(generateID(identifiers, req.RegistryAccount))
 			return resourceChaosImageRegistryRead(ctx, d, meta)
 		}
 		log.Printf("[ERROR] Chaos image registry creation failed: %s", err)
@@ -84,7 +84,7 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("failed to create image registry: %v", err)
 	}
 
-	d.SetId(generateID(identifiers))
+	d.SetId(generateID(identifiers, req.RegistryAccount))
 	return resourceChaosImageRegistryRead(ctx, d, meta)
 }
 
@@ -107,6 +107,7 @@ func resourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceData,
 		return diag.Errorf("failed to read image registry: %v", err)
 	}
 
+	d.SetId(generateID(identifiers, registry.RegistryAccount))
 	d.Set("org_id", identifiers.OrgIdentifier)
 	d.Set("project_id", identifiers.ProjectIdentifier)
 	d.Set("infra_id", registry.InfraID)
@@ -145,10 +146,7 @@ func resourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceData,
 
 func resourceChaosImageRegistryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).ChaosClient
-	identifiers, err := parseID(d.Id(), c.AccountId)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	identifiers := getIdentifiers(d, c.AccountId)
 
 	var infraID *string
 	if v, ok := d.GetOk("infra_id"); ok {
@@ -185,9 +183,9 @@ func resourceChaosImageRegistryUpdate(ctx context.Context, d *schema.ResourceDat
 		}
 	}
 
-	_, err = c.ImageRegistryApi.Update(
+	_, err := c.ImageRegistryApi.Update(
 		ctx,
-		*identifiers,
+		identifiers,
 		req.InfraID,         // *string
 		req.RegistryServer,  // string
 		req.RegistryAccount, // string
@@ -241,8 +239,8 @@ func getIdentifiers(d *schema.ResourceData, accountID string) model.ScopedIdenti
 	return identifiers
 }
 
-func generateID(identifiers model.ScopedIdentifiersRequest) string {
-	parts := []string{}
+func generateID(identifiers model.ScopedIdentifiersRequest, registryAccount string) string {
+	parts := []string{registryAccount}
 	if identifiers.OrgIdentifier != nil {
 		parts = append(parts, *identifiers.OrgIdentifier)
 		if identifiers.ProjectIdentifier != nil {
