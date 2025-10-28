@@ -2,7 +2,6 @@ package image_registry_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -10,14 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+// TestAccDataSourceChaosImageRegistry verifies the basic data source functionality for Chaos Image Registry at the account level.
 func TestAccDataSourceChaosImageRegistry(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	dataSourceName := "data.harness_chaos_image_registry.test"
@@ -41,14 +34,8 @@ func TestAccDataSourceChaosImageRegistry(t *testing.T) {
 	})
 }
 
+// TestAccDataSourceChaosImageRegistry_CheckOverride verifies the check_override attribute in the Chaos Image Registry data source.
 func TestAccDataSourceChaosImageRegistry_CheckOverride(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	dataSourceName := "data.harness_chaos_image_registry.test"
@@ -68,14 +55,8 @@ func TestAccDataSourceChaosImageRegistry_CheckOverride(t *testing.T) {
 	})
 }
 
+// TestAccDataSourceChaosImageRegistry_ProjectLevel verifies the data source at the project level.
 func TestAccDataSourceChaosImageRegistry_ProjectLevel(t *testing.T) {
-	// Check for required environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		t.Skip("Skipping test because HARNESS_ACCOUNT_ID is not set")
-	}
-
-	// Generate unique identifiers
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	dataSourceName := "data.harness_chaos_image_registry.test"
@@ -89,8 +70,9 @@ func TestAccDataSourceChaosImageRegistry_ProjectLevel(t *testing.T) {
 				Config: testAccDataSourceChaosImageRegistryProjectLevelConfig(rName, id, "docker.io", "test-account"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrPair(dataSourceName, "registry_server", resourceName, "registry_server"),
-					resource.TestCheckResourceAttrPair(dataSourceName, "project_id", resourceName, "project_id"),
-					resource.TestCheckResourceAttrPair(dataSourceName, "org_id", resourceName, "org_id"),
+					resource.TestCheckResourceAttrPair(dataSourceName, "registry_account", resourceName, "registry_account"),
+					resource.TestCheckResourceAttrPair(dataSourceName, "is_private", resourceName, "is_private"),
+					resource.TestCheckResourceAttrPair(dataSourceName, "is_default", resourceName, "is_default"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "id"),
 				),
 			},
@@ -98,88 +80,111 @@ func TestAccDataSourceChaosImageRegistry_ProjectLevel(t *testing.T) {
 	})
 }
 
+// Terraform Configurations
+
 func testAccDataSourceChaosImageRegistryConfig(name, id, server, account string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
-
 	return fmt.Sprintf(`
-	resource "harness_chaos_image_registry" "test" {
-		registry_server   = "%s"
-		registry_account  = "%s"
-		is_private       = false
-		is_default       = false
-	}
+		resource "harness_chaos_image_registry" "test" {
+			registry_server = "%[1]s"
+			registry_account = "%[2]s"
+			secret_name = "test-secret"
+			is_private     = true
+			is_default     = false
+			use_custom_images = true
+			is_override_allowed = false
+			custom_images {
+				log_watcher = "harness/chaos-log-watcher:main-latest"
+				ddcr        = "harness/chaos-ddcr:main-latest"
+				ddcr_lib    = "harness/chaos-ddcr-faults:main-latest"
+				ddcr_fault  = "harness/chaos-ddcr-faults:main-latest"
+			}
+		}
 
-	data "harness_chaos_image_registry" "test" {
-		registry_server  = harness_chaos_image_registry.test.registry_server
-		registry_account = harness_chaos_image_registry.test.registry_account
-	}
+		data "harness_chaos_image_registry" "test" {
+			check_override = false
+		}
 	`, server, account)
 }
 
 func testAccDataSourceChaosImageRegistryCheckOverrideConfig(name, id, server, account string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
-
-	return fmt.Sprintf(`
-	resource "harness_chaos_image_registry" "test" {
-		registry_server   = "%s"
-		registry_account  = "%s"
-		is_private       = true
-		is_override_allowed = true
-	}
-
-	data "harness_chaos_image_registry" "test" {
-		registry_server  = harness_chaos_image_registry.test.registry_server
-		registry_account = harness_chaos_image_registry.test.registry_account
-		check_override  = true
-	}
-	`, server, account)
-}
-
-func testAccDataSourceChaosImageRegistryProjectLevelConfig(name, id, server, account string) string {
-	// Use the account ID from environment variables
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	if accountId == "" {
-		accountId = "test" // Default for test cases when not set
-	}
-
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[2]s"
 		name       = "%[1]s"
-		account_id = "%[5]s"
 	}
 
 	resource "harness_platform_project" "test" {
 		identifier  = "%[2]s"
 		name        = "%[1]s"
 		org_id      = harness_platform_organization.test.id
-		account_id  = "%[5]s"
 		color       = "#0063F7"
-		description = "Test project for Chaos Image Registry"
+		description = "Test project for Chaos Hub"
 		tags        = ["foo:bar", "baz:qux"]
 	}
 
 	resource "harness_chaos_image_registry" "test" {
-		org_id          = harness_platform_organization.test.id
-		project_id      = harness_platform_project.test.id
+		org_id        = harness_platform_organization.test.id
+		project_id    = harness_platform_project.test.id
 		registry_server = "%[3]s"
 		registry_account = "%[4]s"
+		secret_name = "test-secret"
 		is_private     = true
 		is_default     = false
+		use_custom_images = true
+		is_override_allowed = false
+		custom_images {
+			log_watcher = "harness/chaos-log-watcher:main-latest"
+			ddcr        = "harness/chaos-ddcr:main-latest"
+			ddcr_lib    = "harness/chaos-ddcr-faults:main-latest"
+			ddcr_fault  = "harness/chaos-ddcr-faults:main-latest"
+		}
 	}
 
 	data "harness_chaos_image_registry" "test" {
-		org_id         = harness_platform_organization.test.id
-		project_id     = harness_platform_project.test.id
-		registry_server = harness_chaos_image_registry.test.registry_server
+		org_id     = harness_platform_organization.test.id
+		project_id = harness_platform_project.test.id
+		check_override = true
 	}
-	`, name, id, server, account, accountId)
+	`, name, id, server, account)
+}
+
+func testAccDataSourceChaosImageRegistryProjectLevelConfig(name, id, server, account string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[2]s"
+		name       = "%[1]s"
+	}
+
+	resource "harness_platform_project" "test" {
+		identifier  = "%[2]s"
+		name        = "%[1]s"
+		org_id      = harness_platform_organization.test.id
+		color       = "#0063F7"
+		description = "Test project for Chaos Hub"
+		tags        = ["foo:bar", "baz:qux"]
+	}
+	
+	resource "harness_chaos_image_registry" "test" {
+		org_id        = harness_platform_organization.test.id
+		project_id    = harness_platform_project.test.id
+		registry_server = "%[3]s"
+		registry_account = "%[4]s"
+		secret_name = "test-secret"
+		is_private     = true
+		is_default     = false
+		use_custom_images = true
+		is_override_allowed = false
+		custom_images {
+			log_watcher = "harness/chaos-log-watcher:main-latest"
+			ddcr        = "harness/chaos-ddcr:main-latest"
+			ddcr_lib    = "harness/chaos-ddcr-faults:main-latest"
+			ddcr_fault  = "harness/chaos-ddcr-faults:main-latest"
+		}
+	}
+
+	data "harness_chaos_image_registry" "test" {
+		org_id     = harness_platform_organization.test.id
+		project_id = harness_platform_project.test.id
+	}
+	`, name, id, server, account)
 }
