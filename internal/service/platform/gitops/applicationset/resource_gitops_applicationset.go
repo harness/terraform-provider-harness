@@ -2,8 +2,9 @@ package applicationset
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
+
+	"encoding/base64"
 	"fmt"
 
 	"github.com/antihax/optional"
@@ -504,11 +505,9 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 						}
 
 						if generator.List.Elements != nil && len(generator.List.Elements) > 0 {
-							fmt.Printf("DEBUG buildApplicationSet: Found %d elements\n", len(generator.List.Elements))
-
 							var elementsList []interface{}
 							for _, elem := range generator.List.Elements {
-								fmt.Printf("DEBUG buildApplicationSet: Element: %v\n", elem)
+								// The API may return plain JSON strings or empty Raw fields
 								var elemMap map[string]interface{}
 								if err := json.Unmarshal([]byte(elem.Raw), &elemMap); err == nil {
 									elementsList = append(elementsList, elemMap)
@@ -608,7 +607,276 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 						}
 						generatorMap["git"] = []interface{}{gitMap}
 					}
-					// TODO: add less used generators
+
+					if generator.ScmProvider != nil {
+						var scmProviderMap = map[string]interface{}{}
+
+						if generator.ScmProvider.Github != nil {
+							var githubMap = map[string]interface{}{}
+							if generator.ScmProvider.Github.Organization != "" {
+								githubMap["organization"] = generator.ScmProvider.Github.Organization
+							}
+							if generator.ScmProvider.Github.Api != "" {
+								githubMap["api"] = generator.ScmProvider.Github.Api
+							}
+							githubMap["all_branches"] = generator.ScmProvider.Github.AllBranches
+							if generator.ScmProvider.Github.AppSecretName != "" {
+								githubMap["app_secret_name"] = generator.ScmProvider.Github.AppSecretName
+							}
+							if generator.ScmProvider.Github.TokenRef != nil {
+								tokenRefMap := map[string]interface{}{
+									"secret_name": generator.ScmProvider.Github.TokenRef.SecretName,
+									"key":         generator.ScmProvider.Github.TokenRef.Key,
+								}
+								githubMap["token_ref"] = []interface{}{tokenRefMap}
+							}
+							scmProviderMap["github"] = []interface{}{githubMap}
+						}
+
+						if generator.ScmProvider.Gitlab != nil {
+							var gitlabMap = map[string]interface{}{}
+							if generator.ScmProvider.Gitlab.Group != "" {
+								gitlabMap["group"] = generator.ScmProvider.Gitlab.Group
+							}
+							if generator.ScmProvider.Gitlab.Api != "" {
+								gitlabMap["api"] = generator.ScmProvider.Gitlab.Api
+							}
+							gitlabMap["all_branches"] = generator.ScmProvider.Gitlab.AllBranches
+							gitlabMap["include_subgroups"] = generator.ScmProvider.Gitlab.IncludeSubgroups
+							if generator.ScmProvider.Gitlab.TokenRef != nil {
+								tokenRefMap := map[string]interface{}{
+									"secret_name": generator.ScmProvider.Gitlab.TokenRef.SecretName,
+									"key":         generator.ScmProvider.Gitlab.TokenRef.Key,
+								}
+								gitlabMap["token_ref"] = []interface{}{tokenRefMap}
+							}
+							if generator.ScmProvider.Gitlab.CaRef != nil {
+								caRefMap := map[string]interface{}{
+									"config_map_name": generator.ScmProvider.Gitlab.CaRef.ConfigMapName,
+									"key":             generator.ScmProvider.Gitlab.CaRef.Key,
+								}
+								gitlabMap["ca_ref"] = []interface{}{caRefMap}
+							}
+							scmProviderMap["gitlab"] = []interface{}{gitlabMap}
+						}
+
+						if generator.ScmProvider.Gitea != nil {
+							var giteaMap = map[string]interface{}{}
+							if generator.ScmProvider.Gitea.Owner != "" {
+								giteaMap["owner"] = generator.ScmProvider.Gitea.Owner
+							}
+							if generator.ScmProvider.Gitea.Api != "" {
+								giteaMap["api"] = generator.ScmProvider.Gitea.Api
+							}
+							giteaMap["all_branches"] = generator.ScmProvider.Gitea.AllBranches
+							giteaMap["insecure"] = generator.ScmProvider.Gitea.Insecure
+							if generator.ScmProvider.Gitea.TokenRef != nil {
+								tokenRefMap := map[string]interface{}{
+									"secret_name": generator.ScmProvider.Gitea.TokenRef.SecretName,
+									"key":         generator.ScmProvider.Gitea.TokenRef.Key,
+								}
+								giteaMap["token_ref"] = []interface{}{tokenRefMap}
+							}
+							scmProviderMap["gitea"] = []interface{}{giteaMap}
+						}
+
+						if generator.ScmProvider.CloneProtocol != "" {
+							scmProviderMap["clone_protocol"] = generator.ScmProvider.CloneProtocol
+						}
+
+						if len(generator.ScmProvider.Filters) > 0 {
+							var filtersList = []interface{}{}
+							for _, filter := range generator.ScmProvider.Filters {
+								filterMap := map[string]interface{}{}
+								if filter.BranchMatch != "" {
+									filterMap["branch_match"] = filter.BranchMatch
+								}
+								if filter.LabelMatch != "" {
+									filterMap["label_match"] = filter.LabelMatch
+								}
+								if filter.RepositoryMatch != "" {
+									filterMap["repository_match"] = filter.RepositoryMatch
+								}
+								if len(filter.PathsExist) > 0 {
+									filterMap["paths_exist"] = filter.PathsExist
+								}
+								if len(filter.PathsDoNotExist) > 0 {
+									filterMap["paths_do_not_exist"] = filter.PathsDoNotExist
+								}
+								filtersList = append(filtersList, filterMap)
+							}
+							scmProviderMap["filter"] = filtersList
+						}
+
+						if generator.ScmProvider.Template != nil {
+							tmpl := buildTemplateMapForState(generator.ScmProvider.Template)
+							if len(tmpl) > 0 {
+								scmProviderMap["template"] = []interface{}{tmpl}
+							}
+						}
+
+						generatorMap["scm_provider"] = []interface{}{scmProviderMap}
+					}
+
+					if generator.Matrix != nil {
+						var matrixMap = map[string]interface{}{}
+						if len(generator.Matrix.Generators) > 0 {
+							var nestedGeneratorsList = []interface{}{}
+							for _, nestedGen := range generator.Matrix.Generators {
+								var nestedGenMap = map[string]interface{}{}
+
+								if nestedGen.List != nil {
+									var listMap = map[string]interface{}{}
+									if nestedGen.List.Elements != nil && len(nestedGen.List.Elements) > 0 {
+										var elementsList []interface{}
+										for _, elem := range nestedGen.List.Elements {
+											// The SDK now properly unmarshals JSON objects into Raw field
+											if elem.Raw != "" {
+												var elemMap map[string]interface{}
+												if err := json.Unmarshal([]byte(elem.Raw), &elemMap); err == nil {
+													elementsList = append(elementsList, elemMap)
+												}
+											}
+										}
+										if len(elementsList) > 0 {
+											listMap["elements"] = elementsList
+										}
+									}
+									nestedGenMap["list"] = []interface{}{listMap}
+								}
+
+								if nestedGen.Clusters != nil {
+									var clustersMap = map[string]interface{}{}
+									clustersMap["enabled"] = true
+									if nestedGen.Clusters.Selector != nil {
+										var selectorMap = map[string]interface{}{}
+										hasSelector := false
+										if nestedGen.Clusters.Selector.MatchLabels != nil && len(nestedGen.Clusters.Selector.MatchLabels) > 0 {
+											selectorMap["match_labels"] = nestedGen.Clusters.Selector.MatchLabels
+											hasSelector = true
+										}
+										if len(nestedGen.Clusters.Selector.MatchExpressions) > 0 {
+											var expressions []interface{}
+											for _, expr := range nestedGen.Clusters.Selector.MatchExpressions {
+												expressions = append(expressions, map[string]interface{}{
+													"key":      expr.Key,
+													"operator": expr.Operator,
+													"values":   expr.Values,
+												})
+											}
+											selectorMap["match_expressions"] = expressions
+											hasSelector = true
+										}
+										if hasSelector {
+											clustersMap["selector"] = []interface{}{selectorMap}
+										}
+									}
+									nestedGenMap["clusters"] = []interface{}{clustersMap}
+								}
+
+								if nestedGen.Git != nil {
+									var gitMap = map[string]interface{}{}
+									if nestedGen.Git.RepoURL != "" {
+										gitMap["repo_url"] = nestedGen.Git.RepoURL
+									}
+									if nestedGen.Git.Revision != "" {
+										gitMap["revision"] = nestedGen.Git.Revision
+									}
+									if nestedGen.Git.Files != nil {
+										var filesList = []interface{}{}
+										for _, file := range nestedGen.Git.Files {
+											var fileMap = map[string]interface{}{}
+											if file.Path != "" {
+												fileMap["path"] = file.Path
+											}
+											filesList = append(filesList, fileMap)
+										}
+										gitMap["file"] = filesList
+									}
+									nestedGenMap["git"] = []interface{}{gitMap}
+								}
+
+								if nestedGen.ScmProvider != nil {
+									var scmProviderMap = map[string]interface{}{}
+
+									if nestedGen.ScmProvider.Github != nil {
+										var githubMap = map[string]interface{}{}
+										if nestedGen.ScmProvider.Github.Organization != "" {
+											githubMap["organization"] = nestedGen.ScmProvider.Github.Organization
+										}
+										if nestedGen.ScmProvider.Github.Api != "" {
+											githubMap["api"] = nestedGen.ScmProvider.Github.Api
+										}
+										githubMap["all_branches"] = nestedGen.ScmProvider.Github.AllBranches
+										if nestedGen.ScmProvider.Github.AppSecretName != "" {
+											githubMap["app_secret_name"] = nestedGen.ScmProvider.Github.AppSecretName
+										}
+										if nestedGen.ScmProvider.Github.TokenRef != nil {
+											tokenRefMap := map[string]interface{}{
+												"secret_name": nestedGen.ScmProvider.Github.TokenRef.SecretName,
+												"key":         nestedGen.ScmProvider.Github.TokenRef.Key,
+											}
+											githubMap["token_ref"] = []interface{}{tokenRefMap}
+										}
+										scmProviderMap["github"] = []interface{}{githubMap}
+									}
+
+									if nestedGen.ScmProvider.Gitlab != nil {
+										var gitlabMap = map[string]interface{}{}
+										if nestedGen.ScmProvider.Gitlab.Group != "" {
+											gitlabMap["group"] = nestedGen.ScmProvider.Gitlab.Group
+										}
+										if nestedGen.ScmProvider.Gitlab.Api != "" {
+											gitlabMap["api"] = nestedGen.ScmProvider.Gitlab.Api
+										}
+										gitlabMap["all_branches"] = nestedGen.ScmProvider.Gitlab.AllBranches
+										gitlabMap["include_subgroups"] = nestedGen.ScmProvider.Gitlab.IncludeSubgroups
+										if nestedGen.ScmProvider.Gitlab.TokenRef != nil {
+											tokenRefMap := map[string]interface{}{
+												"secret_name": nestedGen.ScmProvider.Gitlab.TokenRef.SecretName,
+												"key":         nestedGen.ScmProvider.Gitlab.TokenRef.Key,
+											}
+											gitlabMap["token_ref"] = []interface{}{tokenRefMap}
+										}
+										if nestedGen.ScmProvider.Gitlab.CaRef != nil {
+											caRefMap := map[string]interface{}{
+												"config_map_name": nestedGen.ScmProvider.Gitlab.CaRef.ConfigMapName,
+												"key":             nestedGen.ScmProvider.Gitlab.CaRef.Key,
+											}
+											gitlabMap["ca_ref"] = []interface{}{caRefMap}
+										}
+										scmProviderMap["gitlab"] = []interface{}{gitlabMap}
+									}
+
+									if nestedGen.ScmProvider.Gitea != nil {
+										var giteaMap = map[string]interface{}{}
+										if nestedGen.ScmProvider.Gitea.Owner != "" {
+											giteaMap["owner"] = nestedGen.ScmProvider.Gitea.Owner
+										}
+										if nestedGen.ScmProvider.Gitea.Api != "" {
+											giteaMap["api"] = nestedGen.ScmProvider.Gitea.Api
+										}
+										giteaMap["all_branches"] = nestedGen.ScmProvider.Gitea.AllBranches
+										giteaMap["insecure"] = nestedGen.ScmProvider.Gitea.Insecure
+										if nestedGen.ScmProvider.Gitea.TokenRef != nil {
+											tokenRefMap := map[string]interface{}{
+												"secret_name": nestedGen.ScmProvider.Gitea.TokenRef.SecretName,
+												"key":         nestedGen.ScmProvider.Gitea.TokenRef.Key,
+											}
+											giteaMap["token_ref"] = []interface{}{tokenRefMap}
+										}
+										scmProviderMap["gitea"] = []interface{}{giteaMap}
+									}
+
+									nestedGenMap["scm_provider"] = []interface{}{scmProviderMap}
+								}
+
+								nestedGeneratorsList = append(nestedGeneratorsList, nestedGenMap)
+							}
+							matrixMap["generator"] = nestedGeneratorsList
+						}
+						generatorMap["matrix"] = []interface{}{matrixMap}
+					}
 
 					generatorsList = append(generatorsList, generatorMap)
 				}
@@ -909,6 +1177,404 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 
 						generator.Git = &gitGen
 					}
+
+					// matrix generator
+					if matrix, ok := generatorMap["matrix"]; ok && len(matrix.([]interface{})) > 0 {
+						matrixData, ok := matrix.([]interface{})[0].(map[string]interface{})
+						if !ok {
+							return nil
+						}
+						var matrixGen nextgen.ApplicationsMatrixGenerator
+
+						if nestedGenerators, ok := matrixData["generator"]; ok && len(nestedGenerators.([]interface{})) > 0 {
+							var nestedGenList []nextgen.ApplicationsApplicationSetNestedGenerator
+							for _, nestedGen := range nestedGenerators.([]interface{}) {
+								nestedGenMap := nestedGen.(map[string]interface{})
+								var nestedGenerator nextgen.ApplicationsApplicationSetNestedGenerator
+
+								// Handle list generator in matrix
+								if list, ok := nestedGenMap["list"]; ok && len(list.([]interface{})) > 0 {
+									listData, ok := list.([]interface{})[0].(map[string]interface{})
+									if ok {
+										var listGen nextgen.ApplicationsListGenerator
+										if elements, ok := listData["elements"]; ok && len(elements.([]interface{})) > 0 {
+											var elementsList []nextgen.V1Json
+											for _, elem := range elements.([]interface{}) {
+												elemBytes, _ := json.Marshal(elem)
+												encoded := base64.StdEncoding.EncodeToString(elemBytes)
+												elementsList = append(elementsList, nextgen.V1Json{Raw: encoded})
+											}
+											listGen.Elements = elementsList
+										}
+										nestedGenerator.List = &listGen
+									}
+								}
+
+								// Handle clusters generator in matrix
+								if clusters, ok := nestedGenMap["clusters"]; ok && len(clusters.([]interface{})) > 0 {
+									clustersData, ok := clusters.([]interface{})[0].(map[string]interface{})
+									if ok {
+										var clustersGen nextgen.ApplicationsClusterGenerator
+										if selector, ok := clustersData["selector"]; ok && len(selector.([]interface{})) > 0 {
+											selectorData := selector.([]interface{})[0].(map[string]interface{})
+											var labelSelector nextgen.V1LabelSelector
+											if matchLabels, ok := selectorData["match_labels"]; ok && len(matchLabels.(map[string]interface{})) > 0 {
+												labelSelector.MatchLabels = make(map[string]string)
+												for k, v := range matchLabels.(map[string]interface{}) {
+													labelSelector.MatchLabels[k] = v.(string)
+												}
+											}
+											if matchExpressions, ok := selectorData["match_expressions"]; ok && len(matchExpressions.([]interface{})) > 0 {
+												var expressions []nextgen.V1LabelSelectorRequirement
+												for _, expr := range matchExpressions.([]interface{}) {
+													exprData := expr.(map[string]interface{})
+													var requirement nextgen.V1LabelSelectorRequirement
+													if key, ok := exprData["key"]; ok && len(key.(string)) > 0 {
+														requirement.Key = key.(string)
+													}
+													if operator, ok := exprData["operator"]; ok && len(operator.(string)) > 0 {
+														requirement.Operator = operator.(string)
+													}
+													if values, ok := exprData["values"]; ok && len(values.([]interface{})) > 0 {
+														var valuesList []string
+														for _, val := range values.([]interface{}) {
+															valuesList = append(valuesList, val.(string))
+														}
+														requirement.Values = valuesList
+													}
+													expressions = append(expressions, requirement)
+												}
+												labelSelector.MatchExpressions = expressions
+											}
+											clustersGen.Selector = &labelSelector
+										}
+										if values, ok := clustersData["values"]; ok && len(values.(map[string]interface{})) > 0 {
+											clustersGen.Values = make(map[string]string)
+											for k, v := range values.(map[string]interface{}) {
+												clustersGen.Values[k] = v.(string)
+											}
+										}
+										nestedGenerator.Clusters = &clustersGen
+									}
+								}
+
+								// Handle git generator in matrix
+								if git, ok := nestedGenMap["git"]; ok && len(git.([]interface{})) > 0 {
+									gitData, ok := git.([]interface{})[0].(map[string]interface{})
+									if ok {
+										var gitGen nextgen.ApplicationsGitGenerator
+										if repoURL, ok := gitData["repo_url"]; ok && len(repoURL.(string)) > 0 {
+											gitGen.RepoURL = repoURL.(string)
+										}
+										if revision, ok := gitData["revision"]; ok && len(revision.(string)) > 0 {
+											gitGen.Revision = revision.(string)
+										}
+										if directories, ok := gitData["directory"]; ok && len(directories.([]interface{})) > 0 {
+											var dirList []nextgen.ApplicationsGitDirectoryGeneratorItem
+											for _, dir := range directories.([]interface{}) {
+												dirData := dir.(map[string]interface{})
+												var dirItem nextgen.ApplicationsGitDirectoryGeneratorItem
+												if path, ok := dirData["path"]; ok && len(path.(string)) > 0 {
+													dirItem.Path = path.(string)
+												}
+												if exclude, ok := dirData["exclude"]; ok {
+													dirItem.Exclude = exclude.(bool)
+												}
+												dirList = append(dirList, dirItem)
+											}
+											gitGen.Directories = dirList
+										}
+										if files, ok := gitData["file"]; ok && len(files.([]interface{})) > 0 {
+											var fileList []nextgen.ApplicationsGitFileGeneratorItem
+											for _, file := range files.([]interface{}) {
+												fileData := file.(map[string]interface{})
+												var fileItem nextgen.ApplicationsGitFileGeneratorItem
+												if path, ok := fileData["path"]; ok && len(path.(string)) > 0 {
+													fileItem.Path = path.(string)
+												}
+												fileList = append(fileList, fileItem)
+											}
+											gitGen.Files = fileList
+										}
+										nestedGenerator.Git = &gitGen
+									}
+								}
+
+								// Handle scm_provider generator in matrix
+								if scmProvider, ok := nestedGenMap["scm_provider"]; ok && len(scmProvider.([]interface{})) > 0 {
+									scmProviderData, ok := scmProvider.([]interface{})[0].(map[string]interface{})
+									if ok {
+										var scmProviderGen nextgen.ApplicationsScmProviderGenerator
+
+										// Handle GitHub provider
+										if github, ok := scmProviderData["github"]; ok && len(github.([]interface{})) > 0 {
+											githubData := github.([]interface{})[0].(map[string]interface{})
+											var githubProvider nextgen.ApplicationsScmProviderGeneratorGithub
+											if org, ok := githubData["organization"]; ok && len(org.(string)) > 0 {
+												githubProvider.Organization = org.(string)
+											}
+											if api, ok := githubData["api"]; ok && len(api.(string)) > 0 {
+												githubProvider.Api = api.(string)
+											}
+											if allBranches, ok := githubData["all_branches"]; ok {
+												githubProvider.AllBranches = allBranches.(bool)
+											}
+											if tokenRef, ok := githubData["token_ref"]; ok && len(tokenRef.([]interface{})) > 0 {
+												tokenRefData := tokenRef.([]interface{})[0].(map[string]interface{})
+												var secretRef nextgen.ApplicationsSecretRef
+												if secretName, ok := tokenRefData["secret_name"]; ok && len(secretName.(string)) > 0 {
+													secretRef.SecretName = secretName.(string)
+												}
+												if key, ok := tokenRefData["key"]; ok && len(key.(string)) > 0 {
+													secretRef.Key = key.(string)
+												}
+												githubProvider.TokenRef = &secretRef
+											}
+											if appSecretName, ok := githubData["app_secret_name"]; ok && len(appSecretName.(string)) > 0 {
+												githubProvider.AppSecretName = appSecretName.(string)
+											}
+											scmProviderGen.Github = &githubProvider
+										}
+
+										// Handle GitLab provider
+										if gitlab, ok := scmProviderData["gitlab"]; ok && len(gitlab.([]interface{})) > 0 {
+											gitlabData := gitlab.([]interface{})[0].(map[string]interface{})
+											var gitlabProvider nextgen.ApplicationsScmProviderGeneratorGitlab
+											if group, ok := gitlabData["group"]; ok && len(group.(string)) > 0 {
+												gitlabProvider.Group = group.(string)
+											}
+											if api, ok := gitlabData["api"]; ok && len(api.(string)) > 0 {
+												gitlabProvider.Api = api.(string)
+											}
+											if allBranches, ok := gitlabData["all_branches"]; ok {
+												gitlabProvider.AllBranches = allBranches.(bool)
+											}
+											if includeSubgroups, ok := gitlabData["include_subgroups"]; ok {
+												gitlabProvider.IncludeSubgroups = includeSubgroups.(bool)
+											}
+											if tokenRef, ok := gitlabData["token_ref"]; ok && len(tokenRef.([]interface{})) > 0 {
+												tokenRefData := tokenRef.([]interface{})[0].(map[string]interface{})
+												var secretRef nextgen.ApplicationsSecretRef
+												if secretName, ok := tokenRefData["secret_name"]; ok && len(secretName.(string)) > 0 {
+													secretRef.SecretName = secretName.(string)
+												}
+												if key, ok := tokenRefData["key"]; ok && len(key.(string)) > 0 {
+													secretRef.Key = key.(string)
+												}
+												gitlabProvider.TokenRef = &secretRef
+											}
+											if caRef, ok := gitlabData["ca_ref"]; ok && len(caRef.([]interface{})) > 0 {
+												caRefData := caRef.([]interface{})[0].(map[string]interface{})
+												var configMapRef nextgen.ApplicationsConfigMapKeyRef
+												if configMapName, ok := caRefData["config_map_name"]; ok && len(configMapName.(string)) > 0 {
+													configMapRef.ConfigMapName = configMapName.(string)
+												}
+												if key, ok := caRefData["key"]; ok && len(key.(string)) > 0 {
+													configMapRef.Key = key.(string)
+												}
+												gitlabProvider.CaRef = &configMapRef
+											}
+											scmProviderGen.Gitlab = &gitlabProvider
+										}
+
+										// Handle Gitea provider
+										if gitea, ok := scmProviderData["gitea"]; ok && len(gitea.([]interface{})) > 0 {
+											giteaData := gitea.([]interface{})[0].(map[string]interface{})
+											var giteaProvider nextgen.ApplicationsScmProviderGeneratorGitea
+											if owner, ok := giteaData["owner"]; ok && len(owner.(string)) > 0 {
+												giteaProvider.Owner = owner.(string)
+											}
+											if api, ok := giteaData["api"]; ok && len(api.(string)) > 0 {
+												giteaProvider.Api = api.(string)
+											}
+											if allBranches, ok := giteaData["all_branches"]; ok {
+												giteaProvider.AllBranches = allBranches.(bool)
+											}
+											if insecure, ok := giteaData["insecure"]; ok {
+												giteaProvider.Insecure = insecure.(bool)
+											}
+											if tokenRef, ok := giteaData["token_ref"]; ok && len(tokenRef.([]interface{})) > 0 {
+												tokenRefData := tokenRef.([]interface{})[0].(map[string]interface{})
+												var secretRef nextgen.ApplicationsSecretRef
+												if secretName, ok := tokenRefData["secret_name"]; ok && len(secretName.(string)) > 0 {
+													secretRef.SecretName = secretName.(string)
+												}
+												if key, ok := tokenRefData["key"]; ok && len(key.(string)) > 0 {
+													secretRef.Key = key.(string)
+												}
+												giteaProvider.TokenRef = &secretRef
+											}
+											scmProviderGen.Gitea = &giteaProvider
+										}
+
+										nestedGenerator.ScmProvider = &scmProviderGen
+									}
+								}
+
+								nestedGenList = append(nestedGenList, nestedGenerator)
+							}
+							matrixGen.Generators = nestedGenList
+						}
+
+						generator.Matrix = &matrixGen
+					}
+
+					// scm_provider generator
+					if scmProvider, ok := generatorMap["scm_provider"]; ok && len(scmProvider.([]interface{})) > 0 {
+						scmProviderData, ok := scmProvider.([]interface{})[0].(map[string]interface{})
+						if !ok {
+							return nil
+						}
+						var scmProviderGen nextgen.ApplicationsScmProviderGenerator
+
+						// Handle GitHub provider
+						if github, ok := scmProviderData["github"]; ok && len(github.([]interface{})) > 0 {
+							githubData := github.([]interface{})[0].(map[string]interface{})
+							var githubProvider nextgen.ApplicationsScmProviderGeneratorGithub
+
+							if org, ok := githubData["organization"]; ok && len(org.(string)) > 0 {
+								githubProvider.Organization = org.(string)
+							}
+							if api, ok := githubData["api"]; ok && len(api.(string)) > 0 {
+								githubProvider.Api = api.(string)
+							}
+							if allBranches, ok := githubData["all_branches"]; ok {
+								githubProvider.AllBranches = allBranches.(bool)
+							}
+							if tokenRef, ok := githubData["token_ref"]; ok && len(tokenRef.([]interface{})) > 0 {
+								tokenRefData := tokenRef.([]interface{})[0].(map[string]interface{})
+								var secretRef nextgen.ApplicationsSecretRef
+								if secretName, ok := tokenRefData["secret_name"]; ok && len(secretName.(string)) > 0 {
+									secretRef.SecretName = secretName.(string)
+								}
+								if key, ok := tokenRefData["key"]; ok && len(key.(string)) > 0 {
+									secretRef.Key = key.(string)
+								}
+								githubProvider.TokenRef = &secretRef
+							}
+							if appSecretName, ok := githubData["app_secret_name"]; ok && len(appSecretName.(string)) > 0 {
+								githubProvider.AppSecretName = appSecretName.(string)
+							}
+							scmProviderGen.Github = &githubProvider
+						}
+
+						// Handle GitLab provider
+						if gitlab, ok := scmProviderData["gitlab"]; ok && len(gitlab.([]interface{})) > 0 {
+							gitlabData := gitlab.([]interface{})[0].(map[string]interface{})
+							var gitlabProvider nextgen.ApplicationsScmProviderGeneratorGitlab
+
+							if group, ok := gitlabData["group"]; ok && len(group.(string)) > 0 {
+								gitlabProvider.Group = group.(string)
+							}
+							if api, ok := gitlabData["api"]; ok && len(api.(string)) > 0 {
+								gitlabProvider.Api = api.(string)
+							}
+							if allBranches, ok := gitlabData["all_branches"]; ok {
+								gitlabProvider.AllBranches = allBranches.(bool)
+							}
+							if includeSubgroups, ok := gitlabData["include_subgroups"]; ok {
+								gitlabProvider.IncludeSubgroups = includeSubgroups.(bool)
+							}
+							if tokenRef, ok := gitlabData["token_ref"]; ok && len(tokenRef.([]interface{})) > 0 {
+								tokenRefData := tokenRef.([]interface{})[0].(map[string]interface{})
+								var secretRef nextgen.ApplicationsSecretRef
+								if secretName, ok := tokenRefData["secret_name"]; ok && len(secretName.(string)) > 0 {
+									secretRef.SecretName = secretName.(string)
+								}
+								if key, ok := tokenRefData["key"]; ok && len(key.(string)) > 0 {
+									secretRef.Key = key.(string)
+								}
+								gitlabProvider.TokenRef = &secretRef
+							}
+							if caRef, ok := gitlabData["ca_ref"]; ok && len(caRef.([]interface{})) > 0 {
+								caRefData := caRef.([]interface{})[0].(map[string]interface{})
+								var configMapRef nextgen.ApplicationsConfigMapKeyRef
+								if configMapName, ok := caRefData["config_map_name"]; ok && len(configMapName.(string)) > 0 {
+									configMapRef.ConfigMapName = configMapName.(string)
+								}
+								if key, ok := caRefData["key"]; ok && len(key.(string)) > 0 {
+									configMapRef.Key = key.(string)
+								}
+								gitlabProvider.CaRef = &configMapRef
+							}
+							scmProviderGen.Gitlab = &gitlabProvider
+						}
+
+						// Handle Gitea provider
+						if gitea, ok := scmProviderData["gitea"]; ok && len(gitea.([]interface{})) > 0 {
+							giteaData := gitea.([]interface{})[0].(map[string]interface{})
+							var giteaProvider nextgen.ApplicationsScmProviderGeneratorGitea
+
+							if owner, ok := giteaData["owner"]; ok && len(owner.(string)) > 0 {
+								giteaProvider.Owner = owner.(string)
+							}
+							if api, ok := giteaData["api"]; ok && len(api.(string)) > 0 {
+								giteaProvider.Api = api.(string)
+							}
+							if allBranches, ok := giteaData["all_branches"]; ok {
+								giteaProvider.AllBranches = allBranches.(bool)
+							}
+							if insecure, ok := giteaData["insecure"]; ok {
+								giteaProvider.Insecure = insecure.(bool)
+							}
+							if tokenRef, ok := giteaData["token_ref"]; ok && len(tokenRef.([]interface{})) > 0 {
+								tokenRefData := tokenRef.([]interface{})[0].(map[string]interface{})
+								var secretRef nextgen.ApplicationsSecretRef
+								if secretName, ok := tokenRefData["secret_name"]; ok && len(secretName.(string)) > 0 {
+									secretRef.SecretName = secretName.(string)
+								}
+								if key, ok := tokenRefData["key"]; ok && len(key.(string)) > 0 {
+									secretRef.Key = key.(string)
+								}
+								giteaProvider.TokenRef = &secretRef
+							}
+							scmProviderGen.Gitea = &giteaProvider
+						}
+
+						// Handle clone protocol
+						if cloneProtocol, ok := scmProviderData["clone_protocol"]; ok && len(cloneProtocol.(string)) > 0 {
+							scmProviderGen.CloneProtocol = cloneProtocol.(string)
+						}
+
+						// Handle filters
+						if filters, ok := scmProviderData["filter"]; ok && len(filters.([]interface{})) > 0 {
+							var filterList []nextgen.ApplicationsScmProviderGeneratorFilter
+							for _, filter := range filters.([]interface{}) {
+								filterData := filter.(map[string]interface{})
+								var scmFilter nextgen.ApplicationsScmProviderGeneratorFilter
+
+								if branchMatch, ok := filterData["branch_match"]; ok && len(branchMatch.(string)) > 0 {
+									scmFilter.BranchMatch = branchMatch.(string)
+								}
+								if labelMatch, ok := filterData["label_match"]; ok && len(labelMatch.(string)) > 0 {
+									scmFilter.LabelMatch = labelMatch.(string)
+								}
+								if repoMatch, ok := filterData["repository_match"]; ok && len(repoMatch.(string)) > 0 {
+									scmFilter.RepositoryMatch = repoMatch.(string)
+								}
+								if pathsExist, ok := filterData["paths_exist"]; ok && len(pathsExist.([]interface{})) > 0 {
+									var paths []string
+									for _, path := range pathsExist.([]interface{}) {
+										paths = append(paths, path.(string))
+									}
+									scmFilter.PathsExist = paths
+								}
+								if pathsDoNotExist, ok := filterData["paths_do_not_exist"]; ok && len(pathsDoNotExist.([]interface{})) > 0 {
+									var paths []string
+									for _, path := range pathsDoNotExist.([]interface{}) {
+										paths = append(paths, path.(string))
+									}
+									scmFilter.PathsDoNotExist = paths
+								}
+
+								filterList = append(filterList, scmFilter)
+							}
+							scmProviderGen.Filters = filterList
+						}
+
+						generator.ScmProvider = &scmProviderGen
+					}
+
 					generatorsList = append(generatorsList, generator)
 				}
 
@@ -1075,6 +1741,23 @@ func resourceSecretRef() *schema.Resource {
 			"secret_name": {
 				Type:        schema.TypeString,
 				Description: "Name of Kubernetes `Secret`.",
+				Required:    true,
+			},
+		},
+	}
+}
+
+func resourceConfigMapKeyRef() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"key": {
+				Type:        schema.TypeString,
+				Description: "Key containing information in Kubernetes `ConfigMap`.",
+				Required:    true,
+			},
+			"config_map_name": {
+				Type:        schema.TypeString,
+				Description: "Name of Kubernetes `ConfigMap`.",
 				Required:    true,
 			},
 		},
@@ -1580,6 +2263,13 @@ func applicationSetSCMProviderGeneratorSchema() *schema.Schema {
 								Type:        schema.TypeString,
 								Description: "The Gitlab API URL to talk to.",
 								Optional:    true,
+							},
+							"ca_ref": {
+								Type:        schema.TypeList,
+								Description: "Reference to a ConfigMap containing a CA certificate for self-signed GitLab instances.",
+								Optional:    true,
+								MaxItems:    1,
+								Elem:        resourceConfigMapKeyRef(),
 							},
 							"group": {
 								Type:        schema.TypeString,
