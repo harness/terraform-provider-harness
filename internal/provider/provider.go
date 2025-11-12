@@ -3,8 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry_testing"
 	"log"
+
+	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry_testing"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/default_notification_template_set"
 
@@ -305,6 +306,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_apikey":                             pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                              pl_token.DataSourceToken(),
 				"harness_autostopping_rule_vm":                        as_rule.DataSourceVMRule(),
+				"harness_autostopping_rule_scale_group":               as_rule.DataSourceScaleGroupRule(),
 				"harness_autostopping_rule_rds":                       as_rule.DataSourceRDSRule(),
 				"harness_autostopping_rule_ecs":                       as_rule.DataSourceECSRule(),
 				"harness_platform_file_store_file":                    cdng_file_store.DataSourceFileStoreNodeFile(),
@@ -479,6 +481,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_rule_vm":                        as_rule.ResourceVMRule(),
 				"harness_autostopping_rule_rds":                       as_rule.ResourceRDSRule(),
 				"harness_autostopping_rule_ecs":                       as_rule.ResourceECSRule(),
+				"harness_autostopping_rule_scale_group":               as_rule.ResourceScaleGroupRule(),
 				"harness_platform_file_store_file":                    cdng_file_store.ResourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":                  cdng_file_store.ResourceFileStoreNodeFolder(),
 				"harness_autostopping_azure_proxy":                    load_balancer.ResourceAzureProxy(),
