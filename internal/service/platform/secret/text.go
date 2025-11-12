@@ -53,6 +53,10 @@ func ResourceSecretText() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
+									"kmsKeyId": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 									// Add other fields for the inner map as needed
 								},
 							},
@@ -152,6 +156,9 @@ func readAdditionalMetadata(metadata interface{}) nextgen.AdditionalMetadata {
 				valueMap := v.(map[string]interface{})
 				if version, ok := valueMap["version"].(string); ok {
 					result.Values["version"] = version
+				}
+				if kmsKeyId, ok := valueMap["kmsKeyId"].(string); ok {
+					result.Values["kmsKeyId"] = kmsKeyId
 				}
 				// Add other fields as needed
 			}
