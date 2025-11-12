@@ -3,8 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/default_notification_template_set"
 	"log"
+
+	"github.com/harness/terraform-provider-harness/internal/service/platform/default_notification_template_set"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_channel"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_rule"
@@ -306,6 +307,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_rule_vm":                       as_rule.DataSourceVMRule(),
 				"harness_autostopping_rule_rds":                      as_rule.DataSourceRDSRule(),
 				"harness_autostopping_rule_ecs":                      as_rule.DataSourceECSRule(),
+				"harness_autostopping_rule_scale_group":              as_rule.DataSourceScaleGroupRule(),
 				"harness_fme_workspace":                              fme.DataSourceFMEWorkspace(),
 				"harness_fme_environment":                            fme.DataSourceFMEEnvironment(),
 				"harness_fme_flag_set":                               fme.DataSourceFMEFlagSet(),
@@ -401,7 +403,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_feature_flag":                      feature_flag.ResourceFeatureFlag(),
 				"harness_platform_feature_flag_target_group":         feature_flag_target_group.ResourceFeatureFlagTargetGroup(),
 				"harness_platform_feature_flag_target":               feature_flag_target.ResourceFeatureFlagTarget(),
-				"harness_fme_environment":                           fme.ResourceFMEEnvironment(),
+				"harness_fme_environment":                            fme.ResourceFMEEnvironment(),
 				"harness_fme_environment_segment_keys":               fme.ResourceFMEEnvironmentSegmentKeys(),
 				"harness_fme_api_key":                                fme.ResourceFMEApiKey(),
 				"harness_fme_split":                                  fme.ResourceFMESplit(),
@@ -492,6 +494,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_rule_vm":                       as_rule.ResourceVMRule(),
 				"harness_autostopping_rule_rds":                      as_rule.ResourceRDSRule(),
 				"harness_autostopping_rule_ecs":                      as_rule.ResourceECSRule(),
+				"harness_autostopping_rule_scale_group":              as_rule.ResourceScaleGroupRule(),
 				"harness_platform_file_store_file":                   cdng_file_store.ResourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":                 cdng_file_store.ResourceFileStoreNodeFolder(),
 				"harness_autostopping_azure_proxy":                   load_balancer.ResourceAzureProxy(),
