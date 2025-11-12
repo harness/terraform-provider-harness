@@ -164,6 +164,15 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 				}
 			}
 		}
+
+		// Handle 4xx/5xx errors - extract and display message with HTTP status for better error visibility
+		if httpResp != nil && httpResp.StatusCode >= 400 {
+			respErrorBody, parseErr := ParseErrorBody(erro)
+			if parseErr == nil && respErrorBody != nil && respErrorBody.Message != "" {
+				return diag.Errorf("HTTP %d: %s", httpResp.StatusCode, respErrorBody.Message)
+			}
+		}
+
 		return diag.Errorf(errMessage)
 	}
 
