@@ -175,8 +175,10 @@ func importAdditionalMetadata_2(additionalMetadata *nextgen.AdditionalMetadata) 
 		entry := make(map[string]interface{})
 		for k, v := range additionalMetadata.Values {
 			switch k {
-			case "version", "kmsKeyId":
-				entry[k] = v
+			case "version":
+				entry["version"] = v
+			case "kmsKeyId":
+				entry["kms_key_id"] = v
 			}
 		}
 		data["values"] = schema.NewSet(schema.HashResource(&schema.Resource{

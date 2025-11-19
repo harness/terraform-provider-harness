@@ -170,6 +170,5 @@ func readSecretFile(d *schema.ResourceData, secret *nextgen.Secret) error {
 	d.Set("org_id", secret.OrgIdentifier)
 	d.Set("project_id", secret.ProjectIdentifier)
 	d.Set("tags", helpers.FlattenTags(secret.Tags))
-	d.Set("spec", secret.Spec)
 	return nil
 }
