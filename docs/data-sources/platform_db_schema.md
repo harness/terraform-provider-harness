@@ -41,6 +41,7 @@ data "harness_platform_db_schema" "example" {
 - `id` (String) The ID of this resource.
 - `schema_source` (List of Object) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedatt--schema_source))
 - `service` (String) The service associated with schema
+- `migration_type` (String) DB Migration tool type, Valid values are any one of: Liquibase, Flyway
 - `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedatt--changelog_script"></a>
@@ -52,6 +53,7 @@ Read-Only:
 - `image` (String)
 - `location` (String)
 - `shell` (String)
+- `toml` (String) [Optional] For flyway migration type only
 
 
 <a id="nestedatt--schema_source"></a>
@@ -63,3 +65,4 @@ Read-Only:
 - `connector` (String)
 - `location` (String)
 - `repo` (String)
+- `toml` (String) [Optional] For flyway migration type only

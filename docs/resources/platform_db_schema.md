@@ -13,7 +13,7 @@ Resource for creating a Harness DBDevOps Schema.
 ## Example Usage
 
 ```terraform
-resource "harness_platform_db_schema" "test" {
+resource "harness_platform_db_schema" "default_type_test" {
   identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"
@@ -28,14 +28,15 @@ resource "harness_platform_db_schema" "test" {
   }
 }
 
-resource "harness_platform_db_schema" "test" {
-  identifier = "identifier"
-  org_id     = "org_id"
-  project_id = "project_id"
-  name       = "name"
-  service    = "service1"
-  type       = "Repository"
-  tags       = ["foo:bar", "bar:foo"]
+resource "harness_platform_db_schema" "liquibase_repository_test" {
+  identifier      = "identifier"
+  org_id          = "org_id"
+  project_id      = "project_id"
+  name            = "name"
+  service         = "service1"
+  type            = "Repository"
+  migration_type  = "Liquibase"
+  tags            = ["foo:bar", "bar:foo"]
   schema_source {
     connector    = "gitConnector"
     repo         = "TestRepo"
@@ -45,19 +46,57 @@ resource "harness_platform_db_schema" "test" {
 }
 
 
-resource "harness_platform_db_schema" "test" {
-  identifier = "identifier"
-  org_id     = "org_id"
-  project_id = "project_id"
-  name       = "name"
-  service    = "service1"
-  type       = "Script"
-  tags       = ["foo:bar", "bar:foo"]
+resource "harness_platform_db_schema" "liquibase_script_test" {
+  identifier      = "identifier"
+  org_id          = "org_id"
+  project_id      = "project_id"
+  name            = "name"
+  migration_type  = "Liquibase"
+  service         = "service1"
+  type            = "Script"
+  tags            = ["foo:bar", "bar:foo"]
   changelog_script {
     image    = "plugins/image"
     command  = "echo \\\"hello dbops\\\""
     shell    = "sh/bash"
     location = "db/example-changelog.yaml"
+  }
+}
+
+resource "harness_platform_db_schema" "flyway_repository_test" {
+  identifier      = "identifier"
+  org_id          = "org_id"
+  project_id      = "project_id"
+  name            = "name"
+  service         = "service1"
+  type            = "Repository"
+  migration_type  = "Flyway"
+  tags            = ["foo:bar", "bar:foo"]
+  schema_source {
+    connector     = "gitConnector"
+    repo          = "TestRepo"
+    location      = "db/flyway/migrations"
+    toml          = "db/flyway.toml"
+    archive_path  = "path/to/archive.zip"
+  }
+}
+
+
+resource "harness_platform_db_schema" "flyway_script_test" {
+  identifier        = "identifier"
+  org_id            = "org_id"
+  project_id        = "project_id"
+  name              = "name"
+  migration_type    = "Flyway"
+  service           = "service1"
+  type              = "Script"
+  tags              = ["foo:bar", "bar:foo"]
+  changelog_script {
+    image    = "plugins/image"
+    command  = "echo \\\"hello dbops\\\""
+    shell    = "sh/bash"
+    location = "db/flyway/migrations"
+    toml     = "db/flyway.toml"
   }
 }
 ```
@@ -80,6 +119,7 @@ resource "harness_platform_db_schema" "test" {
 - `service` (String) The service associated with schema
 - `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) Type of the database schema. Valid values are: SCRIPT, REPOSITORY
+- `migration_type` (String) DB migration tool type. Valid values are any one of: Liquibase, Flyway
 
 ### Read-Only
 
@@ -94,6 +134,7 @@ Optional:
 - `image` (String) The fully-qualified name (FQN) of the image
 - `location` (String) Path to changeLog file
 - `shell` (String) Type of the shell. For example Sh or Bash
+- `toml` (String) Config file, to define various settings and properties for managing database schema change
 
 
 <a id="nestedblock--schema_source"></a>
@@ -108,6 +149,7 @@ Optional:
 
 - `archive_path` (String) If connector type is artifactory, path to the archive file which contains the changeLog
 - `repo` (String) If connector url is of account, which repository to connect to using the connector
+- `toml` (String) Config file, to define various settings and properties for managing database schema change
 
 ## Import
 

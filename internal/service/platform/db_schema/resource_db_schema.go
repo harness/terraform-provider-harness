@@ -2,8 +2,9 @@ package dbschema
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"net/http"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/dbops"
@@ -36,6 +37,13 @@ func ResourceDBSchema() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{string(dbops.REPOSITORY_DbSchemaType), string(dbops.SCRIPT_DbSchemaType)}, false),
 				Optional:     true,
 			},
+			"migration_type": {
+				Description:  "DB Migration tool type. Valid values are: Liquibase, Flyway",
+				Type:         schema.TypeString,
+				Default:      string(dbops.LIQUIBASE_MigrationType),
+				ValidateFunc: validation.StringInSlice([]string{string(dbops.LIQUIBASE_MigrationType), string(dbops.FLYWAY_MigrationType)}, false),
+				Optional:     true,
+			},
 			"schema_source": {
 				Description:   "Provides a connector and path at which to find the database schema representation",
 				Type:          schema.TypeList,
@@ -62,6 +70,11 @@ func ResourceDBSchema() *schema.Resource {
 						},
 						"archive_path": {
 							Description: "If connector type is artifactory, path to the archive file which contains the changeLog",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"toml": {
+							Description: "Config file, to define various settings and properties for managing database schema change",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -94,6 +107,11 @@ func ResourceDBSchema() *schema.Resource {
 						},
 						"location": {
 							Description: "Path to changeLog file",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"toml": {
+							Description: "Config file, to define various settings and properties for managing database schema change",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -183,12 +201,18 @@ func buildDbSchema(d *schema.ResourceData) *dbops.DbSchemaIn {
 		schemaIn.Type_ = &dbSchemaType
 	}
 
+	if v, ok := d.GetOk("migration_type"); ok {
+		migrationType := dbops.MigrationType(v.(string))
+		schemaIn.MigrationType = &migrationType
+	}
+
 	if _, ok := d.GetOk("changelog_script"); ok {
 		changelogScript := &dbops.ChangeLogScript{
 			Image:    d.Get("changelog_script.0.image").(string),
 			Command:  d.Get("changelog_script.0.command").(string),
 			Shell:    d.Get("changelog_script.0.shell").(string),
 			Location: d.Get("changelog_script.0.location").(string),
+			Toml:     d.Get("changelog_script.0.toml").(string),
 		}
 		schemaIn.ChangeLogScript = changelogScript
 	}
@@ -199,6 +223,7 @@ func buildDbSchema(d *schema.ResourceData) *dbops.DbSchemaIn {
 			Connector:   d.Get("schema_source.0.connector").(string),
 			Location:    d.Get("schema_source.0.location").(string),
 			ArchivePath: d.Get("schema_source.0.archive_path").(string),
+			Toml:        d.Get("schema_source.0.toml").(string),
 		}
 		schemaIn.Changelog = Changelog
 	}
@@ -219,12 +244,21 @@ func readDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut) {
 		d.Set("type", nil)
 	}
 
+	if dbSchema.MigrationType != nil {
+		d.Set("migration_type", string(*dbSchema.MigrationType))
+	} else {
+		d.Set("migration_type", nil)
+	}
+
 	if dbSchema.Changelog != nil {
 		d.Set("schema_source.0.location", dbSchema.Changelog.Location)
 		d.Set("schema_source.0.repo", dbSchema.Changelog.Repo)
 		d.Set("schema_source.0.connector", dbSchema.Changelog.Connector)
 		d.Set("schema_source.0.archive_path", dbSchema.Changelog.ArchivePath)
 
+		if dbSchema.MigrationType != nil && *dbSchema.MigrationType == dbops.FLYWAY_MigrationType {
+			d.Set("schema_source.0.toml", dbSchema.Changelog.Toml)
+		}
 		d.Set("changelog_script", nil)
 	}
 
@@ -233,6 +267,10 @@ func readDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut) {
 		d.Set("changelog_script.0.command", dbSchema.ChangeLogScript.Command)
 		d.Set("changelog_script.0.shell", dbSchema.ChangeLogScript.Shell)
 		d.Set("changelog_script.0.location", dbSchema.ChangeLogScript.Location)
+
+		if dbSchema.MigrationType != nil && *dbSchema.MigrationType == dbops.FLYWAY_MigrationType {
+			d.Set("changelog_script.0.toml", dbSchema.ChangeLogScript.Toml)
+		}
 
 		d.Set("schema_source", nil)
 	}

@@ -43,11 +43,58 @@ func TestAccResourceDBSchema(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"schema_source.#", "schema_source.0.%", "schema_source.0.connector", "schema_source.0.location", "schema_source.0.repo", "schema_source.0.archive_path"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{
+					"schema_source.#", "schema_source.0.%", "schema_source.0.connector",
+					"schema_source.0.location", "schema_source.0.repo", "schema_source.0.archive_path",
+					"schema_source.0.toml",
+				},
+			},
+		},
+	})
+}
+
+func TestAccResourceDBSchemaForFlywayMigrationType(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_db_schema.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccDBSchemaDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceDBSchemaForFlywayMigrationType(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+				),
+			},
+			{
+				Config: testAccResourceDBSchemaForFlywayMigrationType(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{
+					"schema_source.#", "schema_source.0.%", "schema_source.0.connector", "schema_source.0.location",
+					"schema_source.0.repo", "schema_source.0.archive_path", "schema_source.0.toml"},
 			},
 		},
 	})
@@ -84,11 +131,14 @@ func TestAccResourceDBSchemaArtifactory(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"schema_source.#", "schema_source.0.%", "schema_source.0.connector", "schema_source.0.location", "schema_source.0.repo", "schema_source.0.archive_path"},
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{
+					"schema_source.#", "schema_source.0.%", "schema_source.0.connector",
+					"schema_source.0.location", "schema_source.0.repo",
+					"schema_source.0.archive_path", "schema_source.0.toml"},
 			},
 		},
 	})
@@ -133,6 +183,53 @@ func TestAccResourceDBSchemaWithChangelogScript(t *testing.T) {
 				ImportStateVerifyIgnore: []string{
 					"changelog_script.#", "changelog_script.0.%", "changelog_script.0.image",
 					"changelog_script.0.command", "changelog_script.0.shell", "changelog_script.0.location",
+					"changelog_script.0.toml",
+				},
+			},
+		},
+	})
+}
+
+func TestAccResourceDBSchemaWithChangelogScriptForFlywayMigrationType(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_db_schema.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccDBSchemaDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceDBSchemaWithChangelogScriptForFlywayMigrationType(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "type", "Script"),
+				),
+			},
+			{
+				Config: testAccResourceDBSchemaWithChangelogScriptForFlywayMigrationType(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "type", "Script"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{
+					"changelog_script.#", "changelog_script.0.%", "changelog_script.0.image",
+					"changelog_script.0.command", "changelog_script.0.shell", "changelog_script.0.location",
+					"changelog_script.0.toml",
 				},
 			},
 		},
@@ -184,6 +281,53 @@ func testAccResourceDBSchema(id string, name string) string {
 	`, id, name)
 }
 
+func testAccResourceDBSchemaForFlywayMigrationType(id string, name string) string {
+	return fmt.Sprintf(`
+				resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+				resource "harness_platform_project" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+					org_id = harness_platform_organization.test.id
+					color = "#472848"
+				}
+				resource "harness_platform_connector_github" "test" {
+					identifier  = "%[1]s"
+					name        = "%[2]s"
+					description = "test"
+					tags        = ["foo:bar"]
+					org_id = harness_platform_project.test.org_id
+					project_id = harness_platform_project.test.id
+				  
+					url                = "https://github.com/account"
+					connection_type    = "Account"
+					validation_repo    = "some_repo"
+					delegate_selectors = ["harness-delegate"]
+					credentials {
+					  http {
+						anonymous {}
+					  }
+					}
+				  }
+        		resource "harness_platform_db_schema" "test" {
+					identifier = "%[1]s"
+					org_id = harness_platform_project.test.org_id
+					project_id = harness_platform_project.test.id
+					name = "%[2]s"
+					migration_type = "Flyway"
+					tags = ["foo:bar", "bar:foo"]
+					schema_source {
+						connector = "%[1]s"
+						repo = "DemoRepo"
+						location = "db/flyway/migrations"
+						toml = "flyway.toml"
+					}
+        		}
+	`, id, name)
+}
+
 func testAccResourceDBSchemaArtifactory(id string, name string) string {
 	return fmt.Sprintf(`
 				resource "harness_platform_organization" "test" {
@@ -211,6 +355,7 @@ func testAccResourceDBSchemaArtifactory(id string, name string) string {
 					org_id = harness_platform_project.test.org_id
 					project_id = harness_platform_project.test.id
 					name = "%[2]s"
+					migration_type = "Liquibase"
 					tags = ["foo:bar", "bar:foo"]
 					schema_source {
 						connector = "%[1]s"
@@ -264,6 +409,55 @@ func testAccResourceDBSchemaWithChangelogScript(id string, name string) string {
 						command = "wget changelog.yaml"
 						shell = "Bash"
 						location = "tmp/changelog.yaml"
+					}
+        		}
+	`, id, name)
+}
+
+func testAccResourceDBSchemaWithChangelogScriptForFlywayMigrationType(id string, name string) string {
+	return fmt.Sprintf(`
+				resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+				resource "harness_platform_project" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+					org_id = harness_platform_organization.test.id
+					color = "#472848"
+				}
+				resource "harness_platform_connector_github" "test" {
+					identifier  = "%[1]s"
+					name        = "%[2]s"
+					description = "test"
+					tags        = ["foo:bar"]
+					org_id = harness_platform_project.test.org_id
+					project_id = harness_platform_project.test.id
+				  
+					url                = "https://github.com/account"
+					connection_type    = "Account"
+					validation_repo    = "some_repo"
+					delegate_selectors = ["harness-delegate"]
+					credentials {
+					  http {
+						anonymous {}
+					  }
+					}
+				}
+        		resource "harness_platform_db_schema" "test" {
+					identifier = "%[1]s"
+					org_id = harness_platform_project.test.org_id
+					project_id = harness_platform_project.test.id
+					name = "%[2]s"
+					tags = ["foo:bar", "bar:foo"]
+					type = "Script"
+					migration_type = "Flyway"
+					changelog_script {
+						image = "alpine:latest"
+						command = "wget changelog.yaml"
+						shell = "Bash"
+						location = "db/flyway/migrations"
+						toml = "flyway.toml"
 					}
         		}
 	`, id, name)
