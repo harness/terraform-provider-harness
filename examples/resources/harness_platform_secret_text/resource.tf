@@ -49,7 +49,7 @@ resource "harness_platform_secret_text" "aws_secret_manager" {
 
   additional_metadata {
     values {
-      kmsKeyId = "kmsKeyId"
+      kms_key_id = "kmsKeyId"
     }
   }
 }
