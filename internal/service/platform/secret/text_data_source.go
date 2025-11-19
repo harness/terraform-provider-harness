@@ -42,7 +42,7 @@ func DataSourceSecretText() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"kmsKeyId": {
+									"kms_key_id": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
