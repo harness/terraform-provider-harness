@@ -119,5 +119,3 @@ terraform import harness_platform_token <org_id>/<parent_id>/<apikey_id>/<apikey
 # Import project level token
 terraform import harness_platform_token <org_id>/<project_id>/<parent_id>/<apikey_id>/<apikey_type>/<token_id>
 ```
-
-
