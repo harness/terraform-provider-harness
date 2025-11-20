@@ -122,7 +122,7 @@ func buildSpec(d *schema.ResourceData) string {
 		spec = spec + fmt.Sprintf(`,"spec":{"secretManagerIdentifier":"%[1]s"`, attr.(string))
 	}
 	if attr, ok := d.GetOk("kms_key_id"); ok {
-		spec = spec + fmt.Sprintf(`,"additionalMetadata":{"values":{"kmsKeyId":%[1]s}}}`, attr.(string))
+		spec = spec + fmt.Sprintf(`,"additionalMetadata":{"values":{"kmsKeyId":"%[1]s"}}}`, attr.(string))
 	} else {
 		spec = spec + fmt.Sprintf(`}`)
 	}
@@ -170,5 +170,6 @@ func readSecretFile(d *schema.ResourceData, secret *nextgen.Secret) error {
 	d.Set("org_id", secret.OrgIdentifier)
 	d.Set("project_id", secret.ProjectIdentifier)
 	d.Set("tags", helpers.FlattenTags(secret.Tags))
+
 	return nil
 }
