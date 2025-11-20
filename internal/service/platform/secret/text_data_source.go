@@ -42,10 +42,6 @@ func DataSourceSecretText() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"kms_key_id": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
 									// Add other fields for the inner map as needed
 								},
 							},
