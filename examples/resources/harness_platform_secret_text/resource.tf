@@ -36,20 +36,3 @@ resource "harness_platform_secret_text" "gcp_secret_manager_reference" {
     }
   }
 }
-
-resource "harness_platform_secret_text" "aws_secret_manager" {
-  identifier  = "identifier"
-  name        = "name"
-  description = "example"
-  tags        = ["foo:bar"]
-
-  secret_manager_identifier = "awsSecretManager"
-  value_type                = "Inline"
-  value                     = "secret"
-
-  additional_metadata {
-    values {
-      kms_key_id = "kmsKeyId"
-    }
-  }
-}

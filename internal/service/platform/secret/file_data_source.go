@@ -21,11 +21,6 @@ func DataSourceSecretFile() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"kms_key_id": {
-				Description: "Kms Key Id for encrypting the secret value",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 		},
 	}
 

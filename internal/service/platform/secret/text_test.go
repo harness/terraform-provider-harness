@@ -316,25 +316,6 @@ func testAccResourceSecret_text_inline(id string, name string, secretValue strin
 `, id, name, secretValue)
 }
 
-func testAccResourceSecret_text_inline_AWS_SM(id string, name string, secretValue, secretManagerIdentifier string) string {
-	return fmt.Sprintf(`
-		resource "harness_platform_secret_text" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			description = "test"
-			tags = ["foo:bar"]
-			secret_manager_identifier = "%[4]s"
-			value_type = "Inline"
-			value = "%[3]s"
-			additional_metadata {
-				values {
-					kms_key_id = "awsKMSKeyId"
-				}
-			}
-		}
-`, id, name, secretValue, secretManagerIdentifier)
-}
-
 func testAccResourceSecret_text_reference(id string, name string, secretValue string, secretManagerIdentifier string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_secret_text" "test" {
@@ -510,58 +491,6 @@ func TestAccResourceSecretText_GCP_SM_reference(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
-			},
-		},
-	})
-}
-
-func TestAccResourceSecretText_AWS_SM_reference(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", name)
-	secretValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	updatedValue := secretValue + "updated"
-	resourceName := "harness_platform_secret_text.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccSecretDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceSecret_text_inline_AWS_SM(id, name, secretValue, "harnessSecretManager"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret_manager_identifier", "harnessSecretManager"),
-					resource.TestCheckResourceAttr(resourceName, "value_type", "Inline"),
-					resource.TestCheckResourceAttr(resourceName, "value", secretValue),
-					resource.TestCheckResourceAttr(resourceName, "additional_metadata.0.values.0.kms_key_id", "awsKMSKeyId"),
-				),
-			},
-			{
-				Config: testAccResourceSecret_text_inline_AWS_SM(id, updatedName, updatedValue, "harnessSecretManager"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret_manager_identifier", "harnessSecretManager"),
-					resource.TestCheckResourceAttr(resourceName, "value_type", "Inline"),
-					resource.TestCheckResourceAttr(resourceName, "value", updatedValue),
-					resource.TestCheckResourceAttr(resourceName, "additional_metadata.0.values.0.kms_key_id", "awsKMSKeyId"),
-				),
-			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdFunc:       acctest.AccountLevelResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"value"},
 			},
 		},
 	})
