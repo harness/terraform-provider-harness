@@ -63,5 +63,15 @@ func resourceClusterOrchestratorCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceClusterOrchestratorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	
+	orchestratorID := d.Id()
+	
+	httpResp, err := c.CloudCostClusterOrchestratorApi.DeleteClusterOrchestrator(ctx, c.AccountId, orchestratorID)
+	
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+	
 	return nil
 }
