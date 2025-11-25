@@ -87,7 +87,7 @@ func testDataSourceGitXAccLevel(webhook_identifier string, webhook_name string) 
 			identifier= "%[1]s"
 			name = "%[2]s"
 			repo_name =  "GitXTest3"
-			connector_ref = harness_platform_connector_github.test_connector.identifier
+			connector_ref = "account.${harness_platform_connector_github.test_connector.identifier}"
 
 			depends_on = [harness_platform_connector_github.test_connector]
 		}
