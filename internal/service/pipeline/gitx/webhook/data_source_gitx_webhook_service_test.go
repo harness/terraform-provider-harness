@@ -66,15 +66,36 @@ func TestDataSourceGitxWebhookOrgLevel(t *testing.T) {
 
 func testDataSourceGitXAccLevel(webhook_identifier string, webhook_name string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_connector_github" "test_connector" {
+			identifier          = "TF_test_connector_%[1]s"
+			name                = "TF_test_connector_%[1]s"
+			description         = "Test GitHub connector for webhook test"
+			url                 = "https://github.com/harness-automation"
+			connection_type     = "Account"
+			validation_repo     = "GitXTest3"
+			execute_on_delegate = false
+
+			credentials {
+				http {
+					username  = "harness-automation"
+					token_ref = "account.TF_harness_automation_github_token"
+				}
+			}
+		}
+
 		resource "harness_platform_gitx_webhook" "test" {
 			identifier= "%[1]s"
 			name = "%[2]s"
 			repo_name =  "GitXTest3"
-			connector_ref = "account.TF_github_account_level_connector"
+			connector_ref = harness_platform_connector_github.test_connector.identifier
+
+			depends_on = [harness_platform_connector_github.test_connector]
 		}
 		data "harness_platform_gitx_webhook" "test" {
 			identifier = harness_platform_gitx_webhook.test.identifier
 			name = harness_platform_gitx_webhook.test.name
+
+			depends_on = [harness_platform_gitx_webhook.test]
 		}
 	`, webhook_identifier, webhook_name)
 }
