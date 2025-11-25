@@ -22,6 +22,11 @@ func ResourceWebhook() *schema.Resource {
 		Importer:      helpers.GitWebhookResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"account_id": {
+				Description: "Account Identifier for the Entity.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"identifier": {
 				Description: "GitX webhook identifier.",
 				Type:        schema.TypeString,
