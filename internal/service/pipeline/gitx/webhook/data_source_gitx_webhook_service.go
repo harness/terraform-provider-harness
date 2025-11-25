@@ -31,6 +31,24 @@ func DataSourceWebhook() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"repo_name": {
+				Description: "Repo Identifier for Gitx webhook.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"connector_ref": {
+				Description: "ConnectorRef to be used to create Gitx webhook.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"folder_paths": {
+				Description: "Folder Paths",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 	}
 
