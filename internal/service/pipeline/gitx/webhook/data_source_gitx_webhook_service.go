@@ -16,6 +16,11 @@ func DataSourceWebhook() *schema.Resource {
 		Description: "Resource for creating a Harness pipeline.",
 		ReadContext: dataSourceWebhookRead,
 		Schema: map[string]*schema.Schema{
+			"account_id": {
+				Description: "Account Identifier for the Entity.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"identifier": {
 				Description: "GitX webhook identifier.",
 				Type:        schema.TypeString,
