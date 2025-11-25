@@ -81,6 +81,10 @@ func testDataSourceGitXAccLevel(webhook_identifier string, webhook_name string) 
 					token_ref = "account.TF_harness_automation_github_token"
 				}
 			}
+
+			api_authentication {
+				token_ref = "account.TF_harness_automation_github_token"
+			}
 		}
 
 		resource "harness_platform_gitx_webhook" "test" {
