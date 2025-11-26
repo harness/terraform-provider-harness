@@ -44,16 +44,6 @@ func DataSourceDelegateList() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"description": {
-				Description: "Filter delegates by description.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"host_name": {
-				Description: "Filter delegates by hostname.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"delegate_name": {
 				Description: "Filter delegates by name.",
 				Type:        schema.TypeString,
@@ -117,11 +107,6 @@ func DataSourceDelegateList() *schema.Resource {
 							Computed:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
-						"last_heartbeat": {
-							Description: "Last heartbeat timestamp.",
-							Type:        schema.TypeInt,
-							Computed:    true,
-						},
 						"connected": {
 							Description: "Whether the delegate is connected.",
 							Type:        schema.TypeBool,
@@ -136,55 +121,6 @@ func DataSourceDelegateList() *schema.Resource {
 							Description: "Whether this is a legacy delegate.",
 							Type:        schema.TypeBool,
 							Computed:    true,
-						},
-						"org_name": {
-							Description: "Organization name.",
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
-						"project_name": {
-							Description: "Project name.",
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
-						"delegate_replicas": {
-							Description: "List of delegate replicas/instances.",
-							Type:        schema.TypeList,
-							Computed:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"uuid": {
-										Description: "Replica UUID.",
-										Type:        schema.TypeString,
-										Computed:    true,
-									},
-									"last_heartbeat": {
-										Description: "Replica last heartbeat timestamp.",
-										Type:        schema.TypeInt,
-										Computed:    true,
-									},
-									"connected": {
-										Description: "Whether the replica is connected.",
-										Type:        schema.TypeBool,
-										Computed:    true,
-									},
-									"host_name": {
-										Description: "Replica hostname.",
-										Type:        schema.TypeString,
-										Computed:    true,
-									},
-									"version": {
-										Description: "Replica version.",
-										Type:        schema.TypeString,
-										Computed:    true,
-									},
-									"expiring_at": {
-										Description: "Replica expiration timestamp.",
-										Type:        schema.TypeInt,
-										Computed:    true,
-									},
-								},
-							},
 						},
 					},
 				},
@@ -208,12 +144,6 @@ func dataSourceDelegateListRead(ctx context.Context, d *schema.ResourceData, met
 
 	if status, ok := d.GetOk("status"); ok {
 		body.Status = nextgen.DelegateStatus(status.(string))
-	}
-	if description, ok := d.GetOk("description"); ok {
-		body.Description = description.(string)
-	}
-	if hostName, ok := d.GetOk("host_name"); ok {
-		body.HostName = hostName.(string)
 	}
 	if delegateName, ok := d.GetOk("delegate_name"); ok {
 		body.DelegateName = delegateName.(string)
@@ -251,32 +181,14 @@ func dataSourceDelegateListRead(ctx context.Context, d *schema.ResourceData, met
 
 	for _, delegate := range resp.Resource {
 		delegateMap := map[string]interface{}{
-			"type":           delegate.Type,
-			"name":           delegate.Name,
-			"description":    delegate.Description,
-			"tags":           delegate.Tags,
-			"last_heartbeat": delegate.LastHeartBeat,
-			"connected":      delegate.Connected,
-			"auto_upgrade":   delegate.AutoUpgrade,
-			"legacy":         delegate.Legacy,
-			"org_name":       delegate.OrgName,
-			"project_name":   delegate.ProjectName,
+			"type":         delegate.Type,
+			"name":         delegate.Name,
+			"description":  delegate.Description,
+			"tags":         delegate.Tags,
+			"connected":    delegate.Connected,
+			"auto_upgrade": delegate.AutoUpgrade,
+			"legacy":       delegate.Legacy,
 		}
-
-		// Process delegate replicas
-		replicas := make([]map[string]interface{}, 0, len(delegate.DelegateReplicas))
-		for _, replica := range delegate.DelegateReplicas {
-			replicaMap := map[string]interface{}{
-				"uuid":           replica.Uuid,
-				"last_heartbeat": replica.LastHeartbeat,
-				"connected":      replica.Connected,
-				"host_name":      replica.HostName,
-				"version":        replica.Version,
-				"expiring_at":    replica.ExpiringAt,
-			}
-			replicas = append(replicas, replicaMap)
-		}
-		delegateMap["delegate_replicas"] = replicas
 
 		delegates = append(delegates, delegateMap)
 	}
