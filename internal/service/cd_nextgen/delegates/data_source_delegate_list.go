@@ -7,6 +7,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -37,7 +38,7 @@ func DataSourceDelegateList() *schema.Resource {
 				Description: "Whether to fetch all delegates.",
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     true,
+				Default:     false,
 			},
 			"status": {
 				Description: "Filter delegates by status. Valid values: CONNECTED, DISCONNECTED, ENABLED, DISABLED, WAITING_FOR_APPROVAL, DELETED.",
@@ -173,7 +174,17 @@ func dataSourceDelegateListRead(ctx context.Context, d *schema.ResourceData, met
 
 	resp, httpResp, err := c.DelegateSetupResourceApi.ListDelegates(ctx, body, accountId, opts)
 	if err != nil {
+		tflog.Error(ctx, "Error listing delegates", map[string]interface{}{
+			"error": err,
+		})
 		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
+	// Check for nil Resource field or empty result
+	if resp.Resource == nil || len(resp.Resource) == 0 {
+		d.Set("delegates", []map[string]interface{}{})
+		d.SetId(accountId)
+		return nil
 	}
 
 	// Process delegates data using structured response
