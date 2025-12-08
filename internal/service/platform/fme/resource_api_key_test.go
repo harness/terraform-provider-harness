@@ -2,6 +2,7 @@ package fme_test
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"testing"
 
@@ -12,6 +13,11 @@ import (
 )
 
 func TestAccResourceFMEApiKey_ClientSide(t *testing.T) {
+	workspaceID := os.Getenv("SPLIT_WORKSPACE_ID")
+	if workspaceID == "" {
+		t.Skip("SPLIT_WORKSPACE_ID environment variable must be set for this test")
+	}
+
 	envName := fmt.Sprintf("%s_env_%s", t.Name(), utils.RandStringBytes(5))
 	keyName := fmt.Sprintf("%s_key_%s", t.Name(), utils.RandStringBytes(5))
 	resourceName := "harness_fme_api_key.test"
@@ -22,7 +28,7 @@ func TestAccResourceFMEApiKey_ClientSide(t *testing.T) {
 		CheckDestroy:      testAccFMEApiKeyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceFMEApiKey(envName, keyName, "client_side"),
+				Config: testAccResourceFMEApiKey(workspaceID, envName, keyName, "client_side"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", keyName),
 					resource.TestCheckResourceAttr(resourceName, "type", "client_side"),
@@ -42,6 +48,11 @@ func TestAccResourceFMEApiKey_ClientSide(t *testing.T) {
 }
 
 func TestAccResourceFMEApiKey_ServerSide(t *testing.T) {
+	workspaceID := os.Getenv("SPLIT_WORKSPACE_ID")
+	if workspaceID == "" {
+		t.Skip("SPLIT_WORKSPACE_ID environment variable must be set for this test")
+	}
+
 	envName := fmt.Sprintf("%s_env_%s", t.Name(), utils.RandStringBytes(5))
 	keyName := fmt.Sprintf("%s_key_%s", t.Name(), utils.RandStringBytes(5))
 	resourceName := "harness_fme_api_key.test"
@@ -52,7 +63,7 @@ func TestAccResourceFMEApiKey_ServerSide(t *testing.T) {
 		CheckDestroy:      testAccFMEApiKeyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceFMEApiKey(envName, keyName, "server_side"),
+				Config: testAccResourceFMEApiKey(workspaceID, envName, keyName, "server_side"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", keyName),
 					resource.TestCheckResourceAttr(resourceName, "type", "server_side"),
@@ -66,6 +77,11 @@ func TestAccResourceFMEApiKey_ServerSide(t *testing.T) {
 }
 
 func TestAccResourceFMEApiKey_InvalidType(t *testing.T) {
+	workspaceID := os.Getenv("SPLIT_WORKSPACE_ID")
+	if workspaceID == "" {
+		t.Skip("SPLIT_WORKSPACE_ID environment variable must be set for this test")
+	}
+
 	envName := fmt.Sprintf("%s_env_%s", t.Name(), utils.RandStringBytes(5))
 	keyName := fmt.Sprintf("%s_key_%s", t.Name(), utils.RandStringBytes(5))
 
@@ -74,7 +90,7 @@ func TestAccResourceFMEApiKey_InvalidType(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config:      testAccResourceFMEApiKey(envName, keyName, "invalid_type"),
+				Config:      testAccResourceFMEApiKey(workspaceID, envName, keyName, "invalid_type"),
 				ExpectError: regexp.MustCompile("expected type to be one of \\[client_side server_side\\]"),
 			},
 		},
@@ -111,17 +127,19 @@ func testAccFMEApiKeyDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAccResourceFMEApiKey(envName, keyName, keyType string) string {
+func testAccResourceFMEApiKey(workspaceID, envName, keyName, keyType string) string {
 	return fmt.Sprintf(`
 		resource "harness_fme_environment" "test_env" {
-			name       = "%[1]s"
-			production = false
+			workspace_id = "%[1]s"
+			name         = "%[2]s"
+			production   = false
 		}
 
 		resource "harness_fme_api_key" "test" {
+			workspace_id   = "%[1]s"
 			environment_id = harness_fme_environment.test_env.id
-			name          = "%[2]s"
-			type          = "%[3]s"
+			name           = "%[3]s"
+			type           = "%[4]s"
 		}
-`, envName, keyName, keyType)
+`, workspaceID, envName, keyName, keyType)
 }

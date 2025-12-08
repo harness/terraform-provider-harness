@@ -129,10 +129,9 @@ func (s *SplitDefinitionsService) Create(workspaceID, environmentID, splitName s
 	var result SplitDefinition
 	url := fmt.Sprintf("https://api.split.io/internal/api/v2/splits/ws/%s/%s/environments/%s", workspaceID, splitName, environmentID)
 
-	// Debug logging - print the request JSON
+	// Log the request JSON for debugging purposes
 	if jsonBytes, err := json.Marshal(opts); err == nil {
 		log.Printf("[DEBUG] Split definition create request JSON: %s", string(jsonBytes))
-		fmt.Printf("DEBUG: Split definition create request JSON: %s\n", string(jsonBytes))
 	}
 
 	// Try POST first to create/activate the split in environment (normal case for new splits)
@@ -141,14 +140,12 @@ func (s *SplitDefinitionsService) Create(workspaceID, environmentID, splitName s
 		// If POST fails with 409 (split already exists in environment), try PUT to update it
 		if strings.Contains(err.Error(), "409") {
 			log.Printf("[DEBUG] POST failed with 409 (split already in environment), trying PUT to update")
-			fmt.Printf("DEBUG: POST failed with 409, trying PUT to update split definition\n")
 
 			err = s.client.put(url, opts, &result)
 			if err != nil {
 				return nil, err
 			}
 			log.Printf("[DEBUG] PUT succeeded")
-			fmt.Printf("DEBUG: PUT succeeded\n")
 		} else {
 			return nil, err
 		}

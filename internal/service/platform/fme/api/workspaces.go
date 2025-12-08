@@ -29,7 +29,6 @@ func (w *WorkspacesService) Get(workspaceID string) (*Workspace, error) {
 
 // FindByName finds a workspace by name
 func (w *WorkspacesService) FindByName(name string) (*Workspace, error) {
-	fmt.Printf("DEBUG: FindByName called for workspace: %s\n", name)
 	workspaces, err := w.List()
 	if err != nil {
 		return nil, err
@@ -57,24 +56,20 @@ type WorkspaceListResult struct {
 
 // List returns all workspaces (deprecated - use ListAll for consistency)
 func (w *WorkspacesService) List() ([]*Workspace, error) {
-	fmt.Printf("DEBUG: List() called - delegating to ListAll()\n")
 	return w.ListAll()
 }
 
 // ListPaginated returns workspaces with optional pagination
 func (w *WorkspacesService) ListPaginated(opts *GenericListQueryParams) (*WorkspaceListResult, error) {
-	fmt.Printf("DEBUG: ListPaginated() called with opts: %+v\n", opts)
 	var result WorkspaceListResult
 	baseURL := "https://api.split.io/internal/api/v2/workspaces"
 
 	// Enforce max limit of 100
 	if opts != nil && opts.Limit > 100 {
-		fmt.Printf("DEBUG: ListPaginated() limiting from %d to 100\n", opts.Limit)
 		opts.Limit = 100
 	}
 
 	finalURL := w.client.buildURL(baseURL, opts)
-	fmt.Printf("DEBUG: ListPaginated() final URL: %s\n", finalURL)
 	err := w.client.get(finalURL, &result)
 	if err != nil {
 		return nil, err
@@ -84,18 +79,15 @@ func (w *WorkspacesService) ListPaginated(opts *GenericListQueryParams) (*Worksp
 
 // ListAll returns all workspaces by handling pagination automatically
 func (w *WorkspacesService) ListAll() ([]*Workspace, error) {
-	fmt.Printf("DEBUG: ListAll() called\n")
 	var allWorkspaces []*Workspace
 	offset := 0
 	limit := 100 // Use max limit
-	fmt.Printf("DEBUG: ListAll() setting limit to: %d\n", limit)
 
 	for {
 		opts := &GenericListQueryParams{
 			Offset: offset,
 			Limit:  limit,
 		}
-		fmt.Printf("DEBUG: ListAll() calling ListPaginated with opts: offset=%d, limit=%d\n", opts.Offset, opts.Limit)
 
 		result, err := w.ListPaginated(opts)
 		if err != nil {

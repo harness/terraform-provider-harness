@@ -249,27 +249,20 @@ func (c *Client) SetTimeout(t time.Time) {
 
 // buildURL constructs a URL with query parameters from GenericListQueryParams
 func (c *Client) buildURL(baseURL string, opts *GenericListQueryParams) string {
-	fmt.Printf("DEBUG: buildURL() called with baseURL: %s, opts: %+v\n", baseURL, opts)
 	if opts == nil || (opts.Offset == 0 && opts.Limit == 0) {
-		fmt.Printf("DEBUG: buildURL() returning baseURL as-is (no params)\n")
 		return baseURL
 	}
 
 	var params []string
 	if opts.Offset > 0 {
 		params = append(params, fmt.Sprintf("offset=%d", opts.Offset))
-		fmt.Printf("DEBUG: buildURL() added offset param: offset=%d\n", opts.Offset)
 	}
 	if opts.Limit > 0 {
 		params = append(params, fmt.Sprintf("limit=%d", opts.Limit))
-		fmt.Printf("DEBUG: buildURL() added limit param: limit=%d\n", opts.Limit)
 	}
 
 	if len(params) > 0 {
-		finalURL := baseURL + "?" + strings.Join(params, "&")
-		fmt.Printf("DEBUG: buildURL() returning final URL: %s\n", finalURL)
-		return finalURL
+		return baseURL + "?" + strings.Join(params, "&")
 	}
-	fmt.Printf("DEBUG: buildURL() returning baseURL as-is (no valid params)\n")
 	return baseURL
 }

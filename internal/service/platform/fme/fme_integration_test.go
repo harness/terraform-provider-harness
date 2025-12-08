@@ -16,6 +16,11 @@ func TestAccFMEIntegration_Complete(t *testing.T) {
 		t.Skip("SPLIT_WORKSPACE_ID environment variable must be set for this integration test")
 	}
 
+	workspaceName := os.Getenv("SPLIT_WORKSPACE_NAME")
+	if workspaceName == "" {
+		t.Skip("SPLIT_WORKSPACE_NAME environment variable must be set for this integration test")
+	}
+
 	envName := fmt.Sprintf("test-env-%s", utils.RandStringBytes(5))
 	keyName := fmt.Sprintf("test-key-%s", utils.RandStringBytes(5))
 	splitName := fmt.Sprintf("test-split-%s", utils.RandStringBytes(5))
@@ -25,11 +30,11 @@ func TestAccFMEIntegration_Complete(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFMEIntegrationComplete(workspaceID, envName, keyName, splitName),
+				Config: testAccFMEIntegrationComplete(workspaceID, workspaceName, envName, keyName, splitName),
 				Check: resource.ComposeTestCheckFunc(
 					// Workspace data source
 					resource.TestCheckResourceAttr("data.harness_fme_workspace.test", "id", workspaceID),
-					resource.TestCheckResourceAttrSet("data.harness_fme_workspace.test", "name"),
+					resource.TestCheckResourceAttr("data.harness_fme_workspace.test", "name", workspaceName),
 
 					// Environment resource
 					resource.TestCheckResourceAttr("harness_fme_environment.test", "name", envName),
@@ -66,7 +71,7 @@ func TestAccFMEIntegration_ProductionEnvironment(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFMEIntegrationProduction(envName, keyName),
+				Config: testAccFMEIntegrationProduction(workspaceID, envName, keyName),
 				Check: resource.ComposeTestCheckFunc(
 					// Production environment
 					resource.TestCheckResourceAttr("harness_fme_environment.prod", "name", envName),
@@ -87,6 +92,11 @@ func TestAccFMEIntegration_AllResources(t *testing.T) {
 		t.Skip("SPLIT_WORKSPACE_ID environment variable must be set for this integration test")
 	}
 
+	workspaceName := os.Getenv("SPLIT_WORKSPACE_NAME")
+	if workspaceName == "" {
+		t.Skip("SPLIT_WORKSPACE_NAME environment variable must be set for this integration test")
+	}
+
 	envName := fmt.Sprintf("test-env-%s", utils.RandStringBytes(5))
 	keyName := fmt.Sprintf("test-key-%s", utils.RandStringBytes(5))
 	splitName := fmt.Sprintf("test-split-%s", utils.RandStringBytes(5))
@@ -99,11 +109,11 @@ func TestAccFMEIntegration_AllResources(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFMEIntegrationAllResources(workspaceID, envName, keyName, splitName, trafficTypeName, segmentName, flagSetName),
+				Config: testAccFMEIntegrationAllResources(workspaceID, workspaceName, envName, keyName, splitName, trafficTypeName, segmentName, flagSetName),
 				Check: resource.ComposeTestCheckFunc(
 					// Workspace data source
 					resource.TestCheckResourceAttr("data.harness_fme_workspace.test", "id", workspaceID),
-					resource.TestCheckResourceAttrSet("data.harness_fme_workspace.test", "name"),
+					resource.TestCheckResourceAttr("data.harness_fme_workspace.test", "name", workspaceName),
 
 					// Environment resource
 					resource.TestCheckResourceAttr("harness_fme_environment.test", "name", envName),
@@ -144,27 +154,35 @@ func TestAccFMEIntegration_AllResources(t *testing.T) {
 	})
 }
 
-func testAccFMEIntegrationComplete(workspaceID, envName, keyName, splitName string) string {
+func testAccFMEIntegrationComplete(workspaceID, workspaceName, envName, keyName, splitName string) string {
 	return fmt.Sprintf(`
 		data "harness_fme_workspace" "test" {
-			id = "%[1]s"
+			name = "%[2]s"
 		}
 
 		resource "harness_fme_environment" "test" {
-			name       = "%[2]s"
-			production = false
+			workspace_id = "%[1]s"
+			name         = "%[3]s"
+			production   = false
 		}
 
 		resource "harness_fme_api_key" "test" {
+			workspace_id   = "%[1]s"
 			environment_id = harness_fme_environment.test.id
-			name          = "%[3]s"
-			type          = "client_side"
+			name           = "%[4]s"
+			type           = "client_side"
+		}
+
+		resource "harness_fme_traffic_type" "test_for_split" {
+			workspace_id = "%[1]s"
+			name         = "traffic-type-for-split"
 		}
 
 		resource "harness_fme_split" "test" {
-			workspace_id = data.harness_fme_workspace.test.id
-			name         = "%[4]s"
-			description  = "Integration test split"
+			workspace_id    = data.harness_fme_workspace.test.id
+			traffic_type_id = harness_fme_traffic_type.test_for_split.id
+			name            = "%[5]s"
+			description     = "Integration test split"
 		}
 
 		output "workspace_name" {
@@ -183,76 +201,83 @@ func testAccFMEIntegrationComplete(workspaceID, envName, keyName, splitName stri
 		output "split_id" {
 			value = harness_fme_split.test.id
 		}
-`, workspaceID, envName, keyName, splitName)
+`, workspaceID, workspaceName, envName, keyName, splitName)
 }
 
-func testAccFMEIntegrationProduction(envName, keyName string) string {
+func testAccFMEIntegrationProduction(workspaceID, envName, keyName string) string {
 	return fmt.Sprintf(`
 		resource "harness_fme_environment" "prod" {
-			name       = "%[1]s"
-			production = true
+			workspace_id = "%[1]s"
+			name         = "%[2]s"
+			production   = true
 		}
 
 		resource "harness_fme_api_key" "prod" {
+			workspace_id   = "%[1]s"
 			environment_id = harness_fme_environment.prod.id
-			name          = "%[2]s"
-			type          = "server_side"
+			name           = "%[3]s"
+			type           = "server_side"
 		}
-`, envName, keyName)
+`, workspaceID, envName, keyName)
 }
 
-func testAccFMEIntegrationAllResources(workspaceID, envName, keyName, splitName, trafficTypeName, segmentName, flagSetName string) string {
+func testAccFMEIntegrationAllResources(workspaceID, workspaceName, envName, keyName, splitName, trafficTypeName, segmentName, flagSetName string) string {
 	return fmt.Sprintf(`
 		data "harness_fme_workspace" "test" {
-			id = "%[1]s"
+			name = "%[2]s"
 		}
 
 		resource "harness_fme_environment" "test" {
-			name       = "%[2]s"
-			production = false
+			workspace_id = "%[1]s"
+			name         = "%[3]s"
+			production   = false
 		}
 
 		resource "harness_fme_traffic_type" "test" {
 			workspace_id = "%[1]s"
-			name         = "%[5]s"
+			name         = "%[6]s"
 		}
 
 		resource "harness_fme_segment" "test" {
 			workspace_id    = "%[1]s"
 			traffic_type_id = harness_fme_traffic_type.test.id
-			name            = "%[6]s"
+			name            = "%[7]s"
 			description     = "Integration test segment"
 		}
 
 		resource "harness_fme_flag_set" "test" {
 			workspace_id = "%[1]s"
-			name         = "%[7]s"
+			name         = "%[8]s"
 			description  = "Integration test flag set"
 		}
 
 		resource "harness_fme_api_key" "test" {
+			workspace_id   = "%[1]s"
 			environment_id = harness_fme_environment.test.id
-			name          = "%[3]s"
-			type          = "client_side"
+			name           = "%[4]s"
+			type           = "client_side"
 		}
 
 		resource "harness_fme_split" "test" {
-			workspace_id = data.harness_fme_workspace.test.id
-			name         = "%[4]s"
-			description  = "Integration test split"
+			workspace_id    = data.harness_fme_workspace.test.id
+			traffic_type_id = harness_fme_traffic_type.test.id
+			name            = "%[5]s"
+			description     = "Integration test split"
 		}
 
 		data "harness_fme_environment" "test" {
-			id = harness_fme_environment.test.id
+			workspace_id = "%[1]s"
+			name         = harness_fme_environment.test.name
 		}
 
 		data "harness_fme_flag_set" "test" {
-			id = harness_fme_flag_set.test.id
+			workspace_id = "%[1]s"
+			name         = harness_fme_flag_set.test.name
 		}
 
 		data "harness_fme_traffic_type" "test" {
 			workspace_id = "%[1]s"
-			id           = harness_fme_traffic_type.test.id
+			name         = harness_fme_traffic_type.test.name
 		}
 
 		output "workspace_name" {
@@ -283,5 +308,5 @@ func testAccFMEIntegrationAllResources(workspaceID, envName, keyName, splitName,
 		output "split_id" {
 			value = harness_fme_split.test.id
 		}
-`, workspaceID, envName, keyName, splitName, trafficTypeName, segmentName, flagSetName)
+`, workspaceID, workspaceName, envName, keyName, splitName, trafficTypeName, segmentName, flagSetName)
 }

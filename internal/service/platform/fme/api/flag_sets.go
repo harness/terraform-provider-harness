@@ -94,28 +94,18 @@ func (f *FlagSetsService) List(workspaceID string) ([]*FlagSet, error) {
 			url += fmt.Sprintf("&marker=%s", *nextMarker)
 		}
 
-		fmt.Printf("DEBUG: Making request to: %s\n", url)
-
 		var result FlagSetListResult
 		err := f.client.get(url, &result)
 		if err != nil {
-			fmt.Printf("DEBUG: API request error: %v\n", err)
 			return nil, err
-		}
-
-		fmt.Printf("DEBUG: API response successful, got %d flag sets in this batch\n", len(result.Data))
-		for i, fs := range result.Data {
-			fmt.Printf("DEBUG: Batch flag set %d: ID=%s, Name=%s\n", i, getStringValue(fs.ID), getStringValue(fs.Name))
 		}
 
 		allFlagSets = append(allFlagSets, result.Data...)
 
 		if result.NextMarker == nil {
-			fmt.Printf("DEBUG: No more pages, total flag sets: %d\n", len(allFlagSets))
 			break
 		}
 		nextMarker = result.NextMarker
-		fmt.Printf("DEBUG: Next marker: %s\n", *nextMarker)
 	}
 
 	return allFlagSets, nil
@@ -128,33 +118,11 @@ func (f *FlagSetsService) FindByName(workspaceID, flagSetName string) (*FlagSet,
 		return nil, fmt.Errorf("failed to list flag sets: %v", err)
 	}
 
-	// Debug logging - print what we actually got back
-	fmt.Printf("DEBUG: Found %d flag sets in workspace %s\n", len(flagSets), workspaceID)
-	for i, flagSet := range flagSets {
-		var name string
-		if flagSet.Name != nil {
-			name = *flagSet.Name
-		} else {
-			name = "<nil>"
-		}
-		fmt.Printf("DEBUG: Flag set %d: ID=%s, Name=%s\n", i, getStringValue(flagSet.ID), name)
-	}
-	fmt.Printf("DEBUG: Looking for flag set with name: '%s'\n", flagSetName)
-
 	for _, flagSet := range flagSets {
 		if flagSet.Name != nil && *flagSet.Name == flagSetName {
-			fmt.Printf("DEBUG: Found matching flag set: %s\n", *flagSet.Name)
 			return flagSet, nil
 		}
 	}
 
 	return nil, fmt.Errorf("flag set with name '%s' not found in workspace '%s'", flagSetName, workspaceID)
-}
-
-// Helper function to safely get string value
-func getStringValue(s *string) string {
-	if s == nil {
-		return "<nil>"
-	}
-	return *s
 }

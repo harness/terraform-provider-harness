@@ -74,36 +74,16 @@ func (s *SegmentEnvironmentAssociationsService) Update(workspaceID, segmentName,
 func (s *SegmentEnvironmentAssociationsService) Delete(workspaceID, segmentName, environmentID string) error {
 	// Before deactivating, try to clear any existing keys to avoid 409 errors
 	keys, err := s.client.Environments.GetSegmentKeys(environmentID, segmentName)
-	if err != nil {
-		fmt.Printf("DEBUG: Failed to get segment keys: %v\n", err)
-	} else if len(keys) > 0 {
-		fmt.Printf("DEBUG: Clearing %d existing keys from segment %s in environment %s before deactivation\n",
-			len(keys), segmentName, environmentID)
-		fmt.Printf("DEBUG: Keys to remove: %v\n", keys)
+	if err == nil && len(keys) > 0 {
 		clearErr := s.client.Environments.RemoveSegmentKeys(environmentID, segmentName, keys)
-		if clearErr != nil {
-			fmt.Printf("DEBUG: Failed to clear keys before deactivation: %v\n", clearErr)
-			if !strings.Contains(clearErr.Error(), "404") {
-				return clearErr // Return the error instead of ignoring it
-			}
-		} else {
-			fmt.Printf("DEBUG: Successfully cleared keys, verifying removal...\n")
-			// Verify keys were actually removed
-			remainingKeys, verifyErr := s.client.Environments.GetSegmentKeys(environmentID, segmentName)
-			if verifyErr != nil {
-				fmt.Printf("DEBUG: Could not verify key removal: %v\n", verifyErr)
-			} else {
-				fmt.Printf("DEBUG: Remaining keys after removal: %d - %v\n", len(remainingKeys), remainingKeys)
-			}
+		if clearErr != nil && !strings.Contains(clearErr.Error(), "404") {
+			return clearErr
 		}
-	} else {
-		fmt.Printf("DEBUG: No keys found in segment %s environment %s\n", segmentName, environmentID)
 	}
 
 	_, err = s.Deactivate(environmentID, segmentName)
 	// Ignore 404 errors when deleting - segment may never have been activated
 	if err != nil && strings.Contains(err.Error(), "404") {
-		fmt.Printf("DEBUG: Ignoring 404 error when deactivating segment %s in environment %s\n", segmentName, environmentID)
 		return nil
 	}
 	return err
@@ -112,13 +92,10 @@ func (s *SegmentEnvironmentAssociationsService) Delete(workspaceID, segmentName,
 // Activate activates a segment in an environment
 func (s *SegmentEnvironmentAssociationsService) Activate(environmentID, segmentName string) (*SegmentEnvironmentAssociation, error) {
 	url := fmt.Sprintf("https://api.split.io/internal/api/v2/segments/%s/%s", environmentID, segmentName)
-	fmt.Printf("DEBUG: Activating segment %s in environment %s\n", segmentName, environmentID)
 	err := s.client.post(url, nil, nil)
 	if err != nil {
-		fmt.Printf("DEBUG: Segment activation failed: %v\n", err)
 		return nil, err
 	}
-	fmt.Printf("DEBUG: Segment activation successful\n")
 
 	return &SegmentEnvironmentAssociation{
 		SegmentName:      &segmentName,
