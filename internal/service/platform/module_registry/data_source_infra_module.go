@@ -82,6 +82,118 @@ func DataSourceInfraModule() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"account": {
+				Description: "Account that owns the module",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"git_tag_style": {
+				Description: "Git Tag Style",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"module_error": {
+				Description: "Error while retrieving the module",
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+			},
+			"org": {
+				Description: "Organization that owns the module",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"project": {
+				Description: "Project that owns the module",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"testing_enabled": {
+				Description: "Whether testing is enabled for the module",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
+			"testing_metadata": {
+				Description: "Testing metadata for the module",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"account": {
+							Description: "Account is the internal customer account ID",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"org": {
+							Description: "Organization identifier",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"pipelines": {
+							Description: "Pipelines where the testing is enabled",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Computed:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"project": {
+							Description: "Project identifier",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"provider_connector": {
+							Description: "Provider connector for testing purposes",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"provisioner_type": {
+							Description: "Provisioner type for testing purposes",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"provisioner_version": {
+							Description: "Provisioner version for testing purposes",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"release_pipeline": {
+							Description: "Release pipeline",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"updated": {
+				Description: "Timestamp when the module was last modified",
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Optional:    true,
+			},
+			"versions": {
+				Description: "Versions of the module",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 	}
 	return resource

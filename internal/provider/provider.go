@@ -3,8 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/default_notification_template_set"
 	"log"
+
+	"github.com/harness/terraform-provider-harness/internal/service/platform/default_notification_template_set"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_channel"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/central_notification_rule"
@@ -30,6 +31,7 @@ import (
 	governance_rule "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule"
 	governance_rule_set "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry_testing"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_rule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/variable_set"
@@ -305,6 +307,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_rule_vm":                       as_rule.DataSourceVMRule(),
 				"harness_autostopping_rule_rds":                      as_rule.DataSourceRDSRule(),
 				"harness_autostopping_rule_ecs":                      as_rule.DataSourceECSRule(),
+				"harness_autostopping_rule_scale_group":              as_rule.DataSourceScaleGroupRule(),
 				"harness_fme_workspace":                              fme.DataSourceFMEWorkspace(),
 				"harness_fme_environment":                            fme.DataSourceFMEEnvironment(),
 				"harness_fme_flag_set":                               fme.DataSourceFMEFlagSet(),
@@ -333,6 +336,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator":                       cluster_orchestrator.DataSourceClusterOrchestrator(),
 				"harness_cluster_orchestrator_config":                cluster_orchestrator.DataSourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                      module_registry.DataSourceInfraModule(),
+				"harness_platform_infra_modules":                     module_registry.DataSourceInfraModules(),
+				"harness_platform_infra_module_testing":              module_registry_testing.DataSourceInfraModuleTesting(),
 				"harness_chaos_infrastructure":                       infrastructure.DataSourceChaosInfrastructureService(),
 				"harness_chaos_infrastructure_v2":                    chaos_infrastructure_v2.DataSourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                       image_registry.DataSourceChaosImageRegistry(),
@@ -398,7 +403,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_feature_flag":                      feature_flag.ResourceFeatureFlag(),
 				"harness_platform_feature_flag_target_group":         feature_flag_target_group.ResourceFeatureFlagTargetGroup(),
 				"harness_platform_feature_flag_target":               feature_flag_target.ResourceFeatureFlagTarget(),
-				"harness_fme_environment":                           fme.ResourceFMEEnvironment(),
+				"harness_fme_environment":                            fme.ResourceFMEEnvironment(),
 				"harness_fme_environment_segment_keys":               fme.ResourceFMEEnvironmentSegmentKeys(),
 				"harness_fme_api_key":                                fme.ResourceFMEApiKey(),
 				"harness_fme_split":                                  fme.ResourceFMESplit(),
@@ -489,6 +494,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_rule_vm":                       as_rule.ResourceVMRule(),
 				"harness_autostopping_rule_rds":                      as_rule.ResourceRDSRule(),
 				"harness_autostopping_rule_ecs":                      as_rule.ResourceECSRule(),
+				"harness_autostopping_rule_scale_group":              as_rule.ResourceScaleGroupRule(),
 				"harness_platform_file_store_file":                   cdng_file_store.ResourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":                 cdng_file_store.ResourceFileStoreNodeFolder(),
 				"harness_autostopping_azure_proxy":                   load_balancer.ResourceAzureProxy(),
@@ -511,6 +517,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator":                       cluster_orchestrator.ResourceClusterOrchestrator(),
 				"harness_cluster_orchestrator_config":                cluster_orchestrator.ResourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                      module_registry.ResourceInfraModule(),
+				"harness_platform_infra_module_testing":              module_registry_testing.ResourceInfraModuleTesting(),
 				"harness_chaos_infrastructure":                       infrastructure.ResourceChaosInfrastructure(),
 				"harness_chaos_infrastructure_v2":                    chaos_infrastructure_v2.ResourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                       image_registry.ResourceChaosImageRegistry(),

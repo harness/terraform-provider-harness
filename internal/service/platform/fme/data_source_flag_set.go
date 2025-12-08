@@ -2,7 +2,6 @@ package fme
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -54,21 +53,14 @@ func dataSourceFMEFlagSetRead(ctx context.Context, d *schema.ResourceData, meta 
 	workspaceID := d.Get("workspace_id").(string)
 	flagSetName := d.Get("name").(string)
 
-	// Log that we're starting the search
-	fmt.Printf("DEBUG: Starting flag set search for name='%s' in workspace='%s'\n", flagSetName, workspaceID)
-
 	flagSet, err := c.APIClient.FlagSets.FindByName(workspaceID, flagSetName)
 	if err != nil {
-		fmt.Printf("DEBUG: FindByName returned error: %v\n", err)
 		return diag.FromErr(err)
 	}
 
 	if flagSet == nil {
-		fmt.Printf("DEBUG: FindByName returned nil flag set\n")
 		return diag.Errorf("flag set with name %s not found in workspace %s", flagSetName, workspaceID)
 	}
-
-	fmt.Printf("DEBUG: Found flag set: ID=%s, Name=%s\n", *flagSet.ID, *flagSet.Name)
 
 	d.SetId(*flagSet.ID)
 	d.Set("name", flagSet.Name)

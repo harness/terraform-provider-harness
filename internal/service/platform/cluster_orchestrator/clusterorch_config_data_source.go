@@ -22,6 +22,11 @@ func DataSourceClusterOrchestratorConfig() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"disabled": {
+				Description: "Whether the cluster orchestrator is disabled",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"distribution": {
 				Description: "Spot and Ondemand Distribution Preferences for workload replicas",
 				Type:        schema.TypeList,

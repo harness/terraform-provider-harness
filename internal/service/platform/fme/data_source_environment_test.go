@@ -24,7 +24,7 @@ func TestAccDataSourceFMEEnvironment(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceFMEEnvironment(envName),
+				Config: testAccDataSourceFMEEnvironment(workspaceID, envName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", envName),
 					resource.TestCheckResourceAttr(resourceName, "production", "false"),
@@ -35,15 +35,17 @@ func TestAccDataSourceFMEEnvironment(t *testing.T) {
 	})
 }
 
-func testAccDataSourceFMEEnvironment(envName string) string {
+func testAccDataSourceFMEEnvironment(workspaceID, envName string) string {
 	return fmt.Sprintf(`
 		resource "harness_fme_environment" "test" {
-			name       = "%[1]s"
-			production = false
+			workspace_id = "%[1]s"
+			name         = "%[2]s"
+			production   = false
 		}
 
 		data "harness_fme_environment" "test" {
-			id = harness_fme_environment.test.id
+			workspace_id = "%[1]s"
+			name         = harness_fme_environment.test.name
 		}
-`, envName)
+`, workspaceID, envName)
 }

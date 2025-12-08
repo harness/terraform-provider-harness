@@ -76,13 +76,10 @@ func resourceFMEEnvironmentSegmentKeysCreate(ctx context.Context, d *schema.Reso
 		keys[i] = key.(string)
 	}
 
-	fmt.Printf("DEBUG: Adding segment keys for segment %s in environment %s\n", segmentName, environmentID)
 	_, err := c.APIClient.Environments.AddSegmentKeys(environmentID, segmentName, true, keys)
 	if err != nil {
-		fmt.Printf("DEBUG: Adding segment keys failed: %v\n", err)
 		return diag.FromErr(err)
 	}
-	fmt.Printf("DEBUG: Adding segment keys successful\n")
 
 	// Use a composite ID to uniquely identify this resource
 	d.SetId(fmt.Sprintf("%s:%s:%s", workspaceID, segmentName, environmentID))

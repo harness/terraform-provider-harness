@@ -121,7 +121,7 @@ func testAccDataSourceDBInstance(id string, name string) string {
         `, id, name)
 }
 
-func TestAccDataSourceDBInstanceWithLiquibaseProps(t *testing.T) {
+func TestAccDataSourceDBInstanceWithSubstituteProps(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	resourceName := "data.harness_platform_db_instance.test"
@@ -131,7 +131,7 @@ func TestAccDataSourceDBInstanceWithLiquibaseProps(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceDBInstanceWithLiquibaseProps(id, name),
+				Config: testAccDataSourceDBInstanceWithSubstituteProps(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -139,8 +139,8 @@ func TestAccDataSourceDBInstanceWithLiquibaseProps(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "branch", "feature/test"),
 					resource.TestCheckResourceAttr(resourceName, "context", "test-context"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_user", "testuser"),
-					resource.TestCheckResourceAttr(resourceName, "liquibase_substitute_properties.db_password", "testpass"),
+					resource.TestCheckResourceAttr(resourceName, "substitute_properties.db_user", "testuser"),
+					resource.TestCheckResourceAttr(resourceName, "substitute_properties.db_password", "testpass"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 				),
 			},
@@ -148,7 +148,7 @@ func TestAccDataSourceDBInstanceWithLiquibaseProps(t *testing.T) {
 	})
 }
 
-func testAccDataSourceDBInstanceWithLiquibaseProps(id string, name string) string {
+func testAccDataSourceDBInstanceWithSubstituteProps(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -227,7 +227,7 @@ func testAccDataSourceDBInstanceWithLiquibaseProps(id string, name string) strin
 			connector = harness_platform_connector_jdbc.test.id
 			schema = harness_platform_db_schema.test.id
 			context = "test-context"
-			liquibase_substitute_properties = {
+			substitute_properties = {
 				db_user = "testuser"
 				db_password = "testpass"
 			}

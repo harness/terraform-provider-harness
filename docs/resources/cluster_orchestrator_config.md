@@ -15,6 +15,7 @@ Resource for ClusterOrchestrator Config.
 ```terraform
 resource "harness_cluster_orchestrator_config" "example" {
   orchestrator_id = "orch-cvifpfl9rbg8neldj97g"
+  disabled        = false # Set to true to disable the orchestrator
   distribution {
     base_ondemand_capacity      = 2
     ondemand_replica_percentage = 50
@@ -83,6 +84,7 @@ resource "harness_cluster_orchestrator_config" "example" {
 
 - `binpacking` (Block List, Max: 1) Binpacking preferences for Cluster Orchestrator (see [below for nested schema](#nestedblock--binpacking))
 - `commitment_integration` (Block List, Max: 1) Commitment integration configuration for Cluster Orchestrator (see [below for nested schema](#nestedblock--commitment_integration))
+- `disabled` (Boolean) Whether the cluster orchestrator is disabled
 - `node_preferences` (Block List, Max: 1) Node preferences for Cluster Orchestrator (see [below for nested schema](#nestedblock--node_preferences))
 - `replacement_schedule` (Block List, Max: 1) Replacement schedule for Cluster Orchestrator (see [below for nested schema](#nestedblock--replacement_schedule))
 

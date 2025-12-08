@@ -45,7 +45,7 @@ func testAccDataSourceFMETrafficType(workspaceID, trafficTypeName string) string
 
 		data "harness_fme_traffic_type" "test" {
 			workspace_id = "%[1]s"
-			id           = harness_fme_traffic_type.test.id
+			name         = harness_fme_traffic_type.test.name
 		}
 `, workspaceID, trafficTypeName)
 }

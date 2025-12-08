@@ -1,0 +1,9 @@
+```release-note:fix
+  resource: platform_gitops_applicationset: Fix list generator serialization. Elements are now properly included (base64-encoded) in create/update requests instead of sending an empty list.
+  Added missing fields for helm source in schema used for applicationset, this prevented creating applicaitonset with helm source configured.
+  Fixed issue with perpetual diff for cluster generator.
+  Fixed issue with list generator not being properly propageted to appset k8s manifest ( element array wasnt actually passed )
+  Fixed issue with files and directories field for git generator, similar it wasn propagated to appsets k8s manifest.
+  Added import docs for applicationset.
+  Added fields for app and updated docs.
+```

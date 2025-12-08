@@ -15,6 +15,11 @@ func TestAccDataSourceFMEWorkspace(t *testing.T) {
 		t.Skip("SPLIT_WORKSPACE_ID environment variable must be set for this test")
 	}
 
+	workspaceName := os.Getenv("SPLIT_WORKSPACE_NAME")
+	if workspaceName == "" {
+		t.Skip("SPLIT_WORKSPACE_NAME environment variable must be set for this test")
+	}
+
 	resourceName := "data.harness_fme_workspace.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -22,10 +27,10 @@ func TestAccDataSourceFMEWorkspace(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceFMEWorkspace(workspaceID),
+				Config: testAccDataSourceFMEWorkspace(workspaceName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", workspaceID),
-					resource.TestCheckResourceAttrSet(resourceName, "name"),
+					resource.TestCheckResourceAttr(resourceName, "name", workspaceName),
 					resource.TestCheckResourceAttrSet(resourceName, "type"),
 				),
 			},
@@ -33,10 +38,10 @@ func TestAccDataSourceFMEWorkspace(t *testing.T) {
 	})
 }
 
-func testAccDataSourceFMEWorkspace(workspaceID string) string {
+func testAccDataSourceFMEWorkspace(workspaceName string) string {
 	return fmt.Sprintf(`
 		data "harness_fme_workspace" "test" {
-			id = "%[1]s"
+			name = "%[1]s"
 		}
-`, workspaceID)
+`, workspaceName)
 }

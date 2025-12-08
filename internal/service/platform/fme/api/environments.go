@@ -14,9 +14,20 @@ type EnvironmentsService service
 // environment. During the feature release process, Splits can be promoted through the various environments; allowing for
 // a targeted roll out throughout the development process.
 type Environment struct {
+	ID         *string    `json:"id"`
+	Name       *string    `json:"name"`
+	Production *bool      `json:"production"`
+	ApiTokens  []ApiToken `json:"apiTokens,omitempty"`
+}
+
+// ApiToken represents an automatically-created API token for an environment.
+// When an environment is created, Split.io automatically generates API tokens that can be used
+// to interact with that environment programmatically.
+type ApiToken struct {
 	ID         *string `json:"id"`
 	Name       *string `json:"name"`
-	Production *bool   `json:"production"`
+	Type       *string `json:"type"`
+	ApiKeyType *string `json:"apiKeyType"`
 }
 
 // EnvironmentSegment represents a segment in an environment.
@@ -46,7 +57,6 @@ type EnvironmentSegmentKeysRequest struct {
 	Comment string   `json:"comment,omitempty"`
 	Title   string   `json:"title,omitempty"`
 }
-
 
 // Get fetches an environment by ID by searching through the list
 func (e *EnvironmentsService) Get(workspaceID, environmentID string) (*Environment, error) {
@@ -162,8 +172,7 @@ func convertKeysToStringSlice(keys interface{}) []string {
 		return result
 	}
 
-	// If it's some other format, return empty slice and log
-	fmt.Printf("DEBUG: Unexpected keys format: %T = %+v\n", keys, keys)
+	// If it's some other format, return empty slice
 	return []string{}
 }
 

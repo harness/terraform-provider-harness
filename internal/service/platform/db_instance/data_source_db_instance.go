@@ -39,8 +39,8 @@ func DataSourceDBInstance() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"liquibase_substitute_properties": {
-				Description: "The properties to substitute in liquibase changelog",
+			"substitute_properties": {
+				Description: "The properties to substitute in changelog migration script",
 				Type:        schema.TypeMap,
 				Optional:    true,
 			},
@@ -84,5 +84,5 @@ func readDataSourceDBInstance(d *schema.ResourceData, dbInstance *dbops.DbInstan
 	d.Set("connector", dbInstance.Connector)
 	d.Set("context", dbInstance.Context)
 
-	d.Set("liquibase_substitute_properties", dbInstance.LiquibaseSubstituteProperties)
+	d.Set("substitute_properties", dbInstance.SubstituteProperties)
 }

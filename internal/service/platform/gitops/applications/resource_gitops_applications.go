@@ -632,15 +632,26 @@ func BuildAppSpecMap(appSpec *nextgen.ApplicationsApplicationSpec) map[string]in
 		sources := getSourcesForState(appSpec)
 		spec["sources"] = sources
 	}
+
+	if appSpec.RevisionHistoryLimit != "" {
+		spec["revision_history_limit"] = appSpec.RevisionHistoryLimit
+	}
+
 	//destination
 	if appSpec.Destination != nil {
-		var destinationList = []interface{}{}
 		var destination = map[string]interface{}{}
-		destination["name"] = appSpec.Destination.Name
-		destination["namespace"] = appSpec.Destination.Namespace
-		destination["server"] = appSpec.Destination.Server
-		destinationList = append(destinationList, destination)
-		spec["destination"] = destinationList
+		if appSpec.Destination.Name != "" {
+			destination["name"] = appSpec.Destination.Name
+		}
+		if appSpec.Destination.Namespace != "" {
+			destination["namespace"] = appSpec.Destination.Namespace
+		}
+		if appSpec.Destination.Server != "" {
+			destination["server"] = appSpec.Destination.Server
+		}
+		if len(destination) > 0 {
+			spec["destination"] = []interface{}{destination}
+		}
 	}
 	//sync policy
 	if appSpec.SyncPolicy != nil {
@@ -809,6 +820,10 @@ func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.Applic
 		spec.Sources = sources
 	}
 
+	if specData["revision_history_limit"] != nil && len(specData["revision_history_limit"].(string)) > 0 {
+		revisionHistoryLimit := specData["revision_history_limit"].(string)
+		spec.RevisionHistoryLimit = revisionHistoryLimit
+	}
 	//Destination
 	if specData["destination"] != nil && len(specData["destination"].([]interface{})) > 0 {
 		var specDestinationData nextgen.ApplicationsApplicationDestination

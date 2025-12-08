@@ -45,7 +45,8 @@ func testAccDataSourceFMEFlagSet(workspaceID, flagSetName string) string {
 		}
 
 		data "harness_fme_flag_set" "test" {
-			id = harness_fme_flag_set.test.id
+			workspace_id = "%[1]s"
+			name         = harness_fme_flag_set.test.name
 		}
 `, workspaceID, flagSetName)
 }

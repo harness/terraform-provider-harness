@@ -3,10 +3,12 @@
 page_title: "harness_platform_central_notification_rule Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a Notification Rule.
+  Deprecated: Please use data.harness_platform_pipeline_central_notification_rule. Data source for retrieving a Notification Rule.
 ---
 
 # harness_platform_central_notification_rule (Data Source)
+
+> Deprecated: Please use `data.harness_platform_pipeline_central_notification_rule`. See the pipeline-specific data source docs.
 
 Data source for retrieving a Notification Rule.
 

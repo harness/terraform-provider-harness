@@ -13,9 +13,10 @@ import (
 )
 
 const (
-	Database = "database"
-	Instance = "instance"
-	ECS      = "containers"
+	Database   = "database"
+	Instance   = "instance"
+	ECS        = "containers"
+	ScaleGroup = "clusters"
 )
 
 func resourceASRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -171,6 +172,14 @@ func buildASRule(d *schema.ResourceData, kind string, accountId string) nextgen.
 		}
 		routingData.Instance = &nextgen.InstanceBasedRoutingDataV2{}
 		routingData.Instance.Filter = filter
+
+	}
+	scaleGroup := getScaleGroupConfig(d)
+	if scaleGroup != nil {
+		if routingData.Instance == nil {
+			routingData.Instance = &nextgen.InstanceBasedRoutingDataV2{}
+		}
+		routingData.Instance.ScaleGroup = scaleGroup
 	}
 
 	serviceV2.Routing = routingData
@@ -220,6 +229,59 @@ func getContainerConfig(d *schema.ResourceData) *nextgen.ContainerSvc {
 		}
 	}
 	return containerSvc
+}
+
+func getScaleGroupConfig(d *schema.ResourceData) *nextgen.AsgMinimal {
+	var scaleGroup *nextgen.AsgMinimal
+	if attr, ok := d.GetOk("scale_group"); ok {
+		scaleGroup = &nextgen.AsgMinimal{}
+		scaleGroupObj := attr.([]interface{})[0].(map[string]interface{})
+
+		// Handle string fields
+		if attr, ok := scaleGroupObj["id"]; ok && attr.(string) != "" {
+			scaleGroup.Id = attr.(string)
+		}
+		if attr, ok := scaleGroupObj["name"]; ok && attr.(string) != "" {
+			scaleGroup.Name = attr.(string)
+		}
+		if attr, ok := scaleGroupObj["region"]; ok && attr.(string) != "" {
+			scaleGroup.Region = attr.(string)
+		}
+		if attr, ok := scaleGroupObj["zone"]; ok && attr.(string) != "" {
+			scaleGroup.AvailabilityZones = []string{attr.(string)}
+		}
+
+		// Handle numeric fields
+		if attr, ok := scaleGroupObj["desired"]; ok && attr != nil {
+			if desired, ok := attr.(int); ok {
+				scaleGroup.Desired = int32(desired)
+			} else if desired, ok := attr.(int64); ok {
+				scaleGroup.Desired = int32(desired)
+			}
+		}
+		if attr, ok := scaleGroupObj["min"]; ok && attr != nil {
+			if min, ok := attr.(int); ok {
+				scaleGroup.Min = int32(min)
+			} else if min, ok := attr.(int64); ok {
+				scaleGroup.Min = int32(min)
+			}
+		}
+		if attr, ok := scaleGroupObj["max"]; ok && attr != nil {
+			if max, ok := attr.(int); ok {
+				scaleGroup.Max = int32(max)
+			} else if max, ok := attr.(int64); ok {
+				scaleGroup.Max = int32(max)
+			}
+		}
+		if attr, ok := scaleGroupObj["on_demand"]; ok && attr != nil {
+			if onDemand, ok := attr.(int); ok {
+				scaleGroup.OnDemand = int32(onDemand)
+			} else if onDemand, ok := attr.(int64); ok {
+				scaleGroup.OnDemand = int32(onDemand)
+			}
+		}
+	}
+	return scaleGroup
 }
 
 func getDependencies(d *schema.ResourceData) []nextgen.ServiceDep {

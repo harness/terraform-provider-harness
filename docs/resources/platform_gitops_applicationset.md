@@ -13,15 +13,16 @@ Resource for managing a Harness Gitops Applicationset. Please note this resource
 ## Example Usage
 
 ```terraform
-resource "harness_platform_gitops_applicationset" "test_fixed" {
-  #     THIS APPSET IS A VERY BASIC APPSET TO GENERATE ONE APPLICATION PER CLUSTER THAT'S ATTACHED TO THIS AGENT
+# Example 1: Cluster Generator
+resource "harness_platform_gitops_applicationset" "cluster_generator" {
   org_id     = "default"
   project_id = "projectId"
   agent_id   = "account.agentuseast1"
   upsert     = true
+  
   applicationset {
     metadata {
-      name      = "tf-appset"
+      name      = "cluster-appset"
       namespace = "argocd"
     }
     spec {
@@ -33,12 +34,12 @@ resource "harness_platform_gitops_applicationset" "test_fixed" {
           enabled = true
         }
       }
+      
       template {
         metadata {
           name = "{{.name}}-guestbook"
           labels = {
-            env                     = "dev"
-            "harness.io/serviceRef" = "svc1"
+            env = "dev"
           }
         }
         spec {
@@ -51,6 +52,152 @@ resource "harness_platform_gitops_applicationset" "test_fixed" {
           destination {
             server    = "{{.url}}"
             namespace = "app-ns-{{.name}}"
+          }
+        }
+      }
+    }
+  }
+}
+
+# Example 2: List Generator
+resource "harness_platform_gitops_applicationset" "list_generator" {
+  org_id     = "default"
+  project_id = "projectId"
+  agent_id   = "account.agentuseast1"
+  upsert     = true
+  
+  applicationset {
+    metadata {
+      name = "list-appset"
+    }
+    spec {
+      go_template         = true
+      go_template_options = ["missingkey=error"]
+      
+      generator {
+        list {
+          elements = [
+            {
+              cluster = "engineering-dev"
+              url     = "https://kubernetes.default.svc"
+            },
+            {
+              cluster = "engineering-prod"
+              url     = "https://kubernetes.prod.svc"
+            }
+          ]
+        }
+      }
+      
+      template {
+        metadata {
+          name = "{{.cluster}}-guestbook"
+        }
+        spec {
+          project = "default"
+          source {
+            repo_url        = "https://github.com/argoproj/argocd-example-apps.git"
+            path            = "helm-guestbook"
+            target_revision = "HEAD"
+          }
+          destination {
+            server    = "{{.url}}"
+            namespace = "default"
+          }
+        }
+      }
+    }
+  }
+}
+
+# Example 3: Git Generator with Files
+resource "harness_platform_gitops_applicationset" "git_files" {
+  org_id     = "default"
+  project_id = "projectId"
+  agent_id   = "account.agentuseast1"
+  upsert     = true
+  
+  applicationset {
+    metadata {
+      name = "git-files-appset"
+    }
+    spec {
+      generator {
+        git {
+          repo_url = "https://github.com/example/config-repo"
+          revision = "main"
+          
+          file {
+            path = "apps/*/config.json"
+          }
+        }
+      }
+      
+      template {
+        metadata {
+          name = "{{.path.basename}}-app"
+        }
+        spec {
+          project = "default"
+          source {
+            repo_url        = "https://github.com/example/app-repo"
+            path            = "{{.path.path}}"
+            target_revision = "main"
+          }
+          destination {
+            server    = "https://kubernetes.default.svc"
+            namespace = "{{.path.basename}}"
+          }
+        }
+      }
+    }
+  }
+}
+
+# Example 4: Git Generator with Directories
+resource "harness_platform_gitops_applicationset" "git_directories" {
+  org_id     = "default"
+  project_id = "projectId"
+  agent_id   = "account.agentuseast1"
+  upsert     = true
+  
+  applicationset {
+    metadata {
+      name = "git-directories-appset"
+    }
+    spec {
+      generator {
+        git {
+          repo_url = "https://github.com/argoproj/argo-cd.git"
+          revision = "HEAD"
+          
+          directory {
+            path    = "applicationset/examples/git-generator-directory/cluster-addons/*"
+            exclude = false
+          }
+        }
+      }
+      
+      template {
+        metadata {
+          name = "{{.path.basename}}-addon"
+        }
+        spec {
+          project = "default"
+          source {
+            repo_url        = "https://github.com/argoproj/argo-cd.git"
+            path            = "{{.path.path}}"
+            target_revision = "HEAD"
+          }
+          destination {
+            server    = "https://kubernetes.default.svc"
+            namespace = "{{.path.basename}}"
+          }
+          sync_policy {
+            automated {
+              prune     = true
+              self_heal = true
+            }
           }
         }
       }
@@ -196,7 +343,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--sync_policy))
@@ -300,8 +447,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.cluster_decision_resource.template.spec.source.helm.file_parameters`
@@ -330,6 +481,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -422,8 +575,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.cluster_decision_resource.template.spec.sources.helm.file_parameters`
@@ -589,7 +746,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--sync_policy))
@@ -693,8 +850,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--clusters--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.clusters.template.spec.source.helm.file_parameters`
@@ -723,6 +884,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -815,8 +978,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--clusters--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.clusters.template.spec.sources.helm.file_parameters`
@@ -988,7 +1155,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--sync_policy))
@@ -1092,8 +1259,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--git--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.git.template.spec.source.helm.file_parameters`
@@ -1122,6 +1293,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -1214,8 +1387,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--git--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.git.template.spec.sources.helm.file_parameters`
@@ -1328,7 +1505,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
 
 Optional:
 
@@ -1363,7 +1540,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--sync_policy))
@@ -1467,8 +1644,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--list--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.list.template.spec.source.helm.file_parameters`
@@ -1497,6 +1678,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -1589,8 +1772,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--list--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.list.template.spec.sources.helm.file_parameters`
@@ -1787,7 +1974,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--sync_policy))
@@ -1891,8 +2078,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.cluster_decision_resource.template.spec.source.helm.file_parameters`
@@ -1921,6 +2112,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -2013,8 +2206,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.cluster_decision_resource.template.spec.sources.helm.file_parameters`
@@ -2180,7 +2377,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--sync_policy))
@@ -2284,8 +2481,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.clusters.template.spec.source.helm.file_parameters`
@@ -2314,6 +2515,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -2406,8 +2609,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.clusters.template.spec.sources.helm.file_parameters`
@@ -2579,7 +2786,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--sync_policy))
@@ -2683,8 +2890,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.git.template.spec.source.helm.file_parameters`
@@ -2713,6 +2924,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -2805,8 +3018,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.git.template.spec.sources.helm.file_parameters`
@@ -2919,7 +3136,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
 
 Optional:
 
@@ -2954,7 +3171,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--sync_policy))
@@ -3058,8 +3275,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.list.template.spec.source.helm.file_parameters`
@@ -3088,6 +3309,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -3180,8 +3403,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.list.template.spec.sources.helm.file_parameters`
@@ -3376,7 +3603,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--sync_policy))
@@ -3480,8 +3707,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.cluster_decision_resource.template.spec.source.helm.file_parameters`
@@ -3510,6 +3741,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -3602,8 +3835,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.cluster_decision_resource.template.spec.sources.helm.file_parameters`
@@ -3769,7 +4006,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--sync_policy))
@@ -3873,8 +4110,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.clusters.template.spec.source.helm.file_parameters`
@@ -3903,6 +4144,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -3995,8 +4238,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.clusters.template.spec.sources.helm.file_parameters`
@@ -4168,7 +4415,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--sync_policy))
@@ -4272,8 +4519,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.git.template.spec.source.helm.file_parameters`
@@ -4302,6 +4553,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -4394,8 +4647,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.git.template.spec.sources.helm.file_parameters`
@@ -4508,7 +4765,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
 
 Optional:
 
@@ -4543,7 +4800,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--sync_policy))
@@ -4647,8 +4904,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.list.template.spec.source.helm.file_parameters`
@@ -4677,6 +4938,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -4769,8 +5032,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.list.template.spec.sources.helm.file_parameters`
@@ -5033,7 +5300,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--sync_policy))
@@ -5137,8 +5404,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.pull_request.template.spec.source.helm.file_parameters`
@@ -5167,6 +5438,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -5259,8 +5532,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.pull_request.template.spec.sources.helm.file_parameters`
@@ -5576,7 +5853,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--sync_policy))
@@ -5680,8 +5957,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.scm_provider.template.spec.source.helm.file_parameters`
@@ -5710,6 +5991,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -5802,8 +6085,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.scm_provider.template.spec.sources.helm.file_parameters`
@@ -5960,7 +6247,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--sync_policy))
@@ -6064,8 +6351,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.template.spec.source.helm.file_parameters`
@@ -6094,6 +6385,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -6186,8 +6479,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.template.spec.sources.helm.file_parameters`
@@ -6383,7 +6680,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--sync_policy))
@@ -6487,8 +6784,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.cluster_decision_resource.template.spec.source.helm.file_parameters`
@@ -6517,6 +6818,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -6609,8 +6912,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.cluster_decision_resource.template.spec.sources.helm.file_parameters`
@@ -6776,7 +7083,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--sync_policy))
@@ -6880,8 +7187,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.clusters.template.spec.source.helm.file_parameters`
@@ -6910,6 +7221,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -7002,8 +7315,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.clusters.template.spec.sources.helm.file_parameters`
@@ -7175,7 +7492,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--sync_policy))
@@ -7279,8 +7596,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.git.template.spec.source.helm.file_parameters`
@@ -7309,6 +7630,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -7401,8 +7724,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.git.template.spec.sources.helm.file_parameters`
@@ -7515,7 +7842,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
 
 Optional:
 
@@ -7550,7 +7877,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--sync_policy))
@@ -7654,8 +7981,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.list.template.spec.source.helm.file_parameters`
@@ -7684,6 +8015,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -7776,8 +8109,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.list.template.spec.sources.helm.file_parameters`
@@ -8040,7 +8377,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--sync_policy))
@@ -8144,8 +8481,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.pull_request.template.spec.source.helm.file_parameters`
@@ -8174,6 +8515,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -8266,8 +8609,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.pull_request.template.spec.sources.helm.file_parameters`
@@ -8583,7 +8930,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--sync_policy))
@@ -8687,8 +9034,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.scm_provider.template.spec.source.helm.file_parameters`
@@ -8717,6 +9068,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -8809,8 +9162,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.scm_provider.template.spec.sources.helm.file_parameters`
@@ -8967,7 +9324,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--sync_policy))
@@ -9071,8 +9428,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.template.spec.source.helm.file_parameters`
@@ -9101,6 +9462,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -9193,8 +9556,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.template.spec.sources.helm.file_parameters`
@@ -9457,7 +9824,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--sync_policy))
@@ -9561,8 +9928,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.pull_request.template.spec.source.helm.file_parameters`
@@ -9591,6 +9962,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -9683,8 +10056,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.pull_request.template.spec.sources.helm.file_parameters`
@@ -10000,7 +10377,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--sync_policy))
@@ -10104,8 +10481,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.scm_provider.template.spec.source.helm.file_parameters`
@@ -10134,6 +10515,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -10226,8 +10609,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.scm_provider.template.spec.sources.helm.file_parameters`
@@ -10384,7 +10771,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--sync_policy))
@@ -10488,8 +10875,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.template.spec.source.helm.file_parameters`
@@ -10518,6 +10909,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -10610,8 +11003,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--matrix--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.template.spec.sources.helm.file_parameters`
@@ -10809,7 +11206,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--sync_policy))
@@ -10913,8 +11310,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.cluster_decision_resource.template.spec.source.helm.file_parameters`
@@ -10943,6 +11344,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -11035,8 +11438,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.cluster_decision_resource.template.spec.sources.helm.file_parameters`
@@ -11202,7 +11609,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--sync_policy))
@@ -11306,8 +11713,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.clusters.template.spec.source.helm.file_parameters`
@@ -11336,6 +11747,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -11428,8 +11841,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.clusters.template.spec.sources.helm.file_parameters`
@@ -11601,7 +12018,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--sync_policy))
@@ -11705,8 +12122,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.git.template.spec.source.helm.file_parameters`
@@ -11735,6 +12156,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -11827,8 +12250,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.git.template.spec.sources.helm.file_parameters`
@@ -11941,7 +12368,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
 
 Optional:
 
@@ -11976,7 +12403,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--sync_policy))
@@ -12080,8 +12507,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.list.template.spec.source.helm.file_parameters`
@@ -12110,6 +12541,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -12202,8 +12635,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.list.template.spec.sources.helm.file_parameters`
@@ -12398,7 +12835,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--sync_policy))
@@ -12502,8 +12939,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.cluster_decision_resource.template.spec.source.helm.file_parameters`
@@ -12532,6 +12973,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -12624,8 +13067,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.cluster_decision_resource.template.spec.sources.helm.file_parameters`
@@ -12791,7 +13238,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--sync_policy))
@@ -12895,8 +13342,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.clusters.template.spec.source.helm.file_parameters`
@@ -12925,6 +13376,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -13017,8 +13470,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.clusters.template.spec.sources.helm.file_parameters`
@@ -13190,7 +13647,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--sync_policy))
@@ -13294,8 +13751,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.git.template.spec.source.helm.file_parameters`
@@ -13324,6 +13785,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -13416,8 +13879,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.git.template.spec.sources.helm.file_parameters`
@@ -13530,7 +13997,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
 
 Optional:
 
@@ -13565,7 +14032,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--sync_policy))
@@ -13669,8 +14136,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.list.template.spec.source.helm.file_parameters`
@@ -13699,6 +14170,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -13791,8 +14264,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.list.template.spec.sources.helm.file_parameters`
@@ -14055,7 +14532,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--sync_policy))
@@ -14159,8 +14636,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.pull_request.template.spec.source.helm.file_parameters`
@@ -14189,6 +14670,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -14281,8 +14764,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.pull_request.template.spec.sources.helm.file_parameters`
@@ -14598,7 +15085,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--sync_policy))
@@ -14702,8 +15189,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.scm_provider.template.spec.source.helm.file_parameters`
@@ -14732,6 +15223,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -14824,8 +15317,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.scm_provider.template.spec.sources.helm.file_parameters`
@@ -14982,7 +15479,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--sync_policy))
@@ -15086,8 +15583,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.template.spec.source.helm.file_parameters`
@@ -15116,6 +15617,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -15208,8 +15711,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.template.spec.sources.helm.file_parameters`
@@ -15405,7 +15912,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--sync_policy))
@@ -15509,8 +16016,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.cluster_decision_resource.template.spec.source.helm.file_parameters`
@@ -15539,6 +16050,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -15631,8 +16144,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.cluster_decision_resource.template.spec.sources.helm.file_parameters`
@@ -15798,7 +16315,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--sync_policy))
@@ -15902,8 +16419,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.clusters.template.spec.source.helm.file_parameters`
@@ -15932,6 +16453,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -16024,8 +16547,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.clusters.template.spec.sources.helm.file_parameters`
@@ -16197,7 +16724,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--sync_policy))
@@ -16301,8 +16828,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.git.template.spec.source.helm.file_parameters`
@@ -16331,6 +16862,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -16423,8 +16956,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.git.template.spec.sources.helm.file_parameters`
@@ -16537,7 +17074,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
 
 Optional:
 
@@ -16572,7 +17109,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--sync_policy))
@@ -16676,8 +17213,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.list.template.spec.source.helm.file_parameters`
@@ -16706,6 +17247,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -16798,8 +17341,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.list.template.spec.sources.helm.file_parameters`
@@ -17062,7 +17609,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--sync_policy))
@@ -17166,8 +17713,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.pull_request.template.spec.source.helm.file_parameters`
@@ -17196,6 +17747,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -17288,8 +17841,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.pull_request.template.spec.sources.helm.file_parameters`
@@ -17605,7 +18162,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--sync_policy))
@@ -17709,8 +18266,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.scm_provider.template.spec.source.helm.file_parameters`
@@ -17739,6 +18300,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -17831,8 +18394,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.scm_provider.template.spec.sources.helm.file_parameters`
@@ -17989,7 +18556,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--sync_policy))
@@ -18093,8 +18660,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.template.spec.source.helm.file_parameters`
@@ -18123,6 +18694,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -18215,8 +18788,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.template.spec.sources.helm.file_parameters`
@@ -18479,7 +19056,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--sync_policy))
@@ -18583,8 +19160,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.pull_request.template.spec.source.helm.file_parameters`
@@ -18613,6 +19194,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -18705,8 +19288,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.pull_request.template.spec.sources.helm.file_parameters`
@@ -19022,7 +19609,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--sync_policy))
@@ -19126,8 +19713,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.scm_provider.template.spec.source.helm.file_parameters`
@@ -19156,6 +19747,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -19248,8 +19841,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.scm_provider.template.spec.sources.helm.file_parameters`
@@ -19406,7 +20003,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--sync_policy))
@@ -19510,8 +20107,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.template.spec.source.helm.file_parameters`
@@ -19540,6 +20141,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -19632,8 +20235,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--merge--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.template.spec.sources.helm.file_parameters`
@@ -19896,7 +20503,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--sync_policy))
@@ -20000,8 +20607,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--pull_request--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.pull_request.template.spec.source.helm.file_parameters`
@@ -20030,6 +20641,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -20122,8 +20735,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--pull_request--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.pull_request.template.spec.sources.helm.file_parameters`
@@ -20439,7 +21056,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--source))
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--sync_policy))
@@ -20543,8 +21160,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--scm_provider--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.scm_provider.template.spec.source.helm.file_parameters`
@@ -20573,6 +21194,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -20665,8 +21288,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--generator--scm_provider--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.generator.scm_provider.template.spec.sources.helm.file_parameters`
@@ -20830,7 +21457,7 @@ Optional:
 - `ignore_difference` (Block List) Resources and their fields which should be ignored during comparison. More info: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#application-level-configuration. (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--ignore_difference))
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--info))
 - `project` (String) The project the application belongs to.
-- `revision_history_limit` (Number) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
+- `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
 - `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--sync_policy))
 
@@ -20914,8 +21541,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--template--spec--source--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.template.spec.source.helm.file_parameters`
@@ -20944,6 +21575,8 @@ Optional:
 
 - `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
 - `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
@@ -21061,8 +21694,12 @@ Optional:
 - `pass_credentials` (Boolean) If true then adds '--pass-credentials' to Helm commands to pass credentials to all domains.
 - `release_name` (String) Helm release name. If omitted it will use the application name.
 - `skip_crds` (Boolean) Whether to skip custom resource definition installation step (Helm's [--skip-crds](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/)).
+- `skip_schema_validation` (Boolean) Indicates if to skip schema validation during helm template. Corresponds to helm --skip-schema-validation
+- `skip_tests` (Boolean) Indicates if to skip tests during helm template. Corresponds to helm --skip-tests
 - `value_files` (List of String) List of Helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to 'helm template', typically defined as a block.
+- `values_object` (Map of String) Helm values to be passed to 'helm template', typically defined as a block.
+- `version` (String) Helm version to use for templating (either "2" or "3").
 
 <a id="nestedblock--applicationset--spec--template--spec--sources--helm--file_parameters"></a>
 ### Nested Schema for `applicationset.spec.template.spec.sources.helm.file_parameters`
@@ -21225,3 +21862,18 @@ Optional:
 
 - `applications_sync` (String) Represents the policy applied on the generated applications. Possible values are create-only, create-update, create-delete, and sync.
 - `preserve_resources_on_deletion` (Boolean) Label selector used to narrow the scope of targeted clusters.
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+# Import gitOps applicationset with account level agent, agent id has account prefix #
+terraform import harness_platform_gitops_applicationset.example <organization_id>/<project_id>/<agent_id>/<identifier>
+
+# Import gitOps applicationset with org level agent, agent id has org prefix #
+terraform import harness_platform_gitops_applicationset.example <organization_id>/<project_id>/<agent_id>/<identifier>
+
+# Import gitOps applicationset with project level agent #
+terraform import harness_platform_gitops_applicationset.example <organization_id>/<project_id>/<agent_id>/<identifier>
+```

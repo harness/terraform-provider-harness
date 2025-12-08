@@ -24,7 +24,7 @@ resource "harness_platform_workspace" "example" {
   repository_branch       = "main"
   repository_path         = "tf/aws/basic"
   cost_estimation_enabled = true
-  provider_connector      = harness_platform_connector_github.test.id
+  provider_connector      = harness_platform_connector_github.test.id # provider connector will be deprecated in the coming releases
   repository_connector    = harness_platform_connector_github.test.id
   tags                    = ["tag1", "tag2"]
 
@@ -77,6 +77,19 @@ resource "harness_platform_workspace" "example" {
     "plan"    = "plan_pipeline_id"
     "apply"   = "apply_pipeline_id"
   }
+
+  connector {
+    connector_ref = "awsconnector"
+    type = "aws"
+  }
+  connector {
+    connector_ref = "gcpconnector"
+    type = "gcp"
+  }
+  connector {
+    connector_ref = "azureconnector"
+    type = "azure"
+  }
 }
 ```
 
@@ -102,7 +115,7 @@ resource "harness_platform_workspace" "example" {
 - `default_pipelines` (Map of String) Default pipelines associated with this workspace
 - `description` (String) Description of the resource.
 - `environment_variable` (Block Set) Environment variables configured on the workspace (see [below for nested schema](#nestedblock--environment_variable))
-- `provider_connector` (String) Provider connector is the reference to the connector for the infrastructure provider
+- `provider_connector` (String) Provider connector is the reference to the connector for the infrastructure provider - this way of defining connector will be deprecated in the coming releases, use connector as block set.
 - `repository_branch` (String) Repository branch is the name of the branch to fetch the code from. This cannot be set if repository commit or sha is set.
 - `repository_commit` (String) Repository commit is tag to fetch the code from. This cannot be set if repository branch or sha is set.
 - `repository_sha` (String) Repository commit is commit SHA to fetch the code from. This cannot be set if repository branch or commit is set.
