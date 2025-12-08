@@ -196,6 +196,24 @@ func resourceFMEEnvironmentDelete(ctx context.Context, d *schema.ResourceData, m
 	removeFromStateOnly := d.Get("remove_environment_from_state_only").(bool)
 
 	if !removeFromStateOnly {
+		// First, delete any API tokens associated with this environment
+		// The Split.io API requires all API tokens to be deleted before an environment can be deleted
+		if apiTokens, ok := d.GetOk("api_tokens"); ok {
+			tokensList := apiTokens.([]interface{})
+			for _, tokenRaw := range tokensList {
+				token := tokenRaw.(map[string]interface{})
+				if tokenID, ok := token["id"].(string); ok && tokenID != "" {
+					err := c.APIClient.ApiKeys.Delete(tokenID)
+					if err != nil {
+						// Log the error but continue trying to delete other tokens
+						// Some tokens may have already been deleted manually
+						diag.FromErr(err)
+					}
+				}
+			}
+		}
+
+		// Now delete the environment
 		workspaceID := d.Get("workspace_id").(string)
 		err := c.APIClient.Environments.Delete(workspaceID, d.Id())
 		if err != nil {
