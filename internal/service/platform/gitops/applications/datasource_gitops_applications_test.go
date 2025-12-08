@@ -170,6 +170,11 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 			cluster_id = "%[8]s"
 			repo_id = "%[1]s"
 			agent_id = "%[4]s"
+			lifecycle {
+				ignore_changes = [
+					application.0.metadata.0.annotations,
+				]
+			}
 		}
 
 		data "harness_platform_gitops_applications" "test"{
@@ -239,6 +244,11 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 				"%[1]s"
 			]
 			agent_id = "%[4]s"
+			lifecycle {
+				ignore_changes = [
+					application.0.metadata.0.annotations,
+				]
+			}
 		}
 
 		data "harness_platform_gitops_applications" "testms"{
