@@ -25,12 +25,12 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 		"parent_ref": {
 			Description: "Parent reference for the registry",
 			Type:        schema.TypeString,
-			Optional:    true,
+			Required:    true,
 		},
 		"space_ref": {
 			Description: "Space reference for the registry",
 			Type:        schema.TypeString,
-			Optional:    true,
+			Required:    true,
 		},
 		"config": {
 			Description: "Configuration for the registry",
