@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -292,6 +293,39 @@ func TestAccSecretText_DeleteUnderLyingResource(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetPlatformClientWithContext()
 					_, _, err := c.SecretsApi.DeleteSecretV2(ctx, id, c.AccountId, &nextgen.SecretsApiDeleteSecretV2Opts{})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceSecret_text_inline(id, name, secretValue),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+func TestAccSecretText_ForceDelete(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	secretValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+
+	resourceName := "harness_platform_secret_text.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceSecret_text_inline(id, name, secretValue),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					_, _, err := c.SecretsApi.DeleteSecretV2(ctx, id, c.AccountId, &nextgen.SecretsApiDeleteSecretV2Opts{ForceDelete: optional.NewBool(true)})
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceSecret_text_inline(id, name, secretValue),

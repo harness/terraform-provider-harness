@@ -31,6 +31,7 @@ data "harness_platform_secret_text" "test" {
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
+- `force_delete` (Boolean) Enable this flag for force deletion of connector
 
 ### Read-Only
 

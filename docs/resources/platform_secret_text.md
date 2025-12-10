@@ -71,6 +71,7 @@ resource "harness_platform_secret_text" "gcp_secret_manager_reference" {
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
 - `value` (String, Sensitive) Value of the Secret
+- `force_delete` (Boolean) Enable this flag for force deletion of connector
 
 ### Read-Only
 
