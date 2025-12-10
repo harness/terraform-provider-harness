@@ -998,6 +998,111 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 				}
 				appsetSpec.GoTemplateOptions = opts
 			}
+
+			// ignore_application_differences
+			if ignoreAppDiffs, ok := specData["ignore_application_differences"]; ok && len(ignoreAppDiffs.([]interface{})) > 0 {
+				var ignoreList []nextgen.ApplicationsApplicationSetResourceIgnoreDifferences
+				for _, diff := range ignoreAppDiffs.([]interface{}) {
+					diffData := diff.(map[string]interface{})
+					var ignoreDiff nextgen.ApplicationsApplicationSetResourceIgnoreDifferences
+
+					if name, ok := diffData["name"]; ok && len(name.(string)) > 0 {
+						ignoreDiff.Name = name.(string)
+					}
+					if jsonPointers, ok := diffData["json_pointers"]; ok && len(jsonPointers.([]interface{})) > 0 {
+						var pointers []string
+						for _, ptr := range jsonPointers.([]interface{}) {
+							pointers = append(pointers, ptr.(string))
+						}
+						ignoreDiff.JsonPointers = pointers
+					}
+					if jqPathExpressions, ok := diffData["jq_path_expressions"]; ok && len(jqPathExpressions.([]interface{})) > 0 {
+						var expressions []string
+						for _, expr := range jqPathExpressions.([]interface{}) {
+							expressions = append(expressions, expr.(string))
+						}
+						ignoreDiff.JqPathExpressions = expressions
+					}
+
+					ignoreList = append(ignoreList, ignoreDiff)
+				}
+				appsetSpec.IgnoreApplicationDifferences = ignoreList
+			}
+
+			// strategy
+			if strategy, ok := specData["strategy"]; ok && len(strategy.([]interface{})) > 0 {
+				strategyData := strategy.([]interface{})[0].(map[string]interface{})
+				var appSetStrategy nextgen.ApplicationsApplicationSetStrategy
+
+				if strategyType, ok := strategyData["type"]; ok && len(strategyType.(string)) > 0 {
+					appSetStrategy.Type_ = strategyType.(string)
+				}
+
+				if rollingSync, ok := strategyData["rolling_sync"]; ok && len(rollingSync.([]interface{})) > 0 {
+					rollingSyncData := rollingSync.([]interface{})[0].(map[string]interface{})
+					var rolloutStrategy nextgen.ApplicationsApplicationSetRolloutStrategy
+
+					if steps, ok := rollingSyncData["step"]; ok && len(steps.([]interface{})) > 0 {
+						var stepList []nextgen.ApplicationsApplicationSetRolloutStep
+						for _, step := range steps.([]interface{}) {
+							stepData := step.(map[string]interface{})
+							var rolloutStep nextgen.ApplicationsApplicationSetRolloutStep
+
+							if matchExpressions, ok := stepData["match_expressions"]; ok && len(matchExpressions.([]interface{})) > 0 {
+								var expressions []nextgen.ApplicationsApplicationMatchExpression
+								for _, expr := range matchExpressions.([]interface{}) {
+									exprData := expr.(map[string]interface{})
+									var matchExpr nextgen.ApplicationsApplicationMatchExpression
+
+									if key, ok := exprData["key"]; ok && len(key.(string)) > 0 {
+										matchExpr.Key = key.(string)
+									}
+									if operator, ok := exprData["operator"]; ok && len(operator.(string)) > 0 {
+										matchExpr.Operator = operator.(string)
+									}
+									if values, ok := exprData["values"]; ok && len(values.([]interface{})) > 0 {
+										var valuesList []string
+										for _, val := range values.([]interface{}) {
+											valuesList = append(valuesList, val.(string))
+										}
+										matchExpr.Values = valuesList
+									}
+
+									expressions = append(expressions, matchExpr)
+								}
+								rolloutStep.MatchExpressions = expressions
+							}
+
+							if maxUpdate, ok := stepData["max_update"]; ok && len(maxUpdate.(string)) > 0 {
+								rolloutStep.MaxUpdate = &nextgen.IntstrIntOrString{StrVal: maxUpdate.(string)}
+							}
+
+							stepList = append(stepList, rolloutStep)
+						}
+						rolloutStrategy.Steps = stepList
+					}
+
+					appSetStrategy.RollingSync = &rolloutStrategy
+				}
+
+				appsetSpec.Strategy = &appSetStrategy
+			}
+
+			// sync_policy
+			if syncPolicy, ok := specData["sync_policy"]; ok && len(syncPolicy.([]interface{})) > 0 {
+				syncPolicyData := syncPolicy.([]interface{})[0].(map[string]interface{})
+				var appSetSyncPolicy nextgen.ApplicationsApplicationSetSyncPolicy
+
+				if preserveResources, ok := syncPolicyData["preserve_resources_on_deletion"]; ok {
+					appSetSyncPolicy.PreserveResourcesOnDeletion = preserveResources.(bool)
+				}
+				if applicationsSync, ok := syncPolicyData["applications_sync"]; ok && len(applicationsSync.(string)) > 0 {
+					appSetSyncPolicy.ApplicationsSync = applicationsSync.(string)
+				}
+
+				appsetSpec.SyncPolicy = &appSetSyncPolicy
+			}
+
 			//  generators
 			if generators, ok := specData["generator"]; ok && len(generators.([]interface{})) > 0 {
 				var generatorsList []nextgen.ApplicationsApplicationSetGenerator
@@ -1175,6 +1280,10 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 							gitGen.Files = fileList
 						}
 
+						if pathParamPrefix, ok := gitData["path_param_prefix"]; ok && len(pathParamPrefix.(string)) > 0 {
+							gitGen.PathParamPrefix = pathParamPrefix.(string)
+						}
+
 						generator.Git = &gitGen
 					}
 
@@ -1295,6 +1404,9 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 												fileList = append(fileList, fileItem)
 											}
 											gitGen.Files = fileList
+										}
+										if pathParamPrefix, ok := gitData["path_param_prefix"]; ok && len(pathParamPrefix.(string)) > 0 {
+											gitGen.PathParamPrefix = pathParamPrefix.(string)
 										}
 										nestedGenerator.Git = &gitGen
 									}

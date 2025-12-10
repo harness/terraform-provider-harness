@@ -10,6 +10,8 @@ description: |-
 
 Resource for creating and managing Harness Registries.
 
+**Note:** Both `parent_ref` and `space_ref` are required for registry creation.
+
 ## Example Usage
 
 ```terraform
@@ -55,6 +57,8 @@ resource "harness_platform_har_registry" "upstream_registry" {
 
 - `identifier` (String) Unique identifier of the registry
 - `package_type` (String) Type of package (DOCKER, HELM, MAVEN, etc.)
+- `parent_ref` (String) Parent reference for the registry (required for creation)
+- `space_ref` (String) Space reference for the registry (required for creation)
 
 ### Optional
 
@@ -62,8 +66,6 @@ resource "harness_platform_har_registry" "upstream_registry" {
 - `blocked_pattern` (List of String) Blocked artifact patterns
 - `config` (Block List, Max: 1) Configuration for the registry (see [below for nested schema](#nestedblock--config))
 - `description` (String) Description of the registry
-- `parent_ref` (String) Parent reference for the registry
-- `space_ref` (String) Space reference for the registry
 
 ### Read-Only
 
@@ -102,4 +104,32 @@ Optional:
 - `secret_key_identifier` (String)
 - `secret_key_secret_path` (String)
 - `secret_space_path` (String) Secret space path for UserPassword auth type
-- `user_name` (String) User name for UserPassword auth type
+- `user_name` (String) Username for UserPassword auth type
+
+## Import
+
+Import is supported using the following syntax:
+
+### Import Format
+
+The import ID format is: `<space_ref>/<identifier>`
+
+Where:
+- `space_ref` defines the scope: account, org, or project level
+- `identifier` is the unique registry identifier
+
+### Import Examples
+
+```bash
+# Account level: <account_id>/<registry_identifier>
+# Org level: <account_id>/<org_id>/<registry_identifier>
+# Project level: <account_id>/<org_id>/<project_id>/<registry_identifier>
+terraform import harness_platform_har_registry.example <space_ref>/<registry_identifier>
+```
+
+### After Import
+
+```bash
+terraform plan
+terraform apply
+```
