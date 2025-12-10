@@ -34,6 +34,11 @@ func ResourceSecretFile() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"kms_key_id": {
+				Description: "Kms Key Id for encrypting the secret value",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 	helpers.SetMultiLevelResourceSchema(resource.Schema)
@@ -114,7 +119,12 @@ func buildSpec(d *schema.ResourceData) string {
 		spec = spec + fmt.Sprintf(`,"tags":%[1]s`, tags_string)
 	}
 	if attr, ok := d.GetOk("secret_manager_identifier"); ok {
-		spec = spec + fmt.Sprintf(`,"spec":{"secretManagerIdentifier":"%[1]s"}`, attr.(string))
+		spec = spec + fmt.Sprintf(`,"spec":{"secretManagerIdentifier":"%[1]s"`, attr.(string))
+	}
+	if attr, ok := d.GetOk("kms_key_id"); ok {
+		spec = spec + fmt.Sprintf(`,"additionalMetadata":{"values":{"kmsKeyId":"%[1]s"}}}`, attr.(string))
+	} else {
+		spec = spec + fmt.Sprintf(`}`)
 	}
 	return spec + "}}"
 }
@@ -160,5 +170,6 @@ func readSecretFile(d *schema.ResourceData, secret *nextgen.Secret) error {
 	d.Set("org_id", secret.OrgIdentifier)
 	d.Set("project_id", secret.ProjectIdentifier)
 	d.Set("tags", helpers.FlattenTags(secret.Tags))
+
 	return nil
 }
