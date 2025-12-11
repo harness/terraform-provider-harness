@@ -65,6 +65,26 @@ func ResourceRoleAssignments() *schema.Resource {
 					},
 				},
 			},
+			"role_reference": {
+				Description: "Role reference.",
+				Type:        schema.TypeList,
+				Required:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"scope_level": {
+							Description: "Scope level.",
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+						},
+						"identifier": {
+							Description: "Identifier.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
 			"disabled": {
 				Description: "Disabled or not.",
 				Type:        schema.TypeBool,
@@ -206,6 +226,17 @@ func buildRoleAssignment(d *schema.ResourceData) *nextgen.RoleAssignment {
 			roleAssignment.Principal.Type_ = attr.(string)
 		}
 	}
+
+	if attr, ok := d.GetOk("role_reference"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := config["scope_level"]; ok {
+			roleAssignment.RoleReference.ScopeLevel = attr.(string)
+		}
+
+		if attr, ok := config["identifier"]; ok {
+			roleAssignment.RoleReference.Identifier = attr.(string)
+		}
+	}
 	return roleAssignment
 }
 
@@ -221,6 +252,12 @@ func readRoleAssignments(d *schema.ResourceData, roleAssignments *nextgen.RoleAs
 			"scope_level": roleAssignments.Principal.ScopeLevel,
 			"identifier":  roleAssignments.Principal.Identifier,
 			"type":        roleAssignments.Principal.Type_,
+		},
+	})
+	d.Set("role_reference", []interface{}{
+		map[string]interface{}{
+			"scope_level": roleAssignments.RoleReference.ScopeLevel,
+			"identifier":  roleAssignments.RoleReference.Identifier,
 		},
 	})
 }
