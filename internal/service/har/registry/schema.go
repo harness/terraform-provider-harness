@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/harness/harness-go-sdk/harness/har"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"regexp"
@@ -25,12 +26,17 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 		"parent_ref": {
 			Description: "Parent reference for the registry",
 			Type:        schema.TypeString,
-			Required:    true,
+			Optional:    true,
+			Computed:    true,
+			ForceNew:    true,
+			Deprecated:  "This attribute is deprecated and will be removed in a future release. Use 'org_id' and 'project_id' instead.",
 		},
 		"space_ref": {
 			Description: "Space reference for the registry",
 			Type:        schema.TypeString,
-			Required:    true,
+			Optional:    true,
+			Computed:    true,
+			Deprecated:  "This attribute is deprecated and will be removed in a future release. Use 'org_id' and 'project_id' instead.",
 		},
 		"config": {
 			Description: "Configuration for the registry",
@@ -240,6 +246,16 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			},
 		},
 	}
+
+	helpers.SetMultiLevelResourceSchema(mainSchema)
+	// Added this schema handler as these parameters are invluded from the `SetMultiLevelResourceSchema` helper
+	// but will not compute the value if not included in the main payload.
+	mainSchema["org_id"].Computed = true
+	mainSchema["org_id"].ForceNew = true
+	mainSchema["project_id"].Computed = true
+	mainSchema["project_id"].ForceNew = true
+	// common schema requires name, not needed here
+	delete(mainSchema, "name")
 
 	if readOnly {
 		mainSchema["package_type"] = &schema.Schema{

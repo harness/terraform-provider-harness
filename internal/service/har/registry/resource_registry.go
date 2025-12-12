@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/har"
@@ -31,7 +30,12 @@ func ResourceRegistry() *schema.Resource {
 func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetHarClientWithContext(ctx)
 
-	registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
+	// 2025-12-11
+	// We are migrating to use the org_id and project_id parameters. The `buildHARPathRef` manages
+	// the setup of the spaceRef regardless of what 
+	d = buildHARPathRef(d, c)
+
+	registryRef := d.Get("space_ref").(string) + "/" + d.Get("identifier").(string)
 	resp, httpResp, err := c.RegistriesApi.GetRegistry(ctx, registryRef)
 
 	if err != nil {
@@ -52,15 +56,18 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var resp har.InlineResponse201
 	var httpResp *http.Response
 
-	registry := buildRegistry(d)
-	spaceRef := d.Get("space_ref").(string)
+	// 2025-12-11
+	// We are migrating to use the org_id and project_id parameters. The `buildHARPathRef` manages
+	// the setup of the spaceRef regardless of what 
+	d = buildHARPathRef(d, c)
+	registry := buildRegistry(d, c)
 
 	if d.Id() == "" {
 		resp, httpResp, err = c.RegistriesApi.CreateRegistry(ctx, &har.RegistriesApiCreateRegistryOpts{
-			Body: optional.NewInterface(registry), SpaceRef: optional.NewString(spaceRef),
+			Body: optional.NewInterface(registry), SpaceRef: optional.NewString(d.Get("space_ref").(string)),
 		})
 	} else {
-		registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
+		registryRef := d.Get("space_ref").(string) + "/" + d.Get("identifier").(string)
 		resp, httpResp, err = c.RegistriesApi.ModifyRegistry(ctx, registryRef, &har.RegistriesApiModifyRegistryOpts{
 			Body: optional.NewInterface(registry),
 		})
@@ -77,7 +84,12 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 func resourceRegistryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetHarClientWithContext(ctx)
 
-	registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
+	// 2025-12-11
+	// We are migrating to use the org_id and project_id parameters. The `buildHARPathRef` manages
+	// the setup of the spaceRef regardless of what 
+	d = buildHARPathRef(d, c)
+
+	registryRef := d.Get("space_ref").(string) + "/" + d.Get("identifier").(string)
 
 	_, httpResp, err := c.RegistriesApi.DeleteRegistry(ctx, registryRef)
 
@@ -89,40 +101,22 @@ func resourceRegistryDelete(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceRegistryImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	id := d.Id()
+	c, ctx := meta.(*internal.Session).GetHarClientWithContext(ctx)
 
-	if id == "" {
-		return nil, fmt.Errorf("import ID cannot be empty")
-	}
-
-	parts := strings.Split(id, "/")
-	if len(parts) < 2 {
-		return nil, fmt.Errorf("invalid import ID format. Expected: accountId/registry-name or accountId/orgId/projectId/registry-name")
-	}
-
-	for i, part := range parts {
-		if part == "" {
-			return nil, fmt.Errorf("component at position %d cannot be empty", i)
-		}
-	}
-
-	identifier := parts[len(parts)-1]
-	spaceRef := strings.Join(parts[:len(parts)-1], "/")
-
-	d.Set("identifier", identifier)
-	d.Set("space_ref", spaceRef)
-	d.Set("parent_ref", spaceRef)
-	d.SetId(identifier)
+	// 2025-12-11
+	// We are migrating to use the org_id and project_id parameters. The `buildHARPathRef` manages
+	// the setup of the spaceRef regardless of what 
+	d = buildHARPathRef(d, c)
 
 	diags := resourceRegistryRead(ctx, d, meta)
 	if diags.HasError() {
-		return nil, fmt.Errorf("failed to read registry '%s' at '%s': %v", identifier, spaceRef, diags)
+		return nil, fmt.Errorf("failed to read registry '%s' at '%s': %v", d.Get("identifier").(string), d.Get("space_ref").(string), diags)
 	}
 
 	return []*schema.ResourceData{d}, nil
 }
 
-func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
+func buildRegistry(d *schema.ResourceData, c *har.APIClient) *har.RegistryRequest {
 	registry := &har.RegistryRequest{}
 
 	if attr, ok := d.GetOk("identifier"); ok {

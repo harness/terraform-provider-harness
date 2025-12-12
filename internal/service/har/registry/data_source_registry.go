@@ -29,8 +29,10 @@ func dataSourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta in
 	var resp har.InlineResponse201
 	var httpResp *http.Response
 
+	d = buildHARPathRef(d, c)
+
 	id := d.Get("identifier").(string)
-	registryRef := d.Get("space_ref").(string) + "/" + id
+	registryRef := d.Get("space_ref").(string) + "/" + d.Get("identifier").(string)
 
 	if id != "" && registryRef != "" {
 		resp, httpResp, err = c.RegistriesApi.GetRegistry(ctx, registryRef)
