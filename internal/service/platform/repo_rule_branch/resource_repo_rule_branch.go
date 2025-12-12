@@ -241,6 +241,11 @@ func convertToEnumMergeMethod(s []interface{}) ([]code.EnumMergeMethod, error) {
 			list[i] = code.REBASE_EnumMergeMethod
 		case "squash":
 			list[i] = code.SQUASH_EnumMergeMethod
+		// 2025-12-12
+		// Added support for `fast-forward` merge strategy. Unable to use the SDK method
+		// as it does not exist in the SDK at this time.
+		case "fast-forward":
+			list[i] = "fast-forward"
 		default:
 			return list, fmt.Errorf("invalid merge method encountered %s", v)
 		}
