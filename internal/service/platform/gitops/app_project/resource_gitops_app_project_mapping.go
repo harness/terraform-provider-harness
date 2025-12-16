@@ -51,14 +51,20 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"argo_project_name": {
-				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-			},
+		"argo_project_name": {
+			Description: "ArgoCD Project name which is to be mapped to the Harness project.",
+			Type:        schema.TypeString,
+			Required:    true,
+			ForceNew:    true,
 		},
-	}
+		"auto_create_service_env": {
+			Description: "Enable automated creation of service, environment and cluster-env link. Defaults to false.",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+		},
+	},
+}
 	return resource
 }
 
@@ -173,6 +179,10 @@ func buildCreateAppProjectMappingRequest(accountId string, d *schema.ResourceDat
 		appProjectMappingRequest.ArgoProjectName = attr.(string)
 	}
 
+	if attr, ok := d.GetOk("auto_create_service_env"); ok {
+		appProjectMappingRequest.AutoCreateServiceEnv = attr.(bool)
+	}
+
 	return &appProjectMappingRequest
 }
 
@@ -197,6 +207,10 @@ func buildUpdateAppProjectMappingRequest(accountId string, d *schema.ResourceDat
 		appProjectMappingRequest.ArgoProjectName = attr.(string)
 	}
 
+	if attr, ok := d.GetOk("auto_create_service_env"); ok {
+		appProjectMappingRequest.AutoCreateServiceEnv = attr.(bool)
+	}
+
 	return &appProjectMappingRequest
 }
 
@@ -208,4 +222,5 @@ func readAppProjectMapping(d *schema.ResourceData, mapping *nextgen.V1AppProject
 	d.Set("project_id", mapping.ProjectIdentifier)
 	d.Set("agent_id", mapping.AgentIdentifier)
 	d.Set("argo_project_name", mapping.ArgoProjectName)
+	d.Set("auto_create_service_env", mapping.AutoCreateServiceEnv)
 }
