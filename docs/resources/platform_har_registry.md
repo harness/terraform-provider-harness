@@ -10,8 +10,8 @@ description: |-
 
 Resource for creating and managing Harness Registries.
 
-**Note:** Both `parent_ref` and `space_ref` are required for registry creation.
-
+**Note:**
+> In Harness Artifact Registry, a **Virtual** registry is functionally equivalent to what is commonly referred to as a **Local** registry in other systems.
 ## Example Usage
 
 ```terraform
