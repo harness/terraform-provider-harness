@@ -10,6 +10,12 @@ description: |-
 
 Resource for creating a secret of type secret file in Harness.
 
+> [!NOTE]
+> 1. Selecting a Customer managed Key (CMK) for encryption is supported in Harness Delegate version 25.11.87300 or later and is behind the feature flag `PL_ENABLE_NON_DEFAULT_ENCRYPTION_KEY`. Contact Harness Support to enable the feature.
+> 2. This option would be unavailable if the AWS Secret Manager connector has the option Use "put-secret-value" action to update secret value enabled.
+
+Refer to the [documentation](https://developer.harness.io/docs/platform/secrets/secrets-management/add-an-aws-secret-manager/#create-a-text-or-file-secret) for details.
+
 ## Example Usage
 
 ```terraform
@@ -20,6 +26,23 @@ resource "harness_platform_secret_file" "example" {
   tags                      = ["foo:bar"]
   file_path                 = "file_path"
   secret_manager_identifier = "harnessSecretManager"
+}
+
+resource "harness_platform_secret_text" "aws_secret_manager" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "example"
+  tags        = ["foo:bar"]
+
+  secret_manager_identifier = "awsSecretManager"
+  value_type                = "Inline"
+  value                     = "secret"
+
+  additional_metadata {
+    values {
+      kms_key_id = "kmsKeyId"
+    }
+  }
 }
 ```
 
