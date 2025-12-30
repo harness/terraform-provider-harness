@@ -36,6 +36,7 @@ resource "harness_platform_infra_module" "example" {
 
 - `created` (Number) Timestamp when the module was created.
 - `description` (String) Description of the module.
+- `git_tag_style` (String) Git Tag Style.
 - `id` (String) Unique identifier of the module.
 - `repository` (String) For account connectors, the repository where the module can be found
 - `repository_branch` (String) Name of the branch to fetch the code from. This cannot be set if repository commit is set.

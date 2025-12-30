@@ -27,6 +27,12 @@ func ResourceInfraModule() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"git_tag_style": {
+				Description: "Git Tag Style.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
 			"name": {
 				Description: "Name of the module.",
 				Type:        schema.TypeString,
@@ -232,6 +238,9 @@ func buildCreateModuleRequestBody(d *schema.ResourceData) (nextgen.CreateModuleR
 	if repoPath, ok := d.GetOk("repository_path"); ok {
 		module.RepositoryPath = repoPath.(string)
 	}
+	if gitTagStyle, ok := d.GetOk("git_tag_style"); ok {
+		module.GitTagStyle = gitTagStyle.(string)
+	}
 	return module, nil
 }
 
@@ -258,6 +267,9 @@ func buildUpdateModuleRequestBody(d *schema.ResourceData) (nextgen.CreateModuleR
 	}
 	if repoPath, ok := d.GetOk("repository_path"); ok {
 		module.RepositoryPath = repoPath.(string)
+	}
+	if gitTagStyle, ok := d.GetOk("git_tag_style"); ok {
+		module.GitTagStyle = gitTagStyle.(string)
 	}
 	return module, nil
 }
