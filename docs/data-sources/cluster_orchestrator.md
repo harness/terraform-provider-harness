@@ -29,6 +29,7 @@ data "harness_cluster_orchestrator" "example" {
 ### Optional
 
 - `k8s_connector_id` (String) ID of the Harness Kubernetes Connector Being used
+- `region` (String) Region of the k8s cluster
 
 ### Read-Only
 

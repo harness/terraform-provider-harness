@@ -25,6 +25,9 @@ func buildClusterOrch(d *schema.ResourceData) nextgen.CreateClusterOrchestratorD
 	if attr, ok := d.GetOk("cluster_endpoint"); ok {
 		userCfg.ClusterEndPoint = attr.(string)
 	}
+	if attr, ok := d.GetOk("region"); ok {
+		userCfg.Region = attr.(string)
+	}
 	clusterOrch.UserConfig = userCfg
 
 	return *clusterOrch

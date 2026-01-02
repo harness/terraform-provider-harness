@@ -31,6 +31,11 @@ func DataSourceClusterOrchestrator() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"region": {
+				Description: "Region of the k8s cluster",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 
