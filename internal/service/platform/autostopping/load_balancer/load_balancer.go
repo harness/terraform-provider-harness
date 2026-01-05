@@ -84,7 +84,6 @@ func readLoadBalancer(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) 
 	d.SetId(accessPoint.Id)
 	d.Set("identifier", accessPoint.Id)
 	d.Set("name", accessPoint.Name)
-	d.Set("host_name", accessPoint.HostName)
 	d.Set("cloud_connector_id", accessPoint.CloudAccountId)
 	d.Set("region", accessPoint.Region)
 	d.Set("vpc", accessPoint.Vpc)
@@ -136,10 +135,6 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 
 	if attr, ok := d.GetOk("name"); ok {
 		lb.Name = attr.(string)
-	}
-
-	if attr, ok := d.GetOk("host_name"); ok {
-		lb.HostName = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("cloud_connector_id"); ok {
@@ -243,10 +238,6 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 			}
 			lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
 				Route53: route53,
-			}
-		} else {
-			lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
-				Others: lb.HostName,
 			}
 		}
 	}

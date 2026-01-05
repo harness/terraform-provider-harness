@@ -12,7 +12,6 @@ import (
 
 func TestResourceAWSProxy(t *testing.T) {
 	name := utils.RandStringBytes(5)
-	hostName := fmt.Sprintf("ab%s.lightwingtest.com", name)
 	resourceName := "harness_autostopping_aws_proxy.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -21,10 +20,9 @@ func TestResourceAWSProxy(t *testing.T) {
 		//		CheckDestroy:      testAWSProxyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAWSProxy(name, hostName),
+				Config: testAWSProxy(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "host_name", hostName),
 				),
 			},
 			{
@@ -47,12 +45,11 @@ func testAWSProxyDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAWSProxy(name string, hostName string) string {
+func testAWSProxy(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_proxy" "test" {
 			name = "%[1]s"
 			cloud_connector_id = "cloud_connector_id"
-			host_name = "%[2]s"
             region = "us-east-1"
 			vpc = "vpc-2657db5c"
 			security_groups =["sg-01"]
@@ -62,15 +59,14 @@ func testAWSProxy(name string, hostName string) string {
 			allocate_static_ip = true
 			delete_cloud_resources_on_destroy = false
 		}
-`, name, hostName)
+`, name)
 }
 
-func testAWSProxyUpdate(name string, hostName string) string {
+func testAWSProxyUpdate(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_proxy" "test" {
 			name = "%[1]s"
 			cloud_connector_id = "cloud_connector_id"
-			host_name = "%[2]s"
             region = "eastus2"
             vpc = "vpc-2657db5c"
 			security_groups =["sg-01","sg-02"]
@@ -80,5 +76,5 @@ func testAWSProxyUpdate(name string, hostName string) string {
 			allocate_static_ip = true
 			delete_cloud_resources_on_destroy = true
 		}
-`, name, hostName)
+`, name)
 }

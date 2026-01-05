@@ -29,11 +29,6 @@ func ResourceGCPProxy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"host_name": {
-				Description: "Hostname for the proxy",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"cloud_connector_id": {
 				Description: "Id of the cloud connector",
 				Type:        schema.TypeString,
