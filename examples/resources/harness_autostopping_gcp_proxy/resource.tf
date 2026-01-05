@@ -1,7 +1,6 @@
 resource "harness_autostopping_gcp_proxy" "test" {
   name               = "name"
   cloud_connector_id = "cloud_connector_id"
-  host_name          = "host_name"
   region             = "region"
   vpc                = "https://www.googleapis.com/compute/v1/projects/project_id/global/networks/netwok_id"
   zone               = "zone"
