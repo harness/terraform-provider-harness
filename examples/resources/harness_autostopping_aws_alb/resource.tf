@@ -5,7 +5,6 @@ resource "harness_autostopping_aws_alb" "test" {
   region                            = "region"
   vpc                               = "vpc"
   security_groups                   = ["sg1", "sg2"]
-  route53_hosted_zone_id            = "/hostedzone/zone_id"
   delete_cloud_resources_on_destroy = true
 }
 
@@ -17,6 +16,5 @@ resource "harness_autostopping_aws_alb" "harness_alb" {
   region                            = "region"
   vpc                               = "vpc"
   security_groups                   = ["sg-0"]
-  route53_hosted_zone_id            = "/hostedzone/zone_id"
   delete_cloud_resources_on_destroy = false
 }

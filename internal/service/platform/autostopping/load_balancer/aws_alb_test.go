@@ -47,7 +47,6 @@ func testAwsALB(name string) string {
             region = "us-east-1"
 			vpc = "vpc-2657db5c"
 			security_groups =["sg-01","sg-02"]
-			route53_hosted_zone_id = "/hostedzone/hosted_zone_id"
 			delete_cloud_resources_on_destroy = true
 		}
 `, name)
@@ -61,7 +60,6 @@ func testAwsALBUpdate(name string) string {
             region = "us-east-1"
             vpc = "vpc-2657db5c"
 			security_groups =["sg-01","sg-02"]
-			route53_hosted_zone_id = "/hostedzone/hosted_zone_id"
 			delete_cloud_resources_on_destroy = true
 		}
 `, name)

@@ -53,7 +53,6 @@ func testAWSProxy(name string) string {
             region = "us-east-1"
 			vpc = "vpc-2657db5c"
 			security_groups =["sg-01"]
-			route53_hosted_zone_id = "/hostedzone/hosted_zone_id"
 			machine_type = "t2.medium"
             api_key = ""
 			allocate_static_ip = true
@@ -70,7 +69,6 @@ func testAWSProxyUpdate(name string) string {
             region = "eastus2"
             vpc = "vpc-2657db5c"
 			security_groups =["sg-01","sg-02"]
-			route53_hosted_zone_id = "/hostedzone/hosted_zone_id"
             machine_type = "t2.medium"
             api_key = ""
 			allocate_static_ip = true

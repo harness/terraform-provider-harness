@@ -4,7 +4,6 @@ resource "harness_autostopping_aws_proxy" "test" {
   region                            = "region"
   vpc                               = "vpc"
   security_groups                   = ["sg1", "sg2"]
-  route53_hosted_zone_id            = "/hostedzone/zone_id"
   machine_type                      = "t2.medium"
   api_key                           = ""
   allocate_static_ip                = true

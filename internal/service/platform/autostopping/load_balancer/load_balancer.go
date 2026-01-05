@@ -231,16 +231,6 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 		}
 		lb.Metadata.Certificates = append(certificates, *certificateDetails)
 	}
-	if type_ == "aws" {
-		if attr, ok := d.GetOk("route53_hosted_zone_id"); ok {
-			route53 := &nextgen.AccessPointMetaDnsRoute53{
-				HostedZoneId: attr.(string),
-			}
-			lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
-				Route53: route53,
-			}
-		}
-	}
 	if validateFunc := implementationSpecificLBValidators(type_, kind); validateFunc != nil {
 		if err := validateFunc(*lb); err != nil {
 			return *lb, err

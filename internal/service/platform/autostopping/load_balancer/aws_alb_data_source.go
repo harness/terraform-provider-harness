@@ -47,11 +47,6 @@ func DataSourceAwsALB() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"route53_hosted_zone_id": {
-				Description: "Route 53 hosted zone id",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"alb_arn": {
 				Description: "Arn of AWS ALB to be imported. Required only for importing existing ALB",
 				Type:        schema.TypeString,

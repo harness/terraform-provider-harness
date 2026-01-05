@@ -59,11 +59,6 @@ func DataSourceAWSProxy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"route53_hosted_zone_id": {
-				Description: "Route 53 hosted zone id",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"keypair": {
 				Description: "",
 				Type:        schema.TypeString,
