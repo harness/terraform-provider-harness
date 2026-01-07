@@ -8,7 +8,9 @@ import (
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/harness-go-sdk/harness/har"
+	"github.com/harness/harness-go-sdk/harness/idp"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/harness-go-sdk/harness/po"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
 	"github.com/harness/harness-go-sdk/harness/svcdiscovery"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
@@ -25,6 +27,8 @@ type Session struct {
 	ChaosClient *chaos.APIClient
 	SDClient    *svcdiscovery.APIClient
 	HARClient   *har.APIClient
+	IDPClient   *idp.APIClient
+	POClient    *po.APIClient
 }
 
 func (s *Session) GetPlatformClient() (*nextgen.APIClient, context.Context) {
@@ -89,4 +93,18 @@ func (s *Session) GetHarClientWithContext(ctx context.Context) (*har.APIClient, 
 		ctx = context.Background()
 	}
 	return s.HARClient.WithAuthContext(ctx)
+}
+
+func (s *Session) GetIDPClientWithContext(ctx context.Context) (*idp.APIClient, context.Context) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return s.IDPClient, ctx
+}
+
+func (s *Session) GetPOClientWithContext(ctx context.Context) (*po.APIClient, context.Context) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return s.POClient, ctx
 }
