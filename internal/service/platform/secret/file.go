@@ -34,10 +34,42 @@ func ResourceSecretFile() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"kms_key_id": {
-				Description: "Kms Key Id for encrypting the secret value",
-				Type:        schema.TypeString,
+			"additional_metadata": {
+				Description: "Additional Metadata for the Secret",
+				Type:        schema.TypeList,
 				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"values": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"version": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Version of the secret (for AWS/Azure Secret Manager)",
+									},
+									"kms_key_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "KMS Key ID (for AWS Secret Manager)",
+									},
+									"regions": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP region for the secret (for GCP Secret Manager)",
+									},
+									"gcp_project_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP Project ID (for GCP Secret Manager)",
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 		},
 	}
@@ -121,10 +153,37 @@ func buildSpec(d *schema.ResourceData) string {
 	if attr, ok := d.GetOk("secret_manager_identifier"); ok {
 		spec = spec + fmt.Sprintf(`,"spec":{"secretManagerIdentifier":"%[1]s"`, attr.(string))
 	}
-	if attr, ok := d.GetOk("kms_key_id"); ok {
-		spec = spec + fmt.Sprintf(`,"additionalMetadata":{"values":{"kmsKeyId":"%[1]s"}}}`, attr.(string))
+	// Build additionalMetadata from the additional_metadata block (same as text.go)
+	additionalMetadataValues := make([]string, 0)
+
+	if attr, ok := d.GetOk("additional_metadata"); ok {
+		metadataList := attr.([]interface{})
+		if len(metadataList) > 0 {
+			metadataMap := metadataList[0].(map[string]interface{})
+			if valuesSet, ok := metadataMap["values"].(*schema.Set); ok {
+				for _, v := range valuesSet.List() {
+					valueMap := v.(map[string]interface{})
+					if version, ok := valueMap["version"].(string); ok && version != "" {
+						additionalMetadataValues = append(additionalMetadataValues, fmt.Sprintf(`"version":"%s"`, version))
+					}
+					if kmsKeyId, ok := valueMap["kms_key_id"].(string); ok && kmsKeyId != "" {
+						additionalMetadataValues = append(additionalMetadataValues, fmt.Sprintf(`"kmsKeyId":"%s"`, kmsKeyId))
+					}
+					if regions, ok := valueMap["regions"].(string); ok && regions != "" {
+						additionalMetadataValues = append(additionalMetadataValues, fmt.Sprintf(`"regions":"%s"`, regions))
+					}
+					if projectId, ok := valueMap["gcp_project_id"].(string); ok && projectId != "" {
+						additionalMetadataValues = append(additionalMetadataValues, fmt.Sprintf(`"projectId":"%s"`, projectId))
+					}
+				}
+			}
+		}
+	}
+
+	if len(additionalMetadataValues) > 0 {
+		spec = spec + fmt.Sprintf(`,"additionalMetadata":{"values":{%s}}}`, strings.Join(additionalMetadataValues, ","))
 	} else {
-		spec = spec + fmt.Sprintf(`}`)
+		spec = spec + `}`
 	}
 	return spec + "}}"
 }

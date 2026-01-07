@@ -50,14 +50,25 @@ func ResourceSecretText() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"version": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Version of the secret (for AWS/Azure Secret Manager)",
 									},
 									"kms_key_id": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "KMS Key ID (for AWS Secret Manager)",
 									},
-									// Add other fields for the inner map as needed
+									"regions": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP region for the secret (for GCP Secret Manager)",
+									},
+									"gcp_project_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP Project ID (for GCP Secret Manager)",
+									},
 								},
 							},
 						},
@@ -154,13 +165,19 @@ func readAdditionalMetadata(metadata interface{}) nextgen.AdditionalMetadata {
 			// Loop through "values" set
 			for _, v := range valuesSet.List() {
 				valueMap := v.(map[string]interface{})
-				if version, ok := valueMap["version"].(string); ok {
+				if version, ok := valueMap["version"].(string); ok && version != "" {
 					result.Values["version"] = version
 				}
-				if kmsKeyId, ok := valueMap["kms_key_id"].(string); ok {
+				if kmsKeyId, ok := valueMap["kms_key_id"].(string); ok && kmsKeyId != "" {
 					result.Values["kmsKeyId"] = kmsKeyId
 				}
-				// Add other fields as needed
+				// GCP Secret Manager fields
+				if regions, ok := valueMap["regions"].(string); ok && regions != "" {
+					result.Values["regions"] = regions
+				}
+				if projectId, ok := valueMap["gcp_project_id"].(string); ok && projectId != "" {
+					result.Values["projectId"] = projectId
+				}
 			}
 		}
 	}
@@ -179,6 +196,10 @@ func importAdditionalMetadata_2(additionalMetadata *nextgen.AdditionalMetadata) 
 				entry["version"] = v
 			case "kmsKeyId":
 				entry["kms_key_id"] = v
+			case "regions":
+				entry["regions"] = v
+			case "projectId":
+				entry["gcp_project_id"] = v
 			}
 		}
 		data["values"] = schema.NewSet(schema.HashResource(&schema.Resource{
@@ -188,6 +209,14 @@ func importAdditionalMetadata_2(additionalMetadata *nextgen.AdditionalMetadata) 
 					Optional: true,
 				},
 				"kms_key_id": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"regions": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"gcp_project_id": {
 					Type:     schema.TypeString,
 					Optional: true,
 				},
