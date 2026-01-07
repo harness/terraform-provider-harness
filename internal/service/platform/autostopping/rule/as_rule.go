@@ -33,7 +33,7 @@ func resourceASRuleRead(ctx context.Context, d *schema.ResourceData, meta interf
 	}
 
 	if resp.Response != nil {
-		readASRule(d, resp.Response.Service.Id)
+		readASRule(d, resp.Response.Service)
 	}
 
 	return nil
@@ -59,7 +59,10 @@ func resourceASRuleCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	if resp.Response != nil {
-		readASRule(d, resp.Response.Id)
+		service := &nextgen.Service{
+			Id: resp.Response.Id,
+		}
+		readASRule(d, service)
 	}
 
 	return nil
@@ -426,8 +429,18 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 	return httpProxy, tcpProxy, healthCheck
 }
 
-func readASRule(d *schema.ResourceData, id int64) {
-	identifier := strconv.Itoa(int(id))
+func readASRule(d *schema.ResourceData, service *nextgen.Service) {
+	if service == nil {
+		return
+	}
+	identifier := strconv.Itoa(int(service.Id))
 	d.SetId(identifier)
 	d.Set("identifier", identifier)
+	d.Set("name", service.Name)
+	d.Set("cloud_connector_id", service.CloudAccountId)
+	d.Set("idle_time_mins", service.IdleTimeMins)
+	d.Set("custom_domains", service.CustomDomains)
+	if service.Opts != nil {
+		d.Set("dry_run", service.Opts.DryRun)
+	}
 }
