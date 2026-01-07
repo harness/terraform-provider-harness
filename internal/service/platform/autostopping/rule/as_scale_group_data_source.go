@@ -6,7 +6,7 @@ import (
 
 func DataSourceScaleGroupRule() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Variable.",
+		Description: "Data source for retrieving a Harness AutoStopping rule for Scaling Groups.",
 
 		ReadContext: resourceASRuleRead,
 
