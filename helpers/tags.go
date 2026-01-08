@@ -55,6 +55,39 @@ func ExpandField(permissions []interface{}) []string {
 	return result
 }
 
+// ExpandPipelineTags converts Terraform tag strings to a map for Pipeline API.
+// Unlike ExpandTags(), this function splits on the FIRST colon only, preserving
+// any additional colons in the tag value. This is critical for pipeline tags that
+// contain Harness expressions, URLs, timestamps, or other colon-separated values.
+//
+// Examples:
+//   Input:  "ImagePush:<+condition?value1:value2>"
+//   Output: {ImagePush: "<+condition?value1:value2>"}
+//
+//   Input:  "registry:https://example.com:5000/repo"
+//   Output: {registry: "https://example.com:5000/repo"}
+//
+// Fixes: PIPE-30810 - Pipeline tags with colons were being truncated
+func ExpandPipelineTags(tags []interface{}) map[string]string {
+	result := make(map[string]string)
+
+	for _, tag := range tags {
+		tagStr := tag.(string)
+		// Split on first colon only - everything after first : is the value
+		parts := strings.SplitN(tagStr, ":", 2)
+
+		if len(parts) == 1 {
+			// Tag has no colon, treat as key with empty value
+			result[parts[0]] = ""
+		} else {
+			// Tag has "key:value" format where value may contain colons
+			result[parts[0]] = parts[1]
+		}
+	}
+
+	return result
+}
+
 // func ExpandKeyValueTags(tags []interface{}) map[string]string {
 // 	result := map[string]string{}
 
