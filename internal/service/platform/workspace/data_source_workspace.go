@@ -1,7 +1,12 @@
 package workspace
 
 import (
+	"context"
+	"strings"
+
 	"github.com/harness/terraform-provider-harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -10,13 +15,13 @@ func DataSourceWorkspace() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving workspaces.",
 
-		ReadContext: resourceWorkspaceRead,
+		ReadContext: dataResourceWorkspaceRead,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
 				Description: "Identifier of the Workspace",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"org_id": {
 				Description: "Organization Identifier",
@@ -27,6 +32,16 @@ func DataSourceWorkspace() *schema.Resource {
 				Description: "Project Identifier",
 				Type:        schema.TypeString,
 				Required:    true,
+			},
+			"search_term": {
+				Description: "Filter results by partial name match when listing workspaces.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"name_prefix": {
+				Description: "Filter results by workspace name prefix when listing workspaces.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"name": {
 				Description: "Name of the Workspace",
@@ -200,6 +215,7 @@ func DataSourceWorkspace() *schema.Resource {
 				Description: "Provider connectors configured on the Workspace. Only one connector of a type is supported",
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connector_ref": {
@@ -220,4 +236,46 @@ func DataSourceWorkspace() *schema.Resource {
 	}
 	resource.Schema["tags"] = helpers.GetTagsSchema(helpers.SchemaFlagTypes.Optional)
 	return resource
+}
+
+func dataResourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	identifier := strings.TrimSpace(d.Get("identifier").(string))
+	orgId := strings.TrimSpace(d.Get("org_id").(string))
+	projectId := strings.TrimSpace(d.Get("project_id").(string))
+	if identifier != "" {
+		resp, httpResp, err := c.WorkspaceApi.WorkspacesShowWorkspace(
+			ctx,
+			orgId,
+			projectId,
+			identifier,
+			c.AccountId,
+		)
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+
+		readWorkspace(d, &resp)
+		return nil
+	}
+	resp, httpResp, err := findWorkspaces(ctx, orgId, projectId, c.AccountId, c.WorkspaceApi, d.Get("search_term").(string))
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	namePrefix := strings.TrimSpace(d.Get("name_prefix").(string))
+
+	for _, ws := range resp {
+		if namePrefix != "" && !strings.HasPrefix(ws.Name, namePrefix) {
+			continue
+		}
+		body, resp, err := findWorkspace(ctx, ws.Org, ws.Project, ws.Identifier, c.AccountId, c.WorkspaceApi)
+		if err != nil {
+			return helpers.HandleApiError(err, d, resp)
+		}
+
+		readWorkspace(d, body)
+	}
+
+	return nil
 }

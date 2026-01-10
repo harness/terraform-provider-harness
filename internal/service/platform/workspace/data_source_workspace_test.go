@@ -90,7 +90,40 @@ func testAccDataSourceWorkspace(id string, name string) string {
 			repository_branch       = "main"
 			repository_path         = "tf/aws/basic"
 			cost_estimation_enabled = true
-			provider_connector      = "account.${harness_platform_connector_github.test.id}"
+			repository_connector    = "account.${harness_platform_connector_github.test.id}"
+			variable_sets = [harness_platform_infra_variable_set.test.id]
+			tags = ["tag1", "tag2"]
+  		}
+
+		resource "harness_platform_workspace" "test1" {
+			identifier = "test1"
+			name = "test1"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			description = "description"
+			provisioner_type        = "terraform"
+			provisioner_version     = "1.5.6"
+			repository              = "https://github.com/org/repo"
+			repository_branch       = "main"
+			repository_path         = "tf/aws/basic"
+			cost_estimation_enabled = true
+			repository_connector    = "account.${harness_platform_connector_github.test.id}"
+			variable_sets = [harness_platform_infra_variable_set.test.id]
+			tags = ["tag1", "tag2"]
+  		}
+
+		resource "harness_platform_workspace" "test2" {
+			identifier = "test2"
+			name = "test2"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			description = "description"
+			provisioner_type        = "terraform"
+			provisioner_version     = "1.5.6"
+			repository              = "https://github.com/org/repo"
+			repository_branch       = "main"
+			repository_path         = "tf/aws/basic"
+			cost_estimation_enabled = true
 			repository_connector    = "account.${harness_platform_connector_github.test.id}"
 			variable_sets = [harness_platform_infra_variable_set.test.id]
 			tags = ["tag1", "tag2"]
@@ -101,6 +134,17 @@ func testAccDataSourceWorkspace(id string, name string) string {
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			depends_on = [harness_platform_workspace.test]
+		}
+
+		data "harness_platform_workspace" "test2" {
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			name_prefix = "test"
+			depends_on = [harness_platform_workspace.test]
+		}
+
+		output "workspace_ids" {
+			value = data.harness_platform_workspace.test2
 		}
 
 `, id, name)

@@ -25,12 +25,15 @@ data "harness_platform_workspace" "test" {
 
 ### Required
 
-- `identifier` (String) Identifier of the Workspace
 - `org_id` (String) Organization Identifier
 - `project_id` (String) Project Identifier
 
 ### Optional
 
+- `identifier` (String) Identifier of the Workspace
+- `identifier_prefix` (String) Filter results by workspace identifier prefix when listing workspaces.
+- `name_prefix` (String) Filter results by workspace name prefix when listing workspaces.
+- `search_term` (String) Filter results by partial name match when listing workspaces.
 - `connector` (Block Set) Provider connectors configured on the Workspace. Only one connector of a type is supported (see [below for nested schema](#nestedblock--connector))
 - `description` (String) Description of the Workspace
 - `repository_branch` (String) Repository Branch in which the code should be accessed
@@ -54,6 +57,7 @@ data "harness_platform_workspace" "test" {
 - `repository_path` (String) Repository Path is the path in which the infra code resides
 - `terraform_variable` (Block Set) Terraform variables configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable))
 - `terraform_variable_file` (Block Set) Terraform variables files configured on the workspace (see [below for nested schema](#nestedblock--terraform_variable_file))
+- `workspace_ids` (List of String) List of workspace identifiers when identifier is not set.
 
 <a id="nestedblock--connector"></a>
 ### Nested Schema for `connector`
