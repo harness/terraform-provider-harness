@@ -95,8 +95,12 @@ func dataSourceWorkspacesRead(ctx context.Context, d *schema.ResourceData, meta 
 	orgID := d.Get("org_id").(string)
 	projectID := d.Get("project_id").(string)
 	searchTerm := d.Get("search_term").(string)
+	limit := int32(defaultLimit)
+	if v, ok := d.GetOk("limit"); ok {
+		limit = int32(v.(int))
+	}
 
-	workspaces, httpResp, err := findWorkspaces(ctx, orgID, projectID, c.AccountId, c.WorkspaceApi, searchTerm)
+	workspaces, httpResp, err := findWorkspaces(ctx, orgID, projectID, c.AccountId, c.WorkspaceApi, searchTerm, limit)
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
@@ -123,8 +127,8 @@ func dataSourceWorkspacesRead(ctx context.Context, d *schema.ResourceData, meta 
 
 	// synthetic ID so repeated calls with same filters are stable
 	d.SetId(fmt.Sprintf("%s/%s/%s", orgID, projectID, searchTerm))
-	_ = d.Set("identifiers", identifiers)
-	_ = d.Set("workspaces", items)
+	d.Set("identifiers", identifiers)
+	d.Set("workspaces", items)
 
 	return nil
 }
