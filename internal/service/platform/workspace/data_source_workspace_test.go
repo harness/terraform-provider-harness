@@ -90,7 +90,6 @@ func testAccDataSourceWorkspace(id string, name string) string {
 			repository_branch       = "main"
 			repository_path         = "tf/aws/basic"
 			cost_estimation_enabled = true
-			provider_connector      = "account.${harness_platform_connector_github.test.id}"
 			repository_connector    = "account.${harness_platform_connector_github.test.id}"
 			variable_sets = [harness_platform_infra_variable_set.test.id]
 			tags = ["tag1", "tag2"]
