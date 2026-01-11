@@ -10,17 +10,6 @@ import (
 
 const defaultLimit = int32(100)
 
-func findWorkspace(ctx context.Context, orgID, projectID, identifier, accountID string, workspace *nextgen.WorkspacesApiService) (*nextgen.IacmShowWorkspaceResponseBody, *http.Response, error) {
-	resp, httpResp, err := workspace.WorkspacesShowWorkspace(
-		ctx,
-		orgID,
-		projectID,
-		identifier,
-		accountID,
-	)
-	return &resp, httpResp, err
-}
-
 // List all workspaces across pages.
 func findWorkspaces(ctx context.Context, orgID, projectID, accountID string, workspace *nextgen.WorkspacesApiService, searchTerm string) ([]nextgen.IacmWorkspaceResourceSummary, *http.Response, error) {
 	page := int32(1)
