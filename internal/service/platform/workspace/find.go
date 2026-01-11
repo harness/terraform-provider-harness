@@ -31,12 +31,11 @@ func findWorkspaces(ctx context.Context, orgID, projectID, accountID string, wor
 
 	for {
 		opts := &nextgen.WorkspacesApiWorkspacesListWorkspacesOpts{
-			Limit: optional.NewInt32(defaultLimit),
-			Page:  optional.NewInt32(page),
+			Limit:      optional.NewInt32(defaultLimit),
+			Page:       optional.NewInt32(page),
+			SearchTerm: optional.NewString(searchTerm),
 		}
-		if searchTerm != "" {
-			opts.SearchTerm = optional.NewString(searchTerm)
-		}
+
 		workspaces, resp, err := workspace.WorkspacesListWorkspaces(ctx, orgID, projectID, accountID, opts)
 		httpResp = resp
 		if err != nil {
