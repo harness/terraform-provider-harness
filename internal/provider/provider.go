@@ -206,6 +206,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_gcp":                      cdng_connector_cloudProviders.DatasourceConnectorGcp(),
 				"harness_platform_connector_gcp_kms":                  pl_secretManagers.DatasourceConnectorGcpKms(),
 				"harness_platform_connector_gcp_secret_manager":       pl_secretManagers.DatasourceConnectorGcpSM(),
+				"harness_platform_gcp_projects":                       connector.DataSourceGcpProjects(),
 				"harness_platform_connector_git":                      cdng_connector_codeRepositories.DatasourceConnectorGit(),
 				"harness_platform_connector_github":                   cdng_connector_codeRepositories.DatasourceConnectorGithub(),
 				"harness_platform_connector_gitlab":                   cdng_connector_codeRepositories.DatasourceConnectorGitlab(),

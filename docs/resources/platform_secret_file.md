@@ -28,19 +28,35 @@ resource "harness_platform_secret_file" "example" {
   secret_manager_identifier = "harnessSecretManager"
 }
 
-resource "harness_platform_secret_text" "aws_secret_manager" {
-  identifier  = "identifier"
-  name        = "name"
-  description = "example"
-  tags        = ["foo:bar"]
-
+# With AWS Secret Manager KMS Key
+resource "harness_platform_secret_file" "aws_secret_manager" {
+  identifier                = "identifier"
+  name                      = "name"
+  description               = "example"
+  tags                      = ["foo:bar"]
+  file_path                 = "file_path"
   secret_manager_identifier = "awsSecretManager"
-  value_type                = "Inline"
-  value                     = "secret"
 
   additional_metadata {
     values {
       kms_key_id = "kmsKeyId"
+    }
+  }
+}
+
+# With GCP Secret Manager project ID and region
+resource "harness_platform_secret_file" "gcp_secret_manager" {
+  identifier                = "identifier"
+  name                      = "name"
+  description               = "example"
+  tags                      = ["foo:bar"]
+  file_path                 = "file_path"
+  secret_manager_identifier = "gcpSecretManager"
+
+  additional_metadata {
+    values {
+      regions        = "us-east1"
+      gcp_project_id = "my-gcp-project-id"
     }
   }
 }
@@ -59,6 +75,7 @@ resource "harness_platform_secret_text" "aws_secret_manager" {
 
 ### Optional
 
+- `additional_metadata` (Block List) Additional Metadata for the Secret (see [below for nested schema](#nestedblock--additional_metadata))
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
@@ -68,6 +85,23 @@ resource "harness_platform_secret_text" "aws_secret_manager" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--additional_metadata"></a>
+### Nested Schema for `additional_metadata`
+
+Optional:
+
+- `values` (Block Set) (see [below for nested schema](#nestedblock--additional_metadata--values))
+
+<a id="nestedblock--additional_metadata--values"></a>
+### Nested Schema for `additional_metadata.values`
+
+Optional:
+
+- `version` (String) Version of the secret (for AWS/Azure Secret Manager)
+- `kms_key_id` (String) KMS Key ID (for AWS Secret Manager)
+- `regions` (String) GCP region for the secret (for GCP Secret Manager)
+- `gcp_project_id` (String) GCP Project ID (for GCP Secret Manager)
 
 ## Import
 
