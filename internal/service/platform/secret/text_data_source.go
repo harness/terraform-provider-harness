@@ -39,14 +39,25 @@ func DataSourceSecretText() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"version": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Version of the secret (for AWS/Azure Secret Manager)",
 									},
 									"kms_key_id": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "KMS Key ID (for AWS Secret Manager)",
 									},
-									// Add other fields for the inner map as needed
+									"regions": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP region for the secret (for GCP Secret Manager)",
+									},
+									"gcp_project_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP Project ID (for GCP Secret Manager)",
+									},
 								},
 							},
 						},

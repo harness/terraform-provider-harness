@@ -54,4 +54,7 @@ Optional:
 
 Optional:
 
-- `version` (String)
+- `version` (String) Version of the secret (for AWS/Azure Secret Manager)
+- `kms_key_id` (String) KMS Key ID (for AWS Secret Manager)
+- `regions` (String) GCP region for the secret (for GCP Secret Manager)
+- `gcp_project_id` (String) GCP Project ID (for GCP Secret Manager)
