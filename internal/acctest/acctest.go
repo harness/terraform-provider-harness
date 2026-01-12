@@ -11,6 +11,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/harness-go-sdk/harness/har"
 	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/idp"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -84,6 +85,10 @@ func TestAccGetCodeClientWithContext() (*code.APIClient, context.Context) {
 
 func TestAccGetHarClientWithContext() (*har.APIClient, context.Context) {
 	return TestAccProvider.Meta().(*internal.Session).GetHarClientWithContext(context.Background())
+}
+
+func TestAccGetIDPClientWithContext() (*idp.APIClient, context.Context) {
+	return TestAccProvider.Meta().(*internal.Session).GetIDPClientWithContext(context.Background())
 }
 
 func TestAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {
@@ -380,12 +385,12 @@ func TestAccResourceAwsCloudProvider(name string) string {
 		value = "%[3]s"
 		secret_manager_id = data.harness_secret_manager.default.id
 	}
-	
+
 	resource "harness_cloudprovider_aws" "test" {
 		name = "%[1]s"
 		access_key_id_secret_name = harness_encrypted_text.aws_access_key.name
 		secret_access_key_secret_name = harness_encrypted_text.aws_secret_key.name
-	}	
+	}
 `, name, helpers.TestEnvVars.AwsAccessKeyId.Get(), helpers.TestEnvVars.AwsSecretAccessKey.Get())
 }
 
@@ -423,6 +428,6 @@ func TestAccResourceGitConnector_default(name string) string {
 			password_secret_id = harness_encrypted_text.test.id
 			url_type = "REPO"
 			username = "someuser"
-		}	
+		}
 `, name)
 }
