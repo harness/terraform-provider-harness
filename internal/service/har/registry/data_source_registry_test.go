@@ -2,10 +2,11 @@ package registry_test
 
 import (
 	"fmt"
-	"github.com/harness/terraform-provider-harness/internal/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"os"
 	"testing"
+
+	"github.com/harness/terraform-provider-harness/internal/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDataSourceVirtualRegistry(t *testing.T) {
@@ -88,6 +89,7 @@ func testAccDataSourceVirtualRegistry(id string, accId string) string {
 	data "harness_platform_har_registry" "test" {
 			identifier = harness_platform_har_registry.test.identifier
 			space_ref = "%[2]s"
+			parent_ref = "%[2]s"
 	}
 `, id, accId)
 }
@@ -119,6 +121,7 @@ func testAccDataSourceUpstreamAWSRegistry(id string, accId string) string {
 	data "harness_platform_har_registry" "test" {
 			identifier = harness_platform_har_registry.test.identifier
 			space_ref = "%[2]s"
+			parent_ref = "%[2]s"
 	}
 `, id, accId)
 }
@@ -149,6 +152,7 @@ func testAccDataSourceUpstreamAWSRegistry2(id string, accId string) string {
 	data "harness_platform_har_registry" "test" {
 			identifier = harness_platform_har_registry.test.identifier
 			space_ref = "%[2]s"
+			parent_ref = "%[2]s"
 	}
 `, id, accId)
 }

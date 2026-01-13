@@ -110,6 +110,7 @@ resource "harness_platform_secret_sshkey" "ssh_password" {
 - `project_id` (String) Unique identifier of the project.
 - `ssh` (Block List, Max: 1) Kerberos authentication scheme (see [below for nested schema](#nestedblock--ssh))
 - `tags` (Set of String) Tags to associate with the resource.
+- `force_delete` (Boolean) Enable this flag for force deletion of connector
 
 ### Read-Only
 

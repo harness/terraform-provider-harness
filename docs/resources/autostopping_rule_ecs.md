@@ -3,12 +3,12 @@
 page_title: "harness_autostopping_rule_ecs Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Variables.
+  Resource for creating a AutoStopping rule for ECS services.
 ---
 
 # harness_autostopping_rule_ecs (Resource)
 
-Resource for creating a Harness Variables.
+Resource for creating a AutoStopping rule for ECS services.
 
 ## Example Usage
 

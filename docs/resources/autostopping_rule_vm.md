@@ -3,12 +3,12 @@
 page_title: "harness_autostopping_rule_vm Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Variables.
+  Resource for creating a AutoStopping rule for VMs.
 ---
 
 # harness_autostopping_rule_vm (Resource)
 
-Resource for creating a Harness Variables.
+Resource for creating a AutoStopping rule for VMs.
 
 ## Example Usage
 

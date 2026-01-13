@@ -2,13 +2,16 @@ package registry
 
 import (
 	"context"
+	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/har"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"net/http"
 )
 
 func ResourceRegistry() *schema.Resource {
@@ -19,6 +22,9 @@ func ResourceRegistry() *schema.Resource {
 		UpdateContext: resourceRegistryCreateOrUpdate,
 		DeleteContext: resourceRegistryDelete,
 		Schema:        resourceRegistrySchema(false),
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceRegistryImport,
+		},
 	}
 }
 
@@ -54,7 +60,8 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 			Body: optional.NewInterface(registry), SpaceRef: optional.NewString(spaceRef),
 		})
 	} else {
-		resp, httpResp, err = c.RegistriesApi.ModifyRegistry(ctx, d.Id(), &har.RegistriesApiModifyRegistryOpts{
+		registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
+		resp, httpResp, err = c.RegistriesApi.ModifyRegistry(ctx, registryRef, &har.RegistriesApiModifyRegistryOpts{
 			Body: optional.NewInterface(registry),
 		})
 	}
@@ -79,6 +86,40 @@ func resourceRegistryDelete(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	return nil
+}
+
+func resourceRegistryImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	id := d.Id()
+
+	if id == "" {
+		return nil, fmt.Errorf("import ID cannot be empty")
+	}
+
+	parts := strings.Split(id, "/")
+	if len(parts) < 2 {
+		return nil, fmt.Errorf("invalid import ID format. Expected: accountId/registry-name or accountId/orgId/projectId/registry-name")
+	}
+
+	for i, part := range parts {
+		if part == "" {
+			return nil, fmt.Errorf("component at position %d cannot be empty", i)
+		}
+	}
+
+	identifier := parts[len(parts)-1]
+	spaceRef := strings.Join(parts[:len(parts)-1], "/")
+
+	d.Set("identifier", identifier)
+	d.Set("space_ref", spaceRef)
+	d.Set("parent_ref", spaceRef)
+	d.SetId(identifier)
+
+	diags := resourceRegistryRead(ctx, d, meta)
+	if diags.HasError() {
+		return nil, fmt.Errorf("failed to read registry '%s' at '%s': %v", identifier, spaceRef, diags)
+	}
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {

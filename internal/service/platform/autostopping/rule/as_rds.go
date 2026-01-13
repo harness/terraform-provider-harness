@@ -11,7 +11,7 @@ import (
 
 func ResourceRDSRule() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Variables.",
+		Description: "Resource for creating a AutoStopping rule for RDS databases.",
 
 		ReadContext:   resourceASRuleRead,
 		UpdateContext: resourceRDSRuleCreateOrUpdate,

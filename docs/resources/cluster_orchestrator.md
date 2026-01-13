@@ -13,10 +13,13 @@ Resource for creating and deleting ClusterOrchestrators.
 ## Example Usage
 
 ```terraform
+data "aws_region" "current" {}
+
 resource "harness_cluster_orchestrator" "test" {
   name             = "name"
   cluster_endpoint = "http://test.test.com"
   k8s_connector_id = "test"
+  region           = data.aws_region.current.name
 }
 ```
 
@@ -37,6 +40,10 @@ When you run `terraform destroy`, the cluster orchestrator will be permanently d
 - `cluster_endpoint` (String) Endpoint of the k8s cluster being onboarded under the orchestrator
 - `k8s_connector_id` (String) ID of the Harness Kubernetes Connector Being used
 - `name` (String) Name of the Orchestrator
+
+### Optional
+
+- `region` (String) Region of the k8s cluster
 
 ### Read-Only
 

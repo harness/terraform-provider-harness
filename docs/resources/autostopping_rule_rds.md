@@ -3,12 +3,12 @@
 page_title: "harness_autostopping_rule_rds Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Variables.
+  Resource for creating a AutoStopping rule for RDS databases.
 ---
 
 # harness_autostopping_rule_rds (Resource)
 
-Resource for creating a Harness Variables.
+Resource for creating a AutoStopping rule for RDS databases.
 
 ## Example Usage
 
