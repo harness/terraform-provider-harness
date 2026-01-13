@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/antihax/optional v1.0.0
 	github.com/aws/aws-sdk-go v1.55.8
-	github.com/docker/docker v28.3.2+incompatible
+	github.com/docker/docker v28.5.2+incompatible
 	github.com/google/uuid v1.6.0
 	github.com/harness/harness-go-sdk v0.7.0
 	github.com/harness/harness-openapi-go-client v0.0.25
@@ -39,7 +39,6 @@ require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
