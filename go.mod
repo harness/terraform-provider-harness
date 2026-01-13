@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/antihax/optional v1.0.0
-	github.com/aws/aws-sdk-go v1.46.4
+	github.com/aws/aws-sdk-go v1.55.8
 	github.com/docker/docker v28.3.2+incompatible
 	github.com/google/uuid v1.6.0
 	github.com/harness/harness-go-sdk v0.7.0
