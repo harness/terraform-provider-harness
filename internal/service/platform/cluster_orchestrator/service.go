@@ -45,10 +45,10 @@ func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 	if attr, ok := d.GetOk("distribution.0.base_ondemand_capacity"); ok {
 		config.BaseOnDemandCapacity = attr.(int)
 	}
-	if attr, ok := d.GetOk("distribution.0.ondemand_replica_percentage"); ok {
-		config.OnDemandSplit = int(attr.(float64))
-		config.SpotSplit = 100 - config.OnDemandSplit
-	}
+
+	config.OnDemandSplit = int(d.Get("distribution.0.ondemand_replica_percentage").(float64))
+	config.SpotSplit = 100 - config.OnDemandSplit
+
 	if attr, ok := d.GetOk("distribution.0.selector"); ok {
 		config.SpotDistribution = nextgen.ClusterOrchDistributionSelector(attr.(string))
 	}
