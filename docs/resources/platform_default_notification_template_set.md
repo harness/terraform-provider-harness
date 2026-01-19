@@ -30,7 +30,9 @@ Resource for creating a Harness Default Notification Template Set
 
 ### Read-Only
 
+- `created` (Number) Timestamp when the default notification template set was created.
 - `id` (String) The ID of this resource.
+- `last_modified` (Number) Timestamp when the default notification template set was last modified.
 
 <a id="nestedblock--event_template_configuration_set"></a>
 ### Nested Schema for `event_template_configuration_set`

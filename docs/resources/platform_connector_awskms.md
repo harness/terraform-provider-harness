@@ -124,7 +124,6 @@ resource "harness_platform_connector_awskms" "test" {
 
 ### Required
 
-- `arn_ref` (String) A reference to the Harness secret containing the ARN of the AWS KMS. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `credentials` (Block List, Min: 1, Max: 1) Credentials to connect to AWS. (see [below for nested schema](#nestedblock--credentials))
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
@@ -132,6 +131,8 @@ resource "harness_platform_connector_awskms" "test" {
 
 ### Optional
 
+- `arn_plaintext` (String) A reference to the Harness secret containing the ARN of the AWS KMS.
+- `arn_ref` (String) A reference to the Harness secret containing the ARN of the AWS KMS. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `default` (Boolean) Set this connector as the default for all the services.
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
