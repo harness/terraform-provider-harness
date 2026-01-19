@@ -27,7 +27,7 @@ Full, comprehensive documentation is available on the Terraform Registry website
 ## Requirements
 
 - [Terraform](https://www.terraform.io/downloads.html) >= 0.13.x
-- [Go](https://golang.org/doc/install) >= 1.17 (for development)
+- [Go](https://golang.org/doc/install) >= 1.21 (for development)
 
 ## Usage
 
@@ -72,51 +72,176 @@ The provider is available on the [Terraform Registry](https://registry.terraform
    cd terraform-provider-harness
    ```
 
-2. Install dependencies:
+2. Set up your development environment:
    ```sh
-   go mod tidy
+   make dev-setup
    ```
+   This installs all Go dependencies and development tools.
 
-3. Build the provider:
+3. Build and install the provider locally:
    ```sh
-   go build -o terraform-provider-harness
+   make install
    ```
+   This builds the provider and installs it to your local Terraform plugins directory.
 
-4. Create a file called `local.sh` in the root directory with the following content:
-   ```sh
-   #!/bin/sh
-
-   version=0.40.2 # Specify in this format
-   source=registry.terraform.io/harness/harness
-   platform=darwin_amd64 # Use darwin_arm64 for Apple Silicon based Mac
-
-   mkdir -p ~/.terraform.d/plugins/$source/$version/$platform/
-
-   cp terraform-provider-harness ~/.terraform.d/plugins/$source/$version/$platform/terraform-provider-harness
-   ```
-
-5. Make the script executable and run it:
-   ```sh
-   chmod +x local.sh
-   ./local.sh
-   ```
-
-### Configure Terraform to Use Local Build
-
-1. Update the Terraform CLI configuration file (`.terraformrc` on macOS/Linux, `terraform.rc` on Windows):
+4. Configure Terraform to use your local build by adding this to `~/.terraformrc`:
    ```hcl
    provider_installation {
      dev_overrides {
-       "registry.terraform.io/harness/harness" = "/path/to/terraform-provider-harness"
+       "registry.terraform.io/harness/harness" = "~/.terraform.d/plugins/registry.terraform.io/harness/harness/0.99.0-dev/<OS>_<ARCH>"
      }
      direct {}
    }
    ```
-**Note**: Ensure the terraform provider version in your configuration matches the version in the `local.sh` script.
+   Replace `<OS>_<ARCH>` with your platform (e.g., `darwin_arm64`, `linux_amd64`).
+
+5. To remove the local installation:
+   ```sh
+   make uninstall
+   ```
+
+## Development
+
+### Quick Start
+
+```sh
+make help        # Show all available commands
+make dev-setup   # Set up development environment
+make build       # Build the provider
+make test        # Run unit tests
+make install     # Install provider locally
+```
+
+### Available Make Commands
+
+Run `make help` to see all available commands. Here's a summary:
+
+#### Build Commands
+
+| Command | Description |
+|---------|-------------|
+| `make build` | Build the provider binary |
+| `make build-all` | Build for all supported platforms (darwin, linux, windows) |
+| `make install` | Build and install to local Terraform plugins directory |
+| `make uninstall` | Remove locally installed provider |
+| `make clean` | Clean build artifacts and Go caches |
+| `make clean-plugins` | Remove all local plugin versions for this provider |
+
+#### Testing Commands
+
+| Command | Description |
+|---------|-------------|
+| `make test` | Run unit tests |
+| `make testacc` | Run acceptance tests (requires `HARNESS_*` env vars) |
+| `make test-coverage` | Run tests with coverage report |
+| `make sweep` | Run sweepers to clean up test resources (use with caution) |
+
+#### Code Quality Commands
+
+| Command | Description |
+|---------|-------------|
+| `make fmt` | Format Go source code |
+| `make fmt-check` | Check if code is properly formatted |
+| `make vet` | Run go vet static analysis |
+| `make lint` | Run golangci-lint |
+| `make check` | Run all code quality checks |
+
+#### Documentation Commands
+
+| Command | Description |
+|---------|-------------|
+| `make docs` | Generate provider documentation |
+| `make docs-validate` | Validate provider documentation |
+| `make changelog` | Generate changelog from `.changelog` entries |
+
+#### Development Commands
+
+| Command | Description |
+|---------|-------------|
+| `make deps` | Download and tidy Go dependencies |
+| `make deps-upgrade` | Upgrade all dependencies |
+| `make tools` | Install development tools (tfplugindocs, changelog-build, golangci-lint) |
+| `make dev-setup` | Complete development environment setup |
+| `make version` | Show version information |
+
+### Running Tests
+
+#### Unit Tests
+
+```sh
+make test
+```
+
+#### Acceptance Tests
+
+Acceptance tests create real resources in your Harness account. Set the required environment variables first:
+
+```sh
+export HARNESS_ACCOUNT_ID="your-account-id"
+export HARNESS_API_KEY="your-api-key"
+export HARNESS_PLATFORM_API_KEY="your-platform-api-key"
+
+make testacc
+```
+
+#### Test Coverage
+
+```sh
+make test-coverage
+# Opens coverage.html in your browser
+```
+
+### Generating Documentation
+
+Provider documentation is auto-generated from schema descriptions:
+
+```sh
+make docs
+```
+
+Generated docs are placed in the `docs/` directory.
+
+### Generating Changelog
+
+Changelog entries are stored in the `.changelog/` directory. To generate a new changelog:
+
+```sh
+make changelog
+```
+
+To add a changelog entry, create a file in `.changelog/<PR_NUMBER>.txt`:
+
+```
+```release-note:enhancement
+resource/harness_platform_connector: Added support for new authentication method
+```
+```
+
+Supported types: `enhancement`, `bug`, `feature`, `new-resource`, `new-data-source`, `breaking-change`, `note`
+
+### Cleaning Up
+
+```sh
+# Clean build artifacts
+make clean
+
+# Remove all locally installed plugin versions
+make clean-plugins
+
+# Remove test resources (sweepers)
+make sweep
+```
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Run tests and linting (`make check && make test`)
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
 ## Support
 
