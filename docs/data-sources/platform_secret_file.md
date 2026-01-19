@@ -27,6 +27,7 @@ data "harness_platform_secret_file" "example" {
 
 ### Optional
 
+- `additional_metadata` (Block List) Additional Metadata for the Secret (see [below for nested schema](#nestedblock--additional_metadata))
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
@@ -34,7 +35,6 @@ data "harness_platform_secret_file" "example" {
 
 ### Read-Only
 
-- `additional_metadata` (Block List) Additional Metadata for the Secret (see [below for nested schema](#nestedblock--additional_metadata))
 - `description` (String) Description of the resource.
 - `file_path` (String) Path of the file containing secret value
 - `id` (String) The ID of this resource.
