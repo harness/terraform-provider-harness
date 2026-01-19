@@ -1,3 +1,12 @@
+# v0.39.5 (January 19, 2026)
+
+
+FEATURES:
+
+* **New Resource:** `harness_platform_idp_catalog_entity - added a new resource for IDP catalog entity
+  harness_platform_idp_environment_blueprint - added a new resource for IDP environment blueprint
+  harness_platform_idp_environment - added a new resource for IDP environment` ([#1332](https://github.com/harness/terraform-provider-harness/issues/1332))
+
 # v0.38.5 (August 22, 2025)
 Release Page : https://github.com/harness/terraform-provider-harness/releases/tag/v0.38.5
 
