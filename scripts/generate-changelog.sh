@@ -4,7 +4,11 @@
 # Requires: github.com/hashicorp/go-changelog/cmd/changelog-build
 #
 # Usage: ./scripts/generate-changelog.sh [version]
-#   version: Optional version string (e.g., "0.40.0"). If not provided, uses next minor version.
+#   version: Optional version string (e.g., "0.41.0"). If not provided, auto-increments from latest tag.
+#
+# Examples:
+#   ./scripts/generate-changelog.sh           # Auto-increment patch version
+#   ./scripts/generate-changelog.sh 0.41.0    # Specify exact version
 #
 
 set -o errexit
@@ -40,32 +44,40 @@ if [ ! -f "$CHANGELOG_BUILD_PATH" ]; then
     exit 1
 fi
 
-TARGET_SHA=$(git rev-parse HEAD)
-PREVIOUS_RELEASE_TAG=$(git describe --abbrev=0 --match='v*.*.*' --tags 2>/dev/null || git describe --abbrev=0 --match='*.*.*' --tags 2>/dev/null || echo "")
+# Fetch latest tags from remote
+info "Fetching latest tags from remote..."
+git fetch --tags --quiet 2>/dev/null || warn "Could not fetch tags from remote"
 
-if [ -z "$PREVIOUS_RELEASE_TAG" ]; then
-    error "No previous release tag found"
+TARGET_SHA=$(git rev-parse HEAD)
+
+# Get the latest tag by version (not by commit reachability)
+# Filter out invalid tags like 'vnull', 'vv0.36.2', etc.
+LATEST_TAG=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n 1)
+
+if [ -z "$LATEST_TAG" ]; then
+    error "No valid release tags found (expected format: v0.0.0)"
     exit 1
 fi
 
-PREVIOUS_RELEASE_SHA=$(git rev-list -n 1 "$PREVIOUS_RELEASE_TAG")
+LATEST_TAG_SHA=$(git rev-list -n 1 "$LATEST_TAG")
 
-info "Previous release: ${BOLD}$PREVIOUS_RELEASE_TAG${NC} ($PREVIOUS_RELEASE_SHA)"
+info "Latest release tag: ${BOLD}$LATEST_TAG${NC}"
 info "Current HEAD: $TARGET_SHA"
 
-if [ "$TARGET_SHA" == "$PREVIOUS_RELEASE_SHA" ]; then
-    warn "HEAD is at the previous release tag. Nothing to do."
+# Extract version without 'v' prefix
+LATEST_VERSION="${LATEST_TAG#v}"
+
+# Check if we're on the same commit as the latest tag
+if [ "$TARGET_SHA" == "$LATEST_TAG_SHA" ]; then
+    warn "HEAD is at the latest release tag ($LATEST_TAG). Nothing to do."
     exit 0
 fi
 
-# Extract version without 'v' prefix for searching
-VERSION_WITHOUT_V="${PREVIOUS_RELEASE_TAG#v}"
-
-# Try to find the previous changelog section - handle both with and without 'v' prefix
-PREVIOUS_CHANGELOG=$(sed -n -e "/^# v\{0,1\}${VERSION_WITHOUT_V}/,\$p" "$__parent/$CHANGELOG_FILE_NAME" 2>/dev/null || echo "")
+# Try to find the latest version in changelog - handle both with and without 'v' prefix
+PREVIOUS_CHANGELOG=$(sed -n -e "/^# v\{0,1\}${LATEST_VERSION}/,\$p" "$__parent/$CHANGELOG_FILE_NAME" 2>/dev/null || echo "")
 
 if [ -z "$PREVIOUS_CHANGELOG" ]; then
-    warn "Could not find version $VERSION_WITHOUT_V in changelog. Using entire file as base."
+    warn "Could not find version $LATEST_VERSION in changelog. Using entire file as base."
     PREVIOUS_CHANGELOG=$(cat "$__parent/$CHANGELOG_FILE_NAME")
 fi
 
@@ -77,7 +89,7 @@ trap "rm -f $ERROR_FILE" EXIT
 
 # Run changelog-build, capturing stdout and stderr separately
 CHANGELOG=$("$CHANGELOG_BUILD_PATH" -this-release "$TARGET_SHA" \
-                      -last-release "$PREVIOUS_RELEASE_SHA" \
+                      -last-release "$LATEST_TAG_SHA" \
                       -git-dir "$__parent" \
                       -entries-dir .changelog \
                       -changelog-template "$__dir/changelog.tmpl" \
@@ -114,9 +126,10 @@ fi
 if [ -n "${1:-}" ]; then
     NEW_VERSION="$1"
 else
-    # Auto-increment patch version
-    IFS='.' read -r major minor patch <<< "$VERSION_WITHOUT_V"
+    # Auto-increment patch version from latest tag
+    IFS='.' read -r major minor patch <<< "$LATEST_VERSION"
     NEW_VERSION="${major}.${minor}.$((patch + 1))"
+    info "Auto-incrementing from $LATEST_VERSION to $NEW_VERSION"
 fi
 
 NEW_DATE=$(date "+%B %d, %Y")

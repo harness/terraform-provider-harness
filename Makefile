@@ -262,15 +262,9 @@ check: fmt-check vet ## Run all code quality checks
 ##@ Documentation
 
 .PHONY: docs
-docs: ## Generate provider documentation
+docs: ## Generate provider documentation (preserves subcategories)
 	$(call log_header,Generating Documentation)
-	@if [ ! -f $(TFPLUGINDOCS) ]; then \
-		printf "$(COLOR_YELLOW)⚠$(COLOR_RESET) tfplugindocs not found, installing...\n"; \
-		$(GO) install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@latest; \
-	fi
-	$(call log_info,Generating Terraform provider docs...)
-	@$(TFPLUGINDOCS) generate
-	$(call log_success,Documentation generated in docs/)
+	@./scripts/generate-docs.sh
 
 .PHONY: docs-validate
 docs-validate: ## Validate provider documentation
