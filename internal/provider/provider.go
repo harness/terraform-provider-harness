@@ -49,6 +49,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	gitops_filters "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/iacm"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/ip_allowlist"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
@@ -502,6 +503,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                      pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                          workspace.ResourceWorkspace(),
 				"harness_platform_iacm_default_pipeline":              iacm.ResourceIacmDefaultPipeline(),
+				"harness_platform_ip_allowlist":                      ip_allowlist.ResourceIPAllowlist(),
 				"harness_platform_repo":                               repo.ResourceRepo(),
 				"harness_platform_repo_rule_branch":                   repo_rule_branch.ResourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                       repo_webhook.ResourceRepoWebhook(),
