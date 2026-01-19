@@ -13,7 +13,7 @@ import (
 
 func DataSourceWebhook() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness pipeline.",
+		Description: "Data source for retrieving a Harness GitX Webhook.",
 		ReadContext: dataSourceWebhookRead,
 		Schema: map[string]*schema.Schema{
 			"identifier": {
