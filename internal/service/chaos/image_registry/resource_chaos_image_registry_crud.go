@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -36,7 +37,7 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 			secretName := v.(string)
 			req.SecretName = &secretName
 		} else {
-			return diag.Errorf("failed to create image registry: secret_name is required when is_private is true")
+			return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to create image registry: secret_name is required when is_private is true"), d, "create_image_registry")
 		}
 	}
 
@@ -81,7 +82,7 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 		}
 		log.Printf("[ERROR] Chaos image registry creation failed: %s", err)
 		d.SetId("")
-		return diag.Errorf("failed to create image registry: %v", err)
+		return helpers.HandleChaosGraphQLError(err, d, "create_image_registry")
 	}
 
 	d.SetId(generateID(identifiers, req.RegistryAccount))
@@ -102,9 +103,9 @@ func resourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			log.Printf("[WARN] Chaos image registry not found: %s", err)
-			return diag.Errorf("failed to read image registry: %v", err)
+			return helpers.HandleChaosGraphQLReadError(err, d, "get_image_registry")
 		}
-		return diag.Errorf("failed to read image registry: %v", err)
+		return helpers.HandleChaosGraphQLReadError(err, d, "get_image_registry")
 	}
 
 	d.SetId(generateID(identifiers, registry.RegistryAccount))
@@ -208,7 +209,7 @@ func resourceChaosImageRegistryUpdate(ctx context.Context, d *schema.ResourceDat
 		},
 	)
 	if err != nil {
-		return diag.Errorf("failed to update image registry: %v", err)
+		return helpers.HandleChaosGraphQLError(err, d, "update_image_registry")
 	}
 
 	return resourceChaosImageRegistryRead(ctx, d, meta)

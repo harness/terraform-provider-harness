@@ -56,7 +56,7 @@ func resourceInfrastructureV2Create(ctx context.Context, d *schema.ResourceData,
 		},
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
 
 	// Set the ID
@@ -105,7 +105,7 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 			d.SetId("")
 			return nil
 		}
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
 
 	// Check if infra.Identifier is nil
@@ -284,7 +284,7 @@ func resourceInfrastructureV2Update(ctx context.Context, d *schema.ResourceData,
 		},
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
 
 	return resourceInfrastructureV2Read(ctx, d, meta)
@@ -313,7 +313,7 @@ func resourceInfrastructureV2Delete(ctx context.Context, d *schema.ResourceData,
 		projectID,
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
 
 	d.SetId("")

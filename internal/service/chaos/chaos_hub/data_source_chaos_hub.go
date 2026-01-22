@@ -2,9 +2,11 @@ package chaos_hub
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -119,7 +121,7 @@ func dataSourceChaosHubRead(ctx context.Context, d *schema.ResourceData, meta in
 	hubClient := chaos.NewChaosHubClient(c)
 	hubs, err := hubClient.List(ctx, identifiers)
 	if err != nil {
-		return diag.Errorf("failed to list chaos hubs: %v", err)
+		return helpers.HandleChaosGraphQLReadError(err, d, "list_chaos_hubs")
 	}
 
 	targetName := d.Get("name").(string)
@@ -133,7 +135,7 @@ func dataSourceChaosHubRead(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	if foundHub == nil {
-		return diag.Errorf("chaos hub with name '%s' not found", targetName)
+		return helpers.HandleChaosGraphQLReadError(fmt.Errorf("chaos hub with name '%s' not found", targetName), d, "get_chaos_hub")
 	}
 
 	// Convert model.IdentifiersRequest to ScopedIdentifiersRequest for generateID
