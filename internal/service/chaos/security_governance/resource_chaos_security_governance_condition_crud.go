@@ -10,6 +10,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -35,7 +36,7 @@ func resourceChaosSecurityGovernanceConditionCreate(ctx context.Context, d *sche
 	// Get the account ID from the provider config
 	accountID := c.AccountId
 	if accountID == "" {
-		return diag.Errorf("account ID must be configured in the provider")
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID must be configured in the provider"), d, "create_chaos_security_governance_condition")
 	}
 
 	// Get the identifiers from the resource data
@@ -80,19 +81,19 @@ func resourceChaosSecurityGovernanceConditionCreate(ctx context.Context, d *sche
 	// Get and validate fault spec - this is a required field
 	faultSpecs := d.Get("fault_spec").([]interface{})
 	if len(faultSpecs) == 0 {
-		return diag.Errorf("fault_spec is required")
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("fault_spec is required"), d, "create_chaos_security_governance_condition")
 	}
 
 	faultSpec := faultSpecs[0].(map[string]interface{})
 	faults := expandFaults(faultSpec["faults"].([]interface{}))
 	if len(faults) == 0 {
-		return diag.Errorf("at least one fault must be specified in fault_spec")
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("at least one fault must be specified in fault_spec"), d, "create_chaos_security_governance_condition")
 	}
 
 	// Get the operator from the input
 	operator, ok := faultSpec["operator"].(string)
 	if !ok || operator == "" {
-		return diag.Errorf("operator is required in fault_spec")
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("operator is required in fault_spec"), d, "create_chaos_security_governance_condition")
 	}
 
 	// Initialize FaultSpec with the operator and faults from the input
@@ -114,12 +115,12 @@ func resourceChaosSecurityGovernanceConditionCreate(ctx context.Context, d *sche
 	if k8sSpecs, ok := d.GetOk("k8s_spec"); ok && (req.InfraType == model.InfrastructureTypeKubernetes || req.InfraType == model.InfrastructureTypeKubernetesV2) {
 		k8sSpecList, ok := k8sSpecs.([]interface{})
 		if !ok || len(k8sSpecList) == 0 {
-			return diag.Errorf("k8s_spec is required for Kubernetes infrastructure type")
+			return helpers.HandleChaosGraphQLError(fmt.Errorf("k8s_spec is required for Kubernetes infrastructure type"), d, "create_chaos_security_governance_condition")
 		}
 
 		k8sSpec, ok := k8sSpecList[0].(map[string]interface{})
 		if !ok {
-			return diag.Errorf("invalid k8s_spec format")
+			return helpers.HandleChaosGraphQLError(fmt.Errorf("invalid k8s_spec format"), d, "create_chaos_security_governance_condition")
 		}
 
 		req.K8sSpec = expandK8sSpec(k8sSpec)
@@ -130,12 +131,12 @@ func resourceChaosSecurityGovernanceConditionCreate(ctx context.Context, d *sche
 		(req.InfraType == model.InfrastructureTypeLinux || req.InfraType == model.InfrastructureTypeWindows) {
 		machineSpecList, ok := machineSpecs.([]interface{})
 		if !ok || len(machineSpecList) == 0 {
-			return diag.Errorf("machine_spec is required for machine infrastructure type")
+			return helpers.HandleChaosGraphQLError(fmt.Errorf("machine_spec is required for machine infrastructure type"), d, "create_chaos_security_governance_condition")
 		}
 
 		machineSpec, ok := machineSpecList[0].(map[string]interface{})
 		if !ok {
-			return diag.Errorf("invalid machine_spec format")
+			return helpers.HandleChaosGraphQLError(fmt.Errorf("invalid machine_spec format"), d, "create_chaos_security_governance_condition")
 		}
 
 		req.MachineSpec = expandMachineSpec(machineSpec)
@@ -166,7 +167,7 @@ func resourceChaosSecurityGovernanceConditionCreate(ctx context.Context, d *sche
 	// Create the condition
 	_, err = client.Create(ctx, identifiersReq, req)
 	if err != nil {
-		return diag.Errorf("failed to create security governance condition: %v", err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to create security governance condition: %v", err), d, "create_chaos_security_governance_condition")
 	}
 
 	// Set the ID in the state
@@ -183,7 +184,7 @@ func resourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *schema
 	// Parse the ID to get the account, org, and project information
 	accountID := c.AccountId
 	if accountID == "" {
-		return diag.Errorf("account ID must be configured in the provider")
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID must be configured in the provider"), d, "read_chaos_security_governance_condition")
 	}
 
 	log.Printf("[DEBUG] Reading security governance condition with ID: %s", d.Id())
@@ -225,7 +226,7 @@ func resourceChaosSecurityGovernanceConditionRead(ctx context.Context, d *schema
 			return nil
 		}
 		log.Printf("[ERROR] Failed to get condition %s: %v", conditionID, err)
-		return diag.Errorf("failed to read security governance condition: %v", err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to read security governance condition: %v", err), d, "read_chaos_security_governance_condition")
 	}
 
 	// The Get response should be a ConditionResponse
@@ -353,7 +354,7 @@ func resourceChaosSecurityGovernanceConditionUpdate(ctx context.Context, d *sche
 	// Parse the ID to get the account, org, and project information
 	accountID := c.AccountId
 	if accountID == "" {
-		return diag.Errorf("account ID must be configured in the provider")
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID must be configured in the provider"), d, "update_chaos_security_governance_condition")
 	}
 
 	conditionID := d.Id()
@@ -377,9 +378,9 @@ func resourceChaosSecurityGovernanceConditionUpdate(ctx context.Context, d *sche
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			d.SetId("")
-			return diag.Errorf("security governance condition not found, removing from state: %v", err)
+			return helpers.HandleChaosGraphQLError(fmt.Errorf("security governance condition not found, removing from state: %v", err), d, "update_chaos_security_governance_condition")
 		}
-		return diag.Errorf("failed to get existing condition for update: %v", err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to get existing condition for update: %v", err), d, "update_chaos_security_governance_condition")
 	}
 
 	// Convert the existing condition to an update request
@@ -395,13 +396,13 @@ func resourceChaosSecurityGovernanceConditionUpdate(ctx context.Context, d *sche
 	if d.HasChange("fault_spec") {
 		faultSpecs := d.Get("fault_spec").([]interface{})
 		if len(faultSpecs) == 0 {
-			return diag.Errorf("fault_spec is required")
+			return helpers.HandleChaosGraphQLError(fmt.Errorf("fault_spec is required"), d, "update_chaos_security_governance_condition")
 		}
 
 		faultSpec := faultSpecs[0].(map[string]interface{})
 		faults := expandFaults(faultSpec["faults"].([]interface{}))
 		if len(faults) == 0 {
-			return diag.Errorf("at least one fault must be specified in fault_spec")
+			return helpers.HandleChaosGraphQLError(fmt.Errorf("at least one fault must be specified in fault_spec"), d, "update_chaos_security_governance_condition")
 		}
 
 		// Initialize FaultSpec with the operator and faults from the input
@@ -433,7 +434,7 @@ func resourceChaosSecurityGovernanceConditionUpdate(ctx context.Context, d *sche
 		}
 	} else {
 		// This should not happen as fault_spec is required
-		return diag.Errorf("fault_spec is required")
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("fault_spec is required"), d, "update_chaos_security_governance_condition")
 	}
 
 	// Convert K8sSpec if it exists
@@ -542,7 +543,7 @@ func resourceChaosSecurityGovernanceConditionUpdate(ctx context.Context, d *sche
 	// Update the condition
 	_, err = client.Update(ctx, identifiersReq, req)
 	if err != nil {
-		return diag.Errorf("failed to update security governance condition: %v", err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to update security governance condition: %v", err), d, "update_chaos_security_governance_condition")
 	}
 
 	return resourceChaosSecurityGovernanceConditionRead(ctx, d, meta)
@@ -559,7 +560,7 @@ func resourceChaosSecurityGovernanceConditionDelete(ctx context.Context, d *sche
 	if accountID == "" {
 		err := "account ID must be configured in the provider"
 		log.Printf("[ERROR] %s", err)
-		return diag.Errorf(err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("%s", err), d, "delete_chaos_security_governance_condition")
 	}
 	conditionID := d.Id()
 
@@ -593,7 +594,7 @@ func resourceChaosSecurityGovernanceConditionDelete(ctx context.Context, d *sche
 		}
 		errMsg := fmt.Sprintf("failed to delete security governance condition: %v", err)
 		log.Printf("[ERROR] %s", errMsg)
-		return diag.Errorf(errMsg)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("%s", errMsg), d, "delete_chaos_security_governance_condition")
 	}
 
 	log.Printf("[DEBUG] Successfully deleted condition with ID: %s", conditionID)

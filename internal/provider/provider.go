@@ -20,6 +20,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
 	chaos_hub "github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub_v2"
 	image_registry "github.com/harness/terraform-provider-harness/internal/service/chaos/image_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	chaos_infrastructure_v2 "github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure_v2"
@@ -344,6 +345,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_infrastructure_v2":                     chaos_infrastructure_v2.DataSourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                        image_registry.DataSourceChaosImageRegistry(),
 				"harness_chaos_hub":                                   chaos_hub.DataSourceChaosHub(),
+				"harness_chaos_hub_v2":                                chaos_hub_v2.DataSourceChaosHubV2(),
 				"harness_chaos_security_governance_condition":         chaos_security_governance.DataSourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":              chaos_security_governance.DataSourceChaosSecurityGovernanceRule(),
 				"harness_service_discovery_agent":                     service_discovery_agent.DataSourceServiceDiscoveryAgent(),
@@ -521,6 +523,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_image_registry":                        image_registry.ResourceChaosImageRegistry(),
 				"harness_chaos_hub":                                   chaos_hub.ResourceChaosHub(),
 				"harness_chaos_hub_sync":                              chaos_hub.ResourceChaosHubSync(),
+				"harness_chaos_hub_v2":                                chaos_hub_v2.ResourceChaosHubV2(),
 				"harness_chaos_security_governance_condition":         chaos_security_governance.ResourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":              chaos_security_governance.ResourceChaosSecurityGovernanceRule(),
 				"harness_service_discovery_agent":                     service_discovery_agent.ResourceServiceDiscoveryAgent(),

@@ -33,7 +33,7 @@ func expandFaults(faults []interface{}) []*model.Fault {
 		fault := f.(map[string]interface{})
 		faultType, _ := fault["fault_type"].(string)
 		faultName, _ := fault["name"].(string)
-		
+
 		// Convert to model.FaultType
 		var faultTypeModel model.FaultType
 		switch faultType {
@@ -43,9 +43,9 @@ func expandFaults(faults []interface{}) []*model.Fault {
 			// Default to FAULT if not specified or invalid
 			faultTypeModel = model.FaultTypeFault
 		}
-		
+
 		log.Printf("[DEBUG] Expanded fault %d: Type=%s, Name=%s", i, faultTypeModel, faultName)
-		
+
 		result[i] = &model.Fault{
 			FaultType: faultTypeModel,
 			Name:      faultName,
@@ -55,8 +55,6 @@ func expandFaults(faults []interface{}) []*model.Fault {
 	return result
 }
 
-
-
 // Helper function to expand K8s spec from Terraform schema
 func expandK8sSpec(spec map[string]interface{}) *model.K8sSpecInput {
 	k8sSpec := &model.K8sSpecInput{}
@@ -65,7 +63,7 @@ func expandK8sSpec(spec map[string]interface{}) *model.K8sSpecInput {
 	if infraSpecs, ok := spec["infra_spec"].([]interface{}); ok && len(infraSpecs) > 0 {
 		infraSpec := infraSpecs[0].(map[string]interface{})
 		infraIDs := interfaceSliceToStringSlice(infraSpec["infra_ids"].([]interface{}))
-		
+
 		k8sSpec.InfraSpec = &model.InfraSpecInput{
 			Operator: model.Operator(infraSpec["operator"].(string)),
 			InfraIds: infraIDs,
@@ -75,7 +73,7 @@ func expandK8sSpec(spec map[string]interface{}) *model.K8sSpecInput {
 	// Handle ApplicationSpec if provided (using snake_case for Terraform conventions)
 	if appSpecs, ok := spec["application_spec"].([]interface{}); ok && len(appSpecs) > 0 {
 		appSpec := appSpecs[0].(map[string]interface{})
-		
+
 		var workloads []*model.WorkloadInput
 		if workloadList, ok := appSpec["workloads"].([]interface{}); ok {
 			workloads = make([]*model.WorkloadInput, len(workloadList))
@@ -125,7 +123,7 @@ func expandK8sSpec(spec map[string]interface{}) *model.K8sSpecInput {
 	// Handle ChaosServiceAccountSpec if provided (using snake_case for Terraform conventions)
 	if svcAcctSpecs, ok := spec["chaos_service_account_spec"].([]interface{}); ok && len(svcAcctSpecs) > 0 {
 		svcAcctSpec := svcAcctSpecs[0].(map[string]interface{})
-		
+
 		k8sSpec.ChaosServiceAccountSpec = &model.ChaosServiceAccountSpecInput{
 			Operator:        model.Operator(svcAcctSpec["operator"].(string)),
 			ServiceAccounts: interfaceSliceToStringSlice(svcAcctSpec["service_accounts"].([]interface{})),
@@ -140,7 +138,7 @@ func expandMachineSpec(spec map[string]interface{}) *model.MachineSpecInput {
 	if infraSpecs, ok := spec["infra_spec"].([]interface{}); ok && len(infraSpecs) > 0 {
 		infraSpec := infraSpecs[0].(map[string]interface{})
 		infraIDs := interfaceSliceToStringSlice(infraSpec["infra_ids"].([]interface{}))
-		
+
 		return &model.MachineSpecInput{
 			InfraSpec: &model.InfraSpecInput{
 				Operator: model.Operator(infraSpec["operator"].(string)),

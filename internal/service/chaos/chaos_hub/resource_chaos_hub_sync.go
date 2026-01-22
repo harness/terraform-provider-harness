@@ -2,11 +2,13 @@ package chaos_hub
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -70,8 +72,8 @@ func resourceChaosHubSyncCreate(ctx context.Context, d *schema.ResourceData, met
 		// Account level hub ID
 		hubID = parts[0]
 	default:
-		return diag.Errorf("invalid hub ID format: expected org_id/project_id/hub_id or project_id/hub_id or hub_id got: %s",
-			hubID)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("invalid hub ID format: expected org_id/project_id/hub_id or project_id/hub_id or hub_id got: %s",
+			hubID), d, "sync_chaos_hub")
 	}
 
 	// Convert to model.IdentifiersRequest
@@ -87,7 +89,7 @@ func resourceChaosHubSyncCreate(ctx context.Context, d *schema.ResourceData, met
 	// Trigger the sync
 	syncID, err := hubClient.Sync(ctx, hubID, modelIdentifiers)
 	if err != nil {
-		return diag.Errorf("failed to sync chaos hub: %v", err)
+		return helpers.HandleChaosGraphQLError(err, d, "sync_chaos_hub")
 	}
 
 	d.SetId(hubID)
@@ -115,7 +117,7 @@ func resourceChaosHubSyncRead(ctx context.Context, d *schema.ResourceData, meta 
 	hubClient := chaos.NewChaosHubClient(c)
 	hub, err := hubClient.Get(ctx, modelIdentifiers, hubID)
 	if err != nil {
-		return diag.Errorf("failed to get chaos hub with ID %s: %v", hubID, err)
+		return helpers.HandleChaosGraphQLReadError(err, d, "get_chaos_hub")
 	}
 
 	// Update the status

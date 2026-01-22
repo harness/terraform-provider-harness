@@ -376,7 +376,7 @@ func resourceChaosSecurityGovernanceConditionImport(ctx context.Context, d *sche
 				errMsg = fmt.Sprintf("%s in the specified scope (org: %s, project: %s)",
 					errMsg, orgID, projectID)
 			}
-			return nil, fmt.Errorf(errMsg)
+			return nil, fmt.Errorf("%s", errMsg)
 		}
 		return nil, fmt.Errorf("failed to get security governance condition: %v", err)
 	}

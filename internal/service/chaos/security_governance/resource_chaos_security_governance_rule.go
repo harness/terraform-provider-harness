@@ -11,6 +11,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -355,7 +356,7 @@ func resourceChaosSecurityGovernanceRuleCreate(ctx context.Context, d *schema.Re
 
 	accountID := c.AccountId
 	if accountID == "" {
-		return diag.Errorf("account ID must be configured in the provider")
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID must be configured in the provider"), d, "create_chaos_security_governance_rule")
 	}
 
 	identifiers := getRuleIdentifiers(d, accountID)
@@ -372,12 +373,12 @@ func resourceChaosSecurityGovernanceRuleCreate(ctx context.Context, d *schema.Re
 
 	resp, err := client.Create(ctx, identifiers, *ruleInput)
 	if err != nil {
-		return diag.Errorf("failed to create security governance rule (account: %s, org: %s, project: %s): %v",
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to create security governance rule (account: %s, org: %s, project: %s): %v",
 			identifiers.AccountIdentifier,
 			identifiers.OrgIdentifier,
 			identifiers.ProjectIdentifier,
 			err,
-		)
+		), d, "create_chaos_security_governance_rule")
 	}
 
 	log.Printf("[DEBUG] Created rule with response: %+v", resp)
@@ -415,9 +416,7 @@ func resourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Reso
 	ruleID := d.Id()
 	accountID := c.AccountId
 	if accountID == "" {
-		err := "account ID must be configured in the provider"
-		log.Printf("[ERROR] %s", err)
-		return diag.Errorf(err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID must be configured in the provider"), d, "read_chaos_security_governance_rule")
 	}
 	identifiers := getRuleIdentifiers(d, accountID)
 
@@ -433,7 +432,7 @@ func resourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Reso
 			d.SetId("")
 			return nil
 		}
-		return diag.Errorf("failed to read security governance rule: %v", err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to read security governance rule: %v", err), d, "read_chaos_security_governance_rule")
 	}
 
 	if resp == nil || resp.Rule == nil {
@@ -444,7 +443,7 @@ func resourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Reso
 
 	// Set the attributes from the response
 	if err := setRuleAttributes(d, resp, c.AccountId); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set rule attributes: %w", err))
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to set rule attributes: %v", err), d, "read_chaos_security_governance_rule")
 	}
 
 	return nil
@@ -565,9 +564,7 @@ func resourceChaosSecurityGovernanceRuleUpdate(ctx context.Context, d *schema.Re
 	ruleID := d.Id()
 	accountID := c.AccountId
 	if accountID == "" {
-		err := "account ID must be configured in the provider"
-		log.Printf("[ERROR] %s", err)
-		return diag.Errorf(err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID must be configured in the provider"), d, "update_chaos_security_governance_rule")
 	}
 	identifiers := getRuleIdentifiers(d, accountID)
 
@@ -582,7 +579,7 @@ func resourceChaosSecurityGovernanceRuleUpdate(ctx context.Context, d *schema.Re
 
 	_, err = client.Update(ctx, identifiers, *ruleInput)
 	if err != nil {
-		return diag.Errorf("failed to update security governance rule: %v", err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to update security governance rule: %v", err), d, "update_chaos_security_governance_rule")
 	}
 
 	return resourceChaosSecurityGovernanceRuleRead(ctx, d, meta)
@@ -595,9 +592,7 @@ func resourceChaosSecurityGovernanceRuleDelete(ctx context.Context, d *schema.Re
 	ruleID := d.Id()
 	accountID := c.AccountId
 	if accountID == "" {
-		err := "account ID must be configured in the provider"
-		log.Printf("[ERROR] %s", err)
-		return diag.Errorf(err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID must be configured in the provider"), d, "delete_chaos_security_governance_rule")
 	}
 	identifiers := getRuleIdentifiers(d, accountID)
 
@@ -606,7 +601,7 @@ func resourceChaosSecurityGovernanceRuleDelete(ctx context.Context, d *schema.Re
 
 	_, err := client.Delete(ctx, identifiers, ruleID)
 	if err != nil {
-		return diag.Errorf("failed to delete security governance rule: %v", err)
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to delete security governance rule: %v", err), d, "delete_chaos_security_governance_rule")
 	}
 
 	d.SetId("")

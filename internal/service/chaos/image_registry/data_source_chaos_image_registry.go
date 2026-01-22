@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -143,7 +144,7 @@ func dataSourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceDat
 	if d.Get("check_override").(bool) {
 		response, err := c.ImageRegistryApi.CheckOverride(ctx, identifiers, infraID)
 		if err != nil {
-			return diag.Errorf("failed to check image registry override: %v", err)
+			return helpers.HandleChaosGraphQLError(err, d, "check_override_image_registry")
 		}
 
 		d.Set("override_blocked_by_scope", response.OverrideBlockedByScope)
@@ -157,7 +158,7 @@ func dataSourceChaosImageRegistryRead(ctx context.Context, d *schema.ResourceDat
 	// Otherwise, use the standard Get API
 	registry, err := c.ImageRegistryApi.Get(ctx, identifiers, infraID)
 	if err != nil {
-		return diag.Errorf("failed to read image registry: %v", err)
+		return helpers.HandleChaosGraphQLReadError(err, d, "get_image_registry")
 	}
 
 	return setImageRegistryData(d, registry, identifiers)
