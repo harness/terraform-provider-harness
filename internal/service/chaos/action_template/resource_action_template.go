@@ -1083,21 +1083,32 @@ func setRunPropertiesData(d *schema.ResourceData, props *chaos.ActionActionTempl
 
 	runPropsBlock := map[string]interface{}{}
 
+	// String fields - only set if non-empty
 	if props.InitialDelay != "" {
 		runPropsBlock["initial_delay"] = props.InitialDelay
 	}
 	if props.Interval != "" {
 		runPropsBlock["interval"] = props.Interval
 	}
-	if props.MaxRetries != nil {
-		runPropsBlock["max_retries"] = *props.MaxRetries
-	}
-	runPropsBlock["stop_on_failure"] = props.StopOnFailure
 	if props.Timeout != "" {
 		runPropsBlock["timeout"] = props.Timeout
 	}
 	if props.Verbosity != "" {
 		runPropsBlock["verbosity"] = props.Verbosity
+	}
+	
+	// Boolean field - only set if true (non-default)
+	// Following Terraform best practice: don't set default values to avoid drift
+	if props.StopOnFailure {
+		runPropsBlock["stop_on_failure"] = true
+	}
+	
+	// Integer field - only set if non-zero (non-default)
+	if props.MaxRetries != nil {
+		retriesVal := getIntFromInterface(props.MaxRetries)
+		if retriesVal > 0 {
+			runPropsBlock["max_retries"] = retriesVal
+		}
 	}
 
 	if len(runPropsBlock) > 0 {
@@ -1118,9 +1129,8 @@ func setVariablesData(d *schema.ResourceData, vars []chaos.TemplateVariable) err
 	varsList := make([]map[string]interface{}, len(vars))
 	for i, v := range vars {
 		varMap := map[string]interface{}{
-			"name":     v.Name,
-			"value":    v.Value,
-			"required": v.Required,
+			"name":  v.Name,
+			"value": v.Value,
 		}
 		if v.Description != "" {
 			varMap["description"] = v.Description
@@ -1128,6 +1138,11 @@ func setVariablesData(d *schema.ResourceData, vars []chaos.TemplateVariable) err
 		if v.Type_ != nil {
 			// Normalize type to lowercase to match Terraform schema
 			varMap["type"] = strings.ToLower(string(*v.Type_))
+		}
+		// Only set required if true (non-default)
+		// Following Terraform best practice: don't set default values to avoid drift
+		if v.Required {
+			varMap["required"] = true
 		}
 		varsList[i] = varMap
 	}
@@ -1137,4 +1152,27 @@ func setVariablesData(d *schema.ResourceData, vars []chaos.TemplateVariable) err
 		}
 
 	return nil
+}
+
+// getIntFromInterface safely extracts int value from interface{} pointer
+// Returns 0 if nil or cannot convert
+func getIntFromInterface(val *interface{}) int {
+	if val == nil {
+		return 0
+	}
+	
+	switch v := (*val).(type) {
+	case int:
+		return v
+	case int32:
+		return int(v)
+	case int64:
+		return int(v)
+	case float64:
+		return int(v)
+	case float32:
+		return int(v)
+	default:
+		return 0
+	}
 }
