@@ -35,6 +35,65 @@ func DataSourceCatalogEntity() *schema.Resource {
 				Type:        schema.TypeString,
 				Description: "YAML definition of the catalog entity",
 			},
+			"git_details": {
+				Description: "Contains Git Information for importing entities from Git",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"branch_name": {
+							Description: "Name of the branch.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"file_path": {
+							Description: "File path of the Entity in the repository.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"commit_message": {
+							Description: "Commit message used for the merge commit.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"base_branch": {
+							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"connector_ref": {
+							Description: "Identifier of the Harness Connector used for importing entity from Git" + helpers.Descriptions.ConnectorRefText.String(),
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"store_type": {
+							Description: "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"repo_name": {
+							Description: "Name of the repository.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"last_object_id": {
+							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"last_commit_id": {
+							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"is_harness_code_repo": {
+							Description: "If the repo is a Harness Code repo",
+							Type:        schema.TypeBool,
+							Computed:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
