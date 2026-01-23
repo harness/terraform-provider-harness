@@ -135,13 +135,13 @@ func DataSourceChaosSecurityGovernanceRule() *schema.Resource {
 func dataSourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session)
 	if c == nil {
-		return helpers.HandleChaosGraphQLError(fmt.Errorf("provider configuration is nil"), d, "read_chaos_security_governance_rule")
+		return diag.Errorf("provider configuration is nil")
 	}
 	securityGovernanceRuleClient := c.ChaosClient.SecurityGovernanceRuleApi
 
 	accountID := c.AccountId
 	if accountID == "" {
-		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID is required"), d, "read_chaos_security_governance_rule")
+		return diag.Errorf("account ID is required")
 	}
 
 	orgID := d.Get("org_id").(string)
@@ -224,7 +224,7 @@ func dataSourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Re
 			}
 		}
 	} else {
-		return helpers.HandleChaosGraphQLError(fmt.Errorf("either 'id' or 'name' must be specified"), d, "read_chaos_security_governance_rule")
+		return diag.Errorf("either 'id' or 'name' must be specified")
 	}
 
 	// Set the ID
