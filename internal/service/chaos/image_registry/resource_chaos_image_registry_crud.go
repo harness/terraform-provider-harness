@@ -37,7 +37,7 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 			secretName := v.(string)
 			req.SecretName = &secretName
 		} else {
-			return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to create image registry: secret_name is required when is_private is true"), d, "create_image_registry")
+			return diag.Errorf("failed to create image registry: secret_name is required when is_private is true")
 		}
 	}
 

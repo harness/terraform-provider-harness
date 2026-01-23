@@ -443,7 +443,7 @@ func resourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Reso
 
 	// Set the attributes from the response
 	if err := setRuleAttributes(d, resp, c.AccountId); err != nil {
-		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to set rule attributes: %v", err), d, "read_chaos_security_governance_rule")
+		return diag.Errorf("failed to set rule attributes: %v", err)
 	}
 
 	return nil
@@ -564,7 +564,7 @@ func resourceChaosSecurityGovernanceRuleUpdate(ctx context.Context, d *schema.Re
 	ruleID := d.Id()
 	accountID := c.AccountId
 	if accountID == "" {
-		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID must be configured in the provider"), d, "update_chaos_security_governance_rule")
+		return diag.Errorf("account ID must be configured in the provider")
 	}
 	identifiers := getRuleIdentifiers(d, accountID)
 
@@ -592,7 +592,7 @@ func resourceChaosSecurityGovernanceRuleDelete(ctx context.Context, d *schema.Re
 	ruleID := d.Id()
 	accountID := c.AccountId
 	if accountID == "" {
-		return helpers.HandleChaosGraphQLError(fmt.Errorf("account ID must be configured in the provider"), d, "delete_chaos_security_governance_rule")
+		return diag.Errorf("account ID must be configured in the provider")
 	}
 	identifiers := getRuleIdentifiers(d, accountID)
 
