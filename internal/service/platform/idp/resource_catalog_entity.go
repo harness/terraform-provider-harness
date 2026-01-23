@@ -37,8 +37,8 @@ func ResourceCatalogEntity() *schema.Resource {
 			"kind": {
 				Type:        schema.TypeString,
 				Description: "Kind of the catalog entity",
-				Required:    true,
-				ForceNew:    true,
+				Optional:    true,
+				Computed:    true,
 				ValidateFunc: validation.StringInSlice([]string{
 					"component", "group", "user", "workflow", "resource", "system",
 				}, false),
@@ -48,8 +48,87 @@ func ResourceCatalogEntity() *schema.Resource {
 			"yaml": {
 				Type:             schema.TypeString,
 				Description:      "YAML definition of the catalog entity",
-				Required:         true,
+				Optional:         true,
+				Computed:         true,
 				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
+			},
+			"import_from_git": {
+				Description: "Flag to set if importing from Git",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
+			"git_details": {
+				Description: "Contains Git Information for importing entities from Git",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"branch_name": {
+							Description: "Name of the branch.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"file_path": {
+							Description: "File path of the Entity in the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"commit_message": {
+							Description: "Commit message used for the merge commit.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"base_branch": {
+							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"connector_ref": {
+							Description: "Identifier of the Harness Connector used for importing entity from Git" + helpers.Descriptions.ConnectorRefText.String(),
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"store_type": {
+							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
+							Computed:     true,
+						},
+						"repo_name": {
+							Description: "Name of the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"last_object_id": {
+							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"last_commit_id": {
+							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"is_harness_code_repo": {
+							Description: "If the repo is a Harness Code repo",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -94,31 +173,94 @@ func resourceCatalogEntityUpdateOrCreate(ctx context.Context, d *schema.Resource
 	var httpResp *http.Response
 
 	id := d.Id()
-	entityInfo, err := getAndVerifyCatalogEntityInfo(d)
-	if err != nil {
-		return diag.Errorf("failed to parse yaml: %v", err)
-	}
-
-	yaml := d.Get("yaml").(string)
-
 	if id == "" {
-		resp, httpResp, err = c.EntitiesApi.CreateEntity(ctx, idp.EntityCreateRequest{
-			Yaml: yaml,
-		},
-			&idp.EntitiesApiCreateEntityOpts{
-				OrgIdentifier:     entityInfo.OrgId,
-				ProjectIdentifier: entityInfo.ProjectId,
+		if d.Get("import_from_git").(bool) {
+			importInfo := idp.GitImportDetails{}
+			if attr, ok := d.GetOk("git_details"); ok {
+				config := attr.([]interface{})[0].(map[string]interface{})
+				if attr, ok := config["branch_name"]; ok {
+					importInfo.BranchName = attr.(string)
+				}
+				if attr, ok := config["file_path"]; ok {
+					importInfo.FilePath = attr.(string)
+				}
+				if attr, ok := config["connector_ref"]; ok {
+					importInfo.ConnectorRef = attr.(string)
+				}
+				if attr, ok := config["repo_name"]; ok {
+					importInfo.RepoName = attr.(string)
+				}
+				if attr, ok := config["is_harness_code_repo"]; ok {
+					importInfo.IsHarnessCodeRepo = attr.(bool)
+				}
+			}
+
+			orgId := optional.EmptyString()
+			projectId := optional.EmptyString()
+
+			v, ok := d.GetOk("org_id")
+			if ok {
+				orgId = optional.NewString(v.(string))
+			}
+
+			v, ok = d.GetOk("project_id")
+			if ok {
+				projectId = optional.NewString(v.(string))
+			}
+
+			resp, httpResp, err = c.EntitiesApi.ImportEntity(ctx, importInfo, &idp.EntitiesApiImportEntityOpts{
 				HarnessAccount:    optional.NewString(c.AccountId),
+				OrgIdentifier:     orgId,
+				ProjectIdentifier: projectId,
 			})
+		} else {
+			entityInfo, err := getAndVerifyCatalogEntityInfo(d)
+			if err != nil {
+				return diag.Errorf("failed to get and verify catalog entity info: %v", err)
+			}
+			gitDetails := buildGitCreateDetails(d)
+			yaml := d.Get("yaml").(string)
+
+			resp, httpResp, err = c.EntitiesApi.CreateEntity(ctx, idp.EntityCreateRequest{
+				Yaml:       yaml,
+				GitDetails: gitDetails,
+			},
+				&idp.EntitiesApiCreateEntityOpts{
+					OrgIdentifier:     entityInfo.OrgId,
+					ProjectIdentifier: entityInfo.ProjectId,
+					HarnessAccount:    optional.NewString(c.AccountId),
+				})
+		}
 	} else {
+		gitDetails := buildGitUpdateDetails(d)
+
+		connectorRefChanged := d.HasChange("git_details.0.connector_ref")
+		filePathChanged := d.HasChange("git_details.0.file_path")
+		repoNameChanged := d.HasChange("git_details.0.repo_name")
+		shouldUpdateGitDetails := connectorRefChanged || filePathChanged || repoNameChanged
+
+		yaml := d.Get("yaml").(string)
+		entityInfo, err := getAndVerifyCatalogEntityInfo(d)
+		if err != nil {
+			return diag.Errorf("failed to get and verify catalog entity info: %v", err)
+		}
+
 		resp, httpResp, err = c.EntitiesApi.UpdateEntity(ctx, idp.EntityUpdateRequest{
-			Yaml: yaml,
+			Yaml:       yaml,
+			GitDetails: gitDetails,
 		},
 			entityInfo.Scope, entityInfo.Kind, id, &idp.EntitiesApiUpdateEntityOpts{
 				OrgIdentifier:     entityInfo.OrgId,
 				ProjectIdentifier: entityInfo.ProjectId,
 				HarnessAccount:    optional.NewString(c.AccountId),
 			})
+
+		if shouldUpdateGitDetails {
+			diags := resourceCatalogEntityUpdateGitMetadata(ctx, c, d, entityInfo)
+			if diags.HasError() {
+				return diags
+			}
+		}
 	}
 
 	if err != nil {
@@ -126,6 +268,23 @@ func resourceCatalogEntityUpdateOrCreate(ctx context.Context, d *schema.Resource
 	}
 
 	readCatalogEntity(d, resp)
+
+	return nil
+}
+
+func resourceCatalogEntityUpdateGitMetadata(ctx context.Context, c *idp.APIClient, d *schema.ResourceData, info catalogEntityInfo) diag.Diagnostics {
+	httpResp, err := c.EntitiesApi.UpdateGitMetadata(ctx, idp.GitMetadataUpdateRequest{
+		ConnectorRef: d.Get("git_details.0.connector_ref").(string),
+		RepoName:     d.Get("git_details.0.repo_name").(string),
+		FilePath:     d.Get("git_details.0.file_path").(string),
+	}, info.Scope, info.Kind, info.Identifier, &idp.EntitiesApiUpdateGitMetadataOpts{
+		HarnessAccount:    optional.NewString(c.AccountId),
+		OrgIdentifier:     info.OrgId,
+		ProjectIdentifier: info.ProjectId,
+	})
+	if err != nil {
+		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
+	}
 
 	return nil
 }
@@ -172,6 +331,41 @@ func readCatalogEntity(d *schema.ResourceData, entity idp.EntityResponse) {
 	} else {
 		d.Set("yaml", entity.Yaml)
 	}
+	if entity.GitDetails != nil {
+		storeType := helpers.BuildField(d, "git_details.0.store_type")
+		baseBranch := helpers.BuildField(d, "git_details.0.base_branch")
+		commitMessage := helpers.BuildField(d, "git_details.0.commit_message")
+		connectorRef := helpers.BuildField(d, "git_details.0.connector_ref")
+
+		d.Set("git_details", []any{readGitDetails(entity, storeType, baseBranch, commitMessage, connectorRef)})
+	}
+}
+
+func readGitDetails(entity idp.EntityResponse, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
+	git_details := map[string]interface{}{
+		"branch_name":    entity.GitDetails.BranchName,
+		"file_path":      entity.GitDetails.FilePath,
+		"repo_name":      entity.GitDetails.RepoName,
+		"last_commit_id": entity.GitDetails.CommitId,
+		"last_object_id": entity.GitDetails.ObjectId,
+	}
+	if store_type.IsSet() {
+		git_details["store_type"] = store_type.Value()
+	}
+	if base_branch.IsSet() {
+		git_details["base_branch"] = base_branch.Value()
+	}
+	if commit_message.IsSet() {
+		git_details["commit_message"] = commit_message.Value()
+	}
+	if connector_ref.IsSet() {
+		git_details["connector_ref"] = connector_ref.Value()
+	}
+	if connector_ref.Value() == "" {
+		git_details["is_harness_code_repo"] = true
+	}
+
+	return git_details
 }
 
 func getAndVerifyCatalogEntityInfo(d *schema.ResourceData) (catalogEntityInfo, error) {
@@ -237,6 +431,83 @@ func getAndVerifyCatalogEntityInfo(d *schema.ResourceData) (catalogEntityInfo, e
 	return catalogInfo, nil
 }
 
+func buildGitCreateDetails(d *schema.ResourceData) *idp.GitCreateDetails {
+	if _, ok := d.GetOk("git_details"); !ok {
+		return nil
+	}
+
+	config := d.Get("git_details").([]interface{})[0].(map[string]interface{})
+	details := &idp.GitCreateDetails{}
+	if attr, ok := config["branch_name"]; ok {
+		details.BranchName = attr.(string)
+	}
+	if attr, ok := config["file_path"]; ok {
+		details.FilePath = attr.(string)
+	}
+	if attr, ok := config["commit_message"]; ok {
+		details.CommitMessage = attr.(string)
+	}
+	if attr, ok := config["base_branch"]; ok {
+		details.BaseBranch = attr.(string)
+	}
+	if attr, ok := config["connector_ref"]; ok {
+		details.ConnectorRef = attr.(string)
+	}
+	if attr, ok := config["store_type"]; ok {
+		details.StoreType = attr.(string)
+	}
+	if attr, ok := config["repo_name"]; ok {
+		details.RepoName = attr.(string)
+	}
+	if attr, ok := config["is_harness_code_repo"]; ok {
+		details.IsHarnessCodeRepo = attr.(bool)
+	}
+
+	return details
+}
+
+func buildGitUpdateDetails(d *schema.ResourceData) *idp.GitUpdateDetails {
+	if _, ok := d.GetOk("git_details"); !ok {
+		return nil
+	}
+
+	config := d.Get("git_details").([]interface{})[0].(map[string]interface{})
+	details := &idp.GitUpdateDetails{}
+
+	if attr, ok := config["branch_name"]; ok {
+		details.BranchName = attr.(string)
+	}
+	if attr, ok := config["commit_message"]; ok {
+		details.CommitMessage = attr.(string)
+	}
+	if attr, ok := config["base_branch"]; ok {
+		details.BaseBranch = attr.(string)
+	}
+	if attr, ok := config["last_object_id"]; ok {
+		details.LastObjectId = attr.(string)
+	}
+	if attr, ok := config["last_commit_id"]; ok {
+		details.LastCommitId = attr.(string)
+	}
+	if attr, ok := config["is_harness_code_repo"]; ok {
+		details.IsHarnessCodeRepo = attr.(bool)
+	}
+	if attr, ok := config["store_type"]; ok {
+		details.StoreType = attr.(string)
+	}
+	if attr, ok := config["connector_ref"]; ok {
+		details.ConnectorRef = attr.(string)
+	}
+	if attr, ok := config["repo_name"]; ok {
+		details.RepoName = attr.(string)
+	}
+	if attr, ok := config["file_path"]; ok {
+		details.FilePath = attr.(string)
+	}
+
+	return details
+}
+
 var entityImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		// Expected format: <scope>/<kind>/<identifier>
@@ -266,10 +537,10 @@ var entityImporter = &schema.ResourceImporter{
 		var orgId, projectId optional.String
 		scopeParts := strings.Split(scope, ".")
 		if len(scopeParts) > 1 {
-			orgId = optional.NewString(scopeParts[0])
+			orgId = optional.NewString(scopeParts[1])
 		}
 		if len(scopeParts) > 2 {
-			projectId = optional.NewString(scopeParts[1])
+			projectId = optional.NewString(scopeParts[2])
 		}
 
 		c, ctx := meta.(*internal.Session).GetIDPClientWithContext(context.Background())
