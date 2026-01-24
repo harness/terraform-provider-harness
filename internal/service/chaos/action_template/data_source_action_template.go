@@ -39,6 +39,13 @@ func dataSourceActionTemplateSchema() map[string]*schema.Schema {
 	dsSchema["hub_identity"].Required = true
 	dsSchema["hub_identity"].Optional = false
 
+	// Make type optional and computed (it's read from the API)
+	if typeSchema, ok := dsSchema["type"]; ok {
+		typeSchema.Required = false
+		typeSchema.Optional = true
+		typeSchema.Computed = true
+	}
+
 	return dsSchema
 }
 

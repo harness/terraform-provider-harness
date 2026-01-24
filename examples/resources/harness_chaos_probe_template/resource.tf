@@ -1,174 +1,192 @@
-# Example 1: HTTP Probe Template
-resource "harness_chaos_probe_template" "http_example" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
+# ============================================================================
+# Harness Chaos Probe Template Resource Examples
+# ============================================================================
+#
+# Probe templates define health checks for chaos experiments.
+# These examples are based on TESTED configurations from the e2e-test suite.
+#
+# Key Points:
+# - Probe types: httpProbe, cmdProbe, k8sProbe, promProbe
+# - Runtime inputs supported: "<+input>.default('value')"
+# - Run properties control probe behavior (timeout, interval, etc.)
+# ============================================================================
 
-  identity    = "http-health-check"
-  name        = "HTTP Health Check Probe"
-  description = "Checks application health via HTTP endpoint"
-  type        = "httpProbe"
+# ----------------------------------------------------------------------------
+# Example 1: K8s Probe (TESTED ✅)
+# ----------------------------------------------------------------------------
+# Most common pattern: Kubernetes resource probe
 
-  http_probe {
-    url = "https://api.example.com/health"
-    
-    method {
-      get {
-        criteria      = "=="
-        response_code = "200"
-      }
-    }
-  }
+resource "harness_chaos_probe_template" "k8s_probe" {
+  depends_on = [harness_chaos_hub_v2.project_level]
 
-  run_properties {
-    timeout          = "30s"
-    interval         = "5s"
-    polling_interval = "2s"
-    stop_on_failure  = false
-  }
+  # Project level
+  org_id       = harness_platform_organization.this.id
+  project_id   = harness_platform_project.this.id
+  hub_identity = harness_chaos_hub_v2.project_level.identity
 
-  tags = ["http", "health-check", "api"]
-}
+  identity            = "k8s-probe-template"
+  name                = "K8s Probe Template"
+  description         = "Kubernetes resource probe for deployment health"
+  type                = "k8sProbe"
+  infrastructure_type = "KubernetesV2"
+  tags                = ["kubernetes", "probe", "health-check"]
 
-# Example 2: Command Probe Template
-resource "harness_chaos_probe_template" "cmd_example" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "disk-usage-check"
-  name        = "Disk Usage Check Probe"
-  description = "Checks disk usage on target system"
-  type        = "cmdProbe"
-
-  cmd_probe {
-    command = "df -h | grep '/data' | awk '{print $5}' | sed 's/%//'"
-    
-    source {
-      inline {
-        command = "df -h | grep '/data' | awk '{print $5}' | sed 's/%//'"
-      }
-    }
-
-    comparator {
-      type     = "int"
-      criteria = "<"
-      value    = "80"
-    }
-  }
-
-  run_properties {
-    timeout  = "10s"
-    interval = "5s"
-  }
-
-  tags = ["command", "disk", "monitoring"]
-}
-
-# Example 3: Kubernetes Probe Template
-resource "harness_chaos_probe_template" "k8s_example" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "pod-ready-check"
-  name        = "Pod Ready Check Probe"
-  description = "Verifies pods are in ready state"
-  type        = "k8sProbe"
-
+  # K8s probe configuration
   k8s_probe {
-    version   = "v1"
-    resource  = "pods"
-    namespace = "production"
+    resource  = "deployments"
+    namespace = "<+input>.default('default')"
     operation = "present"
-    
-    field_selector = "status.phase=Running"
-    label_selector = "app=frontend"
+    version   = "v1"
   }
 
+  # Run properties
   run_properties {
-    timeout  = "30s"
-    interval = "10s"
+    timeout         = "15s"
+    interval        = "5s"
+    stop_on_failure = false
+    verbosity       = "INFO"
   }
 
-  tags = ["kubernetes", "pod", "health"]
-}
-
-# Example 4: APM Probe Template - Prometheus
-resource "harness_chaos_probe_template" "prometheus_example" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "cpu-usage-monitor"
-  name        = "CPU Usage Monitor"
-  description = "Monitors CPU usage via Prometheus"
-  type        = "apmProbe"
-
-  apm_probe {
-    apm_type = "Prometheus"
-
-    comparator {
-      type     = "float"
-      criteria = "<="
-      value    = "80.0"
-    }
-
-    prometheus_inputs {
-      connector_id = "prometheus-connector"
-      query        = "avg(rate(container_cpu_usage_seconds_total[5m])) * 100"
-    }
-  }
-
-  run_properties {
-    timeout          = "1m"
-    interval         = "15s"
-    polling_interval = "5s"
-  }
-
-  tags = ["prometheus", "apm", "cpu"]
-}
-
-# Example 5: Probe Template with Variables
-resource "harness_chaos_probe_template" "with_variables" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "configurable-http-probe"
-  name        = "Configurable HTTP Probe"
-  description = "HTTP probe with runtime configurable endpoint"
-  type        = "httpProbe"
-
+  # Variables
   variables {
-    name        = "TARGET_URL"
-    description = "Target URL to probe"
-    type        = "string"
+    name        = "target_namespace"
     value       = "<+input>"
-  }
-
-  variables {
-    name        = "EXPECTED_CODE"
-    description = "Expected HTTP response code"
     type        = "string"
-    value       = "<+input>.default('200')"
+    required    = false
+    description = "Kubernetes namespace to probe"
   }
+}
 
+# ----------------------------------------------------------------------------
+# Example 2: HTTP Probe (TESTED ✅)
+# ----------------------------------------------------------------------------
+# HTTP endpoint health check probe
+
+resource "harness_chaos_probe_template" "http_probe" {
+  depends_on = [harness_chaos_hub_v2.project_level]
+
+  org_id       = harness_platform_organization.this.id
+  project_id   = harness_platform_project.this.id
+  hub_identity = harness_chaos_hub_v2.project_level.identity
+
+  identity            = "http-probe-template"
+  name                = "HTTP Probe Template"
+  description         = "HTTP endpoint health check"
+  type                = "httpProbe"
+  infrastructure_type = "KubernetesV2"
+  tags                = ["http", "probe", "endpoint"]
+
+  # HTTP probe configuration
   http_probe {
-    url = "<+variables.TARGET_URL>"
+    url    = "<+input>.default('http://localhost:8080/health')"
+    method = "GET"
     
-    method {
-      get {
-        criteria      = "=="
-        response_code = "<+variables.EXPECTED_CODE>"
-      }
+    headers {
+      key   = "Content-Type"
+      value = "application/json"
+    }
+    
+    headers {
+      key   = "Authorization"
+      value = "<+input>"
     }
   }
 
+  # Run properties
   run_properties {
-    timeout  = "30s"
-    interval = "5s"
+    timeout         = "30s"
+    interval        = "10s"
+    polling_interval = "2s"
+    stop_on_failure = true
+    verbosity       = "INFO"
   }
 
-  tags = ["http", "configurable", "runtime-input"]
+  # Variables
+  variables {
+    name        = "endpoint_url"
+    value       = "<+input>"
+    type        = "string"
+    required    = true
+    description = "HTTP endpoint URL to probe"
+  }
 }
+
+# ----------------------------------------------------------------------------
+# Example 3: CMD Probe (TESTED ✅)
+# ----------------------------------------------------------------------------
+# Command execution probe
+
+resource "harness_chaos_probe_template" "cmd_probe" {
+  depends_on = [harness_chaos_hub_v2.project_level]
+
+  org_id       = harness_platform_organization.this.id
+  project_id   = harness_platform_project.this.id
+  hub_identity = harness_chaos_hub_v2.project_level.identity
+
+  identity            = "cmd-probe-template"
+  name                = "CMD Probe Template"
+  description         = "Command execution probe for custom checks"
+  type                = "cmdProbe"
+  infrastructure_type = "KubernetesV2"
+  tags                = ["cmd", "probe", "custom"]
+
+  # CMD probe configuration
+  cmd_probe {
+    command = "kubectl get pods -n <+input> | grep Running"
+    source  = "inline"
+  }
+
+  # Run properties
+  run_properties {
+    timeout         = "20s"
+    interval        = "5s"
+    stop_on_failure = false
+    verbosity       = "DEBUG"
+  }
+
+  # Variables
+  variables {
+    name        = "check_namespace"
+    value       = "<+input>.default('default')"
+    type        = "string"
+    required    = false
+    description = "Namespace to check for running pods"
+  }
+}
+
+# ----------------------------------------------------------------------------
+# Key Fields Reference
+# ----------------------------------------------------------------------------
+# Required:
+#   - org_id, project_id (scope)
+#   - hub_identity (hub where template is stored)
+#   - identity (template identifier)
+#   - name (template display name)
+#   - type ("httpProbe", "cmdProbe", "k8sProbe", "promProbe")
+#   - infrastructure_type (e.g., "Kubernetes", "KubernetesV2")
+#   - One of: http_probe, cmd_probe, k8s_probe, prom_probe
+#
+# Optional:
+#   - description
+#   - tags
+#   - run_properties (timeout, interval, polling_interval, stop_on_failure, verbosity)
+#   - variables (name, value, type, required, description)
+#
+# Run Properties:
+#   - timeout: Maximum time for probe execution
+#   - interval: Time between probe executions
+#   - polling_interval: Time between status checks
+#   - stop_on_failure: Stop experiment if probe fails
+#   - verbosity: Log level (INFO, DEBUG, ERROR)
+#
+# Runtime Inputs:
+#   - Use "<+input>" for required runtime input
+#   - Use "<+input>.default('value')" for optional with default
+#
+# Computed (read-only):
+#   - probe_id, created_at, updated_at
+#
+# Import Format: org_id/project_id/hub_identity/identity
+# Example: terraform import harness_chaos_probe_template.example \
+#          my_org/my_project/my-hub/my-probe
+# ----------------------------------------------------------------------------

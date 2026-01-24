@@ -241,6 +241,60 @@ func HandleChaosReadApiError(err error, d *schema.ResourceData, httpResp *http.R
 	return handleChaosApiError(err, d, httpResp, true)
 }
 
+// HandleChaosReadApiErrorWithGracefulDestroy handles read errors from Chaos Engineering SDK
+// For 404 errors and certain 500 errors (resource not found/inconsistent state) during read,
+// it clears the resource from state. This is useful during destroy operations when
+// dependent resources may have already been deleted.
+//
+// gracefulErrorPatterns: list of error message patterns that should be treated as "not found"
+// Example: []string{"no matching infra", "at least one hub is required"}
+func HandleChaosReadApiErrorWithGracefulDestroy(err error, d *schema.ResourceData, httpResp *http.Response, gracefulErrorPatterns []string) diag.Diagnostics {
+	chaosErr, ok := err.(chaos.GenericSwaggerError)
+	if !ok {
+		return diag.Errorf(err.Error())
+	}
+	
+	// Handle 404 - resource not found
+	if httpResp != nil && httpResp.StatusCode == 404 {
+		log.Printf("[DEBUG] Resource not found (404), removing from state")
+		d.SetId("")
+		return nil
+	}
+	
+	// Handle 500 errors that indicate resource is gone or in inconsistent state
+	if httpResp != nil && httpResp.StatusCode == 500 && len(gracefulErrorPatterns) > 0 {
+		errMsg := ""
+		
+		// Try to extract error message from model
+		if chaosErr.Model() != nil {
+			if apiErr, ok := chaosErr.Model().(chaos.ApiRestError); ok {
+				if apiErr.Description != "" {
+					errMsg = apiErr.Description
+				} else if apiErr.Message != "" {
+					errMsg = apiErr.Message
+				}
+			}
+		}
+		
+		// Fallback to error string
+		if errMsg == "" {
+			errMsg = fmt.Sprintf("%v", err)
+		}
+		
+		// Check if error matches any graceful patterns
+		for _, pattern := range gracefulErrorPatterns {
+			if strings.Contains(strings.ToLower(errMsg), strings.ToLower(pattern)) {
+				log.Printf("[WARN] Resource not found or in inconsistent state during read (matched pattern: %s): %v", pattern, err)
+				d.SetId("")
+				return nil
+			}
+		}
+	}
+	
+	// Not a graceful error, handle normally
+	return handleChaosApiError(err, d, httpResp, true)
+}
+
 // handleChaosApiError is the internal implementation for chaos error handling
 // It extracts detailed error messages from the error body or model
 func handleChaosApiError(err error, d *schema.ResourceData, httpResp *http.Response, read bool) diag.Diagnostics {

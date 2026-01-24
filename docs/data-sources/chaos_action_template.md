@@ -31,7 +31,6 @@ output "template_id" {
 ### Required
 
 - `hub_identity` (String) Identity of the chaos hub this action template belongs to.
-- `type` (String) Type of the action template. Valid values: delay, customScript, container.
 
 ### Optional
 
@@ -46,6 +45,7 @@ output "template_id" {
 - `project_id` (String) Project identifier.
 - `run_properties` (Block List, Max: 1) Run properties for the action template execution. (see [below for nested schema](#nestedblock--run_properties))
 - `tags` (List of String) Tags to associate with the action template.
+- `type` (String) Type of the action template. Valid values: delay, customScript, container.
 - `variables` (Block List) Template variables that can be used in the action. (see [below for nested schema](#nestedblock--variables))
 
 ### Read-Only

@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -158,9 +159,12 @@ func resourceActionTemplateUpdate(ctx context.Context, d *schema.ResourceData, m
 	log.Printf("[DEBUG] Updating action template: %s in hub: %s", identity, hubIdentity)
 
 	// Build the update request
+	newName := d.Get("name").(string)
+	log.Printf("[DEBUG] Updating name from state: %s", newName)
+
 	req := chaos.ChaosfaulttemplateActionTemplate{
 		Identity: identity,
-		Name:     d.Get("name").(string),
+		Name:     newName,
 		HubRef:   hubIdentity,
 	}
 
@@ -197,8 +201,15 @@ func resourceActionTemplateUpdate(ctx context.Context, d *schema.ResourceData, m
 	// Build variables
 	buildVariables(d, &req)
 
-	// Update the action template
-	_, httpResp, err := c.DefaultApi.UpdateActionTemplate(ctx, req, accountID, orgID, projectID, identity, nil)
+	// Log the complete request for debugging
+	log.Printf("[DEBUG] Update request - Identity: %s, Name: %s, HubRef: %s", req.Identity, req.Name, req.HubRef)
+	log.Printf("[DEBUG] Update request - Description: %s, Tags: %v, Type: %s", req.Description, req.Tags, req.Type_)
+
+	// Update the action template with isDefault=true (required for name updates to work)
+	opts := &chaos.DefaultApiUpdateActionTemplateOpts{
+		IsDefault: optional.NewBool(true),
+	}
+	resp, httpResp, err := c.DefaultApi.UpdateActionTemplate(ctx, req, accountID, orgID, projectID, identity, opts)
 	if err != nil {
 		log.Printf("[ERROR] Failed to update action template: %v", err)
 		if httpResp != nil {
@@ -208,6 +219,7 @@ func resourceActionTemplateUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	log.Printf("[DEBUG] Action template updated successfully: %s", identity)
+	log.Printf("[DEBUG] Update response - Name: %s, Identity: %s", resp.Name, resp.Identity)
 
 	// Read back the updated resource
 	return resourceActionTemplateRead(ctx, d, meta)
@@ -653,7 +665,7 @@ func buildActionProperties(d *schema.ResourceData, req *chaos.Chaosfaulttemplate
 					// EmptyDir volume
 					if emptyDirList, ok := volMap["empty_dir"].([]interface{}); ok && len(emptyDirList) > 0 {
 						emptyDir := &chaos.V1EmptyDirVolumeSource{}
-						
+
 						// Handle case where empty_dir {} is empty (nil config)
 						if emptyDirList[0] != nil {
 							if emptyDirConfig, ok := emptyDirList[0].(map[string]interface{}); ok {
@@ -1096,13 +1108,13 @@ func setRunPropertiesData(d *schema.ResourceData, props *chaos.ActionActionTempl
 	if props.Verbosity != "" {
 		runPropsBlock["verbosity"] = props.Verbosity
 	}
-	
+
 	// Boolean field - only set if true (non-default)
 	// Following Terraform best practice: don't set default values to avoid drift
 	if props.StopOnFailure {
 		runPropsBlock["stop_on_failure"] = true
 	}
-	
+
 	// Integer field - only set if non-zero (non-default)
 	if props.MaxRetries != nil {
 		retriesVal := getIntFromInterface(props.MaxRetries)
@@ -1148,8 +1160,8 @@ func setVariablesData(d *schema.ResourceData, vars []chaos.TemplateVariable) err
 	}
 
 	if err := d.Set("variables", varsList); err != nil {
-			return fmt.Errorf("error setting variables: %v", err)
-		}
+		return fmt.Errorf("error setting variables: %v", err)
+	}
 
 	return nil
 }
@@ -1160,7 +1172,7 @@ func getIntFromInterface(val *interface{}) int {
 	if val == nil {
 		return 0
 	}
-	
+
 	switch v := (*val).(type) {
 	case int:
 		return v

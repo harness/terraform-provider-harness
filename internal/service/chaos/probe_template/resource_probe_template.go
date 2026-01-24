@@ -651,7 +651,7 @@ func setProbeTemplateDataSimplified(d *schema.ResourceData, template *chaos.Gith
 	// Parse run properties (simplified)
 	if template.RunProperties != nil {
 		runPropsBlock := map[string]interface{}{}
-		
+
 		// String fields - only set if non-empty
 		if template.RunProperties.InitialDelay != "" {
 			runPropsBlock["initial_delay"] = template.RunProperties.InitialDelay
@@ -668,13 +668,13 @@ func setProbeTemplateDataSimplified(d *schema.ResourceData, template *chaos.Gith
 		if template.RunProperties.Verbosity != "" {
 			runPropsBlock["verbosity"] = template.RunProperties.Verbosity
 		}
-		
+
 		// Boolean field - only set if true (non-default)
 		// Following Terraform best practice: don't set default values to avoid drift
 		if template.RunProperties.StopOnFailure {
 			runPropsBlock["stop_on_failure"] = true
 		}
-		
+
 		// Integer fields - only set if non-zero (non-default)
 		if template.RunProperties.Attempt != nil {
 			attemptVal := getIntFromInterface(template.RunProperties.Attempt)
@@ -1145,7 +1145,7 @@ func getIntFromInterface(val *interface{}) int {
 	if val == nil {
 		return 0
 	}
-	
+
 	switch v := (*val).(type) {
 	case int:
 		return v

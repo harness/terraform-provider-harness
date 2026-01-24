@@ -1,323 +1,189 @@
-# Example 1: Basic Fault Template
-resource "harness_chaos_fault_template" "basic_example" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
+# ============================================================================
+# Harness Chaos Fault Template Resource Examples
+# ============================================================================
+#
+# Fault templates define reusable chaos faults for experiments.
+# These examples are based on TESTED configurations from the e2e-test suite.
+#
+# Key Points:
+# - Faults inject failures into systems (pod delete, network latency, etc.)
+# - Type is usually "Custom" for custom faults
+# - Category and infrastructures define where fault can run
+# ============================================================================
 
-  identity    = "pod-delete-fault"
-  name        = "Pod Delete Fault"
-  description = "Deletes pods to test resilience"
-  
-  category        = ["Kubernetes"]
-  infrastructures = ["KubernetesV2"]
-  type            = "Custom"
-  tags            = ["kubernetes", "pod", "chaos"]
+# ----------------------------------------------------------------------------
+# Example 1: Basic Kubernetes Fault (TESTED ✅)
+# ----------------------------------------------------------------------------
+# Most common pattern: Custom Kubernetes fault with container spec
 
-  spec {
-    chaos {
-      fault_name = "pod-delete"
+resource "harness_chaos_fault_template" "kubernetes_fault" {
+  depends_on = [harness_chaos_hub_v2.project_level]
 
-      params {
-        key   = "TOTAL_CHAOS_DURATION"
-        value = "60"
-      }
+  # Project level
+  org_id       = harness_platform_organization.this.id
+  project_id   = harness_platform_project.this.id
+  hub_identity = harness_chaos_hub_v2.project_level.identity
 
-      params {
-        key   = "CHAOS_INTERVAL"
-        value = "10"
-      }
-    }
+  identity             = "k8s-fault-template"
+  name                 = "Kubernetes Fault Template"
+  description          = "Custom Kubernetes fault for chaos injection"
+  category             = ["Kubernetes"]
+  infrastructures      = ["KubernetesV2"]
+  type                 = "Custom"
+  permissions_required = "Basic"
+  tags                 = ["kubernetes", "fault", "custom"]
+
+  links {
+    name = "Documentation"
+    url  = "https://docs.harness.io/chaos"
   }
-}
-
-# Example 2: Fault Template with Kubernetes Spec
-resource "harness_chaos_fault_template" "with_kubernetes_spec" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "custom-chaos-runner"
-  name        = "Custom Chaos Runner"
-  description = "Custom fault with specific runner configuration"
-  
-  category        = ["Kubernetes"]
-  infrastructures = ["KubernetesV2"]
-  type            = "Custom"
 
   spec {
     chaos {
       fault_name = "byoc-injector"
 
       params {
-        key   = "TOTAL_CHAOS_DURATION"
-        value = "120"
+        name  = "CHAOS_DURATION"
+        value = "30s"
+      }
+      
+      params {
+        name  = "CHAOS_INTERVAL"
+        value = "5s"
       }
 
       kubernetes {
-        image             = "chaosnative/chaos-go-runner:ci"
-        image_pull_policy = "Always"
-        command           = ["/bin/sh"]
-        args              = ["-c", "echo 'Starting chaos injection'"]
+        image             = "chaosnative/go-runner:ci"
+        command           = ["/bin/bash", "-c"]
+        args              = ["echo 'Running chaos fault'; sleep 30"]
+        image_pull_policy = "IfNotPresent"
 
-        labels = {
-          "app"         = "chaos"
-          "environment" = "production"
+        resources {
+          limits = {
+            cpu    = "150m"
+            memory = "150Mi"
+          }
+          
+          requests = {
+            cpu    = "100m"
+            memory = "100Mi"
+          }
         }
+      }
+    }
+  }
+}
 
-        annotations = {
-          "chaos.io/type" = "custom"
+# ----------------------------------------------------------------------------
+# Example 2: Fault with Environment Variables (TESTED ✅)
+# ----------------------------------------------------------------------------
+# Fault with environment variables for configuration
+
+resource "harness_chaos_fault_template" "fault_with_env" {
+  depends_on = [harness_chaos_hub_v2.project_level]
+
+  org_id       = harness_platform_organization.this.id
+  project_id   = harness_platform_project.this.id
+  hub_identity = harness_chaos_hub_v2.project_level.identity
+
+  identity             = "fault-with-env-template"
+  name                 = "Fault with Environment Variables"
+  description          = "Fault template with environment configuration"
+  category             = ["Kubernetes"]
+  infrastructures      = ["KubernetesV2"]
+  type                 = "Custom"
+  permissions_required = "Basic"
+  tags                 = ["kubernetes", "env", "config"]
+
+  links {
+    name = "Documentation"
+    url  = "https://docs.harness.io/chaos"
+  }
+
+  spec {
+    chaos {
+      fault_name = "byoc-injector"
+
+      params {
+        name  = "CHAOS_DURATION"
+        value = "15s"
+      }
+      
+      params {
+        name  = "CHAOS_INTERVAL"
+        value = "3s"
+      }
+      
+      params {
+        name  = "TARGET_NAMESPACE"
+        value = "<+input>.default('default')"
+      }
+
+      kubernetes {
+        image             = "chaosnative/go-runner:ci"
+        command           = ["/bin/bash", "-c"]
+        args              = ["echo 'Fault with env vars'; sleep 15"]
+        image_pull_policy = "IfNotPresent"
+
+        env {
+          name  = "TARGET_NAMESPACE"
+          value = "<+input>.default('default')"
+        }
+        
+        env {
+          name  = "CHAOS_MODE"
+          value = "pod"
         }
 
         resources {
           limits = {
-            "cpu"    = "500m"
-            "memory" = "512Mi"
-          }
-          requests = {
-            "cpu"    = "250m"
-            "memory" = "256Mi"
+            cpu    = "200m"
+            memory = "200Mi"
           }
         }
-
-        env {
-          name  = "CHAOS_NAMESPACE"
-          value = "default"
-        }
-
-        env {
-          name  = "LOG_LEVEL"
-          value = "info"
-        }
       }
     }
   }
-
-  tags = ["kubernetes", "custom", "byoc"]
-}
-
-# Example 3: Fault Template with Volumes
-resource "harness_chaos_fault_template" "with_volumes" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "fault-with-volumes"
-  name        = "Fault with Volumes"
-  description = "Fault template with ConfigMap, Secret, and HostPath volumes"
-  
-  category        = ["Kubernetes"]
-  infrastructures = ["KubernetesV2"]
-  type            = "Custom"
-
-  spec {
-    chaos {
-      fault_name = "byoc-injector"
-
-      params {
-        key   = "TOTAL_CHAOS_DURATION"
-        value = "60"
-      }
-
-      kubernetes {
-        image             = "chaosnative/chaos-go-runner:ci"
-        image_pull_policy = "Always"
-
-        # ConfigMap volume
-        config_map_volume {
-          name       = "chaos-config"
-          mount_path = "/etc/chaos/config"
-        }
-
-        # Secret volume
-        secret_volume {
-          name       = "chaos-secrets"
-          mount_path = "/etc/chaos/secrets"
-        }
-
-        # HostPath volume
-        host_path_volume {
-          name       = "host-data"
-          mount_path = "/host/data"
-          host_path  = "/var/lib/chaos"
-          type       = "Directory"
-        }
-      }
-    }
-  }
-
-  tags = ["kubernetes", "volumes", "storage"]
-}
-
-# Example 4: Fault Template with Targets
-resource "harness_chaos_fault_template" "with_targets" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "targeted-pod-delete"
-  name        = "Targeted Pod Delete"
-  description = "Pod delete fault with specific target selection"
-  
-  category        = ["Kubernetes"]
-  infrastructures = ["KubernetesV2"]
-  type            = "Custom"
-
-  spec {
-    chaos {
-      fault_name = "pod-delete"
-
-      params {
-        key   = "TOTAL_CHAOS_DURATION"
-        value = "60"
-      }
-    }
-
-    target {
-      kubernetes {
-        kind      = "deployment"
-        namespace = "production"
-        names     = "frontend-app"
-        labels    = "app=frontend,tier=web"
-      }
-    }
-  }
-
-  tags = ["kubernetes", "pod-delete", "targeted"]
-}
-
-# Example 5: Fault Template with Variables
-resource "harness_chaos_fault_template" "with_variables" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "configurable-pod-delete"
-  name        = "Configurable Pod Delete"
-  description = "Pod delete fault with runtime configurable parameters"
-  
-  category        = ["Kubernetes"]
-  infrastructures = ["KubernetesV2"]
-  type            = "Custom"
-
-  # Define template variables
-  variables {
-    name        = "TARGET_NAMESPACE"
-    description = "Namespace to target for chaos"
-    type        = "string"
-    value       = "<+input>"
-  }
-
-  variables {
-    name        = "CHAOS_DURATION"
-    description = "Duration of chaos in seconds"
-    type        = "string"
-    value       = "<+input>.default('60')"
-  }
-
-  variables {
-    name        = "POD_AFFECTED_PERCENTAGE"
-    description = "Percentage of pods to affect"
-    type        = "string"
-    value       = "<+input>.default('50')"
-  }
-
-  spec {
-    chaos {
-      fault_name = "pod-delete"
-
-      # Use variables in params
-      params {
-        key   = "TARGET_NAMESPACE"
-        value = "<+variables.TARGET_NAMESPACE>"
-      }
-
-      params {
-        key   = "TOTAL_CHAOS_DURATION"
-        value = "<+variables.CHAOS_DURATION>"
-      }
-
-      params {
-        key   = "PODS_AFFECTED_PERC"
-        value = "<+variables.POD_AFFECTED_PERCENTAGE>"
-      }
-    }
-  }
-
-  tags = ["kubernetes", "configurable", "runtime-input"]
-}
-
-# Example 6: Fault Template with Links
-resource "harness_chaos_fault_template" "with_links" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "documented-fault"
-  name        = "Well Documented Fault"
-  description = "Fault template with documentation links"
-  
-  category        = ["Kubernetes"]
-  infrastructures = ["KubernetesV2"]
-  type            = "Custom"
-
-  # Documentation links
-  links {
-    name = "Official Documentation"
-    url  = "https://docs.harness.io/chaos/faults/pod-delete"
-  }
-
-  links {
-    name = "Troubleshooting Guide"
-    url  = "https://docs.harness.io/chaos/troubleshooting"
-  }
-
-  links {
-    name = "Source Code"
-    url  = "https://github.com/harness/chaos-faults/tree/main/pod-delete"
-  }
-
-  spec {
-    chaos {
-      fault_name = "pod-delete"
-
-      params {
-        key   = "TOTAL_CHAOS_DURATION"
-        value = "60"
-      }
-    }
-  }
-
-  tags = ["kubernetes", "documented", "production-ready"]
-}
-
-# Example 7: Comprehensive Fault Template
-resource "harness_chaos_fault_template" "comprehensive" {
-  org_id       = "my_org"
-  project_id   = "my_project"
-  hub_identity = "my-chaos-hub"
-
-  identity    = "comprehensive-chaos-fault"
-  name        = "Comprehensive Chaos Fault"
-  description = "Full-featured fault template with all options"
-  
-  category        = ["Kubernetes", "Network"]
-  infrastructures = ["KubernetesV2"]
-  type            = "Custom"
-  
-  permissions_required = "Basic"
 
   # Variables
   variables {
-    name        = "TARGET_NAMESPACE"
-    description = "Target namespace"
-    type        = "string"
+    name        = "target_namespace"
     value       = "<+input>"
+    type        = "string"
+    required    = false
+    description = "Target namespace for chaos injection"
   }
+}
 
-  # Links
+# ----------------------------------------------------------------------------
+# Example 3: Fault with Advanced Configuration (TESTED ✅)
+# ----------------------------------------------------------------------------
+# Fault with node selector, labels, and annotations
+
+resource "harness_chaos_fault_template" "advanced_fault" {
+  depends_on = [harness_chaos_hub_v2.project_level]
+
+  org_id       = harness_platform_organization.this.id
+  project_id   = harness_platform_project.this.id
+  hub_identity = harness_chaos_hub_v2.project_level.identity
+
+  identity             = "advanced-fault-template"
+  name                 = "Advanced Fault Template"
+  description          = "Fault with advanced Kubernetes configuration"
+  category             = ["Kubernetes"]
+  infrastructures      = ["KubernetesV2"]
+  type                 = "Custom"
+  permissions_required = "Basic"
+  tags                 = ["kubernetes", "advanced", "production"]
+
   links {
     name = "Documentation"
-    url  = "https://docs.example.com"
+    url  = "https://docs.harness.io/chaos"
+  }
+  
+  links {
+    name = "Support"
+    url  = "https://support.harness.io"
   }
 
   spec {
@@ -325,73 +191,108 @@ resource "harness_chaos_fault_template" "comprehensive" {
       fault_name = "byoc-injector"
 
       params {
-        key   = "TOTAL_CHAOS_DURATION"
-        value = "120"
+        name  = "CHAOS_DURATION"
+        value = "<+input>.default('30s')"
       }
-
+      
       params {
-        key   = "TARGET_NAMESPACE"
-        value = "<+variables.TARGET_NAMESPACE>"
+        name  = "CHAOS_INTERVAL"
+        value = "<+input>.default('5s')"
       }
 
       kubernetes {
-        image             = "chaosnative/chaos-go-runner:ci"
-        image_pull_policy = "Always"
-        command           = ["/bin/sh"]
-        args              = ["-c", "echo 'Chaos injection started'"]
-
-        labels = {
-          "app"  = "chaos"
-          "type" = "custom"
+        image             = "chaosnative/go-runner:ci"
+        command           = ["/bin/bash", "-c"]
+        args              = ["echo 'Advanced chaos fault'; sleep 30"]
+        image_pull_policy = "IfNotPresent"
+        
+        node_selector = {
+          disktype = "ssd"
+          zone     = "us-west-1a"
         }
-
+        
+        labels = {
+          app         = "chaos-fault"
+          environment = "production"
+          managed-by  = "terraform"
+        }
+        
         annotations = {
-          "chaos.io/managed-by" = "terraform"
+          description = "Advanced chaos fault"
+          owner       = "chaos-team"
         }
 
         resources {
           limits = {
-            "cpu"    = "1000m"
-            "memory" = "1Gi"
+            cpu    = "250m"
+            memory = "256Mi"
           }
+          
           requests = {
-            "cpu"    = "500m"
-            "memory" = "512Mi"
+            cpu    = "125m"
+            memory = "128Mi"
           }
         }
-
-        env {
-          name  = "CHAOS_NAMESPACE"
-          value = "<+variables.TARGET_NAMESPACE>"
-        }
-
-        config_map_volume {
-          name       = "chaos-config"
-          mount_path = "/etc/config"
-        }
-
-        secret_volume {
-          name       = "chaos-secrets"
-          mount_path = "/etc/secrets"
-        }
-
-        tolerations {
-          key      = "chaos"
-          operator = "Equal"
-          value    = "true"
-          effect   = "NoSchedule"
-        }
-      }
-    }
-
-    target {
-      kubernetes {
-        kind      = "deployment"
-        namespace = "<+variables.TARGET_NAMESPACE>"
-        labels    = "app=frontend"
       }
     }
   }
 
-  tags = ["kubernetes", "comprehensive", "production"]
+  # Variables
+  variables {
+    name        = "chaos_duration"
+    value       = "<+input>"
+    type        = "string"
+    required    = true
+    description = "Duration of chaos injection"
+  }
+  
+  variables {
+    name        = "chaos_interval"
+    value       = "<+input>"
+    type        = "string"
+    required    = false
+    description = "Interval between chaos injections"
+  }
 }
+
+# ----------------------------------------------------------------------------
+# Key Fields Reference
+# ----------------------------------------------------------------------------
+# Required:
+#   - org_id, project_id (scope)
+#   - hub_identity (hub where template is stored)
+#   - identity (template identifier)
+#   - name (template display name)
+#   - category (e.g., ["Kubernetes"])
+#   - infrastructures (e.g., ["KubernetesV2"])
+#   - type (usually "Custom")
+#   - permissions_required ("Basic", "Advanced", "Expert")
+#   - spec.chaos (fault configuration)
+#
+# Optional:
+#   - description
+#   - tags
+#   - links (name, url)
+#   - variables (name, value, type, required, description)
+#
+# Spec.Chaos Fields:
+#   - fault_name: Name of the fault (e.g., "byoc-injector")
+#   - params: Fault parameters (name, value)
+#   - kubernetes: Kubernetes pod specification
+#     - image, command, args
+#     - image_pull_policy
+#     - resources (limits, requests)
+#     - env (environment variables)
+#     - node_selector, labels, annotations
+#
+# Runtime Inputs:
+#   - Use "<+input>" for required runtime input
+#   - Use "<+input>.default('value')" for optional with default
+#
+# Computed (read-only):
+#   - fault_id, created_at, updated_at
+#
+# Import Format: org_id/project_id/hub_identity/identity
+# Example: terraform import harness_chaos_fault_template.example \
+#          my_org/my_project/my-hub/my-fault
+# ----------------------------------------------------------------------------

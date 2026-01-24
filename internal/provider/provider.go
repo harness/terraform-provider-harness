@@ -23,6 +23,8 @@ import (
 	chaos_hub "github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/probe_template"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/fault_template"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/experiment_template"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/experiment"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub_v2"
 	image_registry "github.com/harness/terraform-provider-harness/internal/service/chaos/image_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
@@ -352,6 +354,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_action_template":                       action_template.DataSourceActionTemplate(),
 				"harness_chaos_probe_template":                        probe_template.DataSourceProbeTemplate(),
 				"harness_chaos_fault_template":                        fault_template.DataSourceFaultTemplate(),
+				"harness_chaos_experiment_template":                   experiment_template.DataSourceExperimentTemplate(),
+				"harness_chaos_experiment":                            experiment.DataSourceChaosExperiment(),
 				"harness_chaos_security_governance_condition":         chaos_security_governance.DataSourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":              chaos_security_governance.DataSourceChaosSecurityGovernanceRule(),
 				"harness_service_discovery_agent":                     service_discovery_agent.DataSourceServiceDiscoveryAgent(),
@@ -533,6 +537,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_action_template":                       action_template.ResourceActionTemplate(),
 				"harness_chaos_probe_template":                        probe_template.ResourceProbeTemplate(),
 				"harness_chaos_fault_template":                        fault_template.ResourceFaultTemplate(),
+				"harness_chaos_experiment_template":                   experiment_template.ResourceExperimentTemplate(),
+				"harness_chaos_experiment":                            experiment.ResourceChaosExperiment(),
 				"harness_chaos_security_governance_condition":         chaos_security_governance.ResourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":              chaos_security_governance.ResourceChaosSecurityGovernanceRule(),
 				"harness_service_discovery_agent":                     service_discovery_agent.ResourceServiceDiscoveryAgent(),

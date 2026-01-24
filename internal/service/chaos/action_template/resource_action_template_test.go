@@ -2,11 +2,13 @@ package action_template_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceActionTemplate_basic(t *testing.T) {
@@ -31,6 +33,17 @@ func TestAccResourceActionTemplate_basic(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					// Strip account_id from the ID for import
+					// ID format: account_id/org_id/project_id/hub_identity/identity
+					// Import format: org_id/project_id/hub_identity/identity
+					resourceState := s.RootModule().Resources[resourceName]
+					parts := strings.Split(resourceState.Primary.ID, "/")
+					if len(parts) == 5 {
+						return strings.Join(parts[1:], "/"), nil
+					}
+					return resourceState.Primary.ID, nil
+				},
 			},
 		},
 	})
@@ -50,6 +63,7 @@ func TestAccResourceActionTemplate_update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "Test action template"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 				),
 			},
 			{
@@ -57,6 +71,7 @@ func TestAccResourceActionTemplate_update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "Updated action template"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "3"),
 				),
 			},
 		},
@@ -91,7 +106,14 @@ func testAccResourceActionTemplate_basic(name string) string {
 			identity     = "%[1]s"
 			name         = "%[1]s"
 			description  = "Test action template"
+			type         = "delay"
 			tags         = ["test", "terraform"]
+			
+			delay_action {
+				duration = "30s"
+			}
+			
+			depends_on = [harness_chaos_hub_v2.test]
 		}
 	`, name)
 }
@@ -124,7 +146,12 @@ func testAccResourceActionTemplate_updated(identity, name string) string {
 			identity     = "%[1]s"
 			name         = "%[2]s"
 			description  = "Updated action template"
+			type         = "delay"
 			tags         = ["test", "terraform", "updated"]
+			
+			delay_action {
+				duration = "60s"
+			}
 		}
 	`, identity, name)
 }
