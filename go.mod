@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go v1.55.8
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/google/uuid v1.6.0
-	github.com/harness/harness-go-sdk v0.7.1
+	github.com/harness/harness-go-sdk v0.7.3
 	github.com/harness/harness-openapi-go-client v0.0.25
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-cty v1.5.0
@@ -92,7 +92,7 @@ require (
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/sys v0.40.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/tools v0.38.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
@@ -103,4 +103,5 @@ require (
 )
 
 // replace github.com/harness/harness-go-sdk => ../harness-go-sdk
+
 //replace github.com/harness/harness-openapi-go-client => ../harness-openapi-go-client

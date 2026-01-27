@@ -24,6 +24,7 @@ func ResourceEnvironment() *schema.Resource {
 		DeleteContext: resourceEnvironmentDelete,
 		CreateContext: resourceEnvironmentCreateOrUpdate,
 		Importer:      helpers.MultiLevelResourceImporter,
+		CustomizeDiff: validateEnvironmentFieldsMatchYaml,
 
 		Schema: map[string]*schema.Schema{
 			"color": {
@@ -168,6 +169,18 @@ func ResourceEnvironment() *schema.Resource {
 	}
 
 	helpers.SetMultiLevelResourceSchema(resource.Schema)
+	if s, ok := resource.Schema["identifier"]; ok {
+		s.Required = false
+		s.Optional = true
+	}
+	if s, ok := resource.Schema["name"]; ok {
+		s.Required = false
+		s.Optional = true
+	}
+	if s, ok := resource.Schema["description"]; ok {
+		s.Optional = true
+		s.Computed = true
+	}
 
 	return resource
 }
@@ -195,7 +208,10 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	var importResp nextgen.ResponseEnvironmentImportResponseDto
 	var httpResp *http.Response
 	id := d.Id()
-	env := buildEnvironment(d)
+	env, err := buildEnvironment(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	shouldUpdateGitDetails := false
 
 	if id == "" {
@@ -285,18 +301,60 @@ func resourceEnvironmentDelete(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
-func buildEnvironment(d *schema.ResourceData) *nextgen.EnvironmentRequest {
+func buildEnvironment(d *schema.ResourceData) (*nextgen.EnvironmentRequest, error) {
+	identifier := d.Get("identifier").(string)
+	name := d.Get("name").(string)
+	description := d.Get("description").(string)
+	yamlString := d.Get("yaml").(string)
+
+	if yamlString != "" {
+		yamlFields, err := helpers.ExtractYamlResourceFields(yamlString, "environment")
+		if err != nil {
+			return nil, err
+		}
+		if identifier == "" {
+			identifier = yamlFields.Identifier
+		}
+		if name == "" {
+			name = yamlFields.Name
+		}
+		if description == "" {
+			description = yamlFields.Description
+		}
+	}
+
+	if identifier == "" {
+		return nil, fmt.Errorf("identifier must be set or present in environment YAML")
+	}
+	if name == "" {
+		return nil, fmt.Errorf("name must be set or present in environment YAML")
+	}
+
 	return &nextgen.EnvironmentRequest{
-		Identifier:        d.Get("identifier").(string),
+		Identifier:        identifier,
 		OrgIdentifier:     d.Get("org_id").(string),
 		ProjectIdentifier: d.Get("project_id").(string),
-		Name:              d.Get("name").(string),
+		Name:              name,
 		Color:             d.Get("color").(string),
-		Description:       d.Get("description").(string),
+		Description:       description,
 		Tags:              helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
 		Type_:             d.Get("type").(string),
 		Yaml:              d.Get("yaml").(string),
+	}, nil
+}
+
+func validateEnvironmentFieldsMatchYaml(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+	yamlString := d.Get("yaml").(string)
+	if yamlString == "" {
+		return nil
 	}
+
+	yamlFields, err := helpers.ExtractYamlResourceFields(yamlString, "environment")
+	if err != nil {
+		return err
+	}
+
+	return helpers.ValidateYamlFieldsMatch(d, yamlFields, "environment")
 }
 
 func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDetails) {
@@ -306,7 +364,9 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	d.Set("project_id", env.ProjectIdentifier)
 	d.Set("name", env.Name)
 	d.Set("color", env.Color)
-	d.Set("description", env.Description)
+	if env.Description != "" {
+		d.Set("description", env.Description)
+	}
 	d.Set("tags", helpers.FlattenTags(env.Tags))
 	d.Set("type", env.Type_.String())
 	if d.Get("yaml").(string) != "" {
