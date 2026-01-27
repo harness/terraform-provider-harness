@@ -24,6 +24,7 @@ func ResourceInfrastructure() *schema.Resource {
 		DeleteContext: resourceInfrastructureDelete,
 		CreateContext: resourceInfrastructureCreateOrUpdate,
 		Importer:      helpers.EnvRelatedResourceImporter,
+		CustomizeDiff: validateInfrastructureFieldsMatchYaml,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -176,6 +177,18 @@ func ResourceInfrastructure() *schema.Resource {
 		},
 	}
 	helpers.SetMultiLevelResourceSchema(resource.Schema)
+	if s, ok := resource.Schema["identifier"]; ok {
+		s.Required = false
+		s.Optional = true
+	}
+	if s, ok := resource.Schema["name"]; ok {
+		s.Required = false
+		s.Optional = true
+	}
+	if s, ok := resource.Schema["description"]; ok {
+		s.Optional = true
+		s.Computed = true
+	}
 
 	// overwrite schema for tags since these are read from the yaml
 	if s, ok := resource.Schema["tags"]; ok {
@@ -209,7 +222,10 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 	var importResp nextgen.ResponseInfrastructureImportResponse
 	var httpResp *http.Response
 	id := d.Id()
-	infra := buildInfrastructure(d)
+	infra, err := buildInfrastructure(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	shouldUpdateGitDetails := false
 
 	if id == "" {
@@ -304,18 +320,60 @@ func resourceInfrastructureDelete(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func buildInfrastructure(d *schema.ResourceData) *nextgen.InfrastructureRequest {
+func buildInfrastructure(d *schema.ResourceData) (*nextgen.InfrastructureRequest, error) {
+	identifier := d.Get("identifier").(string)
+	name := d.Get("name").(string)
+	description := d.Get("description").(string)
+	yamlString := d.Get("yaml").(string)
+
+	if yamlString != "" {
+		yamlFields, err := helpers.ExtractYamlResourceFields(yamlString, "infrastructureDefinition")
+		if err != nil {
+			return nil, err
+		}
+		if identifier == "" {
+			identifier = yamlFields.Identifier
+		}
+		if name == "" {
+			name = yamlFields.Name
+		}
+		if description == "" {
+			description = yamlFields.Description
+		}
+	}
+
+	if identifier == "" {
+		return nil, fmt.Errorf("identifier must be set or present in infrastructure YAML")
+	}
+	if name == "" {
+		return nil, fmt.Errorf("name must be set or present in infrastructure YAML")
+	}
+
 	return &nextgen.InfrastructureRequest{
-		Identifier:        d.Get("identifier").(string),
+		Identifier:        identifier,
 		OrgIdentifier:     d.Get("org_id").(string),
 		ProjectIdentifier: d.Get("project_id").(string),
 		EnvironmentRef:    d.Get("env_id").(string),
-		Name:              d.Get("name").(string),
-		Description:       d.Get("description").(string),
+		Name:              name,
+		Description:       description,
 		Tags:              helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
 		Type_:             d.Get("type").(string),
 		Yaml:              d.Get("yaml").(string),
+	}, nil
+}
+
+func validateInfrastructureFieldsMatchYaml(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+	yamlString := d.Get("yaml").(string)
+	if yamlString == "" {
+		return nil
 	}
+
+	yamlFields, err := helpers.ExtractYamlResourceFields(yamlString, "infrastructureDefinition")
+	if err != nil {
+		return err
+	}
+
+	return helpers.ValidateYamlFieldsMatch(d, yamlFields, "infrastructure")
 }
 
 func readInfrastructure(d *schema.ResourceData, infra *nextgen.InfrastructureResponse) {

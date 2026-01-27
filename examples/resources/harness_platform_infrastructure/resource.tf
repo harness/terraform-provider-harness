@@ -33,3 +33,30 @@ resource "harness_platform_infrastructure" "example" {
           allowSimultaneousDeployments: false
       EOT
 }
+
+# Google Managed Instance Group Infrastructure Example
+resource "harness_platform_infrastructure" "google_mig_example" {
+  identifier      = "google_mig_infra"
+  name            = "Google MIG Infrastructure"
+  org_id          = "default"
+  project_id      = "my_project"
+  env_id          = "my_environment"
+  type            = "GoogleManagedInstanceGroup"
+  deployment_type = "GoogleManagedInstanceGroup"
+  yaml            = <<-EOT
+        infrastructureDefinition:
+          name: Google MIG Infrastructure
+          identifier: google_mig_infra
+          description: "Infrastructure for Google Managed Instance Group deployments"
+          orgIdentifier: default
+          projectIdentifier: my_project
+          environmentRef: my_environment
+          deploymentType: GoogleManagedInstanceGroup
+          type: GoogleManagedInstanceGroup
+          spec:
+            connectorRef: account.gcpConnector
+            region: us-central1
+            zone: us-central1-a
+            project: my-gcp-project
+      EOT
+}
