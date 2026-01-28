@@ -31,13 +31,27 @@ func ResourceCentralNotificationChannel() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"org_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the organization.",
+			},
+			"project_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the project.",
+			},
 			"org": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the organization. Deprecated: Use org_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'org_id' instead.",
 			},
 			"project": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the project. Deprecated: Use project_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'project_id' instead.",
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -283,12 +297,22 @@ func buildCentralNotificationChannelRequest(d *schema.ResourceData, accountIdent
 		channelDTO.Headers = expandHeaders(v.([]interface{}))
 	}
 
+	// Support both org_id/project_id (preferred) and deprecated org/project
+	org := d.Get("org_id").(string)
+	if org == "" {
+		org = d.Get("org").(string)
+	}
+	project := d.Get("project_id").(string)
+	if project == "" {
+		project = d.Get("project").(string)
+	}
+
 	return &nextgen.NotificationChannelDto{
 		Account:    accountIdentifier,
 		Identifier: d.Get("identifier").(string),
 		Name:       d.Get("name").(string),
-		Org:        d.Get("org").(string),
-		Project:    d.Get("project").(string),
+		Org:        org,
+		Project:    project,
 		NotificationChannelType: func() *nextgen.ChannelType {
 			s := nextgen.ChannelType(d.Get("notification_channel_type").(string))
 			return &s
@@ -347,10 +371,12 @@ func expandHeaders(raw []interface{}) []nextgen.WebHookHeaders {
 func readCentralNotificationChannel(accountIdentifier string, d *schema.ResourceData, notificationChannelDto nextgen.NotificationChannelDto) diag.Diagnostics {
 	d.SetId(notificationChannelDto.Identifier)
 	if notificationChannelDto.Org != "" {
-		d.Set("org", notificationChannelDto.Org)
+		d.Set("org_id", notificationChannelDto.Org)
+		d.Set("org", notificationChannelDto.Org) // Set deprecated field for backward compatibility
 	}
 	if notificationChannelDto.Project != "" {
-		d.Set("project", notificationChannelDto.Project)
+		d.Set("project_id", notificationChannelDto.Project)
+		d.Set("project", notificationChannelDto.Project) // Set deprecated field for backward compatibility
 	}
 	d.Set("identifier", notificationChannelDto.Identifier)
 	d.Set("name", notificationChannelDto.Name)
@@ -421,11 +447,17 @@ func getScope(d *schema.ResourceData) *Scope {
 	org := ""
 	project := ""
 
-	if attr, ok := d.GetOk("org"); ok {
+	// Support both org_id (preferred) and deprecated org
+	if attr, ok := d.GetOk("org_id"); ok {
+		org = (attr.(string))
+	} else if attr, ok := d.GetOk("org"); ok {
 		org = (attr.(string))
 	}
 
-	if attr, ok := d.GetOk("project"); ok {
+	// Support both project_id (preferred) and deprecated project
+	if attr, ok := d.GetOk("project_id"); ok {
+		project = (attr.(string))
+	} else if attr, ok := d.GetOk("project"); ok {
 		project = (attr.(string))
 	}
 

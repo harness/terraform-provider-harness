@@ -19,6 +19,28 @@ func ResourceDefaultNotificationTemplateSet() *schema.Resource {
 		UpdateContext: resourceDefaultNotificationTemplateSetUpdate,
 		DeleteContext: resourceDefaultNotificationTemplateSetDelete,
 		Schema: map[string]*schema.Schema{
+			"org_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the organization.",
+			},
+			"project_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the project.",
+			},
+			"org": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the organization. Deprecated: Use org_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'org_id' instead.",
+			},
+			"project": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the project. Deprecated: Use project_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'project_id' instead.",
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -412,11 +434,17 @@ func getScope(d *schema.ResourceData) *Scope {
 	org := ""
 	project := ""
 
-	if attr, ok := d.GetOk("org"); ok {
+	// Support both org_id (preferred) and deprecated org
+	if attr, ok := d.GetOk("org_id"); ok {
+		org = (attr.(string))
+	} else if attr, ok := d.GetOk("org"); ok {
 		org = (attr.(string))
 	}
 
-	if attr, ok := d.GetOk("project"); ok {
+	// Support both project_id (preferred) and deprecated project
+	if attr, ok := d.GetOk("project_id"); ok {
+		project = (attr.(string))
+	} else if attr, ok := d.GetOk("project"); ok {
 		project = (attr.(string))
 	}
 
