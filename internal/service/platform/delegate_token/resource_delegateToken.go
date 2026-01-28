@@ -21,7 +21,7 @@ func ResourceDelegateToken() *schema.Resource {
 		ReadContext:   resourceDelegateTokenRead,
 		CreateContext: resourceDelegateTokenCreate,
 		UpdateContext: resourceDelegateTokenRevoke,
-		DeleteContext: resourceDelegateTokenRevoke,
+		DeleteContext: resourceDelegateTokenDestroy,
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
@@ -80,6 +80,11 @@ func ResourceDelegateToken() *schema.Resource {
 				Type:        schema.TypeMap,
 				Optional:    true,
 				Computed:    true,
+			},
+			"purge_on_delete": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
 			},
 		},
 	}
@@ -162,6 +167,45 @@ func resourceDelegateTokenRevoke(ctx context.Context, d *schema.ResourceData, me
 
 	return nil
 
+}
+
+func resourceDelegateTokenDestroy(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	dg := resourceDelegateTokenRevoke(ctx, d, meta)
+	if dg != nil {
+		return dg
+	}
+
+	purgeAndDelete := d.Get("purge_on_delete").(bool)
+	if purgeAndDelete {
+		return resourceDelegateTokenDelete(ctx, d, meta)
+	}
+
+	log.Printf("resourceDelegateTokenDelete delegatetoken delete: completed successfully")
+	d.SetId("")
+	return nil
+}
+
+func resourceDelegateTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	delegateToken := buildDelegateToken(d)
+
+	_, httpResp, err := c.DelegateTokenResourceApi.DeleteCgDelegateToken(ctx, c.AccountId, delegateToken.Name, &nextgen.DelegateTokenResourceApiDeleteCgDelegateTokenOpts{
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+	})
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			log.Printf("resourceDelegateTokenDelete delegatetoken delete (delete step): token not found; treating as deleted")
+			d.SetId("")
+			return nil
+		}
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	log.Printf("resourceDelegateTokenDelete delegatetoken delete: completed successfully")
+	d.SetId("")
+	return nil
 }
 
 func buildDelegateToken(d *schema.ResourceData) *nextgen.DelegateTokenDetails {

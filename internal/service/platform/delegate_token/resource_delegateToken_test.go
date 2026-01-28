@@ -11,6 +11,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"net/http"
 )
 
 func TestAccResourceDelegateToken(t *testing.T) {
@@ -342,4 +343,114 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 		return optional.NewString(attr)
 	}
 	return optional.EmptyString()
+}
+
+// test for purge_on_delete
+func TestAccResourceDelegateTokenAccountAndProjectLevel(t *testing.T) {
+	orgID := fmt.Sprintf("o%s", utils.RandStringBytes(5))
+	projectID := fmt.Sprintf("p%s", utils.RandStringBytes(5))
+	accountID := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	accountLevelTokenName := fmt.Sprintf("acctok-%s", utils.RandStringBytes(5))
+	projectLevelTokenName := fmt.Sprintf("projtok-%s", utils.RandStringBytes(5))
+
+	accountLevelResourceName := "harness_platform_delegatetoken.account_level"
+	projectLevelResourceName := "harness_platform_delegatetoken.project_level"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy: testDelegateTokensDestroy(
+			accountLevelResourceName,
+			projectLevelResourceName,
+		),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceDelegateTokenAccountAndProjectLevel(orgID, projectID, accountID, accountLevelTokenName, projectLevelTokenName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(accountLevelResourceName, "name", accountLevelTokenName),
+					resource.TestCheckResourceAttr(accountLevelResourceName, "token_status", "ACTIVE"),
+					resource.TestCheckResourceAttr(accountLevelResourceName, "purge_on_delete", "true"),
+					resource.TestCheckResourceAttr(projectLevelResourceName, "name", projectLevelTokenName),
+					resource.TestCheckResourceAttr(projectLevelResourceName, "token_status", "ACTIVE"),
+				),
+			},
+		},
+	})
+}
+
+func testAccResourceDelegateTokenAccountAndProjectLevel(orgID string, projectID string, accountID string, accountLevelTokenName string, projectLevelTokenName string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name       = "%[1]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[2]s"
+			name       = "%[2]s"
+			org_id     = harness_platform_organization.test.id
+			color      = "#472848"
+		}
+
+		resource "harness_platform_delegatetoken" "account_level" {
+			name             = "%[4]s"
+			account_id        = "%[3]s"
+			purge_on_delete  = true
+		}
+
+		resource "harness_platform_delegatetoken" "project_level" {
+			name       = "%[5]s"
+			account_id  = "%[3]s"
+			org_id      = harness_platform_organization.test.id
+			project_id  = harness_platform_project.test.id
+		}
+	`, orgID, projectID, accountID, accountLevelTokenName, projectLevelTokenName)
+}
+
+func testAccGetResourceDelegateTokenForDestroy(resourceName string, state *terraform.State) (*nextgen.DelegateTokenDetails, error) {
+	rm := state.RootModule()
+	if rm == nil {
+		return nil, nil
+	}
+	r, ok := rm.Resources[resourceName]
+	if !ok || r == nil {
+		return nil, nil
+	}
+
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
+
+	resp, httpResp, err := c.DelegateTokenResourceApi.GetCgDelegateTokens(ctx, c.AccountId, &nextgen.DelegateTokenResourceApiGetCgDelegateTokensOpts{
+		OrgIdentifier:     buildField(r, "org_id"),
+		ProjectIdentifier: buildField(r, "project_id"),
+		Name:              buildField(r, "name"),
+		Status:            optional.EmptyString(),
+	})
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	if resp.Resource == nil || len(resp.Resource) == 0 {
+		return nil, nil
+	}
+
+	return &resp.Resource[0], nil
+}
+
+func testDelegateTokensDestroy(resourceNames ...string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		for _, resourceName := range resourceNames {
+			token, err := testAccGetResourceDelegateTokenForDestroy(resourceName, state)
+			if err != nil {
+				return err
+			}
+			if token != nil && token.Status != "REVOKED" {
+				return fmt.Errorf("Token is not revoked : %s", token.Name)
+			}
+		}
+
+		return nil
+	}
 }
