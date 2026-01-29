@@ -189,8 +189,7 @@ func resourceDelegateTokenDelete(ctx context.Context, d *schema.ResourceData, me
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	delegateToken := buildDelegateToken(d)
-
-	_, httpResp, err := c.DelegateTokenResourceApi.DeleteCgDelegateToken(ctx, c.AccountId, delegateToken.Name, &nextgen.DelegateTokenResourceApiDeleteCgDelegateTokenOpts{
+	httpResp, err := c.DelegateTokenResourceApi.DeleteCgDelegateToken(ctx, c.AccountId, delegateToken.Name, &nextgen.DelegateTokenResourceApiDeleteCgDelegateTokenOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})

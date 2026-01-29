@@ -1,8 +1,10 @@
 package delegatetoken_test
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -338,6 +340,36 @@ func testDelegateTokenDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
+// check actual deletion
+func testDelegateTokenPurged(resourceName string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		httpResp, err := testAccGetResourceDelegateTokenForDestroy(resourceName, state)
+		if err != nil {
+			return err
+		}
+		if httpResp == nil {
+			return fmt.Errorf("Token is not revoked : %s", resourceName)
+		}
+		if strings.Contains(httpResp.Status, "200") {
+			return nil
+		}
+		return fmt.Errorf("Token is not revoked : %s", resourceName)
+	}
+}
+
+// check if token is revoked
+func testDelegateTokenRevoked(resourceName string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		_, err := testAccGetResourceDelegateTokenForDestroy(resourceName, state)
+		if err != nil {
+			if strings.Contains(err.Error(), "404") {
+				return nil
+			}
+		}
+		return fmt.Errorf("Token is not revoked : %s", resourceName)
+	}
+}
+
 func buildField(r *terraform.ResourceState, field string) optional.String {
 	if attr, ok := r.Primary.Attributes[field]; ok {
 		return optional.NewString(attr)
@@ -360,9 +392,9 @@ func TestAccResourceDelegateTokenAccountAndProjectLevel(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy: testDelegateTokensDestroy(
-			accountLevelResourceName,
-			projectLevelResourceName,
+		CheckDestroy: resource.ComposeTestCheckFunc(
+			testDelegateTokenPurged(accountLevelResourceName),
+			testDelegateTokenRevoked(projectLevelResourceName),
 		),
 		Steps: []resource.TestStep{
 			{
@@ -408,49 +440,24 @@ func testAccResourceDelegateTokenAccountAndProjectLevel(orgID string, projectID 
 	`, orgID, projectID, accountID, accountLevelTokenName, projectLevelTokenName)
 }
 
-func testAccGetResourceDelegateTokenForDestroy(resourceName string, state *terraform.State) (*nextgen.DelegateTokenDetails, error) {
+func testAccGetResourceDelegateTokenForDestroy(resourceName string, state *terraform.State) (*http.Response, error) {
 	rm := state.RootModule()
 	if rm == nil {
-		return nil, nil
+		return nil, errors.New("root module nil")
 	}
 	r, ok := rm.Resources[resourceName]
 	if !ok || r == nil {
-		return nil, nil
+		return nil, errors.New("resource not found")
 	}
 
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 
-	resp, httpResp, err := c.DelegateTokenResourceApi.GetCgDelegateTokens(ctx, c.AccountId, &nextgen.DelegateTokenResourceApiGetCgDelegateTokensOpts{
+	_, httpResp, err := c.DelegateTokenResourceApi.GetCgDelegateTokens(ctx, c.AccountId, &nextgen.DelegateTokenResourceApiGetCgDelegateTokensOpts{
 		OrgIdentifier:     buildField(r, "org_id"),
 		ProjectIdentifier: buildField(r, "project_id"),
 		Name:              buildField(r, "name"),
 		Status:            optional.EmptyString(),
 	})
-	if err != nil {
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			return nil, nil
-		}
-		return nil, err
-	}
-	if resp.Resource == nil || len(resp.Resource) == 0 {
-		return nil, nil
-	}
 
-	return &resp.Resource[0], nil
-}
-
-func testDelegateTokensDestroy(resourceNames ...string) resource.TestCheckFunc {
-	return func(state *terraform.State) error {
-		for _, resourceName := range resourceNames {
-			token, err := testAccGetResourceDelegateTokenForDestroy(resourceName, state)
-			if err != nil {
-				return err
-			}
-			if token != nil && token.Status != "REVOKED" {
-				return fmt.Errorf("Token is not revoked : %s", token.Name)
-			}
-		}
-
-		return nil
-	}
+	return httpResp, err
 }
