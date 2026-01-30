@@ -439,8 +439,10 @@ func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 	d.Set("name", service.Name)
 	d.Set("cloud_connector_id", service.CloudAccountId)
 	d.Set("idle_time_mins", service.IdleTimeMins)
-	d.Set("custom_domains", service.CustomDomains)
 	if service.Opts != nil {
 		d.Set("dry_run", service.Opts.DryRun)
 	}
+	d.Set("use_spot", service.Fulfilment == "ondemand")
+	d.Set("custom_domains", service.CustomDomains)
+
 }
