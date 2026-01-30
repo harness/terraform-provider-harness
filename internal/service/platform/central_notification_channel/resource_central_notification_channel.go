@@ -371,12 +371,20 @@ func expandHeaders(raw []interface{}) []nextgen.WebHookHeaders {
 func readCentralNotificationChannel(accountIdentifier string, d *schema.ResourceData, notificationChannelDto nextgen.NotificationChannelDto) diag.Diagnostics {
 	d.SetId(notificationChannelDto.Identifier)
 	if notificationChannelDto.Org != "" {
-		d.Set("org_id", notificationChannelDto.Org)
-		d.Set("org", notificationChannelDto.Org) // Set deprecated field for backward compatibility
+		if _, ok := d.GetOk("org_id"); ok {
+			d.Set("org_id", notificationChannelDto.Org)
+		}
+		if _, ok := d.GetOk("org"); ok {
+			d.Set("org", notificationChannelDto.Org)
+		}
 	}
 	if notificationChannelDto.Project != "" {
-		d.Set("project_id", notificationChannelDto.Project)
-		d.Set("project", notificationChannelDto.Project) // Set deprecated field for backward compatibility
+		if _, ok := d.GetOk("project_id"); ok {
+			d.Set("project_id", notificationChannelDto.Project)
+		}
+		if _, ok := d.GetOk("project"); ok {
+			d.Set("project", notificationChannelDto.Project)
+		}
 	}
 	d.Set("identifier", notificationChannelDto.Identifier)
 	d.Set("name", notificationChannelDto.Name)
@@ -391,16 +399,34 @@ func readCentralNotificationChannel(accountIdentifier string, d *schema.Resource
 		return nil
 	}
 	channel := map[string]interface{}{
-		"slack_webhook_urls":          channelDTO.SlackWebhookUrls,
-		"webhook_urls":                channelDTO.WebhookUrls,
-		"email_ids":                   channelDTO.EmailIds,
-		"pager_duty_integration_keys": channelDTO.PagerDutyIntegrationKeys,
-		"ms_team_keys":                channelDTO.MsTeamKeys,
-		"datadog_urls":                channelDTO.DatadogUrls,
-		"user_groups":                 flattenUserGroups(channelDTO.UserGroups),
-		"headers":                     flattenHeaders(channelDTO.Headers),
-		"delegate_selectors":          channelDTO.DelegateSelectors,
-		"execute_on_delegate":         channelDTO.ExecuteOnDelegate,
+		"execute_on_delegate": channelDTO.ExecuteOnDelegate,
+	}
+	if len(channelDTO.SlackWebhookUrls) > 0 {
+		channel["slack_webhook_urls"] = channelDTO.SlackWebhookUrls
+	}
+	if len(channelDTO.WebhookUrls) > 0 {
+		channel["webhook_urls"] = channelDTO.WebhookUrls
+	}
+	if len(channelDTO.EmailIds) > 0 {
+		channel["email_ids"] = channelDTO.EmailIds
+	}
+	if len(channelDTO.PagerDutyIntegrationKeys) > 0 {
+		channel["pager_duty_integration_keys"] = channelDTO.PagerDutyIntegrationKeys
+	}
+	if len(channelDTO.MsTeamKeys) > 0 {
+		channel["ms_team_keys"] = channelDTO.MsTeamKeys
+	}
+	if len(channelDTO.DatadogUrls) > 0 {
+		channel["datadog_urls"] = channelDTO.DatadogUrls
+	}
+	if len(channelDTO.DelegateSelectors) > 0 {
+		channel["delegate_selectors"] = channelDTO.DelegateSelectors
+	}
+	if len(channelDTO.UserGroups) > 0 {
+		channel["user_groups"] = flattenUserGroups(channelDTO.UserGroups)
+	}
+	if len(channelDTO.Headers) > 0 {
+		channel["headers"] = flattenHeaders(channelDTO.Headers)
 	}
 	if val := channelDTO.ApiKey; val != "" {
 		channel["api_key"] = val
