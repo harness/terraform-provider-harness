@@ -19,6 +19,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
+	cdng_delegates "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/delegates"
 	chaos_hub "github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub"
 	image_registry "github.com/harness/terraform-provider-harness/internal/service/chaos/image_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
@@ -287,6 +288,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_current_account":                             account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                                    delegate.DataSourceDelegate(),
 				"harness_delegate_ids":                                delegate.DataSourceDelegateIds(),
+				"harness_platform_delegate_list":                     cdng_delegates.DataSourceDelegateList(),
 				"harness_encrypted_text":                              secrets.DataSourceEncryptedText(),
 				"harness_environment":                                 environment.DataSourceEnvironment(),
 				"harness_git_connector":                               cd_connector.DataSourceGitConnector(),
