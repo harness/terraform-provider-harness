@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/BurntSushi/toml"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -27,7 +28,6 @@ func resourceASRuleRead(ctx context.Context, d *schema.ResourceData, meta interf
 		return diag.Errorf("invalid rule id")
 	}
 	resp, httpResp, err := c.CloudCostAutoStoppingRulesApi.AutoStoppingRuleDetails(ctx, c.AccountId, ruleId, c.AccountId)
-
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
@@ -487,6 +487,40 @@ func setScaleGroupConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
 	d.Set("scale_group", scaleGroup)
 }
 
+// setFilterConfig sets the VM filter configuration in Terraform state from the API response
+// FilterText is in TOML format and needs to be parsed into FilterObject structure
+func setFilterConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
+	if routing == nil || routing.Instance == nil || routing.Instance.FilterText == "" {
+		return
+	}
+
+	// Parse TOML FilterText into FilterObject
+	var filterObj nextgen.FilterObject
+	if _, err := toml.Decode(routing.Instance.FilterText, &filterObj); err != nil {
+		// If parsing fails, skip setting filter
+		return
+	}
+
+	// Build tags list from map
+	var tags []map[string]interface{}
+	for key, value := range filterObj.Tags {
+		tags = append(tags, map[string]interface{}{
+			"key":   key,
+			"value": value,
+		})
+	}
+
+	filter := []map[string]interface{}{
+		{
+			"vm_ids":  filterObj.Ids,
+			"regions": filterObj.Regions,
+			"zones":   filterObj.Zones,
+			"tags":    tags,
+		},
+	}
+	d.Set("filter", filter)
+}
+
 func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 	if service == nil {
 		return
@@ -511,6 +545,7 @@ func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 		setContainerConfig(d, service.Routing)
 	case ScaleGroup:
 		setScaleGroupConfig(d, service.Routing)
+	case Instance:
+		setFilterConfig(d, service.Routing)
 	}
-	// Remaining fields - http, tcp, health, depends
 }
