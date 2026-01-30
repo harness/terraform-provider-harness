@@ -443,6 +443,22 @@ func setDatabaseConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
 	d.Set("database", database)
 }
 
+// setContainerConfig sets the container (ECS) configuration in Terraform state from the API response
+func setContainerConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
+	if routing == nil || routing.ContainerSvc == nil {
+		return
+	}
+	container := []map[string]interface{}{
+		{
+			"cluster":    routing.ContainerSvc.Cluster,
+			"service":    routing.ContainerSvc.Service,
+			"region":     routing.ContainerSvc.Region,
+			"task_count": int(routing.ContainerSvc.TaskCount),
+		},
+	}
+	d.Set("container", container)
+}
+
 func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 	if service == nil {
 		return
@@ -459,8 +475,11 @@ func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 	d.Set("use_spot", service.Fulfilment == "spot")
 	d.Set("custom_domains", service.CustomDomains)
 
-	// Set routing-related fields
-	if service.Kind == "database" {
+	// Set routing-related fields based on rule kind
+	switch service.Kind {
+	case Database:
 		setDatabaseConfig(d, service.Routing)
+	case ECS:
+		setContainerConfig(d, service.Routing)
 	}
 }
