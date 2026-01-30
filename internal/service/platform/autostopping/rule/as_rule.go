@@ -429,6 +429,20 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 	return httpProxy, tcpProxy, healthCheck
 }
 
+// setDatabaseConfig sets the database configuration in Terraform state from the API response
+func setDatabaseConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
+	if routing == nil || routing.Database == nil {
+		return
+	}
+	database := []map[string]interface{}{
+		{
+			"id":     routing.Database.Id,
+			"region": routing.Database.Region,
+		},
+	}
+	d.Set("database", database)
+}
+
 func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 	if service == nil {
 		return
@@ -445,4 +459,8 @@ func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 	d.Set("use_spot", service.Fulfilment == "spot")
 	d.Set("custom_domains", service.CustomDomains)
 
+	// Set routing-related fields
+	if service.Kind == "database" {
+		setDatabaseConfig(d, service.Routing)
+	}
 }
