@@ -512,4 +512,5 @@ func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 	case ScaleGroup:
 		setScaleGroupConfig(d, service.Routing)
 	}
+	// Remaining fields - http, tcp, health, depends
 }
