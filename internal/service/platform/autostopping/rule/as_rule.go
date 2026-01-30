@@ -442,7 +442,7 @@ func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 	if service.Opts != nil {
 		d.Set("dry_run", service.Opts.DryRun)
 	}
-	d.Set("use_spot", service.Fulfilment == "ondemand")
+	d.Set("use_spot", service.Fulfilment == "spot")
 	d.Set("custom_domains", service.CustomDomains)
 
 }
