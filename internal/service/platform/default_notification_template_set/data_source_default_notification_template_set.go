@@ -7,15 +7,27 @@ func DataDefaultNotificationTemplateSet() *schema.Resource {
 		Description: "Data source for retrieving a Default Notification Template Set.",
 		ReadContext: resourceDefaultNotificationTemplateSetRead,
 		Schema: map[string]*schema.Schema{
+			"org_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the organization.",
+			},
+			"project_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the project.",
+			},
 			"org": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Organization identifier",
+				Description: "Unique identifier of the organization. Deprecated: Use org_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'org_id' instead.",
 			},
 			"project": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Project identifier",
+				Description: "Unique identifier of the project. Deprecated: Use project_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'project_id' instead.",
 			},
 			"name": {
 				Type:        schema.TypeString,

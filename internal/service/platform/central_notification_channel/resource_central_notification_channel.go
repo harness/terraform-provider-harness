@@ -31,13 +31,27 @@ func ResourceCentralNotificationChannel() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"org_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the organization.",
+			},
+			"project_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the project.",
+			},
 			"org": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the organization. Deprecated: Use org_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'org_id' instead.",
 			},
 			"project": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the project. Deprecated: Use project_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'project_id' instead.",
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -283,12 +297,22 @@ func buildCentralNotificationChannelRequest(d *schema.ResourceData, accountIdent
 		channelDTO.Headers = expandHeaders(v.([]interface{}))
 	}
 
+	// Support both org_id/project_id (preferred) and deprecated org/project
+	org := d.Get("org_id").(string)
+	if org == "" {
+		org = d.Get("org").(string)
+	}
+	project := d.Get("project_id").(string)
+	if project == "" {
+		project = d.Get("project").(string)
+	}
+
 	return &nextgen.NotificationChannelDto{
 		Account:    accountIdentifier,
 		Identifier: d.Get("identifier").(string),
 		Name:       d.Get("name").(string),
-		Org:        d.Get("org").(string),
-		Project:    d.Get("project").(string),
+		Org:        org,
+		Project:    project,
 		NotificationChannelType: func() *nextgen.ChannelType {
 			s := nextgen.ChannelType(d.Get("notification_channel_type").(string))
 			return &s
@@ -347,10 +371,20 @@ func expandHeaders(raw []interface{}) []nextgen.WebHookHeaders {
 func readCentralNotificationChannel(accountIdentifier string, d *schema.ResourceData, notificationChannelDto nextgen.NotificationChannelDto) diag.Diagnostics {
 	d.SetId(notificationChannelDto.Identifier)
 	if notificationChannelDto.Org != "" {
-		d.Set("org", notificationChannelDto.Org)
+		if _, ok := d.GetOk("org_id"); ok {
+			d.Set("org_id", notificationChannelDto.Org)
+		}
+		if _, ok := d.GetOk("org"); ok {
+			d.Set("org", notificationChannelDto.Org)
+		}
 	}
 	if notificationChannelDto.Project != "" {
-		d.Set("project", notificationChannelDto.Project)
+		if _, ok := d.GetOk("project_id"); ok {
+			d.Set("project_id", notificationChannelDto.Project)
+		}
+		if _, ok := d.GetOk("project"); ok {
+			d.Set("project", notificationChannelDto.Project)
+		}
 	}
 	d.Set("identifier", notificationChannelDto.Identifier)
 	d.Set("name", notificationChannelDto.Name)
@@ -365,16 +399,34 @@ func readCentralNotificationChannel(accountIdentifier string, d *schema.Resource
 		return nil
 	}
 	channel := map[string]interface{}{
-		"slack_webhook_urls":          channelDTO.SlackWebhookUrls,
-		"webhook_urls":                channelDTO.WebhookUrls,
-		"email_ids":                   channelDTO.EmailIds,
-		"pager_duty_integration_keys": channelDTO.PagerDutyIntegrationKeys,
-		"ms_team_keys":                channelDTO.MsTeamKeys,
-		"datadog_urls":                channelDTO.DatadogUrls,
-		"user_groups":                 flattenUserGroups(channelDTO.UserGroups),
-		"headers":                     flattenHeaders(channelDTO.Headers),
-		"delegate_selectors":          channelDTO.DelegateSelectors,
-		"execute_on_delegate":         channelDTO.ExecuteOnDelegate,
+		"execute_on_delegate": channelDTO.ExecuteOnDelegate,
+	}
+	if len(channelDTO.SlackWebhookUrls) > 0 {
+		channel["slack_webhook_urls"] = channelDTO.SlackWebhookUrls
+	}
+	if len(channelDTO.WebhookUrls) > 0 {
+		channel["webhook_urls"] = channelDTO.WebhookUrls
+	}
+	if len(channelDTO.EmailIds) > 0 {
+		channel["email_ids"] = channelDTO.EmailIds
+	}
+	if len(channelDTO.PagerDutyIntegrationKeys) > 0 {
+		channel["pager_duty_integration_keys"] = channelDTO.PagerDutyIntegrationKeys
+	}
+	if len(channelDTO.MsTeamKeys) > 0 {
+		channel["ms_team_keys"] = channelDTO.MsTeamKeys
+	}
+	if len(channelDTO.DatadogUrls) > 0 {
+		channel["datadog_urls"] = channelDTO.DatadogUrls
+	}
+	if len(channelDTO.DelegateSelectors) > 0 {
+		channel["delegate_selectors"] = channelDTO.DelegateSelectors
+	}
+	if len(channelDTO.UserGroups) > 0 {
+		channel["user_groups"] = flattenUserGroups(channelDTO.UserGroups)
+	}
+	if len(channelDTO.Headers) > 0 {
+		channel["headers"] = flattenHeaders(channelDTO.Headers)
 	}
 	if val := channelDTO.ApiKey; val != "" {
 		channel["api_key"] = val
@@ -421,11 +473,17 @@ func getScope(d *schema.ResourceData) *Scope {
 	org := ""
 	project := ""
 
-	if attr, ok := d.GetOk("org"); ok {
+	// Support both org_id (preferred) and deprecated org
+	if attr, ok := d.GetOk("org_id"); ok {
+		org = (attr.(string))
+	} else if attr, ok := d.GetOk("org"); ok {
 		org = (attr.(string))
 	}
 
-	if attr, ok := d.GetOk("project"); ok {
+	// Support both project_id (preferred) and deprecated project
+	if attr, ok := d.GetOk("project_id"); ok {
+		project = (attr.(string))
+	} else if attr, ok := d.GetOk("project"); ok {
 		project = (attr.(string))
 	}
 

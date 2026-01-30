@@ -16,15 +16,27 @@ func DataSourceCentralNotificationChannelService() *schema.Resource {
 				Required:    true,
 				Description: "Unique identifier of the notification channel.",
 			},
+			"org_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the organization.",
+			},
+			"project_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Unique identifier of the project.",
+			},
 			"org": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Identifier of the organization the notification channel is scoped to.",
+				Description: "Unique identifier of the organization. Deprecated: Use org_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'org_id' instead.",
 			},
 			"project": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Identifier of the project the notification channel is scoped to.",
+				Description: "Unique identifier of the project. Deprecated: Use project_id instead.",
+				Deprecated:  "This field is deprecated and will be removed in a future release. Please use 'project_id' instead.",
 			},
 			"name": {
 				Type:        schema.TypeString,
