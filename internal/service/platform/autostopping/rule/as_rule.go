@@ -459,6 +459,34 @@ func setContainerConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
 	d.Set("container", container)
 }
 
+// setScaleGroupConfig sets the scale group configuration in Terraform state from the API response
+func setScaleGroupConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
+	if routing == nil || routing.Instance == nil || routing.Instance.ScaleGroup == nil {
+		return
+	}
+	sg := routing.Instance.ScaleGroup
+
+	// Get zone from AvailabilityZones array (first element if present)
+	zone := ""
+	if len(sg.AvailabilityZones) > 0 {
+		zone = sg.AvailabilityZones[0]
+	}
+
+	scaleGroup := []map[string]interface{}{
+		{
+			"id":        sg.Id,
+			"name":      sg.Name,
+			"region":    sg.Region,
+			"zone":      zone,
+			"desired":   int(sg.Desired),
+			"min":       int(sg.Min),
+			"max":       int(sg.Max),
+			"on_demand": int(sg.OnDemand),
+		},
+	}
+	d.Set("scale_group", scaleGroup)
+}
+
 func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 	if service == nil {
 		return
@@ -481,5 +509,7 @@ func readASRule(d *schema.ResourceData, service *nextgen.Service) {
 		setDatabaseConfig(d, service.Routing)
 	case ECS:
 		setContainerConfig(d, service.Routing)
+	case ScaleGroup:
+		setScaleGroupConfig(d, service.Routing)
 	}
 }
