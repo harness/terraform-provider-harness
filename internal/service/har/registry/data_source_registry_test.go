@@ -3,6 +3,7 @@ package registry_test
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -11,7 +12,7 @@ import (
 )
 
 func TestAccDataSourceVirtualRegistry(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id := strings.ToLower(fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5)))
 	resourceName := "data.harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -34,7 +35,7 @@ func TestAccDataSourceVirtualRegistry(t *testing.T) {
 }
 
 func TestAccDataSourceUpstreamAWSRegistry(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id := strings.ToLower(fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5)))
 	resourceName := "data.harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -57,7 +58,7 @@ func TestAccDataSourceUpstreamAWSRegistry(t *testing.T) {
 }
 
 func TestAccDataSourceUpstreamAWSRegistry2(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id := strings.ToLower(fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5)))
 	resourceName := "data.harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 

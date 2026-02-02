@@ -358,7 +358,7 @@ func readRegistry(d *schema.ResourceData, registry *har.Registry) {
 				} else {
 					authMap["auth_type"] = "Anonymous"
 				}
-				configMap["auth"] = authMap
+				configMap["auth"] = []interface{}{authMap}
 			}
 		}
 
