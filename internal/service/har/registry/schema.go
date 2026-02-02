@@ -1,12 +1,11 @@
 package registry
 
 import (
-	"context"
-	"fmt"
+	"regexp"
+
 	"github.com/harness/harness-go-sdk/harness/har"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"regexp"
 )
 
 func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
@@ -158,42 +157,6 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 							"config.0.upstream_proxies",
 						},
 					},
-				},
-				CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, i interface{}) error {
-					configType := d.Get("config.0.type").(string)
-					packageType := d.Get("package_type").(string)
-
-					if configType == "UPSTREAM" {
-						// Source is required for UPSTREAM
-						if source, ok := d.GetOk("config.0.source"); !ok || source.(string) == "" {
-							return fmt.Errorf("'source' is required for UPSTREAM registry type")
-						}
-
-						// URL is required for HELM package type
-						if packageType == "HELM" {
-							if url, ok := d.GetOk("config.0.url"); !ok || url.(string) == "" {
-								return fmt.Errorf("'url' is required for UPSTREAM registry type with HELM package type")
-							}
-						}
-
-						// Validate auth configuration
-						if auth, ok := d.GetOk("config.0.auth"); ok {
-							authConfig := auth.([]interface{})[0].(map[string]interface{})
-							authType := authConfig["auth_type"].(string)
-
-							if authType == "UserPassword" {
-								// Check required fields for UserPassword auth
-								if userName, ok := authConfig["user_name"].(string); !ok || userName == "" {
-									return fmt.Errorf("'user_name' is required for UserPassword authentication")
-								}
-								if secretId, ok := authConfig["secret_identifier"].(string); !ok || secretId == "" {
-									return fmt.Errorf("'secret_identifier' is required for UserPassword authentication")
-								}
-							}
-						}
-					}
-
-					return nil
 				},
 			},
 		},

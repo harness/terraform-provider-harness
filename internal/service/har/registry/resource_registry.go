@@ -25,7 +25,57 @@ func ResourceRegistry() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceRegistryImport,
 		},
+		CustomizeDiff: resourceRegistryCustomizeDiff,
 	}
+}
+
+func resourceRegistryCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, i interface{}) error {
+	configType, _ := d.Get("config.0.type").(string)
+	packageType, _ := d.Get("package_type").(string)
+
+	if configType == "UPSTREAM" {
+		// Source is required for UPSTREAM
+		if source, ok := d.GetOk("config.0.source"); !ok || source.(string) == "" {
+			return fmt.Errorf("'source' is required for UPSTREAM registry type")
+		}
+
+		// URL is required for HELM package type
+		if packageType == "HELM" {
+			if url, ok := d.GetOk("config.0.url"); !ok || url.(string) == "" {
+				return fmt.Errorf("'url' is required for UPSTREAM registry type with HELM package type")
+			}
+		}
+
+		// Authentication is required for UPSTREAM registry type
+		hasAuth := false
+		if _, ok := d.GetOk("config.0.auth"); ok {
+			hasAuth = true
+		}
+		if _, ok := d.GetOk("config.0.auth_type"); ok {
+			hasAuth = true
+		}
+		if !hasAuth {
+			return fmt.Errorf("authentication is required for UPSTREAM registry type. Provide either 'config.auth_type' field or 'config.auth' block with authentication details")
+		}
+
+		// Validate auth configuration
+		if auth, ok := d.GetOk("config.0.auth"); ok {
+			authConfig := auth.([]interface{})[0].(map[string]interface{})
+			authType := authConfig["auth_type"].(string)
+
+			if authType == "UserPassword" {
+				// Check required fields for UserPassword auth
+				if userName, ok := authConfig["user_name"].(string); !ok || userName == "" {
+					return fmt.Errorf("'user_name' is required for UserPassword authentication")
+				}
+				if secretId, ok := authConfig["secret_identifier"].(string); !ok || secretId == "" {
+					return fmt.Errorf("'secret_identifier' is required for UserPassword authentication")
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

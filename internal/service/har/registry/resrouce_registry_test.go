@@ -3,6 +3,7 @@ package registry_test
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -1566,3 +1567,105 @@ func TestAccResourceVirtualDockerRegistryAsLocal(t *testing.T) {
 	})
 }
 
+// TestAccResourceUpstreamDockerRegistryNoAuth tests that creating an UPSTREAM registry
+// without authentication should fail with validation error.
+func TestAccResourceUpstreamDockerRegistryNoAuth(t *testing.T) {
+	id := fmt.Sprintf("tf_auto_upstream_docker_no_auth")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamDockerRegistryNoAuth(id, accountId),
+				ExpectError: regexp.MustCompile("authentication is required for UPSTREAM registry type"),
+			},
+		},
+	})
+}
+
+// TestAccResourceUpstreamHelmRegistryNoAuth tests that creating an UPSTREAM Helm registry
+// without authentication should fail with validation error.
+func TestAccResourceUpstreamHelmRegistryNoAuth(t *testing.T) {
+	id := fmt.Sprintf("tf_auto_upstream_helm_no_auth")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamHelmRegistryNoAuth(id, accountId),
+				ExpectError: regexp.MustCompile("authentication is required for UPSTREAM registry type"),
+			},
+		},
+	})
+}
+
+// TestAccResourceUpstreamMavenRegistryNoAuth tests that creating an UPSTREAM Maven registry
+// without authentication should fail with validation error.
+func TestAccResourceUpstreamMavenRegistryNoAuth(t *testing.T) {
+	id := fmt.Sprintf("tf_auto_upstream_maven_no_auth")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamMavenRegistryNoAuth(id, accountId),
+				ExpectError: regexp.MustCompile("authentication is required for UPSTREAM registry type"),
+			},
+		},
+	})
+}
+
+func testAccResourceUpstreamDockerRegistryNoAuth(id string, accId string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_har_registry" "test" {
+  identifier   = "%[1]s"
+  space_ref    = "%[2]s"
+  package_type = "DOCKER"
+
+  config {
+    type   = "UPSTREAM"
+    source = "Dockerhub"
+  }
+  parent_ref = "%[2]s"
+}
+`, id, accId)
+}
+
+func testAccResourceUpstreamHelmRegistryNoAuth(id string, accId string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_har_registry" "test" {
+  identifier   = "%[1]s"
+  space_ref    = "%[2]s"
+  package_type = "HELM"
+
+  config {
+    type   = "UPSTREAM"
+    source = "Custom"
+    url    = "https://charts.example.com"
+  }
+  parent_ref = "%[2]s"
+}
+`, id, accId)
+}
+
+func testAccResourceUpstreamMavenRegistryNoAuth(id string, accId string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_har_registry" "test" {
+  identifier   = "%[1]s"
+  space_ref    = "%[2]s"
+  package_type = "MAVEN"
+
+  config {
+    type   = "UPSTREAM"
+    source = "MavenCentral"
+  }
+  parent_ref = "%[2]s"
+}
+`, id, accId)
+}
