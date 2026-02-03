@@ -24,8 +24,10 @@ Resource for managing Harness Notification Channels.
 
 ### Optional
 
-- `org` (String)
-- `project` (String)
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `org` (String, **Deprecated**) Unique identifier of the organization. Use `org_id` instead.
+- `project` (String, **Deprecated**) Unique identifier of the project. Use `project_id` instead.
 - `status` (String)
 
 ### Read-Only

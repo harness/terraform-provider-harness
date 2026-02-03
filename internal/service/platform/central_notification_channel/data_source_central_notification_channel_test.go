@@ -25,8 +25,8 @@ func TestAccDataSourceCentralNotificationChannel_email(t *testing.T) {
 				Config: testAccDataSourceCentralNotificationChannel(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
-					resource.TestCheckResourceAttr(resourceName, "project", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "notification_channel_type", "EMAIL"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
 				),
@@ -155,8 +155,8 @@ func testAccDataSourceCentralNotificationChannel(id string, name string) string 
 				harness_platform_project.test,
 			]
 			 identifier                = "%[1]s"
-				org     = harness_platform_organization.test.id
-				project = harness_platform_project.test.id
+				org_id     = harness_platform_organization.test.id
+				project_id = harness_platform_project.test.id
 			 name                      = "%[2]s"
 			 notification_channel_type = "EMAIL"
 			 status                    = "ENABLED"
@@ -168,8 +168,8 @@ func testAccDataSourceCentralNotificationChannel(id string, name string) string 
 
 		data "harness_platform_central_notification_channel" "test" {
 			identifier = harness_platform_central_notification_channel.test.identifier
-			org     = harness_platform_organization.test.id
-			project = harness_platform_project.test.id
+			org_id     = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 		}
 
 		resource "time_sleep" "wait_4_seconds" {
@@ -198,8 +198,8 @@ func testAccDataSourceCentralNotificationChannelSlack(id string, name string) st
 				harness_platform_project.test,
 			]
 			 identifier                = "%[1]s"
-			 org                       = harness_platform_organization.test.id
-			 project                   = harness_platform_project.test.id
+			 org_id                    = harness_platform_organization.test.id
+			 project_id                = harness_platform_project.test.id
 			 name                      = "%[2]s"
 			 notification_channel_type = "SLACK"
 			 status                    = "ENABLED"
@@ -211,8 +211,8 @@ func testAccDataSourceCentralNotificationChannelSlack(id string, name string) st
 
 		data "harness_platform_central_notification_channel" "test" {
 			identifier = harness_platform_central_notification_channel.test.identifier
-			org        = harness_platform_organization.test.id
-			project    = harness_platform_project.test.id
+			org_id     = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 		}
 
 		resource "time_sleep" "wait_4_seconds" {
@@ -241,8 +241,8 @@ func testAccDataSourceCentralNotificationChannelMSTeams(id string, name string) 
 				harness_platform_project.test,
 			]
 			 identifier                = "%[1]s"
-			 org                       = harness_platform_organization.test.id
-			 project                   = harness_platform_project.test.id
+			 org_id                    = harness_platform_organization.test.id
+			 project_id                = harness_platform_project.test.id
 			 name                      = "%[2]s"
 			 notification_channel_type = "MSTEAMS"
 			 status                    = "ENABLED"
@@ -254,8 +254,8 @@ func testAccDataSourceCentralNotificationChannelMSTeams(id string, name string) 
 
 		data "harness_platform_central_notification_channel" "test" {
 			identifier = harness_platform_central_notification_channel.test.identifier
-			org        = harness_platform_organization.test.id
-			project    = harness_platform_project.test.id
+			org_id     = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 		}
 
 		resource "time_sleep" "wait_4_seconds" {
@@ -284,8 +284,8 @@ func testAccDataSourceCentralNotificationChannelPagerDuty(id string, name string
 				harness_platform_project.test,
 			]
 			 identifier                = "%[1]s"
-			 org                       = harness_platform_organization.test.id
-			 project                   = harness_platform_project.test.id
+			 org_id                    = harness_platform_organization.test.id
+			 project_id                = harness_platform_project.test.id
 			 name                      = "%[2]s"
 			 notification_channel_type = "PAGERDUTY"
 			 status                    = "ENABLED"
@@ -297,8 +297,8 @@ func testAccDataSourceCentralNotificationChannelPagerDuty(id string, name string
 
 		data "harness_platform_central_notification_channel" "test" {
 			identifier = harness_platform_central_notification_channel.test.identifier
-			org        = harness_platform_organization.test.id
-			project    = harness_platform_project.test.id
+			org_id     = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 		}
 
 		resource "time_sleep" "wait_4_seconds" {
@@ -327,8 +327,8 @@ func testAccDataSourceCentralNotificationChannelWebhook(id string, name string) 
 				harness_platform_project.test,
 			]
 			 identifier                = "%[1]s"
-			 org                       = harness_platform_organization.test.id
-			 project                   = harness_platform_project.test.id
+			 org_id                    = harness_platform_organization.test.id
+			 project_id                = harness_platform_project.test.id
 			 name                      = "%[2]s"
 			 notification_channel_type = "WEBHOOK"
 			 status                    = "ENABLED"
@@ -340,8 +340,8 @@ func testAccDataSourceCentralNotificationChannelWebhook(id string, name string) 
 
 		data "harness_platform_central_notification_channel" "test" {
 			identifier = harness_platform_central_notification_channel.test.identifier
-			org        = harness_platform_organization.test.id
-			project    = harness_platform_project.test.id
+			org_id     = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 		}
 
 		resource "time_sleep" "wait_4_seconds" {
@@ -396,8 +396,8 @@ func testAccDataSourceCentralNotificationChannelDatadog(id string, name string) 
 			harness_platform_project.test,
 		]
 		 identifier                = "%[1]s"
-		 org                       = harness_platform_organization.test.id
-		 project                   = harness_platform_project.test.id
+		 org_id                    = harness_platform_organization.test.id
+		 project_id                = harness_platform_project.test.id
 		 name                      = "%[2]s"
 		 notification_channel_type = "DATADOG"
 		 status                    = "ENABLED"
@@ -410,8 +410,8 @@ func testAccDataSourceCentralNotificationChannelDatadog(id string, name string) 
 
 		data "harness_platform_central_notification_channel" "test" {
 			identifier = harness_platform_central_notification_channel.test.identifier
-			org        = harness_platform_organization.test.id
-			project    = harness_platform_project.test.id
+			org_id     = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 		}
 
 		resource "time_sleep" "wait_4_seconds" {
@@ -419,4 +419,3 @@ func testAccDataSourceCentralNotificationChannelDatadog(id string, name string) 
 		}
 	`, id, name)
 }
-

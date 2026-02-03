@@ -25,6 +25,10 @@ Resource for creating a Harness Default Notification Template Set
 
 ### Optional
 
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `org` (String, **Deprecated**) Unique identifier of the organization. Use `org_id` instead.
+- `project` (String, **Deprecated**) Unique identifier of the project. Use `project_id` instead.
 - `description` (String) Description for Default Notification Template Set
 - `tags` (Map of String) Key-value tags
 

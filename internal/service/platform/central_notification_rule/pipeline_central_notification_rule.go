@@ -400,10 +400,14 @@ func buildPipelineCentralNotificationRule(d *schema.ResourceData) nextgen.Notifi
 func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.ResourceData, notificationRuleDto nextgen.NotificationRuleDto) diag.Diagnostics {
 	d.SetId(notificationRuleDto.Identifier)
 	if notificationRuleDto.Org != "" {
-		d.Set("org", notificationRuleDto.Org)
+		if _, ok := d.GetOk("org"); ok {
+			d.Set("org", notificationRuleDto.Org)
+		}
 	}
 	if notificationRuleDto.Project != "" {
-		d.Set("project", notificationRuleDto.Project)
+		if _, ok := d.GetOk("project"); ok {
+			d.Set("project", notificationRuleDto.Project)
+		}
 	}
 	d.Set("account", accountIdentifier)
 	d.Set("identifier", notificationRuleDto.Identifier)
@@ -417,28 +421,29 @@ func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.Res
 	for _, cond := range notificationRuleDto.NotificationConditions {
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
-			eventDataList := []interface{}{}
-			// Handle notification event data - it can be null when scope_identifiers is empty
+			entityIdentifiers := cfg.EntityIdentifiers
+			if entityIdentifiers == nil {
+				entityIdentifiers = []string{}
+			}
+			eventConfig := map[string]interface{}{
+				"notification_entity": cfg.NotificationEntity,
+				"notification_event":  cfg.NotificationEvent,
+				"entity_identifiers":  entityIdentifiers,
+			}
+			// Only include notification_event_data if API actually returned it
 			if cfg.PipelineEventNotificationParamsDto != nil && cfg.PipelineEventNotificationParamsDto.Type_ != nil {
-				eventData := make(map[string]interface{})
-
-				eventData["type"] = string(*cfg.PipelineEventNotificationParamsDto.Type_)
-				eventData["scope_identifiers"] = cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers
-				eventDataList = []interface{}{eventData}
-			} else {
-				// When notification_event_data is null, create default structure with PIPELINE type
-				eventData := make(map[string]interface{})
-				eventData["type"] = "PIPELINE"
-				eventData["scope_identifiers"] = []string{}
-				eventDataList = []interface{}{eventData}
+				scopeIdentifiers := cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers
+				if scopeIdentifiers == nil {
+					scopeIdentifiers = []string{}
+				}
+				eventData := map[string]interface{}{
+					"type":              string(*cfg.PipelineEventNotificationParamsDto.Type_),
+					"scope_identifiers": scopeIdentifiers,
+				}
+				eventConfig["notification_event_data"] = []interface{}{eventData}
 			}
 
-			eventConfigs = append(eventConfigs, map[string]interface{}{
-				"notification_entity":     cfg.NotificationEntity,
-				"notification_event":      cfg.NotificationEvent,
-				"entity_identifiers":      cfg.EntityIdentifiers,
-				"notification_event_data": eventDataList,
-			})
+			eventConfigs = append(eventConfigs, eventConfig)
 		}
 
 		conditions = append(conditions, map[string]interface{}{

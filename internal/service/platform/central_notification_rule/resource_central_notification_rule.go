@@ -338,7 +338,7 @@ func expandNotificationConditions(raw []interface{}) []nextgen.NotificationCondi
 				} else if directMap, ok := rawEventData.(map[string]interface{}); ok {
 					eventDataMap = directMap
 				}
-				
+
 				if eventDataMap != nil {
 					if typeStr, ok := eventDataMap["type"].(string); ok && typeStr != "" {
 						t := nextgen.ResourceTypeEnum(typeStr)
@@ -427,11 +427,15 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 	d.SetId(notificationRuleDto.Identifier)
 	d.Set("account", accountIdentifier)
 	if notificationRuleDto.Org != "" {
-		d.Set("org", notificationRuleDto.Org)
+		if _, ok := d.GetOk("org"); ok {
+			d.Set("org", notificationRuleDto.Org)
+		}
 	}
 
 	if notificationRuleDto.Project != "" {
-		d.Set("project", notificationRuleDto.Project)
+		if _, ok := d.GetOk("project"); ok {
+			d.Set("project", notificationRuleDto.Project)
+		}
 	}
 	d.Set("identifier", notificationRuleDto.Identifier)
 	d.Set("name", notificationRuleDto.Name)
@@ -445,7 +449,7 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
 			eventData := make(map[string]interface{})
-			
+
 			// Handle notification event data - it can be null when scope_identifiers is empty
 			if cfg.PipelineEventNotificationParamsDto != nil && cfg.PipelineEventNotificationParamsDto.Type_ != nil {
 				eventData["type"] = string(*cfg.PipelineEventNotificationParamsDto.Type_)
@@ -470,19 +474,18 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 			if entityIdentifiers == nil {
 				entityIdentifiers = []string{}
 			}
-
 			// Only include notification_event_data if it has content
 			eventConfig := map[string]interface{}{
 				"notification_entity": cfg.NotificationEntity,
 				"notification_event":  cfg.NotificationEvent,
 				"entity_identifiers":  entityIdentifiers,
 			}
-			
+
 			// Only set notification_event_data if we actually have data to set
 			if len(eventData) > 0 {
 				eventConfig["notification_event_data"] = eventData
 			}
-			
+
 			eventConfigs = append(eventConfigs, eventConfig)
 		}
 

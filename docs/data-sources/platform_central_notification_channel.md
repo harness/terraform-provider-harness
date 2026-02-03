@@ -27,8 +27,10 @@ Data source for retrieving a central notification channel in Harness.
 - `last_modified` (Number) Timestamp when the notification channel was last modified.
 - `name` (String) Name of the notification channel.
 - `notification_channel_type` (String) Type of notification channel. One of: EMAIL, SLACK, PAGERDUTY, MSTeams, WEBHOOK, DATADOG.
-- `org` (String) Identifier of the organization the notification channel is scoped to.
-- `project` (String) Identifier of the project the notification channel is scoped to.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `org` (String, **Deprecated**) Unique identifier of the organization. Use `org_id` instead.
+- `project` (String, **Deprecated**) Unique identifier of the project. Use `project_id` instead.
 - `status` (String) Status of the notification channel. Possible values are ENABLED or DISABLED.
 
 ### Read-Only

@@ -64,8 +64,8 @@ func TestAccResourceDefaultNotificationTemplateSet_projectLevel(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
-					resource.TestCheckResourceAttr(resourceName, "project", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
 			{
@@ -92,8 +92,8 @@ func TestAccResourceDefaultNotificationTemplateSet_orgLevel(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "org", id),
-					resource.TestCheckNoResourceAttr(resourceName, "project"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckNoResourceAttr(resourceName, "project_id"),
 				),
 			},
 			{
@@ -169,12 +169,21 @@ func testAccGetDefaultNotificationTemplateSet(resourceName string, state *terraf
 	var resp nextgen.DefaultNotificationTemplateSetResponse
 	var err error
 
-	if r.Primary.Attributes["org"] != "" && r.Primary.Attributes["project"] != "" {
-		resp, _, err = c.ProjectDefaultNotificationTemplateSetApi.GetProjectDefaultNotificationTemplateSet(ctx, id, r.Primary.Attributes["org"], r.Primary.Attributes["project"], &nextgen.ProjectDefaultNotificationTemplateSetApiGetProjectDefaultNotificationTemplateSetOpts{
+	org := r.Primary.Attributes["org_id"]
+	if org == "" {
+		org = r.Primary.Attributes["org"]
+	}
+	project := r.Primary.Attributes["project_id"]
+	if project == "" {
+		project = r.Primary.Attributes["project"]
+	}
+
+	if org != "" && project != "" {
+		resp, _, err = c.ProjectDefaultNotificationTemplateSetApi.GetProjectDefaultNotificationTemplateSet(ctx, id, org, project, &nextgen.ProjectDefaultNotificationTemplateSetApiGetProjectDefaultNotificationTemplateSetOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 		})
-	} else if r.Primary.Attributes["org"] != "" {
-		resp, _, err = c.OrgDefaultNotificationTemplateSetApi.GetOrgDefaultNotificationTemplateSet(ctx, id, r.Primary.Attributes["org"], &nextgen.OrgDefaultNotificationTemplateSetApiGetOrgDefaultNotificationTemplateSetOpts{
+	} else if org != "" {
+		resp, _, err = c.OrgDefaultNotificationTemplateSetApi.GetOrgDefaultNotificationTemplateSet(ctx, id, org, &nextgen.OrgDefaultNotificationTemplateSetApiGetOrgDefaultNotificationTemplateSetOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 		})
 	} else {
@@ -247,8 +256,8 @@ func testAccResourceDefaultNotificationTemplateSetProjectLevel(id string, name s
 			]
 			identifier                  = "%[1]s"
 			name                       = "%[2]s"
-			org                        = harness_platform_organization.test.id
-			project                    = harness_platform_project.test.id
+			org_id                     = harness_platform_organization.test.id
+			project_id                 = harness_platform_project.test.id
 			description                = "Test project level notification template set"
 			notification_entity        = "PIPELINE"
 			notification_channel_type  = "EMAIL"
@@ -278,7 +287,7 @@ func testAccResourceDefaultNotificationTemplateSetOrgLevel(id string, name strin
 			]
 			identifier                  = "%[1]s"
 			name                       = "%[2]s"
-			org                        = harness_platform_organization.test.id
+			org_id                     = harness_platform_organization.test.id
 			description                = "Test org level notification template set"
 			notification_entity        = "PIPELINE"
 			notification_channel_type  = "EMAIL"
