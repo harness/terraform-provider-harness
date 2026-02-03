@@ -2,9 +2,11 @@ package helpers
 
 import (
 	"encoding/json"
-	"github.com/harness/harness-go-sdk/harness/policymgmt"
+	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/harness/harness-go-sdk/harness/policymgmt"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
@@ -162,6 +164,15 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 				}
 			}
 		}
+
+		// Handle 4xx/5xx errors - extract and display message with HTTP status for better error visibility
+		if httpResp != nil && httpResp.StatusCode >= 400 {
+			respErrorBody, parseErr := ParseErrorBody(erro)
+			if parseErr == nil && respErrorBody != nil && respErrorBody.Message != "" {
+				return diag.Errorf("HTTP %d: %s", httpResp.StatusCode, respErrorBody.Message)
+			}
+		}
+
 		return diag.Errorf(errMessage)
 	}
 
@@ -192,9 +203,47 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 }
 
 func ParseErrorBody(err nextgen.GenericSwaggerError) (*nextgen.ModelError, error) {
+	// First unmarshal into a generic map so we can normalize types that the
+	// SDK expects as strings but the platform sometimes returns as numbers
+	// (for example: "failure": { "code": 400 }). We convert those numeric
+	// values to strings and then unmarshal into nextgen.ModelError.
+	var raw map[string]interface{}
+	if uerr := json.Unmarshal(err.Body(), &raw); uerr != nil {
+		return nil, uerr
+	}
+
+	// Normalize nested failure.code if present
+	if f, ok := raw["failure"].(map[string]interface{}); ok {
+		if codeVal, ok2 := f["code"]; ok2 && codeVal != nil {
+			switch v := codeVal.(type) {
+			case float64:
+				// JSON numbers are decoded as float64 by default
+				f["code"] = fmt.Sprintf("%.0f", v)
+			default:
+				// leave as-is (handles string already)
+				f["code"] = fmt.Sprintf("%v", v)
+			}
+		}
+	}
+
+	// Also normalize top-level code if present
+	if codeVal, ok := raw["code"]; ok && codeVal != nil {
+		switch v := codeVal.(type) {
+		case float64:
+			raw["code"] = fmt.Sprintf("%.0f", v)
+		default:
+			raw["code"] = fmt.Sprintf("%v", v)
+		}
+	}
+
+	modified, merr := json.Marshal(raw)
+	if merr != nil {
+		return nil, merr
+	}
+
 	var parsed nextgen.ModelError
-	if err := json.Unmarshal(err.Body(), &parsed); err != nil {
-		return nil, err
+	if uerr := json.Unmarshal(modified, &parsed); uerr != nil {
+		return nil, uerr
 	}
 	return &parsed, nil
 }
