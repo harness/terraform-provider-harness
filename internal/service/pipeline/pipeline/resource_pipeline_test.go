@@ -673,14 +673,6 @@ func testAccResourceImplicitInlineConfig(projectID string, includeGitBlock bool)
 	}
 
 	return fmt.Sprintf(`
-terraform {
-  required_providers {
-    harness = {
-      source = "harness/harness"
-    }
-  }
-}
-
 resource "harness_platform_organization" "test" {
   identifier = "%[1]s"
   name       = "%[1]s"
