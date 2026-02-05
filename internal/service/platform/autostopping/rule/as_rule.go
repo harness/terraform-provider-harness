@@ -60,6 +60,8 @@ func resourceASRuleCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	if resp.Response != nil {
 		readASRule(d, resp.Response)
+		// Set dependencies from the input rule since RuleResponse doesn't include deps
+		setDependencies(d, rule.Deps)
 	}
 
 	return nil
