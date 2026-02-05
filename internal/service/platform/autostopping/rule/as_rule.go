@@ -3,6 +3,7 @@ package as_rule
 import (
 	"context"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -603,11 +604,17 @@ func setFilterConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
 	filterObj := routing.Instance.Filter
 
 	// Convert tags from map[string]string to []map[string]interface{} to match schema
+	// Sort keys to ensure deterministic ordering and avoid spurious Terraform diffs
 	var tagsList []map[string]interface{}
-	for key, value := range filterObj.Tags {
+	tagKeys := make([]string, 0, len(filterObj.Tags))
+	for key := range filterObj.Tags {
+		tagKeys = append(tagKeys, key)
+	}
+	sort.Strings(tagKeys)
+	for _, key := range tagKeys {
 		tagsList = append(tagsList, map[string]interface{}{
 			"key":   key,
-			"value": value,
+			"value": filterObj.Tags[key],
 		})
 	}
 
