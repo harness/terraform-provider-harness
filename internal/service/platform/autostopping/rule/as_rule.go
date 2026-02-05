@@ -425,6 +425,103 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 	return httpProxy, tcpProxy, healthCheck
 }
 
+// setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response
+func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck) {
+	if routing == nil {
+		return
+	}
+
+	// Set HTTP routing config
+	if routing.Http != nil {
+		httpConfig := make(map[string]interface{})
+
+		// Set proxy_id
+		if routing.Http.Proxy != nil && routing.Http.Proxy.Id != "" {
+			httpConfig["proxy_id"] = routing.Http.Proxy.Id
+		}
+
+		// Set routing (port configs)
+		if len(routing.Http.Ports) > 0 {
+			routingList := make([]map[string]interface{}, 0, len(routing.Http.Ports))
+			for _, portConfig := range routing.Http.Ports {
+				routingEntry := map[string]interface{}{
+					"source_protocol": portConfig.Protocol,
+					"target_protocol": portConfig.TargetProtocol,
+					"source_port":     portConfig.Port,
+					"target_port":     portConfig.TargetPort,
+					"action":          portConfig.Action,
+				}
+				routingList = append(routingList, routingEntry)
+			}
+			httpConfig["routing"] = routingList
+		}
+
+		// Set health check config (nested inside http)
+		if healthCheck != nil {
+			healthConfig := []map[string]interface{}{
+				{
+					"protocol":         healthCheck.Protocol,
+					"port":             healthCheck.Port,
+					"path":             healthCheck.Path,
+					"timeout":          healthCheck.Timeout,
+					"status_code_from": healthCheck.StatusCodeFrom,
+					"status_code_to":   healthCheck.StatusCodeTo,
+				},
+			}
+			httpConfig["health"] = healthConfig
+		}
+
+		d.Set("http", []map[string]interface{}{httpConfig})
+	}
+
+	// Set TCP routing config
+	if routing.Tcp != nil {
+		tcpConfig := make(map[string]interface{})
+
+		// Set proxy_id
+		if routing.Tcp.Proxy != nil && routing.Tcp.Proxy.Id != "" {
+			tcpConfig["proxy_id"] = routing.Tcp.Proxy.Id
+		}
+
+		// Set SSH config
+		if routing.Tcp.SshConf != nil {
+			sshConfig := []map[string]interface{}{
+				{
+					"connect_on": routing.Tcp.SshConf.Source,
+					"port":       routing.Tcp.SshConf.Target,
+				},
+			}
+			tcpConfig["ssh"] = sshConfig
+		}
+
+		// Set RDP config
+		if routing.Tcp.RdpConf != nil {
+			rdpConfig := []map[string]interface{}{
+				{
+					"connect_on": routing.Tcp.RdpConf.Source,
+					"port":       routing.Tcp.RdpConf.Target,
+				},
+			}
+			tcpConfig["rdp"] = rdpConfig
+		}
+
+		// Set forward rules (custom ports)
+		if len(routing.Tcp.CustomPorts) > 0 {
+			forwardRules := make([]map[string]interface{}, 0, len(routing.Tcp.CustomPorts))
+			for _, tcpPort := range routing.Tcp.CustomPorts {
+				forwardRule := map[string]interface{}{
+					"connect_on": tcpPort.Source,
+					"port":       tcpPort.Target,
+				}
+				forwardRules = append(forwardRules, forwardRule)
+			}
+			tcpConfig["forward_rule"] = forwardRules
+		}
+
+		d.Set("tcp", []map[string]interface{}{tcpConfig})
+	}
+}
+
 // setDatabaseConfig sets the database configuration in Terraform state from the API response
 func setDatabaseConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
 	if routing == nil || routing.Database == nil {
@@ -527,5 +624,8 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 		setScaleGroupConfig(d, service.Routing)
 	case Instance:
 		setFilterConfig(d, service.Routing)
+	}
+	if service.Routing != nil && (service.Routing.Http != nil || service.Routing.Tcp != nil) {
+		setRoutingConfig(d, service.Routing, service.HealthCheck)
 	}
 }
