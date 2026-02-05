@@ -33,6 +33,7 @@ func resourceASRuleRead(ctx context.Context, d *schema.ResourceData, meta interf
 
 	if resp.Response != nil {
 		readASRule(d, resp.Response.Service)
+		setDependencies(d, resp.Response.Deps)
 	}
 
 	return nil
@@ -299,6 +300,22 @@ func getDependencies(d *schema.ResourceData) []nextgen.ServiceDep {
 		dependencyList = append(dependencyList, *dependency)
 	}
 	return dependencyList
+}
+
+// setDependencies sets the rule dependencies in Terraform state from the API response
+func setDependencies(d *schema.ResourceData, deps []nextgen.ServiceDep) {
+	if len(deps) == 0 {
+		return
+	}
+
+	dependsList := make([]map[string]interface{}, 0, len(deps))
+	for _, dep := range deps {
+		dependsList = append(dependsList, map[string]interface{}{
+			"rule_id":      int(dep.DepId),
+			"delay_in_sec": int(dep.DelaySecs),
+		})
+	}
+	d.Set("depends", dependsList)
 }
 
 func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *nextgen.TcpProxy, *nextgen.HealthCheck) {
