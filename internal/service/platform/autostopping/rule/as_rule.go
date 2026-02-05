@@ -442,13 +442,10 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 }
 
 // setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response
+// Always sets both http and tcp to ensure stale data is cleared when configs are removed
 func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck) {
-	if routing == nil {
-		return
-	}
-
-	// Set HTTP routing config
-	if routing.Http != nil {
+	// Set HTTP routing config (or clear it if absent)
+	if routing != nil && routing.Http != nil {
 		httpConfig := make(map[string]interface{})
 
 		// Set proxy_id
@@ -488,10 +485,13 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 		}
 
 		d.Set("http", []map[string]interface{}{httpConfig})
+	} else {
+		// Clear http config if not present in API response
+		d.Set("http", []map[string]interface{}{})
 	}
 
-	// Set TCP routing config
-	if routing.Tcp != nil {
+	// Set TCP routing config (or clear it if absent)
+	if routing != nil && routing.Tcp != nil {
 		tcpConfig := make(map[string]interface{})
 
 		// Set proxy_id
@@ -535,6 +535,9 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 		}
 
 		d.Set("tcp", []map[string]interface{}{tcpConfig})
+	} else {
+		// Clear tcp config if not present in API response
+		d.Set("tcp", []map[string]interface{}{})
 	}
 }
 
@@ -656,7 +659,6 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	case Instance:
 		setFilterConfig(d, service.Routing)
 	}
-	if service.Routing != nil && (service.Routing.Http != nil || service.Routing.Tcp != nil) {
-		setRoutingConfig(d, service.Routing, service.HealthCheck)
-	}
+	// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
+	setRoutingConfig(d, service.Routing, service.HealthCheck)
 }
