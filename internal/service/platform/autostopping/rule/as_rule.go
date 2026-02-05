@@ -304,10 +304,6 @@ func getDependencies(d *schema.ResourceData) []nextgen.ServiceDep {
 
 // setDependencies sets the rule dependencies in Terraform state from the API response
 func setDependencies(d *schema.ResourceData, deps []nextgen.ServiceDep) {
-	if len(deps) == 0 {
-		return
-	}
-
 	dependsList := make([]map[string]interface{}, 0, len(deps))
 	for _, dep := range deps {
 		dependsList = append(dependsList, map[string]interface{}{
