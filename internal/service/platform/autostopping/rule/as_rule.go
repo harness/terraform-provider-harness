@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/BurntSushi/toml"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -27,7 +26,7 @@ func resourceASRuleRead(ctx context.Context, d *schema.ResourceData, meta interf
 	if err != nil {
 		return diag.Errorf("invalid rule id")
 	}
-	resp, httpResp, err := c.CloudCostAutoStoppingRulesApi.AutoStoppingRuleDetails(ctx, c.AccountId, ruleId, c.AccountId)
+	resp, httpResp, err := c.CloudCostAutoStoppingRulesV2Api.GetAutoStoppingRuleV2(ctx, c.AccountId, ruleId, c.AccountId)
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
@@ -59,10 +58,7 @@ func resourceASRuleCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	if resp.Response != nil {
-		service := &nextgen.Service{
-			Id: resp.Response.Id,
-		}
-		readASRule(d, service)
+		readASRule(d, resp.Response)
 	}
 
 	return nil
@@ -430,7 +426,7 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 }
 
 // setDatabaseConfig sets the database configuration in Terraform state from the API response
-func setDatabaseConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
+func setDatabaseConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
 	if routing == nil || routing.Database == nil {
 		return
 	}
@@ -444,7 +440,7 @@ func setDatabaseConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
 }
 
 // setContainerConfig sets the container (ECS) configuration in Terraform state from the API response
-func setContainerConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
+func setContainerConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
 	if routing == nil || routing.ContainerSvc == nil {
 		return
 	}
@@ -460,7 +456,7 @@ func setContainerConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
 }
 
 // setScaleGroupConfig sets the scale group configuration in Terraform state from the API response
-func setScaleGroupConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
+func setScaleGroupConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
 	if routing == nil || routing.Instance == nil || routing.Instance.ScaleGroup == nil {
 		return
 	}
@@ -489,39 +485,23 @@ func setScaleGroupConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
 
 // setFilterConfig sets the VM filter configuration in Terraform state from the API response
 // FilterText is in TOML format and needs to be parsed into FilterObject structure
-func setFilterConfig(d *schema.ResourceData, routing *nextgen.RoutingData) {
-	if routing == nil || routing.Instance == nil || routing.Instance.FilterText == "" {
+func setFilterConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
+	if routing == nil || routing.Instance == nil || routing.Instance.Filter == nil {
 		return
 	}
-
-	// Parse TOML FilterText into FilterObject
-	var filterObj nextgen.FilterObject
-	if _, err := toml.Decode(routing.Instance.FilterText, &filterObj); err != nil {
-		// If parsing fails, skip setting filter
-		return
-	}
-
-	// Build tags list from map
-	var tags []map[string]interface{}
-	for key, value := range filterObj.Tags {
-		tags = append(tags, map[string]interface{}{
-			"key":   key,
-			"value": value,
-		})
-	}
-
+	filterObj := routing.Instance.Filter
 	filter := []map[string]interface{}{
 		{
 			"vm_ids":  filterObj.Ids,
 			"regions": filterObj.Regions,
 			"zones":   filterObj.Zones,
-			"tags":    tags,
+			"tags":    filterObj.Tags,
 		},
 	}
 	d.Set("filter", filter)
 }
 
-func readASRule(d *schema.ResourceData, service *nextgen.Service) {
+func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	if service == nil {
 		return
 	}
