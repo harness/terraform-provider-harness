@@ -581,18 +581,27 @@ func setScaleGroupConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2)
 }
 
 // setFilterConfig sets the VM filter configuration in Terraform state from the API response
-// FilterText is in TOML format and needs to be parsed into FilterObject structure
 func setFilterConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
 	if routing == nil || routing.Instance == nil || routing.Instance.Filter == nil {
 		return
 	}
 	filterObj := routing.Instance.Filter
+
+	// Convert tags from map[string]string to []map[string]interface{} to match schema
+	var tagsList []map[string]interface{}
+	for key, value := range filterObj.Tags {
+		tagsList = append(tagsList, map[string]interface{}{
+			"key":   key,
+			"value": value,
+		})
+	}
+
 	filter := []map[string]interface{}{
 		{
 			"vm_ids":  filterObj.Ids,
 			"regions": filterObj.Regions,
 			"zones":   filterObj.Zones,
-			"tags":    filterObj.Tags,
+			"tags":    tagsList,
 		},
 	}
 	d.Set("filter", filter)
