@@ -33,6 +33,7 @@ data "harness_platform_connector_awskms" "example" {
 
 ### Read-Only
 
+- `arn_plaintext` (String) The ARN of the AWS KMS in plaintext. This is used when the ARN is not stored in a Harness secret. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `arn_ref` (String) A reference to the Harness secret containing the ARN of the AWS KMS. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `credentials` (List of Object) Credentials to connect to AWS. (see [below for nested schema](#nestedatt--credentials))
 - `default` (Boolean) Whether this is the default connector.

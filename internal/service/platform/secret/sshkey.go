@@ -186,6 +186,14 @@ func resourceSecretSSHKeyRead(ctx context.Context, d *schema.ResourceData, meta 
 		return err
 	}
 
+	if secret == nil {
+		id := d.Id()
+		if id == "" {
+			id = d.Get("identifier").(string)
+		}
+		return diag.Errorf("SSH key secret '%s' not found", id)
+	}
+
 	if err := readSecretSSHKey(d, secret); err != nil {
 		return diag.FromErr(err)
 	}

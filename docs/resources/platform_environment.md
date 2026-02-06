@@ -101,8 +101,6 @@ resource "harness_platform_environment" "test" {
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
 - `type` (String) The type of environment. Valid values are PreProduction, Production
 
 ### Optional
@@ -111,6 +109,8 @@ resource "harness_platform_environment" "test" {
 - `description` (String) Description of the resource.
 - `force_delete` (Boolean) Enable this flag for force deletion of environments
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
+- `identifier` (String) Unique identifier of the resource.
+- `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.

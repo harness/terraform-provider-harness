@@ -13,7 +13,7 @@ import (
 
 func ResourceWebhook() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness pipeline.",
+		Description: "Resource for creating a Harness GitX Webhook.",
 
 		ReadContext:   resourceWebhookRead,
 		UpdateContext: resourceWebhookUpdate,

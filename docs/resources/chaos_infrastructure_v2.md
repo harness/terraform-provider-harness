@@ -35,7 +35,7 @@ resource "harness_chaos_infrastructure_v2" "test" {
   # Optional fields
   name         = "<name>"
   # Expected to be a numeric group ID
-  run_as_group = <run_as_group>
+  run_as_group = "<run_as_group>"
   run_as_user  = "<run_as_user>"
 
   description     = "<description>"

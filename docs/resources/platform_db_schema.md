@@ -115,11 +115,11 @@ resource "harness_platform_db_schema" "flyway_script_test" {
 
 - `changelog_script` (Block List, Max: 1) Configuration to clone changeSets using script (see [below for nested schema](#nestedblock--changelog_script))
 - `description` (String) Description of the resource.
+- `migration_type` (String) DB Migration tool type. Valid values are: Liquibase, Flyway
 - `schema_source` (Block List, Max: 1) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedblock--schema_source))
 - `service` (String) The service associated with schema
 - `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) Type of the database schema. Valid values are: SCRIPT, REPOSITORY
-- `migration_type` (String) DB migration tool type. Valid values are any one of: Liquibase, Flyway
 
 ### Read-Only
 

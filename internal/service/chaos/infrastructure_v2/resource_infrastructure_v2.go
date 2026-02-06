@@ -157,6 +157,39 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(fmt.Errorf("failed to set environment_id: %v", err))
 	}
 
+	// Set optional fields that may be returned by the API
+	if infra.InfraScope != nil {
+		if err := d.Set("infra_scope", string(*infra.InfraScope)); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set infra_scope: %v", err))
+		}
+	}
+	if err := d.Set("ai_enabled", infra.IsAIEnabled); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set ai_enabled: %v", err))
+	}
+	if err := d.Set("insecure_skip_verify", infra.InsecureSkipVerify); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set insecure_skip_verify: %v", err))
+	}
+	if infra.InfraNamespace != "" {
+		if err := d.Set("namespace", infra.InfraNamespace); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set namespace: %v", err))
+		}
+	}
+	if infra.RunAsUser != 0 {
+		if err := d.Set("run_as_user", int(infra.RunAsUser)); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set run_as_user: %v", err))
+		}
+	}
+	if infra.RunAsGroup != 0 {
+		if err := d.Set("run_as_group", int(infra.RunAsGroup)); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set run_as_group: %v", err))
+		}
+	}
+	if infra.Tags != nil && len(infra.Tags) > 0 {
+		if err := d.Set("tags", infra.Tags); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set tags: %v", err))
+		}
+	}
+
 	// Set maps
 	if err := d.Set("label", infra.Label); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set label: %v", err))
@@ -630,10 +663,13 @@ func buildUpdateInfrastructureV2Request(d *schema.ResourceData, accountID string
 	}
 
 	// Set nested objects
-	log.Printf("[DEBUG] buildUpdateInfrastructureV2Request image_registry: %+v",
-		d.Get("image_registry"))
-	if v, ok := d.GetOk("image_registry"); ok {
-		req.ImageRegistry = expandImageRegistry(v.([]interface{}), d, accountID)
+	// Only send image_registry if it has changed
+	if d.HasChange("image_registry") {
+		log.Printf("[DEBUG] buildUpdateInfrastructureV2Request image_registry changed: %+v",
+			d.Get("image_registry"))
+		if v, ok := d.GetOk("image_registry"); ok {
+			req.ImageRegistry = expandImageRegistry(v.([]interface{}), d, accountID)
+		}
 	}
 	if v, ok := d.GetOk("mtls"); ok {
 		req.Mtls = expandMtls(v.([]interface{}))

@@ -26,6 +26,8 @@ Data source for retrieving a Default Notification Template Set.
 ### Optional
 
 - `description` (String) Description for Default Notification Template Set
+- `org` (String) Organization identifier
+- `project` (String) Project identifier
 - `tags` (Map of String) Key-value tags
 
 ### Read-Only
