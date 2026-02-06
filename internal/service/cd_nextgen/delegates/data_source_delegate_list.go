@@ -79,7 +79,7 @@ func DataSourceDelegateList() *schema.Resource {
 			"filter_type": {
 				Description: "Filter type for delegates.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"delegates": {
 				Description: "List of delegates.",
