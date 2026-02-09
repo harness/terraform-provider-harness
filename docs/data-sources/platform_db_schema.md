@@ -31,6 +31,7 @@ data "harness_platform_db_schema" "example" {
 
 ### Optional
 
+- `migration_type` (String) DB Migration tool type. Valid values are: Liquibase, Flyway
 - `name` (String) Name of the resource.
 - `type` (String) Type of the database schema. Valid values are: Repository, Script
 
@@ -41,7 +42,6 @@ data "harness_platform_db_schema" "example" {
 - `id` (String) The ID of this resource.
 - `schema_source` (List of Object) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedatt--schema_source))
 - `service` (String) The service associated with schema
-- `migration_type` (String) DB Migration tool type, Valid values are any one of: Liquibase, Flyway
 - `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedatt--changelog_script"></a>

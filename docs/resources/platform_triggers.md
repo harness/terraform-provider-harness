@@ -72,10 +72,12 @@ resource "harness_platform_triggers" "example" {
 - `if_match` (String) if-Match
 - `ignore_error` (Boolean) ignore error default false
 - `tags` (Set of String) Tags to associate with the resource.
+- `webhook_url` (String) webhook url
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `webhook_url` (String) The webhook URL if the trigger is type `Webhook`.
 
 ## Import
 

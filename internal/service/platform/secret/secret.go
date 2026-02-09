@@ -88,12 +88,21 @@ func buildField(d *schema.ResourceData, field string) optional.String {
 	return optional.EmptyString()
 }
 
+func BuildFieldBool(d *schema.ResourceData, field string) optional.Bool {
+	if b, ok := d.GetOk(field); ok {
+		return optional.NewBool(b.(bool))
+	}
+
+	return optional.EmptyBool()
+}
+
 func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	_, httpResp, err := c.SecretsApi.DeleteSecretV2(ctx, d.Id(), c.AccountId, &nextgen.SecretsApiDeleteSecretV2Opts{
 		OrgIdentifier:     buildField(d, "org_id"),
 		ProjectIdentifier: buildField(d, "project_id"),
+		ForceDelete:       BuildFieldBool(d, "force_delete"),
 	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)

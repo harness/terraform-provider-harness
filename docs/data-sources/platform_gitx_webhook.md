@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitx_webhook Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness pipeline.
+  Data source for retrieving a Harness GitX Webhook.
 ---
 
 # harness_platform_gitx_webhook (Data Source)
 
-Resource for creating a Harness pipeline.
+Data source for retrieving a Harness GitX Webhook.
 
 ## Example Usage
 

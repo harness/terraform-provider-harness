@@ -38,5 +38,6 @@ data "harness_platform_gitops_app_project_mapping" "example" {
 
 ### Read-Only
 
+- `auto_create_service_env` (Boolean) Enable automated creation of service, environment and cluster-env link. Defaults to false.
 - `id` (String) The ID of this resource.
 - `identifier` (String) Identifier of the GitOps Application Project.

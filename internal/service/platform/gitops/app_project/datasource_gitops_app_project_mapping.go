@@ -2,6 +2,7 @@ package app_project
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -46,13 +47,18 @@ func DatasourceGitopsAppProjectMapping() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"argo_project_name": {
-				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
+		"argo_project_name": {
+			Description: "ArgoCD Project name which is to be mapped to the Harness project.",
+			Type:        schema.TypeString,
+			Required:    true,
 		},
-	}
+		"auto_create_service_env": {
+			Description: "Enable automated creation of service, environment and cluster-env link. Defaults to false.",
+			Type:        schema.TypeBool,
+			Computed:    true,
+		},
+	},
+}
 	return resource
 }
 

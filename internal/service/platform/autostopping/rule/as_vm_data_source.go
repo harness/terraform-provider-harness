@@ -6,7 +6,7 @@ import (
 
 func DataSourceVMRule() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Variable.",
+		Description: "Data source for retrieving a Harness AutoStopping rule for VMs.",
 
 		ReadContext: resourceASRuleRead,
 

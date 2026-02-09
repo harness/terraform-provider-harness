@@ -29,15 +29,35 @@ func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
 		// CheckDestroy:      testAccResourceGitopsAppProjectMappingDestroy(resourceName, agentId), //commenting this since app project mapping cannot exist without an agent.
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProject, id),
+				// Test Case 1: Create with auto_create_service_env = true
+				Config: testAccResourceGitopsAppProjectMappingWithAutoCreate(id, accountId, argoProject, id, "true"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProject),
+					resource.TestCheckResourceAttr(resourceName, "auto_create_service_env", "true"),
 				),
 			},
 			{
-				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProjectUpdated, id),
+				// Test Case 2: Update to auto_create_service_env = false
+				Config: testAccResourceGitopsAppProjectMappingWithAutoCreate(id, accountId, argoProject, id, "false"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProject),
+					resource.TestCheckResourceAttr(resourceName, "auto_create_service_env", "false"),
+				),
+			},
+			{
+				// Test Case 3: Omit field (should default to false)
+				Config: testAccResourceGitopsAppProjectMappingWithoutAutoCreate(id, accountId, argoProject, id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProject),
+					resource.TestCheckResourceAttr(resourceName, "auto_create_service_env", "false"),
+				),
+			},
+			{
+				// Test Case 4: Update argo project name while keeping auto_create_service_env = true
+				Config: testAccResourceGitopsAppProjectMappingWithAutoCreate(id, accountId, argoProjectUpdated, id, "true"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProjectUpdated),
+					resource.TestCheckResourceAttr(resourceName, "auto_create_service_env", "true"),
 				),
 			},
 			{
@@ -77,7 +97,46 @@ func testAccResourceGitopsAppProjectMappingDestroy(resourceName string, agentId 
 	}
 }
 
-func testAccResourceGitopsAppProjectMapping(id string, accountId string, argoProject string, projectId string) string {
+// testAccResourceGitopsAppProjectMappingWithAutoCreate creates a config with auto_create_service_env field
+func testAccResourceGitopsAppProjectMappingWithAutoCreate(id string, accountId string, argoProject string, projectId string, autoCreate string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+		
+		resource "harness_platform_project" "test" {
+			identifier = "%[4]s"
+			name = "%[4]s"
+			org_id = harness_platform_organization.test.id
+		}
+		resource "harness_platform_gitops_agent" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			name = "%[1]s"
+			type = "MANAGED_ARGO_PROVIDER"
+			operator = "ARGO"
+			metadata {
+				namespace = "%[1]s"
+        		high_availability = false
+    		}
+		}
+		resource "harness_platform_gitops_app_project_mapping" "test" {
+			depends_on = [harness_platform_gitops_agent.test]
+			account_id = "%[2]s"
+			org_id = "%[1]s"
+			project_id = "%[4]s"
+			agent_id = "%[1]s"
+			argo_project_name = "%[3]s"
+			auto_create_service_env = %[5]s
+		}
+		`, id, accountId, argoProject, projectId, autoCreate)
+}
+
+// testAccResourceGitopsAppProjectMappingWithoutAutoCreate creates a config without auto_create_service_env field
+func testAccResourceGitopsAppProjectMappingWithoutAutoCreate(id string, accountId string, argoProject string, projectId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"

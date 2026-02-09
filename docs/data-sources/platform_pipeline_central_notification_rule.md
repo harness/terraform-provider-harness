@@ -26,16 +26,17 @@ data "harness_platform_pipeline_central_notification_rule" "example" {
 ### Required
 
 - `identifier` (String) Identifier of the Notification Rule.
+- `name` (String)
 
 ### Optional
 
 - `custom_notification_template_ref` (Block List, Max: 1) (see [below for nested schema](#nestedblock--custom_notification_template_ref))
-- `name` (String)
 - `notification_channel_refs` (List of String)
 - `notification_conditions` (Block List) (see [below for nested schema](#nestedblock--notification_conditions))
 - `org` (String) Identifier of the organization in which the Notification Rule is configured.
 - `project` (String) Identifier of the project in which the Notification Rule is configured.
-- `status` (String) Status of the notification rule. Supported values: `ENABLED`, `DISABLED`. Default: `ENABLED`.
+- `status` (String)
+
 ### Read-Only
 
 - `account` (String) Account identifier associated with this notification channel.
@@ -87,6 +88,7 @@ Required:
 
 Optional:
 
+- `entity_identifiers` (List of String)
 - `notification_event_data` (Block List) (see [below for nested schema](#nestedblock--notification_conditions--notification_event_configs--notification_event_data))
 
 <a id="nestedblock--notification_conditions--notification_event_configs--notification_event_data"></a>

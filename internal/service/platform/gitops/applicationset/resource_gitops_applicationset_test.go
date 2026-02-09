@@ -19,7 +19,7 @@ func TestAccResourceGitopsApplicationSet_AllClustersGenerator(t *testing.T) {
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	// namespace is same as agent id but remove "account." prefix if it exists
-	namespace := strings.TrimPrefix(agentId, "account.")
+	namespace := os.Getenv("HARNESS_TEST_GITOPS_NAMESPACE")
 	//namespace = "argocd"
 	resourceName1 := "harness_platform_gitops_applicationset.test1"
 	resourceName2 := "harness_platform_gitops_applicationset.test2"
@@ -92,6 +92,14 @@ func testAccResourceGitopsApplicationsetClusterGenerator(id, accountId, name, ag
 					}
 					source_repos = ["*"]
 				}
+			}
+			lifecycle {
+				ignore_changes = [
+					project.0.metadata.0.namespace,
+					project.0.metadata.0.finalizers,
+					project.0.metadata.0.labels,
+					project.0.spec.0.source_namespaces,
+				]
 			}
 		}
 
@@ -278,7 +286,7 @@ func TestAccResourceGitopsApplicationSet_MatrixGitClusters(t *testing.T) {
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	namespace := strings.TrimPrefix(agentId, "account.")
+	namespace := os.Getenv("HARNESS_TEST_GITOPS_NAMESPACE")
 	resourceName := "harness_platform_gitops_applicationset.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -335,6 +343,14 @@ func testAccResourceGitopsApplicationsetMatrixGitClusters(id, accountId, name, a
 					}
 					source_repos = ["*"]
 				}
+			}
+			lifecycle {
+				ignore_changes = [
+					project.0.metadata.0.namespace,
+					project.0.metadata.0.finalizers,
+					project.0.metadata.0.labels,
+					project.0.spec.0.source_namespaces,
+				]
 			}
 		}
 
@@ -438,7 +454,7 @@ func TestAccResourceGitopsApplicationSet_SCMProviderGitHub(t *testing.T) {
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	namespace := strings.TrimPrefix(agentId, "account.")
+	namespace := os.Getenv("HARNESS_TEST_GITOPS_NAMESPACE")
 	resourceName := "harness_platform_gitops_applicationset.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -495,6 +511,14 @@ func testAccResourceGitopsApplicationsetSCMProviderGitHub(id, accountId, name, a
 				}
 				source_repos = ["*"]
 			}
+		}
+		lifecycle {
+			ignore_changes = [
+				project.0.metadata.0.namespace,
+				project.0.metadata.0.finalizers,
+				project.0.metadata.0.labels,
+				project.0.spec.0.source_namespaces,
+			]
 		}
 	}
 
@@ -573,7 +597,7 @@ func TestAccResourceGitopsApplicationSet_SCMProviderGitLab(t *testing.T) {
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	namespace := strings.TrimPrefix(agentId, "account.")
+	namespace := os.Getenv("HARNESS_TEST_GITOPS_NAMESPACE")
 	resourceName := "harness_platform_gitops_applicationset.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -631,6 +655,14 @@ func testAccResourceGitopsApplicationsetSCMProviderGitLab(id, accountId, name, a
 				}
 				source_repos = ["*"]
 			}
+		}
+		lifecycle {
+			ignore_changes = [
+				project.0.metadata.0.namespace,
+				project.0.metadata.0.finalizers,
+				project.0.metadata.0.labels,
+				project.0.spec.0.source_namespaces,
+			]
 		}
 	}
 
@@ -713,7 +745,7 @@ func TestAccResourceGitopsApplicationSet_MatrixSCMProviderClustersWithSelector(t
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	namespace := strings.TrimPrefix(agentId, "account.")
+	namespace := os.Getenv("HARNESS_TEST_GITOPS_NAMESPACE")
 	resourceName := "harness_platform_gitops_applicationset.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -772,6 +804,14 @@ func testAccResourceGitopsApplicationsetMatrixSCMProviderClustersWithSelector(id
 				}
 				source_repos = ["*"]
 			}
+		}
+		lifecycle {
+			ignore_changes = [
+				project.0.metadata.0.namespace,
+				project.0.metadata.0.finalizers,
+				project.0.metadata.0.labels,
+				project.0.spec.0.source_namespaces,
+			]
 		}
 	}
 

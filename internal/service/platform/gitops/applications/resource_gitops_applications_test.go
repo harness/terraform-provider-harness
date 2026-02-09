@@ -20,229 +20,91 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 )
 
-func TestAccResourceGitopsApplication_HelmApp(t *testing.T) {
+func TestAccResourceGitopsApplication_AllTypes(t *testing.T) {
 	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
 	id = strings.ReplaceAll(id, "_", "")
-	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
 	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
-	repoId := id
-	clusterName := id
-	namespace := "test"
-	repo := "https://github.com/harness-apps/hosted-gitops-example-apps"
-	namespaceUpdated := namespace + "_updated"
-	resourceName := "harness_platform_gitops_applications.test"
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceGitopsApplicationHelm(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-				),
-			},
-			{
-				Config: testAccResourceGitopsApplicationHelm(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, repoId),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
-			},
-		},
-	})
-}
-
-func TestAccResourceGitopsApplication_HelmAppMultiSource(t *testing.T) {
-	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
-	id = strings.ReplaceAll(id, "_", "")
-	name := id
-	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
 	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
-
-	clusterId := id
-	repoId := id
-	clusterName := id
-	namespace := "test"
 	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
-	namespaceUpdated := namespace + "_updated"
-	resourceName := "harness_platform_gitops_applications.testmultisource"
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceGitopsApplicationHelmMultiSource(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId, clusterToken),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-				),
-			},
-			{
-				Config: testAccResourceGitopsApplicationHelmMultiSource(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, repoId, clusterToken),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
-			},
-		},
-	})
-}
-
-func TestAccResourceGitopsApplication_KustomizeApp(t *testing.T) {
-	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
-	id = strings.ReplaceAll(id, "_", "")
-	name := id
-	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
-	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
-	repoId := id
-	clusterName := id
+	helmRepoURL := os.Getenv("HARNESS_TEST_GITOPS_HELM_REPO_URL")
+	helmChart := os.Getenv("HARNESS_TEST_GITOPS_HELM_REPO_CHART")
 	namespace := "test"
-	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
 	namespaceUpdated := namespace + "_updated"
-	resourceName := "harness_platform_gitops_applications.test"
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceGitopsApplicationKustomize(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-				),
-			},
-			{
-				Config: testAccResourceGitopsApplicationKustomize(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, repoId),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
-			},
-		},
-	})
-}
 
-func TestAccResourceGitopsApplicationHelmCharts_SkipRepoValidationTrue(t *testing.T) {
-	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
-	id = strings.ReplaceAll(id, "_", "")
-	name := id
-	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
-	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
-	clusterName := id
-	namespace := "test"
-	repo := os.Getenv("HARNESS_TEST_GITOPS_HELM_REPO_URL")
-	chart := os.Getenv("HARNESS_TEST_GITOPS_HELM_REPO_CHART")
-	namespaceUpdated := namespace + "_updated"
-	resourceName := "harness_platform_gitops_applications.test"
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceGitopsApplicationHelmSkipRepoValidation(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, chart, true),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-				),
-			},
-			{
-				Config: testAccResourceGitopsApplicationHelmSkipRepoValidation(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, chart, true),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
-			},
-		},
-	})
-}
+	// Resource names for each application type
+	helmAppResource := "harness_platform_gitops_applications.helm_app"
+	kustomizeAppResource := "harness_platform_gitops_applications.kustomize_app"
+	multiSourceAppResource := "harness_platform_gitops_applications.multisource_app"
+	helmChartAppResource := "harness_platform_gitops_applications.helm_chart_app"
+	skipRepoAppResource := "harness_platform_gitops_applications.skip_repo_app"
 
-func TestAccResourceGitopsApplicationGit_SkipRepoValidationTrue(t *testing.T) {
-	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
-	id = strings.ReplaceAll(id, "_", "")
-	name := id
-	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
-	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
-	clusterName := id
-	repoId := id
-	namespace := "test"
-	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
-	namespaceUpdated := namespace + "_updated"
-	resourceName := "harness_platform_gitops_applications.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
+		CheckDestroy: resource.ComposeTestCheckFunc(
+			testAccResourceGitopsApplicationDestroy(helmAppResource),
+			testAccResourceGitopsApplicationDestroy(kustomizeAppResource),
+			testAccResourceGitopsApplicationDestroy(multiSourceAppResource),
+			testAccResourceGitopsApplicationDestroy(helmChartAppResource),
+			testAccResourceGitopsApplicationDestroy(skipRepoAppResource),
+		),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsApplicationGitSkipRepoValidation(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, true),
+				// Step 1: Create all applications
+				Config: testAccResourceGitopsApplicationAllTypes(id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, helmRepoURL, helmChart, namespace),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "skip_repo_validation", "true"),
+					// Helm app checks
+					resource.TestCheckResourceAttr(helmAppResource, "id", id+"helm"),
+					resource.TestCheckResourceAttr(helmAppResource, "application.0.spec.0.destination.0.namespace", namespace),
+					// Kustomize app checks
+					resource.TestCheckResourceAttr(kustomizeAppResource, "id", id+"kustomize"),
+					resource.TestCheckResourceAttr(kustomizeAppResource, "application.0.spec.0.destination.0.namespace", namespace),
+					// Multi-source app checks
+					resource.TestCheckResourceAttr(multiSourceAppResource, "name", id+"multisource"),
+					resource.TestCheckResourceAttr(multiSourceAppResource, "application.0.spec.0.destination.0.namespace", namespace),
+					// Helm chart app checks (skip_repo_validation)
+					resource.TestCheckResourceAttr(helmChartAppResource, "id", id+"helmchart"),
+					resource.TestCheckResourceAttr(helmChartAppResource, "skip_repo_validation", "true"),
+					// Skip repo validation app checks
+					resource.TestCheckResourceAttr(skipRepoAppResource, "id", id+"skiprepo"),
+					resource.TestCheckResourceAttr(skipRepoAppResource, "skip_repo_validation", "true"),
 				),
 			},
 			{
-				Config: testAccResourceGitopsApplicationGitSkipRepoValidation(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, true),
+				// Step 2: Update namespace on all applications
+				Config: testAccResourceGitopsApplicationAllTypes(id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, helmRepoURL, helmChart, namespaceUpdated),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+					// Verify namespace updated on all apps
+					resource.TestCheckResourceAttr(helmAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+					resource.TestCheckResourceAttr(kustomizeAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+					resource.TestCheckResourceAttr(multiSourceAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+					resource.TestCheckResourceAttr(helmChartAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+					resource.TestCheckResourceAttr(skipRepoAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
 				),
 			},
 			{
-				Config: testAccResourceGitopsApplicationKustomize(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, repoId),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
-					resource.TestCheckResourceAttr(resourceName, "skip_repo_validation", "false"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
+				// Step 3: Import state for helm app
+				ResourceName:      helmAppResource,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(helmAppResource),
+			},
+			{
+				// Step 4: Import state for kustomize app
+				ResourceName:      kustomizeAppResource,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(kustomizeAppResource),
+			},
+			{
+				// Step 5: Import state for multi-source app
+				ResourceName:      multiSourceAppResource,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(multiSourceAppResource),
 			},
 		},
 	})
@@ -495,6 +357,9 @@ func testAccResourceGitopsApplicationDestroy(resourceName string) resource.TestC
 
 func testAccGetApplication(resourceName string, state *terraform.State) (*nextgen.Servicev1Application, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
+	if r == nil {
+		return nil, nil
+	}
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	agentIdentifier := r.Primary.Attributes["agent_id"]
 	orgIdentifier := r.Primary.Attributes["org_id"]
@@ -966,4 +831,347 @@ func testAccResourceGitopsApplicationGitSkipRepoValidation(id string, accountId 
             skip_repo_validation = %[10]t
 		}
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, skipRepoValidation)
+}
+
+func testAccResourceGitopsApplicationAllTypes(id string, accountId string, agentId string, clusterServer string, clusterId string, clusterToken string, repo string, helmRepoURL string, helmChart string, namespace string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			org_id = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_service" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+		}
+
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
+		}
+
+		resource "harness_platform_gitops_repository" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[3]s"
+			repo {
+				repo = "%[7]s"
+				name = "%[1]s"
+				insecure = true
+				connection_type = "HTTPS_ANONYMOUS"
+			}
+			upsert = true
+		}
+
+		resource "harness_platform_gitops_repository" "testhelmchart" {
+			identifier = "%[1]shelmchart"
+			account_id = "%[2]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[3]s"
+			repo {
+				repo = "%[8]s"
+				name = "%[1]shelmchart"
+				insecure = true
+				connection_type = "HTTPS_ANONYMOUS"
+			}
+			upsert = true
+		}
+
+		
+
+		resource "harness_platform_gitops_cluster" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			agent_id = "%[3]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			request {
+				upsert = true
+				cluster {
+					server = "%[4]s"
+					name = "%[1]s"
+					config {
+						bearer_token = "%[6]s"
+						tls_client_config {
+							insecure = true
+						}
+						cluster_connection_type = "SERVICE_ACCOUNT"
+					}
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info, request.0.cluster.0.config.0.cluster_connection_type,
+				]
+			}
+		}
+
+		# Application 1: Helm app with path-based source
+		resource "harness_platform_gitops_applications" "helm_app" {
+			depends_on = [harness_platform_gitops_repository.test, harness_platform_gitops_cluster.test]
+			application {
+				metadata {
+					annotations = {}
+					labels = {
+						"harness.io/serviceRef" = harness_platform_service.test.id
+						"harness.io/envRef" = harness_platform_environment.test.id
+					}
+					name = "%[1]shelm"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					source {
+						target_revision = "master"
+						repo_url = "%[7]s"
+						path = "helm-guestbook"
+					}
+					destination {
+						namespace = "%[10]s"
+						server = "%[4]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]shelm"
+			cluster_id = harness_platform_gitops_cluster.test.id
+			repo_id = harness_platform_gitops_repository.test.id
+			agent_id = "%[3]s"
+			name = "%[1]shelm"
+		}
+
+		# Application 2: Kustomize app
+		resource "harness_platform_gitops_applications" "kustomize_app" {
+			depends_on = [harness_platform_gitops_repository.test, harness_platform_gitops_cluster.test]
+			application {
+				metadata {
+					annotations = {}
+					labels = {
+						"harness.io/serviceRef" = harness_platform_service.test.id
+						"harness.io/envRef" = harness_platform_environment.test.id
+					}
+					name = "%[1]skustomize"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					source {
+						target_revision = "master"
+						repo_url = "%[7]s"
+						path = "kustomize-guestbook"
+						kustomize {
+							images = [
+								"gcr.io/heptio-images/ks-guestbook-demo:0.1"
+							]
+						}
+					}
+					destination {
+						namespace = "%[10]s"
+						server = "%[4]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]skustomize"
+			cluster_id = harness_platform_gitops_cluster.test.id
+			repo_id = harness_platform_gitops_repository.test.id
+			agent_id = "%[3]s"
+			name = "%[1]skustomize"
+		}
+
+		# Application 3: Multi-source app
+		resource "harness_platform_gitops_applications" "multisource_app" {
+			depends_on = [harness_platform_gitops_repository.test, harness_platform_gitops_cluster.test]
+			application {
+				metadata {
+					annotations = {}
+					labels = {
+						"harness.io/serviceRef" = harness_platform_service.test.id
+						"harness.io/envRef" = harness_platform_environment.test.id
+					}
+					name = "%[1]smultisource"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					sources {
+						repo_url = "%[7]s"
+						target_revision = "master"
+						ref = "val"
+					}
+					sources {
+						repo_url = "%[7]s"
+						target_revision = "master"
+						path = "helm-guestbook"
+						helm {
+							value_files = [
+								"$val/helm-guestbook/values.yaml"
+							]
+						}
+					}
+					destination {
+						namespace = "%[10]s"
+						server = "%[4]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			name = "%[1]smultisource"
+			cluster_id = harness_platform_gitops_cluster.test.id
+			repo_ids = [
+				harness_platform_gitops_repository.test.id,
+				harness_platform_gitops_repository.test.id
+			]
+			agent_id = "%[3]s"
+		}
+
+		# Application 4: Helm chart app with skip_repo_validation
+		resource "harness_platform_gitops_applications" "helm_chart_app" {
+			depends_on = [harness_platform_gitops_cluster.test]
+			application {
+				metadata {
+					annotations = {}
+					name = "%[1]shelmchart"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					source {
+						target_revision = "2.6.0"
+						repo_url = "https://grafana.github.io/helm-charts"
+						chart = "fluent-bit"
+					}
+					destination {
+						namespace = "%[10]s"
+						server = "%[4]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]shelmchart"
+			cluster_id = harness_platform_gitops_cluster.test.id
+			agent_id = "%[3]s"
+			name = "%[1]shelmchart"
+			skip_repo_validation = true
+		}
+
+		# Application 5: Skip repo validation app (git-based)
+		resource "harness_platform_gitops_applications" "skip_repo_app" {
+			depends_on = [harness_platform_gitops_cluster.test]
+			application {
+				metadata {
+					annotations = {}
+					labels = {
+						"harness.io/serviceRef" = harness_platform_service.test.id
+						"harness.io/envRef" = harness_platform_environment.test.id
+					}
+					name = "%[1]sskiprepo"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					source {
+						target_revision = "master"
+						repo_url = "https://test.com"
+						path = "kustomize-guestbook"
+						kustomize {
+							images = [
+								"gcr.io/heptio-images/ks-guestbook-demo:0.1"
+							]
+						}
+					}
+					destination {
+						namespace = "%[10]s"
+						server = "%[4]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]sskiprepo"
+			cluster_id = harness_platform_gitops_cluster.test.id
+			agent_id = "%[3]s"
+			name = "%[1]sskiprepo"
+			skip_repo_validation = true
+		}
+		`, id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, helmRepoURL, helmChart, namespace)
 }
