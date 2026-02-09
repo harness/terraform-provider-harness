@@ -50,10 +50,25 @@ func ResourceSecretText() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"version": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Version of the secret (for AWS/Azure Secret Manager)",
 									},
-									// Add other fields for the inner map as needed
+									"kms_key_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "KMS Key ID (for AWS Secret Manager)",
+									},
+									"regions": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP region for the secret (for GCP Secret Manager)",
+									},
+									"gcp_project_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP Project ID (for GCP Secret Manager)",
+									},
 								},
 							},
 						},
@@ -150,27 +165,21 @@ func readAdditionalMetadata(metadata interface{}) nextgen.AdditionalMetadata {
 			// Loop through "values" set
 			for _, v := range valuesSet.List() {
 				valueMap := v.(map[string]interface{})
-				if version, ok := valueMap["version"].(string); ok {
+				if version, ok := valueMap["version"].(string); ok && version != "" {
 					result.Values["version"] = version
 				}
-				// Add other fields as needed
+				if kmsKeyId, ok := valueMap["kms_key_id"].(string); ok && kmsKeyId != "" {
+					result.Values["kmsKeyId"] = kmsKeyId
+				}
+				// GCP Secret Manager fields
+				if regions, ok := valueMap["regions"].(string); ok && regions != "" {
+					result.Values["regions"] = regions
+				}
+				if projectId, ok := valueMap["gcp_project_id"].(string); ok && projectId != "" {
+					result.Values["projectId"] = projectId
+				}
 			}
 		}
-	}
-
-	return result
-}
-
-func importAdditionalMetadata(data map[string]string) []map[string]interface{} {
-	var result []map[string]interface{}
-
-	for _, value := range data {
-		entry := map[string]interface{}{
-			"version": value,
-			// Add other fields for the inner map as needed
-		}
-
-		result = append(result, entry)
 	}
 
 	return result
@@ -180,18 +189,39 @@ func importAdditionalMetadata_2(additionalMetadata *nextgen.AdditionalMetadata) 
 	response := make([]interface{}, 0)
 	data := map[string]interface{}{}
 	if additionalMetadata != nil && len(additionalMetadata.Values) > 0 {
-		var valuesList []interface{}
-
-		for _, value := range additionalMetadata.Values {
-			entry := map[string]string{
-				"version": value,
-				// Add other fields for the inner map as needed
+		entry := make(map[string]interface{})
+		for k, v := range additionalMetadata.Values {
+			switch k {
+			case "version":
+				entry["version"] = v
+			case "kmsKeyId":
+				entry["kms_key_id"] = v
+			case "regions":
+				entry["regions"] = v
+			case "projectId":
+				entry["gcp_project_id"] = v
 			}
-
-			valuesList = append(valuesList, entry)
 		}
-
-		data["values"] = valuesList
+		data["values"] = schema.NewSet(schema.HashResource(&schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"version": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"kms_key_id": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"regions": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"gcp_project_id": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+			},
+		}), []interface{}{entry})
 	}
 	return append(response, data)
 }

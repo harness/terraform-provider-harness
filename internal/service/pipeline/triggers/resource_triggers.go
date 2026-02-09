@@ -44,6 +44,12 @@ func ResourceTriggers() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"webhook_url": {
+				Description: "webhook url",
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+			},
 		},
 	}
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
@@ -131,4 +137,5 @@ func readTriggers(d *schema.ResourceData, trigger *nextgen.NgTriggerResponse) {
 	d.Set("project_id", trigger.ProjectIdentifier)
 	d.Set("target_id", trigger.TargetIdentifier)
 	d.Set("yaml", trigger.Yaml)
+	d.Set("webhook_url", trigger.WebhookUrl)
 }

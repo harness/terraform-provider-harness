@@ -3,12 +3,12 @@
 page_title: "harness_autostopping_rule_scale_group Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a Harness Variable.
+  Data source for retrieving a Harness AutoStopping rule for Scaling Groups.
 ---
 
 # harness_autostopping_rule_scale_group (Data Source)
 
-Data source for retrieving a Harness Variable.
+Data source for retrieving a Harness AutoStopping rule for Scaling Groups.
 
 ## Example Usage
 

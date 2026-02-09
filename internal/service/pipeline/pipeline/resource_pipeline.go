@@ -242,7 +242,10 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 					Body:           optional.NewInterface(pipeline_import_request_body),
 					HarnessAccount: optional.NewString(c.AccountId)})
 		} else {
-			pipeline := buildCreatePipeline(d)
+			pipeline, diags := buildCreatePipeline(d)
+			if diags != nil {
+				return diags
+			}
 			if pipeline.GitDetails != nil {
 				base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
 				store_type = optional.NewString(pipeline.GitDetails.StoreType)
@@ -382,12 +385,12 @@ func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-func buildCreatePipeline(d *schema.ResourceData) nextgen.PipelineCreateRequestBody {
+func buildCreatePipeline(d *schema.ResourceData) (nextgen.PipelineCreateRequestBody, diag.Diagnostics) {
 	pipeline := nextgen.PipelineCreateRequestBody{
 		Identifier:   d.Get("identifier").(string),
 		Name:         d.Get("name").(string),
 		Description:  d.Get("description").(string),
-		Tags:         helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
+		Tags:         helpers.ExpandPipelineTags(d.Get("tags").(*schema.Set).List()),
 		PipelineYaml: d.Get("yaml").(string),
 	}
 
@@ -409,17 +412,30 @@ func buildCreatePipeline(d *schema.ResourceData) nextgen.PipelineCreateRequestBo
 		if attr, ok := config["connector_ref"]; ok {
 			pipeline.GitDetails.ConnectorRef = attr.(string)
 		}
-		if attr, ok := config["store_type"]; ok {
-			pipeline.GitDetails.StoreType = attr.(string)
+
+		if attr, ok := config["store_type"]; ok && attr != nil {
+			v, ok := attr.(string)
+			if !ok || v == "" {
+				return pipeline, diag.Errorf("store_type must be set when git_details is provided")
+			}
+			pipeline.GitDetails.StoreType = v
+		} else {
+			return pipeline, diag.Errorf("store_type must be set when git_details is provided")
 		}
+
 		if attr, ok := config["repo_name"]; ok {
 			pipeline.GitDetails.RepoName = attr.(string)
 		}
 		if attr, ok := config["is_harness_code_repo"]; ok {
 			pipeline.GitDetails.IsHarnessCodeRepo = attr.(bool)
 		}
+
+	} else { // When git experience setting is empty on Harness UI & git_details block if nil set store type as INLINE else server throws NullPointerException
+		pipeline.GitDetails = &nextgen.GitCreateDetails{}
+		pipeline.GitDetails.StoreType = "INLINE"
 	}
-	return pipeline
+
+	return pipeline, nil
 }
 
 func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBody {
@@ -427,7 +443,7 @@ func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBo
 		Identifier:   d.Get("identifier").(string),
 		Name:         d.Get("name").(string),
 		Description:  d.Get("description").(string),
-		Tags:         helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
+		Tags:         helpers.ExpandPipelineTags(d.Get("tags").(*schema.Set).List()),
 		PipelineYaml: d.Get("yaml").(string),
 	}
 

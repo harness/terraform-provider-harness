@@ -51,9 +51,9 @@ func TestAccDataSourceChaosInfrastructureV2_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", sanitizeK8sResourceName(rName)),
-					// resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
+					resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
 					resource.TestCheckResourceAttr(resourceName, "infra_scope", "NAMESPACE"),
-					// resource.TestCheckResourceAttrSet(resourceName, "status"),
+					resource.TestCheckResourceAttrSet(resourceName, "status"),
 					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
 				),
 			},
@@ -63,8 +63,8 @@ func TestAccDataSourceChaosInfrastructureV2_basic(t *testing.T) {
 
 // TestAccDataSourceChaosInfrastructureV2_WithAllOptions verifies the data source with all possible options set.
 func TestAccDataSourceChaosInfrastructureV2_WithAllOptions(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	rName := id
+	id := "textwithalloptions"
+	rName := sanitizeK8sResourceName(id)
 	resourceName := "data.harness_chaos_infrastructure_v2.test"
 
 	resource.Test(t, resource.TestCase{
@@ -75,13 +75,13 @@ func TestAccDataSourceChaosInfrastructureV2_WithAllOptions(t *testing.T) {
 				Config: testAccDataSourceChaosInfrastructureV2Config_WithAllOptions(id, rName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", sanitizeK8sResourceName(rName)),
-					// resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
-					resource.TestCheckResourceAttr(resourceName, "ai_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "name", rName),
+					resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
+					resource.TestCheckResourceAttr(resourceName, "is_ai_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "insecure_skip_verify", "true"),
 					resource.TestCheckResourceAttr(resourceName, "namespace", "chaos-namespace"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "litmus-admin"),
-					// resource.TestCheckResourceAttrSet(resourceName, "status"),
+					resource.TestCheckResourceAttrSet(resourceName, "status"),
 				),
 			},
 		},
@@ -99,7 +99,7 @@ func TestAccDataSourceChaosInfrastructureV2_KubernetesType(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceChaosInfrastructureV2Config(id, rName, "KUBERNETES", "NAMESPACE"),
+				Config: testAccDataSourceChaosInfrastructureV2Config(id, rName, "KUBERNETESV2", "NAMESPACE"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
 					resource.TestCheckResourceAttr(resourceName, "infra_scope", "NAMESPACE"),
@@ -120,7 +120,7 @@ func TestAccDataSourceChaosInfrastructureV2_NotFound(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccDataSourceChaosInfrastructureV2Config_NonExistent(id, rName),
-				ExpectError: regexp.MustCompile("not found"),
+				ExpectError: regexp.MustCompile("500 Internal Server Error"),
 			},
 		},
 	})

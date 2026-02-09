@@ -6,7 +6,7 @@ import (
 
 func DataSourceECSRule() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Variable.",
+		Description: "Data source for retrieving a Harness AutoStopping rule for ECS services.",
 		ReadContext: resourceASRuleRead,
 
 		Schema: map[string]*schema.Schema{

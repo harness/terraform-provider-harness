@@ -27,9 +27,11 @@ data "harness_platform_secret_file" "example" {
 
 ### Optional
 
+- `additional_metadata` (Block List) Additional Metadata for the Secret (see [below for nested schema](#nestedblock--additional_metadata))
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
+- `force_delete` (Boolean) Enable this flag for force deletion of connector
 
 ### Read-Only
 
@@ -38,3 +40,20 @@ data "harness_platform_secret_file" "example" {
 - `id` (String) The ID of this resource.
 - `secret_manager_identifier` (String) Identifier of the Secret Manager used to manage the secret.
 - `tags` (Set of String) Tags to associate with the resource.
+
+<a id="nestedblock--additional_metadata"></a>
+### Nested Schema for `additional_metadata`
+
+Optional:
+
+- `values` (Block Set) (see [below for nested schema](#nestedblock--additional_metadata--values))
+
+<a id="nestedblock--additional_metadata--values"></a>
+### Nested Schema for `additional_metadata.values`
+
+Optional:
+
+- `version` (String) Version of the secret (for AWS/Azure Secret Manager)
+- `kms_key_id` (String) KMS Key ID (for AWS Secret Manager)
+- `regions` (String) GCP region for the secret (for GCP Secret Manager)
+- `gcp_project_id` (String) GCP Project ID (for GCP Secret Manager)

@@ -3,12 +3,12 @@
 page_title: "harness_autostopping_rule_vm Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a Harness Variable.
+  Data source for retrieving a Harness AutoStopping rule for VMs.
 ---
 
 # harness_autostopping_rule_vm (Data Source)
 
-Data source for retrieving a Harness Variable.
+Data source for retrieving a Harness AutoStopping rule for VMs.
 
 ## Example Usage
 

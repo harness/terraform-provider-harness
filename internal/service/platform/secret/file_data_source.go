@@ -21,6 +21,43 @@ func DataSourceSecretFile() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"additional_metadata": {
+				Description: "Additional Metadata for the Secret",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"values": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"version": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Version of the secret (for AWS/Azure Secret Manager)",
+									},
+									"kms_key_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "KMS Key ID (for AWS Secret Manager)",
+									},
+									"regions": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP region for the secret (for GCP Secret Manager)",
+									},
+									"gcp_project_id": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "GCP Project ID (for GCP Secret Manager)",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 

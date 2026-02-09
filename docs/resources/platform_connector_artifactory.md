@@ -122,6 +122,7 @@ resource "harness_platform_connector_artifactory" "test" {
 - `credentials` (Block List, Max: 1) Credentials to use for authentication. (see [below for nested schema](#nestedblock--credentials))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.

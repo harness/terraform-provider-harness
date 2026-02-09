@@ -3,7 +3,7 @@
 page_title: "harness_platform_apikey Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a Harness API Key.
+  Data source for retrieving a Harness ApiKey.
 ---
 
 # harness_platform_apikey (Data Source)

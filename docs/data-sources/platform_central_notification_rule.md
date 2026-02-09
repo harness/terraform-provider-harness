@@ -82,4 +82,5 @@ Required:
 
 Optional:
 
+- `entity_identifiers` (List of String)
 - `notification_event_data` (Map of String)

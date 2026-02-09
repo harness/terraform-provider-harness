@@ -1,0 +1,5 @@
+```release-note:new-resource
+  harness_platform_idp_catalog_entity - added a new resource for IDP catalog entity
+  harness_platform_idp_environment_blueprint - added a new resource for IDP environment blueprint
+  harness_platform_idp_environment - added a new resource for IDP environment
+```

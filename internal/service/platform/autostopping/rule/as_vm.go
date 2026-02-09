@@ -11,7 +11,7 @@ import (
 
 func ResourceVMRule() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Variables.",
+		Description: "Resource for creating a AutoStopping rule for VMs.",
 
 		ReadContext:   resourceASRuleRead,
 		UpdateContext: resourceVMRuleCreateOrUpdate,
