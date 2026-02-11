@@ -3,6 +3,7 @@ package as_rule
 import (
 	"context"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -26,14 +27,14 @@ func resourceASRuleRead(ctx context.Context, d *schema.ResourceData, meta interf
 	if err != nil {
 		return diag.Errorf("invalid rule id")
 	}
-	resp, httpResp, err := c.CloudCostAutoStoppingRulesApi.AutoStoppingRuleDetails(ctx, c.AccountId, ruleId, c.AccountId)
-
+	resp, httpResp, err := c.CloudCostAutoStoppingRulesV2Api.GetAutoStoppingRuleV2(ctx, c.AccountId, ruleId, c.AccountId)
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	if resp.Response != nil {
-		readASRule(d, resp.Response.Service.Id)
+		readASRule(d, resp.Response.Service)
+		setDependencies(d, resp.Response.Deps)
 	}
 
 	return nil
@@ -59,7 +60,9 @@ func resourceASRuleCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	if resp.Response != nil {
-		readASRule(d, resp.Response.Id)
+		readASRule(d, resp.Response)
+		// Set dependencies from the input rule since RuleResponse doesn't include deps
+		setDependencies(d, rule.Deps)
 	}
 
 	return nil
@@ -302,6 +305,18 @@ func getDependencies(d *schema.ResourceData) []nextgen.ServiceDep {
 	return dependencyList
 }
 
+// setDependencies sets the rule dependencies in Terraform state from the API response
+func setDependencies(d *schema.ResourceData, deps []nextgen.ServiceDep) {
+	dependsList := make([]map[string]interface{}, 0, len(deps))
+	for _, dep := range deps {
+		dependsList = append(dependsList, map[string]interface{}{
+			"rule_id":      int(dep.DepId),
+			"delay_in_sec": int(dep.DelaySecs),
+		})
+	}
+	d.Set("depends", dependsList)
+}
+
 func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *nextgen.TcpProxy, *nextgen.HealthCheck) {
 	var httpProxy *nextgen.HttpProxy
 	var tcpProxy *nextgen.TcpProxy
@@ -426,8 +441,224 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 	return httpProxy, tcpProxy, healthCheck
 }
 
-func readASRule(d *schema.ResourceData, id int64) {
-	identifier := strconv.Itoa(int(id))
+// setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response
+// Always sets both http and tcp to ensure stale data is cleared when configs are removed
+func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck) {
+	// Set HTTP routing config (or clear it if absent)
+	if routing != nil && routing.Http != nil {
+		httpConfig := make(map[string]interface{})
+
+		// Set proxy_id
+		if routing.Http.Proxy != nil && routing.Http.Proxy.Id != "" {
+			httpConfig["proxy_id"] = routing.Http.Proxy.Id
+		}
+
+		// Set routing (port configs)
+		if len(routing.Http.Ports) > 0 {
+			routingList := make([]map[string]interface{}, 0, len(routing.Http.Ports))
+			for _, portConfig := range routing.Http.Ports {
+				routingEntry := map[string]interface{}{
+					"source_protocol": portConfig.Protocol,
+					"target_protocol": portConfig.TargetProtocol,
+					"source_port":     portConfig.Port,
+					"target_port":     portConfig.TargetPort,
+					"action":          portConfig.Action,
+				}
+				routingList = append(routingList, routingEntry)
+			}
+			httpConfig["routing"] = routingList
+		}
+
+		// Set health check config (nested inside http)
+		if healthCheck != nil {
+			healthConfig := []map[string]interface{}{
+				{
+					"protocol":         healthCheck.Protocol,
+					"port":             healthCheck.Port,
+					"path":             healthCheck.Path,
+					"timeout":          healthCheck.Timeout,
+					"status_code_from": healthCheck.StatusCodeFrom,
+					"status_code_to":   healthCheck.StatusCodeTo,
+				},
+			}
+			httpConfig["health"] = healthConfig
+		}
+
+		d.Set("http", []map[string]interface{}{httpConfig})
+	} else {
+		// Clear http config if not present in API response
+		d.Set("http", []map[string]interface{}{})
+	}
+
+	// Set TCP routing config (or clear it if absent)
+	if routing != nil && routing.Tcp != nil {
+		tcpConfig := make(map[string]interface{})
+
+		// Set proxy_id
+		if routing.Tcp.Proxy != nil && routing.Tcp.Proxy.Id != "" {
+			tcpConfig["proxy_id"] = routing.Tcp.Proxy.Id
+		}
+
+		// Set SSH config
+		if routing.Tcp.SshConf != nil {
+			sshConfig := []map[string]interface{}{
+				{
+					"connect_on": routing.Tcp.SshConf.Source,
+					"port":       routing.Tcp.SshConf.Target,
+				},
+			}
+			tcpConfig["ssh"] = sshConfig
+		}
+
+		// Set RDP config
+		if routing.Tcp.RdpConf != nil {
+			rdpConfig := []map[string]interface{}{
+				{
+					"connect_on": routing.Tcp.RdpConf.Source,
+					"port":       routing.Tcp.RdpConf.Target,
+				},
+			}
+			tcpConfig["rdp"] = rdpConfig
+		}
+
+		// Set forward rules (custom ports)
+		if len(routing.Tcp.CustomPorts) > 0 {
+			forwardRules := make([]map[string]interface{}, 0, len(routing.Tcp.CustomPorts))
+			for _, tcpPort := range routing.Tcp.CustomPorts {
+				forwardRule := map[string]interface{}{
+					"connect_on": tcpPort.Source,
+					"port":       tcpPort.Target,
+				}
+				forwardRules = append(forwardRules, forwardRule)
+			}
+			tcpConfig["forward_rule"] = forwardRules
+		}
+
+		d.Set("tcp", []map[string]interface{}{tcpConfig})
+	} else {
+		// Clear tcp config if not present in API response
+		d.Set("tcp", []map[string]interface{}{})
+	}
+}
+
+// setDatabaseConfig sets the database configuration in Terraform state from the API response
+func setDatabaseConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
+	if routing == nil || routing.Database == nil {
+		return
+	}
+	database := []map[string]interface{}{
+		{
+			"id":     routing.Database.Id,
+			"region": routing.Database.Region,
+		},
+	}
+	d.Set("database", database)
+}
+
+// setContainerConfig sets the container (ECS) configuration in Terraform state from the API response
+func setContainerConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
+	if routing == nil || routing.ContainerSvc == nil {
+		return
+	}
+	container := []map[string]interface{}{
+		{
+			"cluster":    routing.ContainerSvc.Cluster,
+			"service":    routing.ContainerSvc.Service,
+			"region":     routing.ContainerSvc.Region,
+			"task_count": int(routing.ContainerSvc.TaskCount),
+		},
+	}
+	d.Set("container", container)
+}
+
+// setScaleGroupConfig sets the scale group configuration in Terraform state from the API response
+func setScaleGroupConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
+	if routing == nil || routing.Instance == nil || routing.Instance.ScaleGroup == nil {
+		return
+	}
+	sg := routing.Instance.ScaleGroup
+
+	// Get zone from AvailabilityZones array (first element if present)
+	zone := ""
+	if len(sg.AvailabilityZones) > 0 {
+		zone = sg.AvailabilityZones[0]
+	}
+
+	scaleGroup := []map[string]interface{}{
+		{
+			"id":        sg.Id,
+			"name":      sg.Name,
+			"region":    sg.Region,
+			"zone":      zone,
+			"desired":   int(sg.Desired),
+			"min":       int(sg.Min),
+			"max":       int(sg.Max),
+			"on_demand": int(sg.OnDemand),
+		},
+	}
+	d.Set("scale_group", scaleGroup)
+}
+
+// setFilterConfig sets the VM filter configuration in Terraform state from the API response
+func setFilterConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
+	if routing == nil || routing.Instance == nil || routing.Instance.Filter == nil {
+		return
+	}
+	filterObj := routing.Instance.Filter
+
+	// Convert tags from map[string]string to []map[string]interface{} to match schema
+	// Sort keys to ensure deterministic ordering and avoid spurious Terraform diffs
+	var tagsList []map[string]interface{}
+	tagKeys := make([]string, 0, len(filterObj.Tags))
+	for key := range filterObj.Tags {
+		tagKeys = append(tagKeys, key)
+	}
+	sort.Strings(tagKeys)
+	for _, key := range tagKeys {
+		tagsList = append(tagsList, map[string]interface{}{
+			"key":   key,
+			"value": filterObj.Tags[key],
+		})
+	}
+
+	filter := []map[string]interface{}{
+		{
+			"vm_ids":  filterObj.Ids,
+			"regions": filterObj.Regions,
+			"zones":   filterObj.Zones,
+			"tags":    tagsList,
+		},
+	}
+	d.Set("filter", filter)
+}
+
+func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
+	if service == nil {
+		return
+	}
+	identifier := strconv.Itoa(int(service.Id))
 	d.SetId(identifier)
 	d.Set("identifier", identifier)
+	d.Set("name", service.Name)
+	d.Set("cloud_connector_id", service.CloudAccountId)
+	d.Set("idle_time_mins", service.IdleTimeMins)
+	if service.Opts != nil {
+		d.Set("dry_run", service.Opts.DryRun)
+	}
+	d.Set("use_spot", service.Fulfilment == "spot")
+	d.Set("custom_domains", service.CustomDomains)
+
+	// Set routing-related fields based on rule kind
+	switch service.Kind {
+	case Database:
+		setDatabaseConfig(d, service.Routing)
+	case ECS:
+		setContainerConfig(d, service.Routing)
+	case ScaleGroup:
+		setScaleGroupConfig(d, service.Routing)
+	case Instance:
+		setFilterConfig(d, service.Routing)
+	}
+	// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
+	setRoutingConfig(d, service.Routing, service.HealthCheck)
 }
