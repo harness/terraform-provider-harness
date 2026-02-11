@@ -3,13 +3,14 @@ package module_registry
 import (
 	"context"
 	"encoding/json"
+	"log"
+	"net/http"
+
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"log"
-	"net/http"
 )
 
 func ResourceInfraModule() *schema.Resource {
@@ -65,6 +66,16 @@ func ResourceInfraModule() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"connector_org": {
+				Description: "Org of the connector to be used to fetch the code.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"connector_project": {
+				Description: "Project of the connector to be used to fetch the code.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"repository_path": {
 				Description: "Path to the module within the repository.",
 				Type:        schema.TypeString,
@@ -108,6 +119,32 @@ func ResourceInfraModule() *schema.Resource {
 				},
 				Computed: true,
 				Optional: true,
+			},
+			"onboarding_pipeline": {
+				Description: "Onboarding Pipeline identifier.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"onboarding_pipeline_org": {
+				Description: "Onboarding Pipeline organization.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"onboarding_pipeline_project": {
+				Description: "Onboarding Pipeline project.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"onboarding_pipeline_sync": {
+				Description: "Sync the project automatically.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"storage_type": {
+				Description: "How to store the artifact.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
@@ -197,12 +234,12 @@ func readModule(d *schema.ResourceData, module *nextgen.ModuleResource) {
 	d.Set("id", module.Id)
 	d.Set("module_error", module.ModuleError)
 	d.Set("name", module.Name)
-	d.Set("org", module.Org)
-	d.Set("project", module.Project)
 	d.Set("repository", module.Repository)
 	d.Set("repository_branch", module.RepositoryBranch)
 	d.Set("repository_commit", module.RepositoryCommit)
 	d.Set("repository_connector", module.RepositoryConnector)
+	d.Set("connector_org", module.Org)
+	d.Set("connector_project", module.Project)
 	d.Set("repository_path", module.RepositoryPath)
 	d.Set("repository_url", module.RepositoryUrl)
 	d.Set("synced", module.Synced)
@@ -212,6 +249,11 @@ func readModule(d *schema.ResourceData, module *nextgen.ModuleResource) {
 	d.Set("testing_metadata", module.TestingMetadata)
 	d.Set("updated", module.Updated)
 	d.Set("versions", module.Versions)
+	d.Set("onboarding_pipeline", module.OnboardingPipeline)
+	d.Set("onboarding_pipeline_org", module.OnboardingPipelineOrg)
+	d.Set("onboarding_pipeline_project", module.OnboardingPipelineProject)
+	d.Set("onboarding_pipeline_sync", module.OnboardingPipelineSync)
+	d.Set("storage_type", module.StorageType)
 }
 
 func buildCreateModuleRequestBody(d *schema.ResourceData) (nextgen.CreateModuleRequestBody, error) {
@@ -240,6 +282,30 @@ func buildCreateModuleRequestBody(d *schema.ResourceData) (nextgen.CreateModuleR
 	}
 	if gitTagStyle, ok := d.GetOk("git_tag_style"); ok {
 		module.GitTagStyle = gitTagStyle.(string)
+	}
+	if onboardingPipeline, ok := d.GetOk("onboarding_pipeline"); ok {
+		module.OnboardingPipeline = onboardingPipeline.(string)
+	}
+	if onboardingPipelineOrg, ok := d.GetOk("onboarding_pipeline_org"); ok {
+		module.OnboardingPipelineOrg = onboardingPipelineOrg.(string)
+	}
+	if onboardingPipelineProject, ok := d.GetOk("onboarding_pipeline_project"); ok {
+		module.OnboardingPipelineProject = onboardingPipelineProject.(string)
+	}
+	if onboardingPipelineSync, ok := d.GetOk("onboarding_pipeline_sync"); ok {
+		module.OnboardingPipelineSync = onboardingPipelineSync.(bool)
+	}
+	if storageType, ok := d.GetOk("storage_type"); ok {
+		module.StorageType = storageType.(string)
+	}
+	if org, ok := d.GetOk("connector_org"); ok {
+		module.Org = org.(string)
+	}
+	if project, ok := d.GetOk("connector_project"); ok {
+		module.Project = project.(string)
+	}
+	if tags, ok := d.GetOk("tags"); ok {
+		module.Tags = tags.(string)
 	}
 	return module, nil
 }
@@ -270,6 +336,30 @@ func buildUpdateModuleRequestBody(d *schema.ResourceData) (nextgen.CreateModuleR
 	}
 	if gitTagStyle, ok := d.GetOk("git_tag_style"); ok {
 		module.GitTagStyle = gitTagStyle.(string)
+	}
+	if onboardingPipeline, ok := d.GetOk("onboarding_pipeline"); ok {
+		module.OnboardingPipeline = onboardingPipeline.(string)
+	}
+	if onboardingPipelineOrg, ok := d.GetOk("onboarding_pipeline_org"); ok {
+		module.OnboardingPipelineOrg = onboardingPipelineOrg.(string)
+	}
+	if onboardingPipelineProject, ok := d.GetOk("onboarding_pipeline_project"); ok {
+		module.OnboardingPipelineProject = onboardingPipelineProject.(string)
+	}
+	if onboardingPipelineSync, ok := d.GetOk("onboarding_pipeline_sync"); ok {
+		module.OnboardingPipelineSync = onboardingPipelineSync.(bool)
+	}
+	if storageType, ok := d.GetOk("storage_type"); ok {
+		module.StorageType = storageType.(string)
+	}
+	if org, ok := d.GetOk("connector_org"); ok {
+		module.Org = org.(string)
+	}
+	if project, ok := d.GetOk("connector_project"); ok {
+		module.Project = project.(string)
+	}
+	if tags, ok := d.GetOk("tags"); ok {
+		module.Tags = tags.(string)
 	}
 	return module, nil
 }

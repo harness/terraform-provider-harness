@@ -52,6 +52,16 @@ func DataSourceInfraModule() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"connector_org": {
+				Description: "Repository connector orgoanization",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"connector_project": {
+				Description: "Repository connector project",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"repository_path": {
 				Description: "Repository Path is the path in which the module resides",
 				Type:        schema.TypeString,
@@ -193,6 +203,32 @@ func DataSourceInfraModule() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+			},
+			"onboarding_pipeline": {
+				Description: "Onboarding Pipeline identifier.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"onboarding_pipeline_org": {
+				Description: "Onboarding Pipeline organization.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"onboarding_pipeline_project": {
+				Description: "Onboarding Pipeline project.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"onboarding_pipeline_sync": {
+				Description: "Sync the project automatically.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"storage_type": {
+				Description: "How to store the artifact.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}

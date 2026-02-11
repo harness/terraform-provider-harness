@@ -75,6 +75,16 @@ func DataSourceInfraModules() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
+						"connector_org": {
+							Description: "Repository connector orgoanization",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"connector_project": {
+							Description: "Repository connector project",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
 						"repository_path": {
 							Description: "Path within repository",
 							Type:        schema.TypeString,
@@ -110,6 +120,32 @@ func DataSourceInfraModules() *schema.Resource {
 							Type:        schema.TypeInt,
 							Computed:    true,
 						},
+						"onboarding_pipeline": {
+							Description: "Onboarding Pipeline identifier.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"onboarding_pipeline_org": {
+							Description: "Onboarding Pipeline organization.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"onboarding_pipeline_project": {
+							Description: "Onboarding Pipeline project.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"onboarding_pipeline_sync": {
+							Description: "Sync the project automatically.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
+						"storage_type": {
+							Description: "How to store the artifact.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
 					},
 				},
 			},
@@ -133,30 +169,35 @@ func dataSourceInfraModulesRead(ctx context.Context, d *schema.ResourceData, m i
 	modules := make([]interface{}, 0, len(resp))
 	for _, module := range resp {
 		moduleMap := map[string]interface{}{
-			"id":                   module.Id,
-			"name":                 module.Name,
-			"system":               module.System,
-			"description":          module.Description,
-			"account":              module.Account,
-			"org":                  module.Org,
-			"project":              module.Project,
-			"repository":           module.Repository,
-			"repository_branch":    module.RepositoryBranch,
-			"repository_commit":    module.RepositoryCommit,
-			"repository_connector": module.RepositoryConnector,
-			"repository_path":      module.RepositoryPath,
-			"repository_url":       module.RepositoryUrl,
-			"tags":                 module.Tags,
-			"testing_enabled":      module.TestingEnabled,
-			"created":              module.Created,
-			"updated":              module.Updated,
-			"synced":               module.Synced,
+			"id":                          module.Id,
+			"name":                        module.Name,
+			"system":                      module.System,
+			"description":                 module.Description,
+			"account":                     module.Account,
+			"repository":                  module.Repository,
+			"repository_branch":           module.RepositoryBranch,
+			"repository_commit":           module.RepositoryCommit,
+			"repository_connector":        module.RepositoryConnector,
+			"connector_org":               module.Org,
+			"connector_project":           module.Project,
+			"repository_path":             module.RepositoryPath,
+			"repository_url":              module.RepositoryUrl,
+			"tags":                        module.Tags,
+			"testing_enabled":             module.TestingEnabled,
+			"created":                     module.Created,
+			"updated":                     module.Updated,
+			"synced":                      module.Synced,
+			"onboarding_pipeline":         module.OnboardingPipeline,
+			"onboarding_pipeline_org":     module.OnboardingPipelineOrg,
+			"onboarding_pipeline_project": module.OnboardingPipelineProject,
+			"onboarding_pipeline_sync":    module.OnboardingPipelineSync,
+			"storage_type":                module.StorageType,
 		}
 		modules = append(modules, moduleMap)
 	}
 
 	d.Set("modules", modules)
-	
+
 	d.SetId(c.AccountId)
 
 	return nil

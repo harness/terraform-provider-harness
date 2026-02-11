@@ -21,6 +21,13 @@ resource "harness_platform_infra_module" "example" {
   repository_branch    = "main"
   repository_path      = "tf/aws/basic"
   repository_connector = harness_platform_connector_github.test.id
+  onboarding_pipeline         = "my_onboarding_pipeline"
+  onboarding_pipeline_org     = "default"
+  onboarding_pipeline_project = "IaCM_Project"
+  onboarding_pipeline_sync    = true
+  storage_type                = "harness"
+  connector_org               = "default"
+  connector_project           = "my_project"
 }
 ```
 
@@ -38,12 +45,19 @@ resource "harness_platform_infra_module" "example" {
 - `description` (String) Description of the module.
 - `git_tag_style` (String) Git Tag Style.
 - `id` (String) Unique identifier of the module.
+- `onboarding_pipeline` (String) Onboarding Pipeline identifier.
+- `onboarding_pipeline_org` (String) Onboarding Pipeline organization.
+- `onboarding_pipeline_project` (String) Onboarding Pipeline project.
+- `onboarding_pipeline_sync` (Boolean) Sync the project automatically.
+- `connector_org` (String) Connector organization.
+- `connector_project` (String) Connector project.
 - `repository` (String) For account connectors, the repository where the module can be found
 - `repository_branch` (String) Name of the branch to fetch the code from. This cannot be set if repository commit is set.
 - `repository_commit` (String) Tag to fetch the code from. This cannot be set if repository branch is set.
 - `repository_connector` (String) Reference to the connector to be used to fetch the code.
 - `repository_path` (String) Path to the module within the repository.
 - `repository_url` (String) URL of the repository where the module is stored.
+- `storage_type` (String) How to store the artifact.
 - `synced` (Number) Timestamp when the module was last synced.
 - `tags` (String) Git tags associated with the module.
 - `versions` (List of String) List of versions of the module.
