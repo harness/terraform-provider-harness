@@ -55,7 +55,7 @@ func DataSourceVMRule() *schema.Resource {
 						"vm_ids": {
 							Description: "Ids of instances that needs to be managed using the AutoStopping rules",
 							Type:        schema.TypeList,
-							Required:    true,
+							Optional:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
