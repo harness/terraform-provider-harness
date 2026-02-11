@@ -3,18 +3,21 @@ package registry_test
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+// Note: randAlphanumeric is defined in resrouce_registry_test.go
+
 func TestAccDataSourceVirtualRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_registry")
+	id := strings.ToLower(fmt.Sprintf("%s_%s", t.Name(), randAlphanumeric(5)))
 	resourceName := "data.harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
-	resource.UnitTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
@@ -33,11 +36,11 @@ func TestAccDataSourceVirtualRegistry(t *testing.T) {
 }
 
 func TestAccDataSourceUpstreamAWSRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_registry")
+	id := strings.ToLower(fmt.Sprintf("%s_%s", t.Name(), randAlphanumeric(5)))
 	resourceName := "data.harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
-	resource.UnitTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
@@ -53,8 +56,14 @@ func TestAccDataSourceUpstreamAWSRegistry(t *testing.T) {
 			},
 		},
 	})
+}
 
-	resource.UnitTest(t, resource.TestCase{
+func TestAccDataSourceUpstreamAWSRegistry2(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("%s_%s", t.Name(), randAlphanumeric(5)))
+	resourceName := "data.harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{

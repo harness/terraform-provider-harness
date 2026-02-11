@@ -2,23 +2,62 @@ package registry_test
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
+	"regexp"
+	"strings"
 	"testing"
+	"time"
 
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+// randAlphanumeric generates a random alphanumeric string of specified length
+// This ensures identifiers only contain lowercase letters and numbers, avoiding
+// special characters like underscores that could violate API validation rules
+func randAlphanumeric(n int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
+	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+func testAccRegistryCheckDestroy(resourceType string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		c, ctx := acctest.TestAccGetHarClientWithContext()
+		for _, rs := range s.RootModule().Resources {
+			if rs.Type != resourceType {
+				continue
+			}
+			identifier := rs.Primary.ID
+			parentRef := rs.Primary.Attributes["parent_ref"]
+			registryRef := parentRef + "/" + identifier
+			_, _, err := c.RegistriesApi.GetRegistry(ctx, registryRef)
+			if err == nil {
+				return fmt.Errorf("Registry still exists: %s", identifier)
+			}
+		}
+		return nil
+	}
+}
 
 // Tests creating a virtual Docker registry at account level with import
 func TestAccResourceVirtualDockerRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_docker_registry")
+	id := fmt.Sprintf("tfauto_virt_docker_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -50,13 +89,14 @@ func TestAccResourceVirtualDockerRegistry(t *testing.T) {
 
 // Tests creating a virtual Docker registry at organization level with import
 func TestOrgResourceVirtualDockerRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_docker_registry")
+	id := fmt.Sprintf("tfauto_virt_docker_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -88,13 +128,14 @@ func TestOrgResourceVirtualDockerRegistry(t *testing.T) {
 
 // Tests creating a virtual Docker registry at project level with import
 func TestProjectResourceVirtualDockerRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_docker_registry")
+	id := fmt.Sprintf("tfauto_virt_docker_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -126,13 +167,14 @@ func TestProjectResourceVirtualDockerRegistry(t *testing.T) {
 
 // Tests creating an upstream Docker registry with UserPassword auth at account level
 func TestAccResourceUpstreamDockerRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
+	id := fmt.Sprintf("tfauto_up_docker_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -157,13 +199,14 @@ func TestAccResourceUpstreamDockerRegistry(t *testing.T) {
 
 // Tests creating an upstream Docker registry with UserPassword auth at organization level
 func TestOrgResourceUpstreamDockerRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
+	id := fmt.Sprintf("tfauto_up_docker_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -188,13 +231,14 @@ func TestOrgResourceUpstreamDockerRegistry(t *testing.T) {
 
 // Tests creating an upstream Docker registry with UserPassword auth at project level
 func TestProjectResourceUpstreamDockerRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
+	id := fmt.Sprintf("tfauto_up_docker_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -372,13 +416,14 @@ func testProjResourceUpstreamDockerRegistry(id string, accId string) string {
 
 // Tests creating a virtual Helm registry at account level
 func TestAccResourceVirtualHelmRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_helm_registry")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_helm_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -400,13 +445,14 @@ func TestAccResourceVirtualHelmRegistry(t *testing.T) {
 
 // Tests creating a virtual Helm registry at organization level
 func TestOrgResourceVirtualHelmRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_helm_registry")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_helm_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -428,13 +474,14 @@ func TestOrgResourceVirtualHelmRegistry(t *testing.T) {
 
 // Tests creating a virtual Helm registry at project level
 func TestProjectResourceVirtualHelmRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_helm_registry")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_helm_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -456,13 +503,14 @@ func TestProjectResourceVirtualHelmRegistry(t *testing.T) {
 
 // Tests creating an upstream Helm registry with custom URL at account level
 func TestAccResourceUpstreamHelmRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_helm_registry")
+	id := fmt.Sprintf("tfauto_up_helm_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -485,13 +533,14 @@ func TestAccResourceUpstreamHelmRegistry(t *testing.T) {
 
 // Tests creating an upstream Helm registry with custom URL at organization level
 func TestOrgResourceUpstreamHelmRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_helm_registry")
+	id := fmt.Sprintf("tfauto_up_helm_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -514,13 +563,14 @@ func TestOrgResourceUpstreamHelmRegistry(t *testing.T) {
 
 // Tests creating an upstream Helm registry with custom URL at project level
 func TestProjectResourceUpstreamHelmRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_helm_registry")
+	id := fmt.Sprintf("tfauto_up_helm_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -699,13 +749,14 @@ func testProjResourceUpstreamHelmRegistry(id string, accId string) string {
 
 // Tests creating an upstream Docker registry with Anonymous auth at account level
 func TestAccResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
+	id := fmt.Sprintf("tfauto_up_docker_anon_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -729,13 +780,14 @@ func TestAccResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
 
 // Tests creating an upstream Docker registry with Anonymous auth at organization level
 func TestOrgResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
+	id := fmt.Sprintf("tfauto_up_docker_anon_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -759,13 +811,14 @@ func TestOrgResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
 
 // Tests creating an upstream Docker registry with Anonymous auth at project level
 func TestProjectResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_docker_registry")
+	id := fmt.Sprintf("tfauto_up_docker_anon_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -868,13 +921,14 @@ func testProjResourceUpstreamDockerAnonymousRegistry(id string, accId string) st
 
 // Tests creating an upstream Helm registry with Anonymous auth at account level
 func TestAccResourceUpstreamHelmAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_helm_registry")
+	id := strings.ToLower(fmt.Sprintf("tfauto_up_helm_anon_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -893,13 +947,14 @@ func TestAccResourceUpstreamHelmAnonymousRegistry(t *testing.T) {
 
 // Tests creating an upstream Helm registry with Anonymous auth at organization level
 func TestOrgResourceUpstreamHelmAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_helm_registry")
+	id := strings.ToLower(fmt.Sprintf("tfauto_up_helm_anon_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -918,13 +973,14 @@ func TestOrgResourceUpstreamHelmAnonymousRegistry(t *testing.T) {
 
 // Tests creating an upstream Helm registry with Anonymous auth at project level
 func TestProjectResourceUpstreamHelmAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_upstream_helm_registry")
+	id := strings.ToLower(fmt.Sprintf("tfauto_up_helm_anon_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1025,13 +1081,14 @@ func testProjResourceUpstreamHelmAnonymousRegistry(id string, accId string) stri
 
 // Tests updating a virtual Docker registry's description field
 func TestAccResourceVirtualDockerRegistryUpdate(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_docker_registry_update")
+	id := fmt.Sprintf("tfauto_virt_docker_upd_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1076,13 +1133,14 @@ resource "harness_platform_har_registry" "test" {
 
 // Tests creating a virtual Maven registry with import
 func TestAccResourceVirtualMavenRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_maven_registry")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_maven_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1124,13 +1182,14 @@ func testAccResourceVirtualMavenRegistry(id string, accId string) string {
 
 // Tests creating a virtual NPM registry with import
 func TestAccResourceVirtualNPMRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_npm_registry")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_npm_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1172,13 +1231,14 @@ func testAccResourceVirtualNPMRegistry(id string, accId string) string {
 
 // Tests creating a virtual Generic registry with import
 func TestAccResourceVirtualGenericRegistry(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_generic_registry")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_generic_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1220,14 +1280,16 @@ func testAccResourceVirtualGenericRegistry(id string, accId string) string {
 
 // Tests creating a virtual Docker registry with an upstream proxy reference
 func TestAccResourceVirtualDockerRegistryWithUpstreamProxy(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_docker_with_upstream")
-	upstreamId := fmt.Sprintf("tf_auto_upstream_docker_source")
+	rand := utils.RandStringBytes(5)
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_up_%s", rand))
+	upstreamId := strings.ToLower(fmt.Sprintf("tfauto_upsrc_%s", rand))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1287,13 +1349,14 @@ func testAccResourceVirtualDockerRegistryWithUpstreamProxy(id string, upstreamId
 
 // Tests creating a virtual Docker registry with blocked patterns
 func TestAccResourceVirtualDockerRegistryWithBlockedPatterns(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_docker_blocked")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_blocked_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1337,13 +1400,14 @@ func testAccResourceVirtualDockerRegistryWithBlockedPatterns(id string, accId st
 
 // Tests creating a virtual Docker registry with allowed patterns
 func TestAccResourceVirtualDockerRegistryWithAllowedPatterns(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_docker_allowed")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_allowed_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1387,15 +1451,17 @@ func testAccResourceVirtualDockerRegistryWithAllowedPatterns(id string, accId st
 
 // Tests adding and removing upstream_proxies from a virtual registry
 func TestAccResourceVirtualDockerRegistryUpdateUpstreamProxies(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_update_proxies")
-	upstream1 := fmt.Sprintf("tf_auto_upstream_1")
-	upstream2 := fmt.Sprintf("tf_auto_upstream_2")
+	rand := utils.RandStringBytes(5)
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_upprx_%s", rand))
+	upstream1 := strings.ToLower(fmt.Sprintf("tfauto_up1_%s", rand))
+	upstream2 := strings.ToLower(fmt.Sprintf("tfauto_up2_%s", rand))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1443,13 +1509,14 @@ func TestAccResourceVirtualDockerRegistryUpdateUpstreamProxies(t *testing.T) {
 
 // Tests adding and removing allowed_pattern from a virtual registry
 func TestAccResourceVirtualDockerRegistryUpdateAllowedPattern(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_update_allowed")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_updal_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1488,13 +1555,14 @@ func TestAccResourceVirtualDockerRegistryUpdateAllowedPattern(t *testing.T) {
 
 // Tests adding and removing blocked_pattern from a virtual registry
 func TestAccResourceVirtualDockerRegistryUpdateBlockedPattern(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_update_blocked")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_updbl_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1533,13 +1601,14 @@ func TestAccResourceVirtualDockerRegistryUpdateBlockedPattern(t *testing.T) {
 
 // Tests virtual registry as LOCAL storage (no upstream proxies) with import
 func TestAccResourceVirtualDockerRegistryAsLocal(t *testing.T) {
-	id := fmt.Sprintf("tf_auto_virtual_local")
+	id := strings.ToLower(fmt.Sprintf("tfauto_virt_local_%s", utils.RandStringBytes(5)))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
 		Steps: []resource.TestStep{
 			{
 				PreConfig: func() {
@@ -1566,3 +1635,108 @@ func TestAccResourceVirtualDockerRegistryAsLocal(t *testing.T) {
 	})
 }
 
+// TestAccResourceUpstreamDockerRegistryNoAuth tests that creating an UPSTREAM registry
+// without authentication should fail with validation error.
+func TestAccResourceUpstreamDockerRegistryNoAuth(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("tfauto_up_noauth_%s", utils.RandStringBytes(5)))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamDockerRegistryNoAuth(id, accountId),
+				ExpectError: regexp.MustCompile("authentication is required for UPSTREAM registry type"),
+			},
+		},
+	})
+}
+
+// TestAccResourceUpstreamHelmRegistryNoAuth tests that creating an UPSTREAM Helm registry
+// without authentication should fail with validation error.
+func TestAccResourceUpstreamHelmRegistryNoAuth(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("tfauto_uphelm_noauth_%s", utils.RandStringBytes(5)))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamHelmRegistryNoAuth(id, accountId),
+				ExpectError: regexp.MustCompile("authentication is required for UPSTREAM registry type"),
+			},
+		},
+	})
+}
+
+// TestAccResourceUpstreamMavenRegistryNoAuth tests that creating an UPSTREAM Maven registry
+// without authentication should fail with validation error.
+func TestAccResourceUpstreamMavenRegistryNoAuth(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("tfauto_upmaven_noauth_%s", utils.RandStringBytes(5)))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamMavenRegistryNoAuth(id, accountId),
+				ExpectError: regexp.MustCompile("authentication is required for UPSTREAM registry type"),
+			},
+		},
+	})
+}
+
+func testAccResourceUpstreamDockerRegistryNoAuth(id string, accId string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_har_registry" "test" {
+  identifier   = "%[1]s"
+  space_ref    = "%[2]s"
+  package_type = "DOCKER"
+
+  config {
+    type   = "UPSTREAM"
+    source = "Dockerhub"
+  }
+  parent_ref = "%[2]s"
+}
+`, id, accId)
+}
+
+func testAccResourceUpstreamHelmRegistryNoAuth(id string, accId string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_har_registry" "test" {
+  identifier   = "%[1]s"
+  space_ref    = "%[2]s"
+  package_type = "HELM"
+
+  config {
+    type   = "UPSTREAM"
+    source = "Custom"
+    url    = "https://charts.example.com"
+  }
+  parent_ref = "%[2]s"
+}
+`, id, accId)
+}
+
+func testAccResourceUpstreamMavenRegistryNoAuth(id string, accId string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_har_registry" "test" {
+  identifier   = "%[1]s"
+  space_ref    = "%[2]s"
+  package_type = "MAVEN"
+
+  config {
+    type   = "UPSTREAM"
+    source = "MavenCentral"
+  }
+  parent_ref = "%[2]s"
+}
+`, id, accId)
+}
