@@ -13,7 +13,6 @@ import (
 
 func TestResourceAzureProxy(t *testing.T) {
 	name := utils.RandStringBytes(5)
-	hostName := fmt.Sprintf("ab%s.com", name)
 	resourceName := "harness_autostopping_azure_proxy.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -22,17 +21,15 @@ func TestResourceAzureProxy(t *testing.T) {
 		//		CheckDestroy:      testAzureProxyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAzureProxy(name, hostName),
+				Config: testAzureProxy(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "host_name", hostName),
 				),
 			},
 			{
-				Config: testAzureProxyUpdate(name, hostName),
+				Config: testAzureProxyUpdate(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "host_name", hostName),
 				),
 			},
 			{
@@ -73,12 +70,11 @@ func testGetLoadBalancer(resourceName string, state *terraform.State) (*nextgen.
 	return resp.Response, nil
 }
 
-func testAzureProxy(name string, hostName string) string {
+func testAzureProxy(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_azure_proxy" "test" {
 			name = "%[1]s"
 			cloud_connector_id = "cloud_connector_id"
-			host_name = "%[2]s"
 			region             = "eastus2"
 			resource_group     = "resource_group"
 			vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
@@ -90,15 +86,14 @@ func testAzureProxy(name string, hostName string) string {
             api_key = "PLACE_HOLDER_VALUE"
 			delete_cloud_resources_on_destroy = true
 		}
-`, name, hostName)
+`, name)
 }
 
-func testAzureProxyUpdate(name string, hostName string) string {
+func testAzureProxyUpdate(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_azure_proxy" "test" {
 			name = "%[1]s"
 			cloud_connector_id = "cloud_connector_id"
-			host_name = "%[2]s"
 			region             = "eastus2"
 			resource_group     = "resource_group"
 			vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
@@ -110,5 +105,5 @@ func testAzureProxyUpdate(name string, hostName string) string {
             api_key = "PLACE_HOLDER_VALUE"
 			delete_cloud_resources_on_destroy = false
 		}
-`, name, hostName)
+`, name)
 }

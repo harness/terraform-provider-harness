@@ -25,7 +25,6 @@ data "harness_autostopping_aws_alb" "test" {
 
 - `cloud_connector_id` (String) Id of the cloud connector
 - `delete_cloud_resources_on_destroy` (Boolean) Governs how the loadabalancer entity will be deleted on Terraform destroy. When set to true, the associated ALB will be deleted permanently from AWS account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, leaving the cloud resources intact.
-- `host_name` (String) Hostname for the proxy
 - `name` (String) Name of the proxy
 - `region` (String) Region in which cloud resources are hosted
 - `vpc` (String) VPC in which cloud resources are hosted
@@ -34,7 +33,6 @@ data "harness_autostopping_aws_alb" "test" {
 
 - `alb_arn` (String) Arn of AWS ALB to be imported. Required only for importing existing ALB
 - `certificate_id` (String)
-- `route53_hosted_zone_id` (String) Route 53 hosted zone id
 - `security_groups` (List of String) Security Group to define the security rules that determine the inbound and outbound traffic
 
 ### Read-Only

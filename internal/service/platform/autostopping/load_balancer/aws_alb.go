@@ -29,11 +29,6 @@ func ResourceAwsALB() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"host_name": {
-				Description: "Hostname for the proxy",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"cloud_connector_id": {
 				Description: "Id of the cloud connector",
 				Type:        schema.TypeString,
@@ -59,11 +54,6 @@ func ResourceAwsALB() *schema.Resource {
 			},
 			"certificate_id": {
 				Description: "",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"route53_hosted_zone_id": {
-				Description: "Route 53 hosted zone id",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},

@@ -12,7 +12,6 @@ import (
 
 func TestResourceAwsALB(t *testing.T) {
 	name := utils.RandStringBytes(5)
-	hostName := fmt.Sprintf("ab%s.lightwingtest.com", name)
 	resourceName := "harness_autostopping_aws_alb.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -21,10 +20,9 @@ func TestResourceAwsALB(t *testing.T) {
 		//		CheckDestroy:      testAWSProxyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAwsALB(name, hostName),
+				Config: testAwsALB(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "host_name", hostName),
 				),
 			},
 		},
@@ -41,32 +39,28 @@ func testAwsALBDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAwsALB(name string, hostName string) string {
+func testAwsALB(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_alb" "test" {
 			name = "%[1]s"
 			cloud_connector_id = "cloud_connector_id"
-			host_name = "%[2]s"
             region = "us-east-1"
 			vpc = "vpc-2657db5c"
 			security_groups =["sg-01","sg-02"]
-			route53_hosted_zone_id = "/hostedzone/hosted_zone_id"
 			delete_cloud_resources_on_destroy = true
 		}
-`, name, hostName)
+`, name)
 }
 
-func testAwsALBUpdate(name string, hostName string) string {
+func testAwsALBUpdate(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_alb" "test" {
 			name = "%[1]s"
 			cloud_connector_id = "cloud_connector_id"
-			host_name = "%[2]s"
             region = "us-east-1"
             vpc = "vpc-2657db5c"
 			security_groups =["sg-01","sg-02"]
-			route53_hosted_zone_id = "/hostedzone/hosted_zone_id"
 			delete_cloud_resources_on_destroy = true
 		}
-`, name, hostName)
+`, name)
 }

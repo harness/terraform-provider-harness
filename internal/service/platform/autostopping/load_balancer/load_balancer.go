@@ -90,7 +90,6 @@ func readLoadBalancer(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) 
 	d.SetId(accessPoint.Id)
 	d.Set("identifier", accessPoint.Id)
 	d.Set("name", accessPoint.Name)
-	d.Set("host_name", accessPoint.HostName)
 	d.Set("cloud_connector_id", accessPoint.CloudAccountId)
 	d.Set("region", accessPoint.Region)
 	d.Set("vpc", accessPoint.Vpc)
@@ -205,10 +204,6 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 		lb.Name = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("host_name"); ok {
-		lb.HostName = attr.(string)
-	}
-
 	if attr, ok := d.GetOk("cloud_connector_id"); ok {
 		lb.CloudAccountId = attr.(string)
 	}
@@ -302,20 +297,6 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 			certificateDetails.KeySecretId = attr.(string)
 		}
 		lb.Metadata.Certificates = append(certificates, *certificateDetails)
-	}
-	if type_ == "aws" {
-		if attr, ok := d.GetOk("route53_hosted_zone_id"); ok {
-			route53 := &nextgen.AccessPointMetaDnsRoute53{
-				HostedZoneId: attr.(string),
-			}
-			lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
-				Route53: route53,
-			}
-		} else {
-			lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
-				Others: lb.HostName,
-			}
-		}
 	}
 	if validateFunc := implementationSpecificLBValidators(type_, kind); validateFunc != nil {
 		if err := validateFunc(*lb); err != nil {

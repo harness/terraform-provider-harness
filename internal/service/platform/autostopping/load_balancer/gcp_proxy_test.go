@@ -12,7 +12,6 @@ import (
 
 func TestResourceGCPProxy(t *testing.T) {
 	name := utils.RandStringBytes(5)
-	hostName := fmt.Sprintf("ab%s.com", name)
 	resourceName := "harness_autostopping_gcp_proxy.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -21,10 +20,9 @@ func TestResourceGCPProxy(t *testing.T) {
 		//		CheckDestroy:      testAWSProxyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testGCPProxy(name, hostName),
+				Config: testGCPProxy(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "host_name", hostName),
 				),
 			},
 		},
@@ -41,12 +39,11 @@ func testGCPProxyDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testGCPProxy(name string, hostName string) string {
+func testGCPProxy(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_gcp_proxy" "test" {
 			name = "%[1]s"
 			cloud_connector_id = "developerxgcpfm"
-			host_name = "%[2]s"
             region             = "region"
 			vpc                = "https://www.googleapis.com/compute/v1/projects/project_id/global/networks/netwok_id"
 			zone               = "zone"
@@ -60,15 +57,14 @@ func testGCPProxy(name string, hostName string) string {
 				cert_secret_id = "projects/project_id/secrets/secret_id/versions/1"
 			}
 		}
-`, name, hostName)
+`, name)
 }
 
-func testGCPProxyUpdate(name string, hostName string) string {
+func testGCPProxyUpdate(name string) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_gcp_proxy" "test" {
 		name = "%[1]s"
 		cloud_connector_id = "developerxgcpfm"
-		host_name = "%[2]s"
 		region             = "region"
 		vpc                = "https://www.googleapis.com/compute/v1/projects/project_id/global/networks/netwok_id"
 		zone               = "zone"
@@ -83,5 +79,5 @@ func testGCPProxyUpdate(name string, hostName string) string {
 		}
 		delete_cloud_resources_on_destroy = true
 	}
-`, name, hostName)
+`, name)
 }

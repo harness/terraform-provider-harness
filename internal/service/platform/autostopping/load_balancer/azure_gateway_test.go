@@ -12,7 +12,6 @@ import (
 
 func TestResourceAzureGateway(t *testing.T) {
 	name := utils.RandStringBytes(5)
-	hostName := fmt.Sprintf("ab%s.com", name)
 	resourceName := "harness_autostopping_azure_gateway.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -21,10 +20,9 @@ func TestResourceAzureGateway(t *testing.T) {
 		//		CheckDestroy:      testAzureGatewayDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAzureGateway(name, hostName),
+				Config: testAzureGateway(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "host_name", hostName),
 				),
 			},
 		},
@@ -41,12 +39,11 @@ func testAzureGatewayDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAzureGateway(name string, hostName string) string {
+func testAzureGateway(name string) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_azure_gateway" "test" {
 		name = "%[1]s"
 		cloud_connector_id = "cloud_connector_id"
-		host_name = "%[2]s"
 		region = "eastus2"
 		resource_group     = "resource_group"
 		subnet_id          = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
@@ -56,5 +53,5 @@ func testAzureGateway(name string, hostName string) string {
 		sku_size           = "sku2"
 		delete_cloud_resources_on_destroy = true
 	}
-`, name, hostName)
+`, name)
 }
