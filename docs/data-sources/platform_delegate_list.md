@@ -15,25 +15,28 @@ Data source for retrieving a list of Harness delegates.
 ```terraform
 # Get all delegates in an account
 data "harness_platform_delegate_list" "all" {
-  account_id = "your_account_id"
-  fetch_all  = true
+  account_id  = "your_account_id"
+  filter_type = "Delegate"
+  fetch_all   = true
 }
 
 # Get only connected delegates with specific tags
 data "harness_platform_delegate_list" "connected_with_tags" {
-  account_id     = "your_account_id"
-  org_id         = "your_org_id"
-  project_id     = "your_project_id"
-  status         = "CONNECTED"
-  delegate_tags  = ["production", "kubernetes"]
+  account_id    = "your_account_id"
+  org_id        = "your_org_id"
+  project_id    = "your_project_id"
+  filter_type   = "Delegate"
+  status        = "CONNECTED"
+  delegate_tags = ["production", "kubernetes"]
 }
 
 # Get delegates by name pattern and group
 data "harness_platform_delegate_list" "specific_group" {
-  account_id                  = "your_account_id"
+  account_id                 = "your_account_id"
+  filter_type                = "Delegate"
   delegate_name              = "prod-delegate"
   delegate_group_identifier  = "production-group"
-  version_status            = "ACTIVE"
+  version_status             = "ACTIVE"
 }
 ```
 
@@ -43,6 +46,7 @@ data "harness_platform_delegate_list" "specific_group" {
 ### Required
 
 - `account_id` (String) Account identifier.
+- `filter_type` (String) Filter type for delegates.
 
 ### Optional
 
@@ -51,8 +55,7 @@ data "harness_platform_delegate_list" "specific_group" {
 - `delegate_instance_filter` (String) Filter delegate instances. Valid values: AVAILABLE, EXPIRED.
 - `delegate_name` (String) Filter delegates by name.
 - `delegate_tags` (List of String) Filter delegates by tags.
-- `fetch_all` (Boolean) Whether to fetch all delegates.
-- `filter_type` (String) Filter type for delegates.
+- `fetch_all` (Boolean) Whether to fetch all delegates. Defaults to `false`.
 - `org_id` (String) Organization identifier.
 - `project_id` (String) Project identifier.
 - `status` (String) Filter delegates by status. Valid values: CONNECTED, DISCONNECTED, ENABLED, DISABLED, WAITING_FOR_APPROVAL, DELETED.
@@ -68,10 +71,10 @@ data "harness_platform_delegate_list" "specific_group" {
 
 Read-Only:
 
-- `auto_upgrade` (String)
-- `connected` (Boolean)
-- `description` (String)
-- `legacy` (Boolean)
-- `name` (String)
-- `tags` (List of String)
-- `type` (String)
+- `auto_upgrade` (String) Auto upgrade setting.
+- `connected` (Boolean) Whether the delegate is connected.
+- `description` (String) Delegate description.
+- `legacy` (Boolean) Whether this is a legacy delegate.
+- `name` (String) Delegate name.
+- `tags` (List of String) Delegate tags.
+- `type` (String) Delegate type (e.g., HELM_DELEGATE).
