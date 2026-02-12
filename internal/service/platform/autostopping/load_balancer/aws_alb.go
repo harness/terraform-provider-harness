@@ -71,6 +71,7 @@ func ResourceAwsALB() *schema.Resource {
 				Description: "Arn of AWS ALB to be imported. Required only for importing existing ALB",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"delete_cloud_resources_on_destroy": {
 				Description: "Governs how the loadabalancer entity will be deleted on Terraform destroy. When set to true, the associated ALB will be deleted permanently from AWS account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, leaving the cloud resources intact.",
