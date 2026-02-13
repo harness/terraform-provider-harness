@@ -86,6 +86,45 @@ func TestAccResourceWorkspace(t *testing.T) {
 	})
 }
 
+func TestAccResourceWorkspaceTerragrunt(t *testing.T) {
+	resourceName := "harness_platform_workspace.test_tg"
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceWorkspaceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceWorkspaceTerragrunt(id, name, "branch"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "provisioner_type", "terraform"),
+					resource.TestCheckResourceAttr(resourceName, "terragrunt_version", "0.97.0"),
+					resource.TestCheckResourceAttr(resourceName, "provisioner_version", "1.5.6"),
+					resource.TestCheckResourceAttr(resourceName, "terragrunt_provider", "true"),
+					resource.TestCheckResourceAttr(resourceName, "run_all", "true"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.1", "tag2"),
+				),
+			},
+			{
+				Config: testAccResourceWorkspaceTerragrunt(id, updatedName, "branch"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func testAccResourceWorkspaceDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		ws, _ := testAccGetPlatformWorkspace(resourceName, state)
@@ -272,5 +311,77 @@ func testAccResourceWorkspace(id string, name string, repositoryType string) str
 				type = "gcp"
 			}
   		}
+`, id, name, repositoryX)
+}
+
+func testAccResourceWorkspaceTerragrunt(id string, name string, repositoryType string) string {
+	var repositoryX = ""
+	if repositoryType == "branch" {
+		repositoryX = `repository_branch = "main"`
+	} else if repositoryType == "commit" {
+		repositoryX = `repository_commit = "tag1"`
+	} else {
+		repositoryX = `repository_sha = "abcdef12345"`
+	}
+
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_github" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "https://github.com/account"
+			connection_type = "Account"
+			validation_repo = "some_repo"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				http {
+					username = "admin"
+					token_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+		}
+
+		resource "harness_platform_workspace" "test_tg" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			description = "description"
+			provisioner_type = "terraform"
+			terragrunt_version = "0.97.0"
+			provisioner_version = "1.5.6"
+			terragrunt_provider = "true"
+			run_all = true
+			repository = "https://github.com/org/repo"
+			%[3]s
+			repository_path = "tf/aws/basic"
+			cost_estimation_enabled = true
+			repository_connector = "account.${harness_platform_connector_github.test.id}"
+			tags = ["tag1", "tag2"]
+		}
 `, id, name, repositoryX)
 }

@@ -65,6 +65,21 @@ func ResourceWorkspace() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"terragrunt_provider": {
+				Description: "Set to true to enable Terragrunt mode",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"terragrunt_version": {
+				Description: "Terragrunt version to use (e.g., 0.45.0)",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"run_all": {
+				Description: "Boolean flag for run-all terragrunt modules",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"provider_connector": {
 				Description: "Provider connector is the reference to the connector for the infrastructure provider",
 				Type:        schema.TypeString,
@@ -287,7 +302,7 @@ func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, meta i
 
 	createWorkspace, err := buildCreateWorkspace(d)
 	if err != nil {
-		return diag.Errorf(err.Error())
+		return diag.Errorf("%s", err.Error())
 	}
 
 	_, httpResp, err := c.WorkspaceApi.WorkspacesCreateWorkspace(
@@ -314,7 +329,7 @@ func resourceWorkspaceUpdate(ctx context.Context, d *schema.ResourceData, meta i
 
 	updateWorkspace, err := buildUpdateWorkspace(d)
 	if err != nil {
-		return diag.Errorf(err.Error())
+		return diag.Errorf("%s", err.Error())
 	}
 
 	_, httpResp, err := c.WorkspaceApi.WorkspacesUpdateWorkspace(
@@ -342,6 +357,9 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 	d.Set("description", ws.Description)
 	d.Set("provisioner_type", ws.Provisioner)
 	d.Set("provisioner_version", ws.ProvisionerVersion)
+	d.Set("terragrunt_provider", ws.TerragruntProvider)
+	d.Set("terragrunt_version", ws.TerragruntVersion)
+	d.Set("run_all", ws.RunAll)
 	d.Set("provider_connector", ws.ProviderConnector)
 	d.Set("repository", ws.Repository)
 	d.Set("repository_branch", ws.RepositoryBranch)
@@ -389,14 +407,17 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 	}
 	d.Set("default_pipelines", defaultPipelines)
 
-	var providerConnectors []interface{}
-	for _, c := range ws.ProviderConnectors {
-		providerConnectors = append(providerConnectors, map[string]string{
-			"connector_ref": c.ConnectorRef,
-			"type":          c.Type_,
-		})
+	// Only set connector if it was specified in the config (not provider_connector)
+	if _, ok := d.GetOk("connector"); ok {
+		var providerConnectors []interface{}
+		for _, c := range ws.ProviderConnectors {
+			providerConnectors = append(providerConnectors, map[string]string{
+				"connector_ref": c.ConnectorRef,
+				"type":          c.Type_,
+			})
+		}
+		d.Set("connector", providerConnectors)
 	}
-	d.Set("connector", providerConnectors)
 	d.Set("tags", helpers.FlattenTags(ws.Tags))
 }
 
@@ -413,6 +434,18 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 
 	if providerConnector, ok := d.GetOk("provider_connector"); ok {
 		ws.ProviderConnector = providerConnector.(string)
+	}
+
+	if terragruntProvider, ok := d.GetOk("terragrunt_provider"); ok {
+		ws.TerragruntProvider = terragruntProvider.(bool)
+	}
+
+	if terragruntVersion, ok := d.GetOk("terragrunt_version"); ok {
+		ws.TerragruntVersion = terragruntVersion.(string)
+	}
+
+	if runAll, ok := d.GetOk("run_all"); ok {
+		ws.RunAll = runAll.(bool)
 	}
 
 	if desc, ok := d.GetOk("description"); ok {
@@ -486,6 +519,18 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 
 	if providerConnector, ok := d.GetOk("provider_connector"); ok {
 		ws.ProviderConnector = providerConnector.(string)
+	}
+
+	if terragruntProvider, ok := d.GetOk("terragrunt_provider"); ok {
+		ws.TerragruntProvider = terragruntProvider.(bool)
+	}
+
+	if terragruntVersion, ok := d.GetOk("terragrunt_version"); ok {
+		ws.TerragruntVersion = terragruntVersion.(string)
+	}
+
+	if runAll, ok := d.GetOk("run_all"); ok {
+		ws.RunAll = runAll.(bool)
 	}
 
 	if desc, ok := d.GetOk("description"); ok {
@@ -630,14 +675,10 @@ func buildProviderConnectors(d *schema.ResourceData) ([]nextgen.VariableSetConne
 func parseError(err error, httpResp *http.Response) diag.Diagnostics {
 	// copied from helpers/errors.go
 	if httpResp != nil && httpResp.StatusCode == 401 {
-		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-			"1) Please check if token has expired or is wrong.\n" +
-			"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
+		return diag.Errorf("%s\nHint:\n1) Please check if token has expired or is wrong.\n2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.", httpResp.Status)
 	}
 	if httpResp != nil && httpResp.StatusCode == 403 {
-		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-			"1) Please check if the token has required permission for this operation.\n" +
-			"2) Please check if the token has expired or is wrong.")
+		return diag.Errorf("%s\nHint:\n1) Please check if the token has required permission for this operation.\n2) Please check if the token has expired or is wrong.", httpResp.Status)
 	}
 
 	se, ok := err.(nextgen.GenericSwaggerError)
@@ -649,9 +690,8 @@ func parseError(err error, httpResp *http.Response) diag.Diagnostics {
 	iacmErr := nextgen.IacmError{}
 	jsonErr := json.Unmarshal(iacmErrBody, &iacmErr)
 	if jsonErr != nil {
-		return diag.Errorf(err.Error())
+		return diag.Errorf("%s", err.Error())
 	}
 
-	return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-		"1) " + iacmErr.Message)
+	return diag.Errorf("%s\nHint:\n1) %s", httpResp.Status, iacmErr.Message)
 }
