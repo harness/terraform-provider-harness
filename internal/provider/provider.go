@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry_testing"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/provider_registry"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/default_notification_template_set"
 
@@ -342,6 +343,12 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_infra_module":                       module_registry.DataSourceInfraModule(),
 				"harness_platform_infra_modules":                      module_registry.DataSourceInfraModules(),
 				"harness_platform_infra_module_testing":               module_registry_testing.DataSourceInfraModuleTesting(),
+				"harness_platform_infra_provider":                     provider_registry.DataSourceInfraProvider(),
+				"harness_platform_infra_providers":                    provider_registry.DataSourceInfraProviders(),
+				"harness_platform_infra_provider_version":             provider_registry.DataSourceInfraProviderVersion(),
+				"harness_platform_infra_provider_versions":            provider_registry.DataSourceInfraProviderVersions(),
+				"harness_platform_infra_provider_signing_key":         provider_registry.DataSourceInfraProviderSigningKey(),
+				"harness_platform_infra_provider_signing_keys":        provider_registry.DataSourceInfraProviderSigningKeys(),
 				"harness_chaos_infrastructure":                        infrastructure.DataSourceChaosInfrastructureService(),
 				"harness_chaos_infrastructure_v2":                     chaos_infrastructure_v2.DataSourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                        image_registry.DataSourceChaosImageRegistry(),
@@ -518,6 +525,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator_config":                 cluster_orchestrator.ResourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                       module_registry.ResourceInfraModule(),
 				"harness_platform_infra_module_testing":               module_registry_testing.ResourceInfraModuleTesting(),
+				"harness_platform_infra_provider":                     provider_registry.ResourceInfraProvider(),
+				"harness_platform_infra_provider_version":             provider_registry.ResourceInfraProviderVersion(),
+				"harness_platform_infra_provider_version_file":        provider_registry.ResourceInfraProviderVersionFile(),
+				"harness_platform_infra_provider_version_publish":     provider_registry.ResourceInfraProviderVersionPublish(),
+				"harness_platform_infra_provider_signing_key":         provider_registry.ResourceInfraProviderSigningKey(),
 				"harness_chaos_infrastructure":                        infrastructure.ResourceChaosInfrastructure(),
 				"harness_chaos_infrastructure_v2":                     chaos_infrastructure_v2.ResourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                        image_registry.ResourceChaosImageRegistry(),
