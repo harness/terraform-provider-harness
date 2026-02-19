@@ -166,7 +166,14 @@ Optional:
 
 - `aws_cluster_name` (String) AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster.
 - `bearer_token` (String, Sensitive) Bearer authentication token the cluster.
-- `cluster_connection_type` (String) Identifies the authentication method used to connect to the cluster.
+- `cluster_connection_type` (String) Identifies the authentication method used to connect to the cluster. Valid values:
+  - `IN_CLUSTER` - Uses the GitOps Agent's own ServiceAccount credentials. Only valid when `server` is `https://kubernetes.default.svc` (the cluster where the agent is deployed)
+  - `SERVICE_ACCOUNT` - Authenticates using an explicit ServiceAccount bearer token provided in the `bearer_token` field
+  - `USERNAME_PASSWORD` - Authenticates using basic authentication with `username` and `password` fields (deprecated in modern Kubernetes, not recommended)
+  - `IRSA` - Authenticates using AWS IAM Roles for Service Accounts. Requires `role_a_r_n` and `aws_cluster_name` fields for EKS clusters
+  - `EXEC_PROVIDER` - Authenticates using an external command that dynamically generates tokens. Configured via `exec_provider_config` block. Used for Azure/GCP Workload Identity, OIDC, and custom authentication plugins
+  - `TLS_CLIENT_CERT` - Authenticates using X.509 client certificates for mutual TLS (mTLS). Requires both `cert_data` and `key_data` in the `tls_client_config` block
+  - `CLUSTER_CONNECTION_TYPE_NOT_SET` - Connection type will be automatically detected based on provided credentials
 - `disable_compression` (Boolean) DisableCompression bypasses automatic GZip compression requests to to the cluster's API server. Corresponds to running kubectl with --disable-compression
 - `exec_provider_config` (Block List, Max: 1) Configuration for an exec provider. (see [below for nested schema](#nestedblock--request--cluster--config--exec_provider_config))
 - `password` (String) Password of the server of the cluster.
