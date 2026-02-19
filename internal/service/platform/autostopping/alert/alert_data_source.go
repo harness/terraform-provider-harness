@@ -8,9 +8,9 @@ import (
 )
 
 func dataSourceAlertRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	id, ok := d.GetOk("id")
+	id, ok := d.GetOk("identifier")
 	if !ok {
-		return diag.Errorf("id is required")
+		return diag.Errorf("identifier is required")
 	}
 	return alertReadByID(ctx, d, meta, id.(string))
 }
