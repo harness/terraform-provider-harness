@@ -158,8 +158,8 @@ func resourceAlertRead(ctx context.Context, d *schema.ResourceData, meta interfa
 	return alertReadByID(ctx, d, meta, id)
 }
 
-// alertReadByID fetches an alert by id and flattens it into the resource/data source state.
-// For resources, id is d.Id(); for data sources, id is d.Get("id").(string) and the caller must set d.SetId(id).
+// alertReadByID fetches an alert by id and flattens it into the resource state.
+// Used by the resource only; the data source looks up by name and populates id from the server.
 func alertReadByID(ctx context.Context, d *schema.ResourceData, meta interface{}, id string) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
