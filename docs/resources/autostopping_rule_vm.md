@@ -93,14 +93,11 @@ resource "harness_autostopping_rule_vm" "test" {
 <a id="nestedblock--filter"></a>
 ### Nested Schema for `filter`
 
-Required:
-
-- `vm_ids` (List of String) Ids of instances that needs to be managed using the AutoStopping rules
-
 Optional:
 
 - `regions` (List of String) Regions of instances that needs to be managed using the AutoStopping rules
 - `tags` (Block List) Tags of instances that needs to be managed using the AutoStopping rules (see [below for nested schema](#nestedblock--filter--tags))
+- `vm_ids` (List of String) Ids of instances that needs to be managed using the AutoStopping rules
 - `zones` (List of String) Zones of instances that needs to be managed using the AutoStopping rules
 
 <a id="nestedblock--filter--tags"></a>

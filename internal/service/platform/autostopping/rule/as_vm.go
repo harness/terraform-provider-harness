@@ -67,17 +67,19 @@ func ResourceVMRule() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"vm_ids": {
-							Description: "Ids of instances that needs to be managed using the AutoStopping rules",
-							Type:        schema.TypeList,
-							Required:    true,
+							Description:  "Ids of instances that needs to be managed using the AutoStopping rules",
+							Type:         schema.TypeList,
+							Optional:     true,
+							AtLeastOneOf: []string{"filter.0.vm_ids", "filter.0.tags"},
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
 						},
 						"tags": {
-							Description: "Tags of instances that needs to be managed using the AutoStopping rules",
-							Type:        schema.TypeList,
-							Optional:    true,
+							Description:  "Tags of instances that needs to be managed using the AutoStopping rules",
+							Type:         schema.TypeList,
+							Optional:     true,
+							AtLeastOneOf: []string{"filter.0.vm_ids", "filter.0.tags"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"key": {
