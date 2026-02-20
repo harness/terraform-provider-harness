@@ -8,7 +8,6 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
-	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -21,21 +20,16 @@ const (
 	recipientTypeSlack     = "slack"
 )
 
-// validateRecipientsRequireEmailOrSlack ensures at least one of email or slack is set with at least one value.
-func validateRecipientsRequireEmailOrSlack(i interface{}, p cty.Path) diag.Diagnostics {
-	list, ok := i.([]interface{})
+// validateRecipientsBlock ensures at least one of email or slack is set with at least one value.
+// Used by CustomizeDiff (plan-time) and buildAlertRequest (apply-time).
+func validateRecipientsBlock(recList interface{}) error {
+	list, ok := recList.([]interface{})
 	if !ok || len(list) == 0 {
-		return diag.Diagnostics{{
-			Severity: diag.Error,
-			Summary:  "recipients block requires at least one of email or slack with at least one value",
-		}}
+		return fmt.Errorf("recipients block requires at least one of email or slack with at least one value")
 	}
 	block, ok := list[0].(map[string]interface{})
 	if !ok {
-		return diag.Diagnostics{{
-			Severity: diag.Error,
-			Summary:  "recipients block requires at least one of email or slack with at least one value",
-		}}
+		return fmt.Errorf("recipients block requires at least one of email or slack with at least one value")
 	}
 	hasEmail := false
 	if e, ok := block["email"]; ok && e != nil {
@@ -60,10 +54,7 @@ func validateRecipientsRequireEmailOrSlack(i interface{}, p cty.Path) diag.Diagn
 		}
 	}
 	if !hasEmail && !hasSlack {
-		return diag.Diagnostics{{
-			Severity: diag.Error,
-			Summary:  "recipients block requires at least one of email or slack with at least one value",
-		}}
+		return fmt.Errorf("recipients block requires at least one of email or slack with at least one value")
 	}
 	return nil
 }
@@ -90,6 +81,9 @@ func ResourceAlert() *schema.Resource {
 		UpdateContext: resourceAlertUpdate,
 		DeleteContext: resourceAlertDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
+		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+			return validateRecipientsBlock(d.Get("recipients"))
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -104,12 +98,11 @@ func ResourceAlert() *schema.Resource {
 				Default:     true,
 			},
 			"recipients": {
-				Description:      "Notification recipients. At least one of `email` or `slack` is required (with at least one value).",
-				Type:             schema.TypeList,
-				Required:         true,
-				MinItems:         1,
-				MaxItems:         1,
-				ValidateDiagFunc: validateRecipientsRequireEmailOrSlack,
+				Description: "Notification recipients. At least one of `email` or `slack` is required (with at least one value).",
+				Type:        schema.TypeList,
+				Required:    true,
+				MinItems:    1,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"email": {
@@ -234,10 +227,10 @@ func buildAlertRequest(d *schema.ResourceData, id string) (*nextgen.AlertRequest
 		AssociatedEntities: nil,
 	}
 
-	// Recipients: at least one of email or slack
+	// Recipients: at least one of email or slack (validated at plan time via CustomizeDiff; re-check at apply)
 	recList := d.Get("recipients").([]interface{})
-	if len(recList) == 0 {
-		return nil, diag.Errorf("recipients block is required with at least one of email or slack")
+	if err := validateRecipientsBlock(recList); err != nil {
+		return nil, diag.FromErr(err)
 	}
 	rec := recList[0].(map[string]interface{})
 	emailRaw, hasEmail := rec["email"]
@@ -257,9 +250,6 @@ func buildAlertRequest(d *schema.ResourceData, id string) (*nextgen.AlertRequest
 				slacks = append(slacks, s)
 			}
 		}
-	}
-	if len(emails) == 0 && len(slacks) == 0 {
-		return nil, diag.Errorf("at least one of email or slack must be set in recipients with at least one value")
 	}
 	if len(emails) > 0 {
 		req.Recipients = append(req.Recipients, nextgen.AlertRecipient{Type_: recipientTypeEmail, Ids: emails})
