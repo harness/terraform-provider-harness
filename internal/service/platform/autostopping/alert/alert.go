@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	entityTypeAutostopRule = "autostop_rule"
+	entityTypeAutostopRule = "autostopping_rule"
 	relationTypeAll        = "all"
 	relationTypeSpecific   = "specific"
 	recipientTypeEmail     = "email"
