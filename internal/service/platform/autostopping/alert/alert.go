@@ -316,7 +316,6 @@ func buildAlertRequest(d *schema.ResourceData, id string) (*nextgen.AlertRequest
 	if applicableToAll {
 		req.AssociatedEntities = []nextgen.AlertEntity{{
 			RelationType: relationTypeAll,
-			EntityId:     "",
 		}}
 	} else {
 		for _, r := range ruleIDList {
