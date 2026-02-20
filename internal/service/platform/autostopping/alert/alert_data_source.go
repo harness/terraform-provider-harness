@@ -17,29 +17,30 @@ func DataSourceAlert() *schema.Resource {
 			"name": {
 				Description: "Name of the alert.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 			"enabled": {
 				Description: "Whether the alert is enabled.",
 				Type:        schema.TypeBool,
-				Computed:    true,
+				Optional:    true,
+				Default:     true,
 			},
 			"recipients": {
 				Description: "Notification recipients (email and/or slack).",
 				Type:        schema.TypeList,
-				Computed:    true,
+				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"email": {
 							Description: "List of email addresses.",
 							Type:        schema.TypeList,
-							Computed:    true,
+							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
 						"slack": {
 							Description: "List of Slack webhook URLs or channel identifiers.",
 							Type:        schema.TypeList,
-							Computed:    true,
+							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
 					},
@@ -48,18 +49,18 @@ func DataSourceAlert() *schema.Resource {
 			"events": {
 				Description: "List of event types that trigger the alert.",
 				Type:        schema.TypeList,
-				Computed:    true,
+				Required:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"applicable_to_all_rules": {
 				Description: "Whether the alert applies to all AutoStopping rules.",
 				Type:        schema.TypeBool,
-				Computed:    true,
+				Optional:    true,
 			},
 			"rule_id_list": {
 				Description: "List of AutoStopping rule IDs the alert applies to.",
 				Type:        schema.TypeList,
-				Computed:    true,
+				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeInt},
 			},
 		},
