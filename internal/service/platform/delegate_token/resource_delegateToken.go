@@ -62,6 +62,7 @@ func ResourceDelegateToken() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
+				Sensitive:   true,
 			},
 			"created_at": {
 				Description: "Time when the delegate token is created. This is an epoch timestamp.",
