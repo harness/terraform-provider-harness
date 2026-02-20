@@ -59,6 +59,23 @@ func validateRecipientsBlock(recList interface{}) error {
 	return nil
 }
 
+// validateApplicableToAllAndRuleIDList ensures applicable_to_all_rules and rule_id_list are mutually exclusive
+// and that rule_id_list has at least one value when applicable_to_all_rules is false.
+// Used by CustomizeDiff (plan-time) and buildAlertRequest (apply-time).
+func validateApplicableToAllAndRuleIDList(applicableToAll bool, ruleIDList interface{}) error {
+	var list []interface{}
+	if v, ok := ruleIDList.([]interface{}); ok && v != nil {
+		list = v
+	}
+	if applicableToAll && len(list) > 0 {
+		return fmt.Errorf("applicable_to_all_rules and rule_id_list are mutually exclusive: set applicable_to_all_rules to true (and leave rule_id_list empty) or set applicable_to_all_rules to false and provide rule_id_list")
+	}
+	if !applicableToAll && len(list) == 0 {
+		return fmt.Errorf("rule_id_list is required when applicable_to_all_rules is false and must have at least one AutoStopping rule ID")
+	}
+	return nil
+}
+
 // ruleIDFromSchema converts a schema value (int, int64, or float64 from Terraform) to int.
 func ruleIDFromSchema(v interface{}) (int, error) {
 	switch n := v.(type) {
@@ -82,7 +99,18 @@ func ResourceAlert() *schema.Resource {
 		DeleteContext: resourceAlertDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
-			return validateRecipientsBlock(d.Get("recipients"))
+			if err := validateRecipientsBlock(d.Get("recipients")); err != nil {
+				return err
+			}
+			applicableToAll := false
+			if v, ok := d.GetOk("applicable_to_all_rules"); ok {
+				applicableToAll = v.(bool)
+			}
+			var ruleIDList interface{}
+			if v, ok := d.GetOk("rule_id_list"); ok {
+				ruleIDList = v
+			}
+			return validateApplicableToAllAndRuleIDList(applicableToAll, ruleIDList)
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -274,26 +302,14 @@ func buildAlertRequest(d *schema.ResourceData, id string) (*nextgen.AlertRequest
 		return nil, diag.Errorf("at least one event is required")
 	}
 
-	// Associated entities: either all rules or specific rule IDs (mutually exclusive)
+	// Associated entities: either all rules or specific rule IDs (validated at plan time via CustomizeDiff; re-check at apply)
 	applicableToAll := d.Get("applicable_to_all_rules").(bool)
 	var ruleIDList []interface{}
 	if v, ok := d.GetOk("rule_id_list"); ok && v != nil {
 		ruleIDList = v.([]interface{})
 	}
-
-	if applicableToAll && len(ruleIDList) > 0 {
-		return nil, diag.Diagnostics{{
-			Severity: diag.Error,
-			Summary:  "applicable_to_all_rules and rule_id_list are mutually exclusive",
-			Detail:   "Set applicable_to_all_rules to true (and leave rule_id_list empty) to apply the alert to all rules, or set applicable_to_all_rules to false and provide rule_id_list. Do not set both.",
-		}}
-	}
-	if !applicableToAll && len(ruleIDList) == 0 {
-		return nil, diag.Diagnostics{{
-			Severity: diag.Error,
-			Summary:  "rule_id_list required when applicable_to_all_rules is false",
-			Detail:   "When applicable_to_all_rules is false, rule_id_list must have at least one AutoStopping rule ID.",
-		}}
+	if err := validateApplicableToAllAndRuleIDList(applicableToAll, ruleIDList); err != nil {
+		return nil, diag.FromErr(err)
 	}
 
 	if applicableToAll {
