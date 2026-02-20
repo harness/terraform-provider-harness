@@ -10,7 +10,7 @@ func DataSourceAlert() *schema.Resource {
 		ReadContext: resourceAlertRead,
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "Unique identifier of the alert (same as id, populated from server).",
+				Description: "Unique identifier of the alert.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
