@@ -135,13 +135,13 @@ func ResourceAlert() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"applicable_to_all_rules": {
-				Description: "When true, the alert applies to all AutoStopping rules in the account. When false, `rule_id_list` must be provided.",
+				Description: "When true, the alert applies to all AutoStopping rules in the account (leave `rule_id_list` empty). Mutually exclusive with `rule_id_list`.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 			},
 			"rule_id_list": {
-				Description: "List of AutoStopping rule IDs to apply the alert to. Required when `applicable_to_all_rules` is false.",
+				Description: "List of AutoStopping rule IDs to apply the alert to. Required when `applicable_to_all_rules` is false. Mutually exclusive with `applicable_to_all_rules` = true.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeInt},
@@ -284,11 +284,26 @@ func buildAlertRequest(d *schema.ResourceData, id string) (*nextgen.AlertRequest
 		return nil, diag.Errorf("at least one event is required")
 	}
 
-	// Associated entities: either all rules or specific rule IDs
+	// Associated entities: either all rules or specific rule IDs (mutually exclusive)
 	applicableToAll := d.Get("applicable_to_all_rules").(bool)
 	var ruleIDList []interface{}
 	if v, ok := d.GetOk("rule_id_list"); ok && v != nil {
 		ruleIDList = v.([]interface{})
+	}
+
+	if applicableToAll && len(ruleIDList) > 0 {
+		return nil, diag.Diagnostics{{
+			Severity: diag.Error,
+			Summary:  "applicable_to_all_rules and rule_id_list are mutually exclusive",
+			Detail:   "Set applicable_to_all_rules to true (and leave rule_id_list empty) to apply the alert to all rules, or set applicable_to_all_rules to false and provide rule_id_list. Do not set both.",
+		}}
+	}
+	if !applicableToAll && len(ruleIDList) == 0 {
+		return nil, diag.Diagnostics{{
+			Severity: diag.Error,
+			Summary:  "rule_id_list required when applicable_to_all_rules is false",
+			Detail:   "When applicable_to_all_rules is false, rule_id_list must have at least one AutoStopping rule ID.",
+		}}
 	}
 
 	if applicableToAll {
@@ -296,9 +311,6 @@ func buildAlertRequest(d *schema.ResourceData, id string) (*nextgen.AlertRequest
 			AlertEntityAll: nextgen.AlertEntityAll{RelationType: relationTypeAll},
 		}}
 	} else {
-		if len(ruleIDList) == 0 {
-			return nil, diag.Errorf("when applicable_to_all_rules is false, rule_id_list must have at least one rule ID")
-		}
 		for _, r := range ruleIDList {
 			ruleID, err := ruleIDFromSchema(r)
 			if err != nil {

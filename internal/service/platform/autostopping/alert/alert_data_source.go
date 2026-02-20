@@ -57,12 +57,12 @@ func DataSourceAlert() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"applicable_to_all_rules": {
-				Description: "Whether the alert applies to all AutoStopping rules.",
+				Description: "When true, the alert applies to all AutoStopping rules in the account (leave `rule_id_list` empty). Mutually exclusive with `rule_id_list`.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"rule_id_list": {
-				Description: "List of AutoStopping rule IDs the alert applies to.",
+				Description: "List of AutoStopping rule IDs to apply the alert to. Required when `applicable_to_all_rules` is false. Mutually exclusive with `applicable_to_all_rules` = true.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeInt},
