@@ -43,6 +43,7 @@ data "harness_platform_db_schema" "example" {
 - `schema_source` (List of Object) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedatt--schema_source))
 - `service` (String) The service associated with schema
 - `tags` (Set of String) Tags to associate with the resource.
+- `use_percona` (Boolean) If percona-toolkit is enabled for the database schema.
 
 <a id="nestedatt--changelog_script"></a>
 ### Nested Schema for `changelog_script`

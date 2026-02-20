@@ -50,6 +50,16 @@ func HandleGitApiErrorWithResourceData(err error, d *schema.ResourceData, httpRe
 func HandleDBOpsApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
 	erro, ok := err.(dbops.GenericSwaggerError)
 	if ok && httpResp != nil {
+		if httpResp.StatusCode == 400 {
+			errorBody := erro.Body()
+			var jsonMap map[string]interface{}
+			if err := json.Unmarshal(errorBody, &jsonMap); err == nil {
+				if message, exists := jsonMap["message"]; exists {
+					return diag.Errorf("Bad Request: %s", message)
+				}
+			}
+			return diag.Errorf("Bad Request: %s", string(errorBody))
+		}
 		if httpResp.StatusCode == 401 {
 			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
 				"1) Please check if token has expired or is wrong.\n" +
