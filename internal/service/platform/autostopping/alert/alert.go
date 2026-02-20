@@ -315,7 +315,8 @@ func buildAlertRequest(d *schema.ResourceData, id string) (*nextgen.AlertRequest
 
 	if applicableToAll {
 		req.AssociatedEntities = []nextgen.AlertEntity{{
-			AlertEntityAll: nextgen.AlertEntityAll{RelationType: relationTypeAll},
+			RelationType: relationTypeAll,
+			EntityId:     "",
 		}}
 	} else {
 		for _, r := range ruleIDList {
@@ -324,10 +325,8 @@ func buildAlertRequest(d *schema.ResourceData, id string) (*nextgen.AlertRequest
 				return nil, diag.FromErr(err)
 			}
 			req.AssociatedEntities = append(req.AssociatedEntities, nextgen.AlertEntity{
-				AlertEntitySpecific: nextgen.AlertEntitySpecific{
-					RelationType: relationTypeSpecific,
-					EntityId:     strconv.Itoa(ruleID),
-				},
+				RelationType: relationTypeSpecific,
+				EntityId:     strconv.Itoa(ruleID),
 			})
 		}
 	}
@@ -395,12 +394,12 @@ func flattenAlert(d *schema.ResourceData, a *nextgen.Alert) diag.Diagnostics {
 	var ruleIDs []interface{}
 	applicableToAll := false
 	for _, ae := range a.AssociatedEntities {
-		if ae.AlertEntityAll.RelationType == relationTypeAll {
+		if ae.RelationType == relationTypeAll {
 			applicableToAll = true
 			break
 		}
-		if ae.AlertEntitySpecific.RelationType == relationTypeSpecific && ae.AlertEntitySpecific.EntityId != "" {
-			id, err := strconv.Atoi(ae.AlertEntitySpecific.EntityId)
+		if ae.RelationType == relationTypeSpecific && ae.EntityId != "" {
+			id, err := strconv.Atoi(ae.EntityId)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("invalid rule entity_id: %w", err))
 			}
