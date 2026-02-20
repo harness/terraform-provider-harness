@@ -338,6 +338,7 @@ func flattenAlert(d *schema.ResourceData, a *nextgen.Alert) diag.Diagnostics {
 	}
 
 	d.SetId(a.Id)
+	d.Set("identifier", a.Id)
 	if err := d.Set("name", a.Name); err != nil {
 		return diag.FromErr(err)
 	}
