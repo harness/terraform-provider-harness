@@ -99,18 +99,7 @@ func ResourceAlert() *schema.Resource {
 		DeleteContext: resourceAlertDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
-			if err := validateRecipientsBlock(d.Get("recipients")); err != nil {
-				return err
-			}
-			applicableToAll := false
-			if v, ok := d.GetOk("applicable_to_all_rules"); ok {
-				applicableToAll = v.(bool)
-			}
-			var ruleIDList interface{}
-			if v, ok := d.GetOk("rule_id_list"); ok {
-				ruleIDList = v
-			}
-			return validateApplicableToAllAndRuleIDList(applicableToAll, ruleIDList)
+			return validateSchema(d)
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -171,11 +160,23 @@ func ResourceAlert() *schema.Resource {
 	}
 }
 
+func validateSchema(d *schema.ResourceDiff) error {
+	if err := validateRecipientsBlock(d.Get("recipients")); err != nil {
+		return err
+	}
+	applicableToAll := false
+	if v, ok := d.GetOk("applicable_to_all_rules"); ok {
+		applicableToAll = v.(bool)
+	}
+	var ruleIDList interface{}
+	if v, ok := d.GetOk("rule_id_list"); ok {
+		ruleIDList = v
+	}
+	return validateApplicableToAllAndRuleIDList(applicableToAll, ruleIDList)
+}
+
 func resourceAlertRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Id()
-	if id == "" {
-		return nil
-	}
 	return alertReadByID(ctx, d, meta, id)
 }
 
