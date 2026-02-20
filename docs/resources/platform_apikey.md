@@ -67,6 +67,31 @@ resource "harness_platform_apikey" "test" {
 
 - `id` (String) The ID of this resource.
 
+### Important Note: Managing resource dependency order.
+
+Terraform determines deletion order based on resource dependencies. To avoid unexpected behavior, it’s recommended to define explicit `depends_on` blocks so resources are created and destroyed in the correct sequence.
+
+The expected order is:
+
+* **Create:** Service Account → API Key → Token
+* **Destroy:** Token → API Key → Service Account
+
+You can enforce this explicitly in your Terraform configuration:
+
+```terraform
+resource "harness_platform_token" "token" {
+  ...
+  depends_on = [harness_platform_apikey.apikey]
+}
+
+resource "harness_platform_apikey" "apikey" {
+  ...
+  depends_on = [harness_platform_service_account.service_account]
+}
+```
+
+This ensures Terraform manages these resources in the proper order during both creation and deletion.
+
 ## Import
 
 Import is supported using the following syntax:
