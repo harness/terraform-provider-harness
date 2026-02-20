@@ -26,9 +26,12 @@ func DataSourceAlert() *schema.Resource {
 				Default:     true,
 			},
 			"recipients": {
-				Description: "Notification recipients (email and/or slack).",
-				Type:        schema.TypeList,
-				Required:    true,
+				Description:      "Notification recipients (email and/or slack).",
+				Type:             schema.TypeList,
+				Required:         true,
+				MinItems:         1,
+				MaxItems:         1,
+				ValidateDiagFunc: validateRecipientsRequireEmailOrSlack,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"email": {
@@ -50,6 +53,7 @@ func DataSourceAlert() *schema.Resource {
 				Description: "List of event types that trigger the alert.",
 				Type:        schema.TypeList,
 				Required:    true,
+				MinItems:    1,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"applicable_to_all_rules": {
