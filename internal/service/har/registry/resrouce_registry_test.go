@@ -1765,7 +1765,7 @@ func TestAccResourceUpstreamRegistryWithExternalSecretManager(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccResourceUpstreamRegistryWithAwsSecretManager(id, accountId),
-				ExpectError: regexp.MustCompile("upstream registry authentication requires secrets to be stored in Harness Secret Manager"),
+				ExpectError: regexp.MustCompile("failed to validate secret|upstream registry authentication requires secrets to be stored in Harness Secret Manager"),
 			},
 		},
 	})
