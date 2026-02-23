@@ -51,6 +51,7 @@ func DataSourceDelegateToken() *schema.Resource {
 				Description: "Value of the delegate token. Encoded in base64.",
 				Type:        schema.TypeString,
 				Computed:    true,
+				Sensitive:   true,
 			},
 			"created_at": {
 				Description: "Time when the delegate token is created. This is an epoch timestamp.",

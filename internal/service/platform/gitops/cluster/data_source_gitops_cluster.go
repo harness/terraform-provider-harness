@@ -105,11 +105,13 @@ func DataSourceGitopsCluster() *schema.Resource {
 													Description: "Password of the server of the cluster.",
 													Type:        schema.TypeString,
 													Optional:    true,
+													Sensitive:   true,
 												},
 												"bearer_token": {
 													Description: "Bearer authentication token the cluster.",
 													Type:        schema.TypeString,
 													Optional:    true,
+													Sensitive:   true,
 												},
 												"tls_client_config": {
 													Description: "Settings to enable transport layer security.",
@@ -132,11 +134,13 @@ func DataSourceGitopsCluster() *schema.Resource {
 																Description: "Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS. The value should be base64 encoded.",
 																Type:        schema.TypeString,
 																Optional:    true,
+																Sensitive:   true,
 															},
 															"key_data": {
 																Description: "Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS. The value should be base64 encoded.",
 																Type:        schema.TypeString,
 																Optional:    true,
+																Sensitive:   true,
 															},
 															"ca_data": {
 																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile. The value should be base64 encoded.",
