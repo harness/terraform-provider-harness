@@ -1692,6 +1692,25 @@ func TestAccResourceUpstreamMavenRegistryNoAuth(t *testing.T) {
 	})
 }
 
+// TestAccResourceUpstreamRegistryWithExternalSecretManager tests that creating an UPSTREAM registry
+// with an external secret manager (e.g., AWS Secrets Manager) should fail with validation error.
+func TestAccResourceUpstreamRegistryWithExternalSecretManager(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("tfauto_up_extsm_%s", utils.RandStringBytes(5)))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamRegistryWithAwsSecretManager(id, accountId),
+				ExpectError: regexp.MustCompile("upstream registry authentication requires secrets to be stored in Harness Secret Manager"),
+			},
+		},
+	})
+}
+
 func testAccResourceUpstreamDockerRegistryNoAuth(id string, accId string) string {
 	return fmt.Sprintf(`
 resource "harness_platform_har_registry" "test" {
@@ -1735,6 +1754,30 @@ resource "harness_platform_har_registry" "test" {
   config {
     type   = "UPSTREAM"
     source = "MavenCentral"
+  }
+  parent_ref = "%[2]s"
+}
+`, id, accId)
+}
+
+func testAccResourceUpstreamRegistryWithAwsSecretManager(id string, accId string) string {
+	return fmt.Sprintf(`
+# This test assumes there's a secret created with an external secret manager (not Harness Secret Manager)
+# The registry creation should fail with validation error about the secret manager
+resource "harness_platform_har_registry" "test" {
+  identifier   = "%[1]s"
+  space_ref    = "%[2]s"
+  package_type = "DOCKER"
+
+  config {
+    type   = "UPSTREAM"
+    source = "Dockerhub"
+    auth {
+      auth_type = "UserPassword"
+      user_name = "testuser"
+      secret_identifier = "some_external_secret"
+      secret_space_path = "%[2]s"
+    }
   }
   parent_ref = "%[2]s"
 }

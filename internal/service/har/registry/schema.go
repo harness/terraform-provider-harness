@@ -95,7 +95,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"auth_type": {
-									Description: "Type of authentication (UserPassword, Anonymous)",
+									Description: "Type of authentication (UserPassword, Anonymous).",
 									Type:        schema.TypeString,
 									Required:    true,
 									ValidateFunc: validation.StringInSlice([]string{
@@ -106,7 +106,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 										false),
 								},
 								"secret_identifier": {
-									Description: "Secret identifier for UserPassword auth type",
+									Description: "Secret identifier for UserPassword auth type. The secret must be stored in Harness Secret Manager.",
 									Type:        schema.TypeString,
 									Optional:    true,
 								},
