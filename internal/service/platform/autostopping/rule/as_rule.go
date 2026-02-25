@@ -2,21 +2,25 @@ package as_rule
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"gopkg.in/yaml.v3"
 )
 
 const (
 	Database   = "database"
 	Instance   = "instance"
 	ECS        = "containers"
+	K8s        = "k8s"
 	ScaleGroup = "clusters"
 )
 
@@ -185,6 +189,12 @@ func buildASRule(d *schema.ResourceData, kind string, accountId string) nextgen.
 		routingData.Instance.ScaleGroup = scaleGroup
 	}
 
+	k8sConfig := getK8sConfig(d)
+	if k8sConfig != nil {
+		routingData.K8s = k8sConfig
+		serviceV2.Fulfilment = "kubernetes"
+	}
+
 	serviceV2.Routing = routingData
 	deps := getDependencies(d)
 	saveServiceRequestV2 := &nextgen.SaveServiceRequestV2{
@@ -285,6 +295,63 @@ func getScaleGroupConfig(d *schema.ResourceData) *nextgen.AsgMinimal {
 		}
 	}
 	return scaleGroup
+}
+
+func getK8sConfig(d *schema.ResourceData) *nextgen.RoutingDataV2K8s {
+	if attr, ok := d.GetOk("rule_yaml"); !ok || attr.(string) == "" {
+		return nil
+	}
+	yamlStr := d.Get("rule_yaml").(string)
+	jsonStr, err := yamlToJSON(yamlStr)
+	if err != nil {
+		return nil
+	}
+	k8s := &nextgen.RoutingDataV2K8s{}
+	k8s.RuleJson = jsonStr
+	if attr, ok := d.GetOk("k8s_connector_id"); ok && attr.(string) != "" {
+		k8s.ConnectorID = attr.(string)
+	}
+	if attr, ok := d.GetOk("k8s_namespace"); ok && attr.(string) != "" {
+		k8s.Namespace = attr.(string)
+	}
+	return k8s
+}
+
+// yamlToJSON converts a YAML string to JSON. Input may be YAML or JSON (JSON is a subset of YAML).
+func yamlToJSON(yamlStr string) (string, error) {
+	var v interface{}
+	if err := yaml.Unmarshal([]byte(yamlStr), &v); err != nil {
+		return "", err
+	}
+	b, err := json.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+// jsonToYAML converts a JSON string to YAML for storing in rule_yaml on read.
+func jsonToYAML(jsonStr string) (string, error) {
+	var v interface{}
+	if err := json.Unmarshal([]byte(jsonStr), &v); err != nil {
+		return "", err
+	}
+	return canonicalRuleYAML(v)
+}
+
+// canonicalRuleYAML marshals v to YAML with 2-space indent so state has consistent format
+// and avoids drift from indentation or key-order differences.
+func canonicalRuleYAML(v interface{}) (string, error) {
+	var buf strings.Builder
+	enc := yaml.NewEncoder(&buf)
+	enc.SetIndent(2)
+	if err := enc.Encode(v); err != nil {
+		return "", err
+	}
+	if err := enc.Close(); err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(buf.String()), nil
 }
 
 func getDependencies(d *schema.ResourceData) []nextgen.ServiceDep {
@@ -632,6 +699,28 @@ func setFilterConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
 	d.Set("filter", filter)
 }
 
+// setK8sConfig sets the K8s routing configuration in Terraform state from the API response.
+func setK8sConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
+	if routing == nil || routing.K8s == nil {
+		return
+	}
+	k8s := routing.K8s
+	d.Set("k8s_connector_id", k8s.ConnectorID)
+	d.Set("k8s_namespace", k8s.Namespace)
+	ruleYaml := k8s.RuleJson
+	if yamlStr, err := jsonToYAML(k8s.RuleJson); err == nil {
+		ruleYaml = yamlStr
+	} else {
+		var v interface{}
+		if err := yaml.Unmarshal([]byte(k8s.RuleJson), &v); err == nil {
+			if canonical, err := canonicalRuleYAML(v); err == nil {
+				ruleYaml = canonical
+			}
+		}
+	}
+	d.Set("rule_yaml", ruleYaml)
+}
+
 func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	if service == nil {
 		return
@@ -654,6 +743,8 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 		setDatabaseConfig(d, service.Routing)
 	case ECS:
 		setContainerConfig(d, service.Routing)
+	case K8s:
+		setK8sConfig(d, service.Routing)
 	case ScaleGroup:
 		setScaleGroupConfig(d, service.Routing)
 	case Instance:
