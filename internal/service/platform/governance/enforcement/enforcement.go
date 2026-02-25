@@ -248,10 +248,16 @@ func readRuleEnforcementRequest(id string) *nextgen.RuleEnforcementApiEnforcemen
 
 func expandStringList(givenStringListInterface []interface{}) []string {
 	var expandedStringList []string
-
+	if givenStringListInterface == nil {
+		return expandedStringList
+	}
 	if len(givenStringListInterface) > 0 {
 		for _, id := range givenStringListInterface {
-			expandedStringList = append(expandedStringList, id.(string))
+			if id != nil {
+				if s, ok := id.(string); ok {
+					expandedStringList = append(expandedStringList, s)
+				}
+			}
 		}
 	}
 	return expandedStringList

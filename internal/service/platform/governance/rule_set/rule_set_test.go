@@ -52,11 +52,18 @@ func TestAccResourceRuleSet(t *testing.T) {
 
 func testAccResourceRule(name string) string {
 	return fmt.Sprintf(`
+		resource "harness_governance_rule" "rule" {
+			name           = "%[1]s_rule"
+			cloud_provider = "AWS"
+			description    = "Dummy"
+			rules_yaml     = "policies:\n  - name: aws-list-ec2\n    resource: aws.ec2"
+		}
+
 		resource "harness_governance_rule_set" "test" {
-			name               = "%[1]s"
-			cloud_provider     = "AWS"
-			description        = "Dummy"
-			rule_ids		   = ["1NBh8oKjQ4KmzvgkUqN5sQ"]
+			name           = "%[1]s"
+			cloud_provider = "AWS"
+			description    = "Dummy"
+			rule_ids       = [harness_governance_rule.rule.rule_id]
 		}
 	`, name)
 }
