@@ -314,6 +314,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":              connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                             pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                              pl_token.DataSourceToken(),
+				"harness_autostopping_rules":                          as_rule.DataSourceRules(),
 				"harness_autostopping_rule_vm":                        as_rule.DataSourceVMRule(),
 				"harness_autostopping_rule_scale_group":               as_rule.DataSourceScaleGroupRule(),
 				"harness_autostopping_rule_rds":                       as_rule.DataSourceRDSRule(),
