@@ -51,11 +51,6 @@ func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 	if attr, ok := d.GetOk("distribution.0.selector"); ok {
 		config.SpotDistribution = nextgen.ClusterOrchDistributionSelector(attr.(string))
 	}
-	if attr, ok := d.GetOk("binpacking.0.enable_spot_to_spot"); ok {
-		config.Consolidation.EnableSpotToSpot = attr.(bool)
-	} else {
-		config.Consolidation.EnableSpotToSpot = true
-	}
 	if _, ok := d.GetOk("binpacking.0.pod_eviction"); ok {
 		config.Consolidation.PodEvictor.Enabled = true
 		if attr, ok := d.GetOk("binpacking.0.pod_eviction.0.threshold.0.cpu"); ok {
@@ -211,8 +206,9 @@ func readClusterOrchConfig(d *schema.ResourceData, orch *nextgen.ClusterOrchestr
 		"strategy":                    orch.Config.DistributionStrategy,
 	}})
 	d.Set("binpacking", []interface{}{map[string]interface{}{
-		"pod_eviction": getPodEvictionConfig(orch),
-		"disruption":   getDisruptionConfig(orch),
+		"enable_spot_to_spot": orch.Config.Consolidation.EnableSpotToSpot,
+		"pod_eviction":       getPodEvictionConfig(orch),
+		"disruption":         getDisruptionConfig(orch),
 	}})
 	d.Set("node_preferences", []interface{}{map[string]interface{}{
 		"ttl":                       orch.Config.Consolidation.NodeExpiry,

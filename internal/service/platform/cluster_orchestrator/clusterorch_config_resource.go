@@ -98,12 +98,6 @@ func ResourceClusterOrchestratorConfig() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"enable_spot_to_spot": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Default:     true,
-							Description: "Enable spot-to-spot consolidation",
-						},
 						"pod_eviction": {
 							Type:        schema.TypeList,
 							Optional:    true,
