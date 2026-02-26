@@ -305,19 +305,25 @@ func getDisruptionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
 		"criteria": disruptionCfg.ConsolidationPolicy,
 		"delay":    disruptionCfg.ConsolidateAfter,
 	}
-	var budgets []interface{}
+	var budgetList []interface{}
 	for _, budget := range disruptionCfg.Budgets {
-		budgets = append(budgets, map[string]interface{}{
-			"reasons": budget.Reasons,
-			"nodes":   budget.Nodes,
-			"schedule": map[string]interface{}{
-				"frequency": budget.Schedule,
-				"duration":  budget.Duration,
-			},
+		scheduleVal := []interface{}{}
+		if budget.Schedule != nil && budget.Duration != "" {
+			scheduleVal = []interface{}{
+				map[string]interface{}{
+					"frequency": *budget.Schedule,
+					"duration":  budget.Duration,
+				},
+			}
+		}
+		budgetList = append(budgetList, map[string]interface{}{
+			"reasons":  budget.Reasons,
+			"nodes":    budget.Nodes,
+			"schedule": scheduleVal,
 		})
 	}
-	if len(budgets) > 0 {
-		disruptionDto["budgets"] = budgets
+	if len(budgetList) > 0 {
+		disruptionDto["budget"] = budgetList
 	}
 	return []interface{}{disruptionDto}
 }
