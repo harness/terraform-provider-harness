@@ -508,7 +508,8 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 	return httpProxy, tcpProxy, healthCheck
 }
 
-// setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response
+// setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response.
+// When setConnect is true (VM rule), also sets the computed connect block from TCP ssh/rdp source ports.
 // Always sets both http and tcp to ensure stale data is cleared when configs are removed
 func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck) {
 	// Set HTTP routing config (or clear it if absent)
@@ -602,10 +603,27 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 		}
 
 		d.Set("tcp", []map[string]interface{}{tcpConfig})
+		connectBlock := buildConnectBlock(routing)
+		_ = d.Set("connect", []map[string]interface{}{connectBlock})
 	} else {
 		// Clear tcp config if not present in API response
 		d.Set("tcp", []map[string]interface{}{})
+		_ = d.Set("connect", []map[string]interface{}{})
 	}
+}
+
+func buildConnectBlock(routing *nextgen.RoutingDataV2) map[string]interface{} {
+	connectBlock := map[string]interface{}{
+		"ssh": 0,
+		"rdp": 0,
+	}
+	if routing.Tcp.SshConf != nil {
+		connectBlock["ssh"] = routing.Tcp.SshConf.Source
+	}
+	if routing.Tcp.RdpConf != nil {
+		connectBlock["rdp"] = routing.Tcp.RdpConf.Source
+	}
+	return connectBlock
 }
 
 // setDatabaseConfig sets the database configuration in Terraform state from the API response
@@ -721,27 +739,6 @@ func setK8sConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
 	d.Set("rule_yaml", ruleYaml)
 }
 
-// setConnectConfig sets the computed connect block (ssh/rdp source ports) from the API response.
-// Only resources with a "connect" attribute in their schema (e.g. VM) will have state updated;
-// others ignore the Set error.
-func setConnectConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
-	if routing == nil || routing.Tcp == nil {
-		_ = d.Set("connect", []map[string]interface{}{})
-		return
-	}
-	connectBlock := map[string]interface{}{
-		"ssh": 0,
-		"rdp": 0,
-	}
-	if routing.Tcp.SshConf != nil {
-		connectBlock["ssh"] = routing.Tcp.SshConf.Source
-	}
-	if routing.Tcp.RdpConf != nil {
-		connectBlock["rdp"] = routing.Tcp.RdpConf.Source
-	}
-	_ = d.Set("connect", []map[string]interface{}{connectBlock})
-}
-
 func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	if service == nil {
 		return
@@ -773,7 +770,4 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	}
 	// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
 	setRoutingConfig(d, service.Routing, service.HealthCheck)
-	if service.Kind == Instance {
-		setConnectConfig(d, service.Routing)
-	}
 }
