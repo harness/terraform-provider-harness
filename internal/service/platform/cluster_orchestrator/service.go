@@ -35,7 +35,6 @@ func buildClusterOrch(d *schema.ResourceData) nextgen.CreateClusterOrchestratorD
 }
 func setId(d *schema.ResourceData, id string) {
 	d.SetId(id)
-	d.Set("identifier", id)
 }
 func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 	config := &nextgen.ClusterOrchConfig{}
@@ -288,9 +287,11 @@ func getPodEvictionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
 	if podEvictorCfg.Enabled {
 		return []interface{}{
 			map[string]interface{}{
-				"threshold": map[string]interface{}{
-					"cpu":    podEvictorCfg.MinCPU,
-					"memory": podEvictorCfg.MinMem,
+				"threshold": []interface{}{
+					map[string]interface{}{
+						"cpu":    podEvictorCfg.MinCPU,
+						"memory": podEvictorCfg.MinMem,
+					},
 				},
 			},
 		}
