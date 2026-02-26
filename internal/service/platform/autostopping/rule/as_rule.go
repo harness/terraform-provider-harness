@@ -420,6 +420,11 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 					portConfig.Action = attr.(string)
 				}
 				portConfig.RoutingRules = []nextgen.RoutingRule{}
+				if attr, ok := routingObj["path"]; ok {
+					portConfig.RoutingRules = append(portConfig.RoutingRules, nextgen.RoutingRule{
+						PathMatch: attr.(string),
+					})
+				}
 
 				portConfigsList = append(portConfigsList, *portConfig)
 			}
@@ -524,12 +529,17 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 		if len(routing.Http.Ports) > 0 {
 			routingList := make([]map[string]interface{}, 0, len(routing.Http.Ports))
 			for _, portConfig := range routing.Http.Ports {
+				path := ""
+				if len(portConfig.RoutingRules) > 0 {
+					path = portConfig.RoutingRules[0].PathMatch
+				}
 				routingEntry := map[string]interface{}{
 					"source_protocol": portConfig.Protocol,
 					"target_protocol": portConfig.TargetProtocol,
 					"source_port":     portConfig.Port,
 					"target_port":     portConfig.TargetPort,
 					"action":          portConfig.Action,
+					"path":            path,
 				}
 				routingList = append(routingList, routingEntry)
 			}

@@ -138,6 +138,7 @@ Required:
 
 Optional:
 
-- `action` (String) Organization Identifier for the Entity
+- `action` (String) Action to take for the routing rule
+- `path` (String) Path to use for the proxy
 - `source_port` (Number) Port on the proxy
 - `target_port` (Number) Port on the VM

@@ -142,7 +142,12 @@ func ResourceScaleGroupRule() *schema.Resource {
 										Optional:    true,
 									},
 									"action": {
-										Description: "Organization Identifier for the Entity",
+										Description: "Action to take for the routing rule",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"path": {
+										Description: "Path to use for the proxy",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
