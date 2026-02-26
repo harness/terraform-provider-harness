@@ -93,6 +93,7 @@ import (
 	cdng_infrastructure "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/infrastructure"
 	pl_account "github.com/harness/terraform-provider-harness/internal/service/platform/account"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
+	as_alert "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/alert"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
 	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/schedule"
@@ -327,6 +328,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_aws_alb":                        load_balancer.DataSourceAwsALB(),
 				"harness_autostopping_azure_gateway":                  load_balancer.DataSourceAzureGateway(),
 				"harness_autostopping_schedule":                       schedule.DataSourceFixedSchedule(),
+				"harness_autostopping_alert":                          as_alert.DataSourceAlert(),
 				"harness_platform_delegatetoken":                      pl_delegatetoken.DataSourceDelegateToken(),
 				"harness_platform_workspace":                          workspace.DataSourceWorkspace(),
 				"harness_platform_workspace_output":                   workspace.DataSourceWorkspaceOutput(),
@@ -511,6 +513,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_aws_alb":                        load_balancer.ResourceAwsALB(),
 				"harness_autostopping_azure_gateway":                  load_balancer.ResourceAzureGateway(),
 				"harness_autostopping_schedule":                       schedule.ResourceVMRule(),
+				"harness_autostopping_alert":                          as_alert.ResourceAlert(),
 				"harness_platform_delegatetoken":                      pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                          workspace.ResourceWorkspace(),
 				"harness_platform_iacm_default_pipeline":              iacm.ResourceIacmDefaultPipeline(),
