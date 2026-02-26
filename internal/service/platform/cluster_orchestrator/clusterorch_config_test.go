@@ -89,7 +89,7 @@ func testClusterOrchConfig(orchName string) string {
 				criteria = "EmptyOrUnderUtilized"
                 delay = "10m"
                 budget {
-                	reasons = ["Drift","UnderUtilized","Empty"]
+                	reasons = ["Drifted","Underutilized","Empty"]
                     nodes = "20"
 					schedule {
 						frequency = "@daily"
@@ -97,7 +97,7 @@ func testClusterOrchConfig(orchName string) string {
 					}
                 }
 				budget {
-                	reasons = ["Drift","Empty"]
+                	reasons = ["Drifted","Empty"]
                     nodes = "1"
 					schedule {
 						frequency = "@monthly"
@@ -161,7 +161,7 @@ func testClusterOrchConfigDisabled(orchName string, disabled bool) string {
 				criteria = "EmptyOrUnderUtilized"
                 delay = "10m"
                 budget {
-                	reasons = ["Drift","UnderUtilized","Empty"]
+                	reasons = ["Drifted","Underutilized","Empty"]
                     nodes = "20"
 					schedule {
 						frequency = "@daily"
@@ -169,7 +169,7 @@ func testClusterOrchConfigDisabled(orchName string, disabled bool) string {
 					}
                 }
 				budget {
-                	reasons = ["Drift","Empty"]
+                	reasons = ["Drifted","Empty"]
                     nodes = "1"
 					schedule {
 						frequency = "@monthly"
