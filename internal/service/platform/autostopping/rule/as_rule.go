@@ -604,30 +604,35 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 
 		d.Set("tcp", []map[string]interface{}{tcpConfig})
 		if setConnect {
-			connectBlock := buildConnectBlock(routing)
-			_ = d.Set("connect", []map[string]interface{}{connectBlock})
+			connectMap := buildConnectBlock(routing)
+			_ = d.Set("connect", connectMap)
 		}
 	} else {
 		// Clear tcp config if not present in API response
 		d.Set("tcp", []map[string]interface{}{})
 		if setConnect {
-			_ = d.Set("connect", []map[string]interface{}{})
+			_ = d.Set("connect", map[string]interface{}{})
 		}
 	}
 }
 
 func buildConnectBlock(routing *nextgen.RoutingDataV2) map[string]interface{} {
-	connectBlock := map[string]interface{}{
-		"ssh": 0,
-		"rdp": 0,
+	connectMap := make(map[string]interface{})
+	if routing == nil || routing.Tcp == nil {
+		return connectMap
 	}
 	if routing.Tcp.SshConf != nil {
-		connectBlock["ssh"] = routing.Tcp.SshConf.Source
+		connectMap["ssh"] = routing.Tcp.SshConf.Source
 	}
 	if routing.Tcp.RdpConf != nil {
-		connectBlock["rdp"] = routing.Tcp.RdpConf.Source
+		connectMap["rdp"] = routing.Tcp.RdpConf.Source
 	}
-	return connectBlock
+	if len(routing.Tcp.CustomPorts) > 0 {
+		for _, tcpPort := range routing.Tcp.CustomPorts {
+			connectMap[strconv.Itoa(tcpPort.Target)] = tcpPort.Source
+		}
+	}
+	return connectMap
 }
 
 // setDatabaseConfig sets the database configuration in Terraform state from the API response

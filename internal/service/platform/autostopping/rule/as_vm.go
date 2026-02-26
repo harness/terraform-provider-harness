@@ -294,23 +294,10 @@ func ResourceVMRule() *schema.Resource {
 				},
 			},
 			"connect": {
-				Description: "Connection information (source ports on the proxy) returned after the rule is created.",
-				Type:        schema.TypeList,
+				Description: "Connection information (source ports on the proxy). Keys: \"ssh\" and \"rdp\" for SSH/RDP; other keys are target port as string (e.g. \"80\") for forward_rule, value is the proxy source port.",
+				Type:        schema.TypeMap,
 				Computed:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"ssh": {
-							Description: "Source port for SSH (proxy port). Populated when tcp.ssh is configured.",
-							Type:        schema.TypeInt,
-							Computed:    true,
-						},
-						"rdp": {
-							Description: "Source port for RDP (proxy port). Populated when tcp.rdp is configured.",
-							Type:        schema.TypeInt,
-							Computed:    true,
-						},
-					},
-				},
+				Elem:        &schema.Schema{Type: schema.TypeInt},
 			},
 		},
 	}
