@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+const clusterOrchConfigTestName = "terraform-clusterorch-config-test"
+const clusterOrchConfigDisabledTestName = "terraform-clusterorch-disabled-test"
+
 func TestResourceClusterOrchestratorConfig(t *testing.T) {
-	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	resourceName := "harness_cluster_orchestrator_config.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -18,7 +19,7 @@ func TestResourceClusterOrchestratorConfig(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testClusterOrchConfig(name),
+				Config: testClusterOrchConfig(clusterOrchConfigTestName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "orchestrator_id"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
@@ -29,7 +30,6 @@ func TestResourceClusterOrchestratorConfig(t *testing.T) {
 }
 
 func TestResourceClusterOrchestratorConfigDisabled(t *testing.T) {
-	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	resourceName := "harness_cluster_orchestrator_config.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -37,21 +37,21 @@ func TestResourceClusterOrchestratorConfigDisabled(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testClusterOrchConfigDisabled(name, false),
+				Config: testClusterOrchConfigDisabled(clusterOrchConfigDisabledTestName, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "orchestrator_id"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
 				),
 			},
 			{
-				Config: testClusterOrchConfigDisabled(name, true),
+				Config: testClusterOrchConfigDisabled(clusterOrchConfigDisabledTestName, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "orchestrator_id"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "true"),
 				),
 			},
 			{
-				Config: testClusterOrchConfigDisabled(name, false),
+				Config: testClusterOrchConfigDisabled(clusterOrchConfigDisabledTestName, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "orchestrator_id"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
