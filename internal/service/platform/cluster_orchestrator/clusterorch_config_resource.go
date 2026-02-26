@@ -85,7 +85,8 @@ func ResourceClusterOrchestratorConfig() *schema.Resource {
 						"strategy": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "Strategy for choosing spot nodes for cluster",
+							Description: "Strategy for choosing spot nodes for cluster. Allowed values: CostOptimized, LeastInterrupted",
+							ValidateFunc: validation.StringInSlice([]string{"CostOptimized", "LeastInterrupted"}, false),
 						},
 					},
 				},

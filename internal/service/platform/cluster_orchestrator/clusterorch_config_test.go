@@ -76,7 +76,7 @@ func testClusterOrchConfig(orchName string) string {
 			base_ondemand_capacity = 1
             ondemand_replica_percentage = 60
             selector = "ALL"
-            strategy = "COST OPTIMIZED"
+            strategy = "CostOptimized"
 		}
 		binpacking {
             pod_eviction {
@@ -148,7 +148,7 @@ func testClusterOrchConfigDisabled(orchName string, disabled bool) string {
 			base_ondemand_capacity = 1
             ondemand_replica_percentage = 60
             selector = "ALL"
-            strategy = "COST OPTIMIZED"
+            strategy = "CostOptimized"
 		}
 		binpacking {
             pod_eviction {
