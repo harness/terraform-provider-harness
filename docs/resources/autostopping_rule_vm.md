@@ -87,6 +87,7 @@ resource "harness_autostopping_rule_vm" "test" {
 
 ### Read-Only
 
+- `connect` (Map of Number) Connection information (source ports on the proxy). Keys: "ssh" and "rdp" for SSH/RDP; other keys are target port as string (e.g. "80") for forward_rule, value is the proxy source port.
 - `id` (String) The ID of this resource.
 - `identifier` (Number) Unique identifier of the resource
 

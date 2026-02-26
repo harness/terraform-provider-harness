@@ -284,6 +284,12 @@ func DataSourceVMRule() *schema.Resource {
 					},
 				},
 			},
+			"connect": {
+				Description: "Connection information (source ports on the proxy). Keys: \"ssh\" and \"rdp\" for SSH/RDP; other keys are target port as string (e.g. \"80\") for forward_rule, value is the proxy source port.",
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeInt},
+			},
 		},
 	}
 

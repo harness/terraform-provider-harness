@@ -513,9 +513,10 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 	return httpProxy, tcpProxy, healthCheck
 }
 
-// setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response
+// setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response.
+// When setConnect is true (VM rule), also sets the computed connect block from TCP ssh/rdp source ports.
 // Always sets both http and tcp to ensure stale data is cleared when configs are removed
-func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck) {
+func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck, setConnect bool) {
 	// Set HTTP routing config (or clear it if absent)
 	if routing != nil && routing.Http != nil {
 		httpConfig := make(map[string]interface{})
@@ -612,10 +613,36 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 		}
 
 		d.Set("tcp", []map[string]interface{}{tcpConfig})
+		if setConnect {
+			connectMap := buildConnectBlock(routing)
+			_ = d.Set("connect", connectMap)
+		}
 	} else {
 		// Clear tcp config if not present in API response
 		d.Set("tcp", []map[string]interface{}{})
+		if setConnect {
+			_ = d.Set("connect", map[string]interface{}{})
+		}
 	}
+}
+
+func buildConnectBlock(routing *nextgen.RoutingDataV2) map[string]interface{} {
+	connectMap := make(map[string]interface{})
+	if routing == nil || routing.Tcp == nil {
+		return connectMap
+	}
+	if routing.Tcp.SshConf != nil {
+		connectMap["ssh"] = routing.Tcp.SshConf.Source
+	}
+	if routing.Tcp.RdpConf != nil {
+		connectMap["rdp"] = routing.Tcp.RdpConf.Source
+	}
+	if len(routing.Tcp.CustomPorts) > 0 {
+		for _, tcpPort := range routing.Tcp.CustomPorts {
+			connectMap[strconv.Itoa(tcpPort.Target)] = tcpPort.Source
+		}
+	}
+	return connectMap
 }
 
 // setDatabaseConfig sets the database configuration in Terraform state from the API response
@@ -760,6 +787,8 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	case Instance:
 		setFilterConfig(d, service.Routing)
 	}
-	// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
-	setRoutingConfig(d, service.Routing, service.HealthCheck)
+	if service.Kind != K8s {
+		// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
+		setRoutingConfig(d, service.Routing, service.HealthCheck, service.Kind == Instance)
+	}
 }
