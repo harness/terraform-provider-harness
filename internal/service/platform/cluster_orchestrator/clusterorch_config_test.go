@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestResourceClusterOrchestratorConfig(t *testing.T) {
-	orchID := "terraform-clusterorch-config-test"
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	resourceName := "harness_cluster_orchestrator_config.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -17,9 +18,9 @@ func TestResourceClusterOrchestratorConfig(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testClusterOrchConfig(orchID),
+				Config: testClusterOrchConfig(name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "orchestrator_id", orchID),
+					resource.TestCheckResourceAttrSet(resourceName, "orchestrator_id"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
 				),
 			},
@@ -28,7 +29,7 @@ func TestResourceClusterOrchestratorConfig(t *testing.T) {
 }
 
 func TestResourceClusterOrchestratorConfigDisabled(t *testing.T) {
-	orchID := "terraform-clusterorch-disabled-test"
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	resourceName := "harness_cluster_orchestrator_config.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -36,23 +37,23 @@ func TestResourceClusterOrchestratorConfigDisabled(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testClusterOrchConfigDisabled(orchID, false),
+				Config: testClusterOrchConfigDisabled(name, false),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "orchestrator_id", orchID),
+					resource.TestCheckResourceAttrSet(resourceName, "orchestrator_id"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
 				),
 			},
 			{
-				Config: testClusterOrchConfigDisabled(orchID, true),
+				Config: testClusterOrchConfigDisabled(name, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "orchestrator_id", orchID),
+					resource.TestCheckResourceAttrSet(resourceName, "orchestrator_id"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "true"),
 				),
 			},
 			{
-				Config: testClusterOrchConfigDisabled(orchID, false),
+				Config: testClusterOrchConfigDisabled(name, false),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "orchestrator_id", orchID),
+					resource.TestCheckResourceAttrSet(resourceName, "orchestrator_id"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
 				),
 			},
@@ -60,10 +61,16 @@ func TestResourceClusterOrchestratorConfigDisabled(t *testing.T) {
 	})
 }
 
-func testClusterOrchConfig(orchID string) string {
+func testClusterOrchConfig(orchName string) string {
 	return fmt.Sprintf(`
+	resource "harness_cluster_orchestrator" "orch" {
+		name              = "%[1]s"
+		cluster_endpoint  = "http://test.com"
+		k8s_connector_id  = "TestDoNotDelete"
+	}
+
 	resource "harness_cluster_orchestrator_config" "test" {
-		orchestrator_id = "%s"
+		orchestrator_id = harness_cluster_orchestrator.orch.id
 		disabled        = false
 		distribution {
 			base_ondemand_capacity = 1
@@ -123,13 +130,19 @@ func testClusterOrchConfig(orchID string) string {
 			}
 		}
 	}
-`, orchID)
+`, orchName)
 }
 
-func testClusterOrchConfigDisabled(orchID string, disabled bool) string {
+func testClusterOrchConfigDisabled(orchName string, disabled bool) string {
 	return fmt.Sprintf(`
+	resource "harness_cluster_orchestrator" "orch" {
+		name              = "%[1]s"
+		cluster_endpoint  = "http://test.com"
+		k8s_connector_id  = "TestDoNotDelete"
+	}
+
 	resource "harness_cluster_orchestrator_config" "test" {
-		orchestrator_id = "%s"
+		orchestrator_id = harness_cluster_orchestrator.orch.id
 		disabled        = %t
 		distribution {
 			base_ondemand_capacity = 1
@@ -189,5 +202,5 @@ func testClusterOrchConfigDisabled(orchID string, disabled bool) string {
 			}
 		}
 	}
-`, orchID, disabled)
+`, orchName, disabled)
 }
