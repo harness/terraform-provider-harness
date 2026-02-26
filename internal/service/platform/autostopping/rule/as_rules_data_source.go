@@ -36,7 +36,7 @@ func DataSourceRules() *schema.Resource {
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"identifier": {
+						"id": {
 							Description: "Unique identifier of the rule.",
 							Type:        schema.TypeFloat,
 							Computed:    true,
@@ -112,7 +112,7 @@ func readAutoStopRules(ctx context.Context, d *schema.ResourceData, meta interfa
 
 func flattenService(s nextgen.Service) map[string]interface{} {
 	return map[string]interface{}{
-		"identifier":         float64(s.Id),
+		"id":                float64(s.Id),
 		"name":               s.Name,
 		"kind":               s.Kind,
 		"cloud_connector_id": s.CloudAccountId,
