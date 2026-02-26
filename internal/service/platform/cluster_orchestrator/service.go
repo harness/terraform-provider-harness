@@ -35,6 +35,7 @@ func buildClusterOrch(d *schema.ResourceData) nextgen.CreateClusterOrchestratorD
 }
 func setId(d *schema.ResourceData, id string) {
 	d.SetId(id)
+	d.Set("identifier", id)
 }
 func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 	config := &nextgen.ClusterOrchConfig{}
@@ -75,14 +76,13 @@ func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 				Reasons: getDisruptionBudgetReasons(budget),
 				Nodes:   budget["nodes"].(string),
 			}
-			if s, ok := budget["schedule"].([]interface{}); ok && len(s) > 0 {
-				if s0, ok := s[0].(map[string]interface{}); ok {
-					if f, ok := s0["frequency"].(string); ok && f != "" {
-						if dur, ok := s0["duration"].(string); ok && dur != "" {
-							b.Schedule = &f
-							b.Duration = dur
-						}
-					}
+			if len(budget["schedule"].([]interface{})) > 0 {
+				frequency := budget["schedule"].([]interface{})[0].(map[string]interface{})["frequency"].(string)
+				duration := budget["schedule"].([]interface{})[0].(map[string]interface{})["duration"].(string)
+				if frequency != "" && duration != "" {
+					b.Schedule = &frequency
+					b.Duration = duration
+
 				}
 			}
 			budgets = append(budgets, b)
@@ -107,19 +107,15 @@ func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 	return *config
 }
 func getDisruptionBudgetReasons(b map[string]interface{}) []string {
-	reasonsRaw, ok := b["reasons"]
-	if !ok || reasonsRaw == nil {
-		return nil
-	}
-	reasons := reasonsRaw.([]interface{})
+	reasons := b["reasons"].([]interface{})
 	if len(reasons) == 0 {
-		return nil
-	}
-	reasonList := make([]string, 0, len(reasons))
-	for _, reason := range reasons {
-		if s, ok := reason.(string); ok {
-			reasonList = append(reasonList, s)
+		return []string{
+			"Drifted", "Underutilized", "Empty",
 		}
+	}
+	reasonList := []string{}
+	for _, reason := range reasons {
+		reasonList = append(reasonList, reason.(string))
 	}
 	return reasonList
 }
@@ -206,9 +202,8 @@ func readClusterOrchConfig(d *schema.ResourceData, orch *nextgen.ClusterOrchestr
 		"strategy":                    orch.Config.DistributionStrategy,
 	}})
 	d.Set("binpacking", []interface{}{map[string]interface{}{
-		"enable_spot_to_spot": orch.Config.Consolidation.EnableSpotToSpot,
-		"pod_eviction":       getPodEvictionConfig(orch),
-		"disruption":         getDisruptionConfig(orch),
+		"pod_eviction": getPodEvictionConfig(orch),
+		"disruption":   getDisruptionConfig(orch),
 	}})
 	d.Set("node_preferences", []interface{}{map[string]interface{}{
 		"ttl":                       orch.Config.Consolidation.NodeExpiry,
@@ -283,11 +278,9 @@ func getPodEvictionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
 	if podEvictorCfg.Enabled {
 		return []interface{}{
 			map[string]interface{}{
-				"threshold": []interface{}{
-					map[string]interface{}{
-						"cpu":    podEvictorCfg.MinCPU,
-						"memory": podEvictorCfg.MinMem,
-					},
+				"threshold": map[string]interface{}{
+					"cpu":    podEvictorCfg.MinCPU,
+					"memory": podEvictorCfg.MinMem,
 				},
 			},
 		}
@@ -301,25 +294,19 @@ func getDisruptionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
 		"criteria": disruptionCfg.ConsolidationPolicy,
 		"delay":    disruptionCfg.ConsolidateAfter,
 	}
-	var budgetList []interface{}
+	var budgets []interface{}
 	for _, budget := range disruptionCfg.Budgets {
-		scheduleVal := []interface{}{}
-		if budget.Schedule != nil && budget.Duration != "" {
-			scheduleVal = []interface{}{
-				map[string]interface{}{
-					"frequency": *budget.Schedule,
-					"duration":  budget.Duration,
-				},
-			}
-		}
-		budgetList = append(budgetList, map[string]interface{}{
-			"reasons":  budget.Reasons,
-			"nodes":    budget.Nodes,
-			"schedule": scheduleVal,
+		budgets = append(budgets, map[string]interface{}{
+			"reasons": budget.Reasons,
+			"nodes":   budget.Nodes,
+			"schedule": map[string]interface{}{
+				"frequency": budget.Schedule,
+				"duration":  budget.Duration,
+			},
 		})
 	}
-	if len(budgetList) > 0 {
-		disruptionDto["budget"] = budgetList
+	if len(budgets) > 0 {
+		disruptionDto["budgets"] = budgets
 	}
 	return []interface{}{disruptionDto}
 }
