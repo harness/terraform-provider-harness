@@ -511,7 +511,7 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 // setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response.
 // When setConnect is true (VM rule), also sets the computed connect block from TCP ssh/rdp source ports.
 // Always sets both http and tcp to ensure stale data is cleared when configs are removed
-func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck) {
+func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck, setConnect bool) {
 	// Set HTTP routing config (or clear it if absent)
 	if routing != nil && routing.Http != nil {
 		httpConfig := make(map[string]interface{})
@@ -603,12 +603,16 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 		}
 
 		d.Set("tcp", []map[string]interface{}{tcpConfig})
-		connectBlock := buildConnectBlock(routing)
-		_ = d.Set("connect", []map[string]interface{}{connectBlock})
+		if setConnect {
+			connectBlock := buildConnectBlock(routing)
+			_ = d.Set("connect", []map[string]interface{}{connectBlock})
+		}
 	} else {
 		// Clear tcp config if not present in API response
 		d.Set("tcp", []map[string]interface{}{})
-		_ = d.Set("connect", []map[string]interface{}{})
+		if setConnect {
+			_ = d.Set("connect", []map[string]interface{}{})
+		}
 	}
 }
 
@@ -769,5 +773,5 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 		setFilterConfig(d, service.Routing)
 	}
 	// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
-	setRoutingConfig(d, service.Routing, service.HealthCheck)
+	setRoutingConfig(d, service.Routing, service.HealthCheck, service.Kind == Instance)
 }
