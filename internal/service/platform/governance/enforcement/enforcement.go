@@ -102,12 +102,6 @@ func ResourceRuleEnforcement() *schema.Resource {
 		},
 
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, v interface{}) error {
-			// Ensure at least one of rule_ids or rule_set_ids is provided
-			ruleIDs, ruleSetIDs := d.Get("rule_ids").([]interface{}), d.Get("rule_set_ids").([]interface{})
-			if len(ruleIDs) == 0 && len(ruleSetIDs) == 0 {
-				return fmt.Errorf("either 'rule_ids' or 'rule_set_ids' must be provided")
-			}
-
 			// Conditionally require target_regions when cloud_provider is AWS or AZURE
 			cloudProvider := d.Get("cloud_provider").(string)
 			targetRegions := d.Get("target_regions").([]interface{})
@@ -144,6 +138,12 @@ func resourceRuleEnforcementRead(ctx context.Context, d *schema.ResourceData, me
 
 func resourceRuleEnforcementCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	ruleIDs := expandStringList(d.Get("rule_ids").([]interface{}))
+	ruleSetIDs := expandStringList(d.Get("rule_set_ids").([]interface{}))
+	if len(ruleIDs) == 0 && len(ruleSetIDs) == 0 {
+		return diag.FromErr(fmt.Errorf("either 'rule_ids' or 'rule_set_ids' must be provided"))
+	}
 
 	var err error
 	var resp nextgen.ResponseDtoRuleEnforcement
