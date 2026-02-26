@@ -772,6 +772,8 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	case Instance:
 		setFilterConfig(d, service.Routing)
 	}
-	// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
-	setRoutingConfig(d, service.Routing, service.HealthCheck, service.Kind == Instance)
+	if service.Kind != K8s {
+		// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
+		setRoutingConfig(d, service.Routing, service.HealthCheck, service.Kind == Instance)
+	}
 }
