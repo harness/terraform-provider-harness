@@ -721,6 +721,27 @@ func setK8sConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
 	d.Set("rule_yaml", ruleYaml)
 }
 
+// setConnectConfig sets the computed connect block (ssh/rdp source ports) from the API response.
+// Only resources with a "connect" attribute in their schema (e.g. VM) will have state updated;
+// others ignore the Set error.
+func setConnectConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2) {
+	if routing == nil || routing.Tcp == nil {
+		_ = d.Set("connect", []map[string]interface{}{})
+		return
+	}
+	connectBlock := map[string]interface{}{
+		"ssh": 0,
+		"rdp": 0,
+	}
+	if routing.Tcp.SshConf != nil {
+		connectBlock["ssh"] = routing.Tcp.SshConf.Source
+	}
+	if routing.Tcp.RdpConf != nil {
+		connectBlock["rdp"] = routing.Tcp.RdpConf.Source
+	}
+	_ = d.Set("connect", []map[string]interface{}{connectBlock})
+}
+
 func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	if service == nil {
 		return
@@ -752,4 +773,7 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	}
 	// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
 	setRoutingConfig(d, service.Routing, service.HealthCheck)
+	if service.Kind == Instance {
+		setConnectConfig(d, service.Routing)
+	}
 }

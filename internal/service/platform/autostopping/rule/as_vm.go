@@ -293,6 +293,25 @@ func ResourceVMRule() *schema.Resource {
 					},
 				},
 			},
+			"connect": {
+				Description: "Connection information (source ports on the proxy) returned after the rule is created.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ssh": {
+							Description: "Source port for SSH (proxy port). Populated when tcp.ssh is configured.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"rdp": {
+							Description: "Source port for RDP (proxy port). Populated when tcp.rdp is configured.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
