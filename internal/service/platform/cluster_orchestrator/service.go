@@ -76,14 +76,13 @@ func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 				Reasons: getDisruptionBudgetReasons(budget),
 				Nodes:   budget["nodes"].(string),
 			}
-			if s, ok := budget["schedule"].([]interface{}); ok && len(s) > 0 {
-				if s0, ok := s[0].(map[string]interface{}); ok {
-					if f, ok := s0["frequency"].(string); ok && f != "" {
-						if dur, ok := s0["duration"].(string); ok && dur != "" {
-							b.Schedule = &f
-							b.Duration = dur
-						}
-					}
+			if len(budget["schedule"].([]interface{})) > 0 {
+				frequency := budget["schedule"].([]interface{})[0].(map[string]interface{})["frequency"].(string)
+				duration := budget["schedule"].([]interface{})[0].(map[string]interface{})["duration"].(string)
+				if frequency != "" && duration != "" {
+					b.Schedule = &frequency
+					b.Duration = duration
+
 				}
 			}
 			budgets = append(budgets, b)

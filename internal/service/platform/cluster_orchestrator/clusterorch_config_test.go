@@ -74,12 +74,12 @@ func testClusterOrchConfig(orchName string) string {
 		disabled        = false
 		distribution {
 			base_ondemand_capacity = 1
-			ondemand_replica_percentage = 60
-			selector = "ALL"
-			strategy = "CostOptimized"
+            ondemand_replica_percentage = 60
+            selector = "ALL"
+            strategy = "CostOptimized"
 		}
 		binpacking {
-			pod_eviction {
+            pod_eviction {
 				threshold {
 					cpu = 60
 					memory = 80
@@ -87,15 +87,46 @@ func testClusterOrchConfig(orchName string) string {
 			}
 			disruption {
 				criteria = "EmptyOrUnderUtilized"
-				delay   = "10m"
-				budget {
-					reasons = ["Drifted", "Underutilized", "Empty"]
-					nodes   = "20"
+                delay = "10m"
+                budget {
+                	reasons = ["Drifted","Underutilized","Empty"]
+                    nodes = "20"
 					schedule {
-						frequency = "0 0 * * *"
-						duration  = "10m"
+						frequency = "@daily"
+						duration = "10m"
 					}
-				}
+                }
+				budget {
+                	reasons = ["Drifted","Empty"]
+                    nodes = "1"
+					schedule {
+						frequency = "@monthly"
+						duration = "10m"
+					}
+                }
+			}
+		}
+		node_preferences {
+			ttl = "1h"
+            reverse_fallback_interval = "6h"
+		} 
+		commitment_integration {
+			enabled           = true
+			master_account_id = "dummyAccountId"
+		}
+		replacement_schedule {
+			window_type = "Custom"
+			applies_to {
+			  consolidation        = true
+			  harness_pod_eviction = true
+			  reverse_fallback     = true
+			}
+			window_details {
+			  days       = ["SUN", "WED", "SAT"]
+			  time_zone  = "Asia/Calcutta"
+			  all_day    = false
+			  start_time = "10:30"
+			  end_time   = "11:30"
 			}
 		}
 	}
@@ -115,12 +146,12 @@ func testClusterOrchConfigDisabled(orchName string, disabled bool) string {
 		disabled        = %t
 		distribution {
 			base_ondemand_capacity = 1
-			ondemand_replica_percentage = 60
-			selector = "ALL"
-			strategy = "CostOptimized"
+            ondemand_replica_percentage = 60
+            selector = "ALL"
+            strategy = "CostOptimized"
 		}
 		binpacking {
-			pod_eviction {
+            pod_eviction {
 				threshold {
 					cpu = 60
 					memory = 80
@@ -128,15 +159,46 @@ func testClusterOrchConfigDisabled(orchName string, disabled bool) string {
 			}
 			disruption {
 				criteria = "EmptyOrUnderUtilized"
-				delay   = "10m"
-				budget {
-					reasons = ["Drifted", "Underutilized", "Empty"]
-					nodes   = "20"
+                delay = "10m"
+                budget {
+                	reasons = ["Drifted","Underutilized","Empty"]
+                    nodes = "20"
 					schedule {
-						frequency = "0 0 * * *"
-						duration  = "10m"
+						frequency = "@daily"
+						duration = "10m"
 					}
-				}
+                }
+				budget {
+                	reasons = ["Drifted","Empty"]
+                    nodes = "1"
+					schedule {
+						frequency = "@monthly"
+						duration = "10m"
+					}
+                }
+			}
+		}
+		node_preferences {
+			ttl = "1h"
+            reverse_fallback_interval = "6h"
+		} 
+		commitment_integration {
+			enabled           = true
+			master_account_id = "dummyAccountId"
+		}
+		replacement_schedule {
+			window_type = "Custom"
+			applies_to {
+			  consolidation        = true
+			  harness_pod_eviction = true
+			  reverse_fallback     = true
+			}
+			window_details {
+			  days       = ["SUN", "WED", "SAT"]
+			  time_zone  = "Asia/Calcutta"
+			  all_day    = false
+			  start_time = "10:30"
+			  end_time   = "11:30"
 			}
 		}
 	}
