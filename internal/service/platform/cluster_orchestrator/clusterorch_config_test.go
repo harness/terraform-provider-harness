@@ -86,7 +86,7 @@ func testClusterOrchConfig(orchName string) string {
 				}
 			}
 			disruption {
-				criteria = "EmptyOrUnderUtilized"
+				criteria = "WhenEmptyOrUnderutilized"
                 delay = "10m"
                 budget {
                 	reasons = ["Drifted","Underutilized","Empty"]
@@ -158,7 +158,7 @@ func testClusterOrchConfigDisabled(orchName string, disabled bool) string {
 				}
 			}
 			disruption {
-				criteria = "EmptyOrUnderUtilized"
+				criteria = "WhenEmptyOrUnderutilized"
                 delay = "10m"
                 budget {
                 	reasons = ["Drifted","Underutilized","Empty"]

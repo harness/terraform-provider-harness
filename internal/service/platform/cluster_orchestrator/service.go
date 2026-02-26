@@ -52,6 +52,11 @@ func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 	if attr, ok := d.GetOk("distribution.0.selector"); ok {
 		config.SpotDistribution = nextgen.ClusterOrchDistributionSelector(attr.(string))
 	}
+	if attr, ok := d.GetOk("binpacking.0.enable_spot_to_spot"); ok {
+		config.Consolidation.EnableSpotToSpot = attr.(bool)
+	} else {
+		config.Consolidation.EnableSpotToSpot = true
+	}
 	if _, ok := d.GetOk("binpacking.0.pod_eviction"); ok {
 		config.Consolidation.PodEvictor.Enabled = true
 		if attr, ok := d.GetOk("binpacking.0.pod_eviction.0.threshold.0.cpu"); ok {
@@ -76,13 +81,14 @@ func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 				Reasons: getDisruptionBudgetReasons(budget),
 				Nodes:   budget["nodes"].(string),
 			}
-			if len(budget["schedule"].([]interface{})) > 0 {
-				frequency := budget["schedule"].([]interface{})[0].(map[string]interface{})["frequency"].(string)
-				duration := budget["schedule"].([]interface{})[0].(map[string]interface{})["duration"].(string)
-				if frequency != "" && duration != "" {
-					b.Schedule = &frequency
-					b.Duration = duration
-
+			if s, ok := budget["schedule"].([]interface{}); ok && len(s) > 0 {
+				if s0, ok := s[0].(map[string]interface{}); ok {
+					if f, ok := s0["frequency"].(string); ok && f != "" {
+						if dur, ok := s0["duration"].(string); ok && dur != "" {
+							b.Schedule = &f
+							b.Duration = dur
+						}
+					}
 				}
 			}
 			budgets = append(budgets, b)
@@ -107,15 +113,19 @@ func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 	return *config
 }
 func getDisruptionBudgetReasons(b map[string]interface{}) []string {
-	reasons := b["reasons"].([]interface{})
-	if len(reasons) == 0 {
-		return []string{
-			"Drifted", "Underutilized", "Empty",
-		}
+	reasonsRaw, ok := b["reasons"]
+	if !ok || reasonsRaw == nil {
+		return nil
 	}
-	reasonList := []string{}
+	reasons := reasonsRaw.([]interface{})
+	if len(reasons) == 0 {
+		return nil
+	}
+	reasonList := make([]string, 0, len(reasons))
 	for _, reason := range reasons {
-		reasonList = append(reasonList, reason.(string))
+		if s, ok := reason.(string); ok {
+			reasonList = append(reasonList, s)
+		}
 	}
 	return reasonList
 }
