@@ -12,41 +12,45 @@ import (
 )
 
 /*
-Run all data-source tests (dry-run to preview generated config):
 
-	AS_RULES_TEST_CLOUD_CONNECTOR_ID="awsconn05" \
-	AS_RULES_TEST_VM_ID="i-0d3591bd03f1f547d" \
-	AS_RULES_TEST_REGION="ap-south-1" \
-	AS_RULES_TEST_DRY_RUN="true" \
-	go test -v \
-	  ./internal/service/platform/autostopping/rule/... \
-	  -run "TestAccPreFlightVMRule|TestAccDSRules"
+AS_RULES_TEST_PROVIDER_BLOCK="true"  to be set only for testing with dev testing only
+AS_RULES_TEST_DRY_RUN="false" is required to really run the test cases
 
-Run all for real (sequential, no parallelism):
+# Run the test case only
+AS_RULES_TEST_CLOUD_CONNECTOR_ID="awsconn05" \
+AS_RULES_TEST_VM_ID="i-0d3591bd03f1f547d" \
+AS_RULES_TEST_REGION="ap-south-1" \
+AS_RULES_TEST_DRY_RUN="false" \
+AS_RULES_TEST_PROVIDER_BLOCK="true" \
+go test -v   \
+    ./internal/service/platform/autostopping/rule/...  \
+    -run TestAccDSRulesAll
 
-	AS_RULES_TEST_CLOUD_CONNECTOR_ID="awsconn05" \
-	AS_RULES_TEST_VM_ID="i-0d3591bd03f1f547d" \
-	AS_RULES_TEST_REGION="ap-south-1" \
-	AS_RULES_TEST_DRY_RUN="false" \
-	go test -v \
-	  ./internal/service/platform/autostopping/rule/... \
-	  -run "TestAccPreFlightVMRule|TestAccDSRules"
 */
 
 func TestAccDSRulesAll(t *testing.T) {
 	TestAccDSRulesNoFilter(t)
 	if t.Failed() {
+		t.Log("TestAccDSRulesNoFilter FAILED – stopping")
 		return
 	}
+
 	TestAccDSRulesKindInstance(t)
 	if t.Failed() {
+		t.Log("TestAccDSRulesKindInstance FAILED – stopping")
 		return
 	}
+
 	TestAccDSRulesNamePrefix(t)
 	if t.Failed() {
+		t.Log("TestAccDSRulesNamePrefix FAILED – stopping")
 		return
 	}
+
 	TestAccDSRulesNameRegex(t)
+	if t.Failed() {
+		t.Log("TestAccDSRulesNameRegex FAILED – stopping")
+	}
 }
 
 // TestAccDSRulesNoFilter creates one VM rule and queries the data source with no filter.
@@ -62,7 +66,7 @@ data "harness_autostopping_rules" "all" {
   depends_on = [harness_autostopping_rule_vm.svc]
 }
 `
-	t.Logf("=== generated Terraform source ===\n%s", cfg)
+	// t.Logf("=== generated Terraform source ===\n%s", cfg)
 	if isDryRunOnly {
 		t.Skip("AS_RULES_TEST_DRY_RUN is true: skipping real execution")
 		return
@@ -83,7 +87,6 @@ data "harness_autostopping_rules" "all" {
 	})
 }
 
-// TestAccDSRulesKindInstance creates one VM rule and filters the data source by kind=instance.
 func TestAccDSRulesKindInstance(t *testing.T) {
 	isDryRunOnly := os.Getenv("AS_RULES_TEST_DRY_RUN") == "true"
 	cloudConnectorID, vmID, region := testAccDSRulesEnvVars(t, isDryRunOnly)
@@ -118,7 +121,6 @@ data "harness_autostopping_rules" "by_instance_kind" {
 	})
 }
 
-// TestAccDSRulesNamePrefix creates one VM rule and filters the data source by name prefix regex.
 func TestAccDSRulesNamePrefix(t *testing.T) {
 	isDryRunOnly := os.Getenv("AS_RULES_TEST_DRY_RUN") == "true"
 	cloudConnectorID, vmID, region := testAccDSRulesEnvVars(t, isDryRunOnly)
@@ -155,7 +157,6 @@ data "harness_autostopping_rules" "by_name_prefix" {
 	})
 }
 
-// TestAccDSRulesNameRegex creates one VM rule and filters the data source by a broader name regex.
 func TestAccDSRulesNameRegex(t *testing.T) {
 	isDryRunOnly := os.Getenv("AS_RULES_TEST_DRY_RUN") == "true"
 	cloudConnectorID, vmID, region := testAccDSRulesEnvVars(t, isDryRunOnly)
@@ -191,8 +192,6 @@ data "harness_autostopping_rules" "by_name_regex" {
 		},
 	})
 }
-
-const isAddProviderBlock = true
 
 const providerBlockStr = `terraform {
   required_providers {
@@ -247,11 +246,10 @@ func testAccDSRulesEnvVars(t *testing.T, isDryRunOnly bool) (cloudConnectorID, v
 }
 
 func getNewVMRuleBlock(resourceLabel, name, cloudConnectorID, vmID, region string) string {
-
 	vmRuleStr := strings.Clone(vmRuleConstStr)
 	vmRuleStr = fmt.Sprintf(vmRuleStr, resourceLabel, name, cloudConnectorID, vmID, region)
 
-	if isAddProviderBlock {
+	if os.Getenv("AS_RULES_TEST_PROVIDER_BLOCK") == "true" {
 		return providerBlockStr + vmRuleStr
 	}
 
