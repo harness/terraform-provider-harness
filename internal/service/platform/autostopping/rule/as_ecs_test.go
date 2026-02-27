@@ -5,13 +5,13 @@ import (
 	"strings"
 	"testing"
 
-
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestResourceECSRule(t *testing.T) {
-	name := fmt.Sprintf("terr-as-ecs%s", strings.ToLower(randAlphanumeric(3)))
+	name := fmt.Sprintf("terr-ecsrule-%s", strings.ToLower(utils.RandAlphanumericString(5)))
 	resourceName := "harness_autostopping_rule_ecs.test"
 
 	resource.UnitTest(t, resource.TestCase{
