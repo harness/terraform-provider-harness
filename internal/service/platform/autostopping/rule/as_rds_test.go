@@ -14,7 +14,7 @@ import (
 
 func TestResourceRDSRule(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
-	name := fmt.Sprintf("terr-rds-%s", strings.ToLower(utils.RandLowerString(5)))
+	name := fmt.Sprintf("terr-rds-%s", strings.ToLower(utils.RandStringBytes(5)))
 	resourceName := "harness_autostopping_rule_rds.test"
 
 	resource.UnitTest(t, resource.TestCase{
