@@ -6,6 +6,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// HARNESS_PLATFORM_API_KEY must be set for proxy tests (backend requires valid NG API key). If unset, tests are skipped.
+const platformAPIKeyEnv = "HARNESS_PLATFORM_API_KEY"
+
 func testGetLoadBalancer(resourceName string, state *terraform.State) (*nextgen.AccessPoint, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
