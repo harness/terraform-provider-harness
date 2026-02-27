@@ -17,6 +17,9 @@ const gcpProjectIDEnv = "HARNESS_GCP_PROJECT_ID"
 
 func TestResourceGCPProxy(t *testing.T) {
 	projectID := os.Getenv(gcpProjectIDEnv)
+	if projectID == "" {
+		t.Skipf("skip: set %s to run GCP proxy test (requires Secret Manager access)", gcpProjectIDEnv)
+	}
 
 	apiKey := os.Getenv(platformAPIKeyEnv)
 
