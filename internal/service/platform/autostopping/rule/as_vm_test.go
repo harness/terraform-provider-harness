@@ -7,14 +7,14 @@ import (
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
-	"github.com/harness/harness-go-sdk/harness/utils"
+	
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestResourceVMRule(t *testing.T) {
-	name := fmt.Sprintf("terr-as-vm%s", strings.ToLower(utils.RandLowerString(3)))
+	name := fmt.Sprintf("terr-as-vm%s", strings.ToLower(randAlphanumeric(3)))
 	resourceName := "harness_autostopping_rule_vm.test"
 
 	resource.UnitTest(t, resource.TestCase{
