@@ -2,6 +2,7 @@ package load_balancer_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -10,7 +11,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// Env var that must be set to a valid AWS cloud connector ID to run this test.
+const awsProxyCloudConnectorIDEnv = "automation_aws_connector"
+
 func TestResourceAWSProxy(t *testing.T) {
+	connectorID := os.Getenv(awsProxyCloudConnectorIDEnv)
+	if connectorID == "" {
+		t.Fatalf("%s must be set to a valid AWS cloud connector ID", awsProxyCloudConnectorIDEnv)
+	}
+
 	name := utils.RandStringBytes(5)
 	resourceName := "harness_autostopping_aws_proxy.test"
 
@@ -20,7 +29,7 @@ func TestResourceAWSProxy(t *testing.T) {
 		//		CheckDestroy:      testAWSProxyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAWSProxy(name),
+				Config: testAWSProxy(name, connectorID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
@@ -45,11 +54,11 @@ func testAWSProxyDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAWSProxy(name string) string {
+func testAWSProxy(name, cloudConnectorID string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_proxy" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "cloud_connector_id"
+			cloud_connector_id = "%[2]s"
             region = "us-east-1"
 			vpc = "vpc-2657db5c"
 			security_groups =["sg-01"]
@@ -58,14 +67,14 @@ func testAWSProxy(name string) string {
 			allocate_static_ip = true
 			delete_cloud_resources_on_destroy = false
 		}
-`, name)
+`, name, cloudConnectorID)
 }
 
-func testAWSProxyUpdate(name string) string {
+func testAWSProxyUpdate(name, cloudConnectorID string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_proxy" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "cloud_connector_id"
+			cloud_connector_id = "%[2]s"
             region = "eastus2"
             vpc = "vpc-2657db5c"
 			security_groups =["sg-01","sg-02"]
@@ -74,5 +83,5 @@ func testAWSProxyUpdate(name string) string {
 			allocate_static_ip = true
 			delete_cloud_resources_on_destroy = true
 		}
-`, name)
+`, name, cloudConnectorID)
 }

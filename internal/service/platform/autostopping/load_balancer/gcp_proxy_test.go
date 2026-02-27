@@ -43,7 +43,7 @@ func testGCPProxy(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_gcp_proxy" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "developerxgcpfm"
+			cloud_connector_id = "automation_gcp_connector"
             region             = "region"
 			vpc                = "https://www.googleapis.com/compute/v1/projects/project_id/global/networks/netwok_id"
 			zone               = "zone"

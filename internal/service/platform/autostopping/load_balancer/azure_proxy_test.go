@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -52,29 +51,11 @@ func testAzureProxyDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testGetLoadBalancer(resourceName string, state *terraform.State) (*nextgen.AccessPoint, error) {
-	r := acctest.TestAccGetResource(resourceName, state)
-	c, ctx := acctest.TestAccGetPlatformClientWithContext()
-	id := r.Primary.ID
-
-	resp, _, err := c.CloudCostAutoStoppingLoadBalancersApi.DescribeLoadBalancer(ctx, c.AccountId, id, c.AccountId)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.Response == nil {
-		return nil, nil
-	}
-
-	return resp.Response, nil
-}
-
 func testAzureProxy(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_azure_proxy" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "cloud_connector_id"
+			cloud_connector_id = "doNotDeleteAzureConnector"
 			region             = "eastus2"
 			resource_group     = "resource_group"
 			vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
@@ -93,7 +74,7 @@ func testAzureProxyUpdate(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_azure_proxy" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "cloud_connector_id"
+			cloud_connector_id = "doNotDeleteAzureConnector"
 			region             = "eastus2"
 			resource_group     = "resource_group"
 			vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
