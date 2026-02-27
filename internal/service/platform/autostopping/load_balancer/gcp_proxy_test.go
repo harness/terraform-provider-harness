@@ -23,7 +23,7 @@ func TestResourceGCPProxy(t *testing.T) {
 
 	apiKey := os.Getenv(platformAPIKeyEnv)
 
-	name := fmt.Sprintf("terr-gcpproxy-%s", strings.ToLower(utils.RandStringBytes(5)))
+	name := fmt.Sprintf("terr-gcpproxy-%s", strings.ToLower(utils.RandLowerString(5)))
 	resourceName := "harness_autostopping_gcp_proxy.test"
 
 	resource.UnitTest(t, resource.TestCase{

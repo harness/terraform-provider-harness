@@ -15,7 +15,7 @@ import (
 const awsCloudConnectorID = "automation_aws_connector"
 
 func TestResourceAwsALB(t *testing.T) {
-	name := fmt.Sprintf("terr-awsalb-%s", strings.ToLower(utils.RandStringBytes(5)))
+	name := fmt.Sprintf("terr-awsalb-%s", strings.ToLower(utils.RandLowerString(5)))
 	resourceName := "harness_autostopping_aws_alb.test"
 
 	resource.UnitTest(t, resource.TestCase{
