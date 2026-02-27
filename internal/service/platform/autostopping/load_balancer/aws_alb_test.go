@@ -2,6 +2,7 @@ package load_balancer_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -22,7 +23,7 @@ func TestResourceAwsALB(t *testing.T) {
 		//		CheckDestroy:      testAWSProxyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAwsALB(name),
+				Config: testAwsALB(name, connectorID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
@@ -41,7 +42,7 @@ func testAwsALBDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAwsALB(name string) string {
+func testAwsALB(name, cloudConnectorID string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_alb" "test" {
 			name = "%[1]s"
@@ -54,7 +55,7 @@ func testAwsALB(name string) string {
 `, name, awsCloudConnectorID)
 }
 
-func testAwsALBUpdate(name string) string {
+func testAwsALBUpdate(name, cloudConnectorID string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_alb" "test" {
 			name = "%[1]s"
