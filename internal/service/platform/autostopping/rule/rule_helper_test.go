@@ -10,7 +10,7 @@ package as_rule_test
 //   - Scale group: scaleGroupARN, scaleGroupName, scaleGroupRegion must be a real ASG in the account for cloudConnectorIDScaleGroup (AWS).
 const (
 	cloudConnectorIDK8s        = "donotdeleteautomationhemanth"
-	cloudConnectorIDVM         = "doNotDeleteAzureConnector"
+	cloudConnectorIDVM         = "automation_aws_connector"
 	cloudConnectorIDRDS        = "DoNotDelete_LightwingNonProd"
 	cloudConnectorIDScaleGroup = "DoNotDelete_LightwingNonProd"
 )
