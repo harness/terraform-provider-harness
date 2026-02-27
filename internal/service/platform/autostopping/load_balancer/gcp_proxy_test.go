@@ -3,6 +3,7 @@ package load_balancer_test
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
