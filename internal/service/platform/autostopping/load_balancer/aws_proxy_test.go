@@ -54,8 +54,8 @@ func testAWSProxy(name string) string {
 			name = "%[1]s"
 			cloud_connector_id = %q
             region = "us-east-1"
-			vpc = "vpc-2657db5c"
-			security_groups =["sg-01"]
+            vpc = "vpc-0d47ab08fce6d8cc8"
+            security_groups =["ccm-sg"]
 			machine_type = "t2.medium"
             api_key = ""
 			allocate_static_ip = true
@@ -70,8 +70,8 @@ func testAWSProxyUpdate(name string) string {
 			name = "%[1]s"
 			cloud_connector_id = %q
             region = "eastus2"
-            vpc = "vpc-2657db5c"
-			security_groups =["sg-01","sg-02"]
+            vpc = "vpc-0d47ab08fce6d8cc8"
+            security_groups =["ccm-sg"]
             machine_type = "t2.medium"
             api_key = ""
 			allocate_static_ip = true

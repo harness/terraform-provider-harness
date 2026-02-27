@@ -49,6 +49,7 @@ func testAwsALB(name string) string {
 			cloud_connector_id = %q
             region = "us-east-1"
 			vpc = "vpc-0d47ab08fce6d8cc8"
+			security_groups =["ccm-sg"]
 			delete_cloud_resources_on_destroy = true
 		}
 `, name, awsCloudConnectorID)
@@ -61,6 +62,7 @@ func testAwsALBUpdate(name string) string {
 			cloud_connector_id = %q
             region = "us-east-1"
             vpc = "vpc-0d47ab08fce6d8cc8"
+            security_groups =["ccm-sg"]
 			delete_cloud_resources_on_destroy = true
 		}
 `, name, awsCloudConnectorID)
