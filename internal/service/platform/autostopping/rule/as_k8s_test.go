@@ -55,11 +55,11 @@ func testK8sRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 resource "harness_autostopping_rule_k8s" "test" {
   name                = "%[1]s"
-  cloud_connector_id  = %q
-  k8s_connector_id    = %q
+  cloud_connector_id  = %[2]q
+  k8s_connector_id    = %[3]q
   k8s_namespace       = "default"
   idle_time_mins      = 10
-  dry_run             = %[2]t
+  dry_run             = %[4]t
 
   rule_yaml = <<-EOT
 apiVersion: ccm.harness.io/v1
@@ -76,18 +76,18 @@ spec:
   dependencies: []
 EOT
 }
-`, name, dryRun, cloudConnectorIDK8s, k8sConnectorID)
+`, name, cloudConnectorIDK8s, k8sConnectorID, dryRun)
 }
 
 func testK8sRuleUpdate(name, idleTime string, dryRun bool) string {
 	return fmt.Sprintf(`
 resource "harness_autostopping_rule_k8s" "test" {
   name                = "%[1]s"
-  cloud_connector_id  = %q
-  k8s_connector_id    = %q
+  cloud_connector_id  = %[2]q
+  k8s_connector_id    = %[3]q
   k8s_namespace       = "default"
-  idle_time_mins      = %[2]s
-  dry_run             = %[3]t
+  idle_time_mins      = %[4]s
+  dry_run             = %[5]t
 
   rule_yaml = <<-EOT
 apiVersion: ccm.harness.io/v1
@@ -99,10 +99,10 @@ spec:
   service:
     name: nginx
     port: 80
-  idleTimeMins: %[2]s
+  idleTimeMins: %[4]s
   hideProgressPage: false
   dependencies: []
 EOT
 }
-`, name, idleTime, dryRun, cloudConnectorIDK8s, k8sConnectorID)
+`, name, cloudConnectorIDK8s, k8sConnectorID, idleTime, dryRun)
 }

@@ -67,15 +67,15 @@ func testVMRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_rule_vm" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = %q
+		cloud_connector_id = %[2]q
 		idle_time_mins = 10              
-		dry_run = %[2]t
+		dry_run = %[3]t
 		filter {
-			vm_ids = [%q]
-		  	regions = [%q]
+			vm_ids = [%[4]q]
+		  	regions = [%[5]q]
 		}
 		http {
-			proxy_id = %q
+			proxy_id = %[6]q
 			routing {
 				source_protocol = "https"
 				target_protocol = "https"
@@ -100,7 +100,7 @@ func testVMRule(name string, dryRun bool) string {
 			}
 		}
 		tcp {
-			proxy_id = %q
+			proxy_id = %[7]q
 			ssh {
 				port = 22
 			}
@@ -112,10 +112,10 @@ func testVMRule(name string, dryRun bool) string {
 			}                     
 		}
 		depends {
-			rule_id = %d
+			rule_id = %[8]d
 			delay_in_sec = 5
 		}        
 	}
-`, name, dryRun, cloudConnectorIDVM, vmFilterVMID, vmFilterRegion, proxyIDVM, proxyIDVM, ruleIDDependency)
+`, name, cloudConnectorIDVM, dryRun, vmFilterVMID, vmFilterRegion, proxyIDVM, proxyIDVM, ruleIDDependency)
 }
 
