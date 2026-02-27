@@ -121,6 +121,20 @@ func setAppGatewayData(d *schema.ResourceData, accessPoint *nextgen.AccessPoint)
 func setProxyData(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
 	setSecurityGroups(accessPoint, d)
 	setProxyCertificates(d, accessPoint)
+	setProxyIPAddresses(d, accessPoint)
+}
+
+func setProxyIPAddresses(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
+	externalIP := ""
+	if accessPoint.Metadata != nil && accessPoint.Metadata.ExternalIP != "" {
+		externalIP = accessPoint.Metadata.ExternalIP
+	}
+	privateIP := ""
+	if accessPoint.Metadata != nil && accessPoint.Metadata.PrivateIP != "" {
+		privateIP = accessPoint.Metadata.PrivateIP
+	}
+	d.Set("public_ip", externalIP)
+	d.Set("private_ip", privateIP)
 }
 
 func setCertificateId(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
