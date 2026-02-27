@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+const azureProxyPlatformAPIKeyEnv = "HARNESS_PLATFORM_API_KEY"
+
 func TestResourceAzureProxy(t *testing.T) {
 	apiKey := os.Getenv(platformAPIKeyEnv)
 

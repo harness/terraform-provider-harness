@@ -2,7 +2,6 @@ package load_balancer_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
