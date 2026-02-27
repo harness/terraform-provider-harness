@@ -3,6 +3,7 @@ package as_rule_test
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -13,7 +14,7 @@ import (
 )
 
 func TestResourceVMRule(t *testing.T) {
-	name := utils.RandStringBytes(5)
+	name := fmt.Sprintf("terr-as-vm%s", strings.ToLower(utils.RandLowerString(3)))
 	resourceName := "harness_autostopping_rule_vm.test"
 
 	resource.UnitTest(t, resource.TestCase{

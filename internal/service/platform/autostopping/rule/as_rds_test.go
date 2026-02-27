@@ -2,6 +2,7 @@ package as_rule_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -10,7 +11,7 @@ import (
 )
 
 func TestResourceRDSRule(t *testing.T) {
-	name := utils.RandStringBytes(5)
+	name := fmt.Sprintf("terr-as-rds%s", strings.ToLower(utils.RandLowerString(3)))
 	resourceName := "harness_autostopping_rule_rds.test"
 
 	resource.UnitTest(t, resource.TestCase{
