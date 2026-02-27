@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestResourceK8sRule(t *testing.T) {
-	name := "terraform-rule-test-k8s"
+	name := utils.RandStringBytes(5)
 	resourceName := "harness_autostopping_rule_k8s.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -54,8 +55,8 @@ func testK8sRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 resource "harness_autostopping_rule_k8s" "test" {
   name                = "%[1]s"
-  cloud_connector_id  = "granpermissions"
-  k8s_connector_id    = "account.k8s_connector"
+  cloud_connector_id  = %q
+  k8s_connector_id    = %q
   k8s_namespace       = "default"
   idle_time_mins      = 10
   dry_run             = %[2]t
@@ -75,15 +76,15 @@ spec:
   dependencies: []
 EOT
 }
-`, name, dryRun)
+`, name, dryRun, cloudConnectorIDK8s, k8sConnectorID)
 }
 
 func testK8sRuleUpdate(name, idleTime string, dryRun bool) string {
 	return fmt.Sprintf(`
 resource "harness_autostopping_rule_k8s" "test" {
   name                = "%[1]s"
-  cloud_connector_id  = "granpermissions"
-  k8s_connector_id    = "account.k8s_connector"
+  cloud_connector_id  = %q
+  k8s_connector_id    = %q
   k8s_namespace       = "default"
   idle_time_mins      = %[2]s
   dry_run             = %[3]t
@@ -103,5 +104,5 @@ spec:
   dependencies: []
 EOT
 }
-`, name, idleTime, dryRun)
+`, name, idleTime, dryRun, cloudConnectorIDK8s, k8sConnectorID)
 }
