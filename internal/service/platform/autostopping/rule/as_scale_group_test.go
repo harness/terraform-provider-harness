@@ -10,7 +10,7 @@ import (
 )
 
 func TestResourceScaleGroupRule(t *testing.T) {
-	name := fmt.Sprintf("terr-sg-%s", strings.ToLower(utils.RandLowerString(5)))
+	name := fmt.Sprintf("terr-sg-%s", strings.ToLower(utils.RandStringBytes(5)))
 	resourceName := "harness_autostopping_rule_scale_group.test"
 
 	resource.UnitTest(t, resource.TestCase{

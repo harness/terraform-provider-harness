@@ -10,7 +10,7 @@ import (
 )
 
 func TestResourceK8sRule(t *testing.T) {
-	name := fmt.Sprintf("terr-k8s-%s", strings.ToLower(utils.RandLowerString(5)))
+	name := fmt.Sprintf("terr-k8s-%s", strings.ToLower(utils.RandStringBytes(5)))
 	resourceName := "harness_autostopping_rule_k8s.test"
 
 	resource.UnitTest(t, resource.TestCase{

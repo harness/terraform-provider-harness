@@ -11,7 +11,7 @@ import (
 )
 
 func TestResourceECSRule(t *testing.T) {
-	name := fmt.Sprintf("terr-ecsrule-%s", strings.ToLower(utils.RandAlphanumericString(5)))
+	name := fmt.Sprintf("terr-ecsrule-%s", strings.ToLower(utils.RandStringBytes(5)))
 	resourceName := "harness_autostopping_rule_ecs.test"
 
 	resource.UnitTest(t, resource.TestCase{
