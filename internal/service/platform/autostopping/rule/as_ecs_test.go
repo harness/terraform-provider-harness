@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestResourceECSRule(t *testing.T) {
-	name := "terraform-rule-test-ecs"
+	name := utils.RandStringBytes(5)
 	resourceName := "harness_autostopping_rule_ecs.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -53,7 +54,7 @@ func testECSRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_ecs" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = "Azure_SE" 
+		cloud_connector_id = %q
 		idle_time_mins = 10
 		dry_run = %[2]t              
 
@@ -64,21 +65,21 @@ func testECSRule(name string, dryRun bool) string {
 			task_count = 1
 		}		
 		http {
-			proxy_id = "ap-chdpf8f83v0c1aj69oog"             
+			proxy_id = %q
 		}
 		depends {
-			rule_id = 24576
+			rule_id = %d
 			delay_in_sec = 5
 		}        
 	}
-`, name, dryRun)
+`, name, dryRun, cloudConnectorIDVM, proxyIDVM, ruleIDDependency)
 }
 
 func testECSRuleUpdate(name string, idleTime string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_ecs" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = "Azure_SE" 
+		cloud_connector_id = %q
 		idle_time_mins = %[2]s
 		dry_run = %[3]t              
 
@@ -89,12 +90,12 @@ func testECSRuleUpdate(name string, idleTime string, dryRun bool) string {
 			task_count = 1
 		}		
 		http {
-			proxy_id = "ap-chdpf8f83v0c1aj69oog"             
+			proxy_id = %q
 		}
 		depends {
-			rule_id = 24576
+			rule_id = %d
 			delay_in_sec = 5
 		}        
 	}
-`, name, idleTime, dryRun)
+`, name, idleTime, dryRun, cloudConnectorIDVM, proxyIDVM, ruleIDDependency)
 }

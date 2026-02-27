@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestResourceRDSRule(t *testing.T) {
-	name := "terraform-rule-test-rds"
+	name := utils.RandStringBytes(5)
 	resourceName := "harness_autostopping_rule_rds.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -53,7 +54,7 @@ func testRDSRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_rds" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = "DoNotDelete_LightwingNonProd" 
+		cloud_connector_id = %q
 		idle_time_mins = 10
 		dry_run = %[2]t            
 
@@ -62,20 +63,20 @@ func testRDSRule(name string, dryRun bool) string {
 		  	region = "us-east-1"
 		}
 		tcp {
-			proxy_id = "ap-ciun1635us1fhpjiotfg"             
+			proxy_id = %q
 			forward_rule {
 				port = 2233
 			}                     
 		}      
 	}
-`, name, dryRun)
+`, name, dryRun, cloudConnectorIDRDS, proxyIDRDS)
 }
 
 func testRDSRuleUpdate(name string, idleTime string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_rds" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = "DoNotDelete_LightwingNonProd" 
+		cloud_connector_id = %q
 		idle_time_mins = %[2]s
 		dry_run = %[3]t              
 
@@ -84,11 +85,11 @@ func testRDSRuleUpdate(name string, idleTime string, dryRun bool) string {
 		  	region = "us-east-1"
 		}
 		tcp {
-			proxy_id = "ap-ciun1635us1fhpjiotfg"             
+			proxy_id = %q
 			forward_rule {
 				port = 2233
 			}                     
 		}  
 	}
-`, name, idleTime, dryRun)
+`, name, idleTime, dryRun, cloudConnectorIDRDS, proxyIDRDS)
 }

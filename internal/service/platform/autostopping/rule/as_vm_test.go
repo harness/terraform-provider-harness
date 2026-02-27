@@ -6,13 +6,14 @@ import (
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestResourceVMRule(t *testing.T) {
-	name := "terraform-rule-test"
+	name := utils.RandStringBytes(5)
 	resourceName := "harness_autostopping_rule_vm.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -64,17 +65,17 @@ func testGetRule(resourceName string, state *terraform.State) (*nextgen.Service,
 
 func testVMRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
-	resource "harness_autostopping_rule_vm" "test" {
+		resource "harness_autostopping_rule_vm" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = "Azure_SE" 
+		cloud_connector_id = %q
 		idle_time_mins = 10              
 		dry_run = %[2]t
 		filter {
-			vm_ids = ["/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Compute/virtualMachines/virtual_machine"]
-		  	regions = ["useast2"]
+			vm_ids = [%q]
+		  	regions = [%q]
 		}
 		http {
-			proxy_id = "ap-chdpf8f83v0c1aj69oog"           
+			proxy_id = %q
 			routing {
 				source_protocol = "https"
 				target_protocol = "https"
@@ -99,7 +100,7 @@ func testVMRule(name string, dryRun bool) string {
 			}
 		}
 		tcp {
-			proxy_id = "ap-chdpf8f83v0c1aj69oog"
+			proxy_id = %q
 			ssh {
 				port = 22
 			}
@@ -111,9 +112,10 @@ func testVMRule(name string, dryRun bool) string {
 			}                     
 		}
 		depends {
-			rule_id = 24576
+			rule_id = %d
 			delay_in_sec = 5
 		}        
 	}
-`, name, dryRun)
+`, name, dryRun, cloudConnectorIDVM, vmFilterVMID, vmFilterRegion, proxyIDVM, proxyIDVM, ruleIDDependency)
 }
+
