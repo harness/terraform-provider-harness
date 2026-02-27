@@ -15,7 +15,7 @@ import (
 func TestResourceAzureProxy(t *testing.T) {
 	apiKey := os.Getenv(platformAPIKeyEnv)
 
-	name := fmt.Sprintf("terr-azure-proxy%s", strings.ToLower(utils.RandStringBytes(5)))
+	name := fmt.Sprintf("terr-azure-proxy%s", strings.ToLower(utils.RandStringBytes(3)))
 	resourceName := "harness_autostopping_azure_proxy.test"
 
 	resource.UnitTest(t, resource.TestCase{
