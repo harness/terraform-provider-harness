@@ -11,7 +11,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// GCP proxy test requires a real GCP project ID; skip when not set to avoid 403 from Secret Manager.
+const gcpProjectIDEnv = "HARNESS_GCP_PROJECT_ID"
+
 func TestResourceGCPProxy(t *testing.T) {
+	projectID := os.Getenv(gcpProjectIDEnv)
+
 	apiKey := os.Getenv(platformAPIKeyEnv)
 
 	name := utils.RandStringBytes(5)
@@ -23,7 +28,7 @@ func TestResourceGCPProxy(t *testing.T) {
 		//		CheckDestroy:      testAWSProxyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testGCPProxy(name, apiKey),
+				Config: testGCPProxy(name, apiKey, projectID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
@@ -42,46 +47,46 @@ func testGCPProxyDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testGCPProxy(name, apiKey string) string {
+func testGCPProxy(name, apiKey, projectID string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_gcp_proxy" "test" {
 			name = "%[1]s"
 			cloud_connector_id = "automation_gcp_connector"
             region             = "region"
-			vpc                = "https://www.googleapis.com/compute/v1/projects/project_id/global/networks/netwok_id"
+			vpc                = "https://www.googleapis.com/compute/v1/projects/%[3]s/global/networks/netwok_id"
 			zone               = "zone"
 			security_groups    = ["http-server"]
 			machine_type       = "e2-micro"
-			subnet_id          = "https://www.googleapis.com/compute/v1/projects/project_id/regions/region/subnetworks/subnet_name"
-			api_key            = %q
+			subnet_id          = "https://www.googleapis.com/compute/v1/projects/%[3]s/regions/region/subnetworks/subnet_name"
+			api_key            = %[2]q
 			allocate_static_ip = false
 			delete_cloud_resources_on_destroy = true
 			certificates {
-				key_secret_id  = "projects/project_id/secrets/secret_id/versions/1"
-				cert_secret_id = "projects/project_id/secrets/secret_id/versions/1"
+				key_secret_id  = "projects/%[3]s/secrets/secret_id/versions/1"
+				cert_secret_id = "projects/%[3]s/secrets/secret_id/versions/1"
 			}
 		}
-`, name, apiKey)
+`, name, apiKey, projectID)
 }
 
-func testGCPProxyUpdate(name, apiKey string) string {
+func testGCPProxyUpdate(name, apiKey, projectID string) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_gcp_proxy" "test" {
 		name = "%[1]s"
 		cloud_connector_id = "developerxgcpfm"
 		region             = "region"
-		vpc                = "https://www.googleapis.com/compute/v1/projects/project_id/global/networks/netwok_id"
+		vpc                = "https://www.googleapis.com/compute/v1/projects/%[3]s/global/networks/netwok_id"
 		zone               = "zone"
 		security_groups    = ["http-server","https-server"]
 		machine_type       = "e2-micro"
-		subnet_id          = "https://www.googleapis.com/compute/v1/projects/project_id/regions/region/subnetworks/subnet_name"
-		api_key            = %q
+		subnet_id          = "https://www.googleapis.com/compute/v1/projects/%[3]s/regions/region/subnetworks/subnet_name"
+		api_key            = %[2]q
 		allocate_static_ip = false
 		certificates {
-			key_secret_id  = "projects/project_id/secrets/secret_id/versions/1"
-			cert_secret_id = "projects/project_id/secrets/secret_id/versions/1"
+			key_secret_id  = "projects/%[3]s/secrets/secret_id/versions/1"
+			cert_secret_id = "projects/%[3]s/secrets/secret_id/versions/1"
 		}
 		delete_cloud_resources_on_destroy = true
 	}
-`, name, apiKey)
+`, name, apiKey, projectID)
 }

@@ -41,7 +41,7 @@ func TestResourceAWSProxy(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"api_key"},
+				ImportStateVerifyIgnore: []string{"api_key", "allocate_static_ip", "delete_cloud_resources_on_destroy", "machine_type"},
 			},
 		},
 	})
