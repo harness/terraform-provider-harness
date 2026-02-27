@@ -2,6 +2,7 @@ package load_balancer_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -9,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+const azureProxyPlatformAPIKeyEnv = "HARNESS_PLATFORM_API_KEY"
 
 func TestResourceAzureProxy(t *testing.T) {
 	name := utils.RandStringBytes(5)

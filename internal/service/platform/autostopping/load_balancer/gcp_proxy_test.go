@@ -52,6 +52,7 @@ func testGCPProxy(name string) string {
 			subnet_id          = "https://www.googleapis.com/compute/v1/projects/project_id/regions/region/subnetworks/subnet_name"
 			api_key            = ""
 			allocate_static_ip = false
+			delete_cloud_resources_on_destroy = true
 			certificates {
 				key_secret_id  = "projects/project_id/secrets/secret_id/versions/1"
 				cert_secret_id = "projects/project_id/secrets/secret_id/versions/1"
