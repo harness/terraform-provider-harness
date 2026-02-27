@@ -38,18 +38,18 @@ func testScaleGroupRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_scale_group" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = %q
+		cloud_connector_id = %[2]q
 		idle_time_mins = 10              
-		dry_run = %[2]t
+		dry_run = %[3]t
 		scale_group {
-			id = %q
-			name = %q
-			region = %q
+			id = %[4]q
+			name = %[5]q
+			region = %[6]q
 			desired = 2
 			min = 1
 			max = 5
 			on_demand = 1
 		}       
 	}
-`, name, dryRun, cloudConnectorIDScaleGroup, scaleGroupARN, scaleGroupName, scaleGroupRegion)
+`, name, cloudConnectorIDScaleGroup, dryRun, scaleGroupARN, scaleGroupName, scaleGroupRegion)
 }

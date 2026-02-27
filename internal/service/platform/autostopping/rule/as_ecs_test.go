@@ -54,33 +54,8 @@ func testECSRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_ecs" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = %q
+		cloud_connector_id = %[2]q
 		idle_time_mins = 10
-		dry_run = %[2]t              
-
-		container {
-			cluster = "cluster"
-			service = "service"
-			region = "us-east-1"
-			task_count = 1
-		}		
-		http {
-			proxy_id = %q
-		}
-		depends {
-			rule_id = %d
-			delay_in_sec = 5
-		}        
-	}
-`, name, dryRun, cloudConnectorIDVM, proxyIDVM, ruleIDDependency)
-}
-
-func testECSRuleUpdate(name string, idleTime string, dryRun bool) string {
-	return fmt.Sprintf(`
-	resource "harness_autostopping_rule_ecs" "test" {
-		name = "%[1]s"  
-		cloud_connector_id = %q
-		idle_time_mins = %[2]s
 		dry_run = %[3]t              
 
 		container {
@@ -90,12 +65,37 @@ func testECSRuleUpdate(name string, idleTime string, dryRun bool) string {
 			task_count = 1
 		}		
 		http {
-			proxy_id = %q
+			proxy_id = %[4]q
 		}
 		depends {
-			rule_id = %d
+			rule_id = %[5]d
 			delay_in_sec = 5
 		}        
 	}
-`, name, idleTime, dryRun, cloudConnectorIDVM, proxyIDVM, ruleIDDependency)
+`, name, cloudConnectorIDVM, dryRun, proxyIDVM, ruleIDDependency)
+}
+
+func testECSRuleUpdate(name string, idleTime string, dryRun bool) string {
+	return fmt.Sprintf(`
+	resource "harness_autostopping_rule_ecs" "test" {
+		name = "%[1]s"  
+		cloud_connector_id = %[2]q
+		idle_time_mins = %[3]s
+		dry_run = %[4]t              
+
+		container {
+			cluster = "cluster"
+			service = "service"
+			region = "us-east-1"
+			task_count = 1
+		}		
+		http {
+			proxy_id = %[5]q
+		}
+		depends {
+			rule_id = %[6]d
+			delay_in_sec = 5
+		}        
+	}
+`, name, cloudConnectorIDVM, idleTime, dryRun, proxyIDVM, ruleIDDependency)
 }

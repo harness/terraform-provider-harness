@@ -54,42 +54,42 @@ func testRDSRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_rds" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = %q
+		cloud_connector_id = %[2]q
 		idle_time_mins = 10
-		dry_run = %[2]t            
+		dry_run = %[3]t            
 
 		database {
 			id = "database_id"
 		  	region = "us-east-1"
 		}
 		tcp {
-			proxy_id = %q
+			proxy_id = %[4]q
 			forward_rule {
 				port = 2233
 			}                     
 		}      
 	}
-`, name, dryRun, cloudConnectorIDRDS, proxyIDRDS)
+`, name, cloudConnectorIDRDS, dryRun, proxyIDRDS)
 }
 
 func testRDSRuleUpdate(name string, idleTime string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_rds" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = %q
-		idle_time_mins = %[2]s
-		dry_run = %[3]t              
+		cloud_connector_id = %[2]q
+		idle_time_mins = %[3]s
+		dry_run = %[4]t              
 
 		database {
 			id = "database_id"
 		  	region = "us-east-1"
 		}
 		tcp {
-			proxy_id = %q
+			proxy_id = %[5]q
 			forward_rule {
 				port = 2233
 			}                     
 		}  
 	}
-`, name, idleTime, dryRun, cloudConnectorIDRDS, proxyIDRDS)
+`, name, cloudConnectorIDRDS, idleTime, dryRun, proxyIDRDS)
 }
