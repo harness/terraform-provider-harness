@@ -16,7 +16,7 @@ const platformAPIKeyEnv = "HARNESS_PLATFORM_API_KEY"
 func TestResourceECSRule(t *testing.T) {
 	name := fmt.Sprintf("terr-ecsrule-%s", strings.ToLower(utils.RandStringBytes(5)))
 	nameFirst := name + "-first"
-	proxyName := fmt.Sprintf("terr-awsproxy-ecs-%s", strings.ToLower(utils.RandStringBytes(5)))
+	proxyName := fmt.Sprintf("terrawsproxy-%s", strings.ToLower(utils.RandStringBytes(5)))
 	apiKey := os.Getenv(platformAPIKeyEnv)
 
 	resourceName := "harness_autostopping_rule_ecs.test"
