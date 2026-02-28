@@ -80,7 +80,7 @@ resource "harness_autostopping_aws_proxy" "test" {
   allocate_static_ip   = true
   delete_cloud_resources_on_destroy = false
 }
-`, proxyName, cloudConnectorIDVM, apiKey)
+`, proxyName, cloudConnectorIDAWSProxy, apiKey)
 }
 
 // testECSRuleFirstOnly creates AWS proxy + one ECS rule without depends block.
@@ -102,7 +102,7 @@ resource "harness_autostopping_rule_ecs" "first" {
     proxy_id = harness_autostopping_aws_proxy.test.identifier
   }
 }
-`, nameFirst, cloudConnectorIDVM, dryRun)
+`, nameFirst, cloudConnectorIDAWSProxy, dryRun)
 }
 
 // testECSRuleWithDependency creates proxy + first ECS rule (no depends) + second rule depending on first.
@@ -128,7 +128,7 @@ resource "harness_autostopping_rule_ecs" "test" {
     delay_in_sec = 5
   }
 }
-`, name, cloudConnectorIDVM, dryRun)
+`, name, cloudConnectorIDAWSProxy, dryRun)
 }
 
 func testECSRuleUpdate(nameFirst, name, proxyName, apiKey, idleTime string, dryRun bool) string {
@@ -153,5 +153,5 @@ resource "harness_autostopping_rule_ecs" "test" {
     delay_in_sec = 5
   }
 }
-`, name, cloudConnectorIDVM, idleTime, dryRun)
+`, name, cloudConnectorIDAWSProxy, idleTime, dryRun)
 }
