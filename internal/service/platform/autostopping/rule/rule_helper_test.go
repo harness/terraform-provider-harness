@@ -19,7 +19,7 @@ const (
 const k8sConnectorID = "account.k8s_connector"
 
 // Proxy IDs used by VM/ECS and RDS rules. Not defined in load_balancer (those tests create proxies);
-// use IDs of existing proxies in the test account for doNotDeleteAzureConnector (VM) and DoNotDelete_LightwingNonProd (RDS).
+// use IDs of existing proxies in the test account for automation_aws_connector (VM) and DoNotDelete_LightwingNonProd (RDS).
 const (
 	proxyIDVM  = "ap-chdpf8f83v0c1aj69oog"
 	proxyIDRDS = "ap-ciun1635us1fhpjiotfg"
