@@ -1,5 +1,19 @@
 package as_rule_test
 
+import (
+	"strings"
+
+	"github.com/harness/harness-go-sdk/harness/utils"
+)
+
+// randAlnum returns a short random string with no underscore or space (for resource names).
+func randAlnum(n int) string {
+	s := strings.ToLower(utils.RandStringBytes(n))
+	s = strings.ReplaceAll(s, "_", "")
+	s = strings.ReplaceAll(s, " ", "")
+	return s
+}
+
 // Static entity IDs used by autostopping rule tests (connectors, proxies, etc. in the test account).
 //
 // Dependent fields to review when changing cloud connectors:

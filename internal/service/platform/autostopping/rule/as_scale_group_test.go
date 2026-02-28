@@ -3,13 +3,13 @@ package as_rule_test
 import (
 	"fmt"
 	"testing"
-	"github.com/harness/harness-go-sdk/harness/utils"
+
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestResourceScaleGroupRule(t *testing.T) {
-	name := fmt.Sprintf("terr-sg-%s", utils.RandLowerString(5)) // "terr-sg-"+5 = 12 chars
+	name := fmt.Sprintf("terr-sg-%s", randAlnum(5)) // "terr-sg-"+5 = 12 chars
 	resourceName := "harness_autostopping_rule_scale_group.test"
 
 	resource.UnitTest(t, resource.TestCase{
