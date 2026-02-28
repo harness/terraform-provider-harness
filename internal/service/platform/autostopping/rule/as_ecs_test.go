@@ -3,7 +3,6 @@ package as_rule_test
 import (
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -14,9 +13,10 @@ import (
 const platformAPIKeyEnv = "HARNESS_PLATFORM_API_KEY"
 
 func TestResourceECSRule(t *testing.T) {
-	name := fmt.Sprintf("terr-ecsrule-%s", strings.ToLower(utils.RandStringBytes(5)))
-	nameFirst := name + "-first"
-	proxyName := fmt.Sprintf("terrawsproxy-%s", strings.ToLower(utils.RandStringBytes(5)))
+	// Keep names under 19 chars: "terr-ecs1-"+5=16, "terr-ecs2-"+5=16, "terr-aws-p-"+5=16
+	nameFirst := fmt.Sprintf("terr-ecs1-%s", utils.RandLowerString(5))
+	name := fmt.Sprintf("terr-ecs2-%s", utils.RandLowerString(5))
+	proxyName := fmt.Sprintf("terr-aws-p-%s", utils.RandLowerString(5))
 	apiKey := os.Getenv(platformAPIKeyEnv)
 
 	resourceName := "harness_autostopping_rule_ecs.test"

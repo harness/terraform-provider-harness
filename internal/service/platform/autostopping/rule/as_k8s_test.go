@@ -2,7 +2,6 @@ package as_rule_test
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -10,7 +9,7 @@ import (
 )
 
 func TestResourceK8sRule(t *testing.T) {
-	name := fmt.Sprintf("terr-k8s-%s", strings.ToLower(utils.RandStringBytes(5)))
+	name := fmt.Sprintf("terr-k8s-%s", utils.RandLowerString(5)) // "terr-k8s-"+5 = 13 chars
 	resourceName := "harness_autostopping_rule_k8s.test"
 
 	resource.UnitTest(t, resource.TestCase{
