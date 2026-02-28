@@ -22,11 +22,13 @@ func randAlnum(n int) string {
 //   - ECS: uses cloudConnectorIDVM (Azure) and proxyIDVM; container cluster/service/region should match the connector.
 //   - RDS: cloudConnectorIDRDS, proxyIDRDS; database id and region should exist in the RDS connector account.
 //   - Scale group: scaleGroupARN, scaleGroupName, scaleGroupRegion must be a real ASG in the account for cloudConnectorIDScaleGroup (AWS).
+//   - AWS proxy created from rule tests (e.g. ECS) uses cloudConnectorIDAWSProxy.
 const (
 	cloudConnectorIDK8s        = "donotdeleteautomationhemanth"
 	cloudConnectorIDVM         = "automation_aws_connector"
 	cloudConnectorIDRDS        = "DoNotDelete_LightwingNonProd"
 	cloudConnectorIDScaleGroup = "DoNotDelete_LightwingNonProd"
+	cloudConnectorIDAWSProxy   = "DoNotDelete_LightwingNonProd" // for harness_autostopping_aws_proxy when created from autostopping/rule tests
 )
 
 // K8s connector ID for rule_k8s tests
