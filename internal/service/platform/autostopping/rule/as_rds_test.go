@@ -6,14 +6,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestResourceRDSRule(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
-	name := fmt.Sprintf("terr-rds-%s", utils.RandLowerString(5)) // "terr-rds-"+5 = 13 chars
+	name := fmt.Sprintf("terr-rds-%s", randAlnum(5)) // "terr-rds-"+5 = 13 chars
 	resourceName := "harness_autostopping_rule_rds.test"
 
 	resource.UnitTest(t, resource.TestCase{

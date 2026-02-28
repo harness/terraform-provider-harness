@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -14,9 +13,9 @@ const platformAPIKeyEnv = "HARNESS_PLATFORM_API_KEY"
 
 func TestResourceECSRule(t *testing.T) {
 	// Keep names under 19 chars: "terr-ecs1-"+5=16, "terr-ecs2-"+5=16, "terr-aws-p-"+5=16
-	nameFirst := fmt.Sprintf("terr-ecs1-%s", utils.RandLowerString(5))
-	name := fmt.Sprintf("terr-ecs2-%s", utils.RandLowerString(5))
-	proxyName := fmt.Sprintf("terr-aws-p-%s", utils.RandLowerString(5))
+	nameFirst := fmt.Sprintf("terr-ecs1-%s", randAlnum(5))
+	name := fmt.Sprintf("terr-ecs2-%s", randAlnum(5))
+	proxyName := fmt.Sprintf("terr-aws-p-%s", randAlnum(5))
 	apiKey := os.Getenv(platformAPIKeyEnv)
 
 	resourceName := "harness_autostopping_rule_ecs.test"
