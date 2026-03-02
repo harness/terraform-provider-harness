@@ -1,3 +1,5 @@
+//go:build azure_integration
+
 package load_balancer_test
 
 import (
@@ -43,7 +45,7 @@ func testAzureGateway(name string) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_azure_gateway" "test" {
 		name = "%[1]s"
-		cloud_connector_id = "cloud_connector_id"
+		cloud_connector_id = "doNotDeleteAzureConnector"
 		region = "eastus2"
 		resource_group     = "resource_group"
 		subnet_id          = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
