@@ -4,14 +4,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// AWS cloud connector ID in the test account.
+const awsCloudConnectorID = "automation_aws_connector"
+
 func TestResourceAwsALB(t *testing.T) {
-	name := utils.RandStringBytes(5)
+	name := fmt.Sprintf("terr-awsalb-%s", randAlnum(5))
 	resourceName := "harness_autostopping_aws_alb.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -43,24 +45,24 @@ func testAwsALB(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_alb" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "cloud_connector_id"
+			cloud_connector_id = %q
             region = "us-east-1"
-			vpc = "vpc-2657db5c"
-			security_groups =["sg-01","sg-02"]
+			vpc = "vpc-0d47ab08fce6d8cc8"
+			security_groups =["sg-0a2a6eaa3ad797636"]
 			delete_cloud_resources_on_destroy = true
 		}
-`, name)
+`, name, awsCloudConnectorID)
 }
 
 func testAwsALBUpdate(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_alb" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "cloud_connector_id"
+			cloud_connector_id = %q
             region = "us-east-1"
-            vpc = "vpc-2657db5c"
-			security_groups =["sg-01","sg-02"]
+            vpc = "vpc-0d47ab08fce6d8cc8"
+            security_groups =["sg-0a2a6eaa3ad797636"]
 			delete_cloud_resources_on_destroy = true
 		}
-`, name)
+`, name, awsCloudConnectorID)
 }
