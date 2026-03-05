@@ -36,7 +36,7 @@ data "harness_autostopping_rule_rds" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `identifier` (Number) Unique identifier of the resource
+- `identifier` (String) Unique identifier of the resource
 
 <a id="nestedblock--database"></a>
 ### Nested Schema for `database`

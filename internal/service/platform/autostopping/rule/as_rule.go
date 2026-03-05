@@ -98,11 +98,11 @@ func buildASRule(d *schema.ResourceData, kind string, accountId string) nextgen.
 	}
 	serviceV2.Fulfilment = "ondemand"
 	if attr, ok := d.GetOk("use_spot"); ok {
-		onDemand := attr.(bool)
-		if onDemand {
-			serviceV2.Fulfilment = "ondemand"
-		} else {
+		isSpot := attr.(bool)
+		if isSpot {
 			serviceV2.Fulfilment = "spot"
+		} else {
+			serviceV2.Fulfilment = "ondemand"
 		}
 	}
 	serviceV2.IdleTimeMins = 15
@@ -516,7 +516,8 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 // setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response.
 // When setConnect is true (VM rule), also sets the computed connect block from TCP ssh/rdp source ports.
 // Always sets both http and tcp to ensure stale data is cleared when configs are removed
-func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck, setConnect bool) {
+func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck, kind string) {
+	setConnect := kind == Instance
 	// Set HTTP routing config (or clear it if absent)
 	if routing != nil && routing.Http != nil {
 		httpConfig := make(map[string]interface{})
@@ -567,16 +568,19 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 		// Clear http config if not present in API response
 		d.Set("http", []map[string]interface{}{})
 	}
+	if kind == Instance || kind == Database {
+		// Set TCP routing config (or clear it if absent)
+		setTcpConfig(routing, d, setConnect)
+	}
+}
 
-	// Set TCP routing config (or clear it if absent)
+func setTcpConfig(routing *nextgen.RoutingDataV2, d *schema.ResourceData, setConnect bool) {
 	if routing != nil && routing.Tcp != nil {
 		tcpConfig := make(map[string]interface{})
-
 		// Set proxy_id
 		if routing.Tcp.Proxy != nil && routing.Tcp.Proxy.Id != "" {
 			tcpConfig["proxy_id"] = routing.Tcp.Proxy.Id
 		}
-
 		// Set SSH config
 		if routing.Tcp.SshConf != nil {
 			sshConfig := []map[string]interface{}{
@@ -587,7 +591,6 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 			}
 			tcpConfig["ssh"] = sshConfig
 		}
-
 		// Set RDP config
 		if routing.Tcp.RdpConf != nil {
 			rdpConfig := []map[string]interface{}{
@@ -771,9 +774,10 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	if service.Opts != nil {
 		d.Set("dry_run", service.Opts.DryRun)
 	}
-	d.Set("use_spot", service.Fulfilment == "spot")
 	d.Set("custom_domains", service.CustomDomains)
-
+	if service.Kind == Instance {
+		d.Set("use_spot", service.Fulfilment == "spot")
+	}
 	// Set routing-related fields based on rule kind
 	switch service.Kind {
 	case Database:
@@ -789,6 +793,6 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	}
 	if service.Kind != K8s {
 		// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
-		setRoutingConfig(d, service.Routing, service.HealthCheck, service.Kind == Instance)
+		setRoutingConfig(d, service.Routing, service.HealthCheck, service.Kind)
 	}
 }

@@ -1,4 +1,4 @@
-resource "harness_autostopping_rule_k8s" "sujeesh-alert" {
+resource "harness_autostopping_rule_k8s" "demo-rule" {
   name               = "demo-rule"
   cloud_connector_id = "gcp_qa"
   k8s_connector_id = "app_cluster"

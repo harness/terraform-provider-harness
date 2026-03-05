@@ -37,7 +37,7 @@ data "harness_autostopping_rule_ecs" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `identifier` (Number) Unique identifier of the resource
+- `identifier` (String) Unique identifier of the resource
 
 <a id="nestedblock--container"></a>
 ### Nested Schema for `container`

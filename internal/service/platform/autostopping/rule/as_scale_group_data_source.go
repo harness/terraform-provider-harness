@@ -13,7 +13,7 @@ func DataSourceScaleGroupRule() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"identifier": {
 				Description: "Unique identifier of the resource",
-				Type:        schema.TypeFloat,
+				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"name": {
