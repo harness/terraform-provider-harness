@@ -42,6 +42,8 @@ data "harness_autostopping_aws_proxy" "test" {
 
 - `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the resource
+- `private_ip` (String) Private IP address of the proxy
+- `public_ip` (String) Public IP address of the proxy
 
 <a id="nestedblock--certificates"></a>
 ### Nested Schema for `certificates`

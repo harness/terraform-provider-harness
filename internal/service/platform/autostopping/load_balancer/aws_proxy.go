@@ -98,6 +98,16 @@ func ResourceAWSProxy() *schema.Resource {
 				Type:        schema.TypeBool,
 				Required:    true,
 			},
+			"private_ip": {
+				Description: "Private IP address of the proxy",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"public_ip": {
+				Description: "Public IP address of the proxy",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 		},
 	}
 
