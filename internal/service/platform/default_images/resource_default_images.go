@@ -117,6 +117,18 @@ func resourceDefaultImagesDelete(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
+func newIdpExecCfgClient(s *internal.Session) *idp.APIClient {
+	cfg := idp.NewConfiguration()
+	if s.IDPClient != nil {
+		cfg.AccountId = s.IDPClient.AccountId
+		cfg.ApiKey = s.IDPClient.ApiKey
+		if s.IDPClient.Endpoint != "" {
+			cfg.BasePath = s.IDPClient.Endpoint
+		}
+	}
+	return idp.NewAPIClient(cfg)
+}
+
 func execUpdateConfig(ctx context.Context, s *internal.Session, kind,
 	infraType, field, value string) error {
 
@@ -132,7 +144,8 @@ func execUpdateConfig(ctx context.Context, s *internal.Session, kind,
 			[]nextgen.ExecutionConfigUpdate{{Field: field, Value: value}})
 		return err
 	case "idp":
-		c, authCtx := s.GetIDPClientWithContext(ctx)
+		c := newIdpExecCfgClient(s)
+		c, authCtx := c.WithAuthContext(ctx)
 		_, err := c.ExecutionConfigApi.UpdateConfig(authCtx, infraType,
 			[]idp.ExecutionConfigUpdate{{Field: field, Value: value}})
 		return err
@@ -155,7 +168,8 @@ func execResetConfig(ctx context.Context, s *internal.Session, kind, infraType, 
 			[]nextgen.ExecutionConfigUpdate{{Field: field}})
 		return err
 	case "idp":
-		c, authCtx := s.GetIDPClientWithContext(ctx)
+		c := newIdpExecCfgClient(s)
+		c, authCtx := c.WithAuthContext(ctx)
 		_, err := c.ExecutionConfigApi.ResetConfig(authCtx, infraType,
 			[]idp.ExecutionConfigUpdate{{Field: field}})
 		return err
@@ -183,7 +197,8 @@ func execGetCustomerConfig(ctx context.Context, s *internal.Session, kind,
 		}
 		return map[string]string(resp.Data), nil
 	case "idp":
-		c, authCtx := s.GetIDPClientWithContext(ctx)
+		c := newIdpExecCfgClient(s)
+		c, authCtx := c.WithAuthContext(ctx)
 		resp, err := c.ExecutionConfigApi.GetCustomerConfig(authCtx, infraType, true)
 		if err != nil {
 			return nil, err

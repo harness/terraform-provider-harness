@@ -125,7 +125,8 @@ func getIacmExecutionConfig(ctx context.Context, s *internal.Session,
 func getIdpExecutionConfig(ctx context.Context, s *internal.Session,
 	infraType, cfgType string) (map[string]string, error) {
 
-	c, authCtx := s.GetIDPClientWithContext(ctx)
+	c := newIdpExecCfgClient(s)
+	c, authCtx := c.WithAuthContext(ctx)
 	var resp idp.ExecutionConfigResponse
 	var err error
 	if cfgType == "customer" {

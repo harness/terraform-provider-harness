@@ -11,16 +11,8 @@ import (
 )
 
 /*
-Environment variables (CI):
 
-  DI_CI_TEST_DRY_RUN="true"        print generated configs and exit without running
-  DI_CI_TEST_PROVIDER_BLOCK="true" prepend a terraform{} provider block (dev overrides only)
-  DI_CI_TRACE_ATTR="true"          print actual attribute values observed during each CI check step
-
-Environment variables (IACM):
-
-  DI_IACM_TEST_DRY_RUN="true"      print generated configs and exit without running
-  DI_IACM_TRACE_ATTR="true"        print actual attribute values observed during each IACM check step
+DI_CI_TEST_PROVIDER_BLOCK="true" to be set only for dev testing
 
 Run CI:
 
@@ -37,6 +29,14 @@ Run IACM:
   DI_IACM_TRACE_ATTR="true" \
   go test -v ./internal/service/platform/default_images/... \
       -run TestAccDefaultImagesIACMLifecycle
+
+Run IDP:
+
+  DI_IDP_TEST_DRY_RUN="false" \
+  DI_CI_TEST_PROVIDER_BLOCK="true" \
+  DI_IDP_TRACE_ATTR="true" \
+  go test -v ./internal/service/platform/default_images/... \
+      -run TestAccDefaultImagesIDPLifecycle
 */
 
 const ciLiteEngineField = "liteEngineTag"
@@ -44,12 +44,6 @@ const ciResourceAddr = "harness_platform_default_images.ci_lite_engine"
 const ciCustomerDataAddr = "data.harness_platform_default_images.ci_customer"
 const ciDefaultDataAddr = "data.harness_platform_default_images.ci_defaults"
 
-// TestAccDefaultImagesCILifecycle runs four sequential steps against the real API:
-//
-//  1. Read defaults– liteEngineTag must match harness/ci-lite-engine:<tag>
-//  2. Create override – set liteEngineTag = harness/ci-lite-engine:TeethyTiger
-//  3. Update override – change to harness/ci-lite-engine:RunningFox
-//  4. Reset – omit value; liteEngineTag must revert to a Harness default
 func TestAccDefaultImagesCILifecycle(t *testing.T) {
 	isDryRun := os.Getenv("DI_CI_TEST_DRY_RUN") == "true"
 
@@ -153,7 +147,9 @@ func traceAttr(t *testing.T, envVar, addr, attr string) resource.TestCheckFunc {
 }
 
 func diProviderBlock() string {
-	if os.Getenv("DI_CI_TEST_PROVIDER_BLOCK") != "true" && os.Getenv("DI_IACM_TEST_PROVIDER_BLOCK") != "true" {
+	if os.Getenv("DI_CI_TEST_PROVIDER_BLOCK") != "true" &&
+		os.Getenv("DI_IACM_TEST_PROVIDER_BLOCK") != "true" &&
+		os.Getenv("DI_IDP_TEST_PROVIDER_BLOCK") != "true" {
 		return ""
 	}
 	return `terraform {
@@ -210,12 +206,6 @@ const iacmResourceAddr = "harness_platform_default_images.iacm_field"
 const iacmCustomerDataAddr = "data.harness_platform_default_images.iacm_customer"
 const iacmDefaultDataAddr = "data.harness_platform_default_images.iacm_defaults"
 
-// TestAccDefaultImagesIACMLifecycle runs four sequential steps against the real IACM API:
-//
-//  1. Read defaults   – iacmAwsCdk must match plugins/harness_aws_cdk:<tag>
-//  2. Create override – set iacmAwsCdk = plugins/harness_aws_cdk:TeethyTiger
-//  3. Update override – change to plugins/harness_aws_cdk:RunningFox
-//  4. Reset           – omit value; iacmAwsCdk must revert to a Harness default
 func TestAccDefaultImagesIACMLifecycle(t *testing.T) {
 	isDryRun := os.Getenv("DI_IACM_TEST_DRY_RUN") == "true"
 
@@ -323,6 +313,121 @@ resource "harness_platform_default_images" "iacm_field" {
 data "harness_platform_default_images" "iacm_defaults" {
   kind       = "iacm"
   depends_on = [harness_platform_default_images.iacm_field]
+}
+`, field)
+}
+
+const idpField = "registerCatalog"
+const idpResourceAddr = "harness_platform_default_images.idp_field"
+const idpDefaultDataAddr = "data.harness_platform_default_images.idp_defaults"
+
+func TestAccDefaultImagesIDPLifecycle(t *testing.T) {
+	isDryRun := os.Getenv("DI_IDP_TEST_DRY_RUN") == "true"
+
+	configs := map[string]string{
+		"1-read-defaults":      configIDPReadDefaults(),
+		"2-create-TeethyTiger": configIDPWithOverride(idpField, "harness/registercatalog:TeethyTiger"),
+		"3-update-RunningFox":  configIDPWithOverride(idpField, "harness/registercatalog:RunningFox"),
+		"4-reset":              configIDPReset(idpField),
+	}
+
+	if isDryRun {
+		for _, key := range []string{
+			"1-read-defaults",
+			"2-create-TeethyTiger",
+			"3-update-RunningFox",
+			"4-reset",
+		} {
+			t.Logf("\n=== %s ===\n%s", key, configs[key])
+		}
+		return
+	}
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: configs["1-read-defaults"],
+				Check: resource.ComposeTestCheckFunc(
+					traceAttr(t, "DI_IDP_TRACE_ATTR", idpDefaultDataAddr, fmt.Sprintf("images.%s", idpField)),
+					resource.TestMatchResourceAttr(
+						idpDefaultDataAddr,
+						fmt.Sprintf("images.%s", idpField),
+						regexp.MustCompile(`^harness/registercatalog:.+`),
+					),
+				),
+			},
+			{
+				Config: configs["2-create-TeethyTiger"],
+				Check: resource.ComposeTestCheckFunc(
+					traceAttr(t, "DI_IDP_TRACE_ATTR", idpResourceAddr, "value"),
+					resource.TestCheckResourceAttr(
+						idpResourceAddr,
+						"value",
+						"harness/registercatalog:TeethyTiger",
+					),
+				),
+			},
+			{
+				Config: configs["3-update-RunningFox"],
+				Check: resource.ComposeTestCheckFunc(
+					traceAttr(t, "DI_IDP_TRACE_ATTR", idpResourceAddr, "value"),
+					resource.TestCheckResourceAttr(
+						idpResourceAddr,
+						"value",
+						"harness/registercatalog:RunningFox",
+					),
+				),
+			},
+			{
+				Config: configs["4-reset"],
+				Check: resource.ComposeTestCheckFunc(
+					traceAttr(t, "DI_IDP_TRACE_ATTR", idpDefaultDataAddr, fmt.Sprintf("images.%s", idpField)),
+					resource.TestCheckResourceAttr(
+						idpResourceAddr,
+						"value",
+						"",
+					),
+					resource.TestMatchResourceAttr(
+						idpDefaultDataAddr,
+						fmt.Sprintf("images.%s", idpField),
+						regexp.MustCompile(`^harness/registercatalog:.+`),
+					),
+				),
+			},
+		},
+	})
+}
+
+func configIDPReadDefaults() string {
+	return diProviderBlock() + `
+data "harness_platform_default_images" "idp_defaults" {
+  kind = "idp"
+}
+`
+}
+
+func configIDPWithOverride(field, value string) string {
+	return diProviderBlock() + fmt.Sprintf(`
+resource "harness_platform_default_images" "idp_field" {
+  kind  = "idp"
+  field = %q
+  value = %q
+}
+`, field, value)
+}
+
+func configIDPReset(field string) string {
+	return diProviderBlock() + fmt.Sprintf(`
+resource "harness_platform_default_images" "idp_field" {
+  kind  = "idp"
+  field = %q
+}
+
+data "harness_platform_default_images" "idp_defaults" {
+  kind       = "idp"
+  depends_on = [harness_platform_default_images.idp_field]
 }
 `, field)
 }
