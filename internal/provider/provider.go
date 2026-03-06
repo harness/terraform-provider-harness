@@ -123,6 +123,7 @@ import (
 	pipeline_template "github.com/harness/terraform-provider-harness/internal/service/pipeline/template"
 	pipeline_template_filters "github.com/harness/terraform-provider-harness/internal/service/pipeline/template_filters"
 	pipeline_triggers "github.com/harness/terraform-provider-harness/internal/service/pipeline/triggers"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/default_images"
 	idp_resource "github.com/harness/terraform-provider-harness/internal/service/platform/idp"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -366,6 +367,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_idp_catalog_entity":                 idp_resource.DataSourceCatalogEntity(),
 				"harness_platform_idp_environment_blueprint":          idp_resource.DataSourceEnvironmentBlueprint(),
 				"harness_platform_idp_environment":                    idp_resource.DataSourceEnvironment(),
+				"harness_platform_default_images":                     default_images.DataSourceDefaultImages(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                           pipeline_template.ResourceTemplate(),
