@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/harness/harness-go-sdk/harness/idp"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -11,6 +13,7 @@ import (
 )
 
 func DataSourceDefaultImages() *schema.Resource {
+
 	return &schema.Resource{
 		Description: "Data source for retrieving Harness default execution images for CI, IACM, or IDP.",
 		ReadContext: dataSourceDefaultImagesRead,
@@ -44,62 +47,32 @@ func DataSourceDefaultImages() *schema.Resource {
 	}
 }
 
-func dataSourceDefaultImagesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceDefaultImagesRead(ctx context.Context, d *schema.ResourceData,
+	meta interface{}) diag.Diagnostics {
+
 	kind := d.Get("kind").(string)
 	infraType := d.Get("infra_type").(string)
 	cfgType := d.Get("type").(string)
 
 	s := meta.(*internal.Session)
-	var data map[string]string
+	var (
+		data map[string]string
+		err  error
+	)
 
 	switch kind {
 	case "ci":
-		c, authCtx := s.GetPlatformClientWithContext(ctx)
-		if cfgType == "customer" {
-			resp, err := c.CiExecutionConfigApi.GetCustomerConfig(authCtx, infraType, false)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			data = map[string]string(resp.Data)
-		} else {
-			resp, err := c.CiExecutionConfigApi.GetDefaultConfig(authCtx, infraType)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			data = map[string]string(resp.Data)
-		}
+		data, err = getCiExecutionConfig(ctx, s, infraType, cfgType)
 	case "iacm":
-		c, authCtx := s.GetPlatformClientWithContext(ctx)
-		if cfgType == "customer" {
-			resp, err := c.IacmExecutionConfigApi.GetCustomerConfig(authCtx, infraType, false)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			data = map[string]string(resp.Data)
-		} else {
-			resp, err := c.IacmExecutionConfigApi.GetDefaultConfig(authCtx, infraType)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			data = map[string]string(resp.Data)
-		}
+		data, err = getIacmExecutionConfig(ctx, s, infraType, cfgType)
 	case "idp":
-		c, authCtx := s.GetIDPClientWithContext(ctx)
-		if cfgType == "customer" {
-			resp, err := c.ExecutionConfigApi.GetCustomerConfig(authCtx, infraType, false)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			data = map[string]string(resp.Data)
-		} else {
-			resp, err := c.ExecutionConfigApi.GetDefaultConfig(authCtx, infraType)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			data = map[string]string(resp.Data)
-		}
+		data, err = getIdpExecutionConfig(ctx, s, infraType, cfgType)
 	default:
 		return diag.FromErr(fmt.Errorf("unsupported kind %q", kind))
+	}
+
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%s/%s/%s", kind, infraType, cfgType))
@@ -113,4 +86,55 @@ func dataSourceDefaultImagesRead(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	return nil
+}
+
+func getCiExecutionConfig(ctx context.Context, s *internal.Session,
+	infraType, cfgType string) (map[string]string, error) {
+
+	c, authCtx := s.GetPlatformClientWithContext(ctx)
+	var resp nextgen.ExecutionConfigResponse
+	var err error
+	if cfgType == "customer" {
+		resp, err = c.CiExecutionConfigApi.GetCustomerConfig(authCtx, infraType, false)
+	} else {
+		resp, err = c.CiExecutionConfigApi.GetDefaultConfig(authCtx, infraType)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return map[string]string(resp.Data), nil
+}
+
+func getIacmExecutionConfig(ctx context.Context, s *internal.Session,
+	infraType, cfgType string) (map[string]string, error) {
+
+	c, authCtx := s.GetPlatformClientWithContext(ctx)
+	var resp nextgen.ExecutionConfigResponse
+	var err error
+	if cfgType == "customer" {
+		resp, err = c.IacmExecutionConfigApi.GetCustomerConfig(authCtx, infraType, false)
+	} else {
+		resp, err = c.IacmExecutionConfigApi.GetDefaultConfig(authCtx, infraType)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return map[string]string(resp.Data), nil
+}
+
+func getIdpExecutionConfig(ctx context.Context, s *internal.Session,
+	infraType, cfgType string) (map[string]string, error) {
+
+	c, authCtx := s.GetIDPClientWithContext(ctx)
+	var resp idp.ExecutionConfigResponse
+	var err error
+	if cfgType == "customer" {
+		resp, err = c.ExecutionConfigApi.GetCustomerConfig(authCtx, infraType, false)
+	} else {
+		resp, err = c.ExecutionConfigApi.GetDefaultConfig(authCtx, infraType)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return map[string]string(resp.Data), nil
 }

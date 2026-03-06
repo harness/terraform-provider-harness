@@ -20,7 +20,6 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
-	pl_delegates "github.com/harness/terraform-provider-harness/internal/service/platform/delegates"
 	chaos_hub "github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub"
 	image_registry "github.com/harness/terraform-provider-harness/internal/service/chaos/image_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
@@ -33,6 +32,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
 	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
 	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
+	pl_delegates "github.com/harness/terraform-provider-harness/internal/service/platform/delegates"
 	governance_enforcement "github.com/harness/terraform-provider-harness/internal/service/platform/governance/enforcement"
 	governance_rule "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule"
 	governance_rule_set "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule_set"
@@ -291,7 +291,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_current_account":                             account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                                    delegate.DataSourceDelegate(),
 				"harness_delegate_ids":                                delegate.DataSourceDelegateIds(),
-				"harness_platform_delegate_list":                     pl_delegates.DataSourceDelegateList(),
+				"harness_platform_delegate_list":                      pl_delegates.DataSourceDelegateList(),
 				"harness_encrypted_text":                              secrets.DataSourceEncryptedText(),
 				"harness_environment":                                 environment.DataSourceEnvironment(),
 				"harness_git_connector":                               cd_connector.DataSourceGitConnector(),
@@ -553,6 +553,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_idp_catalog_entity":                 idp_resource.ResourceCatalogEntity(),
 				"harness_platform_idp_environment_blueprint":          idp_resource.ResourceEnvironmentBlueprint(),
 				"harness_platform_idp_environment":                    idp_resource.ResourceEnvironment(),
+				"harness_platform_default_images":                     default_images.ResourceDefaultImages(),
 			},
 		}
 
