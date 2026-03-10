@@ -69,6 +69,41 @@ func TestAccResourceGitopsRepoCred(t *testing.T) {
 	//})
 }
 
+func TestAccResourceGitopsRepoCred_IdentifierForceNew(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
+	newId := fmt.Sprintf("%s_updated_%s", t.Name(), utils.RandStringBytes(5))
+	newId = strings.ReplaceAll(newId, "_", "")
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	resourceName := "harness_platform_gitops_repo_cred.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsRepoCredDestroyByIdentifier(newId, agentId),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsRepoCredAccountLevel(id, accountId, agentId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					testAccResourceGitopsRepoCredExists(id, agentId),
+				),
+			},
+			{
+				Config: testAccResourceGitopsRepoCredAccountLevel(newId, accountId, agentId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", newId),
+					resource.TestCheckResourceAttr(resourceName, "identifier", newId),
+					testAccResourceGitopsRepoCredExists(newId, agentId),
+					testAccResourceGitopsRepoCredDoesNotExist(id, agentId),
+				),
+			},
+		},
+	})
+}
+
 func testAccGetRepoCred(resourceName string, state *terraform.State) (*nextgen.Servicev1RepositoryCredentials, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
@@ -90,6 +125,45 @@ func testAccResourceGitopsRepoCredDestroy(resourceName string) resource.TestChec
 		repoCred, _ := testAccGetRepoCred(resourceName, state)
 		if repoCred != nil {
 			return fmt.Errorf("Found repo cred")
+		}
+		return nil
+	}
+}
+
+func testAccResourceGitopsRepoCredDestroyByIdentifier(identifier string, agentId string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		c, ctx := acctest.TestAccGetPlatformClientWithContext()
+		ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+		_, _, err := c.RepositoryCredentialsApi.AgentRepositoryCredentialsServiceGetRepositoryCredentials(ctx, agentId, identifier, c.AccountId, &nextgen.RepositoryCredentialsApiAgentRepositoryCredentialsServiceGetRepositoryCredentialsOpts{})
+		if err == nil {
+			return fmt.Errorf("Found repo cred with identifier %s that should have been destroyed", identifier)
+		}
+		return nil
+	}
+}
+
+func testAccResourceGitopsRepoCredExists(identifier string, agentId string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		c, ctx := acctest.TestAccGetPlatformClientWithContext()
+		ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+		_, _, err := c.RepositoryCredentialsApi.AgentRepositoryCredentialsServiceGetRepositoryCredentials(ctx, agentId, identifier, c.AccountId, &nextgen.RepositoryCredentialsApiAgentRepositoryCredentialsServiceGetRepositoryCredentialsOpts{})
+		if err != nil {
+			return fmt.Errorf("Repo cred with identifier %s should exist but was not found: %v", identifier, err)
+		}
+		return nil
+	}
+}
+
+func testAccResourceGitopsRepoCredDoesNotExist(identifier string, agentId string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		c, ctx := acctest.TestAccGetPlatformClientWithContext()
+		ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+		_, _, err := c.RepositoryCredentialsApi.AgentRepositoryCredentialsServiceGetRepositoryCredentials(ctx, agentId, identifier, c.AccountId, &nextgen.RepositoryCredentialsApiAgentRepositoryCredentialsServiceGetRepositoryCredentialsOpts{})
+		if err == nil {
+			return fmt.Errorf("Repo cred with identifier %s should not exist but was found", identifier)
 		}
 		return nil
 	}
