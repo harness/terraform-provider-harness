@@ -9,7 +9,7 @@ import (
 )
 
 func TestResourceScaleGroupRule(t *testing.T) {
-	name := "terraform-scale-group-rule-test"
+	name := fmt.Sprintf("terr-sg-%s", randAlnum(5)) // "terr-sg-"+5 = 12 chars
 	resourceName := "harness_autostopping_rule_scale_group.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -37,18 +37,18 @@ func testScaleGroupRule(name string, dryRun bool) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_rule_scale_group" "test" {
 		name = "%[1]s"  
-		cloud_connector_id = "Lightwing_Non_Prod_5" 
+		cloud_connector_id = %[2]q
 		idle_time_mins = 10              
-		dry_run = %[2]t
+		dry_run = %[3]t
 		scale_group {
-			id = "arn:aws:autoscaling:us-east-1:1234:autoScalingGroup:abcd:autoScalingGroupName/demo-asg"
-			name = "demo-asg"
-			region = "us-east-1"
+			id = %[4]q
+			name = %[5]q
+			region = %[6]q
 			desired = 2
 			min = 1
 			max = 5
 			on_demand = 1
 		}       
 	}
-`, name, dryRun)
+`, name, cloudConnectorIDAWS, dryRun, scaleGroupARN, scaleGroupName, scaleGroupRegion)
 }

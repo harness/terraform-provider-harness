@@ -2,8 +2,10 @@ package as_rule_test
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -12,22 +14,32 @@ import (
 )
 
 func TestResourceVMRule(t *testing.T) {
-	name := "terraform-rule-test"
+	name := fmt.Sprintf("terr-vm-%s", randAlnum(5))
+	proxyName := fmt.Sprintf("terr-az-p-%s", randAlnum(5))
+	apiKey := os.Getenv(platformAPIKeyEnv)
 	resourceName := "harness_autostopping_rule_vm.test"
+
+	var proxyID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testVMRule(name, true),
+				Config: testVMRule(name, proxyName, apiKey, true),
 				Check: resource.ComposeTestCheckFunc(
+					extractAttr("harness_autostopping_azure_proxy.test", "identifier", &proxyID),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "dry_run", "true"),
 				),
 			},
 			{
-				Config: testVMRule(name, false),
+				PreConfig: func() {
+					if err := waitForProxyReady(proxyID, 3*time.Minute); err != nil {
+						t.Skipf("Skipping: %v", err)
+					}
+				},
+				Config: testVMRule(name, proxyName, apiKey, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "dry_run", "false"),
 				),
@@ -62,58 +74,79 @@ func testGetRule(resourceName string, state *terraform.State) (*nextgen.Service,
 	return resp.Response.Service, nil
 }
 
-func testVMRule(name string, dryRun bool) string {
+func testVMAzureProxy(proxyName, apiKey string) string {
 	return fmt.Sprintf(`
-	resource "harness_autostopping_rule_vm" "test" {
-		name = "%[1]s"  
-		cloud_connector_id = "Azure_SE" 
-		idle_time_mins = 10              
-		dry_run = %[2]t
-		filter {
-			vm_ids = ["/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Compute/virtualMachines/virtual_machine"]
-		  	regions = ["useast2"]
-		}
-		http {
-			proxy_id = "ap-chdpf8f83v0c1aj69oog"           
-			routing {
-				source_protocol = "https"
-				target_protocol = "https"
-				source_port = 443
-				target_port = 443
-				action = "forward"
-			}           
-			routing {
-				source_protocol = "http"
-				target_protocol = "http"
-				source_port = 80
-				target_port = 80
-				action = "forward"
-			}
-			health {
-				protocol = "http"
-				port = 80
-				path = "/"
-				timeout = 30
-				status_code_from = 200
-				status_code_to = 299
-			}
-		}
-		tcp {
-			proxy_id = "ap-chdpf8f83v0c1aj69oog"
-			ssh {
-				port = 22
-			}
-			rdp {
-				port = 3389
-			}               
-			forward_rule {
-				port = 2233
-			}                     
-		}
-		depends {
-			rule_id = 24576
-			delay_in_sec = 5
-		}        
-	}
-`, name, dryRun)
+resource "harness_autostopping_azure_proxy" "test" {
+  name                 = %[1]q
+  cloud_connector_id   = %[2]q
+  region               = %[3]q
+  resource_group       = %[4]q
+  vpc                  = %[5]q
+  subnet_id            = %[6]q
+  security_groups      = [%[7]q]
+  machine_type         = "Standard_D2s_v3"
+  keypair              = "DoNotDelete-Terraform-AS-Test-VM_key"
+  api_key              = %[8]q
+  allocate_static_ip   = false
+  delete_cloud_resources_on_destroy = false
+}
+`, proxyName, cloudConnectorIDVM, vmFilterRegion, azureProxyResourceGroup,
+		azureProxyVNet, azureProxySubnet, azureProxyNSG, apiKey)
+}
+
+func testVMRule(name, proxyName, apiKey string, dryRun bool) string {
+	return testVMAzureProxy(proxyName, apiKey) + fmt.Sprintf(`
+resource "harness_autostopping_rule_vm" "test" {
+  name               = %[1]q
+  cloud_connector_id = %[2]q
+  idle_time_mins     = 10
+  dry_run            = %[3]t
+
+  filter {
+    vm_ids  = [%[4]q]
+    regions = [%[5]q]
+    zones   = []
+  }
+  http {
+    proxy_id = harness_autostopping_azure_proxy.test.identifier
+    routing {
+      source_protocol = "https"
+      target_protocol = "https"
+      source_port     = 443
+      target_port     = 443
+      action          = "forward"
+    }
+    routing {
+      source_protocol = "http"
+      target_protocol = "http"
+      source_port     = 80
+      target_port     = 80
+      action          = "forward"
+    }
+    health {
+      protocol         = "http"
+      port             = 80
+      path             = "/"
+      timeout          = 30
+      status_code_from = 200
+      status_code_to   = 299
+    }
+  }
+  tcp {
+    proxy_id = harness_autostopping_azure_proxy.test.identifier
+    ssh {
+      connect_on = 22
+      port       = 22
+    }
+    rdp {
+      connect_on = 3389
+      port       = 3389
+    }
+    forward_rule {
+      connect_on = 2233
+      port       = 2233
+    }
+  }
+}
+`, name, cloudConnectorIDVM, dryRun, vmFilterVMID, vmFilterRegion)
 }

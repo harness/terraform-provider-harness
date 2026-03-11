@@ -2,35 +2,56 @@ package as_rule_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
+	"time"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestResourceECSRule(t *testing.T) {
-	name := "terraform-rule-test-ecs"
-	resourceName := "harness_autostopping_rule_ecs.test"
+const platformAPIKeyEnv = "HARNESS_PLATFORM_API_KEY"
 
+func TestResourceECSRule(t *testing.T) {
+	// Keep names under 19 chars: "terr-ecs1-"+5=16, "terr-ecs2-"+5=16, "terr-aws-p-"+5=16
+	nameFirst := fmt.Sprintf("terr-ecs1-%s", randAlnum(5))
+	name := fmt.Sprintf("terr-ecs2-%s", randAlnum(5))
+	proxyName := fmt.Sprintf("terr-aws-p-%s", randAlnum(5))
+	apiKey := os.Getenv(platformAPIKeyEnv)
+
+	var proxyID string
+	resourceName := "harness_autostopping_rule_ecs.test"
+	resourceNameFirst := "harness_autostopping_rule_ecs.first"
+
+	// Step 1 creates all resources in a single apply (before async proxy
+	// provisioning can fail). Steps 2+ wait for the proxy to be healthy
+	// before running updates.
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testECSRule(name, true),
+				Config: testECSRuleWithDependency(nameFirst, name, proxyName, apiKey, true),
 				Check: resource.ComposeTestCheckFunc(
+					extractAttr("harness_autostopping_aws_proxy.test", "identifier", &proxyID),
+					resource.TestCheckResourceAttr(resourceNameFirst, "name", nameFirst),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "dry_run", "true"),
 				),
 			},
 			{
-				Config: testECSRule(name, false),
+				PreConfig: func() {
+					if err := waitForProxyReady(proxyID, 90*time.Second); err != nil {
+						t.Fatalf("Proxy not ready: %v", err)
+					}
+				},
+				Config: testECSRuleWithDependency(nameFirst, name, proxyName, apiKey, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "dry_run", "false"),
 				),
 			},
 			{
-				Config: testECSRuleUpdate(name, "15", true),
+				Config: testECSRuleUpdate(nameFirst, name, proxyName, apiKey, "15", true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "idle_time_mins", "15"),
@@ -38,7 +59,7 @@ func TestResourceECSRule(t *testing.T) {
 				),
 			},
 			{
-				Config: testECSRuleUpdate(name, "20", false),
+				Config: testECSRuleUpdate(nameFirst, name, proxyName, apiKey, "20", false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "idle_time_mins", "20"),
@@ -49,52 +70,92 @@ func TestResourceECSRule(t *testing.T) {
 	})
 }
 
-func testECSRule(name string, dryRun bool) string {
+// testECSAWSProxy returns config for AWS proxy (same pattern as TestResourceAWSProxy).
+func testECSAWSProxy(proxyName, apiKey string) string {
 	return fmt.Sprintf(`
-	resource "harness_autostopping_rule_ecs" "test" {
-		name = "%[1]s"  
-		cloud_connector_id = "Azure_SE" 
-		idle_time_mins = 10
-		dry_run = %[2]t              
-
-		container {
-			cluster = "cluster"
-			service = "service"
-			region = "us-east-1"
-			task_count = 1
-		}		
-		http {
-			proxy_id = "ap-chdpf8f83v0c1aj69oog"             
-		}
-		depends {
-			rule_id = 24576
-			delay_in_sec = 5
-		}        
-	}
-`, name, dryRun)
+resource "harness_autostopping_aws_proxy" "test" {
+  name                 = %[1]q
+  cloud_connector_id   = %[2]q
+  region               = "us-east-1"
+  vpc                  = %[3]q
+  security_groups      = [%[4]q]
+  machine_type         = "t2.medium"
+  api_key              = %[5]q
+  allocate_static_ip   = false
+  delete_cloud_resources_on_destroy = false
+}
+`, proxyName, cloudConnectorIDAWS, awsProxyVPC, awsProxySG, apiKey)
 }
 
-func testECSRuleUpdate(name string, idleTime string, dryRun bool) string {
-	return fmt.Sprintf(`
-	resource "harness_autostopping_rule_ecs" "test" {
-		name = "%[1]s"  
-		cloud_connector_id = "Azure_SE" 
-		idle_time_mins = %[2]s
-		dry_run = %[3]t              
+// testECSRuleFirstOnly creates AWS proxy + one ECS rule without depends block.
+func testECSRuleFirstOnly(nameFirst, proxyName, apiKey string, dryRun bool) string {
+	return testECSAWSProxy(proxyName, apiKey) + fmt.Sprintf(`
+resource "harness_autostopping_rule_ecs" "first" {
+  name                = %[1]q
+  cloud_connector_id  = %[2]q
+  idle_time_mins      = 10
+  dry_run             = %[3]t
 
-		container {
-			cluster = "cluster"
-			service = "service"
-			region = "us-east-1"
-			task_count = 1
-		}		
-		http {
-			proxy_id = "ap-chdpf8f83v0c1aj69oog"             
-		}
-		depends {
-			rule_id = 24576
-			delay_in_sec = 5
-		}        
-	}
-`, name, idleTime, dryRun)
+  container {
+    cluster    = "cluster"
+    service    = "service"
+    region     = "us-east-1"
+    task_count = 1
+  }
+  http {
+    proxy_id = harness_autostopping_aws_proxy.test.identifier
+  }
+}
+`, nameFirst, cloudConnectorIDAWS, dryRun)
+}
+
+// testECSRuleWithDependency creates proxy + first ECS rule (no depends) + second rule depending on first.
+func testECSRuleWithDependency(nameFirst, name, proxyName, apiKey string, dryRun bool) string {
+	return testECSRuleFirstOnly(nameFirst, proxyName, apiKey, dryRun) + fmt.Sprintf(`
+resource "harness_autostopping_rule_ecs" "test" {
+  name                = %[1]q
+  cloud_connector_id  = %[2]q
+  idle_time_mins      = 10
+  dry_run             = %[3]t
+
+  container {
+    cluster    = "cluster"
+    service    = "service"
+    region     = "us-east-1"
+    task_count = 1
+  }
+  http {
+    proxy_id = harness_autostopping_aws_proxy.test.identifier
+  }
+  depends {
+    rule_id     = harness_autostopping_rule_ecs.first.identifier
+    delay_in_sec = 5
+  }
+}
+`, name, cloudConnectorIDAWS, dryRun)
+}
+
+func testECSRuleUpdate(nameFirst, name, proxyName, apiKey, idleTime string, dryRun bool) string {
+	return testECSRuleFirstOnly(nameFirst, proxyName, apiKey, dryRun) + fmt.Sprintf(`
+resource "harness_autostopping_rule_ecs" "test" {
+  name                = %[1]q
+  cloud_connector_id  = %[2]q
+  idle_time_mins      = %[3]s
+  dry_run             = %[4]t
+
+  container {
+    cluster    = "cluster"
+    service    = "service"
+    region     = "us-east-1"
+    task_count = 1
+  }
+  http {
+    proxy_id = harness_autostopping_aws_proxy.test.identifier
+  }
+  depends {
+    rule_id     = harness_autostopping_rule_ecs.first.identifier
+    delay_in_sec = 5
+  }
+}
+`, name, cloudConnectorIDAWS, idleTime, dryRun)
 }
