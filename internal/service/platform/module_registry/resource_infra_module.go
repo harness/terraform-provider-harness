@@ -45,7 +45,7 @@ func ResourceInfraModule() *schema.Resource {
 				Required:    true,
 			},
 			"repository": {
-				Description: "For account connectors, the repository where the module can be found",
+				Description: "For account connectors, the repository name where the module can be found.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
