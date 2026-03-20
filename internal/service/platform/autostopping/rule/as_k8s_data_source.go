@@ -1,18 +1,26 @@
 package as_rule
 
 import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+func dataSourceK8sRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	d.SetId(d.Get("identifier").(string))
+	return resourceASRuleRead(ctx, d, meta)
+}
 
 func DataSourceK8sRule() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Harness AutoStopping rule for K8s services.",
-		ReadContext: resourceASRuleRead,
+		ReadContext: dataSourceK8sRuleRead,
 		Schema: map[string]*schema.Schema{
 			"identifier": {
 				Description: "Unique identifier of the resource",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 			"depends": {
 				Description: "Dependent rules",
