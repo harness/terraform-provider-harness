@@ -3,6 +3,7 @@ package as_rule_test
 import (
 	"fmt"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -90,9 +91,48 @@ const ruleIDDependency = 24576
 // - Azure: VM ID, region must match resources in cloudConnectorIDVM subscription.
 // - AWS scale group: region "us-east-1" matches aws_alb_test; ARN/name must be a real ASG in the account.
 const (
-	vmFilterVMID     = "/subscriptions/20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0/resourcegroups/ccm-terraform-rg/providers/Microsoft.Compute/virtualMachines/DoNotDelete-Terraform-AS-Test-VM"
+	vmFilterVMID     = "/subscriptions/20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0/resourceGroups/ccm-terraform-rg/providers/Microsoft.Compute/virtualMachines/DoNotDelete-Terraform-AS-Test-VM-3"
 	vmFilterRegion   = "eastus"
 	scaleGroupARN    = "arn:aws:autoscaling:us-east-1:357919113896:autoScalingGroup:c4a7b124-8366-40bb-beed-0c3f1ecab3e2:autoScalingGroupName/DoNotDelete-Terrform-AS-Test-ASG"
 	scaleGroupName   = "DoNotDelete-Terrform-AS-Test-ASG"
 	scaleGroupRegion = "us-east-1"
 )
+
+// cleanupStaleRulesForVM deletes any existing autostopping rules that reference
+// vmFilterVMID. This prevents "resource already associated with another rule"
+// errors caused by incomplete teardown of previous test runs.
+func cleanupStaleRulesForVM(t *testing.T) {
+	t.Helper()
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
+
+	resp, _, err := c.CloudCostAutoStoppingRulesApi.ListAutoStoppingRules(ctx, c.AccountId, c.AccountId)
+	if err != nil {
+		t.Logf("cleanup: unable to list rules: %v", err)
+		return
+	}
+
+	for _, rule := range resp.Response {
+		if rule.Kind != "instance" || rule.CloudAccountId != cloudConnectorIDVM {
+			continue
+		}
+
+		detail, _, err := c.CloudCostAutoStoppingRulesV2Api.GetAutoStoppingRuleV2(ctx, c.AccountId, float64(rule.Id), c.AccountId)
+		if err != nil {
+			t.Logf("cleanup: unable to get details for rule %d: %v", rule.Id, err)
+			continue
+		}
+		svc := detail.Response.Service
+		if svc == nil || svc.Routing == nil || svc.Routing.Instance == nil || svc.Routing.Instance.Filter == nil {
+			continue
+		}
+		for _, id := range svc.Routing.Instance.Filter.Ids {
+			if id == vmFilterVMID {
+				t.Logf("cleanup: deleting stale rule %d (%s) that references test VM", rule.Id, rule.Name)
+				if _, err := c.CloudCostAutoStoppingRulesApi.DeleteAutoStoppingRule(ctx, float64(rule.Id), c.AccountId, c.AccountId); err != nil {
+					t.Logf("cleanup: failed to delete rule %d: %v", rule.Id, err)
+				}
+				break
+			}
+		}
+	}
+}

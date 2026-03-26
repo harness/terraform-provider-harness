@@ -22,7 +22,10 @@ func TestResourceVMRule(t *testing.T) {
 	var proxyID string
 
 	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanupStaleRulesForVM(t)
+		},
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
