@@ -329,6 +329,14 @@ func testProjResourceVirtualDockerRegistry(id string, accId string) string {
 // Generates Terraform config for an upstream Docker registry with UserPassword auth at account level
 func testAccResourceUpstreamDockerRegistry(id string, accId string) string {
 	return fmt.Sprintf(`
+ resource "harness_platform_secret_text" "test" {
+   identifier  = "Secret_Token_Terraform_%[1]s"
+   name        = "Secret Token Terraform"
+   secret_manager_identifier = "harnessSecretManager"
+   value_type  = "Inline"
+   value       = "test_password"
+ }
+
  resource "harness_platform_har_registry" "test" {
    identifier   = "%[1]s"
    space_ref    = "%[2]s"
@@ -341,11 +349,12 @@ func testAccResourceUpstreamDockerRegistry(id string, accId string) string {
 		auth {
 			auth_type = "UserPassword"
 			user_name = "username"
-			secret_identifier = "Secret_Token"
+			secret_identifier = harness_platform_secret_text.test.identifier
 			secret_space_path = "%[2]s"
 		}
    }
    parent_ref = "%[2]s"
+   depends_on = [harness_platform_secret_text.test]
  }
 `, id, accId)
 }
@@ -356,6 +365,15 @@ func testOrgResourceUpstreamDockerRegistry(id string, accId string) string {
  resource "harness_platform_organization" "test" {
   identifier = "%[1]s_org"
   name = "%[1]s"
+ }
+
+ resource "harness_platform_secret_text" "test" {
+   identifier  = "Secret_Token_Terraform_%[1]s"
+   name        = "Secret Token Terraform"
+   org_id      = harness_platform_organization.test.identifier
+   secret_manager_identifier = "harnessSecretManager"
+   value_type  = "Inline"
+   value       = "test_password"
  }
 
  resource "harness_platform_har_registry" "test" {
@@ -370,11 +388,12 @@ func testOrgResourceUpstreamDockerRegistry(id string, accId string) string {
 		auth {
 			auth_type = "UserPassword"
 			user_name = "username"
-			secret_identifier = "Secret_Token"
-			secret_space_path = "%[2]s"
+			secret_identifier = harness_platform_secret_text.test.identifier
+			secret_space_path = "%[2]s/${harness_platform_organization.test.identifier}"
 		}
    }
    parent_ref = "%[2]s/${harness_platform_organization.test.identifier}"
+   depends_on = [harness_platform_secret_text.test]
  }
 `, id, accId)
 }
@@ -388,11 +407,21 @@ func testProjResourceUpstreamDockerRegistry(id string, accId string) string {
  }
 
  resource "harness_platform_project" "test" {
-  identifier = "%[1]s_project"
+  identifier = "%[1]s_proj"
   name = "%[1]s"
-  org_id = harness_platform_organization.test.id
-  color = "#472848"
+  org_id = harness_platform_organization.test.identifier
  }
+
+ resource "harness_platform_secret_text" "test" {
+   identifier  = "Secret_Token_Terraform_%[1]s"
+   name        = "Secret Token Terraform"
+   org_id      = harness_platform_organization.test.identifier
+   project_id  = harness_platform_project.test.identifier
+   secret_manager_identifier = "harnessSecretManager"
+   value_type  = "Inline"
+   value       = "test_password"
+ }
+
  resource "harness_platform_har_registry" "test" {
    identifier   = "%[1]s"
    space_ref    = "%[2]s/${harness_platform_organization.test.identifier}/${harness_platform_project.test.identifier}"
@@ -405,11 +434,12 @@ func testProjResourceUpstreamDockerRegistry(id string, accId string) string {
 		auth {
 			auth_type = "UserPassword"
 			user_name = "username"
-			secret_identifier = "Secret_Token"
-			secret_space_path = "%[2]s"
+			secret_identifier = harness_platform_secret_text.test.identifier
+			secret_space_path = "%[2]s/${harness_platform_organization.test.identifier}/${harness_platform_project.test.identifier}"
 		}
    }
    parent_ref = "%[2]s/${harness_platform_organization.test.identifier}/${harness_platform_project.test.identifier}"
+   depends_on = [harness_platform_secret_text.test]
  }
 `, id, accId)
 }
@@ -659,6 +689,14 @@ func testProjResourceVirtualHelmRegistry(id string, accId string) string {
 // Generates Terraform config for an upstream Helm registry with custom URL at account level
 func testAccResourceUpstreamHelmRegistry(id string, accId string) string {
 	return fmt.Sprintf(`
+ resource "harness_platform_secret_text" "test" {
+   identifier  = "Secret_Token_Terraform_%[1]s"
+   name        = "Secret Token Terraform"
+   secret_manager_identifier = "harnessSecretManager"
+   value_type  = "Inline"
+   value       = "test_password"
+ }
+
  resource "harness_platform_har_registry" "test" {
    identifier   = "%[1]s"
    space_ref    = "%[2]s"
@@ -672,11 +710,12 @@ func testAccResourceUpstreamHelmRegistry(id string, accId string) string {
 		auth {
 			auth_type = "UserPassword"
 			user_name = "username"
-			secret_identifier = "Secret_Token"
+			secret_identifier = harness_platform_secret_text.test.identifier
 			secret_space_path = "%[2]s"
 		}
    }
    parent_ref = "%[2]s"
+   depends_on = [harness_platform_secret_text.test]
  }
 `, id, accId)
 }
@@ -687,6 +726,15 @@ func testOrgResourceUpstreamHelmRegistry(id string, accId string) string {
  resource "harness_platform_organization" "test" {
   identifier = "%[1]s_org"
   name = "%[1]s"
+ }
+
+ resource "harness_platform_secret_text" "test" {
+   identifier  = "Secret_Token_Terraform_%[1]s"
+   name        = "Secret Token Terraform"
+   org_id      = harness_platform_organization.test.identifier
+   secret_manager_identifier = "harnessSecretManager"
+   value_type  = "Inline"
+   value       = "test_password"
  }
 
  resource "harness_platform_har_registry" "test" {
@@ -702,11 +750,12 @@ func testOrgResourceUpstreamHelmRegistry(id string, accId string) string {
 		auth {
 			auth_type = "UserPassword"
 			user_name = "username"
-			secret_identifier = "Secret_Token"
-			secret_space_path = "%[2]s"
+			secret_identifier = harness_platform_secret_text.test.identifier
+			secret_space_path = "%[2]s/${harness_platform_organization.test.identifier}"
 		}
    }
    parent_ref = "%[2]s/${harness_platform_organization.test.identifier}"
+   depends_on = [harness_platform_secret_text.test]
  }
 `, id, accId)
 }
@@ -725,6 +774,17 @@ func testProjResourceUpstreamHelmRegistry(id string, accId string) string {
   org_id = harness_platform_organization.test.id
   color = "#472848"
  }
+
+ resource "harness_platform_secret_text" "test" {
+   identifier  = "Secret_Token_Terraform_%[1]s"
+   name        = "Secret Token Terraform"
+   org_id      = harness_platform_organization.test.identifier
+   project_id  = harness_platform_project.test.identifier
+   secret_manager_identifier = "harnessSecretManager"
+   value_type  = "Inline"
+   value       = "test_password"
+ }
+
  resource "harness_platform_har_registry" "test" {
    identifier   = "%[1]s"
    space_ref    = "%[2]s/${harness_platform_organization.test.identifier}/${harness_platform_project.test.identifier}"
@@ -738,16 +798,16 @@ func testProjResourceUpstreamHelmRegistry(id string, accId string) string {
 		auth {
 			auth_type = "UserPassword"
 			user_name = "username"
-			secret_identifier = "Secret_Token"
-			secret_space_path = "%[2]s"
+			secret_identifier = harness_platform_secret_text.test.identifier
+			secret_space_path = "%[2]s/${harness_platform_organization.test.identifier}/${harness_platform_project.test.identifier}"
 		}
    }
    parent_ref = "%[2]s/${harness_platform_organization.test.identifier}/${harness_platform_project.test.identifier}"
+   depends_on = [harness_platform_secret_text.test]
  }
 `, id, accId)
 }
 
-// Tests creating an upstream Docker registry with Anonymous auth at account level
 func TestAccResourceUpstreamDockerAnonymousRegistry(t *testing.T) {
 	id := fmt.Sprintf("tfauto_up_docker_anon_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
@@ -1692,6 +1752,25 @@ func TestAccResourceUpstreamMavenRegistryNoAuth(t *testing.T) {
 	})
 }
 
+// TestAccResourceUpstreamRegistryWithExternalSecretManager tests that creating an UPSTREAM registry
+// with an external secret manager (e.g., AWS Secrets Manager) should fail with validation error.
+func TestAccResourceUpstreamRegistryWithExternalSecretManager(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("tfauto_up_extsm_%s", utils.RandStringBytes(5)))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamRegistryWithAwsSecretManager(id, accountId),
+				ExpectError: regexp.MustCompile("failed to validate secret|upstream registry authentication requires secrets to be stored in Harness Secret Manager"),
+			},
+		},
+	})
+}
+
 func testAccResourceUpstreamDockerRegistryNoAuth(id string, accId string) string {
 	return fmt.Sprintf(`
 resource "harness_platform_har_registry" "test" {
@@ -1735,6 +1814,30 @@ resource "harness_platform_har_registry" "test" {
   config {
     type   = "UPSTREAM"
     source = "MavenCentral"
+  }
+  parent_ref = "%[2]s"
+}
+`, id, accId)
+}
+
+func testAccResourceUpstreamRegistryWithAwsSecretManager(id string, accId string) string {
+	return fmt.Sprintf(`
+# This test assumes there's a secret created with an external secret manager (not Harness Secret Manager)
+# The registry creation should fail with validation error about the secret manager
+resource "harness_platform_har_registry" "test" {
+  identifier   = "%[1]s"
+  space_ref    = "%[2]s"
+  package_type = "DOCKER"
+
+  config {
+    type   = "UPSTREAM"
+    source = "Dockerhub"
+    auth {
+      auth_type = "UserPassword"
+      user_name = "testuser"
+      secret_identifier = "some_external_secret"
+      secret_space_path = "%[2]s"
+    }
   }
   parent_ref = "%[2]s"
 }
