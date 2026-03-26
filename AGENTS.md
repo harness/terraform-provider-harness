@@ -28,7 +28,6 @@ Acceptance tests create real resources in Harness. Required environment variable
 - `HARNESS_API_KEY`
 - `HARNESS_PLATFORM_API_KEY`
 
-FME/Split resources also need a valid Split workspace mapped to the Harness org/project used in tests. See [internal/service/split/FME_ACCEPTANCE_TESTING.md](internal/service/split/FME_ACCEPTANCE_TESTING.md) for scoped commands, cleanup after failures, and CI notes.
 
 ## Linting & Formatting
 
