@@ -1,0 +1,3 @@
+```release-note:bug
+Session `GetSplitClientWithContext` now routes through a Split client wrapper with `WithAuthContext`-style initialization for consistent context handling with other SDK clients
+```

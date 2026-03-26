@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_fme_environment: Manage Split environments for a Harness org and project
+```

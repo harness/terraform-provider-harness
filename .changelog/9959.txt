@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_fme_large_segment: Manage Split large segments with optional environment definition
+```

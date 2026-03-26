@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_fme_feature_flag_definition: Manage Split feature flag definitions per environment (JSON definition body)
+```

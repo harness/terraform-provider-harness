@@ -1,0 +1,9 @@
+```release-note:breaking-change
+`harness_fme_large_segment`: removed `environment_id`. Use `harness_fme_large_segment_environment_association` for each environment.
+
+`harness_fme_rule_based_segment`: removed `environment_id` and `definition_json`. Use `harness_fme_rule_based_segment_environment_association` for environment definitions.
+```
+
+```release-note:new-resource
+`harness_fme_rule_based_segment_environment_association`: enable a rule-based segment per environment and manage `definition_json`.
+```

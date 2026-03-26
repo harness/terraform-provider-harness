@@ -16,6 +16,7 @@ Terraform provider for Harness that enables infrastructure-as-code management of
 
 - **Run all unit tests**: `make test`
 - **Run acceptance tests**: `make testacc` (requires HARNESS_* environment variables)
+- **Run FME (Split) acceptance tests only**: `make testacc-fme` or `TF_ACC=1 go test -v ./internal/service/split/... -timeout=120m` (faster than full `testacc`)
 - **Run tests with coverage**: `make test-coverage`
 - **Run single test file**: `go test -v ./internal/service/platform/connector/... -run TestAccResourceConnector`
 - **Run single test case**: `go test -v ./path/to/package -run TestFunctionName`
@@ -26,6 +27,8 @@ Acceptance tests create real resources in Harness. Required environment variable
 - `HARNESS_ACCOUNT_ID`
 - `HARNESS_API_KEY`
 - `HARNESS_PLATFORM_API_KEY`
+
+FME/Split resources also need a valid Split workspace mapped to the Harness org/project used in tests. See [internal/service/split/FME_ACCEPTANCE_TESTING.md](internal/service/split/FME_ACCEPTANCE_TESTING.md) for scoped commands, cleanup after failures, and CI notes.
 
 ## Linting & Formatting
 

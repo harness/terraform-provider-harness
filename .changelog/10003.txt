@@ -1,0 +1,3 @@
+```release-note:bug-fix
+`harness_fme_api_key`: When Split create omits `id` but returns `key`, use that value as the Terraform id and for delete (fixes inconsistent apply with live FME responses). Added `examples/split_debug_api_key` to inspect raw create responses.
+```

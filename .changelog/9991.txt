@@ -1,0 +1,3 @@
+```release-note:bug
+`harness_fme_segment`, `harness_fme_large_segment`, and `harness_fme_feature_flag` import now require a traffic type id from the API or fail with a clear error; read refreshes preserve `traffic_type_id` when the API omits it
+```

@@ -1,0 +1,41 @@
+name: Go
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit:
+    name: Unit tests (short)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: go build
+        run: go build -trimpath -o /dev/null .
+      # Scoped: legacy TestAcc under ./internal/service/cd/... often ignores -short; full ./... needs secrets.
+      - name: go test -short (internal + FME split)
+        run: go test -short ./internal/ ./internal/service/split/... -count=1 -timeout=10m
+
+  fme-acceptance:
+    name: FME acceptance tests (manual)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: FME acceptance (TF_ACC)
+        env:
+          TF_ACC: "1"
+          HARNESS_ACCOUNT_ID: ${{ secrets.HARNESS_ACCOUNT_ID }}
+          HARNESS_API_KEY: ${{ secrets.HARNESS_API_KEY }}
+          HARNESS_PLATFORM_API_KEY: ${{ secrets.HARNESS_PLATFORM_API_KEY }}
+        run: go test -v ./internal/service/split/... -count=1 -timeout=120m

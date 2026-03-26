@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_fme_rule_based_segment: Manage Split rule-based segments with optional environment definition JSON
+```
