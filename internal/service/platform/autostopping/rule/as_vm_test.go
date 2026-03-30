@@ -91,7 +91,7 @@ resource "harness_autostopping_azure_proxy" "test" {
   keypair              = "DoNotDelete-Terraform-AS-Test-VM_key"
   api_key              = %[8]q
   allocate_static_ip   = false
-  delete_cloud_resources_on_destroy = false
+  delete_cloud_resources_on_destroy = true
 }
 `, proxyName, cloudConnectorIDVM, vmFilterRegion, azureProxyResourceGroup,
 		azureProxyVNet, azureProxySubnet, azureProxyNSG, apiKey)
