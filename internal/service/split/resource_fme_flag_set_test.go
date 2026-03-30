@@ -48,6 +48,12 @@ func TestAccFMEFlagSet_dataSourceMatchesResource(t *testing.T) {
 					resource.TestCheckResourceAttr(ds, "name", fsName),
 				),
 			},
+			{
+				ResourceName:      res,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: fmeImportStateIDOrgProjectThird(res, "flag_set_id"),
+			},
 		},
 	})
 }

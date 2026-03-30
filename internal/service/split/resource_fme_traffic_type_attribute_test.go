@@ -22,19 +22,39 @@ func TestAccResourceFMETrafficTypeAttribute_basic(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceFMETrafficTypeAttribute(id, attrID),
+				Config: testAccResourceFMETrafficTypeAttribute(id, attrID, "ACC TT Attribute", false, []string{"acc_a", "acc_b"}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "identifier", attrID),
 					resource.TestCheckResourceAttr(res, "display_name", "ACC TT Attribute"),
 					resource.TestCheckResourceAttr(res, "data_type", "string"),
+					resource.TestCheckResourceAttr(res, "is_searchable", "false"),
+					resource.TestCheckResourceAttr(res, "suggested_values.#", "2"),
 					resource.TestCheckResourceAttrSet(res, "attribute_id"),
 				),
+			},
+			{
+				Config: testAccResourceFMETrafficTypeAttribute(id, attrID, "ACC TT Attribute Updated", true, []string{"acc_a", "acc_b", "acc_c"}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(res, "display_name", "ACC TT Attribute Updated"),
+					resource.TestCheckResourceAttr(res, "is_searchable", "true"),
+					resource.TestCheckResourceAttr(res, "suggested_values.#", "3"),
+				),
+			},
+			{
+				ResourceName:      res,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: fmeImportStateIDOrgProjectTTFourth(res),
 			},
 		},
 	})
 }
 
-func testAccResourceFMETrafficTypeAttribute(id, attrIdentifier string) string {
+func testAccResourceFMETrafficTypeAttribute(id, attrIdentifier, displayName string, searchable bool, suggested []string) string {
+	sugHCL := "[]"
+	if len(suggested) > 0 {
+		sugHCL = testAccHCLStringList(suggested)
+	}
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -54,14 +74,14 @@ func testAccResourceFMETrafficTypeAttribute(id, attrIdentifier string) string {
 	}
 
 	resource "harness_fme_traffic_type_attribute" "test" {
-		org_id          = harness_platform_organization.test.id
-		project_id      = harness_platform_project.test.id
-		traffic_type_id = data.harness_fme_traffic_type.user.traffic_type_id
-		identifier      = "%[2]s"
-		display_name    = "ACC TT Attribute"
-		data_type       = "string"
-		is_searchable   = false
-		suggested_values = ["acc_a", "acc_b"]
+		org_id             = harness_platform_organization.test.id
+		project_id         = harness_platform_project.test.id
+		traffic_type_id    = data.harness_fme_traffic_type.user.traffic_type_id
+		identifier         = "%[2]s"
+		display_name       = "%[3]s"
+		data_type          = "string"
+		is_searchable      = %[4]t
+		suggested_values   = %[5]s
 	}
-	`, id, attrIdentifier)
+	`, id, attrIdentifier, displayName, searchable, sugHCL)
 }

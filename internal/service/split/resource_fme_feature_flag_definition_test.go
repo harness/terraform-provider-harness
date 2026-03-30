@@ -23,10 +23,16 @@ func TestAccResourceFMEFeatureFlagDefinition_basic(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceFMEFeatureFlagDefinition(id, envName, flagName),
+				Config: testAccResourceFMEFeatureFlagDefinition(id, envName, flagName, "off"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "flag_name", flagName),
 					resource.TestCheckResourceAttrSet(res, "definition_id"),
+				),
+			},
+			{
+				Config: testAccResourceFMEFeatureFlagDefinition(id, envName, flagName, "on"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(res, "flag_name", flagName),
 				),
 			},
 			{
@@ -39,7 +45,7 @@ func TestAccResourceFMEFeatureFlagDefinition_basic(t *testing.T) {
 	})
 }
 
-func testAccResourceFMEFeatureFlagDefinition(id, envName, flagName string) string {
+func testAccResourceFMEFeatureFlagDefinition(id, envName, flagName, defaultTreatment string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -77,8 +83,8 @@ func testAccResourceFMEFeatureFlagDefinition(id, envName, flagName string) strin
 				{ name = "on" },
 				{ name = "off" },
 			]
-			defaultTreatment  = "off"
-			defaultRule         = [{ treatment = "off", size = 100 }]
+			defaultTreatment  = "%[4]s"
+			defaultRule         = [{ treatment = "%[4]s", size = 100 }]
 			trafficAllocation   = 100
 		})
 	}
@@ -91,5 +97,5 @@ func testAccResourceFMEFeatureFlagDefinition(id, envName, flagName string) strin
 		definition       = local.ff_definition
 		depends_on       = [harness_fme_feature_flag.test, harness_fme_environment.test]
 	}
-	`, id, envName, flagName)
+	`, id, envName, flagName, defaultTreatment)
 }

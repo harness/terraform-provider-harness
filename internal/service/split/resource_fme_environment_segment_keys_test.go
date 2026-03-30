@@ -23,9 +23,16 @@ func TestAccResourceFMEEnvironmentSegmentKeys_basic(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceFMEEnvironmentSegmentKeys(id, envName, segName),
+				Config: testAccResourceFMEEnvironmentSegmentKeys(id, envName, segName, []string{"acc_key_1", "acc_key_2"}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "segment_name", segName),
+					resource.TestCheckResourceAttr(res, "keys.#", "2"),
+				),
+			},
+			{
+				Config: testAccResourceFMEEnvironmentSegmentKeys(id, envName, segName, []string{"acc_key_1", "acc_key_3"}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(res, "keys.#", "2"),
 				),
 			},
 			{
@@ -38,7 +45,7 @@ func TestAccResourceFMEEnvironmentSegmentKeys_basic(t *testing.T) {
 	})
 }
 
-func testAccResourceFMEEnvironmentSegmentKeys(id, envName, segName string) string {
+func testAccResourceFMEEnvironmentSegmentKeys(id, envName, segName string, keys []string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -83,8 +90,8 @@ func testAccResourceFMEEnvironmentSegmentKeys(id, envName, segName string) strin
 		project_id     = harness_platform_project.test.id
 		environment_id = harness_fme_environment.test.environment_id
 		segment_name   = harness_fme_segment.test.name
-		keys           = ["acc_key_1", "acc_key_2"]
+		keys           = %[4]s
 		depends_on     = [harness_fme_segment_environment_association.act]
 	}
-	`, id, envName, segName)
+	`, id, envName, segName, testAccHCLStringList(keys))
 }

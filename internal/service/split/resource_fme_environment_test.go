@@ -31,6 +31,12 @@ func TestAccResourceFMEEnvironment_basic(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccResourceFMEEnvironment(id, envName, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(res, "production", "true"),
+				),
+			},
+			{
 				ResourceName:            res,
 				ImportState:             true,
 				ImportStateVerify:       true,
