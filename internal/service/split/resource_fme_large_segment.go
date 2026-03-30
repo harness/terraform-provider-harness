@@ -90,6 +90,9 @@ func resourceFMELargeSegmentImport(ctx context.Context, d *schema.ResourceData, 
 	if err != nil {
 		return nil, err
 	}
+	if seg == nil {
+		return nil, fmt.Errorf("cannot import large segment %q: Split API returned no segment", name)
+	}
 	ttID := ""
 	if seg.TrafficType != nil {
 		ttID = seg.TrafficType.ID

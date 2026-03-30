@@ -85,6 +85,9 @@ func resourceFMESegmentImport(ctx context.Context, d *schema.ResourceData, meta 
 	if err != nil {
 		return nil, err
 	}
+	if seg == nil {
+		return nil, fmt.Errorf("cannot import segment %q: Split API returned no segment", segName)
+	}
 	ttID := ""
 	if seg.TrafficType != nil {
 		ttID = seg.TrafficType.ID

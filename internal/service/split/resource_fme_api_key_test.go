@@ -36,8 +36,8 @@ func TestAccResourceFMEApiKey_basic(t *testing.T) {
 				ResourceName:            res,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateIdFunc:       fmeImportStateIDOrgProjectThird(res, "key_id"),
-				ImportStateVerifyIgnore: []string{"api_key", "name", "api_key_type", "environment_id"},
+				ImportStateIdFunc:       fmeImportStateIDApiKey(res),
+				ImportStateVerifyIgnore: []string{"api_key"},
 			},
 		},
 	})
@@ -100,8 +100,8 @@ func TestAccResourceFMEApiKey_clientSide(t *testing.T) {
 				ResourceName:            res,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateIdFunc:       fmeImportStateIDOrgProjectThird(res, "key_id"),
-				ImportStateVerifyIgnore: []string{"api_key", "name", "api_key_type", "environment_id"},
+				ImportStateIdFunc:       fmeImportStateIDApiKey(res),
+				ImportStateVerifyIgnore: []string{"api_key"},
 			},
 		},
 	})

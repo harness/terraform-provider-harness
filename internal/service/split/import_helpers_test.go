@@ -55,3 +55,18 @@ func TestParseImportID3_edgeCases(t *testing.T) {
 		t.Fatal("expected error for 4 segments")
 	}
 }
+
+func TestParseImportID6(t *testing.T) {
+	t.Parallel()
+	o, p, e, typ, n, k, err := split.ParseImportID6("org1/proj1/env1/server_side/mykey/kid-9")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if o != "org1" || p != "proj1" || e != "env1" || typ != "server_side" || n != "mykey" || k != "kid-9" {
+		t.Fatalf("got %q %q %q %q %q %q", o, p, e, typ, n, k)
+	}
+	_, _, _, _, _, _, err = split.ParseImportID6("a/b/c/d/e")
+	if err == nil {
+		t.Fatal("expected error for 5 segments")
+	}
+}

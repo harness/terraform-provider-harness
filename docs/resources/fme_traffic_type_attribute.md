@@ -17,7 +17,7 @@ Create, update, and delete a Harness FME (Split) traffic type attribute. Import 
 
 ### Required
 
-- `data_type` (String) Data type: e.g. `string`, `number`, `datetime`, `set` (normalized to lowercase in state; Split may return uppercase).
+- `data_type` (String) Data type: e.g. `string`, `number`, `datetime`, `set` (normalized to lowercase in state; Split may return uppercase). Config casing is ignored for diffs.
 - `display_name` (String) Display name.
 - `identifier` (String) Attribute identifier (id) in Split.
 - `org_id` (String) Harness organization identifier.

@@ -2,6 +2,7 @@ package split
 
 import (
 	"context"
+	"fmt"
 
 	splitsdk "github.com/harness/harness-go-sdk/harness/split"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -60,10 +61,30 @@ func resourceFMEFlagSetImport(ctx context.Context, d *schema.ResourceData, meta 
 	if err != nil {
 		return nil, err
 	}
+	client, diags := SplitClientFromMeta(ctx, meta)
+	if diags.HasError() {
+		return nil, fmt.Errorf("split client: %v", diags)
+	}
+	fs, err := client.FlagSets.FindByID(fsID)
+	if err != nil {
+		return nil, err
+	}
+	if fs == nil {
+		return nil, fmt.Errorf("cannot import flag set: Split API returned no flag set for id %q", fsID)
+	}
 	if err := d.Set("org_id", orgID); err != nil {
 		return nil, err
 	}
 	if err := d.Set("project_id", projectID); err != nil {
+		return nil, err
+	}
+	if err := d.Set("name", fs.Name); err != nil {
+		return nil, err
+	}
+	if err := d.Set("description", fs.Description); err != nil {
+		return nil, err
+	}
+	if err := d.Set("flag_set_id", fs.ID); err != nil {
 		return nil, err
 	}
 	d.SetId(fsID)

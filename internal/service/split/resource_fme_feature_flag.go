@@ -96,6 +96,9 @@ func resourceFMEFeatureFlagImport(ctx context.Context, d *schema.ResourceData, m
 	if err != nil {
 		return nil, err
 	}
+	if sp == nil {
+		return nil, fmt.Errorf("cannot import feature flag %q: Split API returned no split", name)
+	}
 	ttID := ""
 	if sp.TrafficType != nil {
 		ttID = sp.TrafficType.ID

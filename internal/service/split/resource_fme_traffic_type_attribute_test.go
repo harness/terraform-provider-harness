@@ -26,7 +26,7 @@ func TestAccResourceFMETrafficTypeAttribute_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "identifier", attrID),
 					resource.TestCheckResourceAttr(res, "display_name", "ACC TT Attribute"),
-					resource.TestCheckResourceAttr(res, "data_type", "STRING"),
+					resource.TestCheckResourceAttr(res, "data_type", "string"),
 					resource.TestCheckResourceAttrSet(res, "attribute_id"),
 				),
 			},
@@ -59,7 +59,7 @@ func testAccResourceFMETrafficTypeAttribute(id, attrIdentifier string) string {
 		traffic_type_id = data.harness_fme_traffic_type.user.traffic_type_id
 		identifier      = "%[2]s"
 		display_name    = "ACC TT Attribute"
-		data_type       = "STRING"
+		data_type       = "string"
 		is_searchable   = false
 		suggested_values = ["acc_a", "acc_b"]
 	}

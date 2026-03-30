@@ -59,9 +59,12 @@ func ResourceFMETrafficTypeAttribute() *schema.Resource {
 				Optional:    true,
 			},
 			"data_type": {
-				Description: "Data type: e.g. `string`, `number`, `datetime`, `set` (normalized to lowercase in state; Split may return uppercase).",
+				Description: "Data type: e.g. `string`, `number`, `datetime`, `set` (normalized to lowercase in state; Split may return uppercase). Config casing is ignored for diffs.",
 				Type:        schema.TypeString,
 				Required:    true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return strings.EqualFold(strings.TrimSpace(old), strings.TrimSpace(new))
+				},
 			},
 			"is_searchable": {
 				Description: "Whether the attribute is searchable.",
