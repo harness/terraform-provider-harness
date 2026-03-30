@@ -193,7 +193,6 @@ make testacc-fme
 # TF_ACC=1 go test -v ./internal/service/split/... -timeout=120m
 ```
 
-See [internal/service/split/FME_ACCEPTANCE_TESTING.md](internal/service/split/FME_ACCEPTANCE_TESTING.md) for cleanup if a run fails mid-test.
 
 #### Test Coverage
 
