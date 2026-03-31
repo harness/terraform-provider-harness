@@ -25,7 +25,7 @@ func ResourceProject() *schema.Resource {
 		Timeouts: &schema.ResourceTimeout{
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
-		Importer:      helpers.GitopsAgentProjectImporter,
+		Importer: helpers.GitopsAgentProjectImporter,
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
 				Description: "Agent identifier of the agent where argo project will exist (include scope prefix)",
@@ -1558,11 +1558,14 @@ func setProjectDetails(d *schema.ResourceData, account_id string, projects *next
 			spec["destinations"] = destinationList
 		}
 
-		orphanList := []interface{}{}
-		orphan := map[string]interface{}{}
-		orphan["warn"] = projects.Spec.OrphanedResources.Warn
-		orphanList = append(orphanList, orphan)
-		spec["orphaned_resources"] = orphanList
+		if projects.Spec.OrphanedResources != nil {
+			orphanList := []interface{}{}
+			orphan := map[string]interface{}{}
+			orphan["warn"] = projects.Spec.OrphanedResources.Warn
+			orphanList = append(orphanList, orphan)
+			spec["orphaned_resources"] = orphanList
+		}
+
 		// Convert 'namespace_resource_blacklist' field
 		if len(projects.Spec.NamespaceResourceBlacklist) > 0 {
 			nsResourceBlacklist := make([]interface{}, len(projects.Spec.NamespaceResourceBlacklist))
