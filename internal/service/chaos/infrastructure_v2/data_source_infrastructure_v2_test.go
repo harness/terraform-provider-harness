@@ -120,7 +120,7 @@ func TestAccDataSourceChaosInfrastructureV2_NotFound(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccDataSourceChaosInfrastructureV2Config_NonExistent(id, rName),
-				ExpectError: regexp.MustCompile("500 Internal Server Error"),
+				ExpectError: regexp.MustCompile("no matching infra or not a k8s infra"),
 			},
 		},
 	})
