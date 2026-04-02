@@ -13,17 +13,81 @@ Resource for creating a Splunk connector.
 ## Example Usage
 
 ```terraform
-resource "harness_platform_connector_splunk" "test" {
-  identifier  = "identifier"
-  name        = "name"
-  description = "test"
-  tags        = ["foo:bar"]
+# Example 1: Username/Password Authentication (New Block Format)
+resource "harness_platform_connector_splunk" "username_password" {
+  identifier  = "splunk_userpass"
+  name        = "Splunk Username/Password"
+  description = "Splunk connector with username/password authentication"
+  tags        = ["env:production"]
 
-  url                = "https://splunk.com/"
+  url                = "https://splunk.company.com:8089"
   delegate_selectors = ["harness-delegate"]
   account_id         = "splunk_account_id"
-  username           = "username"
-  password_ref       = "account.secret_id"
+  
+  username_password {
+    username     = "splunk_user"
+    password_ref = "account.splunk_password"
+  }
+}
+
+# Example 2: Bearer Token Authentication
+resource "harness_platform_connector_splunk" "bearer_token" {
+  identifier  = "splunk_bearer"
+  name        = "Splunk Bearer Token"
+  description = "Splunk connector with bearer token authentication"
+  tags        = ["env:production"]
+
+  url                = "https://splunk.company.com:8089"
+  delegate_selectors = ["harness-delegate"]
+  account_id         = "splunk_account_id"
+  
+  bearer_token {
+    bearer_token_ref = "account.splunk_bearer_token"
+  }
+}
+
+# Example 3: HEC Token Authentication
+resource "harness_platform_connector_splunk" "hec_token" {
+  identifier  = "splunk_hec"
+  name        = "Splunk HEC Token"
+  description = "Splunk connector with HEC token authentication"
+  tags        = ["env:production"]
+
+  url                = "https://splunk.company.com:8088"
+  delegate_selectors = ["harness-delegate"]
+  account_id         = "splunk_account_id"
+  
+  hec_token {
+    hec_token_ref = "account.splunk_hec_token"
+  }
+}
+
+# Example 4: No Authentication
+resource "harness_platform_connector_splunk" "no_auth" {
+  identifier  = "splunk_no_auth"
+  name        = "Splunk No Auth"
+  description = "Splunk connector without authentication"
+  tags        = ["env:development"]
+
+  url                = "https://splunk-dev.company.com:8089"
+  delegate_selectors = ["harness-delegate"]
+  account_id         = "splunk_account_id"
+  
+  no_authentication {}
+}
+
+# Example 5: Legacy Format (Deprecated but still supported)
+resource "harness_platform_connector_splunk" "legacy" {
+  identifier  = "splunk_legacy"
+  name        = "Splunk Legacy"
+  description = "Splunk connector using deprecated flat schema"
+  tags        = ["deprecated"]
+
+  url                = "https://splunk.company.com:8089"
+  delegate_selectors = ["harness-delegate"]
+  account_id         = "splunk_account_id"
+  username           = "username"           # Deprecated
+  password_ref       = "account.secret_id"  # Deprecated
 }
 ```
 
@@ -35,21 +99,53 @@ resource "harness_platform_connector_splunk" "test" {
 - `account_id` (String) Splunk account id.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `password_ref` (String) The reference to the Harness secret containing the Splunk password. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `url` (String) URL of the Splunk server.
-- `username` (String) The username used for connecting to Splunk.
 
 ### Optional
 
+- `bearer_token` (Block List, Max: 1) Authenticate to Splunk using bearer token. (see [below for nested schema](#nestedblock--bearer_token))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `hec_token` (Block List, Max: 1) Authenticate to Splunk using HEC (HTTP Event Collector) token. (see [below for nested schema](#nestedblock--hec_token))
+- `no_authentication` (Block List, Max: 1) No authentication required for Splunk. (see [below for nested schema](#nestedblock--no_authentication))
 - `org_id` (String) Unique identifier of the organization.
+- `password_ref` (String, Deprecated) The reference to the Harness secret containing the Splunk password. Deprecated: Use 'username_password' block instead. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
+- `username` (String, Deprecated) The username used for connecting to Splunk. Deprecated: Use 'username_password' block instead.
+- `username_password` (Block List, Max: 1) Authenticate to Splunk using username and password. (see [below for nested schema](#nestedblock--username_password))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--bearer_token"></a>
+### Nested Schema for `bearer_token`
+
+Required:
+
+- `bearer_token_ref` (String) Reference to the Harness secret containing the Splunk bearer token. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+
+<a id="nestedblock--hec_token"></a>
+### Nested Schema for `hec_token`
+
+Required:
+
+- `hec_token_ref` (String) Reference to the Harness secret containing the Splunk HEC token. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+
+<a id="nestedblock--no_authentication"></a>
+### Nested Schema for `no_authentication`
+
+
+<a id="nestedblock--username_password"></a>
+### Nested Schema for `username_password`
+
+Required:
+
+- `password_ref` (String) Reference to a secret containing the password to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `username` (String) Username to use for authentication.
 
 ## Import
 

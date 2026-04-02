@@ -38,20 +38,18 @@ data "harness_autostopping_rule_vm" "example" {
 
 ### Read-Only
 
+- `connect` (Map of Number) Connection information (source ports on the proxy). Keys: "ssh" and "rdp" for SSH/RDP; other keys are target port as string (e.g. "80") for forward_rule, value is the proxy source port.
 - `id` (String) The ID of this resource.
-- `identifier` (Number) Unique identifier of the resource
+- `identifier` (String) Unique identifier of the resource
 
 <a id="nestedblock--filter"></a>
 ### Nested Schema for `filter`
-
-Required:
-
-- `vm_ids` (List of String) Ids of instances that needs to be managed using the AutoStopping rules
 
 Optional:
 
 - `regions` (List of String) Regions of instances that needs to be managed using the AutoStopping rules
 - `tags` (Block List) Tags of instances that needs to be managed using the AutoStopping rules (see [below for nested schema](#nestedblock--filter--tags))
+- `vm_ids` (List of String) Ids of instances that needs to be managed using the AutoStopping rules
 - `zones` (List of String) Zones of instances that needs to be managed using the AutoStopping rules
 
 <a id="nestedblock--filter--tags"></a>
@@ -114,7 +112,8 @@ Required:
 
 Optional:
 
-- `action` (String) Organization Identifier for the Entity
+- `action` (String) Action to take for the routing rule
+- `path` (String) Path to use for the proxy
 - `source_port` (Number) Port on the proxy
 - `target_port` (Number) Port on the VM
 

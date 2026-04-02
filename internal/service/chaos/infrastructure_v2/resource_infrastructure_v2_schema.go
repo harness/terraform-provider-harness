@@ -71,6 +71,7 @@ func resourceChaosInfrastructureV2Schema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Optional:     true,
 			Computed:     true,
+			ForceNew:     true, // Cannot be changed after creation
 			ValidateFunc: validation.StringInSlice([]string{"NAMESPACE", "CLUSTER"}, true),
 			StateFunc: func(val interface{}) string {
 				return strings.ToUpper(val.(string))

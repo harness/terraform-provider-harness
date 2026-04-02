@@ -2,18 +2,18 @@ package load_balancer_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/nextgen"
-	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestResourceAzureProxy(t *testing.T) {
-	name := utils.RandStringBytes(5)
-	hostName := fmt.Sprintf("ab%s.com", name)
+	apiKey := os.Getenv(platformAPIKeyEnv)
+
+	name := fmt.Sprintf("terr-az-proxy%s", randAlnum(5))
 	resourceName := "harness_autostopping_azure_proxy.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -22,24 +22,22 @@ func TestResourceAzureProxy(t *testing.T) {
 		//		CheckDestroy:      testAzureProxyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAzureProxy(name, hostName),
+				Config: testAzureProxy(name, apiKey),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "host_name", hostName),
 				),
 			},
 			{
-				Config: testAzureProxyUpdate(name, hostName),
+				Config: testAzureProxyUpdate(name, apiKey),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "host_name", hostName),
 				),
 			},
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"api_key"},
+				ImportStateVerifyIgnore: []string{"api_key", "allocate_static_ip", "delete_cloud_resources_on_destroy", "keypair", "machine_type", "resource_group", "subnet_id"},
 			},
 		},
 	})
@@ -55,30 +53,11 @@ func testAzureProxyDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testGetLoadBalancer(resourceName string, state *terraform.State) (*nextgen.AccessPoint, error) {
-	r := acctest.TestAccGetResource(resourceName, state)
-	c, ctx := acctest.TestAccGetPlatformClientWithContext()
-	id := r.Primary.ID
-
-	resp, _, err := c.CloudCostAutoStoppingLoadBalancersApi.DescribeLoadBalancer(ctx, c.AccountId, id, c.AccountId)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.Response == nil {
-		return nil, nil
-	}
-
-	return resp.Response, nil
-}
-
-func testAzureProxy(name string, hostName string) string {
+func testAzureProxy(name, apiKey string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_azure_proxy" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "cloud_connector_id"
-			host_name = "%[2]s"
+			cloud_connector_id = "doNotDeleteAzureConnector"
 			region             = "eastus2"
 			resource_group     = "resource_group"
 			vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
@@ -87,18 +66,17 @@ func testAzureProxy(name string, hostName string) string {
 			allocate_static_ip = true
             machine_type = "Standard_D2s_v3"
 			keypair = "PLACE_HOLDER_VALUE"
-            api_key = "PLACE_HOLDER_VALUE"
+            api_key = %q
 			delete_cloud_resources_on_destroy = true
 		}
-`, name, hostName)
+`, name, apiKey)
 }
 
-func testAzureProxyUpdate(name string, hostName string) string {
+func testAzureProxyUpdate(name, apiKey string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_azure_proxy" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "cloud_connector_id"
-			host_name = "%[2]s"
+			cloud_connector_id = "doNotDeleteAzureConnector"
 			region             = "eastus2"
 			resource_group     = "resource_group"
 			vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
@@ -107,8 +85,8 @@ func testAzureProxyUpdate(name string, hostName string) string {
 			allocate_static_ip = true
             machine_type = "Standard_D2s_v3"
 			keypair = "PLACE_HOLDER_VALUE"
-            api_key = "PLACE_HOLDER_VALUE"
+            api_key = %q
 			delete_cloud_resources_on_destroy = false
 		}
-`, name, hostName)
+`, name, apiKey)
 }

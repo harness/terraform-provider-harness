@@ -2,6 +2,7 @@ package cluster_orchestrator
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -410,7 +411,7 @@ func resourceClusterOrchestratorConfigCreateOrUpdate(ctx context.Context, d *sch
 	}
 
 	if !resp.Success {
-		return diag.Errorf(strings.Join(resp.Errors, ","))
+		return diag.Errorf("%s", fmt.Sprintf("update failed: %s", strings.Join(resp.Errors, ",")))
 	}
 
 	disabled := d.Get("disabled").(bool)

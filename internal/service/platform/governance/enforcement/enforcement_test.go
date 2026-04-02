@@ -65,11 +65,18 @@ func TestAccResourceRuleEnforcement(t *testing.T) {
 
 func testAccResourceRuleEnforcement(name, awsAccountId string) string {
 	return fmt.Sprintf(`
+		resource "harness_governance_rule" "rule" {
+			name           = "%[1]s_rule"
+			cloud_provider = "AWS"
+			description    = "Dummy"
+			rules_yaml     = "policies:\n  - name: aws-list-ec2\n    resource: aws.ec2"
+		}
+
 		resource "harness_governance_rule_enforcement" "test" {
 			name               = "%[1]s"
 			cloud_provider     = "AWS"
-			rule_ids          = ["YW-qYiJRSaO3Fqei2EqqRQ"]
-			rule_set_ids      = []
+			rule_ids           = [harness_governance_rule.rule.rule_id]
+			rule_set_ids       = []
 			execution_schedule = "0 0 * * * *"
 			execution_timezone = "UTC"
 			is_enabled         = true

@@ -19,11 +19,6 @@ func DataSourceGCPProxy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"host_name": {
-				Description: "Hostname for the proxy",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"cloud_connector_id": {
 				Description: "Id of the cloud connector",
 				Type:        schema.TypeString,
@@ -97,6 +92,16 @@ func DataSourceGCPProxy() *schema.Resource {
 				Description: "Governs how the proxy entity will be deleted on Terraform destroy. When set to true, the associated VM will be deleted permanently from GCP account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, which leaves the proxy VM in GCP account itself.",
 				Type:        schema.TypeBool,
 				Required:    true,
+			},
+			"private_ip": {
+				Description: "Private IP address of the proxy",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"public_ip": {
+				Description: "Public IP address of the proxy",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 		},
 	}

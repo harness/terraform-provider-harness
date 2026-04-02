@@ -34,13 +34,13 @@ func TestAccResourceConnectorAzureCloudCost(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.directory_name", "directory_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.report_name", "report_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.subscription_id", "subscription_id"),
-					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.billing_type", "billing_type"),
+					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.billing_type", "ACTUAL"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.storage_account_name", "storage_account_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.container_name", "container_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.directory_name", "directory_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.report_name", "report_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.subscription_id", "subscription_id"),
-					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.billing_type", "billing_type"),
+					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.billing_type", "AMORTIZED"),
 				),
 			},
 			{
@@ -58,13 +58,13 @@ func TestAccResourceConnectorAzureCloudCost(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.directory_name", "directory_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.report_name", "report_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.subscription_id", "subscription_id"),
-					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.billing_type", "billing_type"),
+					resource.TestCheckResourceAttr(resourceName, "billing_export_spec.0.billing_type", "ACTUAL"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.storage_account_name", "storage_account_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.container_name", "container_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.directory_name", "directory_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.report_name", "report_name"),
 					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.subscription_id", "subscription_id"),
-					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.billing_type", "billing_type"),
+					resource.TestCheckResourceAttr(resourceName, "billing_export_spec2.0.billing_type", "AMORTIZED"),
 				),
 			},
 			{
@@ -93,7 +93,7 @@ func testAccResourceConnectorAzureCloudCost(id string, name string) string {
 				directory_name = "directory_name"
 				report_name = "report_name"
 				subscription_id = "subscription_id"
-				billing_type = "billing_type"
+				billing_type = "ACTUAL"
 			}
 			billing_export_spec2 {
 				storage_account_name = "storage_account_name"
@@ -101,7 +101,7 @@ func testAccResourceConnectorAzureCloudCost(id string, name string) string {
 				directory_name = "directory_name"
 				report_name = "report_name"
 				subscription_id = "subscription_id"
-				billing_type = "billing_type"
+				billing_type = "AMORTIZED"
 			}
 		}
 `, id, name)

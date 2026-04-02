@@ -3,6 +3,7 @@ package acctest
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 
@@ -356,6 +357,24 @@ func GitopsWebhookImportStateIdFunc(resourceName string) resource.ImportStateIdF
 		orgId := primary.Attributes["org_id"]
 		projId := primary.Attributes["project_id"]
 		return fmt.Sprintf("%s/%s/%s", webhook_identifier, orgId, projId), nil
+	}
+}
+
+// ChaosTemplateImportStateIdFunc strips account_id from chaos template resource IDs
+// Converts: account_id/org_id/project_id/hub_identity/identity (5 parts)
+// To: org_id/project_id/hub_identity/identity (4 parts)
+func ChaosTemplateImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		// Split the 5-part ID and remove account_id
+		parts := strings.Split(id, "/")
+		if len(parts) == 5 {
+			// Return without account_id: org_id/project_id/hub_identity/identity
+			return fmt.Sprintf("%s/%s/%s/%s", parts[1], parts[2], parts[3], parts[4]), nil
+		}
+		// If not 5 parts, return as-is
+		return id, nil
 	}
 }
 

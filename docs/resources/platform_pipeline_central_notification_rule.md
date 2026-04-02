@@ -89,16 +89,16 @@ resource "harness_platform_pipeline_central_notification_rule" "accountExample" 
 ### Required
 
 - `identifier` (String)
+- `name` (String)
 - `notification_channel_refs` (List of String)
 - `notification_conditions` (Block List, Min: 1) (see [below for nested schema](#nestedblock--notification_conditions))
 
 ### Optional
 
 - `custom_notification_template_ref` (Block List, Max: 1) (see [below for nested schema](#nestedblock--custom_notification_template_ref))
-- `name` (String)
 - `org` (String)
 - `project` (String)
-- `status` (String) Status of the notification rule. Supported values: `ENABLED`, `DISABLED`. Default: `ENABLED`.
+- `status` (String)
 
 ### Read-Only
 

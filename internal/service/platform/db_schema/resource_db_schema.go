@@ -44,6 +44,12 @@ func ResourceDBSchema() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{string(dbops.LIQUIBASE_MigrationType), string(dbops.FLYWAY_MigrationType)}, false),
 				Optional:     true,
 			},
+			"use_percona": {
+				Description: "If percona-toolkit is to be enabled for the database schema",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
 			"schema_source": {
 				Description:   "Provides a connector and path at which to find the database schema representation",
 				Type:          schema.TypeList,
@@ -206,6 +212,10 @@ func buildDbSchema(d *schema.ResourceData) *dbops.DbSchemaIn {
 		schemaIn.MigrationType = &migrationType
 	}
 
+	if v, ok := d.GetOk("use_percona"); ok {
+		schemaIn.UsePercona = v.(bool)
+	}
+
 	if _, ok := d.GetOk("changelog_script"); ok {
 		changelogScript := &dbops.ChangeLogScript{
 			Image:    d.Get("changelog_script.0.image").(string),
@@ -249,6 +259,8 @@ func readDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut) {
 	} else {
 		d.Set("migration_type", nil)
 	}
+
+	d.Set("use_percona", dbSchema.UsePercona)
 
 	if dbSchema.Changelog != nil {
 		d.Set("schema_source.0.location", dbSchema.Changelog.Location)

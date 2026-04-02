@@ -36,14 +36,17 @@ data "harness_platform_infra_module" "test" {
 - `description` (String) Description of the module
 - `git_tag_style` (String) Git Tag Style
 - `module_error` (String) Error while retrieving the module
-- `org` (String) Organization that owns the module
-- `project` (String) Project that owns the module
-- `repository` (String) For account connectors, the repository where the module is stored
+- `onboarding_pipeline` (String) Onboarding Pipeline identifier.
+- `onboarding_pipeline_org` (String) Onboarding Pipeline organization.
+- `onboarding_pipeline_project` (String) Onboarding Pipeline project.
+- `onboarding_pipeline_sync` (Boolean) Sync the project automatically.
+- `repository` (String) For account connectors, the repository name where the module is stored.
 - `repository_branch` (String) Repository Branch in which the module should be accessed
 - `repository_commit` (String) Repository Commit in which the module should be accessed
 - `repository_connector` (String) Repository Connector is the reference to the connector for the repository
 - `repository_path` (String) Repository Path is the path in which the module resides
 - `repository_url` (String) URL where the module is stored
+- `storage_type` (String) How to store the artifact.
 - `synced` (Number) Timestamp when the module was last synced
 - `tags` (String) Tags associated with the module
 - `testing_enabled` (Boolean) Whether testing is enabled for the module
@@ -51,15 +54,18 @@ data "harness_platform_infra_module" "test" {
 - `updated` (Number) Timestamp when the module was last modified
 - `versions` (List of String) Versions of the module
 
+### Read-Only
+
+- `connector_org` (String) Repository connector orgoanization
+- `connector_project` (String) Repository connector project
+
 <a id="nestedblock--testing_metadata"></a>
 ### Nested Schema for `testing_metadata`
 
 Optional:
 
 - `account` (String) Account is the internal customer account ID
-- `org` (String) Organization identifier
 - `pipelines` (List of String) Pipelines where the testing is enabled
-- `project` (String) Project identifier
 - `provider_connector` (String) Provider connector for testing purposes
 - `provisioner_type` (String) Provisioner type for testing purposes
 - `provisioner_version` (String) Provisioner version for testing purposes

@@ -423,7 +423,11 @@ func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.Res
 				eventData := make(map[string]interface{})
 
 				eventData["type"] = string(*cfg.PipelineEventNotificationParamsDto.Type_)
-				eventData["scope_identifiers"] = cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers
+				scopeIdentifiers := cfg.PipelineEventNotificationParamsDto.ScopeIdentifiers
+				if scopeIdentifiers == nil {
+					scopeIdentifiers = []string{}
+				}
+				eventData["scope_identifiers"] = scopeIdentifiers
 				eventDataList = []interface{}{eventData}
 			} else {
 				// When notification_event_data is null, create default structure with PIPELINE type
@@ -433,10 +437,14 @@ func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.Res
 				eventDataList = []interface{}{eventData}
 			}
 
+			entityIdentifiers := cfg.EntityIdentifiers
+			if entityIdentifiers == nil {
+				entityIdentifiers = []string{}
+			}
 			eventConfigs = append(eventConfigs, map[string]interface{}{
 				"notification_entity":     cfg.NotificationEntity,
 				"notification_event":      cfg.NotificationEvent,
-				"entity_identifiers":      cfg.EntityIdentifiers,
+				"entity_identifiers":      entityIdentifiers,
 				"notification_event_data": eventDataList,
 			})
 		}

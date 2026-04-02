@@ -56,7 +56,7 @@ func resourceInfrastructureV2Create(ctx context.Context, d *schema.ResourceData,
 		},
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
 
 	// Set the ID
@@ -101,11 +101,12 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 		environmentID,
 	)
 	if err != nil {
-		if httpResp != nil && httpResp.StatusCode == 404 {
-			d.SetId("")
-			return nil
-		}
-		return helpers.HandleApiError(err, d, httpResp)
+		// Use graceful destroy handling for infrastructure read errors
+		// This handles 404 and certain 500 errors (resource not found/inconsistent state)
+		return helpers.HandleChaosReadApiErrorWithGracefulDestroy(err, d, httpResp, []string{
+			"no matching infra",
+			"not a k8s infra",
+		})
 	}
 
 	// Check if infra.Identifier is nil
@@ -155,6 +156,39 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 	}
 	if err := d.Set("environment_id", environmentID); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set environment_id: %v", err))
+	}
+
+	// Set optional fields that may be returned by the API
+	if infra.InfraScope != nil {
+		if err := d.Set("infra_scope", string(*infra.InfraScope)); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set infra_scope: %v", err))
+		}
+	}
+	if err := d.Set("ai_enabled", infra.IsAIEnabled); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set ai_enabled: %v", err))
+	}
+	if err := d.Set("insecure_skip_verify", infra.InsecureSkipVerify); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set insecure_skip_verify: %v", err))
+	}
+	if infra.InfraNamespace != "" {
+		if err := d.Set("namespace", infra.InfraNamespace); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set namespace: %v", err))
+		}
+	}
+	if infra.RunAsUser != 0 {
+		if err := d.Set("run_as_user", int(infra.RunAsUser)); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set run_as_user: %v", err))
+		}
+	}
+	if infra.RunAsGroup != 0 {
+		if err := d.Set("run_as_group", int(infra.RunAsGroup)); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set run_as_group: %v", err))
+		}
+	}
+	if infra.Tags != nil && len(infra.Tags) > 0 {
+		if err := d.Set("tags", infra.Tags); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set tags: %v", err))
+		}
 	}
 
 	// Set maps
@@ -251,7 +285,7 @@ func resourceInfrastructureV2Update(ctx context.Context, d *schema.ResourceData,
 		},
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
 
 	return resourceInfrastructureV2Read(ctx, d, meta)
@@ -280,7 +314,20 @@ func resourceInfrastructureV2Delete(ctx context.Context, d *schema.ResourceData,
 		projectID,
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		// Use graceful destroy handling for infrastructure delete errors
+		// This handles 404 and certain 500 errors (resource not found/inconsistent state)
+		diags := helpers.HandleChaosReadApiErrorWithGracefulDestroy(err, d, httpResp, []string{
+			"no matching infra",
+			"not a k8s infra",
+			"failed to delete infra",
+		})
+		// If the helper cleared the state (SetId("")), we're done
+		if d.Id() == "" {
+			log.Printf("[DEBUG] Infrastructure delete handled gracefully: %s", infraID)
+			return diags
+		}
+		// Otherwise, it's a real error
+		return diags
 	}
 
 	d.SetId("")
@@ -630,10 +677,13 @@ func buildUpdateInfrastructureV2Request(d *schema.ResourceData, accountID string
 	}
 
 	// Set nested objects
-	log.Printf("[DEBUG] buildUpdateInfrastructureV2Request image_registry: %+v",
-		d.Get("image_registry"))
-	if v, ok := d.GetOk("image_registry"); ok {
-		req.ImageRegistry = expandImageRegistry(v.([]interface{}), d, accountID)
+	// Only send image_registry if it has changed
+	if d.HasChange("image_registry") {
+		log.Printf("[DEBUG] buildUpdateInfrastructureV2Request image_registry changed: %+v",
+			d.Get("image_registry"))
+		if v, ok := d.GetOk("image_registry"); ok {
+			req.ImageRegistry = expandImageRegistry(v.([]interface{}), d, accountID)
+		}
 	}
 	if v, ok := d.GetOk("mtls"); ok {
 		req.Mtls = expandMtls(v.([]interface{}))

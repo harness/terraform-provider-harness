@@ -21,7 +21,7 @@ func ResourceVMRule() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"identifier": {
 				Description: "Unique identifier of the resource",
-				Type:        schema.TypeFloat,
+				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"name": {
@@ -67,17 +67,19 @@ func ResourceVMRule() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"vm_ids": {
-							Description: "Ids of instances that needs to be managed using the AutoStopping rules",
-							Type:        schema.TypeList,
-							Required:    true,
+							Description:  "Ids of instances that needs to be managed using the AutoStopping rules",
+							Type:         schema.TypeList,
+							Optional:     true,
+							AtLeastOneOf: []string{"filter.0.vm_ids", "filter.0.tags"},
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
 						},
 						"tags": {
-							Description: "Tags of instances that needs to be managed using the AutoStopping rules",
-							Type:        schema.TypeList,
-							Optional:    true,
+							Description:  "Tags of instances that needs to be managed using the AutoStopping rules",
+							Type:         schema.TypeList,
+							Optional:     true,
+							AtLeastOneOf: []string{"filter.0.vm_ids", "filter.0.tags"},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"key": {
@@ -149,7 +151,12 @@ func ResourceVMRule() *schema.Resource {
 										Optional:    true,
 									},
 									"action": {
-										Description: "Organization Identifier for the Entity",
+										Description: "Action to take for the routing rule",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"path": {
+										Description: "Path to use for the proxy",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -290,6 +297,12 @@ func ResourceVMRule() *schema.Resource {
 						},
 					},
 				},
+			},
+			"connect": {
+				Description: "Connection information (source ports on the proxy). Keys: \"ssh\" and \"rdp\" for SSH/RDP; other keys are target port as string (e.g. \"80\") for forward_rule, value is the proxy source port.",
+				Type:        schema.TypeMap,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeInt},
 			},
 		},
 	}

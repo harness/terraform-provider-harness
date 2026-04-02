@@ -8,6 +8,7 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/har"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -25,7 +26,153 @@ func ResourceRegistry() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceRegistryImport,
 		},
+		CustomizeDiff: resourceRegistryCustomizeDiff,
 	}
+}
+
+func isHarnessSecretManager(secretMgrId string) bool {
+	return secretMgrId == "harnessSecretManager" ||
+		secretMgrId == "account.harnessSecretManager" ||
+		secretMgrId == "org.harnessSecretManager" ||
+		secretMgrId == "project.harnessSecretManager"
+}
+
+func validateUpstreamRegistrySecrets(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	if configType, _ := d.Get("config.0.type").(string); configType != "UPSTREAM" {
+		return nil
+	}
+
+	auth, ok := d.GetOk("config.0.auth")
+	if !ok {
+		return nil
+	}
+
+	authList, ok := auth.([]interface{})
+	if !ok || len(authList) == 0 {
+		return nil
+	}
+	authConfig, ok := authList[0].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+	authType, _ := authConfig["auth_type"].(string)
+	if authType == "Anonymous" {
+		return nil
+	}
+
+	session := meta.(*internal.Session)
+	platformClient, ctx := session.GetPlatformClientWithContext(ctx)
+
+	// Parse space_ref for org/project scope
+	var orgId, projectId string
+	if parts := strings.Split(d.Get("space_ref").(string), "/"); len(parts) >= 3 {
+		orgId = parts[1]
+		projectId = parts[2]
+	} else if len(parts) >= 2 {
+		orgId = parts[1]
+	}
+
+	// Collect secrets to validate
+	var secretsToValidate []string
+	if authType == "UserPassword" {
+		if secretId, ok := authConfig["secret_identifier"].(string); ok && secretId != "" {
+			secretsToValidate = append(secretsToValidate, secretId)
+		}
+	} else if authType == "AccessKeySecretKey" {
+		if accessKeyId, ok := authConfig["access_key_identifier"].(string); ok && accessKeyId != "" {
+			secretsToValidate = append(secretsToValidate, accessKeyId)
+		}
+		if secretKeyId, ok := authConfig["secret_key_identifier"].(string); ok && secretKeyId != "" {
+			secretsToValidate = append(secretsToValidate, secretKeyId)
+		}
+	}
+
+	// Validate each secret
+	for _, secretId := range secretsToValidate {
+		opts := &nextgen.SecretsApiGetSecretV2Opts{}
+		if orgId != "" {
+			opts.OrgIdentifier = optional.NewString(orgId)
+		}
+		if projectId != "" {
+			opts.ProjectIdentifier = optional.NewString(projectId)
+		}
+
+		resp, _, err := platformClient.SecretsApi.GetSecretV2(ctx, secretId, platformClient.AccountId, opts)
+		if err != nil {
+			return fmt.Errorf("failed to validate secret '%s': %v", secretId, err)
+		}
+
+		var secretMgrId string
+		if resp.Data != nil && resp.Data.Secret != nil {
+			if resp.Data.Secret.Text != nil {
+				secretMgrId = resp.Data.Secret.Text.SecretManagerIdentifier
+			} else if resp.Data.Secret.File != nil {
+				secretMgrId = resp.Data.Secret.File.SecretManagerIdentifier
+			}
+		}
+
+		if !isHarnessSecretManager(secretMgrId) {
+			return fmt.Errorf("secret '%s' uses secret manager '%s', but upstream registry authentication requires secrets to be stored in Harness Secret Manager", secretId, secretMgrId)
+		}
+	}
+
+	return nil
+}
+
+func resourceRegistryCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, i interface{}) error {
+	configType, _ := d.Get("config.0.type").(string)
+	packageType, _ := d.Get("package_type").(string)
+
+	if configType == "UPSTREAM" {
+		// Source is required for UPSTREAM
+		if source, ok := d.GetOk("config.0.source"); !ok || source.(string) == "" {
+			return fmt.Errorf("'source' is required for UPSTREAM registry type")
+		}
+
+		// URL is required for HELM package type
+		if packageType == "HELM" {
+			if url, ok := d.GetOk("config.0.url"); !ok || url.(string) == "" {
+				return fmt.Errorf("'url' is required for UPSTREAM registry type with HELM package type")
+			}
+		}
+
+		// Authentication is required for UPSTREAM registry type
+		hasAuth := false
+		if _, ok := d.GetOk("config.0.auth"); ok {
+			hasAuth = true
+		}
+		if _, ok := d.GetOk("config.0.auth_type"); ok {
+			hasAuth = true
+		}
+		if !hasAuth {
+			return fmt.Errorf("authentication is required for UPSTREAM registry type. Provide either 'config.auth_type' field or 'config.auth' block with authentication details")
+		}
+
+		// Validate auth configuration
+		if auth, ok := d.GetOk("config.0.auth"); ok {
+			authConfig := auth.([]interface{})[0].(map[string]interface{})
+			authType := authConfig["auth_type"].(string)
+
+			if authType == "UserPassword" {
+				// Check required fields for UserPassword auth
+				if userName, ok := authConfig["user_name"].(string); !ok || userName == "" {
+					return fmt.Errorf("'user_name' is required for UserPassword authentication")
+				}
+				if secretId, ok := authConfig["secret_identifier"].(string); !ok || secretId == "" {
+					return fmt.Errorf("'secret_identifier' is required for UserPassword authentication")
+				}
+			}
+
+			if authType == "AccessKeySecretKey" {
+				// Check required fields for AccessKeySecretKey auth
+				if secretKeyId, ok := authConfig["secret_key_identifier"].(string); !ok || secretKeyId == "" {
+					return fmt.Errorf("'secret_key_identifier' is required for AccessKeySecretKey authentication")
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -46,6 +193,11 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	c, ctx := meta.(*internal.Session).GetHarClientWithContext(ctx)
 	if c == nil {
 		return diag.Errorf("Harness client is not initialized. Check provider configuration.")
+	}
+
+	// Validate secrets are from Harness Secret Manager for upstream registries
+	if err := validateUpstreamRegistrySecrets(ctx, d, meta); err != nil {
+		return diag.FromErr(err)
 	}
 
 	var err error

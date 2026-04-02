@@ -29,11 +29,6 @@ func ResourceAwsALB() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"host_name": {
-				Description: "Hostname for the proxy",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"cloud_connector_id": {
 				Description: "Id of the cloud connector",
 				Type:        schema.TypeString,
@@ -62,15 +57,11 @@ func ResourceAwsALB() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"route53_hosted_zone_id": {
-				Description: "Route 53 hosted zone id",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"alb_arn": {
 				Description: "Arn of AWS ALB to be imported. Required only for importing existing ALB",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"delete_cloud_resources_on_destroy": {
 				Description: "Governs how the loadabalancer entity will be deleted on Terraform destroy. When set to true, the associated ALB will be deleted permanently from AWS account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, leaving the cloud resources intact.",

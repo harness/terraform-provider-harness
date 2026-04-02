@@ -29,6 +29,7 @@ func ResourceGitopsRepoCred() *schema.Resource {
 				Description: "Identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the Repository Credentials.",

@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/harness_platform_db_schema: Added use_percona field to enable/disable percona-toolkit for database schema operations.
+data-source/harness_platform_db_schema: Added use_percona field.
+```

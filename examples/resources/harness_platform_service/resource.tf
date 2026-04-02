@@ -76,3 +76,61 @@ resource "harness_platform_service" "test" {
   }
 }
 
+
+### Google Managed Instance Group Service Example
+resource "harness_platform_service" "google_mig_service" {
+  identifier  = "google_mig_svc"
+  name        = "Google MIG Service"
+  description = "Service for Google Managed Instance Group deployments"
+  org_id      = "default"
+  project_id  = "my_project"
+
+  yaml = <<-EOT
+    service:
+      name: Google MIG Service
+      identifier: google_mig_svc
+      description: Service for Google Managed Instance Group deployments
+      serviceDefinition:
+        type: GoogleManagedInstanceGroup
+        spec:
+          manifests:
+            - manifest:
+                identifier: instanceTemplate
+                type: GoogleMigInstanceTemplate
+                spec:
+                  store:
+                    type: Github
+                    spec:
+                      connectorRef: account.github
+                      repoName: my-repo
+                      branch: main
+                      paths:
+                        - templates/instance-template.json
+            - manifest:
+                identifier: migConfig
+                type: GoogleMigConfiguration
+                spec:
+                  store:
+                    type: Github
+                    spec:
+                      connectorRef: account.github
+                      repoName: my-repo
+                      branch: main
+                      paths:
+                        - templates/mig-config.json
+          artifacts:
+            primary:
+              primaryArtifactRef: <+input>
+              sources:
+                - identifier: gceImage
+                  type: GceImage
+                  spec:
+                    connectorRef: account.gcpConnector
+                    project: my-gcp-project
+          variables:
+            - name: targetSize
+              type: Number
+              value: 2
+      gitOpsEnabled: false
+  EOT
+}

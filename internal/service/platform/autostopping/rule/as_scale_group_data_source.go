@@ -13,7 +13,7 @@ func DataSourceScaleGroupRule() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"identifier": {
 				Description: "Unique identifier of the resource",
-				Type:        schema.TypeFloat,
+				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"name": {
@@ -135,7 +135,12 @@ func DataSourceScaleGroupRule() *schema.Resource {
 										Optional:    true,
 									},
 									"action": {
-										Description: "Organization Identifier for the Entity",
+										Description: "Action to take for the routing rule",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"path": {
+										Description: "Path to use for the proxy",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},

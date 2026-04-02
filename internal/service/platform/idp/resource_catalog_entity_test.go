@@ -48,6 +48,138 @@ func TestAccResourceCatalogEntity(t *testing.T) {
 	})
 }
 
+func testAccResourceCatalogEntity(id string, description string) string {
+	str := fmt.Sprintf(`
+		resource "harness_platform_idp_catalog_entity" "test" {
+			identifier = "%[1]s"
+			kind = "component"
+			yaml = <<-EOT
+	        apiVersion: harness.io/v1
+	        kind: Component
+	        name: Example Catalog
+	        identifier: "%[1]s"
+	        type: service
+	        owner: user:account/admin@harness.io
+	        spec:
+	            lifecycle: prod
+	        metadata:
+	            tags:
+		            - test
+	            description: "%[2]s"
+	        EOT
+		}
+	`, id, description)
+
+	return str
+}
+
+func TestAccResourceRemoteCatalogEntity(t *testing.T) {
+	description := t.Name()
+	id := fmt.Sprintf("%s_%s", description, utils.RandStringBytes(5))
+	resourceName := "harness_platform_idp_catalog_entity.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccCatalogEntityDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceRemoteCatalogEntity(id, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					testAccEntityCheckYamlField(resourceName, "metadata.description", description),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: testAccCatalogEntityImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func testAccResourceRemoteCatalogEntity(id string, description string) string {
+	str := fmt.Sprintf(`
+		resource "harness_platform_idp_catalog_entity" "test" {
+			identifier = "%[1]s"
+			org_id = "default"
+			project_id = "ssem"
+			kind = "component"
+			git_details {
+		    store_type = "REMOTE"
+			connector_ref = "demossem"
+			repo_name = "catalog"
+			branch_name = "main"
+			file_path = "gitimport/%[1]s.yaml"
+			}
+			yaml = <<-EOT
+	        apiVersion: harness.io/v1
+	        kind: Component
+	        orgIdentifier: default
+	        projectIdentifier: ssem
+	        name: Example Catalog
+	        identifier: "%[1]s"
+	        type: service
+	        owner: user:account/admin@harness.io
+	        spec:
+	            lifecycle: prod
+	        metadata:
+	            tags:
+		            - test
+	            description: "%[2]s"
+	        EOT
+		}
+	`, id, description)
+
+	return str
+}
+
+func TestAccResourceImportRemoteCatalogEntity(t *testing.T) {
+
+	resourceName := "harness_platform_idp_catalog_entity.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccCatalogEntityDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceImportRemoteCatalogEntity(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "test_import"),
+					testAccEntityCheckYamlField(resourceName, "kind", "Component"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: testAccCatalogEntityImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func testAccResourceImportRemoteCatalogEntity() string {
+	str := `
+		resource "harness_platform_idp_catalog_entity" "test" {
+			identifier = "test_import"
+			org_id = "default"
+			project_id = "ssem"
+			import_from_git = true
+			git_details {
+		    store_type = "REMOTE"
+			connector_ref = "demossem"
+			repo_name = "catalog"
+			branch_name = "main"
+			file_path = "gitimport/test_import.yaml"
+			}
+		}
+	`
+
+	return str
+}
+
 func testAccGetCatalogEntity(resourceName string, state *terraform.State) (*idp.EntityResponse, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetIDPClientWithContext()
@@ -126,31 +258,6 @@ func testAccEntityCheckYamlField(resourceName, key, value string) resource.TestC
 	}
 }
 
-func testAccResourceCatalogEntity(id string, description string) string {
-	str := fmt.Sprintf(`
-		resource "harness_platform_idp_catalog_entity" "test" {
-			identifier = "%[1]s"
-			kind = "component"
-			yaml = <<-EOT
-	        apiVersion: harness.io/v1
-	        kind: Component
-	        name: Example Catalog
-	        identifier: "%[1]s"
-	        type: service
-	        owner: user:account/admin@harness.io
-	        spec:
-	            lifecycle: prod
-	        metadata:
-	            tags:
-		            - test
-	            description: "%[2]s"
-	        EOT
-		}
-	`, id, description)
-
-	return str
-}
-
 type catalogEntityInfo struct {
 	Scope      string
 	Kind       string
@@ -204,7 +311,7 @@ func testAccCatalogEntityImportStateIdFunc(resourceName string) resource.ImportS
 			return fmt.Sprintf("%s/%s", info.Kind, info.Identifier), nil
 		}
 
-		scope, _ := strings.CutPrefix("account/", info.Scope)
+		scope, _ := strings.CutPrefix(info.Scope, "account.")
 
 		return fmt.Sprintf("%s/%s/%s", scope, info.Kind, info.Identifier), nil
 	}

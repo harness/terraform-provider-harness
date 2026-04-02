@@ -3,12 +3,16 @@ package project
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"strings"
+	"time"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -18,7 +22,10 @@ func ResourceProject() *schema.Resource {
 		ReadContext:   resourceProjectRead,
 		UpdateContext: resourceProjectUpdate,
 		DeleteContext: resourceProjectDelete,
-		Importer:      helpers.GitopsAgentProjectImporter,
+		Timeouts: &schema.ResourceTimeout{
+			Delete: schema.DefaultTimeout(10 * time.Minute),
+		},
+		Importer: helpers.GitopsAgentProjectImporter,
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
 				Description: "Agent identifier of the agent where argo project will exist (include scope prefix)",
@@ -673,15 +680,47 @@ func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, meta int
 		}
 	}
 
-	_, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceDelete(ctx, agentIdentifier, query_name, accountIdentifier, orgIdentifier, &nextgen.ProjectsApiAgentProjectServiceDeleteOpts{
-		ProjectIdentifier: optional.NewString(projectIdentifier),
+	var lastHTTPResp *http.Response
+	var lastErr error
+
+	err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
+		_, lastHTTPResp, lastErr = c.ProjectGitOpsApi.AgentProjectServiceDelete(ctx, agentIdentifier, query_name, accountIdentifier, orgIdentifier, &nextgen.ProjectsApiAgentProjectServiceDeleteOpts{
+			ProjectIdentifier: optional.NewString(projectIdentifier),
+		})
+
+		if lastErr != nil {
+			if isGitopsProjectReferencedByApplicationsError(lastErr) {
+				return resource.RetryableError(lastErr)
+			}
+			return resource.NonRetryableError(lastErr)
+		}
+
+		return nil
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, lastHTTPResp)
 	}
 
 	return nil
+}
+
+func isGitopsProjectReferencedByApplicationsError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	// GitOps APIs often return nextgen.GenericSwaggerError where the actual message is in the model.
+	// If we only match against err.Error(), we may miss retryable delete errors.
+	if swaggerErr, ok := err.(nextgen.GenericSwaggerError); ok {
+		if gitopsErr, ok := swaggerErr.Model().(nextgen.GatewayruntimeError); ok {
+			msg := strings.ToLower(gitopsErr.Message)
+			return strings.Contains(msg, "project is referenced by") && strings.Contains(msg, "application")
+		}
+	}
+
+	msg := strings.ToLower(err.Error())
+	return strings.Contains(msg, "project is referenced by") && strings.Contains(msg, "application")
 }
 
 // Function to map Terraform schema to internal data structure
@@ -1519,11 +1558,14 @@ func setProjectDetails(d *schema.ResourceData, account_id string, projects *next
 			spec["destinations"] = destinationList
 		}
 
-		orphanList := []interface{}{}
-		orphan := map[string]interface{}{}
-		orphan["warn"] = projects.Spec.OrphanedResources.Warn
-		orphanList = append(orphanList, orphan)
-		spec["orphaned_resources"] = orphanList
+		if projects.Spec.OrphanedResources != nil {
+			orphanList := []interface{}{}
+			orphan := map[string]interface{}{}
+			orphan["warn"] = projects.Spec.OrphanedResources.Warn
+			orphanList = append(orphanList, orphan)
+			spec["orphaned_resources"] = orphanList
+		}
+
 		// Convert 'namespace_resource_blacklist' field
 		if len(projects.Spec.NamespaceResourceBlacklist) > 0 {
 			nsResourceBlacklist := make([]interface{}, len(projects.Spec.NamespaceResourceBlacklist))

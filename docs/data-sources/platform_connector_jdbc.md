@@ -47,10 +47,22 @@ Read-Only:
 
 - `auth_type` (String)
 - `password_ref` (String)
+- `key_pair` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--key_pair))
 - `service_account` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--service_account))
 - `username` (String)
 - `username_password` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--username_password))
 - `username_ref` (String)
+
+<a id="nestedobjatt--credentials--key_pair"></a>
+### Nested Schema for `credentials.key_pair`
+
+Read-Only:
+
+- `username` (String)
+- `username_ref` (String)
+- `private_key_file_ref` (String)
+- `private_key_passphrase_ref` (String)
+
 
 <a id="nestedobjatt--credentials--service_account"></a>
 ### Nested Schema for `credentials.service_account`

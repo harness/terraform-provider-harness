@@ -1505,7 +1505,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template.
 
 Optional:
 
@@ -3136,7 +3136,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template.
 
 Optional:
 
@@ -4765,7 +4765,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template.
 
 Optional:
 
@@ -5811,8 +5811,18 @@ Optional:
 
 - `all_branches` (Boolean) If true, scan every branch of every repository. If false, scan only the default branch.
 - `api` (String) The Gitlab API URL to talk to.
+- `ca_ref` (Block List, Max: 1) Reference to a ConfigMap containing a CA certificate for self-signed GitLab instances. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--gitlab--ca_ref))
 - `include_subgroups` (Boolean) Recurse through subgroups (true) or scan only the base group (false). Defaults to `false`.
 - `token_ref` (Block List, Max: 1) Authentication token reference. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--gitlab--token_ref))
+
+<a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--gitlab--ca_ref"></a>
+### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.scm_provider.gitlab.ca_ref`
+
+Required:
+
+- `config_map_name` (String) Name of Kubernetes `ConfigMap`.
+- `key` (String) Key containing information in Kubernetes `ConfigMap`.
+
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--gitlab--token_ref"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.matrix.generator.scm_provider.gitlab.token_ref`
@@ -7842,7 +7852,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template.
 
 Optional:
 
@@ -8888,8 +8898,18 @@ Optional:
 
 - `all_branches` (Boolean) If true, scan every branch of every repository. If false, scan only the default branch.
 - `api` (String) The Gitlab API URL to talk to.
+- `ca_ref` (Block List, Max: 1) Reference to a ConfigMap containing a CA certificate for self-signed GitLab instances. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--gitlab--ca_ref))
 - `include_subgroups` (Boolean) Recurse through subgroups (true) or scan only the base group (false). Defaults to `false`.
 - `token_ref` (Block List, Max: 1) Authentication token reference. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--gitlab--token_ref))
+
+<a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--gitlab--ca_ref"></a>
+### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.scm_provider.gitlab.ca_ref`
+
+Required:
+
+- `config_map_name` (String) Name of Kubernetes `ConfigMap`.
+- `key` (String) Key containing information in Kubernetes `ConfigMap`.
+
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--gitlab--token_ref"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.merge.generator.scm_provider.gitlab.token_ref`
@@ -10335,8 +10355,18 @@ Optional:
 
 - `all_branches` (Boolean) If true, scan every branch of every repository. If false, scan only the default branch.
 - `api` (String) The Gitlab API URL to talk to.
+- `ca_ref` (Block List, Max: 1) Reference to a ConfigMap containing a CA certificate for self-signed GitLab instances. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--gitlab--ca_ref))
 - `include_subgroups` (Boolean) Recurse through subgroups (true) or scan only the base group (false). Defaults to `false`.
 - `token_ref` (Block List, Max: 1) Authentication token reference. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--gitlab--token_ref))
+
+<a id="nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--gitlab--ca_ref"></a>
+### Nested Schema for `applicationset.spec.generator.matrix.generator.scm_provider.gitlab.ca_ref`
+
+Required:
+
+- `config_map_name` (String) Name of Kubernetes `ConfigMap`.
+- `key` (String) Key containing information in Kubernetes `ConfigMap`.
+
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--gitlab--token_ref"></a>
 ### Nested Schema for `applicationset.spec.generator.matrix.generator.scm_provider.gitlab.token_ref`
@@ -12368,7 +12398,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template.
 
 Optional:
 
@@ -13997,7 +14027,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template.
 
 Optional:
 
@@ -15043,8 +15073,18 @@ Optional:
 
 - `all_branches` (Boolean) If true, scan every branch of every repository. If false, scan only the default branch.
 - `api` (String) The Gitlab API URL to talk to.
+- `ca_ref` (Block List, Max: 1) Reference to a ConfigMap containing a CA certificate for self-signed GitLab instances. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--gitlab--ca_ref))
 - `include_subgroups` (Boolean) Recurse through subgroups (true) or scan only the base group (false). Defaults to `false`.
 - `token_ref` (Block List, Max: 1) Authentication token reference. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--gitlab--token_ref))
+
+<a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--gitlab--ca_ref"></a>
+### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.scm_provider.gitlab.ca_ref`
+
+Required:
+
+- `config_map_name` (String) Name of Kubernetes `ConfigMap`.
+- `key` (String) Key containing information in Kubernetes `ConfigMap`.
+
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--gitlab--token_ref"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.matrix.generator.scm_provider.gitlab.token_ref`
@@ -17074,7 +17114,7 @@ Optional:
 
 Required:
 
-- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template. 
+- `elements` (List of Map of String) List of key/value pairs to pass as parameters into the template.
 
 Optional:
 
@@ -18120,8 +18160,18 @@ Optional:
 
 - `all_branches` (Boolean) If true, scan every branch of every repository. If false, scan only the default branch.
 - `api` (String) The Gitlab API URL to talk to.
+- `ca_ref` (Block List, Max: 1) Reference to a ConfigMap containing a CA certificate for self-signed GitLab instances. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--gitlab--ca_ref))
 - `include_subgroups` (Boolean) Recurse through subgroups (true) or scan only the base group (false). Defaults to `false`.
 - `token_ref` (Block List, Max: 1) Authentication token reference. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--gitlab--token_ref))
+
+<a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--gitlab--ca_ref"></a>
+### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.scm_provider.gitlab.ca_ref`
+
+Required:
+
+- `config_map_name` (String) Name of Kubernetes `ConfigMap`.
+- `key` (String) Key containing information in Kubernetes `ConfigMap`.
+
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--gitlab--token_ref"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.merge.generator.scm_provider.gitlab.token_ref`
@@ -19567,8 +19617,18 @@ Optional:
 
 - `all_branches` (Boolean) If true, scan every branch of every repository. If false, scan only the default branch.
 - `api` (String) The Gitlab API URL to talk to.
+- `ca_ref` (Block List, Max: 1) Reference to a ConfigMap containing a CA certificate for self-signed GitLab instances. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--gitlab--ca_ref))
 - `include_subgroups` (Boolean) Recurse through subgroups (true) or scan only the base group (false). Defaults to `false`.
 - `token_ref` (Block List, Max: 1) Authentication token reference. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--gitlab--token_ref))
+
+<a id="nestedblock--applicationset--spec--generator--merge--generator--scm_provider--gitlab--ca_ref"></a>
+### Nested Schema for `applicationset.spec.generator.merge.generator.scm_provider.gitlab.ca_ref`
+
+Required:
+
+- `config_map_name` (String) Name of Kubernetes `ConfigMap`.
+- `key` (String) Key containing information in Kubernetes `ConfigMap`.
+
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--scm_provider--gitlab--token_ref"></a>
 ### Nested Schema for `applicationset.spec.generator.merge.generator.scm_provider.gitlab.token_ref`
@@ -21014,8 +21074,18 @@ Optional:
 
 - `all_branches` (Boolean) If true, scan every branch of every repository. If false, scan only the default branch.
 - `api` (String) The Gitlab API URL to talk to.
+- `ca_ref` (Block List, Max: 1) Reference to a ConfigMap containing a CA certificate for self-signed GitLab instances. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--gitlab--ca_ref))
 - `include_subgroups` (Boolean) Recurse through subgroups (true) or scan only the base group (false). Defaults to `false`.
 - `token_ref` (Block List, Max: 1) Authentication token reference. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--gitlab--token_ref))
+
+<a id="nestedblock--applicationset--spec--generator--scm_provider--gitlab--ca_ref"></a>
+### Nested Schema for `applicationset.spec.generator.scm_provider.gitlab.ca_ref`
+
+Required:
+
+- `config_map_name` (String) Name of Kubernetes `ConfigMap`.
+- `key` (String) Key containing information in Kubernetes `ConfigMap`.
+
 
 <a id="nestedblock--applicationset--spec--generator--scm_provider--gitlab--token_ref"></a>
 ### Nested Schema for `applicationset.spec.generator.scm_provider.gitlab.token_ref`
@@ -21866,6 +21936,8 @@ Optional:
 ## Import
 
 Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import gitOps applicationset with account level agent, agent id has account prefix #

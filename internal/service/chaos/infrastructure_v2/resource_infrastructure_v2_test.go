@@ -52,7 +52,7 @@ func TestAccResourceChaosInfrastructureV2_basic(t *testing.T) {
 				Config: testAccResourceChaosInfrastructureV2ConfigBasic(rName, id, "KUBERNETESV2", "NAMESPACE"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", SanitizeK8sResourceName(rName)),
-					// resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
+					resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
 					resource.TestCheckResourceAttr(resourceName, "infra_scope", "NAMESPACE"),
 					resource.TestCheckResourceAttr(resourceName, "namespace", "chaos"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "litmus"),
@@ -69,7 +69,6 @@ func TestAccResourceChaosInfrastructureV2_basic(t *testing.T) {
 	})
 }
 
-// TestAccResourceChaosInfrastructureV2_Update verifies update functionality for the Chaos Infrastructure V2 resource.
 // TestAccResourceChaosInfrastructureV2_Update verifies update functionality for the Chaos Infrastructure V2 resource.
 func TestAccResourceChaosInfrastructureV2_Update(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -88,11 +87,11 @@ func TestAccResourceChaosInfrastructureV2_Update(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceChaosInfrastructureV2ConfigUpdate(rName, id, "KUBERNETESV2", "CLUSTER"),
+				Config: testAccResourceChaosInfrastructureV2ConfigUpdate(rName, id, "KUBERNETESV2", "NAMESPACE"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", SanitizeK8sResourceName(rName)),
 					resource.TestCheckResourceAttr(resourceName, "description", "Updated Test Infrastructure"),
-					resource.TestCheckResourceAttr(resourceName, "infra_scope", "CLUSTER"),
+					resource.TestCheckResourceAttr(resourceName, "infra_scope", "NAMESPACE"),
 					resource.TestCheckResourceAttr(resourceName, "namespace", "chaos-updated"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "litmus-admin"),
 					resource.TestCheckResourceAttr(resourceName, "run_as_user", "1001"),
@@ -115,9 +114,9 @@ func TestAccResourceChaosInfrastructureV2_KubernetesType(t *testing.T) {
 		CheckDestroy:      testAccChaosInfrastructureV2Destroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceChaosInfrastructureV2ConfigBasic(rName, id, "KUBERNETES", "NAMESPACE"),
+				Config: testAccResourceChaosInfrastructureV2ConfigBasic(rName, id, "KUBERNETESV2", "NAMESPACE"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETES"),
+					resource.TestCheckResourceAttr(resourceName, "infra_type", "KUBERNETESV2"),
 					resource.TestCheckResourceAttr(resourceName, "infra_scope", "NAMESPACE"),
 				),
 			},
@@ -224,20 +223,20 @@ func testAccResourceChaosInfrastructureV2ConfigBasic(id, name, infraType, infraS
 			type       = "KubernetesDirect"
 
 			yaml = <<-EOT
-		    infrastructureDefinition:
-			    name: "%[2]s"
-			    identifier: "%[1]s"
-			    orgIdentifier: ${harness_platform_organization.test.id}
-			    projectIdentifier: ${harness_platform_project.test.id}
-			    environmentRef: ${harness_platform_environment.test.id}
-			    type: KubernetesDirect
-			    deploymentType: Kubernetes
-			    allowSimultaneousDeployments: false
-			    spec:
-			        connectorRef: ${harness_platform_connector_kubernetes.test.id}
-			        namespace: "chaos"
-			        releaseName: "release-%[1]s"
-			EOT
+        infrastructureDefinition:
+            name: "%[2]s"
+            identifier: "%[1]s"
+            orgIdentifier: ${harness_platform_organization.test.id}
+            projectIdentifier: ${harness_platform_project.test.id}
+            environmentRef: ${harness_platform_environment.test.id}
+            type: KubernetesDirect
+            deploymentType: Kubernetes
+            allowSimultaneousDeployments: false
+            spec:
+                connectorRef: ${harness_platform_connector_kubernetes.test.id}
+                namespace: "chaos"
+                releaseName: "release-%[1]s"
+		EOT
 			tags = []
 		}
 
@@ -310,19 +309,19 @@ func testAccResourceChaosInfrastructureV2ConfigUpdate(name, id, infraType, infra
 			type       = "KubernetesDirect"
 
 			yaml = <<-EOT
-			infrastructureDefinition:
-				name: "%[2]s"
-				identifier: "%[1]s"
-				orgIdentifier: ${harness_platform_organization.test.id}
-				projectIdentifier: ${harness_platform_project.test.id}
-				environmentRef: ${harness_platform_environment.test.id}
-				type: KubernetesDirect
-				deploymentType: Kubernetes
-				allowSimultaneousDeployments: false
-				spec:
-					connectorRef: ${harness_platform_connector_kubernetes.test.id}
-					namespace: "chaos"
-					releaseName: "release-%[1]s"
+            infrastructureDefinition:
+                name: "%[2]s"
+                identifier: "%[1]s"
+                orgIdentifier: ${harness_platform_organization.test.id}
+                projectIdentifier: ${harness_platform_project.test.id}
+                environmentRef: ${harness_platform_environment.test.id}
+                type: KubernetesDirect
+                deploymentType: Kubernetes
+                allowSimultaneousDeployments: false
+                spec:
+                    connectorRef: ${harness_platform_connector_kubernetes.test.id}
+                    namespace: "chaos"
+                    releaseName: "release-%[1]s"
 			EOT
 			tags = []
 		}

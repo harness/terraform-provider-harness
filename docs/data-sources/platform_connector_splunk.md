@@ -34,10 +34,45 @@ data "harness_platform_connector_splunk" "example" {
 ### Read-Only
 
 - `account_id` (String) Splunk account id.
+- `bearer_token` (List of Object) Authenticate to Splunk using bearer token. (see [below for nested schema](#nestedatt--bearer_token))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `hec_token` (List of Object) Authenticate to Splunk using HEC (HTTP Event Collector) token. (see [below for nested schema](#nestedatt--hec_token))
 - `id` (String) The ID of this resource.
-- `password_ref` (String) The reference to the Harness secret containing the Splunk password. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `no_authentication` (List of Object) No authentication required for Splunk. (see [below for nested schema](#nestedatt--no_authentication))
+- `password_ref` (String) The reference to the Harness secret containing the Splunk password. Deprecated: Use 'username_password' block instead. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `tags` (Set of String) Tags to associate with the resource.
 - `url` (String) URL of the Splunk server.
-- `username` (String) The username used for connecting to Splunk.
+- `username` (String) The username used for connecting to Splunk. Deprecated: Use 'username_password' block instead.
+- `username_password` (List of Object) Authenticate to Splunk using username and password. (see [below for nested schema](#nestedatt--username_password))
+
+<a id="nestedatt--bearer_token"></a>
+### Nested Schema for `bearer_token`
+
+Read-Only:
+
+- `bearer_token_ref` (String)
+
+
+<a id="nestedatt--hec_token"></a>
+### Nested Schema for `hec_token`
+
+Read-Only:
+
+- `hec_token_ref` (String)
+
+
+<a id="nestedatt--no_authentication"></a>
+### Nested Schema for `no_authentication`
+
+Read-Only:
+
+
+
+<a id="nestedatt--username_password"></a>
+### Nested Schema for `username_password`
+
+Read-Only:
+
+- `password_ref` (String)
+- `username` (String)

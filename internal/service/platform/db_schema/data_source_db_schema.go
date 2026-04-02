@@ -39,6 +39,12 @@ func DataSourceDBSchema() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{string(dbops.LIQUIBASE_MigrationType), string(dbops.FLYWAY_MigrationType)}, false),
 				Optional:     true,
 			},
+			"use_percona": {
+				Description: "If percona-toolkit is enabled for the database schema",
+				Type:        schema.TypeBool,
+				Default:     false,
+				Optional:    true,
+			},
 			"changelog_script": {
 				Description: "Configuration to clone changeSets using script",
 				Type:        schema.TypeList,
@@ -156,6 +162,8 @@ func readDataSourceDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut)
 	} else {
 		d.Set("migration_type", nil)
 	}
+
+	d.Set("use_percona", dbSchema.UsePercona)
 
 	if dbSchema.ChangeLogScript != nil {
 		d.Set("changelog_script.0.image", dbSchema.ChangeLogScript.Image)

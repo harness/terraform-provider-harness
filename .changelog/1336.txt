@@ -1,0 +1,5 @@
+```release-note:fix
+resource: platform_idp_catalog_entity: Add support for Git Experience to catalog entities.
+Added git_details and import_from_git fields.
+data-source: platform_idp_catalog_entity: Added corresponding git fields.
+```

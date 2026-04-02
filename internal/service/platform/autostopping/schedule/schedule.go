@@ -129,7 +129,7 @@ func ResourceVMRule() *schema.Resource {
 						daysAttribute: {
 							Description: "List of days on which schedule need to be active. Valid values are SUN, MON, TUE, WED, THU, FRI and SAT.",
 							Required:    true,
-							Type:        schema.TypeList,
+							Type:        schema.TypeSet,
 							MinItems:    1,
 							MaxItems:    7,
 							Elem: &schema.Schema{
@@ -342,18 +342,24 @@ func parseSchedule(d *schema.ResourceData, accountId string) (*nextgen.FixedSche
 			periodicityObj, ok := periodicInf[0].(map[string]interface{})
 			if ok {
 				days := []float64{}
-				daysInf, ok := periodicityObj[daysAttribute]
-				if ok {
-					daysInf, ok := daysInf.([]interface{})
-					if ok {
-						for _, dayInf := range daysInf {
-							dp, ok := dayInf.(string)
+				daysInf := periodicityObj[daysAttribute]
+				if daysInf != nil {
+					var dayList []interface{}
+					switch v := daysInf.(type) {
+					case *schema.Set:
+						dayList = v.List()
+					case []interface{}:
+						dayList = v
+					default:
+						dayList = nil
+					}
+					for _, dayInf := range dayList {
+						dp, ok := dayInf.(string)
+						if ok {
+							dv := strings.TrimSpace(dp)
+							i, ok := dayIndex[strings.ToUpper(dv)]
 							if ok {
-								dv := strings.TrimSpace(dp)
-								i, ok := dayIndex[strings.ToUpper(dv)]
-								if ok {
-									days = append(days, float64(i))
-								}
+								days = append(days, float64(i))
 							}
 						}
 					}
@@ -536,7 +542,11 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 				days = append(days, dv)
 			}
 		}
-		periodicity[daysAttribute] = days
+		dayInterfaces := make([]interface{}, len(days))
+		for i, d := range days {
+			dayInterfaces[i] = d
+		}
+		periodicity[daysAttribute] = schema.NewSet(schema.HashString, dayInterfaces)
 		if schedDet.Days.AllDay {
 			periodicity[startTimeAttribute] = dayStart
 			periodicity[endTimeAttribute] = dayEnd

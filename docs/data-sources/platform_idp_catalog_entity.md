@@ -27,5 +27,22 @@ Data source for retrieving Harness catalog entities.
 
 ### Read-Only
 
+- `git_details` (List of Object) Contains Git Information for importing entities from Git (see [below for nested schema](#nestedatt--git_details))
 - `id` (String) The ID of this resource.
 - `yaml` (String) YAML definition of the catalog entity
+
+<a id="nestedatt--git_details"></a>
+### Nested Schema for `git_details`
+
+Read-Only:
+
+- `base_branch` (String)
+- `branch_name` (String)
+- `commit_message` (String)
+- `connector_ref` (String)
+- `file_path` (String)
+- `is_harness_code_repo` (Boolean)
+- `last_commit_id` (String)
+- `last_object_id` (String)
+- `repo_name` (String)
+- `store_type` (String)

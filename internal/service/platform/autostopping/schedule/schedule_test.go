@@ -29,21 +29,18 @@ func TestResourceVMRule(t *testing.T) {
 func testSchedule(name string) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_schedule" "test" {
-		name = "%s"
+		name          = "%s"
 		schedule_type = "uptime"
-		time_zone = "UTC"    
-	
-		time_period {
-			start = "2023-01-02 15:04:05"
-			end = "2024-02-02 15:04:05"
-		}
-	
-		periodicity {
-			days = ["MON", "THU", "TUE"]
+		time_zone     = "UTC"
+		starting_from = "2023-01-02 15:04:05"
+		ending_on     = "2024-02-02 15:04:05"
+
+		repeats {
+			days      = ["MON", "THU", "TUE"]
 			start_time = "09:30"
-			end_time = "16:50"
+			end_time   = "16:50"
 		}
-	
-		rules = [ 123, 234 ]
+
+		rules = [123, 234]
 	}`, name)
 }

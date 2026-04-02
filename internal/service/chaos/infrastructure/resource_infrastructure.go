@@ -125,7 +125,7 @@ func resourceChaosInfrastructureUpdate(ctx context.Context, d *schema.ResourceDa
 	_, httpRespUpdate, errUpdate := c.ChaosSdkApi.UpdateInfraV2(ctx, *updateInfraRequest, accountIdentifier, orgIdentifier, projectIdentifier, &chaos.ChaosSdkApiUpdateInfraV2Opts{})
 
 	if errUpdate != nil {
-		return helpers.HandleApiError(errUpdate, d, httpRespUpdate)
+		return helpers.HandleChaosApiError(errUpdate, d, httpRespUpdate)
 	}
 	readInfraUpdate(d, updateInfraRequest.Identity, updateInfraRequest.EnvironmentID)
 	return nil
@@ -186,7 +186,7 @@ func resourceChaosInfrastructureDelete(ctx context.Context, d *schema.ResourceDa
 	_, httpResp, err := c.ChaosSdkApi.DeleteInfraV2(ctx, identifier, environmentID, accountIdentifier, orgIdentifier, projectIdentifier)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
 
 	return nil
@@ -220,7 +220,7 @@ func resourceChaosInfrastructureCreate(ctx context.Context, d *schema.ResourceDa
 
 	resp, httpRespUpdate, errUpdate := c.ChaosSdkApi.RegisterInfraV2(ctx, createInfraRequest, accountIdentifier, orgIdentifier, projectIdentifier, &chaos.ChaosSdkApiRegisterInfraV2Opts{})
 	if errUpdate != nil {
-		return helpers.HandleApiError(errUpdate, d, httpRespUpdate)
+		return helpers.HandleChaosApiError(errUpdate, d, httpRespUpdate)
 	}
 	readInfraCreate(d, &resp, createInfraRequest.EnvironmentID)
 	defer httpRespUpdate.Body.Close()

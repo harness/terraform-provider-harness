@@ -28,6 +28,7 @@ Resource for creating a Harness Notification Rule
 - `custom_notification_template_ref` (Block List, Max: 1) (see [below for nested schema](#nestedblock--custom_notification_template_ref))
 - `name` (String)
 - `org` (String)
+- `project` (String)
 - `status` (String)
 
 ### Read-Only

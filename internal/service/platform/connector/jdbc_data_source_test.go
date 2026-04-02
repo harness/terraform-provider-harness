@@ -209,3 +209,84 @@ func testAccDataSourceConnectorJDBCServiceAccountAuth(name string) string {
 	}
 	`, name)
 }
+
+func TestAccDataSourceConnectorJDBCKeyPairAuth(t *testing.T) {
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_jdbc.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceConnectorJDBCKeyPairAuth(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "jdbc:snowflake://account.snowflakecomputing.com?warehouse=warehouse_name&db=db_name&schema=schema_name"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.key_pair.0.username", "snowflake_user"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.key_pair.0.private_key_file_ref", fmt.Sprintf("account.%s", name)),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.key_pair.0.private_key_passphrase_ref", fmt.Sprintf("account.%s_passphrase", name)),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.auth_type", "KeyPair"),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSourceConnectorJDBCKeyPairAuth(name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+	resource "harness_platform_secret_text" "passphrase" {
+		identifier = "%[1]s_passphrase"
+		name = "%[1]s_passphrase"
+		description = "test passphrase"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "passphrase"
+	}
+
+	resource "harness_platform_connector_jdbc" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+		url = "jdbc:snowflake://account.snowflakecomputing.com?warehouse=warehouse_name&db=db_name&schema=schema_name"
+		delegate_selectors = ["harness-delegate"]
+		credentials {
+			auth_type = "KeyPair"
+			key_pair {
+				username = "snowflake_user"
+				private_key_file_ref = "account.${harness_platform_secret_text.test.id}"
+				private_key_passphrase_ref = "account.${harness_platform_secret_text.passphrase.id}"
+			}
+		}
+		depends_on = [harness_platform_secret_text.test, harness_platform_secret_text.passphrase]
+	}
+
+	data "harness_platform_connector_jdbc" "test" {
+		identifier = harness_platform_connector_jdbc.test.identifier
+	}
+	`, name)
+}

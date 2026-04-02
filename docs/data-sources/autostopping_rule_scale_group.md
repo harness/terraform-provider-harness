@@ -38,7 +38,7 @@ data "harness_autostopping_rule_scale_group" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `identifier` (Number) Unique identifier of the resource
+- `identifier` (String) Unique identifier of the resource
 
 <a id="nestedblock--scale_group"></a>
 ### Nested Schema for `scale_group`
@@ -108,6 +108,7 @@ Required:
 
 Optional:
 
-- `action` (String) Organization Identifier for the Entity
+- `action` (String) Action to take for the routing rule
+- `path` (String) Path to use for the proxy
 - `source_port` (Number) Port on the proxy
 - `target_port` (Number) Port on the VM

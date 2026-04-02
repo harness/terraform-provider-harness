@@ -25,6 +25,8 @@ data "harness_platform_har_registry" "test" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
+- `parent_ref` (String) Parent reference for the registry
+- `space_ref` (String) Space reference for the registry
 
 ### Optional
 
@@ -33,8 +35,6 @@ data "harness_platform_har_registry" "test" {
 - `config` (Block List, Max: 1) Configuration for the registry (see [below for nested schema](#nestedblock--config))
 - `description` (String) Description of the registry
 - `package_type` (String) Type of package (DOCKER, HELM, MAVEN, etc.)
-- `parent_ref` (String) Parent reference for the registry
-- `space_ref` (String) Space reference for the registry
 
 ### Read-Only
 
@@ -52,10 +52,12 @@ Required:
 Optional:
 
 - `auth` (Block List, Max: 1) Authentication configuration for UPSTREAM registry type (see [below for nested schema](#nestedblock--config--auth))
-- `auth_type` (String) Type of authentication for UPSTREAM registry type (UserPassword, Anonymous)
+- `auth_type` (String) Type of authentication for UPSTREAM registry type (UserPassword, Anonymous, AccessKeySecretKey)
 - `source` (String) Upstream source
 - `upstream_proxies` (List of String) List of upstream proxies for VIRTUAL registry type
 - `url` (String) URL of the upstream (required if type=UPSTREAM & package_type=HELM)
+
+~> **Note:** For UPSTREAM registries, authentication is **required**. You must provide either the `auth_type` field or the `auth` block. Additionally, `source` is required for UPSTREAM registries.
 
 <a id="nestedblock--config--auth"></a>
 ### Nested Schema for `config.auth`

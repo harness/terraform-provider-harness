@@ -311,7 +311,6 @@ func TestAccResourceSecretFile_AWS_SM_reference(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "secret_manager_identifier", "harnessSecretManager"),
-					resource.TestCheckResourceAttr(resourceName, "kms_key_id", "awsKMSKeyId"),
 				),
 			},
 			{
@@ -323,7 +322,6 @@ func TestAccResourceSecretFile_AWS_SM_reference(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "secret_manager_identifier", "harnessSecretManager"),
-					resource.TestCheckResourceAttr(resourceName, "kms_key_id", "awsKMSKeyId"),
 				),
 			},
 			{
@@ -332,7 +330,7 @@ func TestAccResourceSecretFile_AWS_SM_reference(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"file_path",
-					"kms_key_id",
+					"additional_metadata",
 				},
 			},
 		},
@@ -348,7 +346,11 @@ func testAccResourceSecret_file_AWS_SM(id string, name string) string {
 		tags = ["foo:bar"]
 		file_path = "%[3]s"
 		secret_manager_identifier = "harnessSecretManager"
-		kms_key_id = "awsKMSKeyId"
+		additional_metadata {
+			values {
+				kms_key_id = "awsKMSKeyId"
+			}
+		}
 	}
 		`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }

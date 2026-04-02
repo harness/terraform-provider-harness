@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry_testing"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/provider_registry"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/default_notification_template_set"
 
@@ -19,7 +20,13 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/action_template"
 	chaos_hub "github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/probe_template"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/fault_template"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/experiment_template"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/experiment"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub_v2"
 	image_registry "github.com/harness/terraform-provider-harness/internal/service/chaos/image_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	chaos_infrastructure_v2 "github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure_v2"
@@ -31,6 +38,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
 	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
 	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
+	pl_delegates "github.com/harness/terraform-provider-harness/internal/service/platform/delegates"
 	governance_enforcement "github.com/harness/terraform-provider-harness/internal/service/platform/governance/enforcement"
 	governance_rule "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule"
 	governance_rule_set "github.com/harness/terraform-provider-harness/internal/service/platform/governance/rule_set"
@@ -49,6 +57,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	gitops_filters "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/iacm"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/ip_allowlist"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
@@ -90,6 +99,7 @@ import (
 	cdng_infrastructure "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/infrastructure"
 	pl_account "github.com/harness/terraform-provider-harness/internal/service/platform/account"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
+	as_alert "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/alert"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
 	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/schedule"
@@ -119,6 +129,7 @@ import (
 	pipeline_template "github.com/harness/terraform-provider-harness/internal/service/pipeline/template"
 	pipeline_template_filters "github.com/harness/terraform-provider-harness/internal/service/pipeline/template_filters"
 	pipeline_triggers "github.com/harness/terraform-provider-harness/internal/service/pipeline/triggers"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/default_images"
 	idp_resource "github.com/harness/terraform-provider-harness/internal/service/platform/idp"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -286,6 +297,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_current_account":                             account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                                    delegate.DataSourceDelegate(),
 				"harness_delegate_ids":                                delegate.DataSourceDelegateIds(),
+				"harness_platform_delegate_list":                      pl_delegates.DataSourceDelegateList(),
+				"harness_platform_delegate_default_version":           pl_delegates.DataSourceDelegateDefaultVersion(),
 				"harness_encrypted_text":                              secrets.DataSourceEncryptedText(),
 				"harness_environment":                                 environment.DataSourceEnvironment(),
 				"harness_git_connector":                               cd_connector.DataSourceGitConnector(),
@@ -310,10 +323,12 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":              connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                             pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                              pl_token.DataSourceToken(),
+				"harness_autostopping_rules":                          as_rule.DataSourceRules(),
 				"harness_autostopping_rule_vm":                        as_rule.DataSourceVMRule(),
 				"harness_autostopping_rule_scale_group":               as_rule.DataSourceScaleGroupRule(),
 				"harness_autostopping_rule_rds":                       as_rule.DataSourceRDSRule(),
 				"harness_autostopping_rule_ecs":                       as_rule.DataSourceECSRule(),
+				"harness_autostopping_rule_k8s":                       as_rule.DataSourceK8sRule(),
 				"harness_platform_file_store_file":                    cdng_file_store.DataSourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":                  cdng_file_store.DataSourceFileStoreNodeFolder(),
 				"harness_autostopping_azure_proxy":                    load_balancer.DataSourceAzureProxy(),
@@ -322,6 +337,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_aws_alb":                        load_balancer.DataSourceAwsALB(),
 				"harness_autostopping_azure_gateway":                  load_balancer.DataSourceAzureGateway(),
 				"harness_autostopping_schedule":                       schedule.DataSourceFixedSchedule(),
+				"harness_autostopping_alert":                          as_alert.DataSourceAlert(),
 				"harness_platform_delegatetoken":                      pl_delegatetoken.DataSourceDelegateToken(),
 				"harness_platform_workspace":                          workspace.DataSourceWorkspace(),
 				"harness_platform_workspace_output":                   workspace.DataSourceWorkspaceOutput(),
@@ -340,10 +356,22 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_infra_module":                       module_registry.DataSourceInfraModule(),
 				"harness_platform_infra_modules":                      module_registry.DataSourceInfraModules(),
 				"harness_platform_infra_module_testing":               module_registry_testing.DataSourceInfraModuleTesting(),
+				"harness_platform_infra_provider":                     provider_registry.DataSourceInfraProvider(),
+				"harness_platform_infra_providers":                    provider_registry.DataSourceInfraProviders(),
+				"harness_platform_infra_provider_version":             provider_registry.DataSourceInfraProviderVersion(),
+				"harness_platform_infra_provider_versions":            provider_registry.DataSourceInfraProviderVersions(),
+				"harness_platform_infra_provider_signing_key":         provider_registry.DataSourceInfraProviderSigningKey(),
+				"harness_platform_infra_provider_signing_keys":        provider_registry.DataSourceInfraProviderSigningKeys(),
 				"harness_chaos_infrastructure":                        infrastructure.DataSourceChaosInfrastructureService(),
 				"harness_chaos_infrastructure_v2":                     chaos_infrastructure_v2.DataSourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                        image_registry.DataSourceChaosImageRegistry(),
 				"harness_chaos_hub":                                   chaos_hub.DataSourceChaosHub(),
+				"harness_chaos_hub_v2":                                chaos_hub_v2.DataSourceChaosHubV2(),
+				"harness_chaos_action_template":                       action_template.DataSourceActionTemplate(),
+				"harness_chaos_probe_template":                        probe_template.DataSourceProbeTemplate(),
+				"harness_chaos_fault_template":                        fault_template.DataSourceFaultTemplate(),
+				"harness_chaos_experiment_template":                   experiment_template.DataSourceExperimentTemplate(),
+				"harness_chaos_experiment":                            experiment.DataSourceChaosExperiment(),
 				"harness_chaos_security_governance_condition":         chaos_security_governance.DataSourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":              chaos_security_governance.DataSourceChaosSecurityGovernanceRule(),
 				"harness_service_discovery_agent":                     service_discovery_agent.DataSourceServiceDiscoveryAgent(),
@@ -353,6 +381,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_idp_catalog_entity":                 idp_resource.DataSourceCatalogEntity(),
 				"harness_platform_idp_environment_blueprint":          idp_resource.DataSourceEnvironmentBlueprint(),
 				"harness_platform_idp_environment":                    idp_resource.DataSourceEnvironment(),
+				"harness_platform_default_images":                     default_images.DataSourceDefaultImages(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                           pipeline_template.ResourceTemplate(),
@@ -492,6 +521,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_rule_rds":                       as_rule.ResourceRDSRule(),
 				"harness_autostopping_rule_ecs":                       as_rule.ResourceECSRule(),
 				"harness_autostopping_rule_scale_group":               as_rule.ResourceScaleGroupRule(),
+				"harness_autostopping_rule_k8s":                       as_rule.ResourceK8sRule(),
 				"harness_platform_file_store_file":                    cdng_file_store.ResourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":                  cdng_file_store.ResourceFileStoreNodeFolder(),
 				"harness_autostopping_azure_proxy":                    load_balancer.ResourceAzureProxy(),
@@ -500,9 +530,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_aws_alb":                        load_balancer.ResourceAwsALB(),
 				"harness_autostopping_azure_gateway":                  load_balancer.ResourceAzureGateway(),
 				"harness_autostopping_schedule":                       schedule.ResourceVMRule(),
+				"harness_autostopping_alert":                          as_alert.ResourceAlert(),
 				"harness_platform_delegatetoken":                      pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                          workspace.ResourceWorkspace(),
 				"harness_platform_iacm_default_pipeline":              iacm.ResourceIacmDefaultPipeline(),
+				"harness_platform_ip_allowlist":                       ip_allowlist.ResourceIPAllowlist(),
 				"harness_platform_repo":                               repo.ResourceRepo(),
 				"harness_platform_repo_rule_branch":                   repo_rule_branch.ResourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                       repo_webhook.ResourceRepoWebhook(),
@@ -515,11 +547,22 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cluster_orchestrator_config":                 cluster_orchestrator.ResourceClusterOrchestratorConfig(),
 				"harness_platform_infra_module":                       module_registry.ResourceInfraModule(),
 				"harness_platform_infra_module_testing":               module_registry_testing.ResourceInfraModuleTesting(),
+				"harness_platform_infra_provider":                     provider_registry.ResourceInfraProvider(),
+				"harness_platform_infra_provider_version":             provider_registry.ResourceInfraProviderVersion(),
+				"harness_platform_infra_provider_version_file":        provider_registry.ResourceInfraProviderVersionFile(),
+				"harness_platform_infra_provider_version_publish":     provider_registry.ResourceInfraProviderVersionPublish(),
+				"harness_platform_infra_provider_signing_key":         provider_registry.ResourceInfraProviderSigningKey(),
 				"harness_chaos_infrastructure":                        infrastructure.ResourceChaosInfrastructure(),
 				"harness_chaos_infrastructure_v2":                     chaos_infrastructure_v2.ResourceChaosInfrastructureV2(),
 				"harness_chaos_image_registry":                        image_registry.ResourceChaosImageRegistry(),
 				"harness_chaos_hub":                                   chaos_hub.ResourceChaosHub(),
 				"harness_chaos_hub_sync":                              chaos_hub.ResourceChaosHubSync(),
+				"harness_chaos_hub_v2":                                chaos_hub_v2.ResourceChaosHubV2(),
+				"harness_chaos_action_template":                       action_template.ResourceActionTemplate(),
+				"harness_chaos_probe_template":                        probe_template.ResourceProbeTemplate(),
+				"harness_chaos_fault_template":                        fault_template.ResourceFaultTemplate(),
+				"harness_chaos_experiment_template":                   experiment_template.ResourceExperimentTemplate(),
+				"harness_chaos_experiment":                            experiment.ResourceChaosExperiment(),
 				"harness_chaos_security_governance_condition":         chaos_security_governance.ResourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":              chaos_security_governance.ResourceChaosSecurityGovernanceRule(),
 				"harness_service_discovery_agent":                     service_discovery_agent.ResourceServiceDiscoveryAgent(),
@@ -530,6 +573,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_idp_catalog_entity":                 idp_resource.ResourceCatalogEntity(),
 				"harness_platform_idp_environment_blueprint":          idp_resource.ResourceEnvironmentBlueprint(),
 				"harness_platform_idp_environment":                    idp_resource.ResourceEnvironment(),
+				"harness_platform_default_images":                     default_images.ResourceDefaultImages(),
 			},
 		}
 

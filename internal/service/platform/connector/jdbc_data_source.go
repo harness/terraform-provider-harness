@@ -86,6 +86,35 @@ func DatasourceConnectorJDBC() *schema.Resource {
 								},
 							},
 						},
+						"key_pair": {
+							Description: "Authenticate using key pair.",
+							Type:        schema.TypeList,
+							Computed:    true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"username": {
+										Description: "Username to use for authentication.",
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"username_ref": {
+										Description: "Reference to a secret containing the username to use for authentication." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"private_key_file_ref": {
+										Description: "Reference to a secret containing the private key file to use for authentication." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"private_key_passphrase_ref": {
+										Description: "Reference to a secret containing the passphrase for the private key file." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},

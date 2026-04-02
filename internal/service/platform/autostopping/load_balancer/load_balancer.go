@@ -13,6 +13,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+const (
+	KindALB               = "alb"
+	KindAppGateway        = "app_gateway"
+	KindAutostoppingProxy = "autostopping_proxy"
+)
+
 func resourceLoadBalancerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
@@ -84,10 +90,84 @@ func readLoadBalancer(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) 
 	d.SetId(accessPoint.Id)
 	d.Set("identifier", accessPoint.Id)
 	d.Set("name", accessPoint.Name)
-	d.Set("host_name", accessPoint.HostName)
 	d.Set("cloud_connector_id", accessPoint.CloudAccountId)
 	d.Set("region", accessPoint.Region)
 	d.Set("vpc", accessPoint.Vpc)
+	kind := accessPoint.Kind
+	switch kind {
+	case KindALB:
+		setALBData(d, accessPoint)
+	case KindAppGateway:
+		setAppGatewayData(d, accessPoint)
+	case KindAutostoppingProxy:
+		setProxyData(d, accessPoint)
+	}
+}
+
+func setALBData(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
+	setSecurityGroups(accessPoint, d)
+	setCertificateId(d, accessPoint)
+	albArn := ""
+	if accessPoint.Metadata != nil && accessPoint.Metadata.AlbArn != "" {
+		albArn = accessPoint.Metadata.AlbArn
+	}
+	d.Set("alb_arn", albArn)
+}
+
+func setAppGatewayData(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
+	setCertificateId(d, accessPoint)
+}
+
+func setProxyData(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
+	setSecurityGroups(accessPoint, d)
+	setProxyCertificates(d, accessPoint)
+	setProxyIPAddresses(d, accessPoint)
+}
+
+func setProxyIPAddresses(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
+	externalIP := ""
+	if accessPoint.Metadata != nil && accessPoint.Metadata.ExternalIP != "" {
+		externalIP = accessPoint.Metadata.ExternalIP
+	}
+	privateIP := ""
+	if accessPoint.Metadata != nil && accessPoint.Metadata.PrivateIP != "" {
+		privateIP = accessPoint.Metadata.PrivateIP
+	}
+	d.Set("public_ip", externalIP)
+	d.Set("private_ip", privateIP)
+}
+
+func setCertificateId(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
+	certificateId := ""
+	if accessPoint.Metadata != nil && accessPoint.Metadata.CertificateId != "" {
+		certificateId = accessPoint.Metadata.CertificateId
+	}
+	// Always set the certificate_id to the value to consider case where certificate is removed
+	d.Set("certificate_id", certificateId)
+}
+
+func setSecurityGroups(accessPoint *nextgen.AccessPoint, d *schema.ResourceData) {
+	securityGroups := make([]string, 0)
+	if accessPoint.Metadata != nil && len(accessPoint.Metadata.SecurityGroups) > 0 {
+		securityGroups = accessPoint.Metadata.SecurityGroups
+	}
+	// Always set the security_groups to the value to consider case where security groups are removed
+	d.Set("security_groups", securityGroups)
+}
+
+func setProxyCertificates(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
+	certificates := make([]map[string]interface{}, 0)
+	if accessPoint.Metadata != nil && len(accessPoint.Metadata.Certificates) > 0 {
+		for _, cert := range accessPoint.Metadata.Certificates {
+			certMap := map[string]interface{}{
+				"cert_secret_id": cert.CertSecretId,
+				"key_secret_id":  cert.KeySecretId,
+			}
+			certificates = append(certificates, certMap)
+		}
+	}
+	// Always set the certificates to the value to consider case where certificates are removed
+	d.Set("certificates", certificates)
 }
 
 func nonEmptyString(str string) bool {
@@ -136,10 +216,6 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 
 	if attr, ok := d.GetOk("name"); ok {
 		lb.Name = attr.(string)
-	}
-
-	if attr, ok := d.GetOk("host_name"); ok {
-		lb.HostName = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("cloud_connector_id"); ok {
@@ -235,20 +311,6 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 			certificateDetails.KeySecretId = attr.(string)
 		}
 		lb.Metadata.Certificates = append(certificates, *certificateDetails)
-	}
-	if type_ == "aws" {
-		if attr, ok := d.GetOk("route53_hosted_zone_id"); ok {
-			route53 := &nextgen.AccessPointMetaDnsRoute53{
-				HostedZoneId: attr.(string),
-			}
-			lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
-				Route53: route53,
-			}
-		} else {
-			lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
-				Others: lb.HostName,
-			}
-		}
 	}
 	if validateFunc := implementationSpecificLBValidators(type_, kind); validateFunc != nil {
 		if err := validateFunc(*lb); err != nil {

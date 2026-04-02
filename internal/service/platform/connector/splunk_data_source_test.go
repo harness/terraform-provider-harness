@@ -58,3 +58,108 @@ func testAccDataSourceConnectorSplunk(name string) string {
 		}
 	`, name)
 }
+
+func TestAccDataSourceConnectorSplunkUsernamePassword(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_splunk.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceConnectorSplunkUsernamePassword(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://splunk.com/"),
+					resource.TestCheckResourceAttr(resourceName, "username_password.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "account_id", "splunk_account_id"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSourceConnectorSplunkUsernamePassword(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_splunk" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "https://splunk.com/"
+			delegate_selectors = ["harness-delegate"]
+			account_id = "splunk_account_id"
+			
+			username_password {
+				username = "admin"
+				password_ref = "account.doNotDeleteHSM"
+			}
+		}
+
+		data "harness_platform_connector_splunk" "test" {
+			identifier = harness_platform_connector_splunk.test.identifier
+		}
+	`, name)
+}
+
+func TestAccDataSourceConnectorSplunkBearerToken(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_platform_connector_splunk.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceConnectorSplunkBearerToken(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://splunk.com/"),
+					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.bearer_token_ref", "account.doNotDeleteHSM"),
+					resource.TestCheckResourceAttr(resourceName, "account_id", "splunk_account_id"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSourceConnectorSplunkBearerToken(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_splunk" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "https://splunk.com/"
+			delegate_selectors = ["harness-delegate"]
+			account_id = "splunk_account_id"
+			
+			bearer_token {
+				bearer_token_ref = "account.doNotDeleteHSM"
+			}
+		}
+
+		data "harness_platform_connector_splunk" "test" {
+			identifier = harness_platform_connector_splunk.test.identifier
+		}
+	`, name)
+}
