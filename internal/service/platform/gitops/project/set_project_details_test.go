@@ -102,6 +102,64 @@ func TestSetProjectDetails_NilSpec(t *testing.T) {
 	assert.Equal(t, "test-project", d.Id())
 }
 
+func TestSetProjectDetails_MultipleDestinations(t *testing.T) {
+	d := testResourceSchema()
+	project := &nextgen.AppprojectsAppProject{
+		Metadata: &nextgen.V1ObjectMeta{
+			Name:      "test-project",
+			Namespace: "argocd",
+		},
+		Spec: &nextgen.AppprojectsAppProjectSpec{
+			SourceRepos: []string{"*"},
+			Destinations: []nextgen.AppprojectsApplicationDestination{
+				{
+					Namespace: "default",
+					Server:    "https://kubernetes.default.svc",
+					Name:      "in-cluster",
+				},
+				{
+					Namespace: "staging",
+					Server:    "https://staging.example.com",
+					Name:      "staging-cluster",
+				},
+				{
+					Namespace: "production",
+					Server:    "https://prod.example.com",
+					Name:      "prod-cluster",
+				},
+			},
+		},
+	}
+
+	assert.NotPanics(t, func() {
+		setProjectDetails(d, "account123", project)
+	})
+
+	assert.Equal(t, "test-project", d.Id())
+
+	// Verify all three destinations are stored, not just the first one
+	dest0NS := d.Get("project.0.spec.0.destinations.0.namespace").(string)
+	assert.Equal(t, "default", dest0NS)
+	dest0Name := d.Get("project.0.spec.0.destinations.0.name").(string)
+	assert.Equal(t, "in-cluster", dest0Name)
+	dest0Server := d.Get("project.0.spec.0.destinations.0.server").(string)
+	assert.Equal(t, "https://kubernetes.default.svc", dest0Server)
+
+	dest1NS := d.Get("project.0.spec.0.destinations.1.namespace").(string)
+	assert.Equal(t, "staging", dest1NS)
+	dest1Name := d.Get("project.0.spec.0.destinations.1.name").(string)
+	assert.Equal(t, "staging-cluster", dest1Name)
+	dest1Server := d.Get("project.0.spec.0.destinations.1.server").(string)
+	assert.Equal(t, "https://staging.example.com", dest1Server)
+
+	dest2NS := d.Get("project.0.spec.0.destinations.2.namespace").(string)
+	assert.Equal(t, "production", dest2NS)
+	dest2Name := d.Get("project.0.spec.0.destinations.2.name").(string)
+	assert.Equal(t, "prod-cluster", dest2Name)
+	dest2Server := d.Get("project.0.spec.0.destinations.2.server").(string)
+	assert.Equal(t, "https://prod.example.com", dest2Server)
+}
+
 func TestSetProjectDetails_FullProjectWithoutOrphanedResources(t *testing.T) {
 	d := testResourceSchema()
 	project := &nextgen.AppprojectsAppProject{

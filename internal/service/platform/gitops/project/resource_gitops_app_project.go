@@ -1505,12 +1505,12 @@ func setProjectDetails(d *schema.ResourceData, account_id string, projects *next
 		}
 		metadata["annotations"] = annotationsStr
 		metadata["labels"] = labelsStr
-		manageFieldList := []interface{}{}
-		manageField := map[string]interface{}{}
-		for _, k := range projects.Metadata.ManagedFields {
-			manageField["manager"] = k.Manager
-			manageField["operation"] = k.Operation
-			manageFieldList = append(manageFieldList, manageField)
+		manageFieldList := make([]interface{}, len(projects.Metadata.ManagedFields))
+		for i, k := range projects.Metadata.ManagedFields {
+			manageFieldList[i] = map[string]interface{}{
+				"manager":   k.Manager,
+				"operation": k.Operation,
+			}
 		}
 		metadata["managed_fields"] = manageFieldList
 		metadataList = append(metadataList, metadata)
@@ -1542,19 +1542,15 @@ func setProjectDetails(d *schema.ResourceData, account_id string, projects *next
 		spec["cluster_resource_whitelist"] = clusterResourceWhitelist
 		spec["cluster_resource_blacklist"] = clusterResourceBlackList
 
-		destinationList := []interface{}{}
-		destination := map[string]interface{}{}
 		if len(projects.Spec.Destinations) > 0 {
-			destination["namespace"] = projects.Spec.Destinations[0].Namespace
-			destination["server"] = projects.Spec.Destinations[0].Server
-			destination["name"] = projects.Spec.Destinations[0].Name
-		}
-
-		if len(destination) > 0 {
-			destinationList = append(destinationList, destination)
-		}
-
-		if len(destinationList) > 0 {
+			destinationList := make([]interface{}, len(projects.Spec.Destinations))
+			for i, dest := range projects.Spec.Destinations {
+				destinationList[i] = map[string]interface{}{
+					"namespace": dest.Namespace,
+					"server":    dest.Server,
+					"name":      dest.Name,
+				}
+			}
 			spec["destinations"] = destinationList
 		}
 
