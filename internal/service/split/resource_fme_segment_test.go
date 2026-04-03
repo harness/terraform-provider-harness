@@ -22,10 +22,17 @@ func TestAccResourceFMESegment_basic(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceFMESegment(id, segName),
+				Config: testAccResourceFMESegment(id, segName, "acc segment v1"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "name", segName),
 					resource.TestCheckResourceAttrSet(res, "traffic_type_id"),
+					resource.TestCheckResourceAttr(res, "description", "acc segment v1"),
+				),
+			},
+			{
+				Config: testAccResourceFMESegment(id, segName, "acc segment v2"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(res, "description", "acc segment v2"),
 				),
 			},
 			{
@@ -34,11 +41,15 @@ func TestAccResourceFMESegment_basic(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateIdFunc: fmeImportStateIDOrgProjectThird(res, "name"),
 			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check:  testAccFMEVerifySegmentGone(id, id, segName),
+			},
 		},
 	})
 }
 
-func testAccResourceFMESegment(id, segName string) string {
+func testAccResourceFMESegment(id, segName, description string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -62,7 +73,7 @@ func testAccResourceFMESegment(id, segName string) string {
 		project_id      = harness_platform_project.test.id
 		traffic_type_id = data.harness_fme_traffic_type.user.traffic_type_id
 		name            = "%[2]s"
-		description     = "acc classic segment"
+		description     = "%[3]s"
 	}
-	`, id, segName)
+	`, id, segName, description)
 }

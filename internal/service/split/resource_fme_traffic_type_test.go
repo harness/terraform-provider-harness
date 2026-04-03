@@ -16,6 +16,7 @@ func TestAccResourceFMETrafficType_basic(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	ttName := "tftt_" + testAccFMEAlphanum(8)
 	res := "harness_fme_traffic_type.test"
+	var trafficTypeID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -27,6 +28,7 @@ func TestAccResourceFMETrafficType_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(res, "name", ttName),
 					resource.TestCheckResourceAttrSet(res, "traffic_type_id"),
 					resource.TestCheckResourceAttrPair(res, "id", res, "traffic_type_id"),
+					testAccFMECaptureAttr(res, "traffic_type_id", &trafficTypeID),
 				),
 			},
 			{
@@ -34,6 +36,11 @@ func TestAccResourceFMETrafficType_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: fmeImportStateIDOrgProjectThird(res, "traffic_type_id"),
+				Check:             testAccFMECaptureAttr(res, "traffic_type_id", &trafficTypeID),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check:  testAccFMEVerifyTrafficTypeGone(id, id, trafficTypeID),
 			},
 		},
 	})

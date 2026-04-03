@@ -75,6 +75,24 @@ func fmeImportStateIDOrgProjectTTFourth(resourceName string) resource.ImportStat
 	}
 }
 
+// testAccFMEHarnessOrgProjectOnly is the final acceptance-test step config: org + project only.
+// Applying it destroys all harness_fme_* resources while Harness workspace resolution still works,
+// so Split API verification can run in the same step's Check before org/project teardown.
+func testAccFMEHarnessOrgProjectOnly(id string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name       = "%[1]s"
+	}
+
+	resource "harness_platform_project" "test" {
+		identifier = "%[1]s"
+		org_id     = harness_platform_organization.test.id
+		name       = "%[1]s"
+	}
+	`, id)
+}
+
 func fmeImportStatePrimaryID(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		rs, ok := s.RootModule().Resources[resourceName]

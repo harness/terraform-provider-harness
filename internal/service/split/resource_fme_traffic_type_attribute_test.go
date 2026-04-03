@@ -16,6 +16,8 @@ func TestAccResourceFMETrafficTypeAttribute_basic(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	attrID := "tfattr_" + testAccFMEAlphanum(8)
 	res := "harness_fme_traffic_type_attribute.test"
+	var trafficTypeID string
+	var attributeAPIID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -30,6 +32,8 @@ func TestAccResourceFMETrafficTypeAttribute_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(res, "is_searchable", "false"),
 					resource.TestCheckResourceAttr(res, "suggested_values.#", "2"),
 					resource.TestCheckResourceAttrSet(res, "attribute_id"),
+					testAccFMECaptureAttr(res, "traffic_type_id", &trafficTypeID),
+					testAccFMECaptureAttr(res, "attribute_id", &attributeAPIID),
 				),
 			},
 			{
@@ -38,6 +42,8 @@ func TestAccResourceFMETrafficTypeAttribute_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(res, "display_name", "ACC TT Attribute Updated"),
 					resource.TestCheckResourceAttr(res, "is_searchable", "true"),
 					resource.TestCheckResourceAttr(res, "suggested_values.#", "3"),
+					testAccFMECaptureAttr(res, "traffic_type_id", &trafficTypeID),
+					testAccFMECaptureAttr(res, "attribute_id", &attributeAPIID),
 				),
 			},
 			{
@@ -45,6 +51,14 @@ func TestAccResourceFMETrafficTypeAttribute_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: fmeImportStateIDOrgProjectTTFourth(res),
+				Check: resource.ComposeTestCheckFunc(
+					testAccFMECaptureAttr(res, "traffic_type_id", &trafficTypeID),
+					testAccFMECaptureAttr(res, "attribute_id", &attributeAPIID),
+				),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check:  testAccFMEVerifyTrafficTypeAttributeGone(id, id, trafficTypeID, attributeAPIID),
 			},
 		},
 	})

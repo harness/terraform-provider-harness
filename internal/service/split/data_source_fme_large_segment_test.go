@@ -16,6 +16,7 @@ func TestAccDataSourceFMELargeSegment(t *testing.T) {
 	}
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	lsName := fmt.Sprintf("tfls_%s", utils.RandStringBytes(8))
+	res := "harness_fme_large_segment.created"
 	ds := "data.harness_fme_large_segment.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -27,9 +28,15 @@ func TestAccDataSourceFMELargeSegment(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(ds, "id"),
 					resource.TestCheckResourceAttrSet(ds, "large_segment_id"),
+					resource.TestCheckResourceAttrPair(ds, "large_segment_id", res, "large_segment_id"),
 					resource.TestCheckResourceAttr(ds, "name", lsName),
 					resource.TestCheckResourceAttrSet(ds, "traffic_type_id"),
+					resource.TestCheckResourceAttrPair(ds, "traffic_type_id", res, "traffic_type_id"),
 				),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check:  testAccFMEVerifyLargeSegmentGone(id, id, lsName),
 			},
 		},
 	})

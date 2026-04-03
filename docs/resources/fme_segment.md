@@ -24,7 +24,7 @@ Create and delete a Harness FME (Split) segment. Import id format: `org_id/proje
 
 ### Optional
 
-- `description` (String) Segment description.
+- `description` (String) Segment description. Set when the segment is created; changing this value forces replacement (destroy and recreate), not an in-place Split API update.
 
 ### Read-Only
 

@@ -16,7 +16,9 @@ func TestAccDataSourceFMEFlagSet(t *testing.T) {
 	}
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	fsName := fmt.Sprintf("tf_fs_ds_%s", testAccRandomFlagSetSuffix(8))
+	res := "harness_fme_flag_set.created"
 	ds := "data.harness_fme_flag_set.test"
+	var flagSetID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -27,8 +29,15 @@ func TestAccDataSourceFMEFlagSet(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(ds, "id"),
 					resource.TestCheckResourceAttrSet(ds, "flag_set_id"),
+					resource.TestCheckResourceAttrPair(ds, "flag_set_id", res, "flag_set_id"),
+					resource.TestCheckResourceAttrPair(ds, "id", res, "id"),
 					resource.TestCheckResourceAttr(ds, "name", fsName),
+					testAccFMECaptureAttr(res, "flag_set_id", &flagSetID),
 				),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check:  testAccFMEVerifyFlagSetGone(id, id, flagSetID),
 			},
 		},
 	})

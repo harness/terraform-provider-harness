@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -34,18 +35,30 @@ func TestAccFMEFlagSet_dataSourceMatchesResource(t *testing.T) {
 	fsName := fmt.Sprintf("tf_fs_%s", testAccRandomFlagSetSuffix(8))
 	res := "harness_fme_flag_set.test"
 	ds := "data.harness_fme_flag_set.lookup"
+	var flagSetID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccFMEFlagSetWithDataSource(id, fsName),
+				Config: testAccFMEFlagSetWithDataSource(id, fsName, "acceptance test flag set"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(res, "flag_set_id"),
 					resource.TestCheckResourceAttrPair(ds, "flag_set_id", res, "flag_set_id"),
 					resource.TestCheckResourceAttrPair(ds, "id", res, "id"),
 					resource.TestCheckResourceAttr(ds, "name", fsName),
+					resource.TestCheckResourceAttr(res, "description", "acceptance test flag set"),
+					testAccFMECaptureAttr(res, "flag_set_id", &flagSetID),
+				),
+			},
+			{
+				// ForceNew replace deletes then creates the same name; brief Split delay avoids RESOURCE_NAME_IN_USE.
+				PreConfig: func() { time.Sleep(4 * time.Second) },
+				Config:    testAccFMEFlagSetWithDataSource(id, fsName, "acceptance test flag set updated"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(res, "description", "acceptance test flag set updated"),
+					testAccFMECaptureAttr(res, "flag_set_id", &flagSetID),
 				),
 			},
 			{
@@ -53,12 +66,17 @@ func TestAccFMEFlagSet_dataSourceMatchesResource(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: fmeImportStateIDOrgProjectThird(res, "flag_set_id"),
+				Check:             testAccFMECaptureAttr(res, "flag_set_id", &flagSetID),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check:  testAccFMEVerifyFlagSetGone(id, id, flagSetID),
 			},
 		},
 	})
 }
 
-func testAccFMEFlagSetWithDataSource(id, flagSetName string) string {
+func testAccFMEFlagSetWithDataSource(id, flagSetName, description string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -75,7 +93,7 @@ func testAccFMEFlagSetWithDataSource(id, flagSetName string) string {
 		org_id      = harness_platform_organization.test.id
 		project_id  = harness_platform_project.test.id
 		name        = "%[2]s"
-		description = "acceptance test flag set"
+		description = "%[3]s"
 	}
 
 	data "harness_fme_flag_set" "lookup" {
@@ -84,5 +102,5 @@ func testAccFMEFlagSetWithDataSource(id, flagSetName string) string {
 		project_id = harness_platform_project.test.id
 		name       = harness_fme_flag_set.test.name
 	}
-	`, id, flagSetName)
+	`, id, flagSetName, description)
 }

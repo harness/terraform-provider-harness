@@ -48,7 +48,7 @@ func ResourceFMELargeSegment() *schema.Resource {
 				ForceNew:    true,
 			},
 			"description": {
-				Description: "Description.",
+				Description: "Large segment description. Set when the segment is created; changing this value forces replacement (destroy and recreate), not an in-place Split API update.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,

@@ -21,6 +21,8 @@ func TestAccResourceFMERuleBasedSegment_basic(t *testing.T) {
 	rbsName := "tfrbs_" + testAccFMEAlphanum(8)
 	res := "harness_fme_rule_based_segment.test"
 	resAssoc := "harness_fme_rule_based_segment_environment_association.test"
+	resEnv := "harness_fme_environment.test"
+	var envID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -32,12 +34,14 @@ func TestAccResourceFMERuleBasedSegment_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(res, "name", rbsName),
 					resource.TestCheckResourceAttr(resAssoc, "segment_name", rbsName),
 					resource.TestCheckResourceAttrSet(resAssoc, "environment_id"),
+					testAccFMECaptureAttr(resEnv, "environment_id", &envID),
 				),
 			},
 			{
 				Config: testAccResourceFMERuleBasedSegment(id, envName, rbsName, "acc rbs v2", "acc comment v2"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "name", rbsName),
+					testAccFMECaptureAttr(resEnv, "environment_id", &envID),
 				),
 			},
 			{
@@ -45,6 +49,7 @@ func TestAccResourceFMERuleBasedSegment_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: fmeImportStateIDOrgProjectThird(res, "name"),
+				Check:             testAccFMECaptureAttr(resEnv, "environment_id", &envID),
 			},
 			{
 				ResourceName:            resAssoc,
@@ -53,6 +58,15 @@ func TestAccResourceFMERuleBasedSegment_basic(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"definition_json"},
 				ImportStateCheck:        importStateCheckFMERBSAssocDefinitionJSON(testAccFMERBSAssocDefinitionJSON("acc rbs v2", "acc comment v2")),
 				ImportStateIdFunc:       fmeImportStatePrimaryID(resAssoc),
+				Check:                   testAccFMECaptureAttr(resEnv, "environment_id", &envID),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check: resource.ComposeTestCheckFunc(
+					testAccFMEVerifyRuleBasedSegmentGone(id, id, rbsName),
+					testAccFMEVerifyRuleBasedSegmentEnvAssocGone(id, id, envID, rbsName),
+					testAccFMEVerifyEnvironmentGone(id, id, envID),
+				),
 			},
 		},
 	})

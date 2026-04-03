@@ -17,6 +17,7 @@ func TestAccResourceFMESegmentEnvironmentAssociation_basic(t *testing.T) {
 	envName := "tf" + testAccFMEAlphanum(10)
 	segName := "tfseg_" + testAccFMEAlphanum(8)
 	res := "harness_fme_segment_environment_association.test"
+	var envID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -27,6 +28,7 @@ func TestAccResourceFMESegmentEnvironmentAssociation_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "segment_name", segName),
 					resource.TestCheckResourceAttrSet(res, "environment_id"),
+					testAccFMECaptureAttr(res, "environment_id", &envID),
 				),
 			},
 			{
@@ -34,6 +36,15 @@ func TestAccResourceFMESegmentEnvironmentAssociation_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: fmeImportStatePrimaryID(res),
+				Check:             testAccFMECaptureAttr(res, "environment_id", &envID),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check: resource.ComposeTestCheckFunc(
+					testAccFMEVerifySegmentGone(id, id, segName),
+					testAccFMEVerifySegmentEnvAssociationInactive(id, id, envID, segName),
+					testAccFMEVerifyEnvironmentGone(id, id, envID),
+				),
 			},
 		},
 	})

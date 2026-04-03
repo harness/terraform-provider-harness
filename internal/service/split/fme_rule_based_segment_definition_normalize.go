@@ -3,6 +3,7 @@ package split
 import (
 	"encoding/json"
 	"reflect"
+	"sort"
 
 	splitsdk "github.com/harness/harness-go-sdk/harness/split"
 )
@@ -52,6 +53,8 @@ func normalizeRuleBasedSegmentDefinition(d *splitsdk.RuleBasedSegmentDefinition)
 	if d.ExcludedKeys == nil {
 		d.ExcludedKeys = []string{}
 	}
+	// Split and jsonencode may disagree on slice order; excluded keys behave as a set for semantic equality.
+	sort.Strings(d.ExcludedKeys)
 	if d.ExcludedSegments == nil {
 		d.ExcludedSegments = []splitsdk.RuleBasedSegmentRef{}
 	}

@@ -17,6 +17,7 @@ func TestAccResourceFMEFeatureFlagDefinition_basic(t *testing.T) {
 	envName := "tf" + testAccFMEAlphanum(10)
 	flagName := "tfflag_" + testAccFMEAlphanum(8)
 	res := "harness_fme_feature_flag_definition.test"
+	var envID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -27,12 +28,14 @@ func TestAccResourceFMEFeatureFlagDefinition_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "flag_name", flagName),
 					resource.TestCheckResourceAttrSet(res, "definition_id"),
+					testAccFMECaptureAttr(res, "environment_id", &envID),
 				),
 			},
 			{
 				Config: testAccResourceFMEFeatureFlagDefinition(id, envName, flagName, "on"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "flag_name", flagName),
+					testAccFMECaptureAttr(res, "environment_id", &envID),
 				),
 			},
 			{
@@ -40,6 +43,15 @@ func TestAccResourceFMEFeatureFlagDefinition_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: fmeImportStatePrimaryID(res),
+				Check:             testAccFMECaptureAttr(res, "environment_id", &envID),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check: resource.ComposeTestCheckFunc(
+					testAccFMEVerifyFeatureFlagGone(id, id, flagName),
+					testAccFMEVerifyFeatureFlagDefinitionGone(id, id, envID, flagName),
+					testAccFMEVerifyEnvironmentGone(id, id, envID),
+				),
 			},
 		},
 	})

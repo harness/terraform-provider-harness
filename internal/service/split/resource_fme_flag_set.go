@@ -3,6 +3,7 @@ package split
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	splitsdk "github.com/harness/harness-go-sdk/harness/split"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -91,6 +92,15 @@ func resourceFMEFlagSetImport(ctx context.Context, d *schema.ResourceData, meta 
 	return []*schema.ResourceData{d}, nil
 }
 
+// splitFlagSetErrLooksNotFound is true when FindByID/Delete failed because the flag set no longer exists.
+func splitFlagSetErrLooksNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	s := err.Error()
+	return strings.Contains(s, "404") || strings.Contains(s, "not found") || strings.Contains(s, "Not Found")
+}
+
 func resourceFMEFlagSetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client, diags := SplitClientFromMeta(ctx, meta)
 	if diags.HasError() {
@@ -120,6 +130,10 @@ func resourceFMEFlagSetRead(ctx context.Context, d *schema.ResourceData, meta in
 	}
 	fs, err := client.FlagSets.FindByID(d.Id())
 	if err != nil {
+		if splitFlagSetErrLooksNotFound(err) {
+			d.SetId("")
+			return nil
+		}
 		return diag.FromErr(err)
 	}
 	if fs == nil {
@@ -144,6 +158,9 @@ func resourceFMEFlagSetDelete(ctx context.Context, d *schema.ResourceData, meta 
 		return diags
 	}
 	if err := client.FlagSets.Delete(d.Id()); err != nil {
+		if splitFlagSetErrLooksNotFound(err) {
+			return nil
+		}
 		return diag.FromErr(err)
 	}
 	return nil

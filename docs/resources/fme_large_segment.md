@@ -24,7 +24,7 @@ Create and delete a Harness FME (Split) large segment at workspace scope. Use `h
 
 ### Optional
 
-- `description` (String) Description.
+- `description` (String) Large segment description. Set when the segment is created; changing this value forces replacement (destroy and recreate), not an in-place Split API update.
 
 ### Read-Only
 

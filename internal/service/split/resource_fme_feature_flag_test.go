@@ -44,6 +44,10 @@ func TestAccResourceFMEFeatureFlag_basic(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateIdFunc: fmeImportStateIDOrgProjectThird(res, "name"),
 			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check:  testAccFMEVerifyFeatureFlagGone(id, id, flagName),
+			},
 		},
 	})
 }

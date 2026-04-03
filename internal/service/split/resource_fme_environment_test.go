@@ -16,6 +16,7 @@ func TestAccResourceFMEEnvironment_basic(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	envName := "tf" + testAccFMEAlphanum(10)
 	res := "harness_fme_environment.test"
+	var envID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -28,12 +29,14 @@ func TestAccResourceFMEEnvironment_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(res, "production", "false"),
 					resource.TestCheckResourceAttrSet(res, "environment_id"),
 					resource.TestCheckResourceAttrPair(res, "id", res, "environment_id"),
+					testAccFMECaptureAttr(res, "environment_id", &envID),
 				),
 			},
 			{
 				Config: testAccResourceFMEEnvironment(id, envName, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "production", "true"),
+					testAccFMECaptureAttr(res, "environment_id", &envID),
 				),
 			},
 			{
@@ -42,6 +45,11 @@ func TestAccResourceFMEEnvironment_basic(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       fmeImportStateIDOrgProjectThird(res, "environment_id"),
 				ImportStateVerifyIgnore: []string{"bootstrap_api_token_ids"},
+				Check:                   testAccFMECaptureAttr(res, "environment_id", &envID),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check:  testAccFMEVerifyEnvironmentGone(id, id, envID),
 			},
 		},
 	})

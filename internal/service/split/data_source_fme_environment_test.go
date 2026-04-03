@@ -17,7 +17,9 @@ func TestAccDataSourceFMEEnvironment(t *testing.T) {
 	}
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	envName := "tf" + testAccFMEAlphanum(10)
+	res := "harness_fme_environment.created"
 	ds := "data.harness_fme_environment.test"
+	var envID string
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -28,10 +30,17 @@ func TestAccDataSourceFMEEnvironment(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(ds, "id"),
 					resource.TestCheckResourceAttrSet(ds, "environment_id"),
+					resource.TestCheckResourceAttrPair(ds, "environment_id", res, "environment_id"),
+					resource.TestCheckResourceAttrPair(ds, "id", res, "id"),
 					resource.TestCheckResourceAttr(ds, "org_id", id),
 					resource.TestCheckResourceAttr(ds, "project_id", id),
 					resource.TestCheckResourceAttr(ds, "name", envName),
+					testAccFMECaptureAttr(res, "environment_id", &envID),
 				),
+			},
+			{
+				Config: testAccFMEHarnessOrgProjectOnly(id),
+				Check:  testAccFMEVerifyEnvironmentGone(id, id, envID),
 			},
 		},
 	})

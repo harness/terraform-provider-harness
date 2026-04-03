@@ -18,6 +18,12 @@ func TestRuleBasedSegmentDefinitionJSONSemanticallyEqual_notEqual(t *testing.T) 
 	require.False(t, ruleBasedSegmentDefinitionJSONSemanticallyEqual(a, b))
 }
 
+func TestRuleBasedSegmentDefinitionJSONSemanticallyEqual_excludedKeysOrder(t *testing.T) {
+	a := `{"excludedKeys":["excluded_loadgen","excluded_qa_bot"],"rules":[]}`
+	b := `{"excludedKeys":["excluded_qa_bot","excluded_loadgen"],"rules":[]}`
+	require.True(t, ruleBasedSegmentDefinitionJSONSemanticallyEqual(a, b))
+}
+
 func TestRuleBasedSegmentDefinitionJSONSemanticallyEqualIgnoreTitleComment_ignoresPresentationFields(t *testing.T) {
 	withMeta := `{"title":"acc rbs v2","comment":"acc comment v2","rules":[{"condition":{"combiner":"AND","matchers":[{"type":"IN_LIST_STRING","strings":["acc_rbs_key_1"]}]}}]}`
 	rulesOnly := `{"rules":[{"condition":{"combiner":"AND","matchers":[{"type":"IN_LIST_STRING","strings":["acc_rbs_key_1"]}]}}]}`
