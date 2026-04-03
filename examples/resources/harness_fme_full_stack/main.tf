@@ -184,13 +184,14 @@ resource "harness_fme_traffic_type" "extra" {
 }
 
 resource "harness_fme_traffic_type_attribute" "example" {
-  org_id          = harness_platform_organization.this.id
-  project_id      = harness_platform_project.this.id
-  traffic_type_id = data.harness_fme_traffic_type.user.traffic_type_id
-  identifier      = local.attr_id
-  display_name    = "TF Example Attribute"
-  data_type       = "string"
-  is_searchable   = false
+  org_id           = harness_platform_organization.this.id
+  project_id       = harness_platform_project.this.id
+  traffic_type_id  = data.harness_fme_traffic_type.user.traffic_type_id
+  identifier       = local.attr_id
+  display_name     = "TF Example Attribute"
+  data_type        = "string"
+  is_searchable    = false
+  suggested_values = ["standard", "premium", "internal"]
 }
 
 resource "harness_fme_segment" "classic" {
