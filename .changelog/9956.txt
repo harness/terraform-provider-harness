@@ -1,3 +1,0 @@
-```release-note:new-resource
-harness_fme_environment_segment_keys: Replace keys for a classic segment in a Split environment
-```

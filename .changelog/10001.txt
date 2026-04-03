@@ -1,3 +1,0 @@
-```release-note:enhancement
-FME (Split): cache resolved workspace per Harness org/project for the provider session and retry workspace list on 429 and transient duplicate-key errors to reduce throttling and apply flakes.
-```

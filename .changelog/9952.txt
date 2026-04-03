@@ -1,3 +1,0 @@
-```release-note:new-resource
-harness_fme_segment: Manage classic Split segments
-```

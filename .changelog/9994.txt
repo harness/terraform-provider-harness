@@ -1,3 +1,0 @@
-```release-note:enhancement
-harness_fme_environment: Persist auto-created Split API key IDs from the create response in `bootstrap_api_token_ids` and delete them before destroying the environment
-```

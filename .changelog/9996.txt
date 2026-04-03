@@ -1,3 +1,0 @@
-```release-note:new-data-source
-harness_fme_traffic_type: Look up an FME (Split) traffic type by Harness org_id, project_id, and name
-```

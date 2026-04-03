@@ -1,3 +1,0 @@
-```release-note:new-resource
-harness_fme_feature_flag: Manage Split feature flags (splits) and tag associations
-```

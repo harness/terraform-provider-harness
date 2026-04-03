@@ -1,3 +1,0 @@
-```release-note:new-resource
-harness_fme_traffic_type: Create and delete Split traffic types
-```

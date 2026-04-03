@@ -1,3 +1,0 @@
-```release-note:new-resource
-`harness_fme_large_segment_environment_association`: manage large segment definitions per FME environment (mirrors classic `harness_fme_segment_environment_association`).
-```

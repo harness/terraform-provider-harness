@@ -1,3 +1,0 @@
-```release-note:new-resource
-harness_fme_api_key: Create and delete Split server-side or client-side API keys for a workspace environment
-```

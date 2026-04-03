@@ -1,3 +1,0 @@
-```release-note:new-data-source
-harness_fme_environment: Look up an FME (Split) environment by Harness org_id, project_id, and environment name
-```

@@ -1,3 +1,0 @@
-```release-note:enhancement
-Added `examples/resources/harness_fme_full_stack/main.tf` to exercise all `harness_fme_*` data sources and resources in one configuration.
-```

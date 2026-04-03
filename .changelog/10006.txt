@@ -5,5 +5,101 @@
 ```
 
 ```release-note:new-resource
+harness_fme_api_key: Create and delete Split server-side or client-side API keys for a workspace environment
+```
+
+```release-note:new-resource
+harness_fme_environment: Manage Split environments for a Harness org and project
+```
+
+```release-note:new-resource
+harness_fme_environment_segment_keys: Replace keys for a classic segment in a Split environment
+```
+
+```release-note:new-resource
+harness_fme_feature_flag: Manage Split feature flags (splits) and tag associations
+```
+
+```release-note:new-resource
+harness_fme_feature_flag_definition: Manage Split feature flag definitions per environment (JSON definition body)
+```
+
+```release-note:new-resource
+harness_fme_flag_set: Create and delete Split flag sets
+```
+
+```release-note:new-resource
+harness_fme_large_segment: Manage Split large segments with optional environment definition
+```
+
+```release-note:new-resource
+`harness_fme_large_segment_environment_association`: manage large segment definitions per FME environment (mirrors classic `harness_fme_segment_environment_association`).
+```
+
+```release-note:new-resource
+harness_fme_rule_based_segment: Manage Split rule-based segments with optional environment definition JSON
+```
+
+```release-note:new-resource
 `harness_fme_rule_based_segment_environment_association`: enable a rule-based segment per environment and manage `definition_json`.
+```
+
+```release-note:new-resource
+harness_fme_segment: Manage classic Split segments
+```
+
+```release-note:new-resource
+harness_fme_segment_environment_association: Activate or deactivate a classic segment in an environment
+```
+
+```release-note:new-resource
+harness_fme_traffic_type: Create and delete Split traffic types
+```
+
+```release-note:new-resource
+harness_fme_traffic_type_attribute: Manage Split traffic type schema attributes
+```
+
+```release-note:new-data-source
+harness_fme_environment: Look up an FME (Split) environment by Harness org_id, project_id, and environment name
+```
+
+```release-note:new-data-source
+harness_fme_flag_set: Look up an FME (Split) flag set by Harness org_id, project_id, and name
+```
+
+```release-note:new-data-source
+harness_fme_large_segment: Look up an FME (Split) large segment by Harness org_id, project_id, and name
+```
+
+```release-note:new-data-source
+harness_fme_traffic_type: Look up an FME (Split) traffic type by Harness org_id, project_id, and name
+```
+
+```release-note:new-data-source
+harness_fme_workspace: Look up an FME (Split) workspace by name or by Harness org_id and project_id
+```
+
+```release-note:enhancement
+harness_fme_environment: Persist auto-created Split API key IDs from the create response in `bootstrap_api_token_ids` and delete them before destroying the environment
+```
+
+```release-note:enhancement
+FME (Split): cache resolved workspace per Harness org/project for the provider session and retry workspace list on 429 and transient duplicate-key errors to reduce throttling and apply flakes.
+```
+
+```release-note:enhancement
+Added `examples/resources/harness_fme_full_stack/main.tf` to exercise all `harness_fme_*` data sources and resources in one configuration.
+```
+
+```release-note:bug
+Session `GetSplitClientWithContext` now routes through a Split client wrapper with `WithAuthContext`-style initialization for consistent context handling with other SDK clients
+```
+
+```release-note:bug
+`harness_fme_segment`, `harness_fme_large_segment`, and `harness_fme_feature_flag` import now require a traffic type id from the API or fail with a clear error; read refreshes preserve `traffic_type_id` when the API omits it
+```
+
+```release-note:bug-fix
+`harness_fme_api_key`: When Split create omits `id` but returns `key`, use that value as the Terraform id and for delete (fixes inconsistent apply with live FME responses). Added `examples/split_debug_api_key` to inspect raw create responses.
 ```

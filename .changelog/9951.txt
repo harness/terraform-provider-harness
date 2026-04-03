@@ -1,3 +1,0 @@
-```release-note:new-resource
-harness_fme_flag_set: Create and delete Split flag sets
-```
