@@ -40,6 +40,7 @@ data "harness_platform_role_assignments" "example" {
 - `principal` (List of Object) Principal. (see [below for nested schema](#nestedatt--principal))
 - `resource_group_identifier` (String) Resource group identifier.
 - `role_identifier` (String) Role identifier.
+- `role_reference` (List of Object) Role reference. (see [below for nested schema](#nestedatt--role_reference))
 
 <a id="nestedatt--principal"></a>
 ### Nested Schema for `principal`
@@ -49,3 +50,12 @@ Read-Only:
 - `identifier` (String)
 - `scope_level` (String)
 - `type` (String)
+
+
+<a id="nestedatt--role_reference"></a>
+### Nested Schema for `role_reference`
+
+Read-Only:
+
+- `identifier` (String)
+- `scope_level` (String)
