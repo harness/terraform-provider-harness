@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -176,7 +177,7 @@ func dataSourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Re
 					},
 				}
 			}
-			return diag.Errorf("failed to read security governance rule: %v", err)
+			return helpers.HandleChaosGraphQLReadError(err, d, "read_chaos_security_governance_rule")
 		}
 		if resp == nil || resp.Rule == nil {
 			d.SetId("")
@@ -200,7 +201,7 @@ func dataSourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Re
 
 		rules, err := securityGovernanceRuleClient.List(ctx, identifiers, model.ListRuleRequest{})
 		if err != nil {
-			return diag.Errorf("failed to list security governance rules: %v", err)
+			return helpers.HandleChaosGraphQLReadError(err, d, "read_chaos_security_governance_rule")
 		}
 
 		var found bool
@@ -231,7 +232,7 @@ func dataSourceChaosSecurityGovernanceRuleRead(ctx context.Context, d *schema.Re
 
 	// Set the attributes
 	if err := setRuleAttributes(d, &model.RuleResponse{Rule: rule}, accountID); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to set rule attributes: %w", err))
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to set rule attributes: %w", err), d, "read_chaos_security_governance_rule")
 	}
 
 	return nil

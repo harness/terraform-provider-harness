@@ -18,7 +18,7 @@ HOSTNAME     := registry.terraform.io
 NAMESPACE    := harness
 NAME         := harness
 BINARY       := terraform-provider-$(NAME)
-VERSION      ?= 0.99.0-dev
+VERSION      ?= 0.100.0-dev
 
 # Build configuration
 GO           := go

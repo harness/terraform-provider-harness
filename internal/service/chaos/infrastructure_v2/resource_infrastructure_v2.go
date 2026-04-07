@@ -56,7 +56,7 @@ func resourceInfrastructureV2Create(ctx context.Context, d *schema.ResourceData,
 		},
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
 
 	// Set the ID
@@ -101,11 +101,12 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 		environmentID,
 	)
 	if err != nil {
-		if httpResp != nil && httpResp.StatusCode == 404 {
-			d.SetId("")
-			return nil
-		}
-		return helpers.HandleApiError(err, d, httpResp)
+		// Use graceful destroy handling for infrastructure read errors
+		// This handles 404 and certain 500 errors (resource not found/inconsistent state)
+		return helpers.HandleChaosReadApiErrorWithGracefulDestroy(err, d, httpResp, []string{
+			"no matching infra",
+			"not a k8s infra",
+		})
 	}
 
 	// Check if infra.Identifier is nil
@@ -284,7 +285,7 @@ func resourceInfrastructureV2Update(ctx context.Context, d *schema.ResourceData,
 		},
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
 
 	return resourceInfrastructureV2Read(ctx, d, meta)
@@ -313,7 +314,20 @@ func resourceInfrastructureV2Delete(ctx context.Context, d *schema.ResourceData,
 		projectID,
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		// Use graceful destroy handling for infrastructure delete errors
+		// This handles 404 and certain 500 errors (resource not found/inconsistent state)
+		diags := helpers.HandleChaosReadApiErrorWithGracefulDestroy(err, d, httpResp, []string{
+			"no matching infra",
+			"not a k8s infra",
+			"failed to delete infra",
+		})
+		// If the helper cleared the state (SetId("")), we're done
+		if d.Id() == "" {
+			log.Printf("[DEBUG] Infrastructure delete handled gracefully: %s", infraID)
+			return diags
+		}
+		// Otherwise, it's a real error
+		return diags
 	}
 
 	d.SetId("")

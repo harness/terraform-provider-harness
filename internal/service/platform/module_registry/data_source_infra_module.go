@@ -29,7 +29,7 @@ func DataSourceInfraModule() *schema.Resource {
 				Required:    true,
 			},
 			"repository": {
-				Description: "For account connectors, the repository where the module is stored",
+				Description: "For account connectors, the repository name where the module is stored.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
@@ -141,12 +141,6 @@ func DataSourceInfraModule() *schema.Resource {
 							Optional:    true,
 							Computed:    true,
 						},
-						"org": {
-							Description: "Organization identifier",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Computed:    true,
-						},
 						"pipelines": {
 							Description: "Pipelines where the testing is enabled",
 							Type:        schema.TypeList,
@@ -155,12 +149,6 @@ func DataSourceInfraModule() *schema.Resource {
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
-						},
-						"project": {
-							Description: "Project identifier",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Computed:    true,
 						},
 						"provider_connector": {
 							Description: "Provider connector for testing purposes",

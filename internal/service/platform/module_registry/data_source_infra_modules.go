@@ -45,18 +45,8 @@ func DataSourceInfraModules() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
-						"org": {
-							Description: "Organization that owns the module",
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
-						"project": {
-							Description: "Project that owns the module",
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
 						"repository": {
-							Description: "Repository where the module is stored",
+							Description: "Repository name where the module is stored",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
