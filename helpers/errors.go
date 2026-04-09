@@ -19,6 +19,34 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+// isUndefinedResponseTypeError checks if the error is the SDK's "undefined response type"
+// error, which occurs when the API returns a non-JSON/non-XML response (e.g., HTML from
+// a misconfigured endpoint or a proxy/load balancer error page).
+func isUndefinedResponseTypeError(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "undefined response type")
+}
+
+// handleUndefinedResponseTypeError returns a user-friendly diagnostic for the
+// "undefined response type" error.
+func handleUndefinedResponseTypeError(httpResp *http.Response) diag.Diagnostics {
+	statusInfo := ""
+	if httpResp != nil {
+		statusInfo = fmt.Sprintf(" (HTTP %d)", httpResp.StatusCode)
+	}
+	return diag.Errorf(
+		"Received a non-JSON/non-XML response from the Harness API%s. "+
+			"This usually indicates one of the following:\n"+
+			"1) The 'endpoint' (HARNESS_ENDPOINT) is incorrect or unreachable.\n"+
+			"2) A proxy or load balancer is returning an error page instead of the API response.\n"+
+			"3) The Harness API service is temporarily unavailable.\n\n"+
+			"Please verify your provider configuration:\n"+
+			"  - endpoint: should be a valid Harness API URL (e.g., https://app.harness.io/gateway)\n"+
+			"  - account_id: your Harness account identifier (env: HARNESS_ACCOUNT_ID)\n"+
+			"  - platform_api_key: a valid API key (env: HARNESS_PLATFORM_API_KEY)",
+		statusInfo,
+	)
+}
+
 func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
 	return handleApiError(err, d, httpResp, false)
 }
@@ -79,6 +107,9 @@ func HandleDBOpsApiError(err error, d *schema.ResourceData, httpResp *http.Respo
 		}
 	}
 
+	if isUndefinedResponseTypeError(err) {
+		return handleUndefinedResponseTypeError(httpResp)
+	}
 	return diag.Errorf(err.Error())
 }
 
@@ -112,6 +143,9 @@ func HandlePolicyApiError(err error, d *schema.ResourceData, httpResp *http.Resp
 		}
 	}
 
+	if isUndefinedResponseTypeError(err) {
+		return handleUndefinedResponseTypeError(httpResp)
+	}
 	return handleApiError(err, d, httpResp, false)
 }
 
@@ -202,6 +236,9 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 		return diag.Errorf(err_openapi_client.Error())
 	}
 
+	if isUndefinedResponseTypeError(err) {
+		return handleUndefinedResponseTypeError(httpResp)
+	}
 	return diag.Errorf(err.Error())
 }
 
@@ -236,6 +273,9 @@ func HandleDBOpsReadApiError(err error, d *schema.ResourceData, httpResp *http.R
 			return nil
 		}
 	}
+	if isUndefinedResponseTypeError(err) {
+		return handleUndefinedResponseTypeError(httpResp)
+	}
 	return diag.Errorf(err.Error())
 }
 
@@ -263,18 +303,18 @@ func HandleChaosReadApiErrorWithGracefulDestroy(err error, d *schema.ResourceDat
 	if !ok {
 		return diag.Errorf(err.Error())
 	}
-	
+
 	// Handle 404 - resource not found
 	if httpResp != nil && httpResp.StatusCode == 404 {
 		log.Printf("[DEBUG] Resource not found (404), removing from state")
 		d.SetId("")
 		return nil
 	}
-	
+
 	// Handle 500 errors that indicate resource is gone or in inconsistent state
 	if httpResp != nil && httpResp.StatusCode == 500 && len(gracefulErrorPatterns) > 0 {
 		errMsg := ""
-		
+
 		// Try to extract error message from model
 		if chaosErr.Model() != nil {
 			if apiErr, ok := chaosErr.Model().(chaos.ApiRestError); ok {
@@ -285,12 +325,12 @@ func HandleChaosReadApiErrorWithGracefulDestroy(err error, d *schema.ResourceDat
 				}
 			}
 		}
-		
+
 		// Fallback to error string
 		if errMsg == "" {
 			errMsg = fmt.Sprintf("%v", err)
 		}
-		
+
 		// Check if error matches any graceful patterns
 		for _, pattern := range gracefulErrorPatterns {
 			if strings.Contains(strings.ToLower(errMsg), strings.ToLower(pattern)) {
@@ -300,7 +340,7 @@ func HandleChaosReadApiErrorWithGracefulDestroy(err error, d *schema.ResourceDat
 			}
 		}
 	}
-	
+
 	// Not a graceful error, handle normally
 	return handleChaosApiError(err, d, httpResp, true)
 }
@@ -310,10 +350,15 @@ func HandleChaosReadApiErrorWithGracefulDestroy(err error, d *schema.ResourceDat
 func handleChaosApiError(err error, d *schema.ResourceData, httpResp *http.Response, read bool) diag.Diagnostics {
 	chaosErr, ok := err.(chaos.GenericSwaggerError)
 	if !ok {
-		// Not a chaos error, fallback to generic error message
+		if isUndefinedResponseTypeError(err) {
+			return handleUndefinedResponseTypeError(httpResp)
+		}
 		return diag.Errorf(err.Error())
 	}
 	if httpResp == nil {
+		if isUndefinedResponseTypeError(err) {
+			return handleUndefinedResponseTypeError(nil)
+		}
 		return diag.Errorf(chaosErr.Error())
 	}
 
