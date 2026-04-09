@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/url"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry_testing"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/provider_registry"
@@ -22,14 +23,14 @@ import (
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/action_template"
 	chaos_hub "github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub"
-	"github.com/harness/terraform-provider-harness/internal/service/chaos/probe_template"
-	"github.com/harness/terraform-provider-harness/internal/service/chaos/fault_template"
-	"github.com/harness/terraform-provider-harness/internal/service/chaos/experiment_template"
-	"github.com/harness/terraform-provider-harness/internal/service/chaos/experiment"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub_v2"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/experiment"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/experiment_template"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/fault_template"
 	image_registry "github.com/harness/terraform-provider-harness/internal/service/chaos/image_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	chaos_infrastructure_v2 "github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure_v2"
+	"github.com/harness/terraform-provider-harness/internal/service/chaos/probe_template"
 	chaos_security_governance "github.com/harness/terraform-provider-harness/internal/service/chaos/security_governance"
 	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
@@ -735,9 +736,52 @@ func getPOClient(d *schema.ResourceData, version string) *po.APIClient {
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+		var diags diag.Diagnostics
+
+		endpoint := d.Get("endpoint").(string)
+		accountId := d.Get("account_id").(string)
+		apiKey := d.Get("api_key").(string)
+		platformApiKey := d.Get("platform_api_key").(string)
+
+		// Validate endpoint URL format
+		parsedURL, err := url.Parse(endpoint)
+		if err != nil || parsedURL.Scheme == "" || parsedURL.Host == "" {
+			return nil, diag.Errorf(
+				"Invalid Harness API endpoint %q. The endpoint must be a valid URL with a scheme (http/https) and host. "+
+					"Example: https://app.harness.io/gateway. "+
+					"This can be set using the 'endpoint' provider attribute or the %s environment variable.",
+				endpoint, helpers.EnvVars.Endpoint.String(),
+			)
+		}
+
+		if accountId == "" {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Harness account_id is not configured",
+				Detail: fmt.Sprintf(
+					"The account_id is not set. Most Harness resources require an account_id to function correctly. "+
+						"Set it in the provider configuration or via the %s environment variable.",
+					helpers.EnvVars.AccountId.String(),
+				),
+			})
+		}
+
+		if apiKey == "" && platformApiKey == "" {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "No Harness API key configured",
+				Detail: fmt.Sprintf(
+					"Neither api_key nor platform_api_key is set. API operations will fail without authentication. "+
+						"Set platform_api_key (env: %s) for NextGen/Platform resources or api_key (env: %s) for FirstGen resources. "+
+						"See https://registry.terraform.io/providers/harness/harness/latest/docs#api_key-1 for more details.",
+					helpers.EnvVars.PlatformApiKey.String(), helpers.EnvVars.ApiKey.String(),
+				),
+			})
+		}
+
 		return &internal.Session{
-			AccountId:   d.Get("account_id").(string),
-			Endpoint:    d.Get("endpoint").(string),
+			AccountId:   accountId,
+			Endpoint:    endpoint,
 			CDClient:    getCDClient(d, version),
 			PLClient:    getPLClient(d, version),
 			Client:      getClient(d, version),
@@ -748,6 +792,6 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			HARClient:   getHarClient(d, version),
 			IDPClient:   getIDPClient(d, version),
 			POClient:    getPOClient(d, version),
-		}, nil
+		}, diags
 	}
 }
