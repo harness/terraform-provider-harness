@@ -1007,7 +1007,7 @@ func TestAccResourceUpstreamHelmAnonymousRegistry(t *testing.T) {
 
 // Tests creating an upstream Helm registry with Anonymous auth at organization level
 func TestOrgResourceUpstreamHelmAnonymousRegistry(t *testing.T) {
-	id := fmt.Sprintf("tfauto-up-helm-anon-%s", randAlphanumeric(5))
+	id := fmt.Sprintf("tfauto_up_helm_anon_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -1242,7 +1242,7 @@ func testAccResourceVirtualMavenRegistry(id string, accId string) string {
 
 // Tests creating a virtual NPM registry with import
 func TestAccResourceVirtualNPMRegistry(t *testing.T) {
-	id := fmt.Sprintf("tfauto-virt-npm-%s", randAlphanumeric(5))
+	id := fmt.Sprintf("tfauto_virt_npm_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -1846,7 +1846,7 @@ resource "harness_platform_har_registry" "test" {
 
 // Tests creating an upstream NPM registry with firewall_mode = ENABLED
 func TestAccResourceUpstreamNpmRegistryFirewallEnabled(t *testing.T) {
-	id := fmt.Sprintf("tfauto-up-fw-en-%s", randAlphanumeric(5))
+	id := fmt.Sprintf("tfauto_up_fw_en_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -1860,7 +1860,8 @@ func TestAccResourceUpstreamNpmRegistryFirewallEnabled(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					_, _ = acctest.TestAccGetHarClientWithContext()
 				},
-				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
+				Config:             testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "package_type", "NPM"),
@@ -1876,7 +1877,7 @@ func TestAccResourceUpstreamNpmRegistryFirewallEnabled(t *testing.T) {
 
 // Tests creating an upstream NPM registry with firewall_mode = QUARANTINE
 func TestAccResourceUpstreamNpmRegistryFirewallQuarantined(t *testing.T) {
-	id := fmt.Sprintf("tfauto-up-fw-qr-%s", randAlphanumeric(5))
+	id := fmt.Sprintf("tfauto_up_fw_qr_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -1890,7 +1891,8 @@ func TestAccResourceUpstreamNpmRegistryFirewallQuarantined(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					_, _ = acctest.TestAccGetHarClientWithContext()
 				},
-				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
+				Config:             testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "package_type", "NPM"),
@@ -1906,7 +1908,7 @@ func TestAccResourceUpstreamNpmRegistryFirewallQuarantined(t *testing.T) {
 
 // Tests updating firewall_mode from ENABLED to QUARANTINE on an upstream NPM registry
 func TestAccResourceUpstreamNpmRegistryFirewallUpdate(t *testing.T) {
-	id := fmt.Sprintf("tfauto-up-fw-upd-%s", randAlphanumeric(5))
+	id := fmt.Sprintf("tfauto_up_fw_upd_%s", randAlphanumeric(5))
 	resourceName := "harness_platform_har_registry.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
@@ -1920,14 +1922,16 @@ func TestAccResourceUpstreamNpmRegistryFirewallUpdate(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					_, _ = acctest.TestAccGetHarClientWithContext()
 				},
-				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
+				Config:             testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
 				),
 			},
 			{
-				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
+				Config:             testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
@@ -1939,7 +1943,7 @@ func TestAccResourceUpstreamNpmRegistryFirewallUpdate(t *testing.T) {
 
 // Tests that firewall_mode is rejected for DOCKER upstream registries
 func TestAccResourceUpstreamDockerRegistryFirewallRejected(t *testing.T) {
-	id := fmt.Sprintf("tfauto-up-fw-dk-%s", randAlphanumeric(5))
+	id := fmt.Sprintf("tfauto_up_fw_dk_%s", randAlphanumeric(5))
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
@@ -1957,7 +1961,7 @@ func TestAccResourceUpstreamDockerRegistryFirewallRejected(t *testing.T) {
 
 // Tests that firewall_mode is rejected for HELM upstream registries
 func TestAccResourceUpstreamHelmRegistryFirewallRejected(t *testing.T) {
-	id := fmt.Sprintf("tfauto-up-fw-hm-%s", randAlphanumeric(5))
+	id := fmt.Sprintf("tfauto_up_fw_hm_%s", randAlphanumeric(5))
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
@@ -1975,7 +1979,7 @@ func TestAccResourceUpstreamHelmRegistryFirewallRejected(t *testing.T) {
 
 // Tests that firewall_mode is rejected for VIRTUAL registries
 func TestAccResourceVirtualRegistryFirewallRejected(t *testing.T) {
-	id := fmt.Sprintf("tfauto-vr-fw-%s", randAlphanumeric(5))
+	id := fmt.Sprintf("tfauto_vr_fw_%s", randAlphanumeric(5))
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
