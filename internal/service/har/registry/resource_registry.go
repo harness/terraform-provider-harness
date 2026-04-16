@@ -2,7 +2,9 @@ package registry
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -11,9 +13,30 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+// injectFirewallMode marshals a *har.RegistryRequest to a map and injects the
+// firewallMode field into config, since the SDK struct does not include this
+// field yet. Returns the map to pass to optional.NewInterface().
+func injectFirewallMode(registry *har.RegistryRequest, firewallMode string) (interface{}, error) {
+	data, err := json.Marshal(registry)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal registry request: %w", err)
+	}
+	var m map[string]interface{}
+	if err := json.Unmarshal(data, &m); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal registry request: %w", err)
+	}
+	cfg, ok := m["config"].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("failed to inject firewallMode: 'config' key missing from marshaled registry request")
+	}
+	cfg["firewallMode"] = firewallMode
+	return m, nil
+}
 
 func ResourceRegistry() *schema.Resource {
 	return &schema.Resource{
@@ -123,6 +146,16 @@ func resourceRegistryCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, 
 	configType, _ := d.Get("config.0.type").(string)
 	packageType, _ := d.Get("package_type").(string)
 
+	// firewall_mode is only supported on UPSTREAM registries with certain package types
+	if fm, ok := d.GetOk("config.0.firewall_mode"); ok && fm.(string) != "" {
+		if configType != "UPSTREAM" {
+			return fmt.Errorf("'firewall_mode' is only valid for UPSTREAM registry type")
+		}
+		if packageType == "DOCKER" || packageType == "HELM" {
+			return fmt.Errorf("'firewall_mode' is not supported for %s package type", packageType)
+		}
+	}
+
 	if configType == "UPSTREAM" {
 		// Source is required for UPSTREAM
 		if source, ok := d.GetOk("config.0.source"); !ok || source.(string) == "" {
@@ -175,6 +208,51 @@ func resourceRegistryCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, 
 	return nil
 }
 
+// fetchFirewallMode makes a raw HTTP GET to the registry endpoint and extracts
+// the firewallMode field from the JSON response, since the SDK struct does not
+// include this field yet.
+func fetchFirewallMode(c *har.APIClient, ctx context.Context, registryRef string) string {
+	// The /+ suffix tells the HAR API to return the full registry detail including config fields.
+	rawURL := c.Endpoint + "/registry/" + registryRef + "/+"
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, rawURL, nil)
+	if err != nil {
+		tflog.Warn(ctx, "fetchFirewallMode: failed to create request", map[string]interface{}{"error": err.Error()})
+		return ""
+	}
+	req.Header.Set("x-api-key", c.ApiKey)
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		tflog.Warn(ctx, "fetchFirewallMode: HTTP request failed", map[string]interface{}{"error": err.Error(), "url": rawURL})
+		return ""
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		tflog.Warn(ctx, "fetchFirewallMode: unexpected status code", map[string]interface{}{"status": resp.StatusCode, "url": rawURL})
+		return ""
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		tflog.Warn(ctx, "fetchFirewallMode: failed to read response body", map[string]interface{}{"error": err.Error()})
+		return ""
+	}
+
+	var raw struct {
+		Data struct {
+			Config struct {
+				FirewallMode string `json:"firewallMode"`
+			} `json:"config"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(body, &raw); err != nil {
+		tflog.Warn(ctx, "fetchFirewallMode: failed to unmarshal response", map[string]interface{}{"error": err.Error()})
+		return ""
+	}
+	return raw.Data.Config.FirewallMode
+}
+
 func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetHarClientWithContext(ctx)
 
@@ -186,6 +264,24 @@ func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	readRegistry(d, resp.Data)
+
+	// Fetch firewall_mode from raw API response (SDK doesn't support this field yet)
+	if resp.Data != nil && resp.Data.Config != nil &&
+		resp.Data.Config.Type_ != nil && *resp.Data.Config.Type_ == har.UPSTREAM_RegistryType {
+		firewallMode := fetchFirewallMode(c, ctx, registryRef)
+		if firewallMode != "" {
+			// Update the config in state to include firewall_mode
+			if configRaw, ok := d.GetOk("config"); ok {
+				configList := configRaw.([]interface{})
+				if len(configList) > 0 {
+					configMap := configList[0].(map[string]interface{})
+					configMap["firewall_mode"] = firewallMode
+					d.Set("config", []interface{}{configMap})
+				}
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -207,14 +303,23 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	registry := buildRegistry(d)
 	spaceRef := d.Get("space_ref").(string)
 
+	var body interface{} = registry
+	if fm, ok := d.GetOk("config.0.firewall_mode"); ok && fm.(string) != "" {
+		injected, fwErr := injectFirewallMode(registry, fm.(string))
+		if fwErr != nil {
+			return diag.FromErr(fwErr)
+		}
+		body = injected
+	}
+
 	if d.Id() == "" {
 		resp, httpResp, err = c.RegistriesApi.CreateRegistry(ctx, &har.RegistriesApiCreateRegistryOpts{
-			Body: optional.NewInterface(registry), SpaceRef: optional.NewString(spaceRef),
+			Body: optional.NewInterface(body), SpaceRef: optional.NewString(spaceRef),
 		})
 	} else {
 		registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
 		resp, httpResp, err = c.RegistriesApi.ModifyRegistry(ctx, registryRef, &har.RegistriesApiModifyRegistryOpts{
-			Body: optional.NewInterface(registry),
+			Body: optional.NewInterface(body),
 		})
 	}
 
@@ -223,6 +328,24 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	readRegistry(d, resp.Data)
+
+	// Fetch firewall_mode from raw API response (SDK doesn't support this field yet)
+	if resp.Data != nil && resp.Data.Config != nil &&
+		resp.Data.Config.Type_ != nil && *resp.Data.Config.Type_ == har.UPSTREAM_RegistryType {
+		registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
+		firewallMode := fetchFirewallMode(c, ctx, registryRef)
+		if firewallMode != "" {
+			if configRaw, ok := d.GetOk("config"); ok {
+				configList := configRaw.([]interface{})
+				if len(configList) > 0 {
+					configMap := configList[0].(map[string]interface{})
+					configMap["firewall_mode"] = firewallMode
+					d.Set("config", []interface{}{configMap})
+				}
+			}
+		}
+	}
+
 	return nil
 }
 

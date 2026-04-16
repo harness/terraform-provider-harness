@@ -1843,3 +1843,279 @@ resource "harness_platform_har_registry" "test" {
 }
 `, id, accId)
 }
+
+// Tests creating an upstream NPM registry with firewall_mode = ENABLED
+func TestAccResourceUpstreamNpmRegistryFirewallEnabled(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_fw_en_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "NPM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "NpmJs"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+		},
+	})
+}
+
+// Tests creating an upstream NPM registry with firewall_mode = QUARANTINE
+func TestAccResourceUpstreamNpmRegistryFirewallQuarantined(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_fw_qr_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "NPM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "NpmJs"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "QUARANTINE"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+		},
+	})
+}
+
+// Tests updating firewall_mode from ENABLED to QUARANTINE on an upstream NPM registry
+func TestAccResourceUpstreamNpmRegistryFirewallUpdate(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_fw_upd_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
+				),
+			},
+			{
+				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "QUARANTINE"),
+				),
+			},
+		},
+	})
+}
+
+// Tests removing firewall_mode (ENABLED -> unset, should revert to API default)
+func TestAccResourceUpstreamNpmRegistryFirewallRemove(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_fw_rm_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
+				),
+			},
+			{
+				Config: testAccResourceUpstreamNpmRegistryNoFirewall(id, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "NpmJs"),
+				),
+			},
+		},
+	})
+}
+
+// Tests that firewall_mode is rejected for DOCKER upstream registries
+func TestAccResourceUpstreamDockerRegistryFirewallRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_fw_dk_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamDockerRegistryFirewall(id, accountId, "ENABLED"),
+				ExpectError: regexp.MustCompile("'firewall_mode' is not supported for DOCKER package type"),
+			},
+		},
+	})
+}
+
+// Tests that firewall_mode is rejected for HELM upstream registries
+func TestAccResourceUpstreamHelmRegistryFirewallRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_fw_hm_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamHelmRegistryFirewall(id, accountId, "ENABLED"),
+				ExpectError: regexp.MustCompile("'firewall_mode' is not supported for HELM package type"),
+			},
+		},
+	})
+}
+
+// Tests that firewall_mode is rejected for VIRTUAL registries
+func TestAccResourceVirtualRegistryFirewallRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_vr_fw_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceVirtualRegistryFirewall(id, accountId, "ENABLED"),
+				ExpectError: regexp.MustCompile("'firewall_mode' is only valid for UPSTREAM registry type"),
+			},
+		},
+	})
+}
+
+// Generates Terraform config for upstream NPM registry with a specific firewall_mode
+func testAccResourceUpstreamNpmRegistryFirewall(id string, accId string, firewallMode string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "NPM"
+
+   config {
+    type          = "UPSTREAM"
+    auth_type     = "Anonymous"
+    source        = "NpmJs"
+    firewall_mode = "%[3]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, firewallMode)
+}
+
+// Generates Terraform config for upstream NPM registry without firewall_mode
+func testAccResourceUpstreamNpmRegistryNoFirewall(id string, accId string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "NPM"
+
+   config {
+    type      = "UPSTREAM"
+    auth_type = "Anonymous"
+    source    = "NpmJs"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId)
+}
+
+// Generates Terraform config for upstream DOCKER registry with firewall_mode (should be rejected)
+func testAccResourceUpstreamDockerRegistryFirewall(id string, accId string, firewallMode string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+
+   config {
+    type          = "UPSTREAM"
+    auth_type     = "Anonymous"
+    source        = "Dockerhub"
+    firewall_mode = "%[3]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, firewallMode)
+}
+
+// Generates Terraform config for upstream HELM registry with firewall_mode (should be rejected)
+func testAccResourceUpstreamHelmRegistryFirewall(id string, accId string, firewallMode string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "HELM"
+
+   config {
+    type          = "UPSTREAM"
+    auth_type     = "Anonymous"
+    source        = "Custom"
+    url           = "https://charts.example.com"
+    firewall_mode = "%[3]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, firewallMode)
+}
+
+// Generates Terraform config for VIRTUAL registry with firewall_mode (should be rejected)
+func testAccResourceVirtualRegistryFirewall(id string, accId string, firewallMode string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+
+   config {
+    type          = "VIRTUAL"
+    firewall_mode = "%[3]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, firewallMode)
+}
