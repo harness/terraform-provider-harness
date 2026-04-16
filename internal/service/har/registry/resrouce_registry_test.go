@@ -1929,8 +1929,7 @@ func TestAccResourceUpstreamNpmRegistryFirewallUpdate(t *testing.T) {
 				),
 			},
 			{
-				Config:             testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
-				ExpectNonEmptyPlan: true,
+				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
