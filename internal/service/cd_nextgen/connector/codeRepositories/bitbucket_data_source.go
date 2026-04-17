@@ -42,6 +42,11 @@ func DatasourceConnectorBitbucket() *schema.Resource {
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"auth_type": {
+							Description: fmt.Sprintf("Type of API authentication. Valid values are %s.", strings.Join(nextgen.BitBucketApiAccessTypeValues, ", ")),
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
 						"username": {
 							Description: "The username used for connecting to the api.",
 							Type:        schema.TypeString,
@@ -52,8 +57,18 @@ func DatasourceConnectorBitbucket() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
+						"email": {
+							Description: "The email used for connecting to the api (EmailAndApiToken auth).",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"email_ref": {
+							Description: "The name of the Harness secret containing the email (EmailAndApiToken auth)." + secretRefText,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
 						"token_ref": {
-							Description: "Personal access token for interacting with the BitBucket api." + secretRefText,
+							Description: "Reference to a Harness secret containing the token for interacting with the BitBucket api." + secretRefText,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
