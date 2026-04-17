@@ -176,6 +176,37 @@ resource "harness_fme_environment" "stack" {
   depends_on = [harness_platform_project.this]
 }
 
+resource "harness_platform_usergroup" "approvers" {
+  identifier = "${local.harness_id}_approvers"
+  name       = "${local.harness_id}_approvers"
+  org_id     = harness_platform_organization.this.id
+  project_id = harness_platform_project.this.id
+}
+
+resource "harness_fme_environment" "staging_with_approvals" {
+  org_id     = harness_platform_organization.this.id
+  project_id = harness_platform_project.this.id
+  name       = substr("tfstg_${random_string.suffix.result}", 0, 20)
+  production = false
+  depends_on = [harness_platform_project.this]
+
+  change_permissions {
+    allow_kills              = true
+    are_approvals_required   = true
+    are_approvers_restricted = true
+
+    approvers {
+      id   = harness_platform_usergroup.approvers.id
+      type = "group"
+    }
+
+    approval_skippable_by {
+      id   = harness_platform_usergroup.approvers.id
+      type = "group"
+    }
+  }
+}
+
 resource "harness_fme_traffic_type" "extra" {
   org_id     = harness_platform_organization.this.id
   project_id = harness_platform_project.this.id
@@ -298,6 +329,10 @@ output "fme_flag_set_id_from_data" {
 # Map of logical key -> Split environment id for each `harness_fme_environment.stack` instance.
 output "fme_environment_ids" {
   value = { for k, env in harness_fme_environment.stack : k => env.environment_id }
+}
+
+output "fme_staging_environment_id" {
+  value = harness_fme_environment.staging_with_approvals.environment_id
 }
 
 output "fme_api_key_secrets" {

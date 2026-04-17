@@ -63,6 +63,36 @@ func ResourceFMEEnvironment() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"change_permissions": {
+				Description: "Change permission and approval settings for this environment. " +
+					"Controls whether kills are allowed, whether approvals are required for changes, " +
+					"and who can approve or skip approvals. " +
+					"Note: the Split API does not return these on read; values are preserved from create/update responses.",
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"allow_kills": {
+							Description: "Whether kill operations are allowed in this environment.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
+						"are_approvals_required": {
+							Description: "Whether approvals are required before changes take effect.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
+						"are_approvers_restricted": {
+							Description: "Whether only specific users/groups/API keys can approve changes.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
+						"approvers":             permissionEntityListSchema("Users, groups, or API keys that can approve changes."),
+						"approval_skippable_by": permissionEntityListSchema("Users, groups, or API keys that can skip the approval requirement."),
+					},
+				},
+			},
 		},
 	}
 }
@@ -92,8 +122,9 @@ func resourceFMEEnvironmentCreate(ctx context.Context, d *schema.ResourceData, m
 		return diags
 	}
 	req := splitsdk.CreateEnvironmentRequest{
-		Name:       d.Get("name").(string),
-		Production: d.Get("production").(bool),
+		Name:              d.Get("name").(string),
+		Production:        d.Get("production").(bool),
+		ChangePermissions: expandChangePermissions(d),
 	}
 	env, err := client.Environments.Create(wsID, req)
 	if err != nil {
@@ -152,6 +183,12 @@ func resourceFMEEnvironmentRead(ctx context.Context, d *schema.ResourceData, met
 	if err := d.Set("bootstrap_api_token_ids", sorted); err != nil {
 		return diag.FromErr(err)
 	}
+	// Split Get does not return change_permissions; preserve whatever is already in state.
+	if prev := d.Get("change_permissions"); prev != nil {
+		if err := d.Set("change_permissions", prev); err != nil {
+			return diag.FromErr(err)
+		}
+	}
 	return nil
 }
 
@@ -164,12 +201,14 @@ func resourceFMEEnvironmentUpdate(ctx context.Context, d *schema.ResourceData, m
 	if diags.HasError() {
 		return diags
 	}
-	req := splitsdk.CreateEnvironmentRequest{
-		Name:       d.Get("name").(string),
-		Production: d.Get("production").(bool),
+	name := d.Get("name").(string)
+	prod := d.Get("production").(bool)
+	req := splitsdk.UpdateEnvironmentRequest{
+		Name:              &name,
+		Production:        &prod,
+		ChangePermissions: expandChangePermissions(d),
 	}
-	_, err := client.Environments.Update(wsID, d.Id(), req)
-	if err != nil {
+	if _, err := client.Environments.Update(wsID, d.Id(), req); err != nil {
 		return diag.FromErr(err)
 	}
 	return resourceFMEEnvironmentRead(ctx, d, meta)
