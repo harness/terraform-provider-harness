@@ -283,7 +283,11 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 		v1Agent.Type_ = &agentType
 	}
 	if attr, ok := d.GetOk("tags"); ok {
-		v1Agent.Tags = attr.(map[string]string)
+		tags := make(map[string]string)
+		for k, v := range attr.(map[string]interface{}) {
+			tags[k] = v.(string)
+		}
+		v1Agent.Tags = tags
 	}
 	if attr, ok := d.GetOk("metadata"); ok {
 		metadata := attr.([]interface{})

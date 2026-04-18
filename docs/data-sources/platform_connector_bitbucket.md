@@ -48,6 +48,9 @@ data "harness_platform_connector_bitbucket" "example" {
 
 Read-Only:
 
+- `auth_type` (String)
+- `email` (String)
+- `email_ref` (String)
 - `token_ref` (String)
 - `username` (String)
 - `username_ref` (String)

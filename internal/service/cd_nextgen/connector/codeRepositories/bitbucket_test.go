@@ -148,6 +148,81 @@ func TestAccResourceConnectorBitbucket_api_token(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorBitbucket_email_and_api_token(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_bitbucket.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorBitbucket_email_and_api_token(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.auth_type", "EmailAndApiToken"),
+					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.email", "user@example.com"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorBitbucket_email_and_api_token(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.auth_type", "EmailAndApiToken"),
+					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.email", "user@example.com"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccResourceConnectorBitbucket_access_token(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_bitbucket.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorBitbucket_access_token(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.auth_type", "AccessToken"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccResourceConnectorBitbucket_http(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
@@ -219,6 +294,95 @@ func testAccResourceConnectorBitbucket_api_token(id string, name string) string 
 
 			api_authentication {
 				username = "admin"
+				token_ref = "account.${harness_platform_secret_text.test.id}"
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorBitbucket_email_and_api_token(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+		resource "harness_platform_connector_bitbucket" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "https://bitbucket.org/account"
+			connection_type = "Account"
+			validation_repo = "some_repo"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				http {
+					username = "admin"
+					password_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+
+			api_authentication {
+				auth_type = "EmailAndApiToken"
+				email     = "user@example.com"
+				token_ref = "account.${harness_platform_secret_text.test.id}"
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorBitbucket_access_token(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+		resource "harness_platform_connector_bitbucket" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "https://bitbucket.org/account"
+			connection_type = "Account"
+			validation_repo = "some_repo"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				http {
+					username = "admin"
+					password_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+
+			api_authentication {
+				auth_type = "AccessToken"
 				token_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
