@@ -174,6 +174,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.NPM_PackageType),
 				(string)(har.RPM_PackageType),
 				(string)(har.CARGO_PackageType),
+				(string)(har.RAW_PackageType),
 			}, false),
 		},
 		"url": {
@@ -219,6 +220,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.NPM_PackageType),
 				(string)(har.RPM_PackageType),
 				(string)(har.CARGO_PackageType),
+				(string)(har.RAW_PackageType),
 			}, false),
 		}
 	}
