@@ -89,6 +89,40 @@ func TestAccRoleAssignments_withoutSendingIdentifier(t *testing.T) {
 	})
 }
 
+func TestAccRoleAssignments_withRoleReference(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_role_assignments.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRoleAssignmentsDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceRoleAssignments_withRoleReference(id, name, "false", accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "resource_group_identifier", "_all_project_level_resources"),
+					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "managed", "false"),
+					resource.TestCheckResourceAttr(resourceName, "principal.0.type", "SERVICE_ACCOUNT"),
+					resource.TestCheckResourceAttrSet(resourceName, "role_reference.0.identifier"),
+					resource.TestCheckResourceAttr(resourceName, "role_reference.0.scope_level", "organization"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func TestAccResourceRoleAssignments_DeleteUnderlyingResource(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -125,7 +159,10 @@ func TestAccResourceRoleAssignments_DeleteUnderlyingResource(t *testing.T) {
 
 func testAccRoleAssignmentsDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		roleAssignments, _ := testAccGetRoleAssignments(resourceName, state)
+		roleAssignments, err := testAccGetRoleAssignments(resourceName, state)
+		if err != nil {
+			return err
+		}
 		if roleAssignments != nil {
 			return fmt.Errorf("Found role assignment: %s", roleAssignments.Identifier)
 		}
@@ -138,12 +175,16 @@ func testAccGetRoleAssignments(resourceName string, state *terraform.State) (*ne
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 
-	resp, _, err := c.RoleAssignmentsApi.GetRoleAssignment(ctx, c.AccountId, id, &nextgen.RoleAssignmentsApiGetRoleAssignmentOpts{
+	resp, httpResp, err := c.RoleAssignmentsApi.GetRoleAssignment(ctx, c.AccountId, id, &nextgen.RoleAssignmentsApiGetRoleAssignmentOpts{
 		OrgIdentifier:     buildField(r, "org_id"),
 		ProjectIdentifier: buildField(r, "project_id"),
 	})
 
 	if err != nil {
+		// The role assignments API returns 400 (not 404) when the resource no longer exists.
+		if httpResp != nil && httpResp.StatusCode == 400 {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -203,6 +244,57 @@ func testAccResourceRoleAssignments(id string, name string, disabled string, acc
 		project_id = harness_platform_project.test.id
 		resource_group_identifier = "_all_project_level_resources"
 		role_identifier = harness_platform_roles.test.id
+		principal {
+			identifier = harness_platform_service_account.test.id
+			type = "SERVICE_ACCOUNT"
+		}
+		disabled = %[3]s
+		managed = false
+	}
+	`, id, name, disabled, accountId)
+}
+
+func testAccResourceRoleAssignments_withRoleReference(id string, name string, disabled string, accountId string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+	resource "harness_platform_project" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		color = "#0063F7"
+		org_id = harness_platform_organization.test.identifier
+	}
+	resource "harness_platform_service_account" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		email = "email@service.harness.io"
+		description = "test"
+		tags = ["foo:bar"]
+		account_id = "%[4]s"
+		org_id = harness_platform_project.test.org_id
+		project_id = harness_platform_project.test.id
+	}
+	resource "harness_platform_roles" "test" {
+		org_id = harness_platform_organization.test.id
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+		permissions = ["core_pipeline_edit"]
+		allowed_scope_levels = ["organization"]
+	}
+	resource "harness_platform_role_assignments" "test"{
+		identifier = "%[1]s"
+		org_id = harness_platform_project.test.org_id
+		project_id = harness_platform_project.test.id
+		resource_group_identifier = "_all_project_level_resources"
+		role_identifier = harness_platform_roles.test.id
+		role_reference {
+			identifier = harness_platform_roles.test.id
+			scope_level = "organization"
+		}
 		principal {
 			identifier = harness_platform_service_account.test.id
 			type = "SERVICE_ACCOUNT"

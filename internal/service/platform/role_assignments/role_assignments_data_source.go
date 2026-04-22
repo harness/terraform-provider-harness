@@ -49,6 +49,25 @@ func DataSourceRoleAssignments() *schema.Resource {
 					},
 				},
 			},
+			"role_reference": {
+				Description: "Role reference.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"scope_level": {
+							Description: "Scope level.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"identifier": {
+							Description: "Identifier.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+					},
+				},
+			},
 			"disabled": {
 				Description: "Disabled or not.",
 				Type:        schema.TypeBool,

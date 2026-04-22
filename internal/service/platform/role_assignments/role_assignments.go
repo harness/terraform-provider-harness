@@ -32,24 +32,28 @@ func ResourceRoleAssignments() *schema.Resource {
 			"resource_group_identifier": {
 				Description: "Resource group identifier.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"role_identifier": {
 				Description: "Role identifier.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"principal": {
 				Description: "Principal.",
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"scope_level": {
-							Description: "Scope level.",
-							Type:        schema.TypeString,
-							Computed:    true,
-							Optional:    true,
+							Description:  "Scope level. Valid values are 'account', 'organization', or 'project'.",
+							Type:         schema.TypeString,
+							Computed:     true,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"account", "organization", "project"}, false),
 						},
 						"identifier": {
 							Description: "Identifier.",
@@ -61,6 +65,29 @@ func ResourceRoleAssignments() *schema.Resource {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"USER", "USER_GROUP", "SERVICE", "API_KEY", "SERVICE_ACCOUNT"}, false),
+						},
+					},
+				},
+			},
+			"role_reference": {
+				Description: "Role reference. Used to reference roles from a higher scope (e.g., an org-level role in a project-level assignment). When both role_identifier and role_reference are set, they must point to the same role.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"scope_level": {
+							Description:  "Scope level. Valid values are 'account', 'organization', or 'project'.",
+							Type:         schema.TypeString,
+							Computed:     true,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"account", "organization", "project"}, false),
+						},
+						"identifier": {
+							Description: "Identifier.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
@@ -107,7 +134,7 @@ func resourceRoleAssignmentsRead(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
-	readRoleAssignments(d, resp.Data.RoleAssignment)
+	ReadRoleAssignments(d, resp.Data.RoleAssignment)
 
 	return nil
 }
@@ -120,7 +147,7 @@ func resourceRoleAssignmentsCreateorUpdate(ctx context.Context, d *schema.Resour
 	var httpResp *http.Response
 
 	id := d.Id()
-	roleAssignment := buildRoleAssignment(d)
+	roleAssignment := BuildRoleAssignment(d)
 
 	if id == "" {
 		resp, httpResp, err = c.RoleAssignmentsApi.PostRoleAssignment(ctx, *roleAssignment, c.AccountId, &nextgen.RoleAssignmentsApiPostRoleAssignmentOpts{
@@ -147,7 +174,7 @@ func resourceRoleAssignmentsCreateorUpdate(ctx context.Context, d *schema.Resour
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readRoleAssignments(d, resp.Data.RoleAssignment)
+	ReadRoleAssignments(d, resp.Data.RoleAssignment)
 
 	return nil
 }
@@ -167,7 +194,7 @@ func resourceRoleAssignmentsDelete(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func buildRoleAssignment(d *schema.ResourceData) *nextgen.RoleAssignment {
+func BuildRoleAssignment(d *schema.ResourceData) *nextgen.RoleAssignment {
 	roleAssignment := &nextgen.RoleAssignment{
 		Principal: &nextgen.AuthzPrincipal{},
 	}
@@ -206,10 +233,22 @@ func buildRoleAssignment(d *schema.ResourceData) *nextgen.RoleAssignment {
 			roleAssignment.Principal.Type_ = attr.(string)
 		}
 	}
+
+	if attr, ok := d.GetOk("role_reference"); ok {
+		roleAssignment.RoleReference = &nextgen.RoleReference{}
+		config := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := config["scope_level"]; ok {
+			roleAssignment.RoleReference.ScopeLevel = attr.(string)
+		}
+
+		if attr, ok := config["identifier"]; ok {
+			roleAssignment.RoleReference.Identifier = attr.(string)
+		}
+	}
 	return roleAssignment
 }
 
-func readRoleAssignments(d *schema.ResourceData, roleAssignments *nextgen.RoleAssignment) {
+func ReadRoleAssignments(d *schema.ResourceData, roleAssignments *nextgen.RoleAssignment) {
 	d.SetId(roleAssignments.Identifier)
 	d.Set("identifier", roleAssignments.Identifier)
 	d.Set("disabled", roleAssignments.Disabled)
@@ -223,4 +262,12 @@ func readRoleAssignments(d *schema.ResourceData, roleAssignments *nextgen.RoleAs
 			"type":        roleAssignments.Principal.Type_,
 		},
 	})
+	if roleAssignments.RoleReference != nil {
+		d.Set("role_reference", []interface{}{
+			map[string]interface{}{
+				"scope_level": roleAssignments.RoleReference.ScopeLevel,
+				"identifier":  roleAssignments.RoleReference.Identifier,
+			},
+		})
+	}
 }
