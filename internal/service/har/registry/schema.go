@@ -157,6 +157,24 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 							"config.0.upstream_proxies",
 						},
 					},
+					// TODO: Remove raw HTTP workaround in resource_registry.go when the SDK adds FirewallMode to RegistryRequest/Registry.
+					"firewall_mode": {
+						Description: "Dependency firewall mode for UPSTREAM registry type. Controls how artifact downloads are handled by the firewall. " +
+							"ALLOW: no policy evaluation, artifacts always allowed (default). " +
+							"ENABLED: firewall is active, artifacts are scanned against policies. " +
+							"QUARANTINE: firewall blocks/quarantines artifacts that fail policy evaluation.",
+						Type:     schema.TypeString,
+						Optional: true,
+						Computed: true,
+						ValidateFunc: validation.StringInSlice([]string{
+							"ALLOW",
+							"ENABLED",
+							"QUARANTINE",
+						}, false),
+						ConflictsWith: []string{
+							"config.0.upstream_proxies",
+						},
+					},
 				},
 			},
 		},
