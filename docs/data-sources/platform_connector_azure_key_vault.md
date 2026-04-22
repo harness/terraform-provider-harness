@@ -39,13 +39,17 @@ data "harness_platform_connector_azure_key_vault" "example" {
 ### Read-Only
 
 - `azure_environment_type` (String) Azure environment type. Possible values: AZURE or AZURE_US_GOVERNMENT. Default value: AZURE
+- `azure_managed_identity_type` (String) Azure Managed Identity type. Possible values: SystemAssignedManagedIdentity or UserAssignedManagedIdentity.
 - `client_id` (String) Application ID of the Azure App.
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
+- `enable_purge` (Boolean) Boolean value to indicate if purge is enabled.
 - `id` (String) The ID of this resource.
 - `is_default` (Boolean) Specifies whether or not is the default value.
+- `managed_client_id` (String) Client Id of the ManagedIdentity resource.
 - `secret_key` (String) The Harness text secret with the Azure authentication key as its value.
 - `subscription` (String) Azure subscription ID.
 - `tags` (Set of String) Tags to associate with the resource.
 - `tenant_id` (String) The Azure Active Directory (AAD) directory ID where you created your application.
+- `use_managed_identity` (Boolean) Boolean value to indicate if managed identity is used to authenticate to Azure Key Vault.
 - `vault_name` (String) Name of the vault.

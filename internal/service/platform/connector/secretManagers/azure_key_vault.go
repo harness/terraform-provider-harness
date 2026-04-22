@@ -2,11 +2,13 @@ package secretManagers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -19,22 +21,49 @@ func ResourceConnectorAzureKeyVault() *schema.Resource {
 		UpdateContext: resourceConnectorAzureKeyVaultCreateOrUpdate,
 		DeleteContext: resourceConnectorDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
+		CustomizeDiff: customdiff.All(
+			func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+				useMSI := d.Get("use_managed_identity").(bool)
+				if useMSI {
+					msiType, ok := d.GetOk("azure_managed_identity_type")
+					if !ok || msiType.(string) == "" {
+						return fmt.Errorf("\"azure_managed_identity_type\" is required when \"use_managed_identity\" is true")
+					}
+					if msiType.(string) == "UserAssignedManagedIdentity" {
+						if v, ok := d.GetOk("managed_client_id"); !ok || v.(string) == "" {
+							return fmt.Errorf("\"managed_client_id\" is required when \"azure_managed_identity_type\" is \"UserAssignedManagedIdentity\"")
+						}
+					}
+				} else {
+					if v, ok := d.GetOk("client_id"); !ok || v.(string) == "" {
+						return fmt.Errorf("\"client_id\" is required when \"use_managed_identity\" is not set")
+					}
+					if v, ok := d.GetOk("tenant_id"); !ok || v.(string) == "" {
+						return fmt.Errorf("\"tenant_id\" is required when \"use_managed_identity\" is not set")
+					}
+					if v, ok := d.GetOk("secret_key"); !ok || v.(string) == "" {
+						return fmt.Errorf("\"secret_key\" is required when \"use_managed_identity\" is not set")
+					}
+				}
+				return nil
+			},
+		),
 
 		Schema: map[string]*schema.Schema{
 			"client_id": {
-				Description: "Application ID of the Azure App.",
+				Description: "Application ID of the Azure App. Required when use_managed_identity is false.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"secret_key": {
-				Description: "The Harness text secret with the Azure authentication key as its value.",
+				Description: "The Harness text secret with the Azure authentication key as its value. Required when use_managed_identity is false.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"tenant_id": {
-				Description: "The Azure Active Directory (Azure AD) directory ID where you created your application.",
+				Description: "The Azure Active Directory (Azure AD) directory ID where you created your application. Required when use_managed_identity is false.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"vault_name": {
 				Description: "Name of the vault.",
@@ -63,6 +92,29 @@ func ResourceConnectorAzureKeyVault() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"use_managed_identity": {
+				Description: "Boolean value to indicate if managed identity is used to authenticate to Azure Key Vault.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
+			"azure_managed_identity_type": {
+				Description:  "Azure Managed Identity type. Possible values: SystemAssignedManagedIdentity or UserAssignedManagedIdentity. Required when use_managed_identity is true.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"SystemAssignedManagedIdentity", "UserAssignedManagedIdentity"}, false),
+			},
+			"managed_client_id": {
+				Description: "Client Id of the ManagedIdentity resource. Required when azure_managed_identity_type is UserAssignedManagedIdentity.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"enable_purge": {
+				Description: "Boolean value to indicate if purge is enabled.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
 			},
 		},
 	}
@@ -142,6 +194,22 @@ func buildConnectorAzureKeyVault(d *schema.ResourceData) *nextgen.ConnectorInfo 
 		connector.AzureKeyVault.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
+	if attr, ok := d.GetOk("use_managed_identity"); ok {
+		connector.AzureKeyVault.UseManagedIdentity = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("azure_managed_identity_type"); ok {
+		connector.AzureKeyVault.AzureManagedIdentityType = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("managed_client_id"); ok {
+		connector.AzureKeyVault.ManagedClientId = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("enable_purge"); ok {
+		connector.AzureKeyVault.EnablePurge = attr.(bool)
+	}
+
 	return connector
 }
 
@@ -154,6 +222,10 @@ func readConnectorAzureKeyVault(d *schema.ResourceData, connector *nextgen.Conne
 	d.Set("is_default", connector.AzureKeyVault.IsDefault)
 	d.Set("delegate_selectors", connector.AzureKeyVault.DelegateSelectors)
 	d.Set("azure_environment_type", connector.AzureKeyVault.AzureEnvironmentType)
+	d.Set("use_managed_identity", connector.AzureKeyVault.UseManagedIdentity)
+	d.Set("azure_managed_identity_type", connector.AzureKeyVault.AzureManagedIdentityType)
+	d.Set("managed_client_id", connector.AzureKeyVault.ManagedClientId)
+	d.Set("enable_purge", connector.AzureKeyVault.EnablePurge)
 
 	return nil
 }

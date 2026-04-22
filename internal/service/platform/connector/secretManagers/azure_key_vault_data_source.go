@@ -52,6 +52,26 @@ func DataSourceConnectorAzureKeyVault() *schema.Resource {
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"use_managed_identity": {
+				Description: "Boolean value to indicate if managed identity is used to authenticate to Azure Key Vault.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
+			"azure_managed_identity_type": {
+				Description: "Azure Managed Identity type. Possible values: SystemAssignedManagedIdentity or UserAssignedManagedIdentity.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"managed_client_id": {
+				Description: "Client Id of the ManagedIdentity resource.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"enable_purge": {
+				Description: "Boolean value to indicate if purge is enabled.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
 		},
 	}
 
