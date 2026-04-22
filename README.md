@@ -133,6 +133,7 @@ Run `make help` to see all available commands. Here's a summary:
 |---------|-------------|
 | `make test` | Run unit tests |
 | `make testacc` | Run acceptance tests (requires `HARNESS_*` env vars) |
+| `make testacc-fme` | Run FME (Split) acceptance tests only (`./internal/service/split/...`) |
 | `make test-coverage` | Run tests with coverage report |
 | `make sweep` | Run sweepers to clean up test resources (use with caution) |
 
@@ -183,6 +184,15 @@ export HARNESS_PLATFORM_API_KEY="your-platform-api-key"
 
 make testacc
 ```
+
+To run only Harness FME (Split) acceptance tests (smaller and faster than the full suite):
+
+```sh
+make testacc-fme
+# equivalent:
+# TF_ACC=1 go test -v ./internal/service/split/... -timeout=120m
+```
+
 
 #### Test Coverage
 
