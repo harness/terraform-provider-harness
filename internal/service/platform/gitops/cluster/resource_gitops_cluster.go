@@ -523,7 +523,12 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
-	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+	connType, _ := d.GetOk("request.0.cluster.0.config.0.cluster_connection_type")
+	if connTypeStr, ok := connType.(string); ok && connTypeStr == "IRSA" {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.BearerToken = ""
+		}
+	} else if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
 		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
 			resp.Cluster.Config.BearerToken = attr.(string)
 		}
@@ -741,13 +746,24 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 			if requestCluster["config"] != nil && len(requestCluster["config"].([]interface{})) > 0 {
 				clusterConfig := requestCluster["config"].([]interface{})[0].(map[string]interface{})
 				clusterDetails.Config = &nextgen.ClustersClusterConfig{}
-				if clusterConfig["username"] != nil {
+
+				// Read cluster_connection_type up front so we can exclude auth
+				// fields that belong to a different auth method. Without this,
+				// Computed fields like bearer_token survive in state after the
+				// user removes them from config, causing the API to receive
+				// stale credentials alongside the new auth type.
+				var clusterConnectionType string
+				if clusterConfig["cluster_connection_type"] != nil {
+					clusterConnectionType = clusterConfig["cluster_connection_type"].(string)
+				}
+
+				if clusterConfig["username"] != nil && clusterConnectionType != "IRSA" {
 					clusterDetails.Config.Username = clusterConfig["username"].(string)
 				}
-				if clusterConfig["password"] != nil {
+				if clusterConfig["password"] != nil && clusterConnectionType != "IRSA" {
 					clusterDetails.Config.Password = clusterConfig["password"].(string)
 				}
-				if clusterConfig["bearer_token"] != nil {
+				if clusterConfig["bearer_token"] != nil && clusterConnectionType != "IRSA" {
 					clusterDetails.Config.BearerToken = clusterConfig["bearer_token"].(string)
 				}
 
@@ -771,11 +787,11 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 					}
 				}
 
-				if clusterConfig["role_a_r_n"] != nil {
+				if clusterConfig["role_a_r_n"] != nil && clusterConnectionType != "SERVICE_ACCOUNT" {
 					clusterDetails.Config.RoleARN = clusterConfig["role_a_r_n"].(string)
 				}
 
-				if clusterConfig["aws_cluster_name"] != nil {
+				if clusterConfig["aws_cluster_name"] != nil && clusterConnectionType != "SERVICE_ACCOUNT" {
 					clusterDetails.Config.AwsClusterName = clusterConfig["aws_cluster_name"].(string)
 				}
 
