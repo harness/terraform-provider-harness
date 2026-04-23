@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"sort"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -227,8 +228,8 @@ func createOrUpdateRuleEnforcementResponse(d *schema.ResourceData, ruleEnforceme
 func readRuleEnforcementResponse(d *schema.ResourceData, ruleEnforcement *nextgen.EnforcementDetails) error {
 	d.Set("name", ruleEnforcement.EnforcementName)
 	d.Set("cloud_provider", ruleEnforcement.CloudProvider)
-	d.Set("rule_ids", getMapKeys(ruleEnforcement.RuleIds))
-	d.Set("rule_set_ids", getMapKeys(ruleEnforcement.RuleSetIds))
+	d.Set("rule_ids", getMapKeysPreservingStateOrder(d, "rule_ids", ruleEnforcement.RuleIds))
+	d.Set("rule_set_ids", getMapKeysPreservingStateOrder(d, "rule_set_ids", ruleEnforcement.RuleSetIds))
 	d.Set("execution_schedule", ruleEnforcement.Schedule)
 	d.Set("execution_timezone", ruleEnforcement.ExecutionTimezone)
 	d.Set("is_enabled", ruleEnforcement.IsEnabled)
@@ -263,10 +264,36 @@ func expandStringList(givenStringListInterface []interface{}) []string {
 	return expandedStringList
 }
 
-func getMapKeys(m map[string]string) []string {
-	keys := make([]string, 0, len(m))
+// getMapKeysPreservingStateOrder extracts map keys preserving existing state order to avoid false Terraform drift.
+func getMapKeysPreservingStateOrder(d *schema.ResourceData, key string, m map[string]string) []string {
+	newKeys := make(map[string]bool, len(m))
 	for k := range m {
-		keys = append(keys, k)
+		newKeys[k] = true
 	}
-	return keys
+
+	// Get current order from state
+	existingRaw := d.Get(key).([]interface{})
+
+	result := make([]string, 0, len(m))
+	seen := make(map[string]bool, len(m))
+
+	// First, preserve order of IDs that still exist
+	for _, v := range existingRaw {
+		if s, ok := v.(string); ok && newKeys[s] && !seen[s] {
+			result = append(result, s)
+			seen[s] = true
+		}
+	}
+
+	// Then append any new IDs not in the previous state (sorted for determinism)
+	var added []string
+	for k := range m {
+		if !seen[k] {
+			added = append(added, k)
+		}
+	}
+	sort.Strings(added)
+	result = append(result, added...)
+
+	return result
 }
