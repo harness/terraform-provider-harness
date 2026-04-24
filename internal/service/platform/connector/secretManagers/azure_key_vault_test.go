@@ -9,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+const testAzureManagedClientID = "ab000000" + "-0000-0000-0000-00000000cd00"
+
 func TestAccResourceConnectorAzureKeyVault(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -155,6 +157,96 @@ func TestOrgResourceConnectorAzureKeyVault(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorAzureKeyVaultSystemMSI(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_azure_key_vault.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAzureKeyVaultSystemMSI(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "use_managed_identity", "true"),
+					resource.TestCheckResourceAttr(resourceName, "azure_managed_identity_type", "SystemAssignedManagedIdentity"),
+					resource.TestCheckResourceAttr(resourceName, "subscription", "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"),
+					resource.TestCheckResourceAttr(resourceName, "vault_name", "Aman-test"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorAzureKeyVaultSystemMSI(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "use_managed_identity", "true"),
+					resource.TestCheckResourceAttr(resourceName, "azure_managed_identity_type", "SystemAssignedManagedIdentity"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccResourceConnectorAzureKeyVaultUserMSI(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_azure_key_vault.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAzureKeyVaultUserMSI(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "use_managed_identity", "true"),
+					resource.TestCheckResourceAttr(resourceName, "azure_managed_identity_type", "UserAssignedManagedIdentity"),
+					resource.TestCheckResourceAttr(resourceName, "managed_client_id", testAzureManagedClientID),
+					resource.TestCheckResourceAttr(resourceName, "subscription", "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"),
+					resource.TestCheckResourceAttr(resourceName, "vault_name", "Aman-test"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorAzureKeyVaultUserMSI(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "use_managed_identity", "true"),
+					resource.TestCheckResourceAttr(resourceName, "azure_managed_identity_type", "UserAssignedManagedIdentity"),
+					resource.TestCheckResourceAttr(resourceName, "managed_client_id", testAzureManagedClientID),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccResourceConnectorAzureKeyVault(id string, name string) string {
 	return fmt.Sprintf(`
 
@@ -164,7 +256,7 @@ func testAccResourceConnectorAzureKeyVault(id string, name string) string {
 		description = "test"
 		tags = ["foo:bar"]
 
-		client_id = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
+		client_id = "ab000000-0000-0000-0000-00000000cd00"
 		secret_key = "account.azuretest"
 		tenant_id = "b229b2bb-5f33-4d22-bce0-730f6474e906"
 		vault_name = "Aman-test"
@@ -198,7 +290,7 @@ func testProjectResourceConnectorAzureKeyVault(id string, name string) string {
 		tags = ["foo:bar"]
 		org_id = harness_platform_organization.test.id
 		project_id = harness_platform_project.test.id
-		client_id = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
+		client_id = "ab000000-0000-0000-0000-00000000cd00"
 		secret_key = "account.azuretest"
 		tenant_id = "b229b2bb-5f33-4d22-bce0-730f6474e906"
 		vault_name = "Aman-test"
@@ -216,14 +308,14 @@ func testOrgResourceConnectorAzureKeyVault(id string, name string) string {
 		identifier = "%[1]s"
 		name = "%[2]s"
 	}
-	
+
 	resource "harness_platform_connector_azure_key_vault" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
 		org_id = harness_platform_organization.test.id
-		client_id = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
+		client_id = "ab000000-0000-0000-0000-00000000cd00"
 		secret_key = "account.azuretest"
 		tenant_id = "b229b2bb-5f33-4d22-bce0-730f6474e906"
 		vault_name = "Aman-test"
@@ -233,4 +325,49 @@ func testOrgResourceConnectorAzureKeyVault(id string, name string) string {
 		azure_environment_type = "AZURE"
 	}
 `, id, name)
+}
+
+func testAccResourceConnectorAzureKeyVaultSystemMSI(id string, name string) string {
+	return fmt.Sprintf(`
+
+	resource "harness_platform_connector_azure_key_vault" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		vault_name = "Aman-test"
+		subscription = "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"
+		is_default = false
+
+		use_managed_identity = true
+		azure_managed_identity_type = "SystemAssignedManagedIdentity"
+
+		delegate_selectors = ["harness-delegate"]
+		azure_environment_type = "AZURE"
+	}
+`, id, name)
+}
+
+func testAccResourceConnectorAzureKeyVaultUserMSI(id string, name string) string {
+	return fmt.Sprintf(`
+
+	resource "harness_platform_connector_azure_key_vault" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		vault_name = "Aman-test"
+		subscription = "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"
+		is_default = false
+
+		use_managed_identity = true
+		azure_managed_identity_type = "UserAssignedManagedIdentity"
+		managed_client_id = "%[3]s"
+
+		delegate_selectors = ["harness-delegate"]
+		azure_environment_type = "AZURE"
+	}
+`, id, name, testAzureManagedClientID)
 }

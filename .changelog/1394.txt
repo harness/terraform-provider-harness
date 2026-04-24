@@ -1,0 +1,3 @@
+```release-note:enhancement
+harness_platform_connector_bitbucket: Added support for `AccessToken` and `EmailAndApiToken` API authentication types (Bitbucket Cloud Workspace API Tokens).
+```

@@ -8,6 +8,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/harness/harness-go-sdk/harness/chaos/graphql/model"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -206,7 +207,7 @@ func resourceChaosHubCreate(ctx context.Context, d *schema.ResourceData, meta in
 		},
 	)
 	if err != nil {
-		return diag.Errorf("failed to create chaos hub: %v", err)
+		return helpers.HandleChaosGraphQLError(err, d, "create_chaos_hub")
 	}
 
 	d.SetId(hub.ID)
@@ -244,7 +245,7 @@ func resourceChaosHubRead(ctx context.Context, d *schema.ResourceData, meta inte
 			d.SetId("")
 			return nil
 		}
-		return diag.Errorf("failed to read chaos hub: %v", err)
+		return helpers.HandleChaosGraphQLReadError(err, d, "get_chaos_hub")
 	}
 
 	d.Set("name", hub.Name)
@@ -300,7 +301,7 @@ func resourceChaosHubUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	// Get the current state
 	currentHub, err := hubClient.Get(ctx, modelIdentifiers, hubID)
 	if err != nil {
-		return diag.Errorf("failed to get current chaos hub: %v", err)
+		return helpers.HandleChaosGraphQLReadError(err, d, "get_chaos_hub")
 	}
 
 	// Initialize request with required fields
@@ -364,7 +365,7 @@ func resourceChaosHubUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	)
 
 	if err != nil {
-		return diag.Errorf("failed to update chaos hub: %v", err)
+		return helpers.HandleChaosGraphQLError(err, d, "update_chaos_hub")
 	}
 
 	// Update the resource ID if the name has changed
@@ -415,7 +416,7 @@ func resourceChaosHubDelete(ctx context.Context, d *schema.ResourceData, meta in
 			d.SetId("")
 			return nil
 		}
-		return diag.Errorf("failed to get chaos hub for deletion: %v", err)
+		return helpers.HandleChaosGraphQLReadError(err, d, "get_chaos_hub_for_deletion")
 	}
 
 	// If we get here, the hub exists, so proceed with deletion
@@ -433,11 +434,11 @@ func resourceChaosHubDelete(ctx context.Context, d *schema.ResourceData, meta in
 			d.SetId("")
 			return nil
 		}
-		return diag.Errorf("failed to delete chaos hub: %v", err)
+		return helpers.HandleChaosGraphQLError(err, d, "delete_chaos_hub")
 	}
 
 	if !deleted {
-		return diag.Errorf("failed to delete chaos hub: unknown error")
+		return helpers.HandleChaosGraphQLError(fmt.Errorf("failed to delete chaos hub: unknown error"), d, "delete_chaos_hub")
 	}
 
 	// Clear the ID from state

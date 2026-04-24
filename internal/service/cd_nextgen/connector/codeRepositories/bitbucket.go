@@ -21,6 +21,7 @@ func ResourceConnectorBitbucket() *schema.Resource {
 		UpdateContext: resourceConnectorBitbucketCreateOrUpdate,
 		DeleteContext: resourceConnectorDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
+		CustomizeDiff: validateBitbucketApiAuthentication,
 
 		Schema: map[string]*schema.Schema{
 			"url": {
@@ -52,22 +53,39 @@ func ResourceConnectorBitbucket() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"auth_type": {
+							Description:  fmt.Sprintf("Type of API authentication. Valid values are %s. Defaults to `UsernameToken` for backward compatibility.", strings.Join(nextgen.BitBucketApiAccessTypeValues, ", ")),
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      nextgen.BitBucketApiAccessTypes.UsernameToken.String(),
+							ValidateFunc: validation.StringInSlice(nextgen.BitBucketApiAccessTypeValues, false),
+						},
 						"username": {
-							Description:   "The username used for connecting to the api.",
+							Description:   "The username used for connecting to the api. Applicable when `auth_type` is `UsernameToken`.",
 							Type:          schema.TypeString,
 							Optional:      true,
 							ConflictsWith: []string{"api_authentication.0.username_ref"},
-							AtLeastOneOf:  []string{"api_authentication.0.username", "api_authentication.0.username_ref"},
 						},
 						"username_ref": {
-							Description:   "The name of the Harness secret containing the username." + secretRefText,
+							Description:   "The name of the Harness secret containing the username. Applicable when `auth_type` is `UsernameToken`." + secretRefText,
 							Type:          schema.TypeString,
 							Optional:      true,
 							ConflictsWith: []string{"api_authentication.0.username"},
-							AtLeastOneOf:  []string{"api_authentication.0.username", "api_authentication.0.username_ref"},
+						},
+						"email": {
+							Description:   "The email used for connecting to the api. Applicable when `auth_type` is `EmailAndApiToken`.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							ConflictsWith: []string{"api_authentication.0.email_ref"},
+						},
+						"email_ref": {
+							Description:   "The name of the Harness secret containing the email. Applicable when `auth_type` is `EmailAndApiToken`." + secretRefText,
+							Type:          schema.TypeString,
+							Optional:      true,
+							ConflictsWith: []string{"api_authentication.0.email"},
 						},
 						"token_ref": {
-							Description: "Personal access token for interacting with the BitBucket api." + secretRefText,
+							Description: "Reference to a Harness secret containing the personal access token (or API token for `EmailAndApiToken`/`AccessToken`) for interacting with the BitBucket api." + secretRefText,
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -232,21 +250,34 @@ func buildConnectorBitbucket(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	if attr, ok := d.GetOk("api_authentication"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
+		authType := nextgen.BitBucketApiAccessTypes.UsernameToken
+		if v, ok := config["auth_type"].(string); ok && v != "" {
+			authType = nextgen.BitBucketApiAccessType(v)
+		}
+
 		connector.BitBucket.ApiAccess = &nextgen.BitbucketApiAccess{
-			Type_:         nextgen.BitBucketApiAccessTypes.UsernameToken,
-			UsernameToken: &nextgen.BitbucketUsernameTokenApiAccess{},
+			Type_: authType,
 		}
 
-		if attr, ok := config["username"]; ok {
-			connector.BitBucket.ApiAccess.UsernameToken.Username = attr.(string)
-		}
+		tokenRef, _ := config["token_ref"].(string)
 
-		if attr, ok := config["username_ref"]; ok {
-			connector.BitBucket.ApiAccess.UsernameToken.UsernameRef = attr.(string)
-		}
-
-		if attr, ok := config["token_ref"]; ok {
-			connector.BitBucket.ApiAccess.UsernameToken.TokenRef = attr.(string)
+		switch authType {
+		case nextgen.BitBucketApiAccessTypes.UsernameToken:
+			connector.BitBucket.ApiAccess.UsernameToken = &nextgen.BitbucketUsernameTokenApiAccess{
+				Username:    config["username"].(string),
+				UsernameRef: config["username_ref"].(string),
+				TokenRef:    tokenRef,
+			}
+		case nextgen.BitBucketApiAccessTypes.AccessToken:
+			connector.BitBucket.ApiAccess.AccessToken = &nextgen.BitbucketAccessTokenApiAccess{
+				TokenRef: tokenRef,
+			}
+		case nextgen.BitBucketApiAccessTypes.EmailAndApiToken:
+			connector.BitBucket.ApiAccess.EmailApiToken = &nextgen.BitbucketEmailApiTokenApiAccess{
+				Email:    config["email"].(string),
+				EmailRef: config["email_ref"].(string),
+				TokenRef: tokenRef,
+			}
 		}
 	}
 
@@ -300,9 +331,26 @@ func readConnectorBitbucket(d *schema.ResourceData, connector *nextgen.Connector
 		case nextgen.BitBucketApiAccessTypes.UsernameToken:
 			d.Set("api_authentication", []map[string]interface{}{
 				{
+					"auth_type":    connector.BitBucket.ApiAccess.Type_.String(),
 					"username":     connector.BitBucket.ApiAccess.UsernameToken.Username,
 					"username_ref": connector.BitBucket.ApiAccess.UsernameToken.UsernameRef,
 					"token_ref":    connector.BitBucket.ApiAccess.UsernameToken.TokenRef,
+				},
+			})
+		case nextgen.BitBucketApiAccessTypes.AccessToken:
+			d.Set("api_authentication", []map[string]interface{}{
+				{
+					"auth_type": connector.BitBucket.ApiAccess.Type_.String(),
+					"token_ref": connector.BitBucket.ApiAccess.AccessToken.TokenRef,
+				},
+			})
+		case nextgen.BitBucketApiAccessTypes.EmailAndApiToken:
+			d.Set("api_authentication", []map[string]interface{}{
+				{
+					"auth_type": connector.BitBucket.ApiAccess.Type_.String(),
+					"email":     connector.BitBucket.ApiAccess.EmailApiToken.Email,
+					"email_ref": connector.BitBucket.ApiAccess.EmailApiToken.EmailRef,
+					"token_ref": connector.BitBucket.ApiAccess.EmailApiToken.TokenRef,
 				},
 			})
 		default:
@@ -310,5 +358,106 @@ func readConnectorBitbucket(d *schema.ResourceData, connector *nextgen.Connector
 		}
 	}
 
+	return nil
+}
+
+func validateBitbucketApiAuthentication(_ context.Context, d *schema.ResourceDiff, _ interface{}) error {
+	raw, ok := d.GetOk("api_authentication")
+	if !ok {
+		return nil
+	}
+	list := raw.([]interface{})
+	if len(list) == 0 || list[0] == nil {
+		return nil
+	}
+	cfg := list[0].(map[string]interface{})
+
+	authType := cfg["auth_type"].(string)
+	if authType == "" {
+		authType = nextgen.BitBucketApiAccessTypes.UsernameToken.String()
+	}
+
+	username, _ := cfg["username"].(string)
+	usernameRef, _ := cfg["username_ref"].(string)
+	email, _ := cfg["email"].(string)
+	emailRef, _ := cfg["email_ref"].(string)
+	tokenRef, _ := cfg["token_ref"].(string)
+
+	expected := map[string]string{
+		nextgen.BitBucketApiAccessTypes.UsernameToken.String(): `Expected api_authentication block for auth_type "UsernameToken":
+  api_authentication {
+    auth_type    = "UsernameToken"
+    username     = "<username>"      # OR username_ref (exactly one)
+    # username_ref = "account.<secret>"
+    token_ref    = "account.<secret>"
+  }`,
+		nextgen.BitBucketApiAccessTypes.AccessToken.String(): `Expected api_authentication block for auth_type "AccessToken":
+  api_authentication {
+    auth_type = "AccessToken"
+    token_ref = "account.<secret>"
+  }`,
+		nextgen.BitBucketApiAccessTypes.EmailAndApiToken.String(): `Expected api_authentication block for auth_type "EmailAndApiToken":
+  api_authentication {
+    auth_type  = "EmailAndApiToken"
+    email      = "user@example.com"   # OR email_ref (exactly one)
+    # email_ref = "account.<secret>"
+    token_ref  = "account.<secret>"
+  }`,
+	}
+
+	fail := func(reason string) error {
+		return fmt.Errorf("%s\n\n%s", reason, expected[authType])
+	}
+
+	switch authType {
+	case nextgen.BitBucketApiAccessTypes.UsernameToken.String():
+		if email != "" || emailRef != "" {
+			return fail(`"email"/"email_ref" are not allowed for auth_type "UsernameToken".`)
+		}
+		if username == "" && usernameRef == "" {
+			return fail(`Missing credential: one of "username" or "username_ref" is required.`)
+		}
+		if username != "" && usernameRef != "" {
+			return fail(`Set exactly one of "username" or "username_ref", not both.`)
+		}
+		if tokenRef == "" {
+			return fail(`Missing required field "token_ref".`)
+		}
+
+	case nextgen.BitBucketApiAccessTypes.AccessToken.String():
+		var extras []string
+		if username != "" {
+			extras = append(extras, `"username"`)
+		}
+		if usernameRef != "" {
+			extras = append(extras, `"username_ref"`)
+		}
+		if email != "" {
+			extras = append(extras, `"email"`)
+		}
+		if emailRef != "" {
+			extras = append(extras, `"email_ref"`)
+		}
+		if len(extras) > 0 {
+			return fail(fmt.Sprintf(`Unsupported field(s) for auth_type "AccessToken": %s.`, strings.Join(extras, ", ")))
+		}
+		if tokenRef == "" {
+			return fail(`Missing required field "token_ref".`)
+		}
+
+	case nextgen.BitBucketApiAccessTypes.EmailAndApiToken.String():
+		if username != "" || usernameRef != "" {
+			return fail(`"username"/"username_ref" are not allowed for auth_type "EmailAndApiToken".`)
+		}
+		if email == "" && emailRef == "" {
+			return fail(`Missing credential: one of "email" or "email_ref" is required.`)
+		}
+		if email != "" && emailRef != "" {
+			return fail(`Set exactly one of "email" or "email_ref", not both.`)
+		}
+		if tokenRef == "" {
+			return fail(`Missing required field "token_ref".`)
+		}
+	}
 	return nil
 }

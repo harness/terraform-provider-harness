@@ -89,7 +89,7 @@ func ResourceTemplate() *schema.Resource {
 							Computed:    true,
 						},
 						"store_type": {
-							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
+							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE. Important: If your Harness account has the default store type configured as REMOTE (via account-level Git Experience settings), you must explicitly set this field to INLINE within a git_details block to create inline templates. Omitting git_details or this field will cause the server to apply the account default (REMOTE), which will fail unless all required remote Git fields are also provided.",
 							Type:         schema.TypeString,
 							Optional:     true,
 							Computed:     true,

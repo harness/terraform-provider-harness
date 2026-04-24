@@ -18,7 +18,7 @@ HOSTNAME     := registry.terraform.io
 NAMESPACE    := harness
 NAME         := harness
 BINARY       := terraform-provider-$(NAME)
-VERSION      ?= 0.99.0-dev
+VERSION      ?= 0.100.0-dev
 
 # Build configuration
 GO           := go
@@ -191,6 +191,14 @@ testacc: ## Run acceptance tests (requires HARNESS_* env vars)
 	$(call log_info,Timeout: $(ACC_TEST_TIMEOUT))
 	@TF_ACC=1 $(GO) test $(TEST) -v $(TESTARGS) -timeout $(ACC_TEST_TIMEOUT)
 	$(call log_success,Acceptance tests passed)
+
+.PHONY: testacc-fme
+testacc-fme: ## Run FME (Split) acceptance tests only: ./internal/service/split/... (requires HARNESS_* env vars)
+	$(call log_header,Running FME Acceptance Tests)
+	$(call log_warn,This will create real Harness org/project and Split resources in your account)
+	$(call log_info,Timeout: $(ACC_TEST_TIMEOUT))
+	@TF_ACC=1 $(GO) test ./internal/service/split/... -v $(TESTARGS) -timeout $(ACC_TEST_TIMEOUT)
+	$(call log_success,FME acceptance tests passed)
 
 .PHONY: test-coverage
 test-coverage: ## Run tests with coverage report

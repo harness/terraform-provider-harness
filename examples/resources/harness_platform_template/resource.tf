@@ -210,6 +210,78 @@ template:
   EOT
 }
 
+## Inline Pipeline template for accounts with default storeType set to REMOTE
+## If your Harness account has the account-level default store type set to REMOTE,
+## you must explicitly set store_type = "INLINE" inside git_details to create an inline template.
+## Omitting this field will cause the server to apply the account default (REMOTE),
+## which will fail unless all required remote Git fields (connector_ref, repo_name, etc.) are also provided.
+resource "harness_platform_template" "pipeline_template_inline_remote_account" {
+  identifier = "identifier"
+  org_id     = harness_platform_project.test.org_id
+  project_id = harness_platform_project.test.id
+  name       = "name"
+  comments   = "comments"
+  version    = "ab"
+  is_stable  = true
+  git_details {
+    store_type = "INLINE"
+  }
+  template_yaml = <<-EOT
+template:
+  name: "name"
+  identifier: "identifier"
+  versionLabel: "ab"
+  type: Pipeline
+  projectIdentifier: ${harness_platform_project.test.id}
+  orgIdentifier: ${harness_platform_project.test.org_id}
+  tags: {}
+  spec:
+    stages:
+      - stage:
+          identifier: dvvdvd
+          name: dvvdvd
+          description: ""
+          type: Deployment
+          spec:
+            deploymentType: Kubernetes
+            service:
+              serviceRef: <+input>
+              serviceInputs: <+input>
+            environment:
+              environmentRef: <+input>
+              deployToAll: false
+              environmentInputs: <+input>
+              serviceOverrideInputs: <+input>
+              infrastructureDefinitions: <+input>
+            execution:
+              steps:
+                - step:
+                    name: Rollout Deployment
+                    identifier: rolloutDeployment
+                    type: K8sRollingDeploy
+                    timeout: 10m
+                    spec:
+                      skipDryRun: false
+                      pruningEnabled: false
+              rollbackSteps:
+                - step:
+                    name: Rollback Rollout Deployment
+                    identifier: rollbackRolloutDeployment
+                    type: K8sRollingRollback
+                    timeout: 10m
+                    spec:
+                      pruningEnabled: false
+          tags: {}
+          failureStrategies:
+            - onFailure:
+                errors:
+                  - AllErrors
+                action:
+                  type: StageRollback
+
+  EOT
+}
+
 ## Inline Step template
 resource "harness_platform_template" "step_template_inline" {
   identifier    = "identifier"
