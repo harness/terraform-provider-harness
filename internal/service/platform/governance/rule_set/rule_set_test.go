@@ -50,6 +50,86 @@ func TestAccResourceRuleSet(t *testing.T) {
 	})
 }
 
+// TestAccResourceRuleSetUpdateRuleIds verifies that updating a rule set's
+// rule_ids (without changing the name) triggers an update, not a create.
+// Before the CCM-32010 fix, the backend returned "A Rule Set with the
+// specified name already exists" because the PUT endpoint incorrectly
+// rejected updates when the name matched an existing rule set.
+//
+// Regression test for CCM-32010.
+func TestAccResourceRuleSetUpdateRuleIds(t *testing.T) {
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_governance_rule_set.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRuleDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccRuleSetWithOneRule(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "rule_ids.#", "1"),
+				),
+			},
+			{
+				Config: testAccRuleSetWithTwoRules(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "rule_ids.#", "2"),
+				),
+			},
+		},
+	})
+}
+
+func testAccRuleSetWithOneRule(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_governance_rule" "rule1" {
+			name           = "%[1]s_rule1"
+			cloud_provider = "AWS"
+			description    = "First rule"
+			rules_yaml     = "policies:\n  - name: aws-list-ec2\n    resource: aws.ec2"
+		}
+
+		resource "harness_governance_rule_set" "test" {
+			name           = "%[1]s"
+			cloud_provider = "AWS"
+			description    = "Dummy"
+			rule_ids       = [harness_governance_rule.rule1.rule_id]
+		}
+	`, name)
+}
+
+func testAccRuleSetWithTwoRules(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_governance_rule" "rule1" {
+			name           = "%[1]s_rule1"
+			cloud_provider = "AWS"
+			description    = "First rule"
+			rules_yaml     = "policies:\n  - name: aws-list-ec2\n    resource: aws.ec2"
+		}
+
+		resource "harness_governance_rule" "rule2" {
+			name           = "%[1]s_rule2"
+			cloud_provider = "AWS"
+			description    = "Second rule"
+			rules_yaml     = "policies:\n  - name: aws-list-s3\n    resource: aws.s3"
+		}
+
+		resource "harness_governance_rule_set" "test" {
+			name           = "%[1]s"
+			cloud_provider = "AWS"
+			description    = "Dummy"
+			rule_ids       = [
+				harness_governance_rule.rule1.rule_id,
+				harness_governance_rule.rule2.rule_id,
+			]
+		}
+	`, name)
+}
+
 func testAccResourceRule(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_governance_rule" "rule" {
