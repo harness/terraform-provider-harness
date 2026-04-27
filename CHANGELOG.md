@@ -1,3 +1,9 @@
+## Unreleased
+
+### Bug Fixes
+
+* `harness_platform_gitops_applicationset`: Fix perpetual drift on `sync_policy.preserve_resources_on_deletion` by adding missing read logic in `setApplicationSet` ([#1364](https://github.com/harness/terraform-provider-harness/issues/1364))
+
 # v0.39.5 (January 19, 2026)
 
 
