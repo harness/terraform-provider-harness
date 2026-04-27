@@ -271,8 +271,8 @@ func getMapKeysPreservingStateOrder(d *schema.ResourceData, key string, m map[st
 		newKeys[k] = true
 	}
 
-	// Get current order from state
-	existingRaw := d.Get(key).([]interface{})
+	// Get current order from state; handle both TypeList ([]interface{}) and TypeMap (map[string]interface{})
+	existingRaw, _ := d.Get(key).([]interface{})
 
 	result := make([]string, 0, len(m))
 	seen := make(map[string]bool, len(m))
