@@ -257,7 +257,7 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 											Schema: map[string]*schema.Schema{
 												"preserve_resources_on_deletion": {
 													Type:        schema.TypeBool,
-													Description: "Preserve resources on deletion. If true, the applicationset will not delete the generated applications when the applicationset is deleted.",
+													Description: "Preserve resources on deletion. If true, prevents an Application's child resources from being deleted when the parent Application is deleted",
 													Optional:    true,
 												},
 												"applications_sync": {
