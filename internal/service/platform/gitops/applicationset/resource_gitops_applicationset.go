@@ -250,14 +250,14 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 									},
 									"sync_policy": {
 										Type:        schema.TypeList,
-										Description: "Application Set sync policy",
+										Description: "Sync policy for the generated Applications.",
 										Optional:    true,
 										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"preserve_resources_on_deletion": {
 													Type:        schema.TypeBool,
-													Description: "Label selector used to narrow the scope of targeted clusters.",
+													Description: "Preserve resources on deletion. If true, the applicationset will not delete the generated applications when the applicationset is deleted.",
 													Optional:    true,
 												},
 												"applications_sync": {
@@ -881,6 +881,21 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 					generatorsList = append(generatorsList, generatorMap)
 				}
 				spec["generator"] = generatorsList
+			}
+
+			// sync_policy
+			if appset.Appset.Spec.SyncPolicy != nil {
+				syncPolicy := appset.Appset.Spec.SyncPolicy
+				syncPolicyMap := map[string]interface{}{}
+
+				// Always set the boolean (default is false)
+				syncPolicyMap["preserve_resources_on_deletion"] = syncPolicy.PreserveResourcesOnDeletion
+
+				if syncPolicy.ApplicationsSync != "" {
+					syncPolicyMap["applications_sync"] = syncPolicy.ApplicationsSync
+				}
+
+				spec["sync_policy"] = []interface{}{syncPolicyMap}
 			}
 
 			//  template
