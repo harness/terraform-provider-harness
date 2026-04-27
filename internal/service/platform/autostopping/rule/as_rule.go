@@ -774,7 +774,9 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 	if service.Opts != nil {
 		d.Set("dry_run", service.Opts.DryRun)
 	}
-	d.Set("custom_domains", service.CustomDomains)
+	if isCustomDomainSupported(service.Kind) {
+		d.Set("custom_domains", service.CustomDomains)
+	}
 	if service.Kind == Instance {
 		d.Set("use_spot", service.Fulfilment == "spot")
 	}
@@ -795,4 +797,8 @@ func readASRule(d *schema.ResourceData, service *nextgen.ServiceV2) {
 		// Always call setRoutingConfig to ensure stale http/tcp configs are cleared
 		setRoutingConfig(d, service.Routing, service.HealthCheck, service.Kind)
 	}
+}
+
+func isCustomDomainSupported(kind string) bool {
+	return kind == Instance || kind == ECS || kind == ScaleGroup
 }
