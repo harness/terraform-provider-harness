@@ -925,8 +925,10 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 							}
 							stepMap["match_expressions"] = exprList
 						}
-						if step.MaxUpdate != nil {
+						if step.MaxUpdate.StrVal != "" {
 							stepMap["max_update"] = step.MaxUpdate.StrVal
+						} else if step.MaxUpdate.IntVal != 0 {
+							stepMap["max_update"] = fmt.Sprintf("%d", step.MaxUpdate.IntVal)
 						}
 						stepsList = append(stepsList, stepMap)
 					}
