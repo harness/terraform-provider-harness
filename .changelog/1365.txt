@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_gitops_applicationset: Fixed read operation to correctly populate sync_policy, strategy, and ignore_application_differences fields from API response, preventing spurious diffs on plan.
+```

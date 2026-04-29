@@ -250,14 +250,14 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 									},
 									"sync_policy": {
 										Type:        schema.TypeList,
-										Description: "Sync policy for the generated Applications.",
+										Description: "Sync policy configures how generated Applications will relate to their ApplicationSet.",
 										Optional:    true,
 										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"preserve_resources_on_deletion": {
 													Type:        schema.TypeBool,
-													Description: "Preserve resources on deletion. If true, prevents an Application's child resources from being deleted when the parent Application is deleted",
+													Description: "If true, prevents an Application's child resources from being deleted when the parent Application is deleted.",
 													Optional:    true,
 												},
 												"applications_sync": {
@@ -898,6 +898,7 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 				spec["sync_policy"] = []interface{}{syncPolicyMap}
 			}
 
+			// strategy
 			if appset.Appset.Spec.Strategy != nil {
 				strategyMap := map[string]interface{}{}
 				if appset.Appset.Spec.Strategy.Type_ != "" {
@@ -936,6 +937,7 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 				spec["strategy"] = []interface{}{strategyMap}
 			}
 
+			// ignoreApplicationDifferences
 			if len(appset.Appset.Spec.IgnoreApplicationDifferences) > 0 {
 				var ignoreList []interface{}
 				for _, diff := range appset.Appset.Spec.IgnoreApplicationDifferences {
