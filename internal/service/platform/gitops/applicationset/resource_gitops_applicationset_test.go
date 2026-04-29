@@ -1073,3 +1073,338 @@ func testAccResourceGitopsApplicationsetWithSyncPolicy(id, accountId, name, agen
 		}
 	`, id, accountId, name, agentId, namespace)
 }
+
+
+func TestAccResourceGitopsApplicationSet_Strategy(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name := id
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	namespace := os.Getenv("HARNESS_TEST_GITOPS_NAMESPACE")
+	resourceName := "harness_platform_gitops_applicationset.test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsApplicationsetStrategy(id, accountId, name, agentId, namespace),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.metadata.0.name", id),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.type", "RollingSync"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.0.match_expressions.0.key", "env"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.0.match_expressions.0.operator", "In"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.0.match_expressions.0.values.0", "staging"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.0.max_update", "25%"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.1.match_expressions.0.key", "env"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.1.match_expressions.0.operator", "In"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.1.match_expressions.0.values.0", "production"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.1.max_update", "25%"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func testAccResourceGitopsApplicationsetStrategy(id, accountId, name, agentId, namespace string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[3]s"
+	}
+
+	resource "harness_platform_project" "test" {
+		identifier = "%[1]s"
+		name = "%[3]s"
+		org_id = harness_platform_organization.test.id
+	}
+
+	resource "harness_platform_gitops_app_project" "test" {
+		account_id = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		project_id = harness_platform_project.test.id
+		agent_id = "%[4]s"
+		upsert = true
+		project {
+			metadata {
+				name = "appset"
+				namespace = "%[5]s"
+			}
+			spec {
+				cluster_resource_whitelist {
+					group = "*"
+					kind = "*"
+				}
+				destinations {
+					namespace = "*"
+					server = "*"
+				}
+				source_repos = ["*"]
+			}
+		}
+		lifecycle {
+			ignore_changes = [
+				project.0.metadata.0.namespace,
+				project.0.metadata.0.finalizers,
+				project.0.metadata.0.labels,
+				project.0.spec.0.source_namespaces,
+			]
+		}
+	}
+
+	resource "harness_platform_gitops_app_project_mapping" "test" {
+		depends_on = [harness_platform_gitops_app_project.test]
+		account_id = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		project_id = harness_platform_project.test.id
+		agent_id = "%[4]s"
+		argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+	}
+
+	resource "harness_platform_gitops_applicationset" "test" {
+		depends_on = [harness_platform_gitops_app_project_mapping.test]
+		applicationset {
+			metadata {
+			  name      = "%[1]s"
+			  namespace = "%[5]s"
+			}
+			spec {
+			  go_template = true
+			  go_template_options = ["missingkey=error"]
+
+			  generator {
+				list {
+				  elements = [
+					{
+					  cluster = "staging"
+					  url = "https://1.2.3.4"
+					  env = "staging"
+					},
+					{
+					  cluster = "production"
+					  url = "https://2.4.6.8"
+					  env = "production"
+					}
+				  ]
+				}
+			  }
+
+			  strategy {
+				type = "RollingSync"
+				rolling_sync {
+				  step {
+					match_expressions {
+					  key      = "env"
+					  operator = "In"
+					  values   = ["staging"]
+					}
+					max_update = "25%%"
+				  }
+				  step {
+					match_expressions {
+					  key      = "env"
+					  operator = "In"
+					  values   = ["production"]
+					}
+					max_update = "25%%"
+				  }
+				}
+			  }
+
+			  template {
+				metadata {
+				  name = "{{.cluster}}-guestbook"
+				  labels = {
+					env = "{{.env}}"
+				  }
+				}
+				spec {
+				  project = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+				  source {
+					repo_url        = "https://github.com/argoproj/argocd-example-apps.git"
+					path            = "helm-guestbook"
+					target_revision = "HEAD"
+				  }
+				  destination {
+					server    = "{{.url}}"
+					namespace = "%[5]s"
+				  }
+				}
+			  }
+			}
+		  }
+		project_id = harness_platform_project.test.id
+		org_id = harness_platform_organization.test.id
+		agent_id   = "%[4]s"
+		upsert     = true
+		lifecycle {
+		  ignore_changes = [
+			applicationset.0.spec.0.generator.0.list.0.elements,
+			applicationset.0.spec.0.generator.0.list.0.template,
+			applicationset.0.spec.0.template.0.metadata.0.annotations,
+			applicationset.0.spec.0.template.0.metadata.0.labels,
+			applicationset.0.spec.0.template.0.metadata.0.finalizers,
+			applicationset.0.spec.0.template.0.spec.0.project,
+		  ]
+		}
+	}
+	`, id, accountId, name, agentId, namespace)
+}
+
+func TestAccResourceGitopsApplicationSet_IgnoreApplicationDifferences(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name := id
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	namespace := os.Getenv("HARNESS_TEST_GITOPS_NAMESPACE")
+	resourceName := "harness_platform_gitops_applicationset.test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsApplicationsetIgnoreApplicationDifferences(id, accountId, name, agentId, namespace),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.metadata.0.name", id),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.ignore_application_differences.0.name", "my-app"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.ignore_application_differences.0.json_pointers.0", "/spec/replicas"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.ignore_application_differences.1.jq_path_expressions.0", ".spec.template.spec.containers[].resources"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func testAccResourceGitopsApplicationsetIgnoreApplicationDifferences(id, accountId, name, agentId, namespace string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[3]s"
+	}
+
+	resource "harness_platform_project" "test" {
+		identifier = "%[1]s"
+		name = "%[3]s"
+		org_id = harness_platform_organization.test.id
+	}
+
+	resource "harness_platform_gitops_app_project" "test" {
+		account_id = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		project_id = harness_platform_project.test.id
+		agent_id = "%[4]s"
+		upsert = true
+		project {
+			metadata {
+				name = "appset"
+				namespace = "%[5]s"
+			}
+			spec {
+				cluster_resource_whitelist {
+					group = "*"
+					kind = "*"
+				}
+				destinations {
+					namespace = "*"
+					server = "*"
+				}
+				source_repos = ["*"]
+			}
+		}
+		lifecycle {
+			ignore_changes = [
+				project.0.metadata.0.namespace,
+				project.0.metadata.0.finalizers,
+				project.0.metadata.0.labels,
+				project.0.spec.0.source_namespaces,
+			]
+		}
+	}
+
+	resource "harness_platform_gitops_app_project_mapping" "test" {
+		depends_on = [harness_platform_gitops_app_project.test]
+		account_id = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		project_id = harness_platform_project.test.id
+		agent_id = "%[4]s"
+		argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+	}
+
+	resource "harness_platform_gitops_applicationset" "test" {
+		depends_on = [harness_platform_gitops_app_project_mapping.test]
+		applicationset {
+			metadata {
+			  name      = "%[1]s"
+			  namespace = "%[5]s"
+			}
+			spec {
+			  go_template = true
+			  go_template_options = ["missingkey=error"]
+
+			  generator {
+				list {
+				  elements = [
+					{
+					  cluster = "engineering-dev"
+					  url = "https://1.2.3.4"
+					}
+				  ]
+				}
+			  }
+
+			  ignore_application_differences {
+				name          = "my-app"
+				json_pointers = ["/spec/replicas"]
+			  }
+
+			  ignore_application_differences {
+				jq_path_expressions = [".spec.template.spec.containers[].resources"]
+			  }
+
+			  template {
+				metadata {
+				  name = "{{.cluster}}-guestbook"
+				}
+				spec {
+				  project = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+				  source {
+					repo_url        = "https://github.com/argoproj/argocd-example-apps.git"
+					path            = "helm-guestbook"
+					target_revision = "HEAD"
+				  }
+				  destination {
+					server    = "{{.url}}"
+					namespace = "%[5]s"
+				  }
+				}
+			  }
+			}
+		  }
+		project_id = harness_platform_project.test.id
+		org_id = harness_platform_organization.test.id
+		agent_id   = "%[4]s"
+		upsert     = true
+		lifecycle {
+		  ignore_changes = [
+			applicationset.0.spec.0.generator.0.list.0.elements,
+			applicationset.0.spec.0.generator.0.list.0.template,
+			applicationset.0.spec.0.template.0.metadata.0.annotations,
+			applicationset.0.spec.0.template.0.metadata.0.labels,
+			applicationset.0.spec.0.template.0.metadata.0.finalizers,
+			applicationset.0.spec.0.template.0.spec.0.project,
+		  ]
+		}
+	}
+	`, id, accountId, name, agentId, namespace)
+}
