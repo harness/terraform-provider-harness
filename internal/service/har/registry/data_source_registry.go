@@ -48,5 +48,22 @@ func dataSourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	readRegistry(d, registry)
+
+	// Fetch firewall_mode from raw API response (SDK doesn't support this field yet)
+	if registry.Config != nil && registry.Config.Type_ != nil &&
+		*registry.Config.Type_ == har.UPSTREAM_RegistryType {
+		firewallMode := fetchFirewallMode(c, ctx, registryRef)
+		if firewallMode != "" {
+			if configRaw, ok := d.GetOk("config"); ok {
+				configList := configRaw.([]interface{})
+				if len(configList) > 0 {
+					configMap := configList[0].(map[string]interface{})
+					configMap["firewall_mode"] = firewallMode
+					d.Set("config", []interface{}{configMap})
+				}
+			}
+		}
+	}
+
 	return nil
 }

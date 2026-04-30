@@ -165,3 +165,53 @@ func testAccDataSourceUpstreamAWSRegistry2(id string, accId string) string {
 	}
 `, id, accId)
 }
+
+// Tests that firewall_mode is surfaced through the data source for UPSTREAM registries.
+func TestAccDataSourceUpstreamNpmRegistryFirewall(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("tfauto_ds_fw_%s", randAlphanumeric(5)))
+	resourceName := "data.harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccDataSourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSourceUpstreamNpmRegistryFirewall(id string, accId string, firewallMode string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "NPM"
+
+   config {
+    type          = "UPSTREAM"
+    auth_type     = "Anonymous"
+    source        = "NpmJs"
+    firewall_mode = "%[3]s"
+   }
+   parent_ref = "%[2]s"
+ }
+
+ data "harness_platform_har_registry" "test" {
+   identifier = harness_platform_har_registry.test.identifier
+   space_ref  = "%[2]s"
+   parent_ref = "%[2]s"
+ }
+`, id, accId, firewallMode)
+}

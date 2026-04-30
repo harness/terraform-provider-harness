@@ -1859,13 +1859,13 @@ func TestAccResourceUpstreamNpmRegistryFirewallEnabled(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					_, _ = acctest.TestAccGetHarClientWithContext()
 				},
-				Config:             testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
-				ExpectNonEmptyPlan: true,
+				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "package_type", "NPM"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.source", "NpmJs"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
 					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 				),
@@ -1890,13 +1890,13 @@ func TestAccResourceUpstreamNpmRegistryFirewallQuarantined(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					_, _ = acctest.TestAccGetHarClientWithContext()
 				},
-				Config:             testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
-				ExpectNonEmptyPlan: true,
+				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "package_type", "NPM"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
 					resource.TestCheckResourceAttr(resourceName, "config.0.source", "NpmJs"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "QUARANTINE"),
 					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 				),
@@ -1921,17 +1921,18 @@ func TestAccResourceUpstreamNpmRegistryFirewallUpdate(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					_, _ = acctest.TestAccGetHarClientWithContext()
 				},
-				Config:             testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
-				ExpectNonEmptyPlan: true,
+				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "ENABLED"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
 				),
 			},
 			{
 				Config: testAccResourceUpstreamNpmRegistryFirewall(id, accountId, "QUARANTINE"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "QUARANTINE"),
 				),
 			},
 		},
