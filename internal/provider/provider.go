@@ -53,6 +53,8 @@ import (
 	split_svc "github.com/harness/terraform-provider-harness/internal/service/split"
 
 	cdng_manual_freeze "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/manual_freeze"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/ansible_inventory"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/ansible_playbook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
 	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
@@ -346,6 +348,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_workspace_output":                   workspace.DataSourceWorkspaceOutput(),
 				"harness_platform_workspaces":                         workspace.DataSourceWorkspaces(),
 				"harness_platform_iacm_default_pipeline":              iacm.DataSourceIacmDefaultPipeline(),
+				"harness_platform_iacm_ansible_inventory":             ansible_inventory.DataSourceAnsibleInventory(),
+				"harness_platform_iacm_ansible_playbook":              ansible_playbook.DataSourceAnsiblePlaybook(),
 				"harness_platform_repo":                               repo.DataSourceRepo(),
 				"harness_platform_repo_rule_branch":                   repo_rule_branch.DataSourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                       repo_webhook.DataSourceRepoWebhook(),
@@ -556,6 +560,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                         pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                             workspace.ResourceWorkspace(),
 				"harness_platform_iacm_default_pipeline":                 iacm.ResourceIacmDefaultPipeline(),
+				"harness_platform_iacm_ansible_inventory":                ansible_inventory.ResourceAnsibleInventory(),
+				"harness_platform_iacm_ansible_playbook":                 ansible_playbook.ResourceAnsiblePlaybook(),
 				"harness_platform_ip_allowlist":                          ip_allowlist.ResourceIPAllowlist(),
 				"harness_platform_repo":                                  repo.ResourceRepo(),
 				"harness_platform_repo_rule_branch":                      repo_rule_branch.ResourceRepoBranchRule(),

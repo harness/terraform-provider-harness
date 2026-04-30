@@ -1,0 +1,12 @@
+```release-note:new-resource
+harness_platform_iacm_ansible_inventory
+```
+```release-note:new-resource
+harness_platform_iacm_ansible_playbook
+```
+```release-note:new-data-source
+harness_platform_iacm_ansible_inventory
+```
+```release-note:new-data-source
+harness_platform_iacm_ansible_playbook
+```
