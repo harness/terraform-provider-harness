@@ -18,6 +18,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+// supportsFirewallMode returns true if the package type supports firewall_mode.
+// Only NPM, PYTHON, and NUGET package types support firewall_mode.
+func supportsFirewallMode(packageType har.PackageType) bool {
+	return packageType == har.NPM_PackageType ||
+		packageType == har.PYTHON_PackageType ||
+		packageType == har.NUGET_PackageType
+}
+
 // injectFirewallMode marshals a *har.RegistryRequest to a map and injects the
 // firewallMode field into config, since the SDK struct does not include this
 // field yet. Returns the map to pass to optional.NewInterface().
@@ -146,13 +154,13 @@ func resourceRegistryCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, 
 	configType, _ := d.Get("config.0.type").(string)
 	packageType, _ := d.Get("package_type").(string)
 
-	// firewall_mode is only supported on UPSTREAM registries with certain package types
+	// firewall_mode is only supported on UPSTREAM registries with NPM, PYTHON, or NUGET package types
 	if fm, ok := d.GetOk("config.0.firewall_mode"); ok && fm.(string) != "" {
 		if configType != "UPSTREAM" {
 			return fmt.Errorf("'firewall_mode' is only valid for UPSTREAM registry type")
 		}
-		if packageType == "DOCKER" || packageType == "HELM" {
-			return fmt.Errorf("'firewall_mode' is not supported for %s package type", packageType)
+		if !supportsFirewallMode(har.PackageType(packageType)) {
+			return fmt.Errorf("'firewall_mode' is only supported for NPM, PYTHON, and NUGET package types (got %s)", packageType)
 		}
 	}
 
@@ -266,8 +274,10 @@ func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta inte
 	readRegistry(d, resp.Data)
 
 	// Fetch firewall_mode from raw API response (SDK doesn't support this field yet)
+	// Only fetch for package types that support firewall_mode (NPM, PYTHON, NUGET)
 	if resp.Data != nil && resp.Data.Config != nil &&
-		resp.Data.Config.Type_ != nil && *resp.Data.Config.Type_ == har.UPSTREAM_RegistryType {
+		resp.Data.Config.Type_ != nil && *resp.Data.Config.Type_ == har.UPSTREAM_RegistryType &&
+		resp.Data.PackageType != nil && supportsFirewallMode(*resp.Data.PackageType) {
 		firewallMode := fetchFirewallMode(c, ctx, registryRef)
 		if firewallMode != "" {
 			// Update the config in state to include firewall_mode
@@ -305,11 +315,17 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	var body interface{} = registry
 	if fm, ok := d.GetOk("config.0.firewall_mode"); ok && fm.(string) != "" {
-		injected, fwErr := injectFirewallMode(registry, fm.(string))
-		if fwErr != nil {
-			return diag.FromErr(fwErr)
+		// Only inject firewall_mode for package types that support it (NPM, PYTHON, NUGET)
+		if registry.PackageType != nil && !supportsFirewallMode(*registry.PackageType) {
+			tflog.Warn(ctx, "firewall_mode is not supported for package type, skipping injection",
+				map[string]interface{}{"package_type": *registry.PackageType})
+		} else if registry.PackageType != nil {
+			injected, fwErr := injectFirewallMode(registry, fm.(string))
+			if fwErr != nil {
+				return diag.FromErr(fwErr)
+			}
+			body = injected
 		}
-		body = injected
 	}
 
 	if d.Id() == "" {
@@ -330,8 +346,10 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	readRegistry(d, resp.Data)
 
 	// Fetch firewall_mode from raw API response (SDK doesn't support this field yet)
+	// Only fetch for package types that support firewall_mode (NPM, PYTHON, NUGET)
 	if resp.Data != nil && resp.Data.Config != nil &&
-		resp.Data.Config.Type_ != nil && *resp.Data.Config.Type_ == har.UPSTREAM_RegistryType {
+		resp.Data.Config.Type_ != nil && *resp.Data.Config.Type_ == har.UPSTREAM_RegistryType &&
+		resp.Data.PackageType != nil && supportsFirewallMode(*resp.Data.PackageType) {
 		registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
 		firewallMode := fetchFirewallMode(c, ctx, registryRef)
 		if firewallMode != "" {
