@@ -146,13 +146,15 @@ func resourceRegistryCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, 
 	configType, _ := d.Get("config.0.type").(string)
 	packageType, _ := d.Get("package_type").(string)
 
-	// firewall_mode is only supported on UPSTREAM registries with certain package types
-	if fm, ok := d.GetOk("config.0.firewall_mode"); ok && fm.(string) != "" {
-		if configType != "UPSTREAM" {
-			return fmt.Errorf("'firewall_mode' is only valid for UPSTREAM registry type")
-		}
-		if packageType == "DOCKER" || packageType == "HELM" {
-			return fmt.Errorf("'firewall_mode' is not supported for %s package type", packageType)
+	// Only validate firewall_mode when explicitly set by user, not from computed state.
+	if d.HasChange("config.0.firewall_mode") || d.Id() == "" {
+		if fm, ok := d.GetOk("config.0.firewall_mode"); ok && fm.(string) != "" {
+			if configType != "UPSTREAM" {
+				return fmt.Errorf("'firewall_mode' is only valid for UPSTREAM registry type")
+			}
+			if packageType == "DOCKER" || packageType == "HELM" {
+				return fmt.Errorf("'firewall_mode' is not supported for %s package type", packageType)
+			}
 		}
 	}
 
@@ -268,15 +270,20 @@ func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta inte
 	// Fetch firewall_mode from raw API response (SDK doesn't support this field yet)
 	if resp.Data != nil && resp.Data.Config != nil &&
 		resp.Data.Config.Type_ != nil && *resp.Data.Config.Type_ == har.UPSTREAM_RegistryType {
-		firewallMode := fetchFirewallMode(c, ctx, registryRef)
-		if firewallMode != "" {
-			// Update the config in state to include firewall_mode
-			if configRaw, ok := d.GetOk("config"); ok {
-				configList := configRaw.([]interface{})
-				if len(configList) > 0 {
-					configMap := configList[0].(map[string]interface{})
-					configMap["firewall_mode"] = firewallMode
-					d.Set("config", []interface{}{configMap})
+		pt := ""
+		if resp.Data.PackageType != nil {
+			pt = string(*resp.Data.PackageType)
+		}
+		if pt != "DOCKER" && pt != "HELM" {
+			firewallMode := fetchFirewallMode(c, ctx, registryRef)
+			if firewallMode != "" {
+				if configRaw, ok := d.GetOk("config"); ok {
+					configList := configRaw.([]interface{})
+					if len(configList) > 0 {
+						configMap := configList[0].(map[string]interface{})
+						configMap["firewall_mode"] = firewallMode
+						d.Set("config", []interface{}{configMap})
+					}
 				}
 			}
 		}
@@ -332,15 +339,21 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	// Fetch firewall_mode from raw API response (SDK doesn't support this field yet)
 	if resp.Data != nil && resp.Data.Config != nil &&
 		resp.Data.Config.Type_ != nil && *resp.Data.Config.Type_ == har.UPSTREAM_RegistryType {
-		registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
-		firewallMode := fetchFirewallMode(c, ctx, registryRef)
-		if firewallMode != "" {
-			if configRaw, ok := d.GetOk("config"); ok {
-				configList := configRaw.([]interface{})
-				if len(configList) > 0 {
-					configMap := configList[0].(map[string]interface{})
-					configMap["firewall_mode"] = firewallMode
-					d.Set("config", []interface{}{configMap})
+		pt := ""
+		if resp.Data.PackageType != nil {
+			pt = string(*resp.Data.PackageType)
+		}
+		if pt != "DOCKER" && pt != "HELM" {
+			registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
+			firewallMode := fetchFirewallMode(c, ctx, registryRef)
+			if firewallMode != "" {
+				if configRaw, ok := d.GetOk("config"); ok {
+					configList := configRaw.([]interface{})
+					if len(configList) > 0 {
+						configMap := configList[0].(map[string]interface{})
+						configMap["firewall_mode"] = firewallMode
+						d.Set("config", []interface{}{configMap})
+					}
 				}
 			}
 		}
