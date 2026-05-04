@@ -250,14 +250,14 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 									},
 									"sync_policy": {
 										Type:        schema.TypeList,
-										Description: "Application Set sync policy",
+										Description: "Sync policy configures how generated Applications will relate to their ApplicationSet.",
 										Optional:    true,
 										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"preserve_resources_on_deletion": {
 													Type:        schema.TypeBool,
-													Description: "Label selector used to narrow the scope of targeted clusters.",
+													Description: "If true, prevents an Application's child resources from being deleted when the parent Application is deleted.",
 													Optional:    true,
 												},
 												"applications_sync": {
@@ -881,6 +881,81 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 					generatorsList = append(generatorsList, generatorMap)
 				}
 				spec["generator"] = generatorsList
+			}
+
+			// sync_policy
+			if appset.Appset.Spec.SyncPolicy != nil {
+				syncPolicy := appset.Appset.Spec.SyncPolicy
+				syncPolicyMap := map[string]interface{}{}
+
+				// Always set the boolean (default is false)
+				syncPolicyMap["preserve_resources_on_deletion"] = syncPolicy.PreserveResourcesOnDeletion
+
+				if syncPolicy.ApplicationsSync != "" {
+					syncPolicyMap["applications_sync"] = syncPolicy.ApplicationsSync
+				}
+
+				spec["sync_policy"] = []interface{}{syncPolicyMap}
+			}
+
+			// strategy
+			if appset.Appset.Spec.Strategy != nil {
+				strategyMap := map[string]interface{}{}
+				if appset.Appset.Spec.Strategy.Type_ != "" {
+					strategyMap["type"] = appset.Appset.Spec.Strategy.Type_
+				}
+				if appset.Appset.Spec.Strategy.RollingSync != nil && len(appset.Appset.Spec.Strategy.RollingSync.Steps) > 0 {
+					var stepsList []interface{}
+					for _, step := range appset.Appset.Spec.Strategy.RollingSync.Steps {
+						stepMap := map[string]interface{}{}
+						if len(step.MatchExpressions) > 0 {
+							var exprList []interface{}
+							for _, expr := range step.MatchExpressions {
+								exprMap := map[string]interface{}{}
+								if expr.Key != "" {
+									exprMap["key"] = expr.Key
+								}
+								if expr.Operator != "" {
+									exprMap["operator"] = expr.Operator
+								}
+								if len(expr.Values) > 0 {
+									exprMap["values"] = expr.Values
+								}
+								exprList = append(exprList, exprMap)
+							}
+							stepMap["match_expressions"] = exprList
+						}
+						if step.MaxUpdate.StrVal != "" {
+							stepMap["max_update"] = step.MaxUpdate.StrVal
+						} else if step.MaxUpdate.IntVal != 0 {
+							stepMap["max_update"] = fmt.Sprintf("%d", step.MaxUpdate.IntVal)
+						}
+						stepsList = append(stepsList, stepMap)
+					}
+					strategyMap["rolling_sync"] = []interface{}{map[string]interface{}{
+						"step": stepsList,
+					}}
+				}
+				spec["strategy"] = []interface{}{strategyMap}
+			}
+
+			// ignoreApplicationDifferences
+			if len(appset.Appset.Spec.IgnoreApplicationDifferences) > 0 {
+				var ignoreList []interface{}
+				for _, diff := range appset.Appset.Spec.IgnoreApplicationDifferences {
+					diffMap := map[string]interface{}{}
+					if diff.Name != "" {
+						diffMap["name"] = diff.Name
+					}
+					if len(diff.JsonPointers) > 0 {
+						diffMap["json_pointers"] = diff.JsonPointers
+					}
+					if len(diff.JqPathExpressions) > 0 {
+						diffMap["jq_path_expressions"] = diff.JqPathExpressions
+					}
+					ignoreList = append(ignoreList, diffMap)
+				}
+				spec["ignore_application_differences"] = ignoreList
 			}
 
 			//  template
