@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_gitops_cluster: fixed issue where updating cluster auth type from SERVICE_ACCOUNT to IRSA would fail
+```
