@@ -2,12 +2,13 @@ package registry
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/harness/harness-go-sdk/harness/har"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"net/http"
 )
 
 func DataSourceRegistry() *schema.Resource {
@@ -48,5 +49,6 @@ func dataSourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	readRegistry(d, registry)
+
 	return nil
 }
