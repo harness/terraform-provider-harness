@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-// AWS cloud connector ID in the test account.
-const awsCloudConnectorID = "automation_aws_connector"
+// AWS cloud connector ID in the test account (same as awsProxyCloudConnectorID in aws_proxy_test.go).
+const awsCloudConnectorID = "DoNotDelete_LightwingNonProd"
 
 func TestResourceAwsALB(t *testing.T) {
 	name := fmt.Sprintf("terr-awsalb-%s", randAlnum(5))
@@ -47,11 +47,11 @@ func testAwsALB(name string) string {
 			name = "%[1]s"
 			cloud_connector_id = %q
             region = "us-east-1"
-			vpc = "vpc-0d47ab08fce6d8cc8"
-			security_groups =["sg-0a2a6eaa3ad797636"]
+			vpc = %q
+			security_groups =[%q]
 			delete_cloud_resources_on_destroy = true
 		}
-`, name, awsCloudConnectorID)
+`, name, awsCloudConnectorID, awsProxyVPC, awsProxySG)
 }
 
 func testAwsALBUpdate(name string) string {
@@ -60,9 +60,9 @@ func testAwsALBUpdate(name string) string {
 			name = "%[1]s"
 			cloud_connector_id = %q
             region = "us-east-1"
-            vpc = "vpc-0d47ab08fce6d8cc8"
-            security_groups =["sg-0a2a6eaa3ad797636"]
+            vpc = %q
+            security_groups =[%q]
 			delete_cloud_resources_on_destroy = true
 		}
-`, name, awsCloudConnectorID)
+`, name, awsCloudConnectorID, awsProxyVPC, awsProxySG)
 }
