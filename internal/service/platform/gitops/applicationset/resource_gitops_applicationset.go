@@ -6,6 +6,7 @@ import (
 
 	"encoding/base64"
 	"fmt"
+	"strconv"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -496,18 +497,16 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 					//  different generator types
 					if generator.List != nil {
 						var listMap = map[string]interface{}{}
-						// Note: The API returns empty Raw fields for list elements, so we skip reading them
-						// and rely on Terraform config as source of truth. This is a known SDK/API limitation.
 						if generator.List.Template != nil {
-							var templateList = []interface{}{}
-							templateList = append(templateList, buildTemplateMapForState(generator.List.Template))
-							listMap["template"] = templateList
+							templateMap := buildTemplateMapForState(generator.List.Template)
+							if len(templateMap) > 0 {
+								listMap["template"] = []interface{}{templateMap}
+							}
 						}
 
 						if generator.List.Elements != nil && len(generator.List.Elements) > 0 {
 							var elementsList []interface{}
 							for _, elem := range generator.List.Elements {
-								// The API may return plain JSON strings or empty Raw fields
 								var elemMap map[string]interface{}
 								if err := json.Unmarshal([]byte(elem.Raw), &elemMap); err == nil {
 									elementsList = append(elementsList, elemMap)
@@ -925,10 +924,12 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 							}
 							stepMap["match_expressions"] = exprList
 						}
-						if step.MaxUpdate.StrVal != "" {
-							stepMap["max_update"] = step.MaxUpdate.StrVal
-						} else if step.MaxUpdate.IntVal != 0 {
-							stepMap["max_update"] = fmt.Sprintf("%d", step.MaxUpdate.IntVal)
+						if step.MaxUpdate != nil {
+							if step.MaxUpdate.StrVal != "" {
+								stepMap["max_update"] = step.MaxUpdate.StrVal
+							} else if step.MaxUpdate.IntVal != 0 {
+								stepMap["max_update"] = fmt.Sprintf("%d", step.MaxUpdate.IntVal)
+							}
 						}
 						stepsList = append(stepsList, stepMap)
 					}
@@ -1149,7 +1150,12 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 							}
 
 							if maxUpdate, ok := stepData["max_update"]; ok && len(maxUpdate.(string)) > 0 {
-								rolloutStep.MaxUpdate = &nextgen.IntstrIntOrString{StrVal: maxUpdate.(string)}
+								val := maxUpdate.(string)
+								if n, err := strconv.ParseInt(val, 10, 32); err == nil {
+									rolloutStep.MaxUpdate = &nextgen.IntstrIntOrString{Type_: "0", IntVal: int32(n)}
+								} else {
+									rolloutStep.MaxUpdate = &nextgen.IntstrIntOrString{Type_: "1", StrVal: val}
+								}
 							}
 
 							stepList = append(stepList, rolloutStep)

@@ -1095,9 +1095,11 @@ func TestAccResourceGitopsApplicationSet_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.0.match_expressions.0.key", "env"),
 					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.0.match_expressions.0.operator", "In"),
 					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.0.match_expressions.0.values.0", "staging"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.0.max_update", "10%"),
 					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.1.match_expressions.0.key", "env"),
 					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.1.match_expressions.0.operator", "In"),
 					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.1.match_expressions.0.values.0", "production"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.strategy.0.rolling_sync.0.step.1.max_update", "2"),
 				),
 			},
 			{
@@ -1201,6 +1203,7 @@ func testAccResourceGitopsApplicationsetStrategy(id, accountId, name, agentId, n
 					  operator = "In"
 					  values   = ["staging"]
 					}
+					max_update = "10%%"
 				  }
 				  step {
 					match_expressions {
@@ -1208,6 +1211,7 @@ func testAccResourceGitopsApplicationsetStrategy(id, accountId, name, agentId, n
 					  operator = "In"
 					  values   = ["production"]
 					}
+					max_update = "2"
 				  }
 				}
 			  }
