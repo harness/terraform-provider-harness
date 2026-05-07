@@ -1993,6 +1993,210 @@ func TestAccResourceVirtualRegistryFirewallRejected(t *testing.T) {
 	})
 }
 
+// Tests creating a virtual DOCKER registry with metadata
+func TestAccResourceVirtualDockerRegistryWithMetadata(t *testing.T) {
+	id := fmt.Sprintf("tfauto_meta_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryWithMetadata(id, accountId, map[string]string{
+					"team":        "platform",
+					"environment": "production",
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "DOCKER"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.team", "platform"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.environment", "production"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.%", "2"),
+				),
+			},
+		},
+	})
+}
+
+// Tests updating metadata on a virtual DOCKER registry
+func TestAccResourceVirtualDockerRegistryMetadataUpdate(t *testing.T) {
+	id := fmt.Sprintf("tfauto_meta_upd_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryWithMetadata(id, accountId, map[string]string{
+					"team": "platform",
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "metadata.team", "platform"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.%", "1"),
+				),
+			},
+			{
+				Config: testAccResourceVirtualRegistryWithMetadata(id, accountId, map[string]string{
+					"team":    "backend",
+					"version": "v2",
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "metadata.team", "backend"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.version", "v2"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.%", "2"),
+				),
+			},
+		},
+	})
+}
+
+// Tests removing all metadata from a virtual DOCKER registry
+func TestAccResourceVirtualDockerRegistryMetadataRemove(t *testing.T) {
+	id := fmt.Sprintf("tfauto_meta_rm_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryWithMetadata(id, accountId, map[string]string{
+					"team": "platform",
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "metadata.team", "platform"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.%", "1"),
+				),
+			},
+			{
+				Config: testAccResourceVirtualRegistryNoMetadata(id, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "metadata.%", "0"),
+				),
+			},
+		},
+	})
+}
+
+// Tests that metadata with invalid characters is rejected at plan time
+func TestAccResourceMetadataInvalidKeyRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_meta_inv_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceVirtualRegistryWithMetadata(id, accountId, map[string]string{"invalid:key": "value"}),
+				ExpectError: regexp.MustCompile("invalid metadata key"),
+			},
+		},
+	})
+}
+
+// Tests that metadata with invalid value characters is rejected at plan time
+func TestAccResourceMetadataInvalidValueRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_meta_ivl_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceVirtualRegistryWithMetadata(id, accountId, map[string]string{"team": "my team"}),
+				ExpectError: regexp.MustCompile("invalid metadata value"),
+			},
+		},
+	})
+}
+
+// Tests that metadata exceeding 50 items is rejected at plan time
+func TestAccResourceMetadataTooManyItemsRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_meta_max_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	tooMany := make(map[string]string, 50)
+	for i := 0; i < 50; i++ {
+		tooMany[fmt.Sprintf("key%d", i)] = fmt.Sprintf("value%d", i)
+	}
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceVirtualRegistryWithMetadata(id, accountId, tooMany),
+				ExpectError: regexp.MustCompile("too many metadata items"),
+			},
+		},
+	})
+}
+
+// Generates Terraform config for virtual DOCKER registry with metadata
+func testAccResourceVirtualRegistryWithMetadata(id string, accId string, metadata map[string]string) string {
+	metadataBlock := ""
+	if len(metadata) > 0 {
+		metadataBlock = "  metadata = {\n"
+		for k, v := range metadata {
+			metadataBlock += fmt.Sprintf("    %q = %q\n", k, v)
+		}
+		metadataBlock += "  }\n"
+	}
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+
+   config {
+    type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s"
+%[3]s }
+`, id, accId, metadataBlock)
+}
+
+// Generates Terraform config for virtual DOCKER registry without metadata
+func testAccResourceVirtualRegistryNoMetadata(id string, accId string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+
+   config {
+    type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId)
+}
+
 // Generates Terraform config for upstream NPM registry with a specific firewall_mode
 func testAccResourceUpstreamNpmRegistryFirewall(id string, accId string, firewallMode string) string {
 	return fmt.Sprintf(`

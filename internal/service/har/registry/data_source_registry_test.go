@@ -191,6 +191,58 @@ func TestAccDataSourceUpstreamNpmRegistryFirewall(t *testing.T) {
 	})
 }
 
+// Tests that data source reads metadata from a virtual DOCKER registry
+func TestAccDataSourceVirtualRegistryMetadata(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("tfauto_ds_meta_%s", randAlphanumeric(5)))
+	resourceName := "data.harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccDataSourceVirtualRegistryMetadata(id, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "metadata.team", "platform"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.env", "staging"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.%", "2"),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSourceVirtualRegistryMetadata(id string, accId string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+
+   config {
+    type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s"
+   metadata = {
+     team = "platform"
+     env  = "staging"
+   }
+ }
+
+ data "harness_platform_har_registry" "test" {
+   identifier = harness_platform_har_registry.test.identifier
+   space_ref  = "%[2]s"
+   parent_ref = "%[2]s"
+ }
+`, id, accId)
+}
+
 func testAccDataSourceUpstreamNpmRegistryFirewall(id string, accId string, firewallMode string) string {
 	return fmt.Sprintf(`
  resource "harness_platform_har_registry" "test" {

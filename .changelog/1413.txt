@@ -1,0 +1,9 @@
+```release-note:enhancement
+resource/harness_platform_har_registry: Added `metadata` attribute for managing custom key-value metadata on registries via the V3 API
+```
+```release-note:enhancement
+data-source/harness_platform_har_registry: Added `metadata` attribute to read custom key-value metadata from registries
+```
+```release-note:bug
+resource/harness_platform_har_registry: Fixed panic when reading upstream registries with authentication configured
+```

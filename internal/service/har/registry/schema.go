@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/harness/harness-go-sdk/harness/har"
@@ -218,6 +219,33 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Optional:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
+			},
+		},
+		"metadata": {
+			Description: "Custom metadata key-value pairs attached to the registry. " +
+				"Keys and values must match the pattern [letters, numbers, _ . / = + - @] " +
+				"(no spaces or other special characters). Keys are case-sensitive. " +
+				"Maximum 49 entries allowed.",
+			Type:     schema.TypeMap,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+			ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+				m := val.(map[string]interface{})
+				if len(m) >= 50 {
+					errs = append(errs, fmt.Errorf("%q: too many metadata items (%d), maximum allowed is 49", key, len(m)))
+				}
+				metadataRegex := regexp.MustCompile(`^[\p{L}\p{N}_./=+\-@]+$`)
+				for k, v := range m {
+					if !metadataRegex.MatchString(k) {
+						errs = append(errs, fmt.Errorf("%q: invalid metadata key %q — must only contain letters, numbers, and _ . / = + - @", key, k))
+					}
+					if vs, ok := v.(string); ok && !metadataRegex.MatchString(vs) {
+						errs = append(errs, fmt.Errorf("%q: invalid metadata value for key %q — must only contain letters, numbers, and _ . / = + - @", key, k))
+					}
+				}
+				return warns, errs
 			},
 		},
 	}

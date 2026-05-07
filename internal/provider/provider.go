@@ -720,9 +720,11 @@ func getServiceDiscoveryClient(d *schema.ResourceData, version string) *svcdisco
 
 func getHarClient(d *schema.ResourceData, version string) *har.APIClient {
 	cfg := har.NewConfiguration()
+	endpoint := d.Get("endpoint").(string)
 	client := har.NewAPIClient(&har.Configuration{
 		AccountId:     d.Get("account_id").(string),
-		BasePath:      d.Get("endpoint").(string) + "/har/api/v1",
+		BasePath:      endpoint + "/har/api/v1",
+		BasePathV3:    endpoint + "/har/api/v3",
 		ApiKey:        d.Get("platform_api_key").(string),
 		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
 		HTTPClient:    getOpenApiHttpClient(cfg.Logger),

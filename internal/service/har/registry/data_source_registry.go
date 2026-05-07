@@ -50,5 +50,12 @@ func dataSourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta in
 
 	readRegistry(d, registry)
 
+	// Read metadata from V3 API
+	if registry.Uuid != "" {
+		if err := readMetadata(ctx, c, d, registry.Uuid); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
 	return nil
 }

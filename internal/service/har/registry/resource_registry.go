@@ -199,6 +199,13 @@ func resourceRegistryRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	readRegistry(d, resp.Data)
 
+	// Read metadata from V3 API
+	if resp.Data != nil && resp.Data.Uuid != "" {
+		if err := readMetadata(ctx, c, d, resp.Data.Uuid); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
 	return nil
 }
 
@@ -254,6 +261,17 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	readRegistry(d, resp.Data)
+
+	// Handle metadata via V3 API (separate from registry CRUD which uses V1)
+	if resp.Data == nil || resp.Data.Uuid == "" {
+		if _, ok := d.GetOk("metadata"); ok {
+			return diag.Errorf("registry created/updated but UUID missing from response; cannot sync metadata")
+		}
+	} else {
+		if err := syncMetadata(ctx, c, d, resp.Data.Uuid); err != nil {
+			return diag.FromErr(err)
+		}
+	}
 
 	return nil
 }
@@ -500,7 +518,7 @@ func readRegistry(d *schema.ResourceData, registry *har.Registry) {
 				} else {
 					authMap["auth_type"] = "Anonymous"
 				}
-				configMap["auth"] = authMap
+				configMap["auth"] = []interface{}{authMap}
 			}
 		}
 
@@ -515,4 +533,61 @@ func convertListToString(list []interface{}) []string {
 		result[i] = v.(string)
 	}
 	return result
+}
+
+// syncMetadata saves the user-defined metadata to the registry via the V3 metadata API.
+// It uses SaveRegistryMetadata (PUT) which replaces all metadata, ensuring the state
+// in Terraform matches exactly what is on the server.
+func syncMetadata(ctx context.Context, c *har.APIClient, d *schema.ResourceData, registryUUID string) error {
+	metadataMap, ok := d.GetOk("metadata")
+	if !ok {
+		// No metadata in config — check if there was metadata in prior state that needs clearing
+		oldMeta, _ := d.GetChange("metadata")
+		if oldMeta == nil || len(oldMeta.(map[string]interface{})) == 0 {
+			// No metadata before, no metadata now — skip V3 call entirely
+			return nil
+		}
+		// Had metadata before, now removed — save empty to clear
+		_, _, err := c.MetadataApi.SaveRegistryMetadata(ctx, registryUUID, har.MetadataInput{
+			Metadata: []har.MetadataItemInput{},
+		})
+		return err
+	}
+
+	items := []har.MetadataItemInput{}
+	for k, v := range metadataMap.(map[string]interface{}) {
+		items = append(items, har.MetadataItemInput{
+			Key:   k,
+			Value: v.(string),
+		})
+	}
+
+	_, _, err := c.MetadataApi.SaveRegistryMetadata(ctx, registryUUID, har.MetadataInput{
+		Metadata: items,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to save registry metadata: %v", err)
+	}
+
+	return nil
+}
+
+// readMetadata fetches metadata from the V3 API and sets it in the Terraform state.
+// Only MANUAL metadata entries are included (AUTO/system-generated entries are excluded).
+func readMetadata(ctx context.Context, c *har.APIClient, d *schema.ResourceData, registryUUID string) error {
+	resp, _, err := c.MetadataApi.GetRegistryMetadata(ctx, registryUUID)
+	if err != nil {
+		return fmt.Errorf("failed to read registry metadata: %v", err)
+	}
+
+	metadataMap := map[string]string{}
+	for _, entry := range resp.Data {
+		if entry.Type == har.MANUAL_MetadataType {
+			metadataMap[entry.Key] = entry.Value
+		}
+	}
+
+	d.Set("metadata", metadataMap)
+
+	return nil
 }
