@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -204,8 +205,11 @@ func resourceProbeTemplateUpdate(ctx context.Context, d *schema.ResourceData, me
 
 	log.Printf("[DEBUG] Updating probe template: %s", identity)
 
-	// Update the probe template
-	_, httpResp, err := c.DefaultApi.UpdateProbeTemplate(ctx, req, accountID, orgID, projectID, identity, nil)
+	// Update the probe template with isDefault=true to ensure changes are persisted
+	opts := &chaos.DefaultApiUpdateProbeTemplateOpts{
+		IsDefault: optional.NewBool(true),
+	}
+	_, httpResp, err := c.DefaultApi.UpdateProbeTemplate(ctx, req, accountID, orgID, projectID, identity, opts)
 	if err != nil {
 		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
