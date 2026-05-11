@@ -3,6 +3,7 @@ package as_rule_test
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 	"time"
 
@@ -99,6 +100,93 @@ func TestAccResourceECSRule_CCM32012_DependsOrderNoPerpetualPlan(t *testing.T) {
 			},
 		},
 	})
+}
+
+// TestAccResourceECSRule_CCM32336_OutOfBandDeleteRecreates verifies that when an
+// AutoStopping rule is deleted out-of-band (UI / direct API), the next refresh
+// treats the GET as "not found" (HTTP 404 + ENTITY_NOT_FOUND) and re-plans a
+// create instead of erroring out with "giving up after 11 attempt(s)".
+//
+// Regression test for CCM-32336. The bug was that the lwd GET rule API returned
+// HTTP 500 (`Error finding service by id ... : <nil>`) for a deleted rule;
+// the provider only handles 404 + ENTITY_NOT_FOUND in helpers.HandleReadApiError.
+// The fix changes the API to return 404 with body `{"code": "ENTITY_NOT_FOUND", ...}`
+// so terraform plan no longer fails on missing rules.
+func TestAccResourceECSRule_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
+	name := fmt.Sprintf("terr-c336-%s", randAlnum(5))
+	proxyName := fmt.Sprintf("terr-c336p-%s", randAlnum(5))
+	apiKey := os.Getenv(platformAPIKeyEnv)
+
+	var proxyID, ruleIDBefore string
+	resourceName := "harness_autostopping_rule_ecs.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testECSCCM32336Rule(name, proxyName, apiKey),
+				Check: resource.ComposeTestCheckFunc(
+					extractAttr("harness_autostopping_aws_proxy.test", "identifier", &proxyID),
+					extractAttr(resourceName, "identifier", &ruleIDBefore),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					if err := waitForProxyReady(proxyID, 90*time.Second); err != nil {
+						t.Fatalf("Proxy not ready: %v", err)
+					}
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					rid, err := strconv.ParseFloat(ruleIDBefore, 64)
+					if err != nil {
+						t.Fatalf("invalid captured rule id %q: %v", ruleIDBefore, err)
+					}
+					if _, err := c.CloudCostAutoStoppingRulesApi.DeleteAutoStoppingRule(
+						ctx, rid, c.AccountId, c.AccountId,
+					); err != nil {
+						t.Fatalf("CCM-32336: out-of-band delete failed: %v", err)
+					}
+				},
+				Config:             testECSCCM32336Rule(name, proxyName, apiKey),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testECSCCM32336Rule(name, proxyName, apiKey),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttrWith(resourceName, "identifier", func(value string) error {
+						if value == "" || value == ruleIDBefore {
+							return fmt.Errorf("expected new rule id after recreate, got %q (before %q)", value, ruleIDBefore)
+						}
+						return nil
+					}),
+				),
+			},
+		},
+	})
+}
+
+func testECSCCM32336Rule(name, proxyName, apiKey string) string {
+	return testECSAWSProxy(proxyName, apiKey) + fmt.Sprintf(`
+resource "harness_autostopping_rule_ecs" "test" {
+  name               = %[1]q
+  cloud_connector_id = %[2]q
+  idle_time_mins     = 10
+  dry_run            = true
+
+  container {
+    cluster    = "cluster"
+    service    = "service"
+    region     = "us-east-1"
+    task_count = 1
+  }
+  http {
+    proxy_id = harness_autostopping_aws_proxy.test.identifier
+  }
+}
+`, name, cloudConnectorIDAWS)
 }
 
 func testECSCCM32010Step1NoDepends(nameFirst, nameSecond, proxyName, apiKey string, dryRun bool) string {
