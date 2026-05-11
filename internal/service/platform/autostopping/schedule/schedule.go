@@ -27,6 +27,7 @@ const (
 	startTimeAttribute    = "start_time"
 	endTimeAttribute      = "end_time"
 	rulesAttribute        = "rules"
+	priorityAttribute     = "priority"
 	daysAttribute         = "days"
 	nameAttribute         = "name"
 	scheduleResTypeASrule = "autostop_rule"
@@ -178,6 +179,11 @@ func ResourceVMRule() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeFloat,
 				},
+			},
+			priorityAttribute: {
+				Description: "Priority when multiple schedules apply to the same AutoStopping rules. 1 is the highest priority; 2 is next, and larger numbers indicate lower priority.",
+				Type:        schema.TypeInt,
+				Optional:    true,
 			},
 		},
 	}
@@ -430,6 +436,11 @@ func parseSchedule(d *schema.ResourceData, accountId string) (*nextgen.FixedSche
 			}
 		}
 	}
+	if attr, ok := d.GetOk(priorityAttribute); ok {
+		if v, ok := attr.(int); ok {
+			schedule.Priority = v
+		}
+	}
 	return schedule, nil
 }
 
@@ -513,6 +524,7 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 	d.SetId(identifier)
 	d.Set("identifier", float64(schedule.Id))
 	d.Set(nameAttribute, schedule.Name)
+	d.Set(priorityAttribute, schedule.Priority)
 	scheduleType := uptimeSchedule
 	schedDet := schedule.Details.Uptime
 	if schedule.Details.Downtime != nil {

@@ -76,6 +76,11 @@ func DataSourceFixedSchedule() *schema.Resource {
 					Type: schema.TypeFloat,
 				},
 			},
+			priorityAttribute: {
+				Description: "Priority when multiple schedules apply to the same AutoStopping rules. 1 is the highest priority; 2 is next, and larger numbers indicate lower priority.",
+				Type:        schema.TypeInt,
+				Computed:    true,
+			},
 		},
 	}
 
