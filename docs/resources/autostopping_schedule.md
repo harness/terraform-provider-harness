@@ -148,6 +148,7 @@ resource "harness_autostopping_schedule" "OverNightDowntimeOnWeekDays" {
 ### Optional
 
 - `ending_on` (String) Time until which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05
+- `priority` (Number) Priority when multiple schedules apply to the same AutoStopping rules. 1 is the highest priority; 2 is next, and larger numbers indicate lower priority.
 - `repeats` (Block List) For defining periodic schedule. Periodic nature will be applicable from the time of creation of schedule, unless specific 'time_period' is specified (see [below for nested schema](#nestedblock--repeats))
 - `starting_from` (String) Time from which schedule will be active. Schedule will take immediate effect if starting_from is not specified. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05
 

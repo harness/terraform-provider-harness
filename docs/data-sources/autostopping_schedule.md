@@ -25,6 +25,7 @@ Data source for retrieving a fixed schedule for Harness AutoStopping rule
 - `id` (String) The ID of this resource.
 - `identifier` (Number) Unique identifier of the schedule
 - `name` (String) Name of the schedule
+- `priority` (Number) Priority when multiple schedules apply to the same AutoStopping rules. 1 is the highest priority; 2 is next, and larger numbers indicate lower priority.
 - `repeats` (List of Object) For defining periodic schedule. Periodic nature will be applicable from the time of creation of schedule, unless specific 'time_period' is specified (see [below for nested schema](#nestedatt--repeats))
 - `rules` (List of Number) ID of AutoStopping rules on which the schedule applies
 - `starting_from` (String) Time from which schedule will be active. Schedule will take immediate effect if starting_from is not specified. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05
