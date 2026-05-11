@@ -241,26 +241,30 @@ func readConnectorAzureCloudCost(d *schema.ResourceData, connector *nextgen.Conn
 	d.Set("tenant_id", connector.AzureCloudCost.TenantId)
 	d.Set("subscription_id", connector.AzureCloudCost.SubscriptionId)
 	if isFeatureEnabled("BILLING", connector.AzureCloudCost.FeaturesEnabled) {
-		d.Set("billing_export_spec", []interface{}{
-			map[string]interface{}{
-				"storage_account_name": connector.AzureCloudCost.BillingExportSpec.StorageAccountName,
-				"container_name":       connector.AzureCloudCost.BillingExportSpec.ContainerName,
-				"directory_name":       connector.AzureCloudCost.BillingExportSpec.DirectoryName,
-				"report_name":          connector.AzureCloudCost.BillingExportSpec.ReportName,
-				"subscription_id":      connector.AzureCloudCost.BillingExportSpec.SubscriptionId,
-				"billing_type":         connector.AzureCloudCost.BillingExportSpec.BillingType,
-			},
-		})
-		d.Set("billing_export_spec2", []interface{}{
-			map[string]interface{}{
-				"storage_account_name": connector.AzureCloudCost.BillingExportSpec2.StorageAccountName,
-				"container_name":       connector.AzureCloudCost.BillingExportSpec2.ContainerName,
-				"directory_name":       connector.AzureCloudCost.BillingExportSpec2.DirectoryName,
-				"report_name":          connector.AzureCloudCost.BillingExportSpec2.ReportName,
-				"subscription_id":      connector.AzureCloudCost.BillingExportSpec2.SubscriptionId,
-				"billing_type":         connector.AzureCloudCost.BillingExportSpec2.BillingType,
-			},
-		})
+		if connector.AzureCloudCost.BillingExportSpec != nil {
+			d.Set("billing_export_spec", []interface{}{
+				map[string]interface{}{
+					"storage_account_name": connector.AzureCloudCost.BillingExportSpec.StorageAccountName,
+					"container_name":       connector.AzureCloudCost.BillingExportSpec.ContainerName,
+					"directory_name":       connector.AzureCloudCost.BillingExportSpec.DirectoryName,
+					"report_name":          connector.AzureCloudCost.BillingExportSpec.ReportName,
+					"subscription_id":      connector.AzureCloudCost.BillingExportSpec.SubscriptionId,
+					"billing_type":         connector.AzureCloudCost.BillingExportSpec.BillingType,
+				},
+			})
+		}
+		if connector.AzureCloudCost.BillingExportSpec2 != nil {
+			d.Set("billing_export_spec2", []interface{}{
+				map[string]interface{}{
+					"storage_account_name": connector.AzureCloudCost.BillingExportSpec2.StorageAccountName,
+					"container_name":       connector.AzureCloudCost.BillingExportSpec2.ContainerName,
+					"directory_name":       connector.AzureCloudCost.BillingExportSpec2.DirectoryName,
+					"report_name":          connector.AzureCloudCost.BillingExportSpec2.ReportName,
+					"subscription_id":      connector.AzureCloudCost.BillingExportSpec2.SubscriptionId,
+					"billing_type":         connector.AzureCloudCost.BillingExportSpec2.BillingType,
+				},
+			})
+		}
 	}
 
 	return nil
