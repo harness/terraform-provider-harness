@@ -514,20 +514,28 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 }
 
 // setRoutingConfig sets the HTTP and TCP routing configurations in Terraform state from the API response.
-// When setConnect is true (VM rule), also sets the computed connect block from TCP ssh/rdp source ports.
-// Always sets both http and tcp to ensure stale data is cleared when configs are removed
+// HTTP is applied only for instance, ECS, and scale-group rules; TCP for instance and database rules.
+// When setConnect is true (VM rule), setTcpConfig also sets the computed connect block from TCP ssh/rdp source ports.
 func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck, kind string) {
 	setConnect := kind == Instance
-	// Set HTTP routing config (or clear it if absent)
+	if kind == Instance || kind == ECS || kind == ScaleGroup {
+		setHttpConfig(d, routing, healthCheck)
+	}
+	if kind == Instance || kind == Database {
+		setTcpConfig(routing, d, setConnect)
+	}
+}
+
+// setHttpConfig sets the HTTP routing and nested health check in Terraform state from the API response.
+// Clears http when routing is nil or HTTP config is absent.
+func setHttpConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healthCheck *nextgen.HealthCheck) {
 	if routing != nil && routing.Http != nil {
 		httpConfig := make(map[string]interface{})
 
-		// Set proxy_id
 		if routing.Http.Proxy != nil && routing.Http.Proxy.Id != "" {
 			httpConfig["proxy_id"] = routing.Http.Proxy.Id
 		}
 
-		// Set routing (port configs)
 		if len(routing.Http.Ports) > 0 {
 			routingList := make([]map[string]interface{}, 0, len(routing.Http.Ports))
 			for _, portConfig := range routing.Http.Ports {
@@ -548,7 +556,6 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 			httpConfig["routing"] = routingList
 		}
 
-		// Set health check config (nested inside http)
 		if healthCheck != nil {
 			healthConfig := []map[string]interface{}{
 				{
@@ -565,12 +572,7 @@ func setRoutingConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, he
 
 		d.Set("http", []map[string]interface{}{httpConfig})
 	} else {
-		// Clear http config if not present in API response
 		d.Set("http", []map[string]interface{}{})
-	}
-	if kind == Instance || kind == Database {
-		// Set TCP routing config (or clear it if absent)
-		setTcpConfig(routing, d, setConnect)
 	}
 }
 
