@@ -12,7 +12,7 @@ const (
 func ResourceChaosImageRegistry() *schema.Resource {
 	return &schema.Resource{
 		Description:   "Resource for managing a Harness Chaos Image Registry",
-		CreateContext: resourceChaosImageRegistryUpdate,
+		CreateContext: resourceChaosImageRegistryCreate,
 		ReadContext:   resourceChaosImageRegistryRead,
 		UpdateContext: resourceChaosImageRegistryUpdate,
 		DeleteContext: resourceChaosImageRegistryDelete,
@@ -88,28 +88,24 @@ func ResourceChaosImageRegistry() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"log_watcher": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Computed:     true,
-							ValidateFunc: validation.StringIsNotEmpty,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
 						},
 						"ddcr": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Computed:     true,
-							ValidateFunc: validation.StringIsNotEmpty,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
 						},
 						"ddcr_lib": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Computed:     true,
-							ValidateFunc: validation.StringIsNotEmpty,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
 						},
 						"ddcr_fault": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Computed:     true,
-							ValidateFunc: validation.StringIsNotEmpty,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
 						},
 					},
 				},

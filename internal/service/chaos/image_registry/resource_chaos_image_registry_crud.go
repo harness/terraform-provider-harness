@@ -49,6 +49,9 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 			DdcrLib:    getStringPtr(customImages["ddcr_lib"]),
 			DdcrFault:  getStringPtr(customImages["ddcr_fault"]),
 		}
+	} else {
+		// Always provide empty struct to avoid backend nil pointer panic
+		req.CustomImages = &model.CustomImages{}
 	}
 
 	identifiers := getIdentifiers(d, c.AccountId)
@@ -172,16 +175,17 @@ func resourceChaosImageRegistryUpdate(ctx context.Context, d *schema.ResourceDat
 		}
 	}
 
-	if d.HasChange("custom_images") && d.Get("use_custom_images").(bool) {
-		if v, ok := d.GetOk("custom_images"); ok && len(v.([]interface{})) > 0 {
-			customImages := v.([]interface{})[0].(map[string]interface{})
-			req.CustomImages = &model.CustomImages{
-				LogWatcher: getStringPtr(customImages["log_watcher"]),
-				Ddcr:       getStringPtr(customImages["ddcr"]),
-				DdcrLib:    getStringPtr(customImages["ddcr_lib"]),
-				DdcrFault:  getStringPtr(customImages["ddcr_fault"]),
-			}
+	if v, ok := d.GetOk("custom_images"); ok && len(v.([]interface{})) > 0 {
+		customImages := v.([]interface{})[0].(map[string]interface{})
+		req.CustomImages = &model.CustomImages{
+			LogWatcher: getStringPtr(customImages["log_watcher"]),
+			Ddcr:       getStringPtr(customImages["ddcr"]),
+			DdcrLib:    getStringPtr(customImages["ddcr_lib"]),
+			DdcrFault:  getStringPtr(customImages["ddcr_fault"]),
 		}
+	} else {
+		// Always provide empty struct to avoid backend nil pointer panic
+		req.CustomImages = &model.CustomImages{}
 	}
 
 	_, err := c.ImageRegistryApi.Update(
