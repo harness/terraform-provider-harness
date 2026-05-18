@@ -236,10 +236,10 @@ func ResourceWorkspace() *schema.Resource {
 							Required:    true,
 						},
 						"type": {
-							Description:  "Type is the connector type of the connector. Supported types: aws, azure, gcp",
+							Description:  "Type is the connector type of the connector. Supported types: aws, azure, gcp, vault",
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"aws", "azure", "gcp"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"aws", "azure", "gcp", "vault"}, false),
 						},
 					},
 				},
