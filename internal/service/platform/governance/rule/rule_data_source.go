@@ -56,6 +56,12 @@ func resourceRuleReadDataSource(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	if resp.Data != nil {
+		// Check if the rule was deleted externally
+		if len(resp.Data.Rules) == 0 {
+			d.SetId("")
+			return nil
+		}
+
 		err := readRuleResponse(d, resp.Data)
 		if err != nil {
 			return helpers.HandleReadApiError(err, d, httpResp)
