@@ -63,6 +63,34 @@ func TestAccResourceRuleEnforcement(t *testing.T) {
 	})
 }
 
+func TestAccResourceRuleEnforcementWithFalseBooleans(t *testing.T) {
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_governance_rule_enforcement.test"
+	awsAccountId := os.Getenv("AWS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRuleEnforcementDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceRuleEnforcementWithFalseBooleans(name, awsAccountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "cloud_provider", "AWS"),
+					resource.TestCheckResourceAttr(resourceName, "execution_schedule", "0 0 * * * *"),
+					resource.TestCheckResourceAttr(resourceName, "execution_timezone", "UTC"),
+					resource.TestCheckResourceAttr(resourceName, "is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "target_accounts.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "target_regions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "is_dry_run", "false"),
+					resource.TestCheckResourceAttr(resourceName, "description", "Test false booleans"),
+				),
+			},
+		},
+	})
+}
+
 func testAccResourceRuleEnforcement(name, awsAccountId string) string {
 	return fmt.Sprintf(`
 		resource "harness_governance_rule" "rule" {
@@ -84,6 +112,31 @@ func testAccResourceRuleEnforcement(name, awsAccountId string) string {
 			target_regions     = ["us-east-1"]
 			is_dry_run         = true
 			description        = "Dummy"
+		}
+	`, name, awsAccountId)
+}
+
+func testAccResourceRuleEnforcementWithFalseBooleans(name, awsAccountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_governance_rule" "rule" {
+			name           = "%[1]s_rule"
+			cloud_provider = "AWS"
+			description    = "Test false booleans"
+			rules_yaml     = "policies:\n  - name: aws-list-ec2\n    resource: aws.ec2"
+		}
+
+		resource "harness_governance_rule_enforcement" "test" {
+			name               = "%[1]s"
+			cloud_provider     = "AWS"
+			rule_ids           = [harness_governance_rule.rule.rule_id]
+			rule_set_ids       = []
+			execution_schedule = "0 0 * * * *"
+			execution_timezone = "UTC"
+			is_enabled         = false
+			target_accounts    = ["%[2]s"]
+			target_regions     = ["us-east-1"]
+			is_dry_run         = false
+			description        = "Test false booleans"
 		}
 	`, name, awsAccountId)
 }
