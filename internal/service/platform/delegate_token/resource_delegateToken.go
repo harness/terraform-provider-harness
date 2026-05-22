@@ -197,7 +197,14 @@ func readDelegateToken(d *schema.ResourceData, delegateTokenDetails *nextgen.Del
 	d.Set("account_id", delegateTokenDetails.AccountId)
 	d.Set("token_status", delegateTokenDetails.Status)
 	d.Set("created_at", delegateTokenDetails.CreatedAt)
-	d.Set("created_by", readCreatedByData(delegateTokenDetails.CreatedByNgUser.Type_, delegateTokenDetails.CreatedByNgUser.Name, delegateTokenDetails.CreatedByNgUser.Jwtclaims))
+
+	// Handle default tokens where CreatedByNgUser may be nil
+	if delegateTokenDetails.CreatedByNgUser != nil {
+		d.Set("created_by", readCreatedByData(delegateTokenDetails.CreatedByNgUser.Type_, delegateTokenDetails.CreatedByNgUser.Name, delegateTokenDetails.CreatedByNgUser.Jwtclaims))
+	} else {
+		d.Set("created_by", map[string]string{})
+	}
+
 	d.Set("value", delegateTokenDetails.Value)
 }
 
