@@ -115,6 +115,49 @@ func DatasourceConnectorJDBC() *schema.Resource {
 								},
 							},
 						},
+						"oidc": {
+							Description: "Authenticate using OIDC.",
+							Type:        schema.TypeList,
+							Computed:    true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"provider_type": {
+										Description: "The OIDC provider type.",
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"gcp_oidc": {
+										Description: "GCP OIDC configuration.",
+										Type:        schema.TypeList,
+										Computed:    true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"project_number": {
+													Description: "The GCP project number (numeric).",
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+												"workload_pool_id": {
+													Description: "The Workload Identity Pool ID.",
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+												"provider_id": {
+													Description: "The OIDC Provider ID within the pool.",
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+												"service_account_email": {
+													Description: "The GCP Service Account email for impersonation.",
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},

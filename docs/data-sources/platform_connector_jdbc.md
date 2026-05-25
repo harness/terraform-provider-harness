@@ -48,6 +48,7 @@ Read-Only:
 - `auth_type` (String)
 - `password_ref` (String)
 - `key_pair` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--key_pair))
+- `oidc` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--oidc))
 - `service_account` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--service_account))
 - `username` (String)
 - `username_password` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--username_password))
@@ -62,6 +63,25 @@ Read-Only:
 - `username_ref` (String)
 - `private_key_file_ref` (String)
 - `private_key_passphrase_ref` (String)
+
+
+<a id="nestedobjatt--credentials--oidc"></a>
+### Nested Schema for `credentials.oidc`
+
+Read-Only:
+
+- `provider_type` (String)
+- `gcp_oidc` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--oidc--gcp_oidc))
+
+<a id="nestedobjatt--credentials--oidc--gcp_oidc"></a>
+### Nested Schema for `credentials.oidc.gcp_oidc`
+
+Read-Only:
+
+- `project_number` (String)
+- `workload_pool_id` (String)
+- `provider_id` (String)
+- `service_account_email` (String)
 
 
 <a id="nestedobjatt--credentials--service_account"></a>

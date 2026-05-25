@@ -138,3 +138,24 @@ resource "harness_platform_connector_jdbc" "test" {
     password_ref = "account.secret_id"
   }
 }
+
+resource "harness_platform_connector_jdbc" "oidc_example" {
+  identifier         = "jdbc_oidc_gcp"
+  name               = "JDBC OIDC GCP"
+  description        = "JDBC connector using GCP OIDC authentication"
+  tags               = ["foo:bar"]
+  url                = "jdbc:postgresql://cloudsql-proxy:5432/mydb"
+  delegate_selectors = ["harness-delegate"]
+  credentials {
+    auth_type = "Oidc"
+    oidc {
+      provider_type = "Gcp"
+      gcp_oidc {
+        project_number        = "145904791365"
+        workload_pool_id      = "harness-identity-pool"
+        provider_id           = "harness-oidc-provider"
+        service_account_email = "db-sa@project.iam.gserviceaccount.com"
+      }
+    }
+  }
+}
