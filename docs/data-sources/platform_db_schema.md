@@ -40,7 +40,7 @@ data "harness_platform_db_schema" "example" {
 - `changelog_script` (List of Object) Configuration to clone changeSets using script (see [below for nested schema](#nestedatt--changelog_script))
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `schema_source` (List of Object) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedatt--schema_source))
+- `schema_source` (List of Object) Provides a connector and path at which to find the database schema representation. For Harness Code Repository, connector will be empty. (see [below for nested schema](#nestedatt--schema_source))
 - `service` (String) The service associated with schema
 - `tags` (Set of String) Tags to associate with the resource.
 - `use_percona` (Boolean) If percona-toolkit is enabled for the database schema.

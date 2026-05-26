@@ -80,13 +80,13 @@ func DataSourceDBSchema() *schema.Resource {
 				},
 			},
 			"schema_source": {
-				Description: "Provides a connector and path at which to find the database schema representation",
+				Description: "Provides a connector and path at which to find the database schema representation. For Harness Code Repository, connector will be empty.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connector": {
-							Description: "Connector to repository at which to find details about the database schema",
+							Description: "Connector to repository at which to find details about the database schema. Empty when using Harness Code Repository.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -179,15 +179,18 @@ func readDataSourceDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut)
 	}
 
 	if dbSchema.Changelog != nil {
-		d.Set("schema_source.0.location", dbSchema.Changelog.Location)
-		d.Set("schema_source.0.repo", dbSchema.Changelog.Repo)
-		d.Set("schema_source.0.connector", dbSchema.Changelog.Connector)
-		d.Set("schema_source.0.archive_path", dbSchema.Changelog.ArchivePath)
-
-		if dbSchema.MigrationType != nil && *dbSchema.MigrationType == dbops.FLYWAY_MigrationType {
-			d.Set("schema_source.0.toml", dbSchema.Changelog.Toml)
+		schemaSource := map[string]interface{}{
+			"connector":    dbSchema.Changelog.Connector,
+			"location":     dbSchema.Changelog.Location,
+			"repo":         dbSchema.Changelog.Repo,
+			"archive_path": dbSchema.Changelog.ArchivePath,
 		}
 
+		if dbSchema.MigrationType != nil && *dbSchema.MigrationType == dbops.FLYWAY_MigrationType {
+			schemaSource["toml"] = dbSchema.Changelog.Toml
+		}
+
+		d.Set("schema_source", []interface{}{schemaSource})
 		d.Set("changelog_script", nil)
 	}
 }
