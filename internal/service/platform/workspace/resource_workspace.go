@@ -56,7 +56,7 @@ func ResourceWorkspace() *schema.Resource {
 				Optional:    true,
 			},
 			"provisioner_type": {
-				Description: "Provisioner type defines the provisioning tool to use (terraform or opentofu)",
+				Description: "Provisioner type defines the provisioning tool to use (terraform, opentofu, or awscdk)",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -244,6 +244,36 @@ func ResourceWorkspace() *schema.Resource {
 					},
 				},
 			},
+			"provisioner_config": {
+				Description: "Provisioner configuration for awscdk provisioner type. Required when provisioner_type is awscdk.",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"language": {
+							Description: "Programming language for AWS CDK (e.g., python, typescript)",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"language_version": {
+							Description: "Version of the programming language (e.g., 3.12 for Python)",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"package_manager": {
+							Description: "Package manager to use (e.g., pip, npm)",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"package_manager_version": {
+							Description: "Version of the package manager (e.g., 25.3 for pip)",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 	resource.Schema["tags"] = helpers.GetTagsSchema(helpers.SchemaFlagTypes.Optional)
@@ -418,6 +448,7 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 		}
 		d.Set("connector", providerConnectors)
 	}
+
 	d.Set("tags", helpers.FlattenTags(ws.Tags))
 }
 
@@ -497,6 +528,8 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 		return nextgen.IacmUpdateWorkspaceRequestBody{}, err
 	}
 	ws.ProviderConnectors = providerConnectors
+
+	ws.ProvisionerConfiguration = buildProvisionerConfig(d)
 
 	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
 		ws.Tags = helpers.ExpandTags(attr)
@@ -583,6 +616,8 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 	}
 	ws.ProviderConnectors = providerConnectors
 
+	ws.ProvisionerConfiguration = buildProvisionerConfig(d)
+
 	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
 		ws.Tags = helpers.ExpandTags(attr)
 	}
@@ -667,6 +702,23 @@ func buildProviderConnectors(d *schema.ResourceData) ([]nextgen.VariableSetConne
 		}
 	}
 	return connectors, nil
+}
+
+func buildProvisionerConfig(d *schema.ResourceData) *nextgen.IacmProvisionerConfiguration {
+	if provisionerConfigSet, ok := d.GetOk("provisioner_config"); ok {
+		provisionerConfigList := provisionerConfigSet.(*schema.Set).List()
+		if len(provisionerConfigList) > 0 {
+			if config, ok := provisionerConfigList[0].(map[string]interface{}); ok {
+				return &nextgen.IacmProvisionerConfiguration{
+					Language:              config["language"].(string),
+					LanguageVersion:       config["language_version"].(string),
+					PackageManager:        config["package_manager"].(string),
+					PackageManagerVersion: config["package_manager_version"].(string),
+				}
+			}
+		}
+	}
+	return nil
 }
 
 // iacm errors are in a different format from other harness services
