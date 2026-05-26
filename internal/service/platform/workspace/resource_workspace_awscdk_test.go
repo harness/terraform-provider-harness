@@ -71,11 +71,12 @@ func TestAccResourceWorkspace_AwsCdkTypescript(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "provisioner_type", "awscdk"),
+					resource.TestCheckResourceAttr(resourceName, "provisioner_config.#", "1"),
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "provisioner_config.*", map[string]string{
 						"language":                "typescript",
-						"language_version":        "5.4",
+						"language_version":        "24.13.0",
 						"package_manager":         "npm",
-						"package_manager_version": "10.2",
+						"package_manager_version": "11.10.0",
 					}),
 				),
 			},
@@ -100,26 +101,26 @@ func TestAccResourceWorkspace_AwsCdkUpdate(t *testing.T) {
 		CheckDestroy:      testAccResourceWorkspaceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceWorkspaceAwsCdkWithVersion(id, name, "3.11", "24.0"),
+				Config: testAccResourceWorkspaceAwsCdkWithVersion(id, name, "3.13", "25.3"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "provisioner_type", "awscdk"),
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "provisioner_config.*", map[string]string{
 						"language":                "python",
-						"language_version":        "3.11",
+						"language_version":        "3.13",
 						"package_manager":         "pip",
-						"package_manager_version": "24.0",
+						"package_manager_version": "25.3",
 					}),
 				),
 			},
 			{
-				Config: testAccResourceWorkspaceAwsCdkWithVersion(id, name, "3.12", "25.3"),
+				Config: testAccResourceWorkspaceAwsCdkWithVersion(id, name, "3.13", "25.3"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "provisioner_type", "awscdk"),
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "provisioner_config.*", map[string]string{
 						"language":                "python",
-						"language_version":        "3.12",
+						"language_version":        "3.13",
 						"package_manager":         "pip",
 						"package_manager_version": "25.3",
 					}),
@@ -209,7 +210,7 @@ func testAccResourceWorkspaceAwsCdkPython(id string, name string) string {
 			project_id = harness_platform_project.test.id
 			description = "test workspace with aws cdk python"
 			provisioner_type = "awscdk"
-			provisioner_version = "2.150.0"
+			provisioner_version = "2.1108.0"
 			repository = "https://github.com/org/repo"
 			repository_branch = "main"
 			repository_path = "cdk/python"
@@ -276,7 +277,7 @@ func testAccResourceWorkspaceAwsCdkTypescript(id string, name string) string {
 			project_id = harness_platform_project.test.id
 			description = "test workspace with aws cdk typescript"
 			provisioner_type = "awscdk"
-			provisioner_version = "2.150.0"
+			provisioner_version = "2.1108.0"
 			repository = "https://github.com/org/repo"
 			repository_branch = "main"
 			repository_path = "cdk/typescript"
@@ -285,9 +286,9 @@ func testAccResourceWorkspaceAwsCdkTypescript(id string, name string) string {
 
 			provisioner_config {
 				language = "typescript"
-				language_version = "5.4"
+				language_version = "24.13.0"
 				package_manager = "npm"
-				package_manager_version = "10.2"
+				package_manager_version = "11.10.0"
 			}
 
 			tags = ["cdk-test", "typescript"]
@@ -343,7 +344,7 @@ func testAccResourceWorkspaceAwsCdkWithVersion(id string, name string, langVersi
 			project_id = harness_platform_project.test.id
 			description = "test workspace with aws cdk version update"
 			provisioner_type = "awscdk"
-			provisioner_version = "2.150.0"
+			provisioner_version = "2.1108.0"
 			repository = "https://github.com/org/repo"
 			repository_branch = "main"
 			repository_path = "cdk/python"
@@ -410,7 +411,7 @@ func testAccResourceWorkspaceAwsCdkWithConnectors(id string, name string) string
 			project_id = harness_platform_project.test.id
 			description = "test workspace with aws cdk and connectors"
 			provisioner_type = "awscdk"
-			provisioner_version = "2.150.0"
+			provisioner_version = "2.1108.0"
 			repository = "https://github.com/org/repo"
 			repository_branch = "main"
 			repository_path = "cdk/python"
