@@ -1,4 +1,148 @@
-# v0.39.5 (January 19, 2026)
+# v0.42.8 (May 28, 2026)
+
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_jdbc: Added support for OIDC authentication type with GCP provider for keyless database authentication. ([#1424](https://github.com/harness/terraform-provider-harness/issues/1424))
+
+BUG FIXES:
+
+* data-source/harness_platform_delegatetoken: Fixed panic when fetching default delegate tokens with nil CreatedByNgUser field ([#DEL-6930](https://github.com/harness/terraform-provider-harness/issues/DEL-6930))
+
+# v0.42.7 (May 19, 2026)
+
+No changes.
+
+# v0.42.6 (May 11, 2026)
+
+
+ENHANCEMENTS:
+
+* data-source/harness_platform_har_registry: Added `metadata` attribute to read custom key-value metadata from registries ([#1413](https://github.com/harness/terraform-provider-harness/issues/1413))
+* resource/harness_platform_har_registry: Added `metadata` attribute for managing custom key-value metadata on registries via the V3 API ([#1413](https://github.com/harness/terraform-provider-harness/issues/1413))
+
+BUG FIXES:
+
+* resource/harness_platform_har_registry: Fixed panic when reading upstream registries with authentication configured ([#1413](https://github.com/harness/terraform-provider-harness/issues/1413))
+
+# v0.42.5 (May 05, 2026)
+
+
+FEATURES:
+
+* **New Data Source:** `harness_platform_iacm_ansible_inventory` ([#1405](https://github.com/harness/terraform-provider-harness/issues/1405))
+* **New Data Source:** `harness_platform_iacm_ansible_playbook` ([#1405](https://github.com/harness/terraform-provider-harness/issues/1405))
+* **New Resource:** `harness_platform_iacm_ansible_inventory` ([#1405](https://github.com/harness/terraform-provider-harness/issues/1405))
+* **New Resource:** `harness_platform_iacm_ansible_playbook` ([#1405](https://github.com/harness/terraform-provider-harness/issues/1405))
+
+BUG FIXES:
+
+* harness_platform_gitops_applicationset: Fixed read operation to correctly populate sync_policy, strategy, and ignore_application_differences fields from API response, preventing spurious diffs on plan. ([#1365](https://github.com/harness/terraform-provider-harness/issues/1365))
+* harness_platform_gitops_cluster: fixed issue where updating cluster auth type from SERVICE_ACCOUNT to IRSA would fail ([#1400](https://github.com/harness/terraform-provider-harness/issues/1400))
+
+# v0.42.4 (April 28, 2026)
+
+No changes.
+
+# v0.42.3 (April 22, 2026)
+
+
+BREAKING CHANGES:
+
+* `harness_fme_large_segment`: removed `environment_id`. Use `harness_fme_large_segment_environment_association` for each environment.
+
+`harness_fme_rule_based_segment`: removed `environment_id` and `definition_json`. Use `harness_fme_rule_based_segment_environment_association` for environment definitions. ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+
+FEATURES:
+
+* **New Data Source:** `harness_fme_environment: Look up an FME (Split) environment by Harness org_id, project_id, and environment name` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Data Source:** `harness_fme_flag_set: Look up an FME (Split) flag set by Harness org_id, project_id, and name` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Data Source:** `harness_fme_large_segment: Look up an FME (Split) large segment by Harness org_id, project_id, and name` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Data Source:** `harness_fme_traffic_type: Look up an FME (Split) traffic type by Harness org_id, project_id, and name` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Data Source:** `harness_fme_workspace: Look up an FME (Split) workspace by name or by Harness org_id and project_id` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** ``harness_fme_large_segment_environment_association`: manage large segment definitions per FME environment (mirrors classic `harness_fme_segment_environment_association`).` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** ``harness_fme_rule_based_segment_environment_association`: enable a rule-based segment per environment and manage `definition_json`.` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_api_key: Create and delete Split server-side or client-side API keys for a workspace environment` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_environment: Manage Split environments for a Harness org and project` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_environment_segment_keys: Replace keys for a classic segment in a Split environment` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_feature_flag: Manage Split feature flags (splits) and tag associations` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_feature_flag_definition: Manage Split feature flag definitions per environment (JSON definition body)` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_flag_set: Create and delete Split flag sets` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_large_segment: Manage Split large segments with optional environment definition` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_rule_based_segment: Manage Split rule-based segments with optional environment definition JSON` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_segment: Manage classic Split segments` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_segment_environment_association: Activate or deactivate a classic segment in an environment` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_traffic_type: Create and delete Split traffic types` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* **New Resource:** `harness_fme_traffic_type_attribute: Manage Split traffic type schema attributes` ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+
+ENHANCEMENTS:
+
+* Added `examples/resources/harness_fme_full_stack/main.tf` to exercise all `harness_fme_*` data sources and resources in one configuration. ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* FME (Split): cache resolved workspace per Harness org/project for the provider session and retry workspace list on 429 and transient duplicate-key errors to reduce throttling and apply flakes. ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* harness_fme_environment: Persist auto-created Split API key IDs from the create response in `bootstrap_api_token_ids` and delete them before destroying the environment ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+
+BUG FIXES:
+
+* Session `GetSplitClientWithContext` now routes through a Split client wrapper with `WithAuthContext`-style initialization for consistent context handling with other SDK clients ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+* `harness_fme_segment`, `harness_fme_large_segment`, and `harness_fme_feature_flag` import now require a traffic type id from the API or fail with a clear error; read refreshes preserve `traffic_type_id` when the API omits it ([#10006](https://github.com/harness/terraform-provider-harness/issues/10006))
+
+# v0.42.2 (April 17, 2026)
+
+
+ENHANCEMENTS:
+
+* harness_platform_connector_bitbucket: Added support for `AccessToken` and `EmailAndApiToken` API authentication types (Bitbucket Cloud Workspace API Tokens). ([#1394](https://github.com/harness/terraform-provider-harness/issues/1394))
+
+# v0.42.1 (April 08, 2026)
+
+No changes.
+
+# v0.42.0 (March 31, 2026)
+
+No changes.
+
+# v0.41.8 (March 26, 2026)
+
+No changes.
+
+# v0.41.7 (March 18, 2026)
+
+No changes.
+
+# v0.41.6 (March 11, 2026)
+
+No changes.
+
+# v0.41.5 (March 05, 2026)
+
+No changes.
+
+# v0.41.4 (February 23, 2026)
+
+
+ENHANCEMENTS:
+
+* harness_platform_connector_jdbc: adding new KeyPair auth support ([#1356](https://github.com/harness/terraform-provider-harness/issues/1356))
+* resource/harness_platform_db_schema: Added use_percona field to enable/disable percona-toolkit for database schema operations.
+  data-source/harness_platform_db_schema: Added use_percona field. ([#1355](https://github.com/harness/terraform-provider-harness/issues/1355))
+
+# v0.41.3 (February 12, 2026)
+
+No changes.
+
+# v0.41.2 (February 11, 2026)
+
+No changes.
+
+# v0.41.1 (January 30, 2026)
+
+No changes.
+
+# v0.41.0 (January 23, 2026)
+
+No changes.
+
+# v0.40.0 (January 14, 2026)
 
 
 FEATURES:
@@ -6,6 +150,39 @@ FEATURES:
 * **New Resource:** `harness_platform_idp_catalog_entity - added a new resource for IDP catalog entity
   harness_platform_idp_environment_blueprint - added a new resource for IDP environment blueprint
   harness_platform_idp_environment - added a new resource for IDP environment` ([#1332](https://github.com/harness/terraform-provider-harness/issues/1332))
+
+# v0.39.5 (January 07, 2026)
+
+No changes.
+
+# v0.39.4 (December 10, 2025)
+
+No changes.
+
+# v0.39.3 (November 24, 2025)
+
+No changes.
+
+# v0.39.2 (November 14, 2025)
+
+No changes.
+
+# v0.39.1 (November 12, 2025)
+
+No changes.
+
+# v0.39.0 (October 19, 2025)
+
+
+FEATURES:
+
+* **New Resource:** `harness_platform_infra_module_testing - added a new resource for iacm module registry testing
+  harness_platform_infra_module_testing - added a new data source for iacm module registry testing
+  harness_platform_infra_modules - added a new data source for iacm module registry` ([#1302](https://github.com/harness/terraform-provider-harness/issues/1302))
+
+ENHANCEMENTS:
+
+* resource: Updated harness_platform_policyset to use policy_references instead of policies ([#1286](https://github.com/harness/terraform-provider-harness/issues/1286))
 
 # v0.38.5 (August 22, 2025)
 Release Page : https://github.com/harness/terraform-provider-harness/releases/tag/v0.38.5
@@ -16,17 +193,17 @@ Reverted the Go version upgrade.
 # v0.36.0 (March 24, 2025)
 This version is not recommended for use with the Terraform provider. Please use a different version.
 
-# 0.35.8 (March 07,2025) 
+# 0.35.8 (March 07,2025)
 
-# 0.35.7 (March 07,2025) 
+# 0.35.7 (March 07,2025)
 
 ENHANCEMENTS:
 
 * data-source/harness_platform_gitops_agent_operator_yaml: Added support for retrieving GitOps Agent Operator Yaml ([#1185](https://github.com/harness/terraform-provider-harness/issues/1185))
 
-# 0.35.6 (February 21,2025) 
+# 0.35.6 (February 21,2025)
 
-# 0.35.5 (February 17,2025) 
+# 0.35.5 (February 17,2025)
 
 FEATURES:
 
@@ -36,90 +213,90 @@ ENHANCEMENTS:
 
 * harness_platform_connector_jdbc: adding new ServiceAccount auth support ([#1160](https://github.com/harness/terraform-provider-harness/issues/1160))
 
-# 0.35.4 (February 11,2025) 
+# 0.35.4 (February 11,2025)
 
-# 0.35.3 (February 03,2025) 
+# 0.35.3 (February 03,2025)
 
-# 0.35.2 (January 23,2025) 
+# 0.35.2 (January 23,2025)
 
-# 0.35.1 (January 22,2025) 
+# 0.35.1 (January 22,2025)
 
-# 0.35.0 (January 20,2025) 
+# 0.35.0 (January 20,2025)
 
-# 0.34.9 (January 13,2025) 
+# 0.34.9 (January 13,2025)
 
-# 0.34.8 (January 08,2025) 
+# 0.34.8 (January 08,2025)
 
-# 0.34.7 (January 07,2025) 
+# 0.34.7 (January 07,2025)
 
-# 0.34.6 (December 26,2024) 
+# 0.34.6 (December 26,2024)
 
-# 0.34.5 (December 09,2024) 
+# 0.34.5 (December 09,2024)
 
-# 0.34.4 (December 06,2024) 
+# 0.34.4 (December 06,2024)
 
 FEATURES:
 
 * **New Resource:** `harness_platform_infra_module - added a new resource for iacm module registry
   harness_platform_infra_module - added a new data source for iacm module registry` ([#1099](https://github.com/harness/terraform-provider-harness/issues/1099))
 
-# 0.34.3 (November 08,2024) 
+# 0.34.3 (November 08,2024)
 
 ENHANCEMENTS:
 
 * harness_platform_connector_awscc: Added GOVERNANCE as a feature that can be enabled for the AWS Cloud Cost connector.
-harness_platform_connector_azure_cloud_cost: Added GOVERNANCE as a feature that can be enabled for the Azure Cloud Cost connector.
-harness_platform_connector_gcp_cloud_cost: Added GOVERNANCE as a feature that can be enabled for the GCP Cloud Cost connector. ([#1091](https://github.com/harness/terraform-provider-harness/issues/1091))
+  harness_platform_connector_azure_cloud_cost: Added GOVERNANCE as a feature that can be enabled for the Azure Cloud Cost connector.
+  harness_platform_connector_gcp_cloud_cost: Added GOVERNANCE as a feature that can be enabled for the GCP Cloud Cost connector. ([#1091](https://github.com/harness/terraform-provider-harness/issues/1091))
 
-# 0.34.2 (November 05,2024) 
+# 0.34.2 (November 05,2024)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_gitops_applications: add support for multi source applications
-resource/harness_platform_gitops_repository: add force delete repo that skips validation against apps using repo ([#1082](https://github.com/harness/terraform-provider-harness/issues/1082))
+  resource/harness_platform_gitops_repository: add force delete repo that skips validation against apps using repo ([#1082](https://github.com/harness/terraform-provider-harness/issues/1082))
 
-# 0.34.1 (October 11,2024) 
+# 0.34.1 (October 11,2024)
 
-# 0.34.0 (October 09,2024) 
+# 0.34.0 (October 09,2024)
 
 FEATURES:
 
 * **New Resource:** `harness_cluster_orchestrator - Added Cluster Orchestrator resource in Harness terraform provider` ([#1084](https://github.com/harness/terraform-provider-harness/issues/1084))
 * **New Resource:** `harness_governance_rule_set - Added Governance Rule Set resource in Harness terraform provider` ([#1075](https://github.com/harness/terraform-provider-harness/issues/1075))
 
-# 0.33.4 (October 01,2024) 
+# 0.33.4 (October 01,2024)
 
 FEATURES:
 
 * **New Resource:** `harness_governance_rule - Added Governance Rule resource in Harness terraform provider` ([#1068](https://github.com/harness/terraform-provider-harness/issues/1068))
 
-# 0.33.3 (September 13,2024) 
+# 0.33.3 (September 13,2024)
 
-# 0.33.2 (September 12,2024) 
+# 0.33.2 (September 12,2024)
 
-# 0.33.1 (September 11,2024) 
+# 0.33.1 (September 11,2024)
 
-# 0.33.0 (September 11,2024) 
+# 0.33.0 (September 11,2024)
 
 FEATURES:
 
 * **New Resource:** `harness_governance_rule_enforcement - Added Governance Enforcement resource in Harness terraform provider` ([#1052](https://github.com/harness/terraform-provider-harness/issues/1052))
 
-# 0.32.9 (September 10,2024) 
+# 0.32.9 (September 10,2024)
 
-# 0.32.9 (September 10,2024) 
+# 0.32.9 (September 10,2024)
 
-# 0.32.8 (September 05,2024) 
+# 0.32.8 (September 05,2024)
 
-# 0.32.7 (September 03,2024) 
+# 0.32.7 (September 03,2024)
 
-# 0.32.6 (August 29,2024) 
+# 0.32.6 (August 29,2024)
 
-# 0.32.5 (August 27,2024) 
+# 0.32.5 (August 27,2024)
 
-# 0.32.4 (August 27,2024) 
+# 0.32.4 (August 27,2024)
 
-# 0.32.3 (August 09,2024) 
+# 0.32.3 (August 09,2024)
 
 FEATURES:
 
@@ -128,25 +305,25 @@ FEATURES:
 ENHANCEMENTS:
 
 * harness_platform_policy: - Have added support for remote policies, now users can create remote policies using terraform by providing git references in the script.
-                         - Updated the Data Source for policy as rego should not be a mandatory field for GET call. ([#1015](https://github.com/harness/terraform-provider-harness/issues/1015))
+  - Updated the Data Source for policy as rego should not be a mandatory field for GET call. ([#1015](https://github.com/harness/terraform-provider-harness/issues/1015))
 * resource/harness_platform_connector_gcp: added support for OIDC Auth in GCP connector. ([#1019](https://github.com/harness/terraform-provider-harness/issues/1019))
 
-# 0.32.2 (July 25,2024) 
+# 0.32.2 (July 25,2024)
 
 ENHANCEMENTS:
 
 * harness_platform_gitops_app_project: Rename the file name ([#1011](https://github.com/harness/terraform-provider-harness/issues/1011))
 * harness_platform_gitops_project: Added the resource version gitops project ([#1010](https://github.com/harness/terraform-provider-harness/issues/1010))
 
-# 0.32.1 (July 23,2024) 
+# 0.32.1 (July 23,2024)
 
 ENHANCEMENTS:
 
 * harness_platform_gitops_project: Update the schema of gitops project ([#1009](https://github.com/harness/terraform-provider-harness/issues/1009))
 * harness_platform_pipeline: Added update call for git metadata in pipeline update flow.
-harness_platform_template:Added update call for git metadata in template update flow. ([#1008](https://github.com/harness/terraform-provider-harness/issues/1008))
+  harness_platform_template:Added update call for git metadata in template update flow. ([#1008](https://github.com/harness/terraform-provider-harness/issues/1008))
 
-# 0.31.9 (July 18,2024) 
+# 0.31.9 (July 18,2024)
 
 FEATURES:
 
@@ -156,7 +333,7 @@ ENHANCEMENTS:
 
 * resource_monitored_service: Add support for custom change sources in monitored service configuration. ([#1007](https://github.com/harness/terraform-provider-harness/issues/1007))
 
-# 0.31.8 (July 11,2024) 
+# 0.31.8 (July 11,2024)
 
 FEATURES:
 
@@ -169,50 +346,50 @@ FEATURES:
 ENHANCEMENTS:
 
 * harness_platform_connector_gcp_cloud_cost: Added support for governance in feature_enabled field in gcp and azure cloud cost connectors
-harness_platform_connector_azure_cloud_cost: Added support for governance in feature_enabled field in gcp and azure cloud cost connectors ([#1006](https://github.com/harness/terraform-provider-harness/issues/1006))
+  harness_platform_connector_azure_cloud_cost: Added support for governance in feature_enabled field in gcp and azure cloud cost connectors ([#1006](https://github.com/harness/terraform-provider-harness/issues/1006))
 * platform_gitops_applications: Added support for skip repo validation, when set true repo doesnt have to be created before creating application. ([#979](https://github.com/harness/terraform-provider-harness/issues/979))
 
-# 0.31.7 (July 02,2024) 
+# 0.31.7 (July 02,2024)
 
-# 0.31.6 (July 01,2024) 
+# 0.31.6 (July 01,2024)
 
-# 0.31.5 (June 17,2024) 
+# 0.31.5 (June 17,2024)
 
 BUG FIXES:
 
 * resource/platform_repo: Fixes issue for repo import giving 404 even after being successful. ([#978](https://github.com/harness/terraform-provider-harness/issues/978))
 
-# 0.31.4 (June 07,2024) 
+# 0.31.4 (June 07,2024)
 
-# 0.31.3 (May 31,2024) 
+# 0.31.3 (May 31,2024)
 
-# 0.31.2 (May 21,2024) 
+# 0.31.2 (May 21,2024)
 
-# 0.31.1 (May 10,2024) 
+# 0.31.1 (May 10,2024)
 
-# 0.31.0 (May 10,2024) 
+# 0.31.0 (May 10,2024)
 
-# 0.31.0 (May 10,2024) 
+# 0.31.0 (May 10,2024)
 
 ENHANCEMENTS:
 
 * resource/harness_pipeline: Updated the description for tags in pipeline create ([#977](https://github.com/harness/terraform-provider-harness/issues/977))
 
-# 0.30.9 (May 03,2024) 
+# 0.30.9 (May 03,2024)
 
-# 0.30.8 (April 04,2024) 
+# 0.30.8 (April 04,2024)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_variable: updated schema to forceNew for identifier, orgId and projectId ([#963](https://github.com/harness/terraform-provider-harness/issues/963))
 
-# 0.30.7 (March 22,2024) 
+# 0.30.7 (March 22,2024)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_user: added support for update for user groups for user entity ([#957](https://github.com/harness/terraform-provider-harness/issues/957))
 
-# 0.30.6 (March 18,2024) 
+# 0.30.6 (March 18,2024)
 
 ENHANCEMENTS:
 
@@ -222,7 +399,7 @@ BUG FIXES:
 
 * fix resource and data source for environment to gitops cluster mapping ([#954](https://github.com/harness/terraform-provider-harness/issues/954))
 
-# 0.30.5 (March 07,2024) 
+# 0.30.5 (March 07,2024)
 
 FEATURES:
 
@@ -236,53 +413,53 @@ ENHANCEMENTS:
 * harness_platform_service: Added supprt for creating/Updating remote services and import from git for service. ([#927](https://github.com/harness/terraform-provider-harness/issues/927))
 * harness_platform_service_overrides_v2: Added supprt for creating/Updating remote Overrides and import from git for Overrides. ([#930](https://github.com/harness/terraform-provider-harness/issues/930))
 
-# 0.30.4 (February 28,2024) 
+# 0.30.4 (February 28,2024)
 
 ENHANCEMENTS:
 
 * harness_platform_gitops_applications: The Path field was required. It has been updated to optional. ([#926](https://github.com/harness/terraform-provider-harness/issues/926))
 * resource/harness_platform_connector_aws: added support for OIDC Auth in AWS connector. ([#925](https://github.com/harness/terraform-provider-harness/issues/925))
 
-# 0.30.3 (February 27,2024) 
+# 0.30.3 (February 27,2024)
 
 ENHANCEMENTS:
 
 * platform_connector_github.md - Added documentation for github http anonymous connector
-resource.tf - Example of github http anonymous resource for github connector
-go.mod - upgraded harness-go-sdk version to v0.3.74
-github.go - Added Schema and CRUD for github anonymous http credentials in github connector
-github_test.go - Test for schema and CRUD for github anonymous http credentials in github connector
-github_data_source.go - Added Schema for github anonymous http credentials in github connector
-github_data_source_test.go - Added  test for Schema of github anonymous http  credentials in github connector ([#886](https://github.com/harness/terraform-provider-harness/issues/886))
+  resource.tf - Example of github http anonymous resource for github connector
+  go.mod - upgraded harness-go-sdk version to v0.3.74
+  github.go - Added Schema and CRUD for github anonymous http credentials in github connector
+  github_test.go - Test for schema and CRUD for github anonymous http credentials in github connector
+  github_data_source.go - Added Schema for github anonymous http credentials in github connector
+  github_data_source_test.go - Added  test for Schema of github anonymous http  credentials in github connector ([#886](https://github.com/harness/terraform-provider-harness/issues/886))
 * resource/harness_platform_project: where project and org is required, new resources are created on updating scope. ([#902](https://github.com/harness/terraform-provider-harness/issues/902))
 
-# 0.30.2 (January 23,2024) 
+# 0.30.2 (January 23,2024)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_project: corrected error handling for EntityNotFoundException ([#872](https://github.com/harness/terraform-provider-harness/issues/872))
 
-# 0.30.1 (January 19,2024) 
+# 0.30.1 (January 19,2024)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_connector_github: added force deletion support for github connector ([#855](https://github.com/harness/terraform-provider-harness/issues/855))
 * resource/harness_platform_project: added error handling for EntityNotFoundException ([#858](https://github.com/harness/terraform-provider-harness/issues/858))
 
-# 0.30.0 (January 10,2024) 
+# 0.30.0 (January 10,2024)
 
 FEATURES:
 
 * **New Data Source:** `harness_platform_current_account -  new data resource for account id` ([#785](https://github.com/harness/terraform-provider-harness/issues/785))
 * **New Resource:** `resource/harness_platform_connector_pdc: Added Pdc connector resource.` ([#832](https://github.com/harness/terraform-provider-harness/issues/832))
 
-# 0.29.4 (December 12,2023) 
+# 0.29.4 (December 12,2023)
 
 BUG FIXES:
 
 * resource/monitored_service - Added missing examples for monitored service with thresholds and NewRelic health source. ([#814](https://github.com/harness/terraform-provider-harness/issues/814))
 
-# 0.29.3 (December 11,2023) 
+# 0.29.3 (December 11,2023)
 
 ENHANCEMENTS:
 
@@ -293,16 +470,16 @@ BUG FIXES:
 * resource/harness_platform_connector_aws - Added support to add aws region field in connector to perform connection test. ([#806](https://github.com/harness/terraform-provider-harness/issues/806))
 * resource/harness_platform_template: Fixing the update flow for templates ([#780](https://github.com/harness/terraform-provider-harness/issues/780))
 
-# 0.29.2 (November 28,2023) 
+# 0.29.2 (November 28,2023)
 
-# 0.29.1 (November 28,2023) 
+# 0.29.1 (November 28,2023)
 
 BUG FIXES:
 
 * Monitored service didn't use to honour metric threshold correctly earlier with this fix customer can add metric threshold to all the health sources ([#777](https://github.com/harness/terraform-provider-harness/issues/777))
 * harness_platform_ff_api_key -  Fix error type ([#763](https://github.com/harness/terraform-provider-harness/issues/763))
 
-# 0.29.0 (November 16,2023) 
+# 0.29.0 (November 16,2023)
 
 FEATURES:
 
@@ -317,14 +494,14 @@ ENHANCEMENTS:
 * Days attribute of AutoStopping fixed schedule has been modified to be list of weekdays instead of string for brevity ([#731](https://github.com/harness/terraform-provider-harness/issues/731))
 * harness_platform_service_overrides_v2 -  Updated documentation with details of how overrides v2 identifiers are generated. ([#730](https://github.com/harness/terraform-provider-harness/issues/730))
 * resource/platform_connector_aws: added force deletion support
-resource/platform_connector_azure_cloud_provider: added force deletion support
-resources/platform_connector_gcp: added force deletion support
-resources/platform_connector_helm: added force deletion support
-resources/platform_connector_kubernetes: added force deletion support
-resources/platform_connector_oci_helm: added force deletion support
-resources/platform_connector_rancher: added force deletion support ([#743](https://github.com/harness/terraform-provider-harness/issues/743))
+  resource/platform_connector_azure_cloud_provider: added force deletion support
+  resources/platform_connector_gcp: added force deletion support
+  resources/platform_connector_helm: added force deletion support
+  resources/platform_connector_kubernetes: added force deletion support
+  resources/platform_connector_oci_helm: added force deletion support
+  resources/platform_connector_rancher: added force deletion support ([#743](https://github.com/harness/terraform-provider-harness/issues/743))
 
-# 0.28.3 (October 25,2023) 
+# 0.28.3 (October 25,2023)
 
 FEATURES:
 
@@ -340,21 +517,21 @@ BUG FIXES:
 
 * harness_platform_gitops_app_project_mapping -  Fix field name of argo project. ([#709](https://github.com/harness/terraform-provider-harness/issues/709))
 
-# 0.28.2 (October 09,2023) 
+# 0.28.2 (October 09,2023)
 
 ENHANCEMENTS:
 
 * Added is_namespaced for agent creating ([#704](https://github.com/harness/terraform-provider-harness/issues/704))
 * platform_connector_github.md - Added documentation for custom health connector
-resource.tf - Example of github_app in credentials for github connector
-go.mod - upgraded harness-go-sdk version to v0.3.52
-github.go - Added Schema and CRUD for github_app credentials in github connector
-github_test.go - Test for schema and CRUD for github_app credentials in github connector
-github_data_source.go - Added Schema for github_app credentials in github connector
-github_data_source_test.go - Added  test for Schema of github_app credentials in github connector ([#703](https://github.com/harness/terraform-provider-harness/issues/703))
+  resource.tf - Example of github_app in credentials for github connector
+  go.mod - upgraded harness-go-sdk version to v0.3.52
+  github.go - Added Schema and CRUD for github_app credentials in github connector
+  github_test.go - Test for schema and CRUD for github_app credentials in github connector
+  github_data_source.go - Added Schema for github_app credentials in github connector
+  github_data_source_test.go - Added  test for Schema of github_app credentials in github connector ([#703](https://github.com/harness/terraform-provider-harness/issues/703))
 * resource/harness_platform_gitops_agent: add support for new flux operator. ([#674](https://github.com/harness/terraform-provider-harness/issues/674))
 
-# 0.28.1 (September 27,2023) 
+# 0.28.1 (September 27,2023)
 
 ENHANCEMENTS:
 
@@ -365,14 +542,14 @@ BUG FIXES:
 * harness_platform_feature_flag -  Enable adding target and target groups through features ([#699](https://github.com/harness/terraform-provider-harness/issues/699))
 * harness_platform_feature_flag -  Fix updates on targets, target groups and feature flags. ([#700](https://github.com/harness/terraform-provider-harness/issues/700))
 
-# 0.28.0 (September 18,2023) 
+# 0.28.0 (September 18,2023)
 
 FEATURES:
 
 * **New Resource:** `- Support for AutoStopping LoadBalancers - AWS proxy, AWS ALB, Azure gateway, Azure proxy, GCP proxy` ([#698](https://github.com/harness/terraform-provider-harness/issues/698))
 * **New Resource:** `- Support for AutoStopping Rules - AWS VM, Azure VM, GCP VM, AWS RDS, AWS ECS
- - This version does not support dry run AutoStopping rule creation, provision for hide progress page and tag based ECS rule creation
- - Does not have support for schedules feature` ([#634](https://github.com/harness/terraform-provider-harness/issues/634))
+- This version does not support dry run AutoStopping rule creation, provision for hide progress page and tag based ECS rule creation
+- Does not have support for schedules feature` ([#634](https://github.com/harness/terraform-provider-harness/issues/634))
 
 ENHANCEMENTS:
 
@@ -382,32 +559,32 @@ BUG FIXES:
 
 * harness_platform_feature_flag_target_group -  Fix type issue when casting between types for include and exclude rules ([#694](https://github.com/harness/terraform-provider-harness/issues/694))
 
-# 0.27.2 (September 14,2023) 
+# 0.27.2 (September 14,2023)
 
 BUG FIXES:
 
 * harness_platform_connector_aws -  Set value for cross_account_access if not nil. ([#687](https://github.com/harness/terraform-provider-harness/issues/687))
 
-# 0.27.1 (September 13,2023) 
+# 0.27.1 (September 13,2023)
 
 ENHANCEMENTS:
 
 * harness_platform_feature_flag - Add support to add targets with feature flags ([#684](https://github.com/harness/terraform-provider-harness/issues/684))
 
-# 0.27.0 (September 13,2023) 
+# 0.27.0 (September 13,2023)
 
 ENHANCEMENTS:
 
 * harness_platform_template - Added support to import Template entity from git.
-harness_platform_input_set - Added support to import InputSet entity from git. ([#682](https://github.com/harness/terraform-provider-harness/issues/682))
+  harness_platform_input_set - Added support to import InputSet entity from git. ([#682](https://github.com/harness/terraform-provider-harness/issues/682))
 * harness_platform_template - Added support to update stable version of a template via terraform ([#675](https://github.com/harness/terraform-provider-harness/issues/675))
 * platform_connector_customhealthsource.md Added documentation for custom health connector
-resource.tf Example of loki health source with custom health source connector added
-provider.go : Added new data source harness_platform_connector_customhealthsource
-custom_health_data_source.go Schema and CRUD of custom health source connector
-custom_health_data_source_test.go Test for Schema and CRUD of custom health source connector
-customhealthsource.go Schema and CRUD of custom health source connector
-customhealthsource_test.go Test for Schema and CRUD of custom health source connector ([#677](https://github.com/harness/terraform-provider-harness/issues/677))
+  resource.tf Example of loki health source with custom health source connector added
+  provider.go : Added new data source harness_platform_connector_customhealthsource
+  custom_health_data_source.go Schema and CRUD of custom health source connector
+  custom_health_data_source_test.go Test for Schema and CRUD of custom health source connector
+  customhealthsource.go Schema and CRUD of custom health source connector
+  customhealthsource_test.go Test for Schema and CRUD of custom health source connector ([#677](https://github.com/harness/terraform-provider-harness/issues/677))
 * resource/harness_platform_service_overrides_v2: Added Support For Service Overrides V2 ([#673](https://github.com/harness/terraform-provider-harness/issues/673))
 
 BUG FIXES:
@@ -416,35 +593,35 @@ BUG FIXES:
 * Fixed aws-cc to allow non-billing connector type ([#679](https://github.com/harness/terraform-provider-harness/issues/679))
 * harness_platform_file_store_file -  Make file content optional, if the file content is provided use it directly else get the content from file path. ([#681](https://github.com/harness/terraform-provider-harness/issues/681))
 
-# 0.26.0 (September 01,2023) 
+# 0.26.0 (September 01,2023)
 
 FEATURES:
 
 * **New Resource:** `resource_feature_flag_target_group - Added feature flag target group resources to the Harness Terraform Provider.` ([#661](https://github.com/harness/terraform-provider-harness/issues/661))
 
-# 0.25.0 (September 01,2023) 
+# 0.25.0 (September 01,2023)
 
 FEATURES:
 
 * **New Resource:** `harness_platform_gitops_app_project_mapping - GitOps app project mapping for agents resource.` ([#659](https://github.com/harness/terraform-provider-harness/issues/659))
 * **New Resource:** `resource_feature_flag_target - Added feature flag target resources to the Harness Terraform Provider.` ([#660](https://github.com/harness/terraform-provider-harness/issues/660))
 
-# 0.24.5 (August 29,2023) 
+# 0.24.5 (August 29,2023)
 
 BUG FIXES:
 
 * Fixed policy-set api to correctly enable/disable policy-sets ([#670](https://github.com/harness/terraform-provider-harness/issues/670))
 
-# 0.24.4 (August 29,2023) 
+# 0.24.4 (August 29,2023)
 
 ENHANCEMENTS:
 
 * data_source_monitored_service_test.go Added tests for multiple healthsources such as Prometheus, Datadog etc.
-resource_monitored_service.go Added version field and renamed MonitoredServiceSpec to MonitoredService
-resource_monitored_service_test.go renamed MonitoredServiceSpec to MonitoredService
-utils.go Deserializer updated with new health sources such as azure, signalFx, loki and sumologic
-platform_monitored_service.md Added docs for health sources such as azure, signalFx, loki and sumologic
-resource.tf Added examples for all newly added health sources, datadog and prometheus ([#669](https://github.com/harness/terraform-provider-harness/issues/669))
+  resource_monitored_service.go Added version field and renamed MonitoredServiceSpec to MonitoredService
+  resource_monitored_service_test.go renamed MonitoredServiceSpec to MonitoredService
+  utils.go Deserializer updated with new health sources such as azure, signalFx, loki and sumologic
+  platform_monitored_service.md Added docs for health sources such as azure, signalFx, loki and sumologic
+  resource.tf Added examples for all newly added health sources, datadog and prometheus ([#669](https://github.com/harness/terraform-provider-harness/issues/669))
 * harness_platform_pipeline - Added support to import pipeline entity from git. ([#643](https://github.com/harness/terraform-provider-harness/issues/643))
 * resource/harness_plaform_user: Limit the user creation call to 1 at a time. ([#668](https://github.com/harness/terraform-provider-harness/issues/668))
 
@@ -452,14 +629,14 @@ BUG FIXES:
 
 * Fixed harness_platform_file_store_folder create resource plugin crash, when service account token was used to create ([#665](https://github.com/harness/terraform-provider-harness/issues/665))
 
-# 0.24.3 (August 22,2023) 
+# 0.24.3 (August 22,2023)
 
 BUG FIXES:
 
 * PolicySets list must return sorted ordered list of policysets. ([#658](https://github.com/harness/terraform-provider-harness/issues/658))
 * UI update to service environment override resource is not reflected accurately if this resource is created using Terraform. ([#654](https://github.com/harness/terraform-provider-harness/issues/654))
 
-# 0.24.2 (August 17,2023) 
+# 0.24.2 (August 17,2023)
 
 ENHANCEMENTS:
 
@@ -470,7 +647,7 @@ BUG FIXES:
 * - Deprecated enabled from the monitored service dto to not allow customer to set monitored service as enabled to start with via terraform ([#640](https://github.com/harness/terraform-provider-harness/issues/640))
 * Fixed the environment group resource to support org and account level environment groups also. ([#655](https://github.com/harness/terraform-provider-harness/issues/655))
 
-# 0.24.1 (August 10,2023) 
+# 0.24.1 (August 10,2023)
 
 ENHANCEMENTS:
 
@@ -480,7 +657,7 @@ BUG FIXES:
 
 * resource_manual_freeze : bug fix for deployment freeze while saving expired freeze ([#650](https://github.com/harness/terraform-provider-harness/issues/650))
 
-# 0.24.0 (August 01,2023) 
+# 0.24.0 (August 01,2023)
 
 FEATURES:
 
@@ -492,13 +669,13 @@ ENHANCEMENTS:
 * Add more fields for overrides v2 data source ([#636](https://github.com/harness/terraform-provider-harness/issues/636))
 * resource/harness_platform_gitops_repository: add support for token update for OCI helm repo with ESO ([#638](https://github.com/harness/terraform-provider-harness/issues/638))
 
-# 0.23.3 (July 25,2023) 
+# 0.23.3 (July 25,2023)
 
 ENHANCEMENTS:
 
 * Upgraded harnes-go-sdk@v0.3.39 ([#630](https://github.com/harness/terraform-provider-harness/issues/630))
 
-# 0.23.2 (July 20,2023) 
+# 0.23.2 (July 20,2023)
 
 ENHANCEMENTS:
 
@@ -511,7 +688,7 @@ BUG FIXES:
 * resource/harness_platform_apikey: made tags field as set of strings ([#625](https://github.com/harness/terraform-provider-harness/issues/625))
 * resource/harness_platform_token: made tags field as set of strings ([#624](https://github.com/harness/terraform-provider-harness/issues/624))
 
-# 0.23.1 (July 14,2023) 
+# 0.23.1 (July 14,2023)
 
 ENHANCEMENTS:
 
@@ -522,7 +699,7 @@ BUG FIXES:
 * - Formatting the sample example for harness_platform_environment resource ([#604](https://github.com/harness/terraform-provider-harness/issues/604))
 * Fix for supporting yaml for environment and environment group data source ([#610](https://github.com/harness/terraform-provider-harness/issues/610))
 
-# 0.23.0 (July 05,2023) 
+# 0.23.0 (July 05,2023)
 
 FEATURES:
 
@@ -534,19 +711,19 @@ ENHANCEMENTS:
 * resource/harness_platform_gitops_cluster: Added support for IAM role in GitOps ([#578](https://github.com/harness/terraform-provider-harness/issues/578))
 * resource/harness_platform_service_overrides_v2: Added Support For Service Overrides V2 ([#579](https://github.com/harness/terraform-provider-harness/issues/579))
 * resource/harness_platform_template: Update the description for filter_visibility.
-resource/harness_platform_template_filters: Update the description force_delete. ([#600](https://github.com/harness/terraform-provider-harness/issues/600))
+  resource/harness_platform_template_filters: Update the description force_delete. ([#600](https://github.com/harness/terraform-provider-harness/issues/600))
 
 BUG FIXES:
 
 * resource/harness_platform_token: fix for returning token value in create API ([#605](https://github.com/harness/terraform-provider-harness/issues/605))
 
-# 0.22.1 (June 15,2023) 
+# 0.22.1 (June 15,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_connector_aws - Added Aws BackOff Strategy Override Support ([#560](https://github.com/harness/terraform-provider-harness/issues/560))
 * resource/harness_platform_policyset: correct description for 'severity' for policy.
-resource/harness_platform_policy: Enhance example to showcase how to add policy with Rego spanning over multiple lines. ([#569](https://github.com/harness/terraform-provider-harness/issues/569))
+  resource/harness_platform_policy: Enhance example to showcase how to add policy with Rego spanning over multiple lines. ([#569](https://github.com/harness/terraform-provider-harness/issues/569))
 
 BUG FIXES:
 
@@ -554,7 +731,7 @@ BUG FIXES:
 * Fix for supporting import for account/org infrastructure. ([#577](https://github.com/harness/terraform-provider-harness/issues/577))
 * resource/harness_platform_usergroup - ignore the order of users and user_emails when doing CRUD. ([#567](https://github.com/harness/terraform-provider-harness/issues/567))
 
-# 0.22.0 (June 05,2023) 
+# 0.22.0 (June 05,2023)
 
 FEATURES:
 
@@ -568,13 +745,13 @@ BUG FIXES:
 
 * resource/harness_platform_template - deprecated the field description from resource ([#561](https://github.com/harness/terraform-provider-harness/issues/561))
 
-# 0.21.0 (May 25,2023) 
+# 0.21.0 (May 25,2023)
 
 FEATURES:
 
 * **New Resource:** `platform_connector_elasticsearch - Added elasticsearch connector resource in Harness terraform provider` ([#538](https://github.com/harness/terraform-provider-harness/issues/538))
 
-# 0.20.0 (May 16,2023) 
+# 0.20.0 (May 16,2023)
 
 FEATURES:
 
@@ -583,9 +760,9 @@ FEATURES:
 ENHANCEMENTS:
 
 * resources/platform_role_assignments: Made resource_group_identifier, role_identifier and type under principal schema required.
-resources/platform_secret_sshkey: Updated the Behaviour of referencing the secrets at account, project and org Level. Made Key Field Required in SSH credential of type keyReference ([#509](https://github.com/harness/terraform-provider-harness/issues/509))
+  resources/platform_secret_sshkey: Updated the Behaviour of referencing the secrets at account, project and org Level. Made Key Field Required in SSH credential of type keyReference ([#509](https://github.com/harness/terraform-provider-harness/issues/509))
 
-# 0.19.2 (May 11,2023) 
+# 0.19.2 (May 11,2023)
 
 FEATURES:
 
@@ -597,7 +774,7 @@ ENHANCEMENTS:
 * resource/harness_platform_infrastructure: added force deletion support for infrastructures ([#527](https://github.com/harness/terraform-provider-harness/issues/527))
 * resource/harness_platform_triggers: added documentation links ([#501](https://github.com/harness/terraform-provider-harness/issues/501))
 
-# 0.19.1 (May 02,2023) 
+# 0.19.1 (May 02,2023)
 
 ENHANCEMENTS:
 
@@ -608,141 +785,141 @@ BUG FIXES:
 
 * resource/harness_platform_connector_awscc: Fix bug in aws cloud cost connector resource ([#524](https://github.com/harness/terraform-provider-harness/issues/524))
 
-# 0.19.0 (April 26,2023) 
+# 0.19.0 (April 26,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_template: added force deletion support for templates ([#518](https://github.com/harness/terraform-provider-harness/issues/518))
 
-# 0.18.0 (April 25,2023) 
+# 0.18.0 (April 25,2023)
 
 FEATURES:
 
 * **New Resource:** `platform_feature_flag - Added feature flag resources to the Harness Terraform Provider.
 platform_ff_api_key - Added FF SDK API key resources to the Harness Terraform provider.` ([#517](https://github.com/harness/terraform-provider-harness/issues/517))
 
-# 0.17.5 (April 20,2023) 
+# 0.17.5 (April 20,2023)
 
 BUG FIXES:
 
 * data-source/harness_platform_infrastructure: Fix bug wrt usages of tags in infrastructure yaml. ([#515](https://github.com/harness/terraform-provider-harness/issues/515))
 
-# 0.17.4 (April 20,2023) 
+# 0.17.4 (April 20,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_connector_github: Added support for secret ref in application and installtion in github app authentication method. ([#508](https://github.com/harness/terraform-provider-harness/issues/508))
 
-# 0.17.3 (April 10,2023) 
+# 0.17.3 (April 10,2023)
 
 BUG FIXES:
 
 * data-source/harness_platform_organization: Fixed the data source to use either name or identifier.
-data-source/harness_platform_usergroup: Fixed the data source to use either name or identifier. ([#507](https://github.com/harness/terraform-provider-harness/issues/507))
+  data-source/harness_platform_usergroup: Fixed the data source to use either name or identifier. ([#507](https://github.com/harness/terraform-provider-harness/issues/507))
 
-# 0.17.2 (April 06,2023) 
+# 0.17.2 (April 06,2023)
 
-# 0.17.1 (April 05,2023) 
+# 0.17.1 (April 05,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_gitops_cluster: Added support for Optional Tags in cluster ([#486](https://github.com/harness/terraform-provider-harness/issues/486))
 * resource/harness_platform_service: added force deletion support for services
-resource/harness_platform_environment: added force deletion support for environments
-resource/harness_platform_environment_group: added force deletion support for environment groups ([#491](https://github.com/harness/terraform-provider-harness/issues/491))
+  resource/harness_platform_environment: added force deletion support for environments
+  resource/harness_platform_environment_group: added force deletion support for environment groups ([#491](https://github.com/harness/terraform-provider-harness/issues/491))
 
 BUG FIXES:
 
 * harness_platform_input_set: Fixed import.
-harness_platform_triggers: Fixed import. ([#478](https://github.com/harness/terraform-provider-harness/issues/478))
+  harness_platform_triggers: Fixed import. ([#478](https://github.com/harness/terraform-provider-harness/issues/478))
 * resource/harness_platform_connector_aws_secret_manager: Fixed the plugin crash issue when api key doent have enough permissions. ([#502](https://github.com/harness/terraform-provider-harness/issues/502))
 
-# 0.17.0 (March 24,2023) 
+# 0.17.0 (March 24,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_policyset: Adding the policyset management provider ([#485](https://github.com/harness/terraform-provider-harness/issues/485))
 
-# 0.16.4 (March 22,2023) 
+# 0.16.4 (March 22,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_environment_service_overrides: Support for organisation and account scoped service overrides ([#479](https://github.com/harness/terraform-provider-harness/issues/479))
 
-# 0.16.3 (March 22,2023) 
+# 0.16.3 (March 22,2023)
 
 ENHANCEMENTS:
 
 * resources: Update yaml fields description. ([#484](https://github.com/harness/terraform-provider-harness/issues/484))
 
-# 0.16.2 (March 21,2023) 
+# 0.16.2 (March 21,2023)
 
 BUG FIXES:
 
 * resource/harness_platform_role_assignments: Allow creation of role_assignments without Identifier and set that identifier coming from upStream when doing a get call. ([#477](https://github.com/harness/terraform-provider-harness/issues/477))
 * resource/harness_platform_secret_text: The Value Field was Optional , It has been updated to Required Field. ([#472](https://github.com/harness/terraform-provider-harness/issues/472))
 
-# 0.16.1 (March 15,2023) 
+# 0.16.1 (March 15,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_template: Updated connector ref field's description.
-resource/harness_platform_pipeline: Updated connector ref field's description.
-resource/harness_platform_connector_kubernetes_cloud_cost: Updated connector ref field's description.
-resource/harness_platform_input_set: Updated connector ref field's description. ([#471](https://github.com/harness/terraform-provider-harness/issues/471))
+  resource/harness_platform_pipeline: Updated connector ref field's description.
+  resource/harness_platform_connector_kubernetes_cloud_cost: Updated connector ref field's description.
+  resource/harness_platform_input_set: Updated connector ref field's description. ([#471](https://github.com/harness/terraform-provider-harness/issues/471))
 
-# 0.16.0 (March 14,2023) 
+# 0.16.0 (March 14,2023)
 
 FEATURES:
 
 * **New Resource:** `resource/harness_platform_connector_oci_helm: Added Oci Helm connector resource.` ([#466](https://github.com/harness/terraform-provider-harness/issues/466))
 
-# 0.15.0 (March 10,2023) 
+# 0.15.0 (March 10,2023)
 
 FEATURES:
 
 * **New Resource:** `resource/harness_platform_connector_service_now: Added Service Now connector resource.` ([#465](https://github.com/harness/terraform-provider-harness/issues/465))
 
-# 0.14.15 (March 09,2023) 
+# 0.14.15 (March 09,2023)
 
 BUG FIXES:
 
 * harness_platform_secret_text: Mark new resource when secret deleted from ui . ([#461](https://github.com/harness/terraform-provider-harness/issues/461))
 * harness_platform_usergroup: Mark new resource when usergroup deleted from ui. ([#462](https://github.com/harness/terraform-provider-harness/issues/462))
 
-# 0.14.14 (March 09,2023) 
+# 0.14.14 (March 09,2023)
 
 BUG FIXES:
 
 * harness_platform_secret_text: Mark new resource when secret deleted from ui . ([#461](https://github.com/harness/terraform-provider-harness/issues/461))
 
-# 0.14.13 (March 08,2023) 
+# 0.14.13 (March 08,2023)
 
 BUG FIXES:
 
 * harness_platform_template: Fixed import.
-harness_platform_pipeline: Fixed import. ([#457](https://github.com/harness/terraform-provider-harness/issues/457))
+  harness_platform_pipeline: Fixed import. ([#457](https://github.com/harness/terraform-provider-harness/issues/457))
 
-# 0.14.12 (March 08,2023) 
+# 0.14.12 (March 08,2023)
 
 BUG FIXES:
 
 * resource/harness_platform_connector_jira: Fixed Jira Connector Resource to support newer UsernamePassword authentication beans. Users of Jira Connector need to update their Harness Terraform Provider to this version since it is a breaking change in the API. ([#456](https://github.com/harness/terraform-provider-harness/issues/456))
 
-# 0.14.11 (March 06,2023) 
+# 0.14.11 (March 06,2023)
 
 BUG FIXES:
 
 * resource/harness_platform_connector_helm: Fixed documentation. ([#452](https://github.com/harness/terraform-provider-harness/issues/452))
 * resource/harness_platform_organization: Fixed the plugin crash issue during terraform refresh when the api key was invalid. ([#454](https://github.com/harness/terraform-provider-harness/issues/454))
 
-# 0.14.10 (March 01,2023) 
+# 0.14.10 (March 01,2023)
 
 BUG FIXES:
 
 * resource/harness_platform_user: Fixed Bug with user resource. ([#451](https://github.com/harness/terraform-provider-harness/issues/451))
 
-# 0.14.9 (March 01,2023) 
+# 0.14.9 (March 01,2023)
 
 ENHANCEMENTS:
 
@@ -753,31 +930,31 @@ BUG FIXES:
 * resource/harness_platform_connector_gcp_secret_manager: Fixed GCP Secret Manager resource. ([#442](https://github.com/harness/terraform-provider-harness/issues/442))
 * resource/harness_platform_user: Fixed Bug with user resource. ([#446](https://github.com/harness/terraform-provider-harness/issues/446))
 
-# 0.14.5 (February 23,2023) 
+# 0.14.5 (February 23,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_service: added support for account and org level.
-resource/harness_platform_environment: added support for account and org level. ([#432](https://github.com/harness/terraform-provider-harness/issues/432))
+  resource/harness_platform_environment: added support for account and org level. ([#432](https://github.com/harness/terraform-provider-harness/issues/432))
 
 BUG FIXES:
 
 * resource/harness_platform_secret_file: Fix secret file resource. ([#437](https://github.com/harness/terraform-provider-harness/issues/437))
 
-# 0.14.4 (February 22,2023) 
+# 0.14.4 (February 22,2023)
 
 BUG FIXES:
 
 * resource/harness_platform_environment_service_overrides: Fix import flow ([#423](https://github.com/harness/terraform-provider-harness/issues/423))
 * resource/harness_platform_monitored_service: Fields template_ref and version_label shouldn't be required for harness_platform_monitored_service. ([#430](https://github.com/harness/terraform-provider-harness/issues/430))
 
-# 0.14.3 (February 13,2023) 
+# 0.14.3 (February 13,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_user_group: Update filters field in workflo, enviroments ,pipeline object in user group to be optional. ([#422](https://github.com/harness/terraform-provider-harness/issues/422))
 
-# 0.14.2 (February 07,2023) 
+# 0.14.2 (February 07,2023)
 
 ENHANCEMENTS:
 
@@ -787,7 +964,7 @@ BUG FIXES:
 
 * resource/harness_platform_user: Fix user schema. ([#413](https://github.com/harness/terraform-provider-harness/issues/413))
 
-# 0.14.1 (January 31,2023) 
+# 0.14.1 (January 31,2023)
 
 ENHANCEMENTS:
 
@@ -797,95 +974,95 @@ BUG FIXES:
 
 * resource/harness_platform_usergroup: Fix users and user_emails field in user group schema. ([#411](https://github.com/harness/terraform-provider-harness/issues/411))
 
-# 0.14.0 (January 27,2023) 
+# 0.14.0 (January 27,2023)
 
 FEATURES:
 
 * **New Resource:** `platform_manual_freeze - Added manual deployment freeze resource in Harness terraform provider` ([#355](https://github.com/harness/terraform-provider-harness/issues/355))
 * **New Resource:** `resource/harness_platform_user: Resource for creating a Harness User` ([#353](https://github.com/harness/terraform-provider-harness/issues/353))
 
-# 0.13.3 (January 19,2023) 
+# 0.13.3 (January 19,2023)
 
 BUG FIXES:
 
 * resource/harness_platform_pipeline: Update terraform resource to reflect the backend changes in api.
-resource/harness_platform_input_set: Update terraform resource to reflect the backend changes in api. ([#396](https://github.com/harness/terraform-provider-harness/issues/396))
+  resource/harness_platform_input_set: Update terraform resource to reflect the backend changes in api. ([#396](https://github.com/harness/terraform-provider-harness/issues/396))
 
-# 0.13.2 (January 19,2023) 
+# 0.13.2 (January 19,2023)
 
-# 0.13.1 (January 19,2023) 
+# 0.13.1 (January 19,2023)
 
-# 0.13.0 (January 17,2023) 
+# 0.13.0 (January 17,2023)
 
 FEATURES:
 
 * **New Resource:** `platform_monitored_service - Added monitored service resources to the Harness Terraform Provider.
 platform_slo - Added service-level objective (SLO) resources to the Harness Terraform provider.` ([#348](https://github.com/harness/terraform-provider-harness/issues/348))
 
-# 0.12.4 (January 16,2023) 
+# 0.12.4 (January 16,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_environment_service_overrides: Mark new resource if resource is deleted during terraform refresh
-resource/harness_platform_organization: Mark new resource if resource is deleted during terraform refresh
-resource/harness_platform_role_assignments: Mark new resource if resource is deleted during terraform refresh
-resource/harness_platform_variables: Mark new resource if resource is deleted during terraform refresh ([#387](https://github.com/harness/terraform-provider-harness/issues/387))
+  resource/harness_platform_organization: Mark new resource if resource is deleted during terraform refresh
+  resource/harness_platform_role_assignments: Mark new resource if resource is deleted during terraform refresh
+  resource/harness_platform_variables: Mark new resource if resource is deleted during terraform refresh ([#387](https://github.com/harness/terraform-provider-harness/issues/387))
 * resource/harness_platform_input_set: Added gitx support for inputSet resource.
-data-source/harness_platform_input_set: Added gitx support for inputSet resource. ([#389](https://github.com/harness/terraform-provider-harness/issues/389))
+  data-source/harness_platform_input_set: Added gitx support for inputSet resource. ([#389](https://github.com/harness/terraform-provider-harness/issues/389))
 * resource/harness_platform_service: Updating the documentation.
-resource/harness_platform_environment: Updating the documentation. ([#378](https://github.com/harness/terraform-provider-harness/issues/378))
+  resource/harness_platform_environment: Updating the documentation. ([#378](https://github.com/harness/terraform-provider-harness/issues/378))
 
-# 0.12.3 (January 04,2023) 
+# 0.12.3 (January 04,2023)
 
 BUG FIXES:
 
 * resource/harness_platform_connector_github: Fix connector delete context. ([#377](https://github.com/harness/terraform-provider-harness/issues/377))
 
-# 0.12.2 (January 03,2023) 
+# 0.12.2 (January 03,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_usergroup: Add example to create user group by adding email. ([#373](https://github.com/harness/terraform-provider-harness/issues/373))
 
-# 0.12.1 (January 03,2023) 
+# 0.12.1 (January 03,2023)
 
 ENHANCEMENTS:
 
 * resource/harness_platform_usergroup:  Allow TF resource to support creating of user-groups by adding User email id. ([#371](https://github.com/harness/terraform-provider-harness/issues/371))
 
-# 0.12.0 (December 23,2022) 
+# 0.12.0 (December 23,2022)
 
 FEATURES:
 
 * **New Resource:** `platform_connector_jenkins - Added jenkins connector resource in Harness terraform provider.` ([#365](https://github.com/harness/terraform-provider-harness/issues/365))
 
-# 0.11.5 (December 14,2022) 
+# 0.11.5 (December 14,2022)
 
 BUG FIXES:
 
 * resource/harness_platform_connector_github: Fix terraform refresh for github connector ([#352](https://github.com/harness/terraform-provider-harness/issues/352))
 
-# 0.11.4 (December 13,2022) 
+# 0.11.4 (December 13,2022)
 
 BUG FIXES:
 
 * resource/harness_yaml_config: Fix yaml config resource ([#349](https://github.com/harness/terraform-provider-harness/issues/349))
 
-# 0.11.3 (December 09,2022) 
+# 0.11.3 (December 09,2022)
 
 FEATURES:
 
 * **New Resource:** `resource/harness_platform_template_filters: Resource for creating a Harness template filters` ([#337](https://github.com/harness/terraform-provider-harness/issues/337))
 
-# 0.11.2 (December 07,2022) 
+# 0.11.2 (December 07,2022)
 
 BUG FIXES:
 
 * resource/harness_platform_environment: Handle case when environment is deleted from somewhere else and refresh fails ([#343](https://github.com/harness/terraform-provider-harness/issues/343))
 
-# 0.11.1 (December 06,2022) 
+# 0.11.1 (December 06,2022)
 
-# 0.11.0 (December 02,2022) 
+# 0.11.0 (December 02,2022)
 
 FEATURES:
 
@@ -895,25 +1072,25 @@ BUG FIXES:
 
 * resource/harness_platform_project: Fix project refresh ([#333](https://github.com/harness/terraform-provider-harness/issues/333))
 
-# 0.10.3 (December 02,2022) 
+# 0.10.3 (December 02,2022)
 
 BUG FIXES:
 
 * data-source/harness_platform_usergroup: Fix usergroup data-source to get account and org level usergroups ([#334](https://github.com/harness/terraform-provider-harness/issues/334))
 
-# 0.10.2 (December 01,2022) 
+# 0.10.2 (December 01,2022)
 
 BUG FIXES:
 
 * resource/harness_platform_infrastructure: Fix infrastructure resource when creating multiple infrastructure in same env ([#330](https://github.com/harness/terraform-provider-harness/issues/330))
 
-# 0.10.1 (November 30,2022) 
+# 0.10.1 (November 30,2022)
 
 BUG FIXES:
 
 * resource/harness_platform_template: Fix template resource ([#329](https://github.com/harness/terraform-provider-harness/issues/329))
 
-# 0.10.0 (November 30,2022) 
+# 0.10.0 (November 30,2022)
 
 FEATURES:
 
@@ -924,19 +1101,19 @@ ENHANCEMENTS:
 
 * resource/harness_platform_policy: Adding the policy management provider ([#319](https://github.com/harness/terraform-provider-harness/issues/319))
 
-# 0.9.1 (November 24,2022) 
+# 0.9.1 (November 24,2022)
 
 BUG FIXES:
 
 * resource/harness_platform_pipeline: Fix error propagation from api ([#318](https://github.com/harness/terraform-provider-harness/issues/318))
 
-# 0.9.0 (November 24,2022) 
+# 0.9.0 (November 24,2022)
 
 FEATURES:
 
 * **New Resource:** `platform_connector_azure_key_vault - Added the Azure Key Vault connector resource to the Harness Terraform provider.` ([#287](https://github.com/harness/terraform-provider-harness/issues/287))
 
-# 0.8.4 (November 23,2022) 
+# 0.8.4 (November 23,2022)
 
 ENHANCEMENTS:
 
@@ -992,7 +1169,7 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * harness_platform_gitops_agent : Fix subcategory in documentation
-harness_platform_gitops_cluster : Fix subcategory in documentation ([#242](https://github.com/harness/terraform-provider-harness/issues/242))
+  harness_platform_gitops_cluster : Fix subcategory in documentation ([#242](https://github.com/harness/terraform-provider-harness/issues/242))
 
 # 0.6.9 (October 20,2022)
 
