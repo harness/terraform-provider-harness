@@ -1,0 +1,3 @@
+```release-note:enhancement
+harness_platform_gitops_applications: Added support for the `namespace` field inside `kustomize` source configuration blocks. This also enables the field in `harness_platform_gitops_applicationset` template specs (e.g. `spec.generators[].template.spec.source.kustomize.namespace` and top-level `spec.template`).
+```
