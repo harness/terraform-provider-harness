@@ -449,6 +449,12 @@ func DataSourceGitopsApplications() *schema.Resource {
 																Optional:    true,
 																Computed:    true,
 															},
+															"namespace": {
+																Description: "Override the namespace of the Kustomize application.",
+																Type:        schema.TypeString,
+																Optional:    true,
+																Computed:    true,
+															},
 														},
 													},
 												},
@@ -824,6 +830,11 @@ func DataSourceGitopsApplications() *schema.Resource {
 															"force_common_annotations": {
 																Description: "Indicates if to force applying common annotations to resources for kustomize apps.",
 																Type:        schema.TypeBool,
+																Optional:    true,
+															},
+															"namespace": {
+																Description: "Override the namespace of the Kustomize application.",
+																Type:        schema.TypeString,
 																Optional:    true,
 															},
 														},
