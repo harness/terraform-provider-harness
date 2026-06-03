@@ -1,3 +1,12 @@
+# v0.43.0 (June 03, 2026)
+
+
+ENHANCEMENTS:
+
+* `resource/harness_platform_gitops_repository`: Added write-only credential fields (password_wo, ssh_private_key_wo, tls_client_cert_data_wo, tls_client_cert_key_wo, github_app_private_key_wo) so sensitive credentials are never stored in Terraform state. Requires Terraform >= 1.11.
+* `resource/harness_platform_gitops_repo_cred`: Added write-only credential fields (password_wo, ssh_private_key_wo, tls_client_cert_data_wo, tls_client_cert_key_wo, github_app_private_key_wo) so sensitive credentials are never stored in Terraform state. Requires Terraform >= 1.11.
+* `resource/harness_platform_gitops_cluster`: Added write-only credential fields (password_wo, bearer_token_wo, tls_client_config.cert_data_wo, tls_client_config.key_data_wo) so sensitive credentials are never stored in Terraform state. Requires Terraform >= 1.11. ([#CDS-123457](https://github.com/harness/terraform-provider-harness/issues/CDS-123457))
+
 # v0.42.8 (May 28, 2026)
 
 
