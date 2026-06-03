@@ -35,7 +35,7 @@ data "harness_platform_har_registry" "test" {
 - `config` (Block List, Max: 1) Configuration for the registry (see [below for nested schema](#nestedblock--config))
 - `description` (String) Description of the registry
 - `metadata` (Map of String) Custom metadata key-value pairs attached to the registry. Keys and values must match the pattern [letters, numbers, _ . / = + - @] (no spaces or other special characters). Keys are case-sensitive. Maximum 49 entries allowed.
-- `package_type` (String) Type of package (DOCKER, HELM, MAVEN, etc.)
+- `package_type` (String) Type of package (DOCKER, HELM, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET)
 
 ### Read-Only
 
