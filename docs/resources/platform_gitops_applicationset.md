@@ -263,7 +263,7 @@ Optional:
 - `go_template_options` (List of String) Optional list of go templating options, see https://pkg.go.dev/text/template#Template.Optional. This is only relevant if `goTemplate` is true
 - `ignore_application_differences` (Block List) Application Set ignoreApplicationDifferences (see [below for nested schema](#nestedblock--applicationset--spec--ignore_application_differences))
 - `strategy` (Block List, Max: 1) [Progressive Sync](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Progressive-Syncs/) strategy (see [below for nested schema](#nestedblock--applicationset--spec--strategy))
-- `sync_policy` (Block List, Max: 1) Application Set sync policy (see [below for nested schema](#nestedblock--applicationset--spec--sync_policy))
+- `sync_policy` (Block List, Max: 1) Sync policy configures how generated Applications will relate to their ApplicationSet. (see [below for nested schema](#nestedblock--applicationset--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator"></a>
 ### Nested Schema for `applicationset.spec.generator`

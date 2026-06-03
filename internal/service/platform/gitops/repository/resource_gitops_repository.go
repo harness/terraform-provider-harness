@@ -6,6 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
+	hcty "github.com/hashicorp/go-cty/cty"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -76,19 +78,50 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 						},
 						"password": {
-							Description: "Password or PAT to be used for authenticating the remote repository.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Computed:    true,
-							Sensitive:   true,
-						},
-						"ssh_private_key": {
-							Description:   "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
+							Description:   "Password or PAT to be used for authenticating the remote repository. Use password_wo for write-only support (Terraform >= 1.11).",
 							Type:          schema.TypeString,
 							Optional:      true,
 							Computed:      true,
 							Sensitive:     true,
-							ConflictsWith: []string{"repo.0.password", "repo.0.github_app_private_key", "repo.0.github_app_id", "repo.0.github_app_installation_id", "repo.0.github_app_enterprise_base_url", "repo.0.tls_client_cert_data", "repo.0.tls_client_cert_key"},
+							ConflictsWith: []string{"repo.0.password_wo"},
+						},
+						"password_wo": {
+							Description:   "Password or PAT for authenticating the remote repository. Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"repo.0.password"},
+							RequiredWith:  []string{"repo.0.password_wo_version"},
+						},
+						"password_wo_version": {
+							Description:  "Increment to rotate the credential when using password_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"repo.0.password_wo"},
+						},
+						"ssh_private_key": {
+							Description:   "SSH Key in PEM format for authenticating the repository. Used only for Git repository. Use ssh_private_key_wo for write-only support (Terraform >= 1.11).",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Computed:      true,
+							Sensitive:     true,
+							ConflictsWith: []string{"repo.0.password", "repo.0.github_app_private_key", "repo.0.github_app_id", "repo.0.github_app_installation_id", "repo.0.github_app_enterprise_base_url", "repo.0.tls_client_cert_data", "repo.0.tls_client_cert_key", "repo.0.ssh_private_key_wo"},
+						},
+						"ssh_private_key_wo": {
+							Description:   "SSH Key in PEM format for authenticating the repository. Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"repo.0.ssh_private_key"},
+							RequiredWith:  []string{"repo.0.ssh_private_key_wo_version"},
+						},
+						"ssh_private_key_wo_version": {
+							Description:  "Increment to rotate the credential when using ssh_private_key_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"repo.0.ssh_private_key_wo"},
 						},
 						"insecure_ignore_host_key": {
 							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.",
@@ -107,20 +140,50 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Default:     false,
 						},
 						"tls_client_cert_data": {
-							Description:   "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
+							Description:   "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded. Use tls_client_cert_data_wo for write-only support (Terraform >= 1.11).",
 							Type:          schema.TypeString,
 							Optional:      true,
 							Sensitive:     true,
 							Computed:      true,
-							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.github_app_private_key", "repo.0.github_app_id", "repo.0.github_app_installation_id", "repo.0.github_app_enterprise_base_url"},
+							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.github_app_private_key", "repo.0.github_app_id", "repo.0.github_app_installation_id", "repo.0.github_app_enterprise_base_url", "repo.0.tls_client_cert_data_wo"},
+						},
+						"tls_client_cert_data_wo": {
+							Description:   "Certificate in PEM format for authenticating at the repo server (mTLS). Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"repo.0.tls_client_cert_data"},
+							RequiredWith:  []string{"repo.0.tls_client_cert_data_wo_version"},
+						},
+						"tls_client_cert_data_wo_version": {
+							Description:  "Increment to rotate the credential when using tls_client_cert_data_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"repo.0.tls_client_cert_data_wo"},
 						},
 						"tls_client_cert_key": {
-							Description:   "Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
+							Description:   "Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded. Use tls_client_cert_key_wo for write-only support (Terraform >= 1.11).",
 							Type:          schema.TypeString,
 							Optional:      true,
 							Sensitive:     true,
 							Computed:      true,
-							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.github_app_private_key", "repo.0.github_app_id", "repo.0.github_app_installation_id", "repo.0.github_app_enterprise_base_url"},
+							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.github_app_private_key", "repo.0.github_app_id", "repo.0.github_app_installation_id", "repo.0.github_app_enterprise_base_url", "repo.0.tls_client_cert_key_wo"},
+						},
+						"tls_client_cert_key_wo": {
+							Description:   "Private key in PEM format for authenticating at the repo server (mTLS). Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"repo.0.tls_client_cert_key"},
+							RequiredWith:  []string{"repo.0.tls_client_cert_key_wo_version"},
+						},
+						"tls_client_cert_key_wo_version": {
+							Description:  "Increment to rotate the credential when using tls_client_cert_key_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"repo.0.tls_client_cert_key_wo"},
 						},
 						"type_": {
 							Description:  "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
@@ -145,12 +208,27 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 						},
 						"github_app_private_key": {
-							Description:   "GitHub app private key PEM data.",
+							Description:   "GitHub app private key PEM data. Use github_app_private_key_wo for write-only support (Terraform >= 1.11).",
 							Type:          schema.TypeString,
 							Optional:      true,
 							Sensitive:     true,
 							Computed:      true,
-							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.tls_client_cert_data", "repo.0.tls_client_cert_key"},
+							ConflictsWith: []string{"repo.0.password", "repo.0.ssh_private_key", "repo.0.tls_client_cert_data", "repo.0.tls_client_cert_key", "repo.0.github_app_private_key_wo"},
+						},
+						"github_app_private_key_wo": {
+							Description:   "GitHub app private key PEM data. Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"repo.0.github_app_private_key"},
+							RequiredWith:  []string{"repo.0.github_app_private_key_wo_version"},
+						},
+						"github_app_private_key_wo_version": {
+							Description:  "Increment to rotate the credential when using github_app_private_key_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"repo.0.github_app_private_key_wo"},
 						},
 						"github_app_id": {
 							Description:   "Id of the GitHub app used to access the repo.",
@@ -450,6 +528,7 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	setRepositoryDetails(d, &resp)
+	preserveWoVersions(d)
 	return nil
 }
 
@@ -585,6 +664,7 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	setRepositoryDetails(d, &resp)
+	preserveWoVersions(d)
 	return nil
 }
 
@@ -811,12 +891,19 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 			if repo["username"] != nil {
 				repoObj.Username = repo["username"].(string)
 			}
-			if repo["password"] != nil {
+
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("password_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoObj.Password = woVal.AsString()
+			} else if repo["password"] != nil {
 				repoObj.Password = repo["password"].(string)
 			}
-			if repo["ssh_private_key"] != nil {
+
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("ssh_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoObj.SshPrivateKey = woVal.AsString()
+			} else if repo["ssh_private_key"] != nil {
 				repoObj.SshPrivateKey = repo["ssh_private_key"].(string)
 			}
+
 			if repo["insecure_ignore_host_key"] != nil {
 				repoObj.InsecureIgnoreHostKey = repo["insecure_ignore_host_key"].(bool)
 			}
@@ -827,12 +914,18 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 				repoObj.EnableLfs = repo["enable_lfs"].(bool)
 			}
 
-			if repo["tls_client_cert_data"] != nil {
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("tls_client_cert_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoObj.TlsClientCertData = woVal.AsString()
+			} else if repo["tls_client_cert_data"] != nil {
 				repoObj.TlsClientCertData = repo["tls_client_cert_data"].(string)
 			}
-			if repo["tls_client_cert_key"] != nil {
+
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("tls_client_cert_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoObj.TlsClientCertKey = woVal.AsString()
+			} else if repo["tls_client_cert_key"] != nil {
 				repoObj.TlsClientCertKey = repo["tls_client_cert_key"].(string)
 			}
+
 			if repo["type_"] != nil {
 				repoObj.Type_ = repo["type_"].(string)
 			}
@@ -845,9 +938,13 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 			if repo["enable_oci"] != nil {
 				repoObj.EnableOCI = repo["enable_oci"].(bool)
 			}
-			if repo["github_app_private_key"] != nil {
+
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("github_app_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoObj.GithubAppPrivateKey = woVal.AsString()
+			} else if repo["github_app_private_key"] != nil {
 				repoObj.GithubAppPrivateKey = repo["github_app_private_key"].(string)
 			}
+
 			if repo["github_app_id"] != nil {
 				repoObj.GithubAppID = repo["github_app_id"].(string)
 			}
@@ -869,6 +966,27 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 		}
 	}
 	return &repoObj
+}
+
+// preserveWoVersions writes _wo_version values back to state so Terraform
+// does not detect a spurious diff after apply. WriteOnly fields are always
+// null in state; their companion version integers must be explicitly kept.
+func preserveWoVersions(d *schema.ResourceData) {
+	if v, ok := d.GetOk("repo.0.password_wo_version"); ok {
+		d.Set("repo.0.password_wo_version", v)
+	}
+	if v, ok := d.GetOk("repo.0.ssh_private_key_wo_version"); ok {
+		d.Set("repo.0.ssh_private_key_wo_version", v)
+	}
+	if v, ok := d.GetOk("repo.0.tls_client_cert_data_wo_version"); ok {
+		d.Set("repo.0.tls_client_cert_data_wo_version", v)
+	}
+	if v, ok := d.GetOk("repo.0.tls_client_cert_key_wo_version"); ok {
+		d.Set("repo.0.tls_client_cert_key_wo_version", v)
+	}
+	if v, ok := d.GetOk("repo.0.github_app_private_key_wo_version"); ok {
+		d.Set("repo.0.github_app_private_key_wo_version", v)
+	}
 }
 
 func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Repository) {
@@ -918,6 +1036,18 @@ func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Reposit
 		repoO["proxy"] = repo.Repository.Proxy
 		repoO["project"] = repo.Repository.Project
 		repoO["connection_type"] = repo.Repository.ConnectionType
+
+		// Preserve _wo_version integers: d.Set("repo", ...) below would zero
+		// them out because the API never returns write-only credential values.
+		if v, ok := d.GetOk("repo.0.password_wo_version"); ok {
+			repoO["password_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("repo.0.ssh_private_key_wo_version"); ok {
+			repoO["ssh_private_key_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("repo.0.github_app_private_key_wo_version"); ok {
+			repoO["github_app_private_key_wo_version"] = v.(int)
+		}
 
 		repoList = append(repoList, repoO)
 		d.Set("repo", repoList)
