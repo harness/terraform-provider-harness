@@ -115,6 +115,25 @@ func DatasourceConnectorJDBC() *schema.Resource {
 								},
 							},
 						},
+						"inherit_from_delegate": {
+							Description: "Authenticate using credentials inherited from the Harness delegate runtime identity.",
+							Type:        schema.TypeList,
+							Computed:    true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"username": {
+										Description: "Username to use for authentication.",
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"username_ref": {
+										Description: "Reference to a secret containing the username to use for authentication." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+								},
+							},
+						},
 						"oidc": {
 							Description: "Authenticate using OIDC.",
 							Type:        schema.TypeList,
