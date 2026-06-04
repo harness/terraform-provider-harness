@@ -132,6 +132,7 @@ resource "harness_platform_pipeline" "test" {
     file_path     = ".harness/gitx.yaml"
     connector_ref = "account.DoNotDeleteGithub"
     repo_name     = "open-repo"
+    is_force_import = true
   }
   pipeline_import_request {
     pipeline_name        = "gitx"
@@ -191,6 +192,7 @@ Optional:
 - `branch_name` (String) Name of the branch.
 - `connector_ref` (String) Identifier of the Harness Connector used for importing entity from Git To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `file_path` (String) File path of the Entity in the repository.
+- `is_force_import` (Boolean) Force import from Git even if the file path is already imported.
 - `repo_name` (String) Name of the repository.
 
 
