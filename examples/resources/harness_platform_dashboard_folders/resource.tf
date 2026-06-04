@@ -1,3 +1,3 @@
-resource "harness_platform_dashboard_folders" "folder" {
+resource "harness_platform_dashboard_folder" "folder" {
   name = "name"
 }
