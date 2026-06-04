@@ -576,6 +576,7 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 		}
 	}
 	setClusterDetails(d, &resp)
+	preserveClusterWoVersions(d)
 	return nil
 }
 
