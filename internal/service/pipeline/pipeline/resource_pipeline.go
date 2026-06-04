@@ -147,6 +147,11 @@ func ResourcePipeline() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
+						"is_force_import": {
+							Description: "Force import from Git even if the file path is already imported.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -347,6 +352,9 @@ func createImportFromGitRequest(d *schema.ResourceData) *nextgen.PipelineImportR
 		}
 		if attr, ok := config["repo_name"]; ok {
 			pipeline_git_import_info.RepoName = attr.(string)
+		}
+		if attr, ok := config["is_force_import"]; ok {
+			pipeline_git_import_info.IsForceImport = attr.(bool)
 		}
 	}
 
