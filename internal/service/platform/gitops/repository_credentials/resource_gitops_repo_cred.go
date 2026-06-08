@@ -506,6 +506,24 @@ func setGitopsRepositoriesCredential(d *schema.ResourceData, repoCred *nextgen.S
 		cred["enable_oci"] = repoCred.RepoCreds.EnableOCI
 		cred["type"] = repoCred.RepoCreds.Type_
 
+		// Preserve _wo_version integers: d.Set("creds", ...) below would zero
+		// them out because the API never returns write-only credential values.
+		if v, ok := d.GetOk("creds.0.password_wo_version"); ok {
+			cred["password_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.ssh_private_key_wo_version"); ok {
+			cred["ssh_private_key_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.tls_client_cert_data_wo_version"); ok {
+			cred["tls_client_cert_data_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.tls_client_cert_key_wo_version"); ok {
+			cred["tls_client_cert_key_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.github_app_private_key_wo_version"); ok {
+			cred["github_app_private_key_wo_version"] = v.(int)
+		}
+
 		credList = append(credList, cred)
 		d.Set("creds", credList)
 	}

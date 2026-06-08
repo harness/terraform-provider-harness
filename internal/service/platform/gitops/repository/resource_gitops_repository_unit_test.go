@@ -3,6 +3,7 @@ package repository
 import (
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -249,6 +250,87 @@ func TestRepoSchema_LegacyFieldsStillComputed(t *testing.T) {
 		}
 		if !s.Computed {
 			t.Errorf("expected Computed=true on legacy field %q (backward compat)", field)
+		}
+	}
+}
+
+// fakeServicev1Repository builds a minimal API response for unit tests.
+func fakeServicev1Repository(identifier string, repo nextgen.RepositoriesRepository) nextgen.Servicev1Repository {
+	return nextgen.Servicev1Repository{
+		Identifier:        identifier,
+		AccountIdentifier: "acc",
+		AgentIdentifier:   "agent",
+		Repository:        &repo,
+	}
+}
+
+// TestSetRepositoryDetails_AllWoVersionsPreserved is the regression test for the bug where
+// setRepositoryDetails only injected 3 of 5 _wo_version fields into the map before d.Set,
+// causing tls_client_cert_data_wo_version and tls_client_cert_key_wo_version to be zeroed.
+func TestSetRepositoryDetails_AllWoVersionsPreserved(t *testing.T) {
+	d := newRepoTestResourceData(t, map[string]interface{}{
+		"identifier": "test-repo",
+		"agent_id":   "test-agent",
+		"repo": baseRepoBlock(map[string]interface{}{
+			"connection_type":                  "HTTPS",
+			"password_wo_version":              1,
+			"ssh_private_key_wo_version":       2,
+			"tls_client_cert_data_wo_version":  3,
+			"tls_client_cert_key_wo_version":   4,
+			"github_app_private_key_wo_version": 5,
+		}),
+	})
+
+	resp := fakeServicev1Repository("test-repo", nextgen.RepositoriesRepository{
+		Repo:           "https://github.com/example/repo",
+		ConnectionType: "HTTPS",
+	})
+	setRepositoryDetails(d, &resp)
+
+	cases := map[string]int{
+		"repo.0.password_wo_version":               1,
+		"repo.0.ssh_private_key_wo_version":        2,
+		"repo.0.tls_client_cert_data_wo_version":   3,
+		"repo.0.tls_client_cert_key_wo_version":    4,
+		"repo.0.github_app_private_key_wo_version": 5,
+	}
+	for field, want := range cases {
+		got, ok := d.GetOk(field)
+		if !ok || got.(int) != want {
+			t.Errorf("field %q: want %d after setRepositoryDetails, got %v (ok=%v)", field, want, got, ok)
+		}
+	}
+}
+
+// TestPreserveWoVersions_AllFieldsRoundtrip verifies that preserveWoVersions re-writes all 5
+// _wo_version fields, including the two tls fields that were missing before the fix.
+func TestPreserveWoVersions_AllFieldsRoundtrip(t *testing.T) {
+	d := newRepoTestResourceData(t, map[string]interface{}{
+		"identifier": "test-repo",
+		"agent_id":   "test-agent",
+		"repo": baseRepoBlock(map[string]interface{}{
+			"connection_type":                  "HTTPS",
+			"password_wo_version":              6,
+			"ssh_private_key_wo_version":       7,
+			"tls_client_cert_data_wo_version":  8,
+			"tls_client_cert_key_wo_version":   9,
+			"github_app_private_key_wo_version": 10,
+		}),
+	})
+
+	preserveWoVersions(d)
+
+	cases := map[string]int{
+		"repo.0.password_wo_version":               6,
+		"repo.0.ssh_private_key_wo_version":        7,
+		"repo.0.tls_client_cert_data_wo_version":   8,
+		"repo.0.tls_client_cert_key_wo_version":    9,
+		"repo.0.github_app_private_key_wo_version": 10,
+	}
+	for field, want := range cases {
+		got, ok := d.GetOk(field)
+		if !ok || got.(int) != want {
+			t.Errorf("field %q: want %d after preserveWoVersions, got %v (ok=%v)", field, want, got, ok)
 		}
 	}
 }

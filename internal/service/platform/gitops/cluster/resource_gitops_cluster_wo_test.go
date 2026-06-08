@@ -3,6 +3,7 @@ package cluster
 import (
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -274,5 +275,107 @@ func TestClusterSchema_BearerTokenStillComputed(t *testing.T) {
 	}
 	if !s.Computed {
 		t.Error("expected Computed=true on bearer_token for backward compatibility")
+	}
+}
+
+// fakeServicev1Cluster builds a minimal API response for unit tests.
+func fakeServicev1Cluster(identifier string) nextgen.Servicev1Cluster {
+	return nextgen.Servicev1Cluster{
+		Identifier:        identifier,
+		AccountIdentifier: "acc",
+		AgentIdentifier:   "agent",
+		Cluster: &nextgen.ClustersCluster{
+			Server: "https://k8s.example.com",
+			Name:   "my-cluster",
+			Config: &nextgen.ClustersClusterConfig{
+				ClusterConnectionType: "SERVICE_ACCOUNT",
+				TlsClientConfig:       &nextgen.ClustersTlsClientConfig{},
+			},
+		},
+	}
+}
+
+// TestSetClusterDetails_AllWoVersionsPreserved is the regression test for the bug where
+// setClusterDetails called d.Set("request", list) which zeroed _wo_version integers.
+func TestSetClusterDetails_AllWoVersionsPreserved(t *testing.T) {
+	d := newTestResourceData(t, map[string]interface{}{
+		"identifier": "test-cluster",
+		"agent_id":   "test-agent",
+		"request": baseClusterRequestBlock(map[string]interface{}{
+			"cluster_connection_type": "SERVICE_ACCOUNT",
+			"password_wo_version":     1,
+			"bearer_token_wo_version": 2,
+			"tls_client_config": []interface{}{
+				map[string]interface{}{
+					"insecure":             false,
+					"server_name":          "",
+					"cert_data":            "",
+					"key_data":             "",
+					"ca_data":              "",
+					"cert_data_wo_version": 3,
+					"key_data_wo_version":  4,
+					"ca_data_wo_version":   5,
+				},
+			},
+		}),
+	})
+
+	resp := fakeServicev1Cluster("test-cluster")
+	setClusterDetails(d, &resp)
+
+	cases := map[string]int{
+		"request.0.cluster.0.config.0.password_wo_version":                            1,
+		"request.0.cluster.0.config.0.bearer_token_wo_version":                        2,
+		"request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version":       3,
+		"request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version":        4,
+		"request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version":         5,
+	}
+	for field, want := range cases {
+		got, ok := d.GetOk(field)
+		if !ok || got.(int) != want {
+			t.Errorf("field %q: want %d after setClusterDetails, got %v (ok=%v)", field, want, got, ok)
+		}
+	}
+}
+
+// TestPreserveClusterWoVersions_AllFieldsRoundtrip verifies all 5 cluster _wo_version fields
+// survive a preserveClusterWoVersions call.
+func TestPreserveClusterWoVersions_AllFieldsRoundtrip(t *testing.T) {
+	d := newTestResourceData(t, map[string]interface{}{
+		"identifier": "test-cluster",
+		"agent_id":   "test-agent",
+		"request": baseClusterRequestBlock(map[string]interface{}{
+			"cluster_connection_type": "SERVICE_ACCOUNT",
+			"password_wo_version":     6,
+			"bearer_token_wo_version": 7,
+			"tls_client_config": []interface{}{
+				map[string]interface{}{
+					"insecure":             false,
+					"server_name":          "",
+					"cert_data":            "",
+					"key_data":             "",
+					"ca_data":              "",
+					"cert_data_wo_version": 8,
+					"key_data_wo_version":  9,
+					"ca_data_wo_version":   10,
+				},
+			},
+		}),
+	})
+
+	preserveClusterWoVersions(d)
+
+	cases := map[string]int{
+		"request.0.cluster.0.config.0.password_wo_version":                            6,
+		"request.0.cluster.0.config.0.bearer_token_wo_version":                        7,
+		"request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version":       8,
+		"request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version":        9,
+		"request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version":         10,
+	}
+	for field, want := range cases {
+		got, ok := d.GetOk(field)
+		if !ok || got.(int) != want {
+			t.Errorf("field %q: want %d after preserveClusterWoVersions, got %v (ok=%v)", field, want, got, ok)
+		}
 	}
 }

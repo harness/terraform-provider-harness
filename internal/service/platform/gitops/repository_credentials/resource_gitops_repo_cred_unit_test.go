@@ -3,6 +3,7 @@ package repository_credentials
 import (
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -191,11 +192,91 @@ func TestRepoCredSchema_CredentialFieldsAreComputed(t *testing.T) {
 }
 
 // TestRepoCredSchema_BlockIsComputed verifies the creds block-level Computed=true is preserved.
-// NOTE: This is why write-only fields cannot be added to this resource — the SDK prohibits
-// WriteOnly attributes inside a Computed=true block. Tracked separately.
-func TestRepoCredSchema_BlockIsComputed(t *testing.T) {
+// TestRepoCredSchema_BlockIsNotComputed verifies the creds block does NOT have Computed=true.
+// The SDK prohibits WriteOnly attributes inside a Computed=true block, so Computed was removed
+// from the creds block when write-only fields were introduced (CDS-123457).
+func TestRepoCredSchema_BlockIsNotComputed(t *testing.T) {
 	r := ResourceGitopsRepoCred()
-	if !r.Schema["creds"].Computed {
-		t.Error("expected creds block to have Computed=true")
+	if r.Schema["creds"].Computed {
+		t.Error("creds block must not have Computed=true — WriteOnly fields are incompatible with Computed blocks")
+	}
+}
+
+// fakeRepoCred builds a minimal Servicev1RepositoryCredentials API response with the given cred fields.
+func fakeRepoCred(identifier string, creds nextgen.HrepocredsRepoCreds) nextgen.Servicev1RepositoryCredentials {
+	return nextgen.Servicev1RepositoryCredentials{
+		Identifier:        identifier,
+		AccountIdentifier: "acc",
+		AgentIdentifier:   "agent",
+		RepoCreds:         &creds,
+	}
+}
+
+// TestSetGitopsRepositoriesCredential_WoVersionsPreservedAfterSet is the regression test for
+// PIPE-34920: setGitopsRepositoriesCredential called d.Set("creds", list) which zeroed all
+// _wo_version integers because the API never returns write-only values.
+func TestSetGitopsRepositoriesCredential_WoVersionsPreservedAfterSet(t *testing.T) {
+	d := newRepoCredTestResourceData(t, map[string]interface{}{
+		"identifier": "test-cred",
+		"agent_id":   "test-agent",
+		"creds": baseCredsBlock(map[string]interface{}{
+			"ssh_private_key_wo_version":        2,
+			"password_wo_version":               1,
+			"tls_client_cert_data_wo_version":   3,
+			"tls_client_cert_key_wo_version":    4,
+			"github_app_private_key_wo_version": 5,
+		}),
+	})
+
+	resp := fakeRepoCred("test-cred", nextgen.HrepocredsRepoCreds{
+		Url:  "https://github.com/example",
+		Type_: "git",
+	})
+	setGitopsRepositoriesCredential(d, &resp)
+
+	cases := map[string]int{
+		"creds.0.password_wo_version":               1,
+		"creds.0.ssh_private_key_wo_version":        2,
+		"creds.0.tls_client_cert_data_wo_version":   3,
+		"creds.0.tls_client_cert_key_wo_version":    4,
+		"creds.0.github_app_private_key_wo_version": 5,
+	}
+	for field, want := range cases {
+		got, ok := d.GetOk(field)
+		if !ok || got.(int) != want {
+			t.Errorf("field %q: want %d after setGitopsRepositoriesCredential, got %v (ok=%v)", field, want, got, ok)
+		}
+	}
+}
+
+// TestPreserveRepoCredWoVersions_AllFieldsRoundtrip verifies that preserveRepoCredWoVersions
+// re-writes each _wo_version field back to state (belt-and-suspenders after the in-map fix).
+func TestPreserveRepoCredWoVersions_AllFieldsRoundtrip(t *testing.T) {
+	d := newRepoCredTestResourceData(t, map[string]interface{}{
+		"identifier": "test-cred",
+		"agent_id":   "test-agent",
+		"creds": baseCredsBlock(map[string]interface{}{
+			"password_wo_version":               7,
+			"ssh_private_key_wo_version":        8,
+			"tls_client_cert_data_wo_version":   9,
+			"tls_client_cert_key_wo_version":    10,
+			"github_app_private_key_wo_version": 11,
+		}),
+	})
+
+	preserveRepoCredWoVersions(d)
+
+	cases := map[string]int{
+		"creds.0.password_wo_version":               7,
+		"creds.0.ssh_private_key_wo_version":        8,
+		"creds.0.tls_client_cert_data_wo_version":   9,
+		"creds.0.tls_client_cert_key_wo_version":    10,
+		"creds.0.github_app_private_key_wo_version": 11,
+	}
+	for field, want := range cases {
+		got, ok := d.GetOk(field)
+		if !ok || got.(int) != want {
+			t.Errorf("field %q: want %d after preserveRepoCredWoVersions, got %v (ok=%v)", field, want, got, ok)
+		}
 	}
 }

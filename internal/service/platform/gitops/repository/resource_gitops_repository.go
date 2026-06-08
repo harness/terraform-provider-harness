@@ -599,6 +599,7 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	setRepositoryDetails(d, &resp)
+	preserveWoVersions(d)
 	return nil
 
 }
@@ -1044,6 +1045,12 @@ func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Reposit
 		}
 		if v, ok := d.GetOk("repo.0.ssh_private_key_wo_version"); ok {
 			repoO["ssh_private_key_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("repo.0.tls_client_cert_data_wo_version"); ok {
+			repoO["tls_client_cert_data_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("repo.0.tls_client_cert_key_wo_version"); ok {
+			repoO["tls_client_cert_key_wo_version"] = v.(int)
 		}
 		if v, ok := d.GetOk("repo.0.github_app_private_key_wo_version"); ok {
 			repoO["github_app_private_key_wo_version"] = v.(int)
