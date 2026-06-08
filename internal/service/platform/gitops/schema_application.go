@@ -201,6 +201,11 @@ func ArgoAppSpecSchemaV1() *schema.Schema {
 											Type:        schema.TypeBool,
 											Optional:    true,
 										},
+										"namespace": {
+											Description: "Override the namespace of the Kustomize application.",
+											Type:        schema.TypeString,
+											Optional:    true,
+										},
 									},
 								},
 							},
@@ -458,6 +463,11 @@ func ArgoAppSpecSchemaV1() *schema.Schema {
 										"force_common_annotations": {
 											Description: "Indicates if to force applying common annotations to resources for kustomize apps.",
 											Type:        schema.TypeBool,
+											Optional:    true,
+										},
+										"namespace": {
+											Description: "Override the namespace of the Kustomize application.",
+											Type:        schema.TypeString,
 											Optional:    true,
 										},
 									},
@@ -869,6 +879,11 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 											Description: "Indicates if to force applying common annotations to resources for kustomize apps.",
 											Optional:    true,
 										},
+										"namespace": {
+											Type:        schema.TypeString,
+											Description: "Override the namespace of the Kustomize application.",
+											Optional:    true,
+										},
 									},
 								},
 							},
@@ -1088,6 +1103,11 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 										"force_common_annotations": {
 											Type:        schema.TypeBool,
 											Description: "Indicates if to force applying common annotations to resources for kustomize apps.",
+											Optional:    true,
+										},
+										"namespace": {
+											Type:        schema.TypeString,
+											Description: "Override the namespace of the Kustomize application.",
 											Optional:    true,
 										},
 									},
