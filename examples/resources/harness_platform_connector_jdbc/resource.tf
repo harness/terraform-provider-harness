@@ -159,3 +159,18 @@ resource "harness_platform_connector_jdbc" "oidc_example" {
     }
   }
 }
+
+resource "harness_platform_connector_jdbc" "inherit_from_delegate_example" {
+  identifier         = "jdbc_inherit_delegate"
+  name               = "JDBC Inherit From Delegate"
+  description        = "JDBC connector using delegate runtime identity"
+  tags               = ["foo:bar"]
+  url                = "jdbc:postgresql://cloudsql-proxy:5432/mydb"
+  delegate_selectors = ["harness-delegate"]
+  credentials {
+    auth_type = "InheritFromDelegate"
+    inherit_from_delegate {
+      username = "db_user"
+    }
+  }
+}

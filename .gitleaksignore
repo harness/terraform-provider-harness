@@ -2749,3 +2749,5 @@ ff1924b912d74eaaf0bd983caa24e90bc2462461:idp-service/config/config.yml:generic-a
 b4a707813d980950e96b4834bc75179b4e67fce4:idp-service/src/main/java/io/harness/idp/common/Constants.java:private-key:29
 b4a707813d980950e96b4834bc75179b4e67fce4:idp-service/src/main/java/io/harness/idp/common/Constants.java:private-key:30
 de0f157f2e8f2b9cc17bfcb0c1dd2ff03b820fc8:idp-service/config/config.yml:generic-api-key:205
+5c820e89329b4ea587c555d364482ef5f70c12c6:internal/service/platform/gitops/repository_credentials/resource_gitops_repo_cred_unit_test.go:private-key:65
+5c820e89329b4ea587c555d364482ef5f70c12c6:internal/service/platform/gitops/repository/resource_gitops_repository_unit_test.go:private-key:74

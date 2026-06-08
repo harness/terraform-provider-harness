@@ -206,6 +206,7 @@ resource "harness_platform_gitops_app_project" "test" {
 - `org_id` (String) Org identifier of the GitOps Agent where argo project is to be created.
 - `project_id` (String) Project identifier of the Gitops Agent where argo project is to be created.
 - `query_name` (String) Identifier for the GitOps Argo project.
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `upsert` (Boolean) Indicates if the argo project should be updated if existing and inserted if not.
 
 ### Read-Only
@@ -379,6 +380,16 @@ Optional:
 - `namespaces` (List of String) Namespaces associated with synchronization window.
 - `schedule` (String) Schedule of synchronization window.
 - `time_zone` (String) Time zone of synchronization window.
+
+
+
+
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `delete` (String)
 
 ## Import
 

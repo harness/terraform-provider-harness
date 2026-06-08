@@ -43,6 +43,8 @@ resource "harness_platform_gitops_repo_cred" "test" {
 
 ### Optional
 
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
 - `account_id` (String, Deprecated) Account identifier of the Repository Credentials.
 - `creds` (Block List, Max: 1) credential details. (see [below for nested schema](#nestedblock--creds))
 - `org_id` (String) Organization identifier of the Repository Credentials.
@@ -58,15 +60,27 @@ resource "harness_platform_gitops_repo_cred" "test" {
 
 Optional:
 
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
 - `enable_oci` (Boolean) Specifies whether helm-oci support should be enabled for this repo.
 - `github_app_enterprise_base_url` (String) Specifies the GitHub API URL for GitHub app authentication.
 - `github_app_id` (String, Sensitive) Specifies the Github App ID of the app used to access the repo for GitHub app authentication.
 - `github_app_installation_id` (String, Sensitive) Specifies the ID of the installed GitHub App for GitHub app authentication.
-- `github_app_private_key` (String, Sensitive) github_app_private_key specifies the private key PEM data for authentication via GitHub app.
-- `password` (String, Sensitive) Password or PAT to be used for authenticating the remote repository.
-- `ssh_private_key` (String, Sensitive) SSH Key in PEM format for authenticating the repository. Used only for Git repository.
-- `tls_client_cert_data` (String, Sensitive) Certificate in PEM format for authenticating at the repo server. This is used for mTLS.
-- `tls_client_cert_key` (String, Sensitive) Private key in PEM format for authenticating at the repo server. This is used for mTLS.
+- `github_app_private_key` (String, Sensitive) github_app_private_key specifies the private key PEM data for authentication via GitHub app. Use github_app_private_key_wo for write-only support (Terraform >= 1.11).
+- `github_app_private_key_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) GitHub app private key PEM data. Write-only: never stored in state. Requires Terraform >= 1.11.
+- `github_app_private_key_wo_version` (Number) Increment to rotate the credential when using github_app_private_key_wo.
+- `password` (String, Sensitive) Password or PAT to be used for authenticating the remote repository. Use password_wo for write-only support (Terraform >= 1.11).
+- `password_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Password or PAT for authenticating the remote repository. Write-only: never stored in state. Requires Terraform >= 1.11.
+- `password_wo_version` (Number) Increment to rotate the credential when using password_wo.
+- `ssh_private_key` (String, Sensitive) SSH Key in PEM format for authenticating the repository. Used only for Git repository. Use ssh_private_key_wo for write-only support (Terraform >= 1.11).
+- `ssh_private_key_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) SSH Key in PEM format for authenticating the repository. Write-only: never stored in state. Requires Terraform >= 1.11.
+- `ssh_private_key_wo_version` (Number) Increment to rotate the credential when using ssh_private_key_wo.
+- `tls_client_cert_data` (String, Sensitive) Certificate in PEM format for authenticating at the repo server. This is used for mTLS. Use tls_client_cert_data_wo for write-only support (Terraform >= 1.11).
+- `tls_client_cert_data_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Certificate in PEM format for authenticating at the repo server (mTLS). Write-only: never stored in state. Requires Terraform >= 1.11.
+- `tls_client_cert_data_wo_version` (Number) Increment to rotate the credential when using tls_client_cert_data_wo.
+- `tls_client_cert_key` (String, Sensitive) Private key in PEM format for authenticating at the repo server. This is used for mTLS. Use tls_client_cert_key_wo for write-only support (Terraform >= 1.11).
+- `tls_client_cert_key_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Private key in PEM format for authenticating at the repo server (mTLS). Write-only: never stored in state. Requires Terraform >= 1.11.
+- `tls_client_cert_key_wo_version` (Number) Increment to rotate the credential when using tls_client_cert_key_wo.
 - `type` (String) Type specifies the type of the repoCreds.Can be either 'git' or 'helm. 'git' is assumed if empty or absent
 - `url` (String) URL of the remote repository. Make sure you pass at least an org, this will not work if you just provide the host, for eg. "https://github.com"
 - `username` (String) Username to be used for authenticating the remote repository.

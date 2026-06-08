@@ -41,23 +41,30 @@ func ResourceConnectorJDBC() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"auth_type": {
-							Description:  "Authentication types for JDBC connector",
-							Type:         schema.TypeString,
-							Optional:     true,
-							Default:      nextgen.JDBCAuthTypes.UsernamePassword.String(),
-							ValidateFunc: validation.StringInSlice([]string{nextgen.JDBCAuthTypes.UsernamePassword.String(), nextgen.JDBCAuthTypes.ServiceAccount.String(), nextgen.JDBCAuthTypes.KeyPair.String(), nextgen.JDBCAuthTypes.Oidc.String()}, false),
+							Description: "Authentication types for JDBC connector",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Default:     nextgen.JDBCAuthTypes.UsernamePassword.String(),
+							ValidateFunc: validation.StringInSlice([]string{
+								nextgen.JDBCAuthTypes.UsernamePassword.String(),
+								nextgen.JDBCAuthTypes.ServiceAccount.String(),
+								nextgen.JDBCAuthTypes.KeyPair.String(),
+								nextgen.JDBCAuthTypes.InheritFromDelegate.String(),
+								nextgen.JDBCAuthTypes.Oidc.String(),
+							}, false),
 						},
 						"username": {
 							Description:   "The username to use for the database server.",
 							Type:          schema.TypeString,
 							Optional:      true,
-							ConflictsWith: []string{"credentials.0.username_ref", "credentials.0.username_password", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.oidc"},
+							ConflictsWith: []string{"credentials.0.username_ref", "credentials.0.username_password", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.inherit_from_delegate", "credentials.0.oidc"},
 							AtLeastOneOf: []string{
 								"credentials.0.username",
 								"credentials.0.username_ref",
 								"credentials.0.username_password",
 								"credentials.0.service_account",
 								"credentials.0.key_pair",
+								"credentials.0.inherit_from_delegate",
 								"credentials.0.oidc",
 							},
 						},
@@ -65,13 +72,14 @@ func ResourceConnectorJDBC() *schema.Resource {
 							Description:   "The reference to the Harness secret containing the username to use for the database server." + secret_ref_text,
 							Type:          schema.TypeString,
 							Optional:      true,
-							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_password", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.oidc"},
+							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_password", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.inherit_from_delegate", "credentials.0.oidc"},
 							AtLeastOneOf: []string{
 								"credentials.0.username",
 								"credentials.0.username_ref",
 								"credentials.0.username_password",
 								"credentials.0.service_account",
 								"credentials.0.key_pair",
+								"credentials.0.inherit_from_delegate",
 								"credentials.0.oidc",
 							},
 						},
@@ -79,12 +87,13 @@ func ResourceConnectorJDBC() *schema.Resource {
 							Description:   "The reference to the Harness secret containing the password to use for the database server." + secret_ref_text,
 							Type:          schema.TypeString,
 							Optional:      true,
-							ConflictsWith: []string{"credentials.0.username_password", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.oidc"},
+							ConflictsWith: []string{"credentials.0.username_password", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.inherit_from_delegate", "credentials.0.oidc"},
 							AtLeastOneOf: []string{
 								"credentials.0.password_ref",
 								"credentials.0.username_password",
 								"credentials.0.service_account",
 								"credentials.0.key_pair",
+								"credentials.0.inherit_from_delegate",
 								"credentials.0.oidc",
 							},
 						},
@@ -93,12 +102,13 @@ func ResourceConnectorJDBC() *schema.Resource {
 							Type:          schema.TypeList,
 							MaxItems:      1,
 							Optional:      true,
-							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_ref", "credentials.0.password_ref", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.oidc"},
+							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_ref", "credentials.0.password_ref", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.inherit_from_delegate", "credentials.0.oidc"},
 							AtLeastOneOf: []string{
 								"credentials.0.username_password",
 								"credentials.0.service_account",
 								"credentials.0.password_ref",
 								"credentials.0.key_pair",
+								"credentials.0.inherit_from_delegate",
 								"credentials.0.oidc",
 							},
 							Elem: &schema.Resource{
@@ -136,12 +146,13 @@ func ResourceConnectorJDBC() *schema.Resource {
 							Type:          schema.TypeList,
 							MaxItems:      1,
 							Optional:      true,
-							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_ref", "credentials.0.password_ref", "credentials.0.username_password", "credentials.0.key_pair", "credentials.0.oidc"},
+							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_ref", "credentials.0.password_ref", "credentials.0.username_password", "credentials.0.key_pair", "credentials.0.inherit_from_delegate", "credentials.0.oidc"},
 							AtLeastOneOf: []string{
 								"credentials.0.username_password",
 								"credentials.0.service_account",
 								"credentials.0.password_ref",
 								"credentials.0.key_pair",
+								"credentials.0.inherit_from_delegate",
 								"credentials.0.oidc",
 							},
 							Elem: &schema.Resource{
@@ -159,12 +170,13 @@ func ResourceConnectorJDBC() *schema.Resource {
 							Type:          schema.TypeList,
 							MaxItems:      1,
 							Optional:      true,
-							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_ref", "credentials.0.password_ref", "credentials.0.username_password", "credentials.0.service_account", "credentials.0.oidc"},
+							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_ref", "credentials.0.password_ref", "credentials.0.username_password", "credentials.0.service_account", "credentials.0.inherit_from_delegate", "credentials.0.oidc"},
 							AtLeastOneOf: []string{
 								"credentials.0.username_password",
 								"credentials.0.service_account",
 								"credentials.0.password_ref",
 								"credentials.0.key_pair",
+								"credentials.0.inherit_from_delegate",
 								"credentials.0.oidc",
 							},
 							Elem: &schema.Resource{
@@ -202,17 +214,49 @@ func ResourceConnectorJDBC() *schema.Resource {
 								},
 							},
 						},
-						"oidc": {
-							Description:   "Authenticate using OIDC.",
+						"inherit_from_delegate": {
+							Description:   "Authenticate using credentials inherited from the Harness delegate runtime identity (e.g. GCP ADC, AWS IAM).",
 							Type:          schema.TypeList,
 							MaxItems:      1,
 							Optional:      true,
-							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_ref", "credentials.0.password_ref", "credentials.0.username_password", "credentials.0.service_account", "credentials.0.key_pair"},
+							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_ref", "credentials.0.password_ref", "credentials.0.username_password", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.oidc"},
 							AtLeastOneOf: []string{
 								"credentials.0.username_password",
 								"credentials.0.service_account",
 								"credentials.0.password_ref",
 								"credentials.0.key_pair",
+								"credentials.0.inherit_from_delegate",
+								"credentials.0.oidc",
+							},
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"username": {
+										Description:   "Username to use for authentication.",
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"credentials.0.inherit_from_delegate.0.username_ref"},
+									},
+									"username_ref": {
+										Description:   "Reference to a secret containing the username to use for authentication." + secret_ref_text,
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"credentials.0.inherit_from_delegate.0.username"},
+									},
+								},
+							},
+						},
+						"oidc": {
+							Description:   "Authenticate using OIDC.",
+							Type:          schema.TypeList,
+							MaxItems:      1,
+							Optional:      true,
+							ConflictsWith: []string{"credentials.0.username", "credentials.0.username_ref", "credentials.0.password_ref", "credentials.0.username_password", "credentials.0.service_account", "credentials.0.key_pair", "credentials.0.inherit_from_delegate"},
+							AtLeastOneOf: []string{
+								"credentials.0.username_password",
+								"credentials.0.service_account",
+								"credentials.0.password_ref",
+								"credentials.0.key_pair",
+								"credentials.0.inherit_from_delegate",
 								"credentials.0.oidc",
 							},
 							Elem: &schema.Resource{
@@ -227,7 +271,7 @@ func ResourceConnectorJDBC() *schema.Resource {
 										Description: "GCP OIDC configuration. Required when provider_type is Gcp.",
 										Type:        schema.TypeList,
 										MaxItems:    1,
-										Required:    true,
+										Optional:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"project_number": {
@@ -409,6 +453,23 @@ func buildConnectorJDBC(d *schema.ResourceData) *nextgen.ConnectorInfo {
 				}
 			}
 		}
+	case nextgen.JDBCAuthTypes.InheritFromDelegate.String():
+		{
+			connector1.JDBC.Auth = &nextgen.JdbcAuthenticationDto{
+				Type_:               nextgen.JDBCAuthTypes.InheritFromDelegate,
+				InheritFromDelegate: &nextgen.JdbcDelegateAccessDto{},
+			}
+			if inheritConfig, ok := config["inherit_from_delegate"]; ok && len(inheritConfig.([]interface{})) > 0 {
+				if inheritMap, ok := inheritConfig.([]interface{})[0].(map[string]interface{}); ok {
+					if attr, ok := inheritMap["username"]; ok {
+						connector1.JDBC.Auth.InheritFromDelegate.Username = attr.(string)
+					}
+					if attr, ok := inheritMap["username_ref"]; ok {
+						connector1.JDBC.Auth.InheritFromDelegate.UsernameRef = attr.(string)
+					}
+				}
+			}
+		}
 	default:
 		panic(fmt.Sprintf("unknown jdbc auth method type %s", authType))
 	}
@@ -507,6 +568,22 @@ func readConnectorJDBC(d *schema.ResourceData, connector *nextgen.ConnectorInfo)
 			}
 		}
 		d.Set("credentials", []map[string]interface{}{credMap})
+	case nextgen.JDBCAuthTypes.InheritFromDelegate:
+		inheritMap := map[string]interface{}{}
+		if connector.JDBC.Auth.InheritFromDelegate != nil {
+			inheritMap = map[string]interface{}{
+				"username":     connector.JDBC.Auth.InheritFromDelegate.Username,
+				"username_ref": connector.JDBC.Auth.InheritFromDelegate.UsernameRef,
+			}
+		}
+		d.Set("credentials", []map[string]interface{}{
+			{
+				"auth_type": nextgen.JDBCAuthTypes.InheritFromDelegate.String(),
+				"inherit_from_delegate": []map[string]interface{}{
+					inheritMap,
+				},
+			},
+		})
 	default:
 		return fmt.Errorf("unknown jdbc auth method type %s", connector.JDBC.Auth.Type_)
 	}

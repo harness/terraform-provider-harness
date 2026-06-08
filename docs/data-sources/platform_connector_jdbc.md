@@ -46,23 +46,33 @@ data "harness_platform_connector_jdbc" "example" {
 Read-Only:
 
 - `auth_type` (String)
-- `password_ref` (String)
+- `inherit_from_delegate` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--inherit_from_delegate))
 - `key_pair` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--key_pair))
 - `oidc` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--oidc))
+- `password_ref` (String)
 - `service_account` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--service_account))
 - `username` (String)
 - `username_password` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--username_password))
 - `username_ref` (String)
+
+<a id="nestedobjatt--credentials--inherit_from_delegate"></a>
+### Nested Schema for `credentials.inherit_from_delegate`
+
+Read-Only:
+
+- `username` (String)
+- `username_ref` (String)
+
 
 <a id="nestedobjatt--credentials--key_pair"></a>
 ### Nested Schema for `credentials.key_pair`
 
 Read-Only:
 
-- `username` (String)
-- `username_ref` (String)
 - `private_key_file_ref` (String)
 - `private_key_passphrase_ref` (String)
+- `username` (String)
+- `username_ref` (String)
 
 
 <a id="nestedobjatt--credentials--oidc"></a>
@@ -70,8 +80,8 @@ Read-Only:
 
 Read-Only:
 
-- `provider_type` (String)
 - `gcp_oidc` (List of Object) (see [below for nested schema](#nestedobjatt--credentials--oidc--gcp_oidc))
+- `provider_type` (String)
 
 <a id="nestedobjatt--credentials--oidc--gcp_oidc"></a>
 ### Nested Schema for `credentials.oidc.gcp_oidc`
@@ -79,9 +89,10 @@ Read-Only:
 Read-Only:
 
 - `project_number` (String)
-- `workload_pool_id` (String)
 - `provider_id` (String)
 - `service_account_email` (String)
+- `workload_pool_id` (String)
+
 
 
 <a id="nestedobjatt--credentials--service_account"></a>

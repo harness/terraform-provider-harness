@@ -270,9 +270,14 @@ check: fmt-check vet ## Run all code quality checks
 ##@ Documentation
 
 .PHONY: docs
-docs: ## Generate provider documentation (preserves subcategories)
+docs: ## Generate provider docs only when doc-impacting files changed
 	$(call log_header,Generating Documentation)
 	@./scripts/generate-docs.sh
+
+.PHONY: docs-all
+docs-all: ## Force full provider documentation regeneration
+	$(call log_header,Generating Full Documentation)
+	@FORCE_DOCS=true ./scripts/generate-docs.sh
 
 .PHONY: docs-validate
 docs-validate: ## Validate provider documentation

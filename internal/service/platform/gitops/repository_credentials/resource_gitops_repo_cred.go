@@ -2,8 +2,10 @@ package repository_credentials
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"net/http"
+
+	hcty "github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
@@ -65,7 +67,6 @@ func ResourceGitopsRepoCred() *schema.Resource {
 				Description: "credential details.",
 				Type:        schema.TypeList,
 				Optional:    true,
-				Computed:    true,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -82,44 +83,119 @@ func ResourceGitopsRepoCred() *schema.Resource {
 							ConflictsWith: []string{"creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
 						},
 						"password": {
-							Description:   "Password or PAT to be used for authenticating the remote repository.",
+							Description:   "Password or PAT to be used for authenticating the remote repository. Use password_wo for write-only support (Terraform >= 1.11).",
 							Type:          schema.TypeString,
 							Optional:      true,
 							Computed:      true,
 							Sensitive:     true,
-							ConflictsWith: []string{"creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
+							ConflictsWith: []string{"creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url", "creds.0.password_wo"},
+						},
+						"password_wo": {
+							Description:   "Password or PAT for authenticating the remote repository. Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.password"},
+							RequiredWith:  []string{"creds.0.password_wo_version"},
+						},
+						"password_wo_version": {
+							Description:  "Increment to rotate the credential when using password_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"creds.0.password_wo"},
 						},
 						"ssh_private_key": {
-							Description:   "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
+							Description:   "SSH Key in PEM format for authenticating the repository. Used only for Git repository. Use ssh_private_key_wo for write-only support (Terraform >= 1.11).",
 							Type:          schema.TypeString,
 							Optional:      true,
 							Computed:      true,
 							Sensitive:     true,
-							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url", "creds.0.ssh_private_key_wo"},
+						},
+						"ssh_private_key_wo": {
+							Description:   "SSH Key in PEM format for authenticating the repository. Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.ssh_private_key"},
+							RequiredWith:  []string{"creds.0.ssh_private_key_wo_version"},
+						},
+						"ssh_private_key_wo_version": {
+							Description:  "Increment to rotate the credential when using ssh_private_key_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"creds.0.ssh_private_key_wo"},
 						},
 						"tls_client_cert_data": {
-							Description:   "Certificate in PEM format for authenticating at the repo server. This is used for mTLS.",
+							Description:   "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. Use tls_client_cert_data_wo for write-only support (Terraform >= 1.11).",
 							Type:          schema.TypeString,
 							Optional:      true,
 							Computed:      true,
 							Sensitive:     true,
-							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url", "creds.0.tls_client_cert_data_wo"},
+						},
+						"tls_client_cert_data_wo": {
+							Description:   "Certificate in PEM format for authenticating at the repo server (mTLS). Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.tls_client_cert_data"},
+							RequiredWith:  []string{"creds.0.tls_client_cert_data_wo_version"},
+						},
+						"tls_client_cert_data_wo_version": {
+							Description:  "Increment to rotate the credential when using tls_client_cert_data_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"creds.0.tls_client_cert_data_wo"},
 						},
 						"tls_client_cert_key": {
-							Description:   "Private key in PEM format for authenticating at the repo server. This is used for mTLS.",
+							Description:   "Private key in PEM format for authenticating at the repo server. This is used for mTLS. Use tls_client_cert_key_wo for write-only support (Terraform >= 1.11).",
 							Type:          schema.TypeString,
 							Optional:      true,
 							Computed:      true,
 							Sensitive:     true,
-							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url"},
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.github_app_private_key", "creds.0.github_app_id", "creds.0.github_app_installation_id", "creds.0.github_app_enterprise_base_url", "creds.0.tls_client_cert_key_wo"},
+						},
+						"tls_client_cert_key_wo": {
+							Description:   "Private key in PEM format for authenticating at the repo server (mTLS). Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.tls_client_cert_key"},
+							RequiredWith:  []string{"creds.0.tls_client_cert_key_wo_version"},
+						},
+						"tls_client_cert_key_wo_version": {
+							Description:  "Increment to rotate the credential when using tls_client_cert_key_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"creds.0.tls_client_cert_key_wo"},
 						},
 						"github_app_private_key": {
-							Description:   "github_app_private_key specifies the private key PEM data for authentication via GitHub app.",
+							Description:   "github_app_private_key specifies the private key PEM data for authentication via GitHub app. Use github_app_private_key_wo for write-only support (Terraform >= 1.11).",
 							Type:          schema.TypeString,
 							Optional:      true,
 							Computed:      true,
 							Sensitive:     true,
-							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key"},
+							ConflictsWith: []string{"creds.0.username", "creds.0.password", "creds.0.ssh_private_key", "creds.0.tls_client_cert_data", "creds.0.tls_client_cert_key", "creds.0.github_app_private_key_wo"},
+						},
+						"github_app_private_key_wo": {
+							Description:   "GitHub app private key PEM data. Write-only: never stored in state. Requires Terraform >= 1.11.",
+							Type:          schema.TypeString,
+							Optional:      true,
+							WriteOnly:     true,
+							Sensitive:     true,
+							ConflictsWith: []string{"creds.0.github_app_private_key"},
+							RequiredWith:  []string{"creds.0.github_app_private_key_wo_version"},
+						},
+						"github_app_private_key_wo_version": {
+							Description:  "Increment to rotate the credential when using github_app_private_key_wo.",
+							Type:         schema.TypeInt,
+							Optional:     true,
+							RequiredWith: []string{"creds.0.github_app_private_key_wo"},
 						},
 						"github_app_id": {
 							Description:   "Specifies the Github App ID of the app used to access the repo for GitHub app authentication.",
@@ -205,19 +281,29 @@ func resourceGitopsRepoCredCreate(ctx context.Context, d *schema.ResourceData, m
 		d.MarkNewResource()
 		return nil
 	}
-	if attr, ok := d.GetOk("creds.0.password"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("password_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.Password = ""
+	} else if attr, ok := d.GetOk("creds.0.password"); ok {
 		resp.RepoCreds.Password = attr.(string)
 	}
-	if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("ssh_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.SshPrivateKey = ""
+	} else if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
 		resp.RepoCreds.SshPrivateKey = attr.(string)
 	}
-	if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.TlsClientCertData = ""
+	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
 		resp.RepoCreds.TlsClientCertData = attr.(string)
 	}
-	if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.TlsClientCertKey = ""
+	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
 		resp.RepoCreds.TlsClientCertKey = attr.(string)
 	}
-	if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("github_app_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.GithubAppPrivateKey = ""
+	} else if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
 		resp.RepoCreds.GithubAppPrivateKey = attr.(string)
 	}
 	if attr, ok := d.GetOk("creds.0.github_app_installation_id"); ok {
@@ -225,6 +311,7 @@ func resourceGitopsRepoCredCreate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	setGitopsRepositoriesCredential(d, &resp)
+	preserveRepoCredWoVersions(d)
 	return nil
 }
 
@@ -271,19 +358,29 @@ func resourceGitopsRepoCredUpdate(ctx context.Context, d *schema.ResourceData, m
 		return nil
 	}
 
-	if attr, ok := d.GetOk("creds.0.password"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("password_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.Password = ""
+	} else if attr, ok := d.GetOk("creds.0.password"); ok {
 		resp.RepoCreds.Password = attr.(string)
 	}
-	if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("ssh_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.SshPrivateKey = ""
+	} else if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
 		resp.RepoCreds.SshPrivateKey = attr.(string)
 	}
-	if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.TlsClientCertData = ""
+	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
 		resp.RepoCreds.TlsClientCertData = attr.(string)
 	}
-	if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.TlsClientCertKey = ""
+	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
 		resp.RepoCreds.TlsClientCertKey = attr.(string)
 	}
-	if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
+	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("github_app_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+		resp.RepoCreds.GithubAppPrivateKey = ""
+	} else if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
 		resp.RepoCreds.GithubAppPrivateKey = attr.(string)
 	}
 	if attr, ok := d.GetOk("creds.0.github_app_installation_id"); ok {
@@ -291,6 +388,7 @@ func resourceGitopsRepoCredUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	setGitopsRepositoriesCredential(d, &resp)
+	preserveRepoCredWoVersions(d)
 	return nil
 }
 
@@ -318,27 +416,37 @@ func resourceGitopsRepoCredRead(ctx context.Context, d *schema.ResourceData, met
 		return nil
 	}
 
-	if attr, ok := d.GetOk("creds.0.password"); ok {
+	if _, ok := d.GetOk("creds.0.password_wo_version"); ok {
+		resp.RepoCreds.Password = ""
+	} else if attr, ok := d.GetOk("creds.0.password"); ok {
 		if len(resp.RepoCreds.Password) != 0 {
 			resp.RepoCreds.Password = attr.(string)
 		}
 	}
-	if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
+	if _, ok := d.GetOk("creds.0.ssh_private_key_wo_version"); ok {
+		resp.RepoCreds.SshPrivateKey = ""
+	} else if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
 		if len(resp.RepoCreds.SshPrivateKey) != 0 {
 			resp.RepoCreds.SshPrivateKey = attr.(string)
 		}
 	}
-	if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
+	if _, ok := d.GetOk("creds.0.tls_client_cert_data_wo_version"); ok {
+		resp.RepoCreds.TlsClientCertData = ""
+	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
 		if len(resp.RepoCreds.TlsClientCertData) != 0 {
 			resp.RepoCreds.TlsClientCertData = attr.(string)
 		}
 	}
-	if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
+	if _, ok := d.GetOk("creds.0.tls_client_cert_key_wo_version"); ok {
+		resp.RepoCreds.TlsClientCertKey = ""
+	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
 		if len(resp.RepoCreds.TlsClientCertKey) != 0 {
 			resp.RepoCreds.TlsClientCertKey = attr.(string)
 		}
 	}
-	if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
+	if _, ok := d.GetOk("creds.0.github_app_private_key_wo_version"); ok {
+		resp.RepoCreds.GithubAppPrivateKey = ""
+	} else if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
 		if len(resp.RepoCreds.GithubAppPrivateKey) != 0 {
 			resp.RepoCreds.GithubAppPrivateKey = attr.(string)
 		}
@@ -350,6 +458,7 @@ func resourceGitopsRepoCredRead(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	setGitopsRepositoriesCredential(d, &resp)
+	preserveRepoCredWoVersions(d)
 	return nil
 }
 
@@ -397,6 +506,24 @@ func setGitopsRepositoriesCredential(d *schema.ResourceData, repoCred *nextgen.S
 		cred["enable_oci"] = repoCred.RepoCreds.EnableOCI
 		cred["type"] = repoCred.RepoCreds.Type_
 
+		// Preserve _wo_version integers: d.Set("creds", ...) below would zero
+		// them out because the API never returns write-only credential values.
+		if v, ok := d.GetOk("creds.0.password_wo_version"); ok {
+			cred["password_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.ssh_private_key_wo_version"); ok {
+			cred["ssh_private_key_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.tls_client_cert_data_wo_version"); ok {
+			cred["tls_client_cert_data_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.tls_client_cert_key_wo_version"); ok {
+			cred["tls_client_cert_key_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.github_app_private_key_wo_version"); ok {
+			cred["github_app_private_key_wo_version"] = v.(int)
+		}
+
 		credList = append(credList, cred)
 		d.Set("creds", credList)
 	}
@@ -435,23 +562,33 @@ func buildRepoCred(d *schema.ResourceData) *nextgen.HrepocredsRepoCreds {
 				repoCred.Username = requestCreds["username"].(string)
 			}
 
-			if requestCreds["password"] != nil {
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("password_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoCred.Password = woVal.AsString()
+			} else if requestCreds["password"] != nil {
 				repoCred.Password = requestCreds["password"].(string)
 			}
 
-			if requestCreds["ssh_private_key"] != nil {
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("ssh_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoCred.SshPrivateKey = woVal.AsString()
+			} else if requestCreds["ssh_private_key"] != nil {
 				repoCred.SshPrivateKey = requestCreds["ssh_private_key"].(string)
 			}
 
-			if requestCreds["tls_client_cert_data"] != nil {
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoCred.TlsClientCertData = woVal.AsString()
+			} else if requestCreds["tls_client_cert_data"] != nil {
 				repoCred.TlsClientCertData = requestCreds["tls_client_cert_data"].(string)
 			}
 
-			if requestCreds["tls_client_cert_key"] != nil {
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoCred.TlsClientCertKey = woVal.AsString()
+			} else if requestCreds["tls_client_cert_key"] != nil {
 				repoCred.TlsClientCertKey = requestCreds["tls_client_cert_key"].(string)
 			}
 
-			if requestCreds["github_app_private_key"] != nil {
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("github_app_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				repoCred.GithubAppPrivateKey = woVal.AsString()
+			} else if requestCreds["github_app_private_key"] != nil {
 				repoCred.GithubAppPrivateKey = requestCreds["github_app_private_key"].(string)
 			}
 
@@ -479,4 +616,22 @@ func buildRepoCred(d *schema.ResourceData) *nextgen.HrepocredsRepoCreds {
 
 	}
 	return &repoCred
+}
+
+func preserveRepoCredWoVersions(d *schema.ResourceData) {
+	if v, ok := d.GetOk("creds.0.password_wo_version"); ok {
+		d.Set("creds.0.password_wo_version", v)
+	}
+	if v, ok := d.GetOk("creds.0.ssh_private_key_wo_version"); ok {
+		d.Set("creds.0.ssh_private_key_wo_version", v)
+	}
+	if v, ok := d.GetOk("creds.0.tls_client_cert_data_wo_version"); ok {
+		d.Set("creds.0.tls_client_cert_data_wo_version", v)
+	}
+	if v, ok := d.GetOk("creds.0.tls_client_cert_key_wo_version"); ok {
+		d.Set("creds.0.tls_client_cert_key_wo_version", v)
+	}
+	if v, ok := d.GetOk("creds.0.github_app_private_key_wo_version"); ok {
+		d.Set("creds.0.github_app_private_key_wo_version", v)
+	}
 }
