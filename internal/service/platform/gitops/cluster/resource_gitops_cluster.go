@@ -133,6 +133,7 @@ func ResourceGitopsCluster() *schema.Resource {
 													Description:   "Password of the server of the cluster. Use password_wo for write-only support (Terraform >= 1.11).",
 													Type:          schema.TypeString,
 													Optional:      true,
+													Computed:      true,
 													Sensitive:     true,
 													ConflictsWith: []string{"request.0.cluster.0.config.0.password_wo"},
 												},
@@ -544,7 +545,6 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	setClusterDetails(d, &resp)
-	preserveClusterWoVersions(d)
 	return nil
 }
 
@@ -625,7 +625,6 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	setClusterDetails(d, &resp)
-	preserveClusterWoVersions(d)
 	return nil
 }
 
@@ -668,24 +667,86 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 			configList := []interface{}{}
 			config := map[string]interface{}{}
 			config["username"] = cl.Cluster.Config.Username
-			config["password"] = cl.Cluster.Config.Password
-			config["bearer_token"] = cl.Cluster.Config.BearerToken
+
+			// For each sensitive field with a _wo counterpart: if the _wo path is
+			// active (config has _wo set, or _wo_version > 0 in state), write "" to
+			// prevent the API response from re-populating the legacy field in state.
+			configWoActive := func(configAttr, versionAttr string) bool {
+				if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("request").IndexInt(0).GetAttr("cluster").IndexInt(0).GetAttr("config").IndexInt(0).GetAttr(configAttr)); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+					return true
+				}
+				if v, ok := d.GetOk("request.0.cluster.0.config.0." + versionAttr); ok && v.(int) > 0 {
+					return true
+				}
+				return false
+			}
+
+			if configWoActive("password_wo", "password_wo_version") {
+				config["password"] = ""
+			} else if len(cl.Cluster.Config.Password) > 0 {
+				config["password"] = cl.Cluster.Config.Password
+			}
+			if configWoActive("bearer_token_wo", "bearer_token_wo_version") {
+				config["bearer_token"] = ""
+			} else if len(cl.Cluster.Config.BearerToken) > 0 {
+				config["bearer_token"] = cl.Cluster.Config.BearerToken
+			}
+
+			tlsWoActive := func(configAttr, versionAttr string) bool {
+				if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("request").IndexInt(0).GetAttr("cluster").IndexInt(0).GetAttr("config").IndexInt(0).GetAttr("tls_client_config").IndexInt(0).GetAttr(configAttr)); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+					return true
+				}
+				if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0." + versionAttr); ok && v.(int) > 0 {
+					return true
+				}
+				return false
+			}
+
+			// Preserve TLS _wo_version integers unconditionally: if API returns nil
+			// TlsClientConfig the versions must still survive the d.Set("request",...) call.
+			tlsClientConfigList := []interface{}{}
+			tlsClientConfig := map[string]interface{}{}
+			if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version"); ok {
+				tlsClientConfig["cert_data_wo_version"] = v.(int)
+			}
+			if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version"); ok {
+				tlsClientConfig["key_data_wo_version"] = v.(int)
+			}
+			if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version"); ok {
+				tlsClientConfig["ca_data_wo_version"] = v.(int)
+			}
+
 			if cl.Cluster.Config.TlsClientConfig != nil {
-				tlsClientConfigList := []interface{}{}
-				tlsClientConfig := map[string]interface{}{}
 				tlsClientConfig["insecure"] = cl.Cluster.Config.TlsClientConfig.Insecure
 				tlsClientConfig["server_name"] = cl.Cluster.Config.TlsClientConfig.ServerName
-				tlsClientConfig["cert_data"] = cl.Cluster.Config.TlsClientConfig.CertData
-				tlsClientConfig["key_data"] = cl.Cluster.Config.TlsClientConfig.KeyData
-				tlsClientConfig["ca_data"] = cl.Cluster.Config.TlsClientConfig.CaData
-				if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version"); ok {
-					tlsClientConfig["cert_data_wo_version"] = v.(int)
+
+				if tlsWoActive("cert_data_wo", "cert_data_wo_version") {
+					tlsClientConfig["cert_data"] = ""
+				} else if len(cl.Cluster.Config.TlsClientConfig.CertData) > 0 {
+					tlsClientConfig["cert_data"] = cl.Cluster.Config.TlsClientConfig.CertData
 				}
-				if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version"); ok {
-					tlsClientConfig["key_data_wo_version"] = v.(int)
+				if tlsWoActive("key_data_wo", "key_data_wo_version") {
+					tlsClientConfig["key_data"] = ""
+				} else if len(cl.Cluster.Config.TlsClientConfig.KeyData) > 0 {
+					tlsClientConfig["key_data"] = cl.Cluster.Config.TlsClientConfig.KeyData
 				}
-				if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version"); ok {
-					tlsClientConfig["ca_data_wo_version"] = v.(int)
+				if tlsWoActive("ca_data_wo", "ca_data_wo_version") {
+					tlsClientConfig["ca_data"] = ""
+				} else if len(cl.Cluster.Config.TlsClientConfig.CaData) > 0 {
+					tlsClientConfig["ca_data"] = cl.Cluster.Config.TlsClientConfig.CaData
+				}
+
+				tlsClientConfigList = append(tlsClientConfigList, tlsClientConfig)
+				config["tls_client_config"] = tlsClientConfigList
+			} else if len(tlsClientConfig) > 0 {
+				// API returned nil TlsClientConfig but _wo_version integers exist in state.
+				// Preserve insecure and server_name from prior state so Optional-only fields
+				// are not zero-filled by the SDK, which would cause a perpetual plan diff.
+				if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.insecure"); ok {
+					tlsClientConfig["insecure"] = v.(bool)
+				}
+				if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.server_name"); ok {
+					tlsClientConfig["server_name"] = v.(string)
 				}
 				tlsClientConfigList = append(tlsClientConfigList, tlsClientConfig)
 				config["tls_client_config"] = tlsClientConfigList
@@ -1035,22 +1096,4 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 
 func getUpdateFieldFromPath(path string) string {
 	return strings.Split(path, ".")[len(strings.Split(path, "."))-1]
-}
-
-func preserveClusterWoVersions(d *schema.ResourceData) {
-	if v, ok := d.GetOk("request.0.cluster.0.config.0.password_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.password_wo_version", v)
-	}
-	if v, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.bearer_token_wo_version", v)
-	}
-	if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version", v)
-	}
-	if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version", v)
-	}
-	if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version", v)
-	}
 }

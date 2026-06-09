@@ -528,7 +528,6 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	setRepositoryDetails(d, &resp)
-	preserveWoVersions(d)
 	return nil
 }
 
@@ -664,7 +663,6 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	setRepositoryDetails(d, &resp)
-	preserveWoVersions(d)
 	return nil
 }
 
@@ -968,27 +966,6 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 	return &repoObj
 }
 
-// preserveWoVersions writes _wo_version values back to state so Terraform
-// does not detect a spurious diff after apply. WriteOnly fields are always
-// null in state; their companion version integers must be explicitly kept.
-func preserveWoVersions(d *schema.ResourceData) {
-	if v, ok := d.GetOk("repo.0.password_wo_version"); ok {
-		d.Set("repo.0.password_wo_version", v)
-	}
-	if v, ok := d.GetOk("repo.0.ssh_private_key_wo_version"); ok {
-		d.Set("repo.0.ssh_private_key_wo_version", v)
-	}
-	if v, ok := d.GetOk("repo.0.tls_client_cert_data_wo_version"); ok {
-		d.Set("repo.0.tls_client_cert_data_wo_version", v)
-	}
-	if v, ok := d.GetOk("repo.0.tls_client_cert_key_wo_version"); ok {
-		d.Set("repo.0.tls_client_cert_key_wo_version", v)
-	}
-	if v, ok := d.GetOk("repo.0.github_app_private_key_wo_version"); ok {
-		d.Set("repo.0.github_app_private_key_wo_version", v)
-	}
-}
-
 func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Repository) {
 	d.SetId(repo.Identifier)
 	d.Set("account_id", repo.AccountIdentifier)
@@ -1004,24 +981,51 @@ func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Reposit
 		if len(repo.Repository.Username) > 0 {
 			repoO["username"] = repo.Repository.Username
 		}
-		if len(repo.Repository.Password) > 0 {
+		// For each sensitive field that has a _wo counterpart: if the write-only
+		// path is active (config has the _wo field set, or _wo_version > 0 in
+		// state), explicitly write "" to prevent the API response from re-populating
+		// the legacy field in state — which would defeat the purpose of write-only.
+		woActive := func(configAttr, versionAttr string) bool {
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr(configAttr)); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				return true
+			}
+			if v, ok := d.GetOk("repo.0." + versionAttr); ok && v.(int) > 0 {
+				return true
+			}
+			return false
+		}
+
+		if woActive("password_wo", "password_wo_version") {
+			repoO["password"] = ""
+		} else if len(repo.Repository.Password) > 0 {
 			repoO["password"] = repo.Repository.Password
 		}
-		repoO["ssh_private_key"] = repo.Repository.SshPrivateKey
+
+		if woActive("ssh_private_key_wo", "ssh_private_key_wo_version") {
+			repoO["ssh_private_key"] = ""
+		} else if len(repo.Repository.SshPrivateKey) > 0 {
+			repoO["ssh_private_key"] = repo.Repository.SshPrivateKey
+		}
 		repoO["insecure_ignore_host_key"] = repo.Repository.InsecureIgnoreHostKey
 		repoO["insecure"] = repo.Repository.Insecure
 		repoO["enable_lfs"] = repo.Repository.EnableLfs
-		if len(repo.Repository.TlsClientCertData) > 0 {
+		if woActive("tls_client_cert_data_wo", "tls_client_cert_data_wo_version") {
+			repoO["tls_client_cert_data"] = ""
+		} else if len(repo.Repository.TlsClientCertData) > 0 {
 			repoO["tls_client_cert_data"] = repo.Repository.TlsClientCertData
 		}
-		if len(repo.Repository.TlsClientCertKey) > 0 {
+		if woActive("tls_client_cert_key_wo", "tls_client_cert_key_wo_version") {
+			repoO["tls_client_cert_key"] = ""
+		} else if len(repo.Repository.TlsClientCertKey) > 0 {
 			repoO["tls_client_cert_key"] = repo.Repository.TlsClientCertKey
 		}
 		repoO["type_"] = repo.Repository.Type_
 		repoO["name"] = repo.Repository.Name
 		repoO["inherited_creds"] = repo.Repository.InheritedCreds
 		repoO["enable_oci"] = repo.Repository.EnableOCI
-		if len(repo.Repository.GithubAppPrivateKey) > 0 {
+		if woActive("github_app_private_key_wo", "github_app_private_key_wo_version") {
+			repoO["github_app_private_key"] = ""
+		} else if len(repo.Repository.GithubAppPrivateKey) > 0 {
 			repoO["github_app_private_key"] = repo.Repository.GithubAppPrivateKey
 		}
 		if len(repo.Repository.GithubAppID) > 0 {
@@ -1037,16 +1041,18 @@ func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Reposit
 		repoO["project"] = repo.Repository.Project
 		repoO["connection_type"] = repo.Repository.ConnectionType
 
-		// Preserve _wo_version integers: d.Set("repo", ...) below would zero
+		// Preserve all _wo_version integers: d.Set("repo", ...) below would zero
 		// them out because the API never returns write-only credential values.
-		if v, ok := d.GetOk("repo.0.password_wo_version"); ok {
-			repoO["password_wo_version"] = v.(int)
-		}
-		if v, ok := d.GetOk("repo.0.ssh_private_key_wo_version"); ok {
-			repoO["ssh_private_key_wo_version"] = v.(int)
-		}
-		if v, ok := d.GetOk("repo.0.github_app_private_key_wo_version"); ok {
-			repoO["github_app_private_key_wo_version"] = v.(int)
+		for _, versionField := range []string{
+			"password_wo_version",
+			"ssh_private_key_wo_version",
+			"tls_client_cert_data_wo_version",
+			"tls_client_cert_key_wo_version",
+			"github_app_private_key_wo_version",
+		} {
+			if v, ok := d.GetOk("repo.0." + versionField); ok {
+				repoO[versionField] = v.(int)
+			}
 		}
 
 		repoList = append(repoList, repoO)

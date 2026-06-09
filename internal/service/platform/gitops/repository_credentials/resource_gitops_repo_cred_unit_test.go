@@ -190,12 +190,61 @@ func TestRepoCredSchema_CredentialFieldsAreComputed(t *testing.T) {
 	}
 }
 
-// TestRepoCredSchema_BlockIsComputed verifies the creds block-level Computed=true is preserved.
-// NOTE: This is why write-only fields cannot be added to this resource — the SDK prohibits
-// WriteOnly attributes inside a Computed=true block. Tracked separately.
-func TestRepoCredSchema_BlockIsComputed(t *testing.T) {
+// TestRepoCredSchema_BlockNotComputed verifies creds block-level Computed=false.
+// The SDK prohibits WriteOnly fields inside a Computed=true block, so block-level
+// Computed was removed to enable _wo fields on individual credential attributes.
+func TestRepoCredSchema_BlockNotComputed(t *testing.T) {
 	r := ResourceGitopsRepoCred()
-	if !r.Schema["creds"].Computed {
-		t.Error("expected creds block to have Computed=true")
+	if r.Schema["creds"].Computed {
+		t.Error("creds block must NOT have Computed=true: the SDK prohibits WriteOnly fields inside a Computed block")
+	}
+}
+
+// TestRepoCredSchema_WoFieldsPresent verifies all write-only fields exist in the creds schema.
+func TestRepoCredSchema_WoFieldsPresent(t *testing.T) {
+	r := ResourceGitopsRepoCred()
+	credsElem := r.Schema["creds"].Elem.(*schema.Resource)
+	woFields := []string{
+		"password_wo",
+		"password_wo_version",
+		"ssh_private_key_wo",
+		"ssh_private_key_wo_version",
+		"tls_client_cert_data_wo",
+		"tls_client_cert_data_wo_version",
+		"tls_client_cert_key_wo",
+		"tls_client_cert_key_wo_version",
+		"github_app_private_key_wo",
+		"github_app_private_key_wo_version",
+	}
+	for _, field := range woFields {
+		if _, ok := credsElem.Schema[field]; !ok {
+			t.Errorf("expected field %q in creds schema, not found", field)
+		}
+	}
+}
+
+// TestRepoCredSchema_WoFieldsAreWriteOnly verifies WriteOnly and Sensitive are set on _wo credential fields.
+func TestRepoCredSchema_WoFieldsAreWriteOnly(t *testing.T) {
+	r := ResourceGitopsRepoCred()
+	credsElem := r.Schema["creds"].Elem.(*schema.Resource)
+	writeOnlyFields := []string{
+		"password_wo",
+		"ssh_private_key_wo",
+		"tls_client_cert_data_wo",
+		"tls_client_cert_key_wo",
+		"github_app_private_key_wo",
+	}
+	for _, field := range writeOnlyFields {
+		s, ok := credsElem.Schema[field]
+		if !ok {
+			t.Errorf("field %q not found in creds schema", field)
+			continue
+		}
+		if !s.WriteOnly {
+			t.Errorf("expected WriteOnly=true on field %q", field)
+		}
+		if !s.Sensitive {
+			t.Errorf("expected Sensitive=true on field %q", field)
+		}
 	}
 }

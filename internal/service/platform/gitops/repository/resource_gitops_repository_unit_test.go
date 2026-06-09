@@ -3,6 +3,7 @@ package repository
 import (
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -20,28 +21,28 @@ func newRepoTestResourceData(t *testing.T, values map[string]interface{}) *schem
 
 func baseRepoBlock(overrides map[string]interface{}) []interface{} {
 	base := map[string]interface{}{
-		"repo":                          "https://github.com/example/repo",
-		"username":                      "",
-		"password":                      "",
-		"ssh_private_key":               "",
-		"insecure_ignore_host_key":      false,
-		"insecure":                      false,
-		"enable_lfs":                    false,
-		"tls_client_cert_data":          "",
-		"tls_client_cert_key":           "",
-		"type_":                         "git",
-		"name":                          "",
-		"inherited_creds":               false,
-		"enable_oci":                    false,
-		"github_app_private_key":        "",
-		"github_app_id":                 "",
-		"github_app_installation_id":    "",
-		"github_app_enterprise_base_url": "",
-		"proxy":                         "",
-		"project":                       "",
-		"connection_type":               "HTTPS_ANONYMOUS",
-		"password_wo_version":           0,
-		"ssh_private_key_wo_version":    0,
+		"repo":                              "https://github.com/example/repo",
+		"username":                          "",
+		"password":                          "",
+		"ssh_private_key":                   "",
+		"insecure_ignore_host_key":          false,
+		"insecure":                          false,
+		"enable_lfs":                        false,
+		"tls_client_cert_data":              "",
+		"tls_client_cert_key":               "",
+		"type_":                             "git",
+		"name":                              "",
+		"inherited_creds":                   false,
+		"enable_oci":                        false,
+		"github_app_private_key":            "",
+		"github_app_id":                     "",
+		"github_app_installation_id":        "",
+		"github_app_enterprise_base_url":    "",
+		"proxy":                             "",
+		"project":                           "",
+		"connection_type":                   "HTTPS_ANONYMOUS",
+		"password_wo_version":               0,
+		"ssh_private_key_wo_version":        0,
 		"github_app_private_key_wo_version": 0,
 	}
 	for k, v := range overrides {
@@ -203,10 +204,10 @@ func TestRepoSchema_WoConflictsWithLegacy(t *testing.T) {
 	repoElem := r.Schema["repo"].Elem.(*schema.Resource)
 
 	pairs := map[string]string{
-		"password_wo":            "repo.0.password",
-		"ssh_private_key_wo":     "repo.0.ssh_private_key",
-		"tls_client_cert_data_wo": "repo.0.tls_client_cert_data",
-		"tls_client_cert_key_wo": "repo.0.tls_client_cert_key",
+		"password_wo":               "repo.0.password",
+		"ssh_private_key_wo":        "repo.0.ssh_private_key",
+		"tls_client_cert_data_wo":   "repo.0.tls_client_cert_data",
+		"tls_client_cert_key_wo":    "repo.0.tls_client_cert_key",
 		"github_app_private_key_wo": "repo.0.github_app_private_key",
 	}
 	for woField, legacyPath := range pairs {
@@ -225,6 +226,41 @@ func TestRepoSchema_WoConflictsWithLegacy(t *testing.T) {
 		if !found {
 			t.Errorf("expected %q in ConflictsWith of %q, got %v", legacyPath, woField, s.ConflictsWith)
 		}
+	}
+}
+
+// TestSetRepositoryDetails_WoVersionClearsLegacyPassword verifies that when password_wo_version > 0
+// is in state, setRepositoryDetails writes "" to the legacy password field (CDS-125468).
+func TestSetRepositoryDetails_WoVersionClearsLegacyPassword(t *testing.T) {
+	d := newRepoTestResourceData(t, map[string]interface{}{
+		"identifier": "test-repo",
+		"agent_id":   "test-agent",
+		"repo": baseRepoBlock(map[string]interface{}{
+			"password_wo_version": 1,
+			"connection_type":     "HTTPS",
+		}),
+	})
+
+	repo := &nextgen.Servicev1Repository{
+		Identifier:      "test-repo",
+		AgentIdentifier: "test-agent",
+		Repository: &nextgen.RepositoriesRepository{
+			Repo:           "https://github.com/example/repo",
+			Password:       "ghp_still_in_api_response",
+			ConnectionType: "HTTPS",
+		},
+	}
+
+	setRepositoryDetails(d, repo)
+
+	// The API echoed back a password, but since wo_version > 0, state must NOT retain it.
+	repoList := d.Get("repo").([]interface{})
+	if len(repoList) == 0 {
+		t.Fatal("expected repo list in state")
+	}
+	repoMap := repoList[0].(map[string]interface{})
+	if pw, ok := repoMap["password"]; ok && pw.(string) != "" {
+		t.Errorf("expected legacy password to be cleared from state when wo_version > 0, got %q", pw)
 	}
 }
 

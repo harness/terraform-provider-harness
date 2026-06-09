@@ -276,3 +276,22 @@ func TestClusterSchema_BearerTokenStillComputed(t *testing.T) {
 		t.Error("expected Computed=true on bearer_token for backward compatibility")
 	}
 }
+
+// TestClusterSchema_PasswordIsComputed verifies password has Computed=true so that legacy
+// customers whose state has password="mypass" do not get a perpetual plan diff when the
+// API redacts the field on read (returns ""). Without Computed=true, the SDK zero-fills the
+// absent key to "" and the plan shows "" → "mypass" every run.
+func TestClusterSchema_PasswordIsComputed(t *testing.T) {
+	r := ResourceGitopsCluster()
+	configElem := r.Schema["request"].Elem.(*schema.Resource).
+		Schema["cluster"].Elem.(*schema.Resource).
+		Schema["config"].Elem.(*schema.Resource)
+
+	s, ok := configElem.Schema["password"]
+	if !ok {
+		t.Fatal("password field not found in config schema")
+	}
+	if !s.Computed {
+		t.Error("expected Computed=true on password for backward compatibility (SDK preserves prior state when API redacts)")
+	}
+}

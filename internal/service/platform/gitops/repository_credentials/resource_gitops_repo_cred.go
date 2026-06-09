@@ -311,7 +311,6 @@ func resourceGitopsRepoCredCreate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	setGitopsRepositoriesCredential(d, &resp)
-	preserveRepoCredWoVersions(d)
 	return nil
 }
 
@@ -388,7 +387,6 @@ func resourceGitopsRepoCredUpdate(ctx context.Context, d *schema.ResourceData, m
 	}
 
 	setGitopsRepositoriesCredential(d, &resp)
-	preserveRepoCredWoVersions(d)
 	return nil
 }
 
@@ -416,49 +414,7 @@ func resourceGitopsRepoCredRead(ctx context.Context, d *schema.ResourceData, met
 		return nil
 	}
 
-	if _, ok := d.GetOk("creds.0.password_wo_version"); ok {
-		resp.RepoCreds.Password = ""
-	} else if attr, ok := d.GetOk("creds.0.password"); ok {
-		if len(resp.RepoCreds.Password) != 0 {
-			resp.RepoCreds.Password = attr.(string)
-		}
-	}
-	if _, ok := d.GetOk("creds.0.ssh_private_key_wo_version"); ok {
-		resp.RepoCreds.SshPrivateKey = ""
-	} else if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
-		if len(resp.RepoCreds.SshPrivateKey) != 0 {
-			resp.RepoCreds.SshPrivateKey = attr.(string)
-		}
-	}
-	if _, ok := d.GetOk("creds.0.tls_client_cert_data_wo_version"); ok {
-		resp.RepoCreds.TlsClientCertData = ""
-	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
-		if len(resp.RepoCreds.TlsClientCertData) != 0 {
-			resp.RepoCreds.TlsClientCertData = attr.(string)
-		}
-	}
-	if _, ok := d.GetOk("creds.0.tls_client_cert_key_wo_version"); ok {
-		resp.RepoCreds.TlsClientCertKey = ""
-	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
-		if len(resp.RepoCreds.TlsClientCertKey) != 0 {
-			resp.RepoCreds.TlsClientCertKey = attr.(string)
-		}
-	}
-	if _, ok := d.GetOk("creds.0.github_app_private_key_wo_version"); ok {
-		resp.RepoCreds.GithubAppPrivateKey = ""
-	} else if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
-		if len(resp.RepoCreds.GithubAppPrivateKey) != 0 {
-			resp.RepoCreds.GithubAppPrivateKey = attr.(string)
-		}
-	}
-	if attr, ok := d.GetOk("creds.0.github_app_installation_id"); ok {
-		if len(resp.RepoCreds.GithubAppInstallationID) != 0 {
-			resp.RepoCreds.GithubAppInstallationID = attr.(string)
-		}
-	}
-
 	setGitopsRepositoriesCredential(d, &resp)
-	preserveRepoCredWoVersions(d)
 	return nil
 }
 
@@ -495,16 +451,72 @@ func setGitopsRepositoriesCredential(d *schema.ResourceData, repoCred *nextgen.S
 		cred := map[string]interface{}{}
 		cred["url"] = repoCred.RepoCreds.Url
 		cred["username"] = repoCred.RepoCreds.Username
-		cred["password"] = repoCred.RepoCreds.Password
-		cred["ssh_private_key"] = repoCred.RepoCreds.SshPrivateKey
-		cred["tls_client_cert_data"] = repoCred.RepoCreds.TlsClientCertData
-		cred["tls_client_cert_key"] = repoCred.RepoCreds.TlsClientCertKey
-		cred["github_app_private_key"] = repoCred.RepoCreds.GithubAppPrivateKey
+
+		// For each sensitive field with a _wo counterpart: if the _wo path is
+		// active (config has _wo set, or _wo_version > 0 in state), write "" to
+		// prevent the API response from re-populating the legacy field in state.
+		woActive := func(configAttr, versionAttr string) bool {
+			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr(configAttr)); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+				return true
+			}
+			if v, ok := d.GetOk("creds.0." + versionAttr); ok && v.(int) > 0 {
+				return true
+			}
+			return false
+		}
+
+		if woActive("password_wo", "password_wo_version") {
+			cred["password"] = ""
+		} else if len(repoCred.RepoCreds.Password) > 0 {
+			cred["password"] = repoCred.RepoCreds.Password
+		}
+		if woActive("ssh_private_key_wo", "ssh_private_key_wo_version") {
+			cred["ssh_private_key"] = ""
+		} else if len(repoCred.RepoCreds.SshPrivateKey) > 0 {
+			cred["ssh_private_key"] = repoCred.RepoCreds.SshPrivateKey
+		}
+		if woActive("tls_client_cert_data_wo", "tls_client_cert_data_wo_version") {
+			cred["tls_client_cert_data"] = ""
+		} else if len(repoCred.RepoCreds.TlsClientCertData) > 0 {
+			cred["tls_client_cert_data"] = repoCred.RepoCreds.TlsClientCertData
+		}
+		if woActive("tls_client_cert_key_wo", "tls_client_cert_key_wo_version") {
+			cred["tls_client_cert_key"] = ""
+		} else if len(repoCred.RepoCreds.TlsClientCertKey) > 0 {
+			cred["tls_client_cert_key"] = repoCred.RepoCreds.TlsClientCertKey
+		}
+		if woActive("github_app_private_key_wo", "github_app_private_key_wo_version") {
+			cred["github_app_private_key"] = ""
+		} else if len(repoCred.RepoCreds.GithubAppPrivateKey) > 0 {
+			cred["github_app_private_key"] = repoCred.RepoCreds.GithubAppPrivateKey
+		}
+
 		cred["github_app_id"] = repoCred.RepoCreds.GithubAppID
-		cred["github_app_installation_id"] = repoCred.RepoCreds.GithubAppInstallationID
+		if attr, ok := d.GetOk("creds.0.github_app_installation_id"); ok && len(repoCred.RepoCreds.GithubAppInstallationID) != 0 {
+			cred["github_app_installation_id"] = attr.(string)
+		} else {
+			cred["github_app_installation_id"] = repoCred.RepoCreds.GithubAppInstallationID
+		}
 		cred["github_app_enterprise_base_url"] = repoCred.RepoCreds.GithubAppEnterpriseBaseUrl
 		cred["enable_oci"] = repoCred.RepoCreds.EnableOCI
 		cred["type"] = repoCred.RepoCreds.Type_
+
+		// Preserve _wo_version integers so d.Set("creds", ...) doesn't zero them.
+		if v, ok := d.GetOk("creds.0.password_wo_version"); ok {
+			cred["password_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.ssh_private_key_wo_version"); ok {
+			cred["ssh_private_key_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.tls_client_cert_data_wo_version"); ok {
+			cred["tls_client_cert_data_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.tls_client_cert_key_wo_version"); ok {
+			cred["tls_client_cert_key_wo_version"] = v.(int)
+		}
+		if v, ok := d.GetOk("creds.0.github_app_private_key_wo_version"); ok {
+			cred["github_app_private_key_wo_version"] = v.(int)
+		}
 
 		credList = append(credList, cred)
 		d.Set("creds", credList)
@@ -598,22 +610,4 @@ func buildRepoCred(d *schema.ResourceData) *nextgen.HrepocredsRepoCreds {
 
 	}
 	return &repoCred
-}
-
-func preserveRepoCredWoVersions(d *schema.ResourceData) {
-	if v, ok := d.GetOk("creds.0.password_wo_version"); ok {
-		d.Set("creds.0.password_wo_version", v)
-	}
-	if v, ok := d.GetOk("creds.0.ssh_private_key_wo_version"); ok {
-		d.Set("creds.0.ssh_private_key_wo_version", v)
-	}
-	if v, ok := d.GetOk("creds.0.tls_client_cert_data_wo_version"); ok {
-		d.Set("creds.0.tls_client_cert_data_wo_version", v)
-	}
-	if v, ok := d.GetOk("creds.0.tls_client_cert_key_wo_version"); ok {
-		d.Set("creds.0.tls_client_cert_key_wo_version", v)
-	}
-	if v, ok := d.GetOk("creds.0.github_app_private_key_wo_version"); ok {
-		d.Set("creds.0.github_app_private_key_wo_version", v)
-	}
 }
