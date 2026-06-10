@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	hcty "github.com/hashicorp/go-cty/cty"
-
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -133,6 +131,7 @@ func ResourceGitopsCluster() *schema.Resource {
 													Description:   "Password of the server of the cluster. Use password_wo for write-only support (Terraform >= 1.11).",
 													Type:          schema.TypeString,
 													Optional:      true,
+													Computed:      true,
 													Sensitive:     true,
 													ConflictsWith: []string{"request.0.cluster.0.config.0.password_wo"},
 												},
@@ -533,7 +532,12 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("request").IndexInt(0).GetAttr("cluster").IndexInt(0).GetAttr("config").IndexInt(0).GetAttr("bearer_token_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.password_wo", "request.0.cluster.0.config.0.password_wo_version") {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.Password = ""
+		}
+	}
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.bearer_token_wo", "request.0.cluster.0.config.0.bearer_token_wo_version") {
 		if resp.Cluster.Config != nil {
 			resp.Cluster.Config.BearerToken = ""
 		}
@@ -570,7 +574,16 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
-	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.password_wo", "request.0.cluster.0.config.0.password_wo_version") {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.Password = ""
+		}
+	}
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.bearer_token_wo", "request.0.cluster.0.config.0.bearer_token_wo_version") {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.BearerToken = ""
+		}
+	} else if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
 		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
 			resp.Cluster.Config.BearerToken = attr.(string)
 		}
@@ -610,12 +623,17 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.password_wo", "request.0.cluster.0.config.0.password_wo_version") {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.Password = ""
+		}
+	}
 	connType, _ := d.GetOk("request.0.cluster.0.config.0.cluster_connection_type")
 	if connTypeStr, ok := connType.(string); ok && connTypeStr == "IRSA" {
 		if resp.Cluster.Config != nil {
 			resp.Cluster.Config.BearerToken = ""
 		}
-	} else if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("request").IndexInt(0).GetAttr("cluster").IndexInt(0).GetAttr("config").IndexInt(0).GetAttr("bearer_token_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	} else if helpers.WoActive(d, "request.0.cluster.0.config.0.bearer_token_wo", "request.0.cluster.0.config.0.bearer_token_wo_version") {
 		if resp.Cluster.Config != nil {
 			resp.Cluster.Config.BearerToken = ""
 		}
@@ -669,8 +687,16 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 			configList := []interface{}{}
 			config := map[string]interface{}{}
 			config["username"] = cl.Cluster.Config.Username
-			config["password"] = cl.Cluster.Config.Password
-			config["bearer_token"] = cl.Cluster.Config.BearerToken
+			if helpers.WoActive(d, "request.0.cluster.0.config.0.password_wo", "request.0.cluster.0.config.0.password_wo_version") {
+				config["password"] = ""
+			} else if len(cl.Cluster.Config.Password) > 0 {
+				config["password"] = cl.Cluster.Config.Password
+			}
+			if helpers.WoActive(d, "request.0.cluster.0.config.0.bearer_token_wo", "request.0.cluster.0.config.0.bearer_token_wo_version") {
+				config["bearer_token"] = ""
+			} else {
+				config["bearer_token"] = cl.Cluster.Config.BearerToken
+			}
 			if cl.Cluster.Config.TlsClientConfig != nil {
 				tlsClientConfigList := []interface{}{}
 				tlsClientConfig := map[string]interface{}{}
@@ -873,13 +899,13 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 					clusterDetails.Config.Username = clusterConfig["username"].(string)
 				}
 				if clusterConnectionType != "IRSA" {
-					if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("request").IndexInt(0).GetAttr("cluster").IndexInt(0).GetAttr("config").IndexInt(0).GetAttr("password_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-						clusterDetails.Config.Password = woVal.AsString()
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.password_wo"); ok {
+						clusterDetails.Config.Password = val
 					} else if clusterConfig["password"] != nil {
 						clusterDetails.Config.Password = clusterConfig["password"].(string)
 					}
-					if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("request").IndexInt(0).GetAttr("cluster").IndexInt(0).GetAttr("config").IndexInt(0).GetAttr("bearer_token_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-						clusterDetails.Config.BearerToken = woVal.AsString()
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.bearer_token_wo"); ok {
+						clusterDetails.Config.BearerToken = val
 					} else if clusterConfig["bearer_token"] != nil {
 						clusterDetails.Config.BearerToken = clusterConfig["bearer_token"].(string)
 					}
@@ -894,18 +920,18 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 					if configTlsClientConfig["server_name"] != nil {
 						clusterDetails.Config.TlsClientConfig.ServerName = configTlsClientConfig["server_name"].(string)
 					}
-					if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("request").IndexInt(0).GetAttr("cluster").IndexInt(0).GetAttr("config").IndexInt(0).GetAttr("tls_client_config").IndexInt(0).GetAttr("cert_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-						clusterDetails.Config.TlsClientConfig.CertData = woVal.AsString()
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo"); ok {
+						clusterDetails.Config.TlsClientConfig.CertData = val
 					} else if configTlsClientConfig["cert_data"] != nil {
 						clusterDetails.Config.TlsClientConfig.CertData = configTlsClientConfig["cert_data"].(string)
 					}
-					if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("request").IndexInt(0).GetAttr("cluster").IndexInt(0).GetAttr("config").IndexInt(0).GetAttr("tls_client_config").IndexInt(0).GetAttr("key_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-						clusterDetails.Config.TlsClientConfig.KeyData = woVal.AsString()
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.tls_client_config.0.key_data_wo"); ok {
+						clusterDetails.Config.TlsClientConfig.KeyData = val
 					} else if configTlsClientConfig["key_data"] != nil {
 						clusterDetails.Config.TlsClientConfig.KeyData = configTlsClientConfig["key_data"].(string)
 					}
-					if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("request").IndexInt(0).GetAttr("cluster").IndexInt(0).GetAttr("config").IndexInt(0).GetAttr("tls_client_config").IndexInt(0).GetAttr("ca_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-						clusterDetails.Config.TlsClientConfig.CaData = woVal.AsString()
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo"); ok {
+						clusterDetails.Config.TlsClientConfig.CaData = val
 					} else if configTlsClientConfig["ca_data"] != nil {
 						clusterDetails.Config.TlsClientConfig.CaData = configTlsClientConfig["ca_data"].(string)
 					}
@@ -1039,19 +1065,68 @@ func getUpdateFieldFromPath(path string) string {
 }
 
 func preserveClusterWoVersions(d *schema.ResourceData) {
+	requestRaw, ok := d.GetOk("request")
+	if !ok {
+		return
+	}
+
+	requestList, ok := requestRaw.([]interface{})
+	if !ok || len(requestList) == 0 || requestList[0] == nil {
+		return
+	}
+	requestMap, ok := requestList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	clusterList, ok := requestMap["cluster"].([]interface{})
+	if !ok || len(clusterList) == 0 || clusterList[0] == nil {
+		return
+	}
+	clusterMap, ok := clusterList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	configList, _ := clusterMap["config"].([]interface{})
+	if len(configList) == 0 || configList[0] == nil {
+		configList = []interface{}{map[string]interface{}{}}
+	}
+	configMap, ok := configList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+
 	if v, ok := d.GetOk("request.0.cluster.0.config.0.password_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.password_wo_version", v)
+		configMap["password_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.bearer_token_wo_version", v)
+		configMap["bearer_token_wo_version"] = v.(int)
+	}
+
+	tlsList, _ := configMap["tls_client_config"].([]interface{})
+	if len(tlsList) == 0 || tlsList[0] == nil {
+		tlsList = []interface{}{map[string]interface{}{}}
+	}
+	tlsMap, ok := tlsList[0].(map[string]interface{})
+	if !ok {
+		return
 	}
 	if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version", v)
+		tlsMap["cert_data_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version", v)
+		tlsMap["key_data_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version"); ok {
-		d.Set("request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version", v)
+		tlsMap["ca_data_wo_version"] = v.(int)
 	}
+
+	configMap["tls_client_config"] = []interface{}{tlsMap}
+	configList[0] = configMap
+	clusterMap["config"] = configList
+	clusterList[0] = clusterMap
+	requestMap["cluster"] = clusterList
+	requestList[0] = requestMap
+	d.Set("request", requestList)
 }

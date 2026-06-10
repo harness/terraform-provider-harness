@@ -1,0 +1,5 @@
+```release-note:bug
+resource/harness_platform_gitops_cluster: Fixed write-only credential handling so bearer_token remains masked when bearer_token_wo is active, and _wo_version values are preserved without invalid nested state writes.
+resource/harness_platform_gitops_repository: Fixed _wo_version state preservation to avoid invalid nested state writes during create/read/update flows.
+resource/harness_platform_gitops_repo_cred: Fixed _wo_version state preservation to avoid invalid nested state writes during create/read/update flows.
+```

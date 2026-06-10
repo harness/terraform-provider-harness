@@ -6,8 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
-	hcty "github.com/hashicorp/go-cty/cty"
-
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -505,19 +503,29 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 		return nil
 	}
 
-	if attr, ok := d.GetOk("repo.0.password"); ok {
+	if helpers.WoActive(d, "repo.0.password_wo", "repo.0.password_wo_version") {
+		resp.Repository.Password = ""
+	} else if attr, ok := d.GetOk("repo.0.password"); ok {
 		resp.Repository.Password = attr.(string)
 	}
-	if attr, ok := d.GetOk("repo.0.ssh_private_key"); ok {
+	if helpers.WoActive(d, "repo.0.ssh_private_key_wo", "repo.0.ssh_private_key_wo_version") {
+		resp.Repository.SshPrivateKey = ""
+	} else if attr, ok := d.GetOk("repo.0.ssh_private_key"); ok {
 		resp.Repository.SshPrivateKey = attr.(string)
 	}
-	if attr, ok := d.GetOk("repo.0.tls_client_cert_data"); ok {
+	if helpers.WoActive(d, "repo.0.tls_client_cert_data_wo", "repo.0.tls_client_cert_data_wo_version") {
+		resp.Repository.TlsClientCertData = ""
+	} else if attr, ok := d.GetOk("repo.0.tls_client_cert_data"); ok {
 		resp.Repository.TlsClientCertData = attr.(string)
 	}
-	if attr, ok := d.GetOk("repo.0.tls_client_cert_key"); ok {
+	if helpers.WoActive(d, "repo.0.tls_client_cert_key_wo", "repo.0.tls_client_cert_key_wo_version") {
+		resp.Repository.TlsClientCertKey = ""
+	} else if attr, ok := d.GetOk("repo.0.tls_client_cert_key"); ok {
 		resp.Repository.TlsClientCertKey = attr.(string)
 	}
-	if attr, ok := d.GetOk("repo.0.github_app_private_key"); ok {
+	if helpers.WoActive(d, "repo.0.github_app_private_key_wo", "repo.0.github_app_private_key_wo_version") {
+		resp.Repository.GithubAppPrivateKey = ""
+	} else if attr, ok := d.GetOk("repo.0.github_app_private_key"); ok {
 		resp.Repository.GithubAppPrivateKey = attr.(string)
 	}
 	if attr, ok := d.GetOk("repo.0.github_app_id"); ok {
@@ -562,27 +570,37 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 		d.MarkNewResource()
 		return nil
 	}
-	if attr, ok := d.GetOk("repo.0.password"); ok {
+	if helpers.WoActive(d, "repo.0.password_wo", "repo.0.password_wo_version") {
+		resp.Repository.Password = ""
+	} else if attr, ok := d.GetOk("repo.0.password"); ok {
 		if len(resp.Repository.Password) != 0 {
 			resp.Repository.Password = attr.(string)
 		}
 	}
-	if attr, ok := d.GetOk("repo.0.ssh_private_key"); ok {
+	if helpers.WoActive(d, "repo.0.ssh_private_key_wo", "repo.0.ssh_private_key_wo_version") {
+		resp.Repository.SshPrivateKey = ""
+	} else if attr, ok := d.GetOk("repo.0.ssh_private_key"); ok {
 		if len(resp.Repository.SshPrivateKey) != 0 {
 			resp.Repository.SshPrivateKey = attr.(string)
 		}
 	}
-	if attr, ok := d.GetOk("repo.0.tls_client_cert_data"); ok {
+	if helpers.WoActive(d, "repo.0.tls_client_cert_data_wo", "repo.0.tls_client_cert_data_wo_version") {
+		resp.Repository.TlsClientCertData = ""
+	} else if attr, ok := d.GetOk("repo.0.tls_client_cert_data"); ok {
 		if len(resp.Repository.TlsClientCertData) != 0 {
 			resp.Repository.TlsClientCertData = attr.(string)
 		}
 	}
-	if attr, ok := d.GetOk("repo.0.tls_client_cert_key"); ok {
+	if helpers.WoActive(d, "repo.0.tls_client_cert_key_wo", "repo.0.tls_client_cert_key_wo_version") {
+		resp.Repository.TlsClientCertKey = ""
+	} else if attr, ok := d.GetOk("repo.0.tls_client_cert_key"); ok {
 		if len(resp.Repository.TlsClientCertKey) != 0 {
 			resp.Repository.TlsClientCertKey = attr.(string)
 		}
 	}
-	if attr, ok := d.GetOk("repo.0.github_app_private_key"); ok {
+	if helpers.WoActive(d, "repo.0.github_app_private_key_wo", "repo.0.github_app_private_key_wo_version") {
+		resp.Repository.GithubAppPrivateKey = ""
+	} else if attr, ok := d.GetOk("repo.0.github_app_private_key"); ok {
 		if len(resp.Repository.GithubAppPrivateKey) != 0 {
 			resp.Repository.GithubAppPrivateKey = attr.(string)
 		}
@@ -642,19 +660,29 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 		return nil
 	}
 
-	if attr, ok := d.GetOk("repo.0.password"); ok {
+	if helpers.WoActive(d, "repo.0.password_wo", "repo.0.password_wo_version") {
+		resp.Repository.Password = ""
+	} else if attr, ok := d.GetOk("repo.0.password"); ok {
 		resp.Repository.Password = attr.(string)
 	}
-	if attr, ok := d.GetOk("repo.0.ssh_private_key"); ok {
+	if helpers.WoActive(d, "repo.0.ssh_private_key_wo", "repo.0.ssh_private_key_wo_version") {
+		resp.Repository.SshPrivateKey = ""
+	} else if attr, ok := d.GetOk("repo.0.ssh_private_key"); ok {
 		resp.Repository.SshPrivateKey = attr.(string)
 	}
-	if attr, ok := d.GetOk("repo.0.tls_client_cert_data"); ok {
+	if helpers.WoActive(d, "repo.0.tls_client_cert_data_wo", "repo.0.tls_client_cert_data_wo_version") {
+		resp.Repository.TlsClientCertData = ""
+	} else if attr, ok := d.GetOk("repo.0.tls_client_cert_data"); ok {
 		resp.Repository.TlsClientCertData = attr.(string)
 	}
-	if attr, ok := d.GetOk("repo.0.tls_client_cert_key"); ok {
+	if helpers.WoActive(d, "repo.0.tls_client_cert_key_wo", "repo.0.tls_client_cert_key_wo_version") {
+		resp.Repository.TlsClientCertKey = ""
+	} else if attr, ok := d.GetOk("repo.0.tls_client_cert_key"); ok {
 		resp.Repository.TlsClientCertKey = attr.(string)
 	}
-	if attr, ok := d.GetOk("repo.0.github_app_private_key"); ok {
+	if helpers.WoActive(d, "repo.0.github_app_private_key_wo", "repo.0.github_app_private_key_wo_version") {
+		resp.Repository.GithubAppPrivateKey = ""
+	} else if attr, ok := d.GetOk("repo.0.github_app_private_key"); ok {
 		resp.Repository.GithubAppPrivateKey = attr.(string)
 	}
 	if attr, ok := d.GetOk("repo.0.github_app_id"); ok {
@@ -893,14 +921,14 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 				repoObj.Username = repo["username"].(string)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("password_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoObj.Password = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "repo.0.password_wo"); ok {
+				repoObj.Password = val
 			} else if repo["password"] != nil {
 				repoObj.Password = repo["password"].(string)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("ssh_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoObj.SshPrivateKey = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "repo.0.ssh_private_key_wo"); ok {
+				repoObj.SshPrivateKey = val
 			} else if repo["ssh_private_key"] != nil {
 				repoObj.SshPrivateKey = repo["ssh_private_key"].(string)
 			}
@@ -915,14 +943,14 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 				repoObj.EnableLfs = repo["enable_lfs"].(bool)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("tls_client_cert_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoObj.TlsClientCertData = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "repo.0.tls_client_cert_data_wo"); ok {
+				repoObj.TlsClientCertData = val
 			} else if repo["tls_client_cert_data"] != nil {
 				repoObj.TlsClientCertData = repo["tls_client_cert_data"].(string)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("tls_client_cert_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoObj.TlsClientCertKey = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "repo.0.tls_client_cert_key_wo"); ok {
+				repoObj.TlsClientCertKey = val
 			} else if repo["tls_client_cert_key"] != nil {
 				repoObj.TlsClientCertKey = repo["tls_client_cert_key"].(string)
 			}
@@ -940,8 +968,8 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 				repoObj.EnableOCI = repo["enable_oci"].(bool)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("repo").IndexInt(0).GetAttr("github_app_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoObj.GithubAppPrivateKey = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "repo.0.github_app_private_key_wo"); ok {
+				repoObj.GithubAppPrivateKey = val
 			} else if repo["github_app_private_key"] != nil {
 				repoObj.GithubAppPrivateKey = repo["github_app_private_key"].(string)
 			}
@@ -973,21 +1001,38 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 // does not detect a spurious diff after apply. WriteOnly fields are always
 // null in state; their companion version integers must be explicitly kept.
 func preserveWoVersions(d *schema.ResourceData) {
+	repoRaw, ok := d.GetOk("repo")
+	if !ok {
+		return
+	}
+
+	repoList, ok := repoRaw.([]interface{})
+	if !ok || len(repoList) == 0 || repoList[0] == nil {
+		return
+	}
+	repoMap, ok := repoList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+
 	if v, ok := d.GetOk("repo.0.password_wo_version"); ok {
-		d.Set("repo.0.password_wo_version", v)
+		repoMap["password_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("repo.0.ssh_private_key_wo_version"); ok {
-		d.Set("repo.0.ssh_private_key_wo_version", v)
+		repoMap["ssh_private_key_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("repo.0.tls_client_cert_data_wo_version"); ok {
-		d.Set("repo.0.tls_client_cert_data_wo_version", v)
+		repoMap["tls_client_cert_data_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("repo.0.tls_client_cert_key_wo_version"); ok {
-		d.Set("repo.0.tls_client_cert_key_wo_version", v)
+		repoMap["tls_client_cert_key_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("repo.0.github_app_private_key_wo_version"); ok {
-		d.Set("repo.0.github_app_private_key_wo_version", v)
+		repoMap["github_app_private_key_wo_version"] = v.(int)
 	}
+
+	repoList[0] = repoMap
+	d.Set("repo", repoList)
 }
 
 func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Repository) {
@@ -1005,24 +1050,36 @@ func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Reposit
 		if len(repo.Repository.Username) > 0 {
 			repoO["username"] = repo.Repository.Username
 		}
-		if len(repo.Repository.Password) > 0 {
+		if helpers.WoActive(d, "repo.0.password_wo", "repo.0.password_wo_version") {
+			repoO["password"] = ""
+		} else if len(repo.Repository.Password) > 0 {
 			repoO["password"] = repo.Repository.Password
 		}
-		repoO["ssh_private_key"] = repo.Repository.SshPrivateKey
+		if helpers.WoActive(d, "repo.0.ssh_private_key_wo", "repo.0.ssh_private_key_wo_version") {
+			repoO["ssh_private_key"] = ""
+		} else {
+			repoO["ssh_private_key"] = repo.Repository.SshPrivateKey
+		}
 		repoO["insecure_ignore_host_key"] = repo.Repository.InsecureIgnoreHostKey
 		repoO["insecure"] = repo.Repository.Insecure
 		repoO["enable_lfs"] = repo.Repository.EnableLfs
-		if len(repo.Repository.TlsClientCertData) > 0 {
+		if helpers.WoActive(d, "repo.0.tls_client_cert_data_wo", "repo.0.tls_client_cert_data_wo_version") {
+			repoO["tls_client_cert_data"] = ""
+		} else if len(repo.Repository.TlsClientCertData) > 0 {
 			repoO["tls_client_cert_data"] = repo.Repository.TlsClientCertData
 		}
-		if len(repo.Repository.TlsClientCertKey) > 0 {
+		if helpers.WoActive(d, "repo.0.tls_client_cert_key_wo", "repo.0.tls_client_cert_key_wo_version") {
+			repoO["tls_client_cert_key"] = ""
+		} else if len(repo.Repository.TlsClientCertKey) > 0 {
 			repoO["tls_client_cert_key"] = repo.Repository.TlsClientCertKey
 		}
 		repoO["type_"] = repo.Repository.Type_
 		repoO["name"] = repo.Repository.Name
 		repoO["inherited_creds"] = repo.Repository.InheritedCreds
 		repoO["enable_oci"] = repo.Repository.EnableOCI
-		if len(repo.Repository.GithubAppPrivateKey) > 0 {
+		if helpers.WoActive(d, "repo.0.github_app_private_key_wo", "repo.0.github_app_private_key_wo_version") {
+			repoO["github_app_private_key"] = ""
+		} else if len(repo.Repository.GithubAppPrivateKey) > 0 {
 			repoO["github_app_private_key"] = repo.Repository.GithubAppPrivateKey
 		}
 		if len(repo.Repository.GithubAppID) > 0 {

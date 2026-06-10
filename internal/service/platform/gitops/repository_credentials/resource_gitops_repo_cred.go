@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	hcty "github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/antihax/optional"
@@ -281,27 +280,27 @@ func resourceGitopsRepoCredCreate(ctx context.Context, d *schema.ResourceData, m
 		d.MarkNewResource()
 		return nil
 	}
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("password_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.password_wo", "creds.0.password_wo_version") {
 		resp.RepoCreds.Password = ""
 	} else if attr, ok := d.GetOk("creds.0.password"); ok {
 		resp.RepoCreds.Password = attr.(string)
 	}
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("ssh_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.ssh_private_key_wo", "creds.0.ssh_private_key_wo_version") {
 		resp.RepoCreds.SshPrivateKey = ""
 	} else if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
 		resp.RepoCreds.SshPrivateKey = attr.(string)
 	}
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.tls_client_cert_data_wo", "creds.0.tls_client_cert_data_wo_version") {
 		resp.RepoCreds.TlsClientCertData = ""
 	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
 		resp.RepoCreds.TlsClientCertData = attr.(string)
 	}
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.tls_client_cert_key_wo", "creds.0.tls_client_cert_key_wo_version") {
 		resp.RepoCreds.TlsClientCertKey = ""
 	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
 		resp.RepoCreds.TlsClientCertKey = attr.(string)
 	}
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("github_app_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.github_app_private_key_wo", "creds.0.github_app_private_key_wo_version") {
 		resp.RepoCreds.GithubAppPrivateKey = ""
 	} else if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
 		resp.RepoCreds.GithubAppPrivateKey = attr.(string)
@@ -358,27 +357,27 @@ func resourceGitopsRepoCredUpdate(ctx context.Context, d *schema.ResourceData, m
 		return nil
 	}
 
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("password_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.password_wo", "creds.0.password_wo_version") {
 		resp.RepoCreds.Password = ""
 	} else if attr, ok := d.GetOk("creds.0.password"); ok {
 		resp.RepoCreds.Password = attr.(string)
 	}
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("ssh_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.ssh_private_key_wo", "creds.0.ssh_private_key_wo_version") {
 		resp.RepoCreds.SshPrivateKey = ""
 	} else if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
 		resp.RepoCreds.SshPrivateKey = attr.(string)
 	}
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.tls_client_cert_data_wo", "creds.0.tls_client_cert_data_wo_version") {
 		resp.RepoCreds.TlsClientCertData = ""
 	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
 		resp.RepoCreds.TlsClientCertData = attr.(string)
 	}
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.tls_client_cert_key_wo", "creds.0.tls_client_cert_key_wo_version") {
 		resp.RepoCreds.TlsClientCertKey = ""
 	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
 		resp.RepoCreds.TlsClientCertKey = attr.(string)
 	}
-	if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("github_app_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
+	if helpers.WoActive(d, "creds.0.github_app_private_key_wo", "creds.0.github_app_private_key_wo_version") {
 		resp.RepoCreds.GithubAppPrivateKey = ""
 	} else if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
 		resp.RepoCreds.GithubAppPrivateKey = attr.(string)
@@ -416,35 +415,35 @@ func resourceGitopsRepoCredRead(ctx context.Context, d *schema.ResourceData, met
 		return nil
 	}
 
-	if _, ok := d.GetOk("creds.0.password_wo_version"); ok {
+	if helpers.WoActive(d, "creds.0.password_wo", "creds.0.password_wo_version") {
 		resp.RepoCreds.Password = ""
 	} else if attr, ok := d.GetOk("creds.0.password"); ok {
 		if len(resp.RepoCreds.Password) != 0 {
 			resp.RepoCreds.Password = attr.(string)
 		}
 	}
-	if _, ok := d.GetOk("creds.0.ssh_private_key_wo_version"); ok {
+	if helpers.WoActive(d, "creds.0.ssh_private_key_wo", "creds.0.ssh_private_key_wo_version") {
 		resp.RepoCreds.SshPrivateKey = ""
 	} else if attr, ok := d.GetOk("creds.0.ssh_private_key"); ok {
 		if len(resp.RepoCreds.SshPrivateKey) != 0 {
 			resp.RepoCreds.SshPrivateKey = attr.(string)
 		}
 	}
-	if _, ok := d.GetOk("creds.0.tls_client_cert_data_wo_version"); ok {
+	if helpers.WoActive(d, "creds.0.tls_client_cert_data_wo", "creds.0.tls_client_cert_data_wo_version") {
 		resp.RepoCreds.TlsClientCertData = ""
 	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_data"); ok {
 		if len(resp.RepoCreds.TlsClientCertData) != 0 {
 			resp.RepoCreds.TlsClientCertData = attr.(string)
 		}
 	}
-	if _, ok := d.GetOk("creds.0.tls_client_cert_key_wo_version"); ok {
+	if helpers.WoActive(d, "creds.0.tls_client_cert_key_wo", "creds.0.tls_client_cert_key_wo_version") {
 		resp.RepoCreds.TlsClientCertKey = ""
 	} else if attr, ok := d.GetOk("creds.0.tls_client_cert_key"); ok {
 		if len(resp.RepoCreds.TlsClientCertKey) != 0 {
 			resp.RepoCreds.TlsClientCertKey = attr.(string)
 		}
 	}
-	if _, ok := d.GetOk("creds.0.github_app_private_key_wo_version"); ok {
+	if helpers.WoActive(d, "creds.0.github_app_private_key_wo", "creds.0.github_app_private_key_wo_version") {
 		resp.RepoCreds.GithubAppPrivateKey = ""
 	} else if attr, ok := d.GetOk("creds.0.github_app_private_key"); ok {
 		if len(resp.RepoCreds.GithubAppPrivateKey) != 0 {
@@ -495,11 +494,31 @@ func setGitopsRepositoriesCredential(d *schema.ResourceData, repoCred *nextgen.S
 		cred := map[string]interface{}{}
 		cred["url"] = repoCred.RepoCreds.Url
 		cred["username"] = repoCred.RepoCreds.Username
-		cred["password"] = repoCred.RepoCreds.Password
-		cred["ssh_private_key"] = repoCred.RepoCreds.SshPrivateKey
-		cred["tls_client_cert_data"] = repoCred.RepoCreds.TlsClientCertData
-		cred["tls_client_cert_key"] = repoCred.RepoCreds.TlsClientCertKey
-		cred["github_app_private_key"] = repoCred.RepoCreds.GithubAppPrivateKey
+		if helpers.WoActive(d, "creds.0.password_wo", "creds.0.password_wo_version") {
+			cred["password"] = ""
+		} else {
+			cred["password"] = repoCred.RepoCreds.Password
+		}
+		if helpers.WoActive(d, "creds.0.ssh_private_key_wo", "creds.0.ssh_private_key_wo_version") {
+			cred["ssh_private_key"] = ""
+		} else {
+			cred["ssh_private_key"] = repoCred.RepoCreds.SshPrivateKey
+		}
+		if helpers.WoActive(d, "creds.0.tls_client_cert_data_wo", "creds.0.tls_client_cert_data_wo_version") {
+			cred["tls_client_cert_data"] = ""
+		} else {
+			cred["tls_client_cert_data"] = repoCred.RepoCreds.TlsClientCertData
+		}
+		if helpers.WoActive(d, "creds.0.tls_client_cert_key_wo", "creds.0.tls_client_cert_key_wo_version") {
+			cred["tls_client_cert_key"] = ""
+		} else {
+			cred["tls_client_cert_key"] = repoCred.RepoCreds.TlsClientCertKey
+		}
+		if helpers.WoActive(d, "creds.0.github_app_private_key_wo", "creds.0.github_app_private_key_wo_version") {
+			cred["github_app_private_key"] = ""
+		} else {
+			cred["github_app_private_key"] = repoCred.RepoCreds.GithubAppPrivateKey
+		}
 		cred["github_app_id"] = repoCred.RepoCreds.GithubAppID
 		cred["github_app_installation_id"] = repoCred.RepoCreds.GithubAppInstallationID
 		cred["github_app_enterprise_base_url"] = repoCred.RepoCreds.GithubAppEnterpriseBaseUrl
@@ -562,32 +581,32 @@ func buildRepoCred(d *schema.ResourceData) *nextgen.HrepocredsRepoCreds {
 				repoCred.Username = requestCreds["username"].(string)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("password_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoCred.Password = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "creds.0.password_wo"); ok {
+				repoCred.Password = val
 			} else if requestCreds["password"] != nil {
 				repoCred.Password = requestCreds["password"].(string)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("ssh_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoCred.SshPrivateKey = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "creds.0.ssh_private_key_wo"); ok {
+				repoCred.SshPrivateKey = val
 			} else if requestCreds["ssh_private_key"] != nil {
 				repoCred.SshPrivateKey = requestCreds["ssh_private_key"].(string)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_data_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoCred.TlsClientCertData = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "creds.0.tls_client_cert_data_wo"); ok {
+				repoCred.TlsClientCertData = val
 			} else if requestCreds["tls_client_cert_data"] != nil {
 				repoCred.TlsClientCertData = requestCreds["tls_client_cert_data"].(string)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("tls_client_cert_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoCred.TlsClientCertKey = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "creds.0.tls_client_cert_key_wo"); ok {
+				repoCred.TlsClientCertKey = val
 			} else if requestCreds["tls_client_cert_key"] != nil {
 				repoCred.TlsClientCertKey = requestCreds["tls_client_cert_key"].(string)
 			}
 
-			if woVal, diags := d.GetRawConfigAt(hcty.GetAttrPath("creds").IndexInt(0).GetAttr("github_app_private_key_wo")); !diags.HasError() && woVal.IsKnown() && !woVal.IsNull() {
-				repoCred.GithubAppPrivateKey = woVal.AsString()
+			if val, ok := helpers.WoStringValue(d, "creds.0.github_app_private_key_wo"); ok {
+				repoCred.GithubAppPrivateKey = val
 			} else if requestCreds["github_app_private_key"] != nil {
 				repoCred.GithubAppPrivateKey = requestCreds["github_app_private_key"].(string)
 			}
@@ -619,19 +638,36 @@ func buildRepoCred(d *schema.ResourceData) *nextgen.HrepocredsRepoCreds {
 }
 
 func preserveRepoCredWoVersions(d *schema.ResourceData) {
+	credsRaw, ok := d.GetOk("creds")
+	if !ok {
+		return
+	}
+
+	credsList, ok := credsRaw.([]interface{})
+	if !ok || len(credsList) == 0 || credsList[0] == nil {
+		return
+	}
+	credMap, ok := credsList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+
 	if v, ok := d.GetOk("creds.0.password_wo_version"); ok {
-		d.Set("creds.0.password_wo_version", v)
+		credMap["password_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("creds.0.ssh_private_key_wo_version"); ok {
-		d.Set("creds.0.ssh_private_key_wo_version", v)
+		credMap["ssh_private_key_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("creds.0.tls_client_cert_data_wo_version"); ok {
-		d.Set("creds.0.tls_client_cert_data_wo_version", v)
+		credMap["tls_client_cert_data_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("creds.0.tls_client_cert_key_wo_version"); ok {
-		d.Set("creds.0.tls_client_cert_key_wo_version", v)
+		credMap["tls_client_cert_key_wo_version"] = v.(int)
 	}
 	if v, ok := d.GetOk("creds.0.github_app_private_key_wo_version"); ok {
-		d.Set("creds.0.github_app_private_key_wo_version", v)
+		credMap["github_app_private_key_wo_version"] = v.(int)
 	}
+
+	credsList[0] = credMap
+	d.Set("creds", credsList)
 }
