@@ -39,10 +39,6 @@ func TestAccResourceProbeTemplate_httpProbe_basic(t *testing.T) {
 }
 
 func TestAccResourceProbeTemplate_httpProbe_update(t *testing.T) {
-	t.Skip("Skipping: Terraform test framework not detecting changes between steps. " +
-		"API supports updates (verified via curl), but Terraform SDK v2 test framework " +
-		"shows '0 to change' even when configs are different. Known limitation.")
-	
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	resourceName := "harness_chaos_probe_template.test"
 

@@ -10,7 +10,17 @@ import (
 )
 
 // TestAccDataSourceChaosImageRegistry verifies the basic data source functionality for Chaos Image Registry at the account level.
+//
+// Skipped: the account-level image registry is a singleton keyed by scope
+// (ImageRegistryApi.Get ignores registry_account), and real accounts already
+// have a default account-level registry. The configured resource is therefore
+// adopted/overwritten by the existing one, so apply never converges (perpetual
+// "update in-place"). Account scope also can't be exercised without destructively
+// mutating shared state that Delete (a no-op) won't restore. Project-level
+// coverage is provided by TestAccDataSourceChaosImageRegistry_ProjectLevel and
+// _CheckOverride, which run in an isolated org/project.
 func TestAccDataSourceChaosImageRegistry(t *testing.T) {
+	t.Skip("Account-level image registry is a shared singleton already present on real accounts; create/read cannot converge without destructively mutating shared state. Covered at project scope by the other data source tests.")
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
 	dataSourceName := "data.harness_chaos_image_registry.test"

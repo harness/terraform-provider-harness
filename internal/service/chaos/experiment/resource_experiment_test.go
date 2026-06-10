@@ -2,6 +2,7 @@ package experiment_test
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -59,6 +60,40 @@ func TestAccResourceChaosExperiment_basic(t *testing.T) {
 }
 
 func testAccResourceChaosExperiment_basic(name string) string {
+	return testAccResourceChaosExperiment_config(name, "Test experiment from template", `["test", "terraform"]`)
+}
+
+// TestAccResourceChaosExperiment_updateNotSupported verifies that in-place updates
+// to a template-based experiment are rejected with the documented error. Experiments
+// created from templates do not support in-place updates (name/description/tags); the
+// resource's Update returns an error instructing recreation instead.
+func TestAccResourceChaosExperiment_updateNotSupported(t *testing.T) {
+	// Use a short name to stay under the 47 char experiment identity limit.
+	name := fmt.Sprintf("upd_%s", utils.RandStringBytes(5))
+	resourceName := "harness_chaos_experiment.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceChaosExperiment_config(name, "Initial description", `["test", "terraform"]`),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "Initial description"),
+					resource.TestCheckResourceAttrSet(resourceName, "experiment_id"),
+				),
+			},
+			{
+				// Changing description (a non-ForceNew field) triggers an in-place
+				// update, which the resource rejects by design.
+				Config:      testAccResourceChaosExperiment_config(name, "Updated description", `["test", "terraform"]`),
+				ExpectError: regexp.MustCompile(`cannot be updated directly`),
+			},
+		},
+	})
+}
+
+func testAccResourceChaosExperiment_config(name, description, tags string) string {
 	return fmt.Sprintf(`
 resource "harness_platform_organization" "test" {
 	identifier = "%[1]s"
@@ -166,12 +201,12 @@ resource "harness_chaos_experiment" "test" {
 	name              = "%[1]s"
 	# Correct format: environment_id/infra_id
 	infra_ref         = "${harness_platform_environment.test.id}/${harness_chaos_infrastructure_v2.test.infra_id}"
-	description       = "Test experiment from template"
+	description       = "%[2]s"
 	import_type       = "REFERENCE"
 
-	tags = ["test", "terraform"]
+	tags = %[3]s
 }
-`, name)
+`, name, description, tags)
 }
 
 func TestAccResourceChaosExperiment_localImport(t *testing.T) {

@@ -767,9 +767,16 @@ func expandImageRegistry(in []interface{}, d *schema.ResourceData, accountID str
 		log.Printf("[WARN] image_registry not configured, environment_id is not set in the configuration")
 	}
 
-	// Handle custom images
+	// Handle custom images. The infrastructure update handler dereferences
+	// request.CustomImages without a nil check (hce-saas
+	// pkg/imageregistry/repository.go), so a nil value causes a 500
+	// "error occurred while updating the infrastructure". Always send a
+	// non-nil struct, mirroring the standalone harness_chaos_image_registry fix.
 	if v, ok := m["custom_images"].([]interface{}); ok && len(v) > 0 {
 		reg.CustomImages = expandCustomImages(v)
+	}
+	if reg.CustomImages == nil {
+		reg.CustomImages = &chaos.ImageRegistryCustomImagesRequest{}
 	}
 
 	// Handle identifier - use the one from registry config or create from infrastructure details
