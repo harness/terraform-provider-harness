@@ -702,12 +702,14 @@ func getCodeClient(d *schema.ResourceData, version string) *code.APIClient {
 }
 
 func getChaosClient(d *schema.ResourceData, version string) *chaos.APIClient {
+	cfg := chaos.NewConfiguration()
 	client := chaos.NewAPIClient(&chaos.Configuration{
 		AccountId:     d.Get("account_id").(string),
 		BasePath:      d.Get("endpoint").(string) + "/chaos/manager/api", // check if this can be taken from sdk
 		ApiKey:        d.Get("platform_api_key").(string),
 		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
 		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)},
+		HTTPClient:    getHttpClient(cfg.Logger).StandardClient(),
 	})
 	return client
 }
