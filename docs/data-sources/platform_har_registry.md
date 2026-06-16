@@ -41,6 +41,7 @@ data "harness_platform_har_registry" "test" {
 
 - `created_at` (String) Creation timestamp
 - `id` (String) The ID of this resource.
+- `is_public` (Boolean) Whether the registry is public. When true, the registry is publicly accessible without authentication.
 - `url` (String) URL of the registry
 
 <a id="nestedblock--config"></a>

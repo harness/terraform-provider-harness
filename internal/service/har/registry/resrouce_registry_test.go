@@ -70,10 +70,55 @@ func TestAccResourceVirtualDockerRegistry(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
 					resource.TestCheckResourceAttr(resourceName, "parent_ref", accountId),
 					resource.TestCheckResourceAttr(resourceName, "space_ref", accountId),
+					// is_public defaults to false (private)
+					resource.TestCheckResourceAttr(resourceName, "is_public", "false"),
 					// Validate computed fields
 					resource.TestCheckResourceAttrSet(resourceName, "url"),
 					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests creating a public virtual Docker registry at account level with import
+func TestAccResourcePublicVirtualDockerRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_pub_docker_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourcePublicVirtualDockerRegistry(id, accountId, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "DOCKER"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "is_public", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				// Toggle back to private
+				Config: testAccResourcePublicVirtualDockerRegistry(id, accountId, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "is_public", "false"),
 				),
 			},
 			{
@@ -275,6 +320,24 @@ func testAccResourceVirtualDockerRegistry(id string, accId string) string {
    parent_ref = "%[2]s"
  }
 `, id, accId)
+}
+
+// Generates Terraform config for a public/private virtual Docker registry at account level
+func testAccResourcePublicVirtualDockerRegistry(id string, accId string, isPublic bool) string {
+	return fmt.Sprintf(`
+
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+   is_public    = %[3]t
+
+   config {
+    type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, isPublic)
 }
 
 // Generates Terraform config for a virtual Docker registry at organization level
@@ -1939,6 +2002,53 @@ func TestAccResourceUpstreamNpmRegistryFirewallUpdate(t *testing.T) {
 	})
 }
 
+// Tests the Progress Software scenario: a public upstream NPM proxy registry with dependency firewall enabled.
+// Verifies is_public works alongside firewall_mode on an UPSTREAM NPM registry, and can be toggled to private.
+func TestAccResourceUpstreamNpmRegistryPublicFirewall(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_pub_npm_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamNpmRegistryPublicFirewall(id, accountId, true, "ENABLED"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "NPM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "NpmJs"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
+					resource.TestCheckResourceAttr(resourceName, "is_public", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				// Toggle to private, keep firewall enabled
+				Config: testAccResourceUpstreamNpmRegistryPublicFirewall(id, accountId, false, "ENABLED"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "is_public", "false"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 // Tests that firewall_mode is rejected for DOCKER upstream registries
 func TestAccResourceUpstreamDockerRegistryFirewallRejected(t *testing.T) {
 	id := fmt.Sprintf("tfauto_up_fw_dk_%s", randAlphanumeric(5))
@@ -2214,6 +2324,26 @@ func testAccResourceUpstreamNpmRegistryFirewall(id string, accId string, firewal
    parent_ref = "%[2]s"
  }
 `, id, accId, firewallMode)
+}
+
+// Generates Terraform config for a public/private upstream NPM proxy registry with a firewall_mode (Progress Software scenario)
+func testAccResourceUpstreamNpmRegistryPublicFirewall(id string, accId string, isPublic bool, firewallMode string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "NPM"
+   is_public    = %[3]t
+
+   config {
+    type          = "UPSTREAM"
+    auth_type     = "Anonymous"
+    source        = "NpmJs"
+    firewall_mode = "%[4]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, isPublic, firewallMode)
 }
 
 // Generates Terraform config for upstream DOCKER registry with firewall_mode (should be rejected)

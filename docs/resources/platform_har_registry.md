@@ -66,6 +66,7 @@ resource "harness_platform_har_registry" "upstream_registry" {
 - `blocked_pattern` (List of String) Blocked artifact patterns
 - `config` (Block List, Max: 1) Configuration for the registry (see [below for nested schema](#nestedblock--config))
 - `description` (String) Description of the registry
+- `is_public` (Boolean) Whether the registry is public. When set to true, the registry is publicly accessible without authentication. Defaults to false (private).
 - `metadata` (Map of String) Custom metadata key-value pairs attached to the registry. Keys and values must match the pattern [letters, numbers, _ . / = + - @] (no spaces or other special characters). Keys are case-sensitive. Maximum 49 entries allowed.
 
 ### Read-Only
