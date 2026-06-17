@@ -21,28 +21,28 @@ func newRepoTestResourceData(t *testing.T, values map[string]interface{}) *schem
 
 func baseRepoBlock(overrides map[string]interface{}) []interface{} {
 	base := map[string]interface{}{
-		"repo":                          "https://github.com/example/repo",
-		"username":                      "",
-		"password":                      "",
-		"ssh_private_key":               "",
-		"insecure_ignore_host_key":      false,
-		"insecure":                      false,
-		"enable_lfs":                    false,
-		"tls_client_cert_data":          "",
-		"tls_client_cert_key":           "",
-		"type_":                         "git",
-		"name":                          "",
-		"inherited_creds":               false,
-		"enable_oci":                    false,
-		"github_app_private_key":        "",
-		"github_app_id":                 "",
-		"github_app_installation_id":    "",
-		"github_app_enterprise_base_url": "",
-		"proxy":                         "",
-		"project":                       "",
-		"connection_type":               "HTTPS_ANONYMOUS",
-		"password_wo_version":           0,
-		"ssh_private_key_wo_version":    0,
+		"repo":                              "https://github.com/example/repo",
+		"username":                          "",
+		"password":                          "",
+		"ssh_private_key":                   "",
+		"insecure_ignore_host_key":          false,
+		"insecure":                          false,
+		"enable_lfs":                        false,
+		"tls_client_cert_data":              "",
+		"tls_client_cert_key":               "",
+		"type_":                             "git",
+		"name":                              "",
+		"inherited_creds":                   false,
+		"enable_oci":                        false,
+		"github_app_private_key":            "",
+		"github_app_id":                     "",
+		"github_app_installation_id":        "",
+		"github_app_enterprise_base_url":    "",
+		"proxy":                             "",
+		"project":                           "",
+		"connection_type":                   "HTTPS_ANONYMOUS",
+		"password_wo_version":               0,
+		"ssh_private_key_wo_version":        0,
 		"github_app_private_key_wo_version": 0,
 	}
 	for k, v := range overrides {
@@ -204,10 +204,10 @@ func TestRepoSchema_WoConflictsWithLegacy(t *testing.T) {
 	repoElem := r.Schema["repo"].Elem.(*schema.Resource)
 
 	pairs := map[string]string{
-		"password_wo":            "repo.0.password",
-		"ssh_private_key_wo":     "repo.0.ssh_private_key",
-		"tls_client_cert_data_wo": "repo.0.tls_client_cert_data",
-		"tls_client_cert_key_wo": "repo.0.tls_client_cert_key",
+		"password_wo":               "repo.0.password",
+		"ssh_private_key_wo":        "repo.0.ssh_private_key",
+		"tls_client_cert_data_wo":   "repo.0.tls_client_cert_data",
+		"tls_client_cert_key_wo":    "repo.0.tls_client_cert_key",
 		"github_app_private_key_wo": "repo.0.github_app_private_key",
 	}
 	for woField, legacyPath := range pairs {
@@ -272,11 +272,11 @@ func TestSetRepositoryDetails_AllWoVersionsPreserved(t *testing.T) {
 		"identifier": "test-repo",
 		"agent_id":   "test-agent",
 		"repo": baseRepoBlock(map[string]interface{}{
-			"connection_type":                  "HTTPS",
-			"password_wo_version":              1,
-			"ssh_private_key_wo_version":       2,
-			"tls_client_cert_data_wo_version":  3,
-			"tls_client_cert_key_wo_version":   4,
+			"connection_type":                   "HTTPS",
+			"password_wo_version":               1,
+			"ssh_private_key_wo_version":        2,
+			"tls_client_cert_data_wo_version":   3,
+			"tls_client_cert_key_wo_version":    4,
 			"github_app_private_key_wo_version": 5,
 		}),
 	})
@@ -302,6 +302,47 @@ func TestSetRepositoryDetails_AllWoVersionsPreserved(t *testing.T) {
 	}
 }
 
+func TestSetRepositoryDetails_MasksSensitiveWhenWoVersionSet(t *testing.T) {
+	d := newRepoTestResourceData(t, map[string]interface{}{
+		"identifier": "test-repo",
+		"agent_id":   "test-agent",
+		"repo": baseRepoBlock(map[string]interface{}{
+			"connection_type":                   "HTTPS",
+			"password_wo_version":               1,
+			"ssh_private_key_wo_version":        2,
+			"tls_client_cert_data_wo_version":   3,
+			"tls_client_cert_key_wo_version":    4,
+			"github_app_private_key_wo_version": 5,
+		}),
+	})
+
+	resp := fakeServicev1Repository("test-repo", nextgen.RepositoriesRepository{
+		Repo:                "https://github.com/example/repo",
+		ConnectionType:      "HTTPS",
+		Password:            "server-password",
+		SshPrivateKey:       "server-ssh-key",
+		TlsClientCertData:   "server-cert",
+		TlsClientCertKey:    "server-key",
+		GithubAppPrivateKey: "server-gh-app-key",
+	})
+
+	setRepositoryDetails(d, &resp)
+
+	cases := []string{
+		"repo.0.password",
+		"repo.0.ssh_private_key",
+		"repo.0.tls_client_cert_data",
+		"repo.0.tls_client_cert_key",
+		"repo.0.github_app_private_key",
+	}
+	for _, field := range cases {
+		got := d.Get(field).(string)
+		if got != "" {
+			t.Fatalf("expected %s to be masked, got %q", field, got)
+		}
+	}
+}
+
 // TestPreserveWoVersions_AllFieldsRoundtrip verifies that preserveWoVersions re-writes all 5
 // _wo_version fields, including the two tls fields that were missing before the fix.
 func TestPreserveWoVersions_AllFieldsRoundtrip(t *testing.T) {
@@ -309,11 +350,11 @@ func TestPreserveWoVersions_AllFieldsRoundtrip(t *testing.T) {
 		"identifier": "test-repo",
 		"agent_id":   "test-agent",
 		"repo": baseRepoBlock(map[string]interface{}{
-			"connection_type":                  "HTTPS",
-			"password_wo_version":              6,
-			"ssh_private_key_wo_version":       7,
-			"tls_client_cert_data_wo_version":  8,
-			"tls_client_cert_key_wo_version":   9,
+			"connection_type":                   "HTTPS",
+			"password_wo_version":               6,
+			"ssh_private_key_wo_version":        7,
+			"tls_client_cert_data_wo_version":   8,
+			"tls_client_cert_key_wo_version":    9,
 			"github_app_private_key_wo_version": 10,
 		}),
 	})

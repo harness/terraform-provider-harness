@@ -486,6 +486,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -614,6 +615,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -889,6 +891,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -1017,6 +1020,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -1298,6 +1302,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -1426,6 +1431,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -1683,6 +1689,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -1811,6 +1818,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -2117,6 +2125,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -2245,6 +2254,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -2520,6 +2530,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -2648,6 +2659,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -2929,6 +2941,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -3057,6 +3070,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -3314,6 +3328,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -3442,6 +3457,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -3746,6 +3762,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -3874,6 +3891,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -4149,6 +4167,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -4277,6 +4296,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -4558,6 +4578,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -4686,6 +4707,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -4943,6 +4965,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -5071,6 +5094,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -5443,6 +5467,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -5571,6 +5596,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -6006,6 +6032,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -6134,6 +6161,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -6400,6 +6428,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -6528,6 +6557,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -6833,6 +6863,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -6961,6 +6992,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -7236,6 +7268,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -7364,6 +7397,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -7645,6 +7679,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -7773,6 +7808,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -8030,6 +8066,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -8158,6 +8195,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -8530,6 +8568,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -8658,6 +8697,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -9093,6 +9133,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -9221,6 +9262,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -9487,6 +9529,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -9615,6 +9658,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -9987,6 +10031,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -10115,6 +10160,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -10550,6 +10596,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -10678,6 +10725,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -10944,6 +10992,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -11072,6 +11121,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -11379,6 +11429,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -11507,6 +11558,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -11782,6 +11834,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -11910,6 +11963,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -12191,6 +12245,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -12319,6 +12374,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -12576,6 +12632,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -12704,6 +12761,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -13008,6 +13066,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -13136,6 +13195,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -13411,6 +13471,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -13539,6 +13600,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -13820,6 +13882,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -13948,6 +14011,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -14205,6 +14269,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -14333,6 +14398,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -14705,6 +14771,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -14833,6 +14900,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -15268,6 +15336,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -15396,6 +15465,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -15662,6 +15732,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -15790,6 +15861,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -16095,6 +16167,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -16223,6 +16296,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -16498,6 +16572,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -16626,6 +16701,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -16907,6 +16983,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -17035,6 +17112,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -17292,6 +17370,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -17420,6 +17499,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -17792,6 +17872,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -17920,6 +18001,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -18355,6 +18437,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -18483,6 +18566,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -18749,6 +18833,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -18877,6 +18962,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -19249,6 +19335,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -19377,6 +19464,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -19812,6 +19900,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -19940,6 +20029,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -20206,6 +20296,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -20334,6 +20425,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -20706,6 +20798,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -20834,6 +20927,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -21269,6 +21363,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -21397,6 +21492,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -21650,6 +21746,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 
@@ -21803,6 +21900,7 @@ Optional:
 - `images` (List of String) List of Kustomize image override specifications.
 - `name_prefix` (String) Prefix appended to resources for Kustomize apps.
 - `name_suffix` (String) Suffix appended to resources for Kustomize apps.
+- `namespace` (String) Override the namespace of the Kustomize application.
 - `version` (String) Version of Kustomize to use for rendering manifests.
 
 

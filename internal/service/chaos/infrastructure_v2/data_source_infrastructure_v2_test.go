@@ -63,7 +63,11 @@ func TestAccDataSourceChaosInfrastructureV2_basic(t *testing.T) {
 
 // TestAccDataSourceChaosInfrastructureV2_WithAllOptions verifies the data source with all possible options set.
 func TestAccDataSourceChaosInfrastructureV2_WithAllOptions(t *testing.T) {
-	id := "textwithalloptions"
+	// CLUSTER scope renders an "event-watcher-<infra_id>" Helm release whose name must
+	// match ^[a-z0-9]([-a-z0-9]*[a-z0-9])?...$ and be <= 53 chars. Since infra_id is also
+	// a Harness identifier (no dashes allowed), use a short all-lowercase-alphanumeric id
+	// that is valid for both.
+	id := fmt.Sprintf("tfchaosopts%s", strings.ToLower(strings.ReplaceAll(utils.RandStringBytes(8), "_", "x")))
 	rName := sanitizeK8sResourceName(id)
 	resourceName := "data.harness_chaos_infrastructure_v2.test"
 

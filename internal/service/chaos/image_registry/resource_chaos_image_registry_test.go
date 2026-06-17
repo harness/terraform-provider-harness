@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-// TestAccResourceChaosImageRegistry verifies create, read, and import functionality for the Chaos Image Registry resource.
+// TestAccResourceChaosImageRegistry verifies create and read functionality for the Chaos Image Registry resource.
 func TestAccResourceChaosImageRegistry(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	rName := id
@@ -63,6 +63,47 @@ func TestAccResourceChaosImageRegistry_Update(t *testing.T) {
 			},
 		},
 	})
+}
+
+// TestAccResourceChaosImageRegistry_Import verifies import functionality for the Chaos Image Registry resource.
+func TestAccResourceChaosImageRegistry_Import(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	rName := id
+	resourceName := "harness_chaos_image_registry.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccChaosImageRegistryDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceChaosImageRegistryConfigBasic(rName, id, "docker.io", "test-account"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "registry_server", "docker.io"),
+					resource.TestCheckResourceAttr(resourceName, "registry_account", "test-account"),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: testAccChaosImageRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// testAccChaosImageRegistryImportStateIdFunc builds the import ID (org_id/project_id)
+// from the resource state for the image registry import test.
+func testAccChaosImageRegistryImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("resource not found: %s", resourceName)
+		}
+		return fmt.Sprintf("%s/%s", rs.Primary.Attributes["org_id"], rs.Primary.Attributes["project_id"]), nil
+	}
 }
 
 // TestAccResourceChaosImageRegistry_WithCustomImages verifies the resource with custom images enabled.

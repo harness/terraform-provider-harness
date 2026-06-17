@@ -124,7 +124,7 @@ resource "harness_platform_workspace" "example" {
 Required:
 
 - `connector_ref` (String) Connector Ref is the reference to the connector
-- `type` (String) Type is the connector type of the connector. Supported types: aws, azure, gcp
+- `type` (String) Type is the connector type of the connector. Supported types: aws, azure, gcp, vault
 
 
 <a id="nestedblock--environment_variable"></a>

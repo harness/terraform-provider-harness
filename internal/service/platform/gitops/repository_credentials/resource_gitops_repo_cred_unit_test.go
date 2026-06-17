@@ -229,7 +229,7 @@ func TestSetGitopsRepositoriesCredential_WoVersionsPreservedAfterSet(t *testing.
 	})
 
 	resp := fakeRepoCred("test-cred", nextgen.HrepocredsRepoCreds{
-		Url:  "https://github.com/example",
+		Url:   "https://github.com/example",
 		Type_: "git",
 	})
 	setGitopsRepositoriesCredential(d, &resp)
@@ -245,6 +245,46 @@ func TestSetGitopsRepositoriesCredential_WoVersionsPreservedAfterSet(t *testing.
 		got, ok := d.GetOk(field)
 		if !ok || got.(int) != want {
 			t.Errorf("field %q: want %d after setGitopsRepositoriesCredential, got %v (ok=%v)", field, want, got, ok)
+		}
+	}
+}
+
+func TestSetGitopsRepositoriesCredential_MasksSensitiveWhenWoVersionSet(t *testing.T) {
+	d := newRepoCredTestResourceData(t, map[string]interface{}{
+		"identifier": "test-cred",
+		"agent_id":   "test-agent",
+		"creds": baseCredsBlock(map[string]interface{}{
+			"password_wo_version":               1,
+			"ssh_private_key_wo_version":        2,
+			"tls_client_cert_data_wo_version":   3,
+			"tls_client_cert_key_wo_version":    4,
+			"github_app_private_key_wo_version": 5,
+		}),
+	})
+
+	resp := fakeRepoCred("test-cred", nextgen.HrepocredsRepoCreds{
+		Url:                 "https://github.com/example",
+		Type_:               "git",
+		Password:            "server-password",
+		SshPrivateKey:       "server-ssh-key",
+		TlsClientCertData:   "server-cert",
+		TlsClientCertKey:    "server-key",
+		GithubAppPrivateKey: "server-gh-app-key",
+	})
+
+	setGitopsRepositoriesCredential(d, &resp)
+
+	cases := []string{
+		"creds.0.password",
+		"creds.0.ssh_private_key",
+		"creds.0.tls_client_cert_data",
+		"creds.0.tls_client_cert_key",
+		"creds.0.github_app_private_key",
+	}
+	for _, field := range cases {
+		got := d.Get(field).(string)
+		if got != "" {
+			t.Fatalf("expected %s to be masked, got %q", field, got)
 		}
 	}
 }

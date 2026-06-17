@@ -33,6 +33,7 @@ import (
 	chaos_infrastructure_v2 "github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure_v2"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/probe_template"
 	chaos_security_governance "github.com/harness/terraform-provider-harness/internal/service/chaos/security_governance"
+	chaos_security_governance_v3 "github.com/harness/terraform-provider-harness/internal/service/chaos/security_governance_v3"
 	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/dashboards"
@@ -382,6 +383,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_experiment":                            experiment.DataSourceChaosExperiment(),
 				"harness_chaos_security_governance_condition":         chaos_security_governance.DataSourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":              chaos_security_governance.DataSourceChaosSecurityGovernanceRule(),
+				"harness_chaos_security_governance_condition_v3":      chaos_security_governance_v3.DataSourceChaosSecurityGovernanceConditionV3(),
+				"harness_chaos_security_governance_rule_v3":           chaos_security_governance_v3.DataSourceChaosSecurityGovernanceRuleV3(),
 				"harness_service_discovery_agent":                     service_discovery_agent.DataSourceServiceDiscoveryAgent(),
 				"harness_service_discovery_setting":                   service_discovery_setting.DataSourceSetting(),
 				"harness_platform_har_registry":                       har_registry.DataSourceRegistry(),
@@ -595,6 +598,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_experiment":                               experiment.ResourceChaosExperiment(),
 				"harness_chaos_security_governance_condition":            chaos_security_governance.ResourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":                 chaos_security_governance.ResourceChaosSecurityGovernanceRule(),
+				"harness_chaos_security_governance_condition_v3":         chaos_security_governance_v3.ResourceChaosSecurityGovernanceConditionV3(),
+				"harness_chaos_security_governance_rule_v3":              chaos_security_governance_v3.ResourceChaosSecurityGovernanceRuleV3(),
 				"harness_service_discovery_agent":                        service_discovery_agent.ResourceServiceDiscoveryAgent(),
 				"harness_service_discovery_setting":                      service_discovery_setting.ResourceSetting(),
 				"harness_platform_har_registry":                          har_registry.ResourceRegistry(),

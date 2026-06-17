@@ -324,17 +324,41 @@ func TestSetClusterDetails_AllWoVersionsPreserved(t *testing.T) {
 	setClusterDetails(d, &resp)
 
 	cases := map[string]int{
-		"request.0.cluster.0.config.0.password_wo_version":                            1,
-		"request.0.cluster.0.config.0.bearer_token_wo_version":                        2,
-		"request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version":       3,
-		"request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version":        4,
-		"request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version":         5,
+		"request.0.cluster.0.config.0.password_wo_version":                      1,
+		"request.0.cluster.0.config.0.bearer_token_wo_version":                  2,
+		"request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version": 3,
+		"request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version":  4,
+		"request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version":   5,
 	}
 	for field, want := range cases {
 		got, ok := d.GetOk(field)
 		if !ok || got.(int) != want {
 			t.Errorf("field %q: want %d after setClusterDetails, got %v (ok=%v)", field, want, got, ok)
 		}
+	}
+}
+
+// TestSetClusterDetails_BearerTokenMaskedWhenWoVersion ensures bearer_token is not
+// rehydrated into state when bearer_token_wo(_version) mode is active.
+func TestSetClusterDetails_BearerTokenMaskedWhenWoVersion(t *testing.T) {
+	d := newTestResourceData(t, map[string]interface{}{
+		"identifier": "test-cluster",
+		"agent_id":   "test-agent",
+		"request": baseClusterRequestBlock(map[string]interface{}{
+			"cluster_connection_type": "SERVICE_ACCOUNT",
+			"bearer_token_wo_version": 1,
+			"bearer_token":            "",
+		}),
+	})
+
+	resp := fakeServicev1Cluster("test-cluster")
+	resp.Cluster.Config.BearerToken = "server-bearer-token"
+
+	setClusterDetails(d, &resp)
+
+	got := d.Get("request.0.cluster.0.config.0.bearer_token").(string)
+	if got != "" {
+		t.Fatalf("expected bearer_token to remain masked when bearer_token_wo_version is set, got %q", got)
 	}
 }
 
@@ -366,16 +390,35 @@ func TestPreserveClusterWoVersions_AllFieldsRoundtrip(t *testing.T) {
 	preserveClusterWoVersions(d)
 
 	cases := map[string]int{
-		"request.0.cluster.0.config.0.password_wo_version":                            6,
-		"request.0.cluster.0.config.0.bearer_token_wo_version":                        7,
-		"request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version":       8,
-		"request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version":        9,
-		"request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version":         10,
+		"request.0.cluster.0.config.0.password_wo_version":                      6,
+		"request.0.cluster.0.config.0.bearer_token_wo_version":                  7,
+		"request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version": 8,
+		"request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version":  9,
+		"request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version":   10,
 	}
 	for field, want := range cases {
 		got, ok := d.GetOk(field)
 		if !ok || got.(int) != want {
 			t.Errorf("field %q: want %d after preserveClusterWoVersions, got %v (ok=%v)", field, want, got, ok)
 		}
+	}
+}
+
+// TestClusterSchema_PasswordIsComputed verifies password has Computed=true so that legacy
+// customers whose state has password="mypass" do not get a perpetual plan diff when the
+// API redacts the field on read (returns ""). Without Computed=true, the SDK zero-fills the
+// absent key to "" and the plan shows "" → "mypass" every run.
+func TestClusterSchema_PasswordIsComputed(t *testing.T) {
+	r := ResourceGitopsCluster()
+	configElem := r.Schema["request"].Elem.(*schema.Resource).
+		Schema["cluster"].Elem.(*schema.Resource).
+		Schema["config"].Elem.(*schema.Resource)
+
+	s, ok := configElem.Schema["password"]
+	if !ok {
+		t.Fatal("password field not found in config schema")
+	}
+	if !s.Computed {
+		t.Error("expected Computed=true on password for backward compatibility (SDK preserves prior state when API redacts)")
 	}
 }

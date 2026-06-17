@@ -947,6 +947,7 @@ func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]
 		kustomize["common_annotations"] = appSpec.Source.Kustomize.CommonAnnotations
 		kustomize["force_common_labels"] = appSpec.Source.Kustomize.ForceCommonLabels
 		kustomize["force_common_annotations"] = appSpec.Source.Kustomize.ForceCommonAnnotations
+		kustomize["namespace"] = appSpec.Source.Kustomize.Namespace
 		kustomizeList = append(kustomizeList, kustomize)
 		source["kustomize"] = kustomizeList
 	}
@@ -1094,6 +1095,7 @@ func getSourcesForState(appSpec *nextgen.ApplicationsApplicationSpec) []interfac
 			kustomize["common_annotations"] = sourceSpec.Kustomize.CommonAnnotations
 			kustomize["force_common_labels"] = sourceSpec.Kustomize.ForceCommonLabels
 			kustomize["force_common_annotations"] = sourceSpec.Kustomize.ForceCommonAnnotations
+			kustomize["namespace"] = sourceSpec.Kustomize.Namespace
 
 			kustomizeList = append(kustomizeList, kustomize)
 			source["kustomize"] = kustomizeList
@@ -1320,6 +1322,9 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 		}
 		if kustomizeSource["force_common_annotations"] != nil {
 			kustomizeData.ForceCommonAnnotations = kustomizeSource["force_common_annotations"].(bool)
+		}
+		if kustomizeSource["namespace"] != nil && len(kustomizeSource["namespace"].(string)) > 0 {
+			kustomizeData.Namespace = kustomizeSource["namespace"].(string)
 		}
 
 		specSource.Kustomize = &kustomizeData

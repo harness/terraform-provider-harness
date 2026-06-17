@@ -196,6 +196,12 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.PUPPET_PackageType),
 			}, false),
 		},
+		"is_public": {
+			Description: "Whether the registry is public. When set to true, the registry is publicly accessible without authentication. Defaults to false (private).",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+		},
 		"url": {
 			Description: "URL of the registry",
 			Type:        schema.TypeString,
@@ -252,6 +258,11 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 	}
 
 	if readOnly {
+		mainSchema["is_public"] = &schema.Schema{
+			Description: "Whether the registry is public. When true, the registry is publicly accessible without authentication.",
+			Type:        schema.TypeBool,
+			Computed:    true,
+		}
 		mainSchema["package_type"] = &schema.Schema{
 			Description: "Type of package (DOCKER, HELM, MAVEN, etc.)",
 			Type:        schema.TypeString,
