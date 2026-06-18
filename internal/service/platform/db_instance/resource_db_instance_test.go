@@ -2,6 +2,7 @@ package dbinstance_test
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -211,6 +212,326 @@ func testAccResourceDBInstance(id string, name string) string {
 			name = "%[2]s"
 			tags = ["foo:bar", "bar:foo"]
 			branch = "main"
+			connector = harness_platform_connector_jdbc.test.id
+			schema = harness_platform_db_schema.test.id
+			depends_on = [harness_platform_db_schema.test]
+		}
+        `, id, name)
+}
+
+func TestAccResourceDBInstanceWithCommitSha(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_db_instance.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccDBInstanceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceDBInstanceWithCommitSha(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "commit_sha", "abc123def456"),
+				),
+			},
+			{
+				Config: testAccResourceDBInstanceWithCommitSha(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "commit_sha", "abc123def456"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.DBInstanceResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceDBInstanceWithGitTag(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_db_instance.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccDBInstanceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceDBInstanceWithGitTag(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "git_tag", "v1.0.0"),
+				),
+			},
+			{
+				Config: testAccResourceDBInstanceWithGitTag(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "git_tag", "v1.0.0"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.DBInstanceResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceDBInstanceConflictingFields(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceDBInstanceWithConflictingFields(id, name),
+				ExpectError: regexp.MustCompile(`"commit_sha": conflicts with branch`),
+			},
+		},
+	})
+}
+
+func TestAccResourceDBInstanceTransitionRevisionStrategy(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_db_instance.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccDBInstanceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceDBInstanceWithCommitSha(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "commit_sha", "abc123def456"),
+					resource.TestCheckResourceAttr(resourceName, "branch", ""),
+					resource.TestCheckResourceAttr(resourceName, "git_tag", ""),
+				),
+			},
+			{
+				Config: testAccResourceDBInstance(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "branch", "main"),
+					resource.TestCheckResourceAttr(resourceName, "commit_sha", ""),
+					resource.TestCheckResourceAttr(resourceName, "git_tag", ""),
+				),
+			},
+			{
+				Config: testAccResourceDBInstanceWithGitTag(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "git_tag", "v1.0.0"),
+					resource.TestCheckResourceAttr(resourceName, "branch", ""),
+					resource.TestCheckResourceAttr(resourceName, "commit_sha", ""),
+				),
+			},
+		},
+	})
+}
+
+func testAccResourceDBInstanceWithConflictingFields(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_db_instance" "test" {
+			identifier = "%[1]s"
+			org_id     = "org_id"
+			project_id = "project_id"
+			name       = "%[2]s"
+			schema     = "schema1"
+			branch     = "main"
+			commit_sha = "abc123def456"
+			connector  = "jdbcConnector"
+		}
+        `, id, name)
+}
+
+func testAccResourceDBInstanceWithCommitSha(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+			depends_on = [harness_platform_organization.test]
+		}
+		resource "harness_platform_connector_github" "test" {
+			identifier  = "%[1]s"
+			name        = "%[2]s"
+			description = "test"
+			tags        = ["foo:bar"]
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			url                = "https://github.com/account"
+			connection_type    = "Account"
+			validation_repo    = "some_repo"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				http {
+				anonymous {}
+				}
+			}
+			depends_on = [harness_platform_project.test]
+		}
+        resource "harness_platform_db_schema" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			name = "%[2]s"
+			tags = ["foo:bar", "bar:foo"]
+			schema_source {
+				connector = harness_platform_connector_github.test.id
+				repo = "TestRepo"
+				location = "db/example-changelog.yaml"
+			}
+			depends_on = [harness_platform_connector_github.test]
+        }
+
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			tags = ["foo:bar"]
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_jdbc" "test" {
+			  identifier = "%[1]sjdbc"
+			  name = "%[2]sjdbc"
+			  description = "test"
+              org_id = harness_platform_project.test.org_id
+              project_id = harness_platform_project.test.id
+			  tags = ["foo:bar"]
+			  url = "jdbc:sqlserver://1.2.3;trustServerCertificate=true"
+			  delegate_selectors = ["harness-delegate"]
+			  credentials {
+				username = "admin"
+				password_ref = harness_platform_secret_text.test.id
+			  }
+		}
+        resource "harness_platform_db_instance" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			name = "%[2]s"
+			tags = ["foo:bar", "bar:foo"]
+			commit_sha = "abc123def456"
+			connector = harness_platform_connector_jdbc.test.id
+			schema = harness_platform_db_schema.test.id
+			depends_on = [harness_platform_db_schema.test]
+		}
+        `, id, name)
+}
+
+func testAccResourceDBInstanceWithGitTag(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+			depends_on = [harness_platform_organization.test]
+		}
+		resource "harness_platform_connector_github" "test" {
+			identifier  = "%[1]s"
+			name        = "%[2]s"
+			description = "test"
+			tags        = ["foo:bar"]
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			url                = "https://github.com/account"
+			connection_type    = "Account"
+			validation_repo    = "some_repo"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				http {
+				anonymous {}
+				}
+			}
+			depends_on = [harness_platform_project.test]
+		}
+        resource "harness_platform_db_schema" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			name = "%[2]s"
+			tags = ["foo:bar", "bar:foo"]
+			schema_source {
+				connector = harness_platform_connector_github.test.id
+				repo = "TestRepo"
+				location = "db/example-changelog.yaml"
+			}
+			depends_on = [harness_platform_connector_github.test]
+        }
+
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			tags = ["foo:bar"]
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_jdbc" "test" {
+			  identifier = "%[1]sjdbc"
+			  name = "%[2]sjdbc"
+			  description = "test"
+              org_id = harness_platform_project.test.org_id
+              project_id = harness_platform_project.test.id
+			  tags = ["foo:bar"]
+			  url = "jdbc:sqlserver://1.2.3;trustServerCertificate=true"
+			  delegate_selectors = ["harness-delegate"]
+			  credentials {
+				username = "admin"
+				password_ref = harness_platform_secret_text.test.id
+			  }
+		}
+        resource "harness_platform_db_instance" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			name = "%[2]s"
+			tags = ["foo:bar", "bar:foo"]
+			git_tag = "v1.0.0"
 			connector = harness_platform_connector_jdbc.test.id
 			schema = harness_platform_db_schema.test.id
 			depends_on = [harness_platform_db_schema.test]
