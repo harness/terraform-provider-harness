@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_ansible_inventory, harness_platform_ansible_playbook: Fixed out-of-band deletion handling so a manually deleted inventory or playbook is detected on read and recreated, instead of failing the plan.
+```
