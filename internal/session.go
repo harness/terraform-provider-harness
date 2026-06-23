@@ -112,7 +112,7 @@ func (s *Session) GetIDPClientWithContext(ctx context.Context) (*idp.APIClient, 
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	return s.IDPClient, ctx
+	return s.IDPClient.WithAuthContext(ctx)
 }
 
 func (s *Session) GetPOClientWithContext(ctx context.Context) (*po.APIClient, context.Context) {
