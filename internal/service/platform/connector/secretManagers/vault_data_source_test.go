@@ -666,7 +666,7 @@ func testAccDataSourceConnectorVault_VaultAgent(name string) string {
 		tags = ["foo:bar"]
 
 		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Reference"
+		value_type = "Inline"
 		value = "secret"
 	}
 
@@ -752,7 +752,7 @@ func testAccDataSourceConnectorVault_VaultAgentProjectLevel(name string, connect
 		org_id= harness_platform_organization.test.id
 		project_id=harness_platform_project.test.id
 		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Reference"
+		value_type = "Inline"
 		value = "secret"
 		depends_on = [time_sleep.wait_5_seconds]
 	}
@@ -836,7 +836,7 @@ func testAccDataSourceConnectorVault_VaultAgentOrgLevel(name string, connectorNa
 		tags = ["foo:bar"]
 		org_id = harness_platform_organization.test.id
 		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Reference"
+		value_type = "Inline"
 		value = "secret"
 		depends_on = [time_sleep.wait_2_seconds]
 	}
@@ -893,7 +893,7 @@ func testAccDataSourceConnectorVault_k8sAuth(name string) string {
 		tags = ["foo:bar"]
 
 		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Reference"
+		value_type = "Inline"
 		value = "secret"
 	}
 
@@ -981,7 +981,7 @@ func testAccDataSourceConnectorVault_k8sAuthProjectLevel(name string, connectorN
 		org_id= harness_platform_organization.test.id
 		project_id=harness_platform_project.test.id
 		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Reference"
+		value_type = "Inline"
 		value = "secret"
 		depends_on = [time_sleep.wait_5_seconds]
 	}
@@ -1067,7 +1067,7 @@ func testAccDataSourceConnectorVault_k8sAuthOrgLevel(name string, connectorName 
 		tags = ["foo:bar"]
 		org_id= harness_platform_organization.test.id
 		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Reference"
+		value_type = "Inline"
 		value = "secret"
 		depends_on = [time_sleep.wait_4_seconds]
 	}
