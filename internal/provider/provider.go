@@ -742,13 +742,12 @@ func getHarClient(d *schema.ResourceData, version string) *har.APIClient {
 func getIDPClient(d *schema.ResourceData, version string) *idp.APIClient {
 	cfg := idp.NewConfiguration()
 	client := idp.NewAPIClient(&idp.Configuration{
-		AccountId:     d.Get("account_id").(string),
-		BasePath:      d.Get("endpoint").(string),
-		ApiKey:        d.Get("platform_api_key").(string),
-		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
-		HTTPClient:    getOpenApiHttpClient(cfg.Logger),
-		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)},
-		DebugLogging:  openapi_client_logging.IsDebugOrHigher(cfg.Logger),
+		AccountId:    d.Get("account_id").(string),
+		BasePath:     d.Get("endpoint").(string),
+		ApiKey:       d.Get("platform_api_key").(string),
+		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		HTTPClient:   getOpenApiHttpClient(cfg.Logger),
+		DebugLogging: openapi_client_logging.IsDebugOrHigher(cfg.Logger),
 	})
 	return client
 }
