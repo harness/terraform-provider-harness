@@ -38,7 +38,7 @@ resource "harness_platform_har_registry" "upstream_registry" {
 
   config {
     type   = "UPSTREAM"
-    source = "CUSTOM"
+    source = "Custom"
     url    = "https://helm.sh"
     auth {
       auth_type         = "UserPassword"
@@ -49,6 +49,52 @@ resource "harness_platform_har_registry" "upstream_registry" {
   }
   parent_ref = "accountId/orgId/projectId"
 }
+
+# Example of an Upstream Go Registry (GoProxy source needs no url)
+resource "harness_platform_har_registry" "go_upstream" {
+  identifier   = "upstream_go_registry"
+  description  = "Upstream Go Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "GO"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "GoProxy"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of an Upstream Conda Registry (Anaconda source needs no url)
+resource "harness_platform_har_registry" "conda_upstream" {
+  identifier   = "upstream_conda_registry"
+  description  = "Upstream Conda Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "CONDA"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "Anaconda"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of an Upstream Helm HTTP Registry (HelmChartRepo source requires url)
+resource "harness_platform_har_registry" "helm_http_upstream" {
+  identifier   = "upstream_helm_http_registry"
+  description  = "Upstream Helm HTTP Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "HELM_HTTP"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "HelmChartRepo"
+    url       = "https://charts.bitnami.com/bitnami"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
 ```
 
 ## Schema
@@ -56,7 +102,7 @@ resource "harness_platform_har_registry" "upstream_registry" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 
