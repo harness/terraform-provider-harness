@@ -508,6 +508,14 @@ func ResourceProject() *schema.Resource {
 										Optional:    true,
 										Description: "This option determines whether destinations can only reference clusters which are argo project-scoped",
 									},
+									"supported_namespaces": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: "Namespaces where Application CRs are permitted to reside for this project.",
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
 								},
 							},
 						},
@@ -1088,6 +1096,16 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				}
 			}
 
+			var supportedNamespaces []string
+			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
+				specData := sr[0].(map[string]interface{})
+				if sns, ok := specData["supported_namespaces"].([]interface{}); ok {
+					for _, s := range sns {
+						supportedNamespaces = append(supportedNamespaces, s.(string))
+					}
+				}
+			}
+
 			approjectsAppProjectSpec = &nextgen.AppprojectsAppProjectSpec{
 				Destinations:                    appprojectsApplicationDestination,
 				ClusterResourceWhitelist:        v1GroupKind,
@@ -1101,6 +1119,7 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				OrphanedResources:               orphanedResources,
 				SourceNamespaces:                sourceNamespaces,
 				PermitOnlyProjectScopedClusters: permitOnlyProjectScopedClusters,
+				SupportedNamespaces:             supportedNamespaces,
 			}
 
 			appprojectsAppProject = &nextgen.AppprojectsAppProject{
@@ -1446,6 +1465,16 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 				}
 			}
 
+			var supportedNamespaces []string
+			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
+				specData := sr[0].(map[string]interface{})
+				if sns, ok := specData["supported_namespaces"].([]interface{}); ok {
+					for _, s := range sns {
+						supportedNamespaces = append(supportedNamespaces, s.(string))
+					}
+				}
+			}
+
 			approjectsAppProjectSpec = &nextgen.AppprojectsAppProjectSpec{
 				Destinations:                    appprojectsApplicationDestination,
 				ClusterResourceWhitelist:        v1GroupKind,
@@ -1459,6 +1488,7 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 				OrphanedResources:               orphanedResources,
 				SourceNamespaces:                sourceNamespaces,
 				PermitOnlyProjectScopedClusters: permitOnlyProjectScopedClusters,
+				SupportedNamespaces:             supportedNamespaces,
 			}
 
 			appprojectsAppProject = &nextgen.AppprojectsAppProject{
@@ -1628,6 +1658,9 @@ func setProjectDetails(d *schema.ResourceData, account_id string, projects *next
 		}
 		if len(projects.Spec.SourceNamespaces) > 0 {
 			spec["source_namespaces"] = projects.Spec.SourceNamespaces
+		}
+		if len(projects.Spec.SupportedNamespaces) > 0 {
+			spec["supported_namespaces"] = projects.Spec.SupportedNamespaces
 		}
 		spec["permit_only_project_scoped_clusters"] = projects.Spec.PermitOnlyProjectScopedClusters
 		specdataList = append(specdataList, spec)

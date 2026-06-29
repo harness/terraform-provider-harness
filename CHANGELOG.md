@@ -3,6 +3,9 @@
 
 ENHANCEMENTS:
 
+* data-source/harness_platform_gitops_agent_deploy_yaml: Added `application_namespaces` to `argocd_settings` block to configure namespaces where Application CRs are permitted to reside. ([#CDS-121683](https://harness.atlassian.net/browse/CDS-121683))
+* resource/harness_platform_gitops_app_project: Added `supported_namespaces` to project spec for configuring namespaces where Application CRs are permitted to reside for the project. ([#CDS-121683](https://harness.atlassian.net/browse/CDS-121683))
+
 * `resource/harness_platform_gitops_repository`: Added write-only credential fields (password_wo, ssh_private_key_wo, tls_client_cert_data_wo, tls_client_cert_key_wo, github_app_private_key_wo) so sensitive credentials are never stored in Terraform state. Requires Terraform >= 1.11.
 * `resource/harness_platform_gitops_repo_cred`: Added write-only credential fields (password_wo, ssh_private_key_wo, tls_client_cert_data_wo, tls_client_cert_key_wo, github_app_private_key_wo) so sensitive credentials are never stored in Terraform state. Requires Terraform >= 1.11.
 * `resource/harness_platform_gitops_cluster`: Added write-only credential fields (password_wo, bearer_token_wo, tls_client_config.cert_data_wo, tls_client_config.key_data_wo) so sensitive credentials are never stored in Terraform state. Requires Terraform >= 1.11. ([#CDS-123457](https://github.com/harness/terraform-provider-harness/issues/CDS-123457))
