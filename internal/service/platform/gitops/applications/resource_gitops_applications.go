@@ -158,6 +158,11 @@ func ResourceGitopsApplication() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
+			"force_delete": {
+				Description: "Indicates if the GitOps application should be force deleted from harness.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"name": {
 				Description: "Name of the GitOps application.",
 				Type:        schema.TypeString,
@@ -515,7 +520,7 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var agentIdentifier, orgIdentifier, projectIdentifier, requestName, requestPropagationPolicy string
-	var requestCascade, optionsRemoveExistingFinalizers bool
+	var requestCascade, optionsRemoveExistingFinalizers, forceDelete bool
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
@@ -534,6 +539,9 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 	if attr, ok := d.GetOk("options_remove_existing_finalizers"); ok {
 		optionsRemoveExistingFinalizers = attr.(bool)
 	}
+	if attr, ok := d.GetOk("force_delete"); ok {
+		forceDelete = attr.(bool)
+	}
 	if attr, ok := d.GetOk("name"); ok {
 		requestName = attr.(string)
 	}
@@ -545,6 +553,7 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 		RequestCascade:                  optional.NewBool(requestCascade),
 		RequestPropagationPolicy:        optional.NewString(requestPropagationPolicy),
 		OptionsRemoveExistingFinalizers: optional.NewBool(optionsRemoveExistingFinalizers),
+		OptionsForceDelete:              optional.NewBool(forceDelete),
 	})
 
 	if err != nil {
