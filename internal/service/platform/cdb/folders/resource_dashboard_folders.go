@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceDashboardFolders() *schema.Resource {
+func ResourceDashboardFolder() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Resource for a Harness Custom Dashboard Folder.",
 
@@ -19,6 +19,8 @@ func ResourceDashboardFolders() *schema.Resource {
 		ReadContext:   resourceFolderRead,
 		UpdateContext: resourceFolderUpdate,
 		DeleteContext: resourceFolderDelete,
+
+		Importer: &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
 
 		Schema: map[string]*schema.Schema{
 			"id": {
