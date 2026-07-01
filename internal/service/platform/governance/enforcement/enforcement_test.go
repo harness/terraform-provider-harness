@@ -16,6 +16,8 @@ import (
 func TestAccResourceRuleEnforcement(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	updatedName := fmt.Sprintf("%s_updated", name)
+	disabledName := fmt.Sprintf("%s_disabled", updatedName)
+	dryRunDisabledName := fmt.Sprintf("%s_dryrun_disabled", disabledName)
 	resourceName := "harness_governance_rule_enforcement.test"
 	awsAccountId := os.Getenv("AWS_ACCOUNT_ID")
 
@@ -49,6 +51,34 @@ func TestAccResourceRuleEnforcement(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target_accounts.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "target_regions.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "is_dry_run", "true"),
+					resource.TestCheckResourceAttr(resourceName, "description", "Dummy"),
+				),
+			},
+			{
+				Config: testAccResourceRuleEnforcementWithEnabled(disabledName, awsAccountId, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", disabledName),
+					resource.TestCheckResourceAttr(resourceName, "cloud_provider", "AWS"),
+					resource.TestCheckResourceAttr(resourceName, "execution_schedule", "0 0 * * * *"),
+					resource.TestCheckResourceAttr(resourceName, "execution_timezone", "UTC"),
+					resource.TestCheckResourceAttr(resourceName, "is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "target_accounts.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "target_regions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "is_dry_run", "true"),
+					resource.TestCheckResourceAttr(resourceName, "description", "Dummy"),
+				),
+			},
+			{
+				Config: testAccResourceRuleEnforcementWithBooleans(dryRunDisabledName, awsAccountId, false, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", dryRunDisabledName),
+					resource.TestCheckResourceAttr(resourceName, "cloud_provider", "AWS"),
+					resource.TestCheckResourceAttr(resourceName, "execution_schedule", "0 0 * * * *"),
+					resource.TestCheckResourceAttr(resourceName, "execution_timezone", "UTC"),
+					resource.TestCheckResourceAttr(resourceName, "is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "target_accounts.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "target_regions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "is_dry_run", "false"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Dummy"),
 				),
 			},
@@ -92,6 +122,14 @@ func TestAccResourceRuleEnforcementWithFalseBooleans(t *testing.T) {
 }
 
 func testAccResourceRuleEnforcement(name, awsAccountId string) string {
+	return testAccResourceRuleEnforcementWithBooleans(name, awsAccountId, true, true)
+}
+
+func testAccResourceRuleEnforcementWithEnabled(name, awsAccountId string, isEnabled bool) string {
+	return testAccResourceRuleEnforcementWithBooleans(name, awsAccountId, isEnabled, true)
+}
+
+func testAccResourceRuleEnforcementWithBooleans(name, awsAccountId string, isEnabled bool, isDryRun bool) string {
 	return fmt.Sprintf(`
 		resource "harness_governance_rule" "rule" {
 			name           = "%[1]s_rule"
@@ -107,13 +145,13 @@ func testAccResourceRuleEnforcement(name, awsAccountId string) string {
 			rule_set_ids       = []
 			execution_schedule = "0 0 * * * *"
 			execution_timezone = "UTC"
-			is_enabled         = true
+			is_enabled         = %[3]t
 			target_accounts    = ["%[2]s"]
 			target_regions     = ["us-east-1"]
-			is_dry_run         = true
+			is_dry_run         = %[4]t
 			description        = "Dummy"
 		}
-	`, name, awsAccountId)
+	`, name, awsAccountId, isEnabled, isDryRun)
 }
 
 func testAccResourceRuleEnforcementWithFalseBooleans(name, awsAccountId string) string {
