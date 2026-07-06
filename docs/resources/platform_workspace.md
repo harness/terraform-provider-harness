@@ -77,6 +77,11 @@ resource "harness_platform_workspace" "example" {
     "plan"    = "plan_pipeline_id"
     "apply"   = "apply_pipeline_id"
   }
+
+  associated_template {
+    template_id = "my_template"
+    version     = "v1.0.0"
+  }
 }
 ```
 
@@ -90,7 +95,7 @@ resource "harness_platform_workspace" "example" {
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `provisioner_type` (String) Provisioner type defines the provisioning tool to use (terraform or opentofu)
+- `provisioner_type` (String) Provisioner type defines the provisioning tool to use (terraform, opentofu, or awscdk)
 - `provisioner_version` (String) Provisioner version defines the provisioner version to use. The latest version of Opentofu should always be supported, Terraform is only supported up to version 1.5.7.
 - `repository` (String) Repository is the name of the repository to fetch the code from.
 - `repository_connector` (String) Repository connector is the reference to the connector used to fetch the code.
@@ -98,11 +103,13 @@ resource "harness_platform_workspace" "example" {
 
 ### Optional
 
+- `associated_template` (Block List, Max: 1) Template associated with the workspace. (see [below for nested schema](#nestedblock--associated_template))
 - `connector` (Block Set) Provider connectors configured on the Workspace. Only one connector of a type is supported (see [below for nested schema](#nestedblock--connector))
 - `default_pipelines` (Map of String) Default pipelines associated with this workspace
 - `description` (String) Description of the resource.
 - `environment_variable` (Block Set) Environment variables configured on the workspace (see [below for nested schema](#nestedblock--environment_variable))
 - `provider_connector` (String) Provider connector is the reference to the connector for the infrastructure provider
+- `provisioner_config` (Block Set, Max: 1) Provisioner configuration for awscdk provisioner type. Required when provisioner_type is awscdk. (see [below for nested schema](#nestedblock--provisioner_config))
 - `repository_branch` (String) Repository branch is the name of the branch to fetch the code from. This cannot be set if repository commit or sha is set.
 - `repository_commit` (String) Repository commit is tag to fetch the code from. This cannot be set if repository branch or sha is set.
 - `repository_sha` (String) Repository commit is commit SHA to fetch the code from. This cannot be set if repository branch or commit is set.
@@ -117,6 +124,18 @@ resource "harness_platform_workspace" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--associated_template"></a>
+### Nested Schema for `associated_template`
+
+Required:
+
+- `template_id` (String) Template identifier. Changing this forces a new resource.
+
+Optional:
+
+- `version` (String) Template version. Can be updated in place.
+
 
 <a id="nestedblock--connector"></a>
 ### Nested Schema for `connector`
@@ -135,6 +154,17 @@ Required:
 - `key` (String) Key is the identifier for the variable. Must be unique within the workspace.
 - `value` (String) Value is the value of the variable. For string value types this field should contain the value of the variable. For secret value types this should contain a reference to a valid harness secret.
 - `value_type` (String) Value type indicates the value type of the variable. Currently we support string and secret.
+
+
+<a id="nestedblock--provisioner_config"></a>
+### Nested Schema for `provisioner_config`
+
+Required:
+
+- `language` (String) Programming language for AWS CDK (e.g., python, typescript)
+- `language_version` (String) Version of the programming language (e.g., 3.12 for Python)
+- `package_manager` (String) Package manager to use (e.g., pip, npm)
+- `package_manager_version` (String) Version of the package manager (e.g., 25.3 for pip)
 
 
 <a id="nestedblock--terraform_variable"></a>

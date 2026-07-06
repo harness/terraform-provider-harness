@@ -244,6 +244,27 @@ func ResourceWorkspace() *schema.Resource {
 					},
 				},
 			},
+			"associated_template": {
+				Description: "Template associated with the workspace.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"template_id": {
+							Description: "Template identifier. Changing this forces a new resource.",
+							Type:        schema.TypeString,
+							Required:    true,
+							ForceNew:    true,
+						},
+						"version": {
+							Description: "Template version. Can be updated in place.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
 			"provisioner_config": {
 				Description: "Provisioner configuration for awscdk provisioner type. Required when provisioner_type is awscdk.",
 				Type:        schema.TypeSet,
@@ -295,6 +316,11 @@ func resourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, meta int
 		c.AccountId,
 	)
 	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
@@ -374,6 +400,35 @@ func resourceWorkspaceUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		return parseError(err, httpResp)
 	}
 
+	if d.HasChange("associated_template") {
+		// template_id is ForceNew, so associating a template, removing it, or switching to
+		// a different template all recreate the workspace via the Create path (which embeds
+		// the association and, on removal, drops it when the old workspace is destroyed).
+		// The only change that reaches Update is an in-place version bump of an
+		// already-associated template, handled here via the workspace templates API.
+		if v, ok := d.GetOk("associated_template"); ok {
+			templateList := v.([]interface{})
+			if len(templateList) > 0 {
+				tpl := templateList[0].(map[string]interface{})
+				body := nextgen.IacmUpdateWorkspaceTemplateRequestBody{
+					Version: tpl["version"].(string),
+				}
+				_, httpResp, err := c.WorkspaceTemplatesApi.WorkspaceTemplatesUpdateWorkspaceTemplate(
+					ctx,
+					body,
+					c.AccountId,
+					d.Get("org_id").(string),
+					d.Get("project_id").(string),
+					tpl["template_id"].(string),
+					d.Get("identifier").(string),
+				)
+				if err != nil {
+					return parseError(err, httpResp)
+				}
+			}
+		}
+	}
+
 	resourceWorkspaceRead(ctx, d, meta)
 	return nil
 }
@@ -447,6 +502,19 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 			})
 		}
 		d.Set("connector", providerConnectors)
+	}
+
+	// Only reflect associated_template when it is declared on the workspace itself.
+	// The association can alternatively be managed by the standalone
+	// harness_platform_iacm_workspace_template resource, in which case unconditionally
+	// writing it here would produce a perpetual diff (config has no block, server does).
+	if _, ok := d.GetOk("associated_template"); ok && ws.AssociatedTemplate != nil {
+		d.Set("associated_template", []interface{}{
+			map[string]interface{}{
+				"template_id": ws.AssociatedTemplate.TemplateID,
+				"version":     ws.AssociatedTemplate.Version,
+			},
+		})
 	}
 
 	d.Set("tags", helpers.FlattenTags(ws.Tags))
@@ -617,6 +685,17 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 	ws.ProviderConnectors = providerConnectors
 
 	ws.ProvisionerConfiguration = buildProvisionerConfig(d)
+
+	if v, ok := d.GetOk("associated_template"); ok {
+		templateList := v.([]interface{})
+		if len(templateList) > 0 {
+			tpl := templateList[0].(map[string]interface{})
+			ws.AssociatedTemplate = &nextgen.IacmAssociatedTemplate{
+				TemplateID: tpl["template_id"].(string),
+				Version:    tpl["version"].(string),
+			}
+		}
+	}
 
 	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
 		ws.Tags = helpers.ExpandTags(attr)

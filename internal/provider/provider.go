@@ -563,6 +563,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                         pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                             workspace.ResourceWorkspace(),
 				"harness_platform_iacm_default_pipeline":                 iacm.ResourceIacmDefaultPipeline(),
+				"harness_platform_iacm_workspace_template":               iacm.ResourceIacmWorkspaceTemplate(),
 				"harness_platform_iacm_ansible_inventory":                ansible_inventory.ResourceAnsibleInventory(),
 				"harness_platform_iacm_ansible_playbook":                 ansible_playbook.ResourceAnsiblePlaybook(),
 				"harness_platform_ip_allowlist":                          ip_allowlist.ResourceIPAllowlist(),
