@@ -8,20 +8,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-// Blocked on CCM-32498: harness_cluster_orchestrator create panics with
-// "Invalid address to set: []string{\"identifier\"}" because setId() writes an
-// attribute that the resource schema does not declare. Test cannot reach Step 1
-// completion until the provider is fixed.
-//
 // TestResourceClusterOrchestrator_CCM32336_OutOfBandDeleteRecreates verifies that
 // when a Cluster Orchestrator is deleted out-of-band (UI / direct API), the next
-// terraform refresh does not error. The orchestrator resource's ReadContext
-// re-creates on miss, so the contract here is that the API call path used during
-// refresh tolerates a deleted entity instead of failing the terraform plan.
+// terraform refresh does not error and re-plans a create.
 //
-// Regression test for CCM-32336 (the bug class is: lwd GET returning HTTP 500
-// for a deleted entity causes terraform plan to fail with "giving up after 11
-// attempt(s)"). Tracked alongside CCM-32403 for non-rule AutoStopping entities.
+// Regression test for CCM-32336 (lwd GET returning HTTP 500 for a deleted entity
+// causes terraform plan to fail with "giving up after 11 attempt(s)").
 func TestResourceClusterOrchestrator_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
 	name := "terraform-co-ccm32336-test"
 	resourceName := "harness_cluster_orchestrator.test"

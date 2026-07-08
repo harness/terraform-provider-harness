@@ -11,20 +11,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-// Blocked on CCM-32500: GET /ccm/api/governance/enforcement/details returns
-// HTTP 400 ("Invalid request: Governance Enforcement do not exists.") for a
-// deleted enforcement, so HandleReadApiError does not clear state and terraform
-// plan errors out. Test is parked until the API returns 404 for missing IDs.
-//
 // TestAccResourceRuleEnforcement_CCM32336_OutOfBandDeleteRecreates verifies that
 // when a governance rule enforcement is deleted out-of-band (UI / direct API),
 // the next terraform refresh treats the GET as "not found" and re-plans a
 // create instead of erroring out with "giving up after 11 attempt(s)".
 //
-// Regression test for CCM-32336 (the bug class is: a NextGen GET endpoint
-// returning HTTP 500 for a deleted entity causes terraform plan to fail).
-// The enforcement Read() routes through helpers.HandleReadApiError which
-// clears state on 404 + ENTITY_NOT_FOUND.
+// Regression test for CCM-32336. The enforcement Read() routes through
+// helpers.HandleReadApiError which clears state on 404 + ENTITY_NOT_FOUND.
 func TestAccResourceRuleEnforcement_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	resourceName := "harness_governance_rule_enforcement.test"

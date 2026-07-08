@@ -10,20 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-// Blocked on CCM-32499: provider readRuleResponse panics with
-// "index out of range [0] with length 0" because POST /governance/rule/list
-// returns HTTP 200 with {"Rules": []} for a deleted rule and the provider does
-// not bounds-check before accessing Rules[0].
-//
 // TestAccResourceRule_CCM32336_OutOfBandDeleteRecreates verifies that when a
 // governance rule (cloud asset policy) is deleted out-of-band (UI / direct API),
 // the next terraform refresh treats the GET as "not found" and re-plans a create
 // instead of erroring out with "giving up after 11 attempt(s)".
 //
-// Regression test for CCM-32336 (the bug class is: a NextGen GET endpoint
-// returning HTTP 500 for a deleted entity causes terraform plan to fail).
-// The governance rule resource Read() routes through helpers.HandleReadApiError
-// which clears state on 404 + ENTITY_NOT_FOUND.
+// Regression test for CCM-32336. The governance rule Read() routes through
+// helpers.HandleReadApiError which clears state on 404 + ENTITY_NOT_FOUND.
 func TestAccResourceRule_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	resourceName := "harness_governance_rule.test"

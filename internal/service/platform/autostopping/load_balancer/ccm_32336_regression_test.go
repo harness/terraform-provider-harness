@@ -9,19 +9,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-// Blocked on CCM-32403: AutoStopping load_balancer GET still returns non-404 for
-// a deleted ALB and the DeleteLoadBalancer API is async, so this test is parked
-// until the API returns 404 + ENTITY_NOT_FOUND for missing AccessPoints.
-//
 // TestAccResourceAwsALB_CCM32336_OutOfBandDeleteRecreates verifies that when an
 // AutoStopping load balancer (AWS ALB) is deleted out-of-band (UI / direct API),
 // the next refresh treats the GET as "not found" (HTTP 404 + ENTITY_NOT_FOUND)
 // and re-plans a create instead of erroring out.
 //
-// Regression test for CCM-32336 (AutoStopping load_balancer / AccessPoint variant
-// tracked under CCM-32403). The bug class is: lwd GET returning HTTP 500 for a
-// deleted entity causes terraform plan to fail. The fix returns 404 +
-// ENTITY_NOT_FOUND so the provider's helpers.HandleReadApiError clears state.
+// Regression test for CCM-32336. The provider's helpers.HandleReadApiError clears
+// state on 404 + ENTITY_NOT_FOUND so terraform plan reports a recreate.
 func TestAccResourceAwsALB_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
 	name := fmt.Sprintf("terr-c336alb-%s", randAlnum(5))
 	resourceName := "harness_autostopping_aws_alb.test"
