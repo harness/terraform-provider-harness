@@ -49,6 +49,9 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 			DdcrLib:    getStringPtr(customImages["ddcr_lib"]),
 			DdcrFault:  getStringPtr(customImages["ddcr_fault"]),
 		}
+	} else {
+		// Always provide empty struct to avoid backend nil pointer panic
+		req.CustomImages = &model.CustomImages{}
 	}
 
 	identifiers := getIdentifiers(d, c.AccountId)
@@ -172,16 +175,17 @@ func resourceChaosImageRegistryUpdate(ctx context.Context, d *schema.ResourceDat
 		}
 	}
 
-	if d.HasChange("custom_images") && d.Get("use_custom_images").(bool) {
-		if v, ok := d.GetOk("custom_images"); ok && len(v.([]interface{})) > 0 {
-			customImages := v.([]interface{})[0].(map[string]interface{})
-			req.CustomImages = &model.CustomImages{
-				LogWatcher: getStringPtr(customImages["log_watcher"]),
-				Ddcr:       getStringPtr(customImages["ddcr"]),
-				DdcrLib:    getStringPtr(customImages["ddcr_lib"]),
-				DdcrFault:  getStringPtr(customImages["ddcr_fault"]),
-			}
+	if v, ok := d.GetOk("custom_images"); ok && len(v.([]interface{})) > 0 {
+		customImages := v.([]interface{})[0].(map[string]interface{})
+		req.CustomImages = &model.CustomImages{
+			LogWatcher: getStringPtr(customImages["log_watcher"]),
+			Ddcr:       getStringPtr(customImages["ddcr"]),
+			DdcrLib:    getStringPtr(customImages["ddcr_lib"]),
+			DdcrFault:  getStringPtr(customImages["ddcr_fault"]),
 		}
+	} else {
+		// Always provide empty struct to avoid backend nil pointer panic
+		req.CustomImages = &model.CustomImages{}
 	}
 
 	_, err := c.ImageRegistryApi.Update(
@@ -219,6 +223,34 @@ func resourceChaosImageRegistryDelete(ctx context.Context, d *schema.ResourceDat
 	// Nothing to do here as registry configuration is reset using is_default
 	d.SetId("")
 	return nil
+}
+
+// resourceChaosImageRegistryImport imports an existing image registry into Terraform state.
+// Supported import ID formats (registry is unique per scope + optional infra):
+//   - org_id/project_id
+//   - org_id/project_id/infra_id
+//
+// Account-scoped registries cannot be imported via this function as the import
+// ID requires an org_id.
+func resourceChaosImageRegistryImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	parts := strings.Split(d.Id(), "/")
+	switch len(parts) {
+	case 2:
+		d.Set("org_id", parts[0])
+		d.Set("project_id", parts[1])
+	case 3:
+		d.Set("org_id", parts[0])
+		d.Set("project_id", parts[1])
+		d.Set("infra_id", parts[2])
+	default:
+		return nil, fmt.Errorf("invalid import ID %q, expected org_id/project_id or org_id/project_id/infra_id", d.Id())
+	}
+
+	if diags := resourceChaosImageRegistryRead(ctx, d, meta); diags.HasError() {
+		return nil, fmt.Errorf("failed to read image registry on import: %s", diags[0].Summary)
+	}
+
+	return []*schema.ResourceData{d}, nil
 }
 
 // Helper functions

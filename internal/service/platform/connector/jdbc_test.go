@@ -322,6 +322,164 @@ func TestAccResourceConnectorJDBCKeyPairAuth(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorJDBCInheritFromDelegateAuth(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_jdbc.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorJDBCInheritFromDelegateAuth(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "jdbc:postgresql://cloudsql-proxy:5432/mydb"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.auth_type", "InheritFromDelegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate.0.username", "db_user"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorJDBCInheritFromDelegateAuth(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "jdbc:postgresql://cloudsql-proxy:5432/mydb"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.auth_type", "InheritFromDelegate"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate.0.username", "db_user"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccResourceConnectorJDBCInheritFromDelegateAuth(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_connector_jdbc" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		url = "jdbc:postgresql://cloudsql-proxy:5432/mydb"
+		delegate_selectors = ["harness-delegate"]
+		credentials {
+			auth_type = "InheritFromDelegate"
+			inherit_from_delegate {
+				username = "db_user"
+			}
+		}
+	}
+`, id, name)
+}
+
+func TestAccResourceConnectorJDBCOidcAuth(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_jdbc.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorJDBCOidcAuth(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "jdbc:postgresql://cloudsql-proxy:5432/mydb"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.auth_type", "Oidc"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.provider_type", "Gcp"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.gcp_oidc.0.project_number", "145904791365"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.gcp_oidc.0.workload_pool_id", "harness-identity-pool"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.gcp_oidc.0.provider_id", "harness-oidc-provider"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.gcp_oidc.0.service_account_email", "db-sa@project.iam.gserviceaccount.com"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorJDBCOidcAuth(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "jdbc:postgresql://cloudsql-proxy:5432/mydb"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.auth_type", "Oidc"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.provider_type", "Gcp"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.gcp_oidc.0.project_number", "145904791365"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.gcp_oidc.0.workload_pool_id", "harness-identity-pool"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.gcp_oidc.0.provider_id", "harness-oidc-provider"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.oidc.0.gcp_oidc.0.service_account_email", "db-sa@project.iam.gserviceaccount.com"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccResourceConnectorJDBCOidcAuth(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_connector_jdbc" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		url = "jdbc:postgresql://cloudsql-proxy:5432/mydb"
+		delegate_selectors = ["harness-delegate"]
+		credentials {
+			auth_type = "Oidc"
+			oidc {
+				provider_type = "Gcp"
+				gcp_oidc {
+					project_number = "145904791365"
+					workload_pool_id = "harness-identity-pool"
+					provider_id = "harness-oidc-provider"
+					service_account_email = "db-sa@project.iam.gserviceaccount.com"
+				}
+			}
+		}
+	}
+`, id, name)
+}
+
 func testAccResourceConnectorJDBCKeyPairAuth(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {

@@ -51,7 +51,7 @@ func ResourceDBSchema() *schema.Resource {
 				Default:     false,
 			},
 			"schema_source": {
-				Description:   "Provides a connector and path at which to find the database schema representation",
+				Description:   "Provides a connector and path at which to find the database schema representation. For Harness Code Repository, omit the connector and provide repo directly.",
 				Type:          schema.TypeList,
 				MaxItems:      1,
 				Optional:      true,
@@ -60,9 +60,9 @@ func ResourceDBSchema() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connector": {
-							Description: "Connector to repository at which to find details about the database schema",
+							Description: "Connector to repository at which to find details about the database schema. Leave empty when using Harness Code Repository.",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 						},
 						"location": {
 							Description: "The path within the specified repository at which to find details about the database schema",
@@ -70,12 +70,12 @@ func ResourceDBSchema() *schema.Resource {
 							Required:    true,
 						},
 						"repo": {
-							Description: "If connector url is of account, which repository to connect to using the connector",
+							Description: "Repository name. Required for Harness Code Repository or when connector connection type is Account.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"archive_path": {
-							Description: "If connector type is artifactory, path to the archive file which contains the changeLog",
+							Description: "If connector type is artifactory, path to the archive file which contains the changeLog. Not supported with Harness Code Repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -263,14 +263,18 @@ func readDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut) {
 	d.Set("use_percona", dbSchema.UsePercona)
 
 	if dbSchema.Changelog != nil {
-		d.Set("schema_source.0.location", dbSchema.Changelog.Location)
-		d.Set("schema_source.0.repo", dbSchema.Changelog.Repo)
-		d.Set("schema_source.0.connector", dbSchema.Changelog.Connector)
-		d.Set("schema_source.0.archive_path", dbSchema.Changelog.ArchivePath)
+		schemaSource := map[string]interface{}{
+			"connector":    dbSchema.Changelog.Connector,
+			"location":     dbSchema.Changelog.Location,
+			"repo":         dbSchema.Changelog.Repo,
+			"archive_path": dbSchema.Changelog.ArchivePath,
+		}
 
 		if dbSchema.MigrationType != nil && *dbSchema.MigrationType == dbops.FLYWAY_MigrationType {
-			d.Set("schema_source.0.toml", dbSchema.Changelog.Toml)
+			schemaSource["toml"] = dbSchema.Changelog.Toml
 		}
+
+		d.Set("schema_source", []interface{}{schemaSource})
 		d.Set("changelog_script", nil)
 	}
 

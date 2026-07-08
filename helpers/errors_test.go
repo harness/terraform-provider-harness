@@ -5,7 +5,50 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+// TestHandleIacmReadApiError_404ClearsState verifies that a 404 during a read on an
+// IaCM endpoint (Ansible inventory/playbook, workspace, etc.) clears the resource from
+// state instead of erroring. IaCM endpoints return an IacmError body that has no "code"
+// field, so the generic code-based not-found detection never fires for them. A resource
+// deleted out-of-band must be detected so Terraform can recreate it.
+func TestHandleIacmReadApiError_404ClearsState(t *testing.T) {
+	d := schema.TestResourceDataRaw(t, map[string]*schema.Schema{
+		"name": {Type: schema.TypeString, Optional: true},
+	}, map[string]interface{}{})
+	d.SetId("my-inventory")
+
+	httpResp := &http.Response{StatusCode: 404}
+	diags := HandleIacmReadApiError(errors.New("not found"), d, httpResp)
+
+	if diags.HasError() {
+		t.Fatalf("expected no error diagnostics on 404 read, got: %v", diags)
+	}
+	if d.Id() != "" {
+		t.Errorf("expected resource ID to be cleared on 404 read, got: %q", d.Id())
+	}
+}
+
+// TestHandleIacmReadApiError_NonNotFoundReturnsError verifies that non-404 errors still
+// surface as diagnostics and do NOT clear state.
+func TestHandleIacmReadApiError_NonNotFoundReturnsError(t *testing.T) {
+	d := schema.TestResourceDataRaw(t, map[string]*schema.Schema{
+		"name": {Type: schema.TypeString, Optional: true},
+	}, map[string]interface{}{})
+	d.SetId("my-inventory")
+
+	httpResp := &http.Response{StatusCode: 500}
+	diags := HandleIacmReadApiError(errors.New("boom"), d, httpResp)
+
+	if !diags.HasError() {
+		t.Fatal("expected error diagnostics on 500 read, got none")
+	}
+	if d.Id() == "" {
+		t.Error("expected resource ID to be preserved on non-404 read")
+	}
+}
 
 func TestIsUndefinedResponseTypeError(t *testing.T) {
 	tests := []struct {

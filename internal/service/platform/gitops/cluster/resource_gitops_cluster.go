@@ -128,17 +128,50 @@ func ResourceGitopsCluster() *schema.Resource {
 													Optional:    true,
 												},
 												"password": {
-													Description: "Password of the server of the cluster.",
-													Type:        schema.TypeString,
-													Optional:    true,
-													Sensitive:   true,
+													Description:   "Password of the server of the cluster. Use password_wo for write-only support (Terraform >= 1.11).",
+													Type:          schema.TypeString,
+													Optional:      true,
+													Computed:      true,
+													Sensitive:     true,
+													ConflictsWith: []string{"request.0.cluster.0.config.0.password_wo"},
+												},
+												"password_wo": {
+													Description:   "Password of the server of the cluster. Write-only: never stored in state. Requires Terraform >= 1.11.",
+													Type:          schema.TypeString,
+													Optional:      true,
+													WriteOnly:     true,
+													Sensitive:     true,
+													ConflictsWith: []string{"request.0.cluster.0.config.0.password"},
+													RequiredWith:  []string{"request.0.cluster.0.config.0.password_wo_version"},
+												},
+												"password_wo_version": {
+													Description:  "Increment to rotate the credential when using password_wo.",
+													Type:         schema.TypeInt,
+													Optional:     true,
+													RequiredWith: []string{"request.0.cluster.0.config.0.password_wo"},
 												},
 												"bearer_token": {
-													Description: "Bearer authentication token the cluster.",
-													Type:        schema.TypeString,
-													Sensitive:   true,
-													Optional:    true,
-													Computed:    true,
+													Description:   "Bearer authentication token the cluster. Use bearer_token_wo for write-only support (Terraform >= 1.11).",
+													Type:          schema.TypeString,
+													Sensitive:     true,
+													Optional:      true,
+													Computed:      true,
+													ConflictsWith: []string{"request.0.cluster.0.config.0.bearer_token_wo"},
+												},
+												"bearer_token_wo": {
+													Description:   "Bearer authentication token for the cluster. Write-only: never stored in state. Requires Terraform >= 1.11.",
+													Type:          schema.TypeString,
+													Optional:      true,
+													WriteOnly:     true,
+													Sensitive:     true,
+													ConflictsWith: []string{"request.0.cluster.0.config.0.bearer_token"},
+													RequiredWith:  []string{"request.0.cluster.0.config.0.bearer_token_wo_version"},
+												},
+												"bearer_token_wo_version": {
+													Description:  "Increment to rotate the credential when using bearer_token_wo.",
+													Type:         schema.TypeInt,
+													Optional:     true,
+													RequiredWith: []string{"request.0.cluster.0.config.0.bearer_token_wo"},
 												},
 												"tls_client_config": {
 													Description: "Settings to enable transport layer security.",
@@ -158,21 +191,69 @@ func ResourceGitopsCluster() *schema.Resource {
 																Optional:    true,
 															},
 															"cert_data": {
-																Description: "Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS. The value should be base64 encoded.",
-																Type:        schema.TypeString,
-																Optional:    true,
-																Sensitive:   true,
+																Description:   "Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS. The value should be base64 encoded. Use cert_data_wo for write-only support (Terraform >= 1.11).",
+																Type:          schema.TypeString,
+																Optional:      true,
+																Sensitive:     true,
+																ConflictsWith: []string{"request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo"},
+															},
+															"cert_data_wo": {
+																Description:   "Certificate data for mTLS authentication. Write-only: never stored in state. Requires Terraform >= 1.11.",
+																Type:          schema.TypeString,
+																Optional:      true,
+																WriteOnly:     true,
+																Sensitive:     true,
+																ConflictsWith: []string{"request.0.cluster.0.config.0.tls_client_config.0.cert_data"},
+																RequiredWith:  []string{"request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version"},
+															},
+															"cert_data_wo_version": {
+																Description:  "Increment to rotate the credential when using cert_data_wo.",
+																Type:         schema.TypeInt,
+																Optional:     true,
+																RequiredWith: []string{"request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo"},
 															},
 															"key_data": {
-																Description: "Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS. The value should be base64 encoded.",
-																Type:        schema.TypeString,
-																Optional:    true,
-																Sensitive:   true,
+																Description:   "Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS. The value should be base64 encoded. Use key_data_wo for write-only support (Terraform >= 1.11).",
+																Type:          schema.TypeString,
+																Optional:      true,
+																Sensitive:     true,
+																ConflictsWith: []string{"request.0.cluster.0.config.0.tls_client_config.0.key_data_wo"},
+															},
+															"key_data_wo": {
+																Description:   "Key data for mTLS authentication. Write-only: never stored in state. Requires Terraform >= 1.11.",
+																Type:          schema.TypeString,
+																Optional:      true,
+																WriteOnly:     true,
+																Sensitive:     true,
+																ConflictsWith: []string{"request.0.cluster.0.config.0.tls_client_config.0.key_data"},
+																RequiredWith:  []string{"request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version"},
+															},
+															"key_data_wo_version": {
+																Description:  "Increment to rotate the credential when using key_data_wo.",
+																Type:         schema.TypeInt,
+																Optional:     true,
+																RequiredWith: []string{"request.0.cluster.0.config.0.tls_client_config.0.key_data_wo"},
 															},
 															"ca_data": {
-																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile. The value should be base64 encoded.",
-																Type:        schema.TypeString,
-																Optional:    true,
+																Description:   "CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile. The value should be base64 encoded. Use ca_data_wo for write-only support (Terraform >= 1.11).",
+																Type:          schema.TypeString,
+																Optional:      true,
+																ConflictsWith: []string{"request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo"},
+															},
+															"ca_data_wo": {
+																Description:   "CA data holds PEM-encoded bytes. Write-only: never stored in state. Requires Terraform >= 1.11.",
+																Type:          schema.TypeString,
+																Optional:      true,
+																WriteOnly:     true,
+																Sensitive:     true,
+																ConflictsWith: []string{"request.0.cluster.0.config.0.tls_client_config.0.ca_data"},
+																RequiredWith:  []string{"request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version"},
+															},
+															"ca_data_wo_version": {
+																Description:  "Increment to rotate the credential when using ca_data_wo.",
+																Type:         schema.TypeInt,
+																Optional:     true,
+																RequiredWith: []string{"request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo"},
 															},
 														},
 													},
@@ -451,13 +532,23 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
-	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.password_wo", "request.0.cluster.0.config.0.password_wo_version") {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.Password = ""
+		}
+	}
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.bearer_token_wo", "request.0.cluster.0.config.0.bearer_token_wo_version") {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.BearerToken = ""
+		}
+	} else if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
 		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
 			resp.Cluster.Config.BearerToken = attr.(string)
 		}
 	}
 
 	setClusterDetails(d, &resp)
+	preserveClusterWoVersions(d)
 	return nil
 }
 
@@ -483,12 +574,22 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
-	if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.password_wo", "request.0.cluster.0.config.0.password_wo_version") {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.Password = ""
+		}
+	}
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.bearer_token_wo", "request.0.cluster.0.config.0.bearer_token_wo_version") {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.BearerToken = ""
+		}
+	} else if attr, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token"); ok {
 		if resp.Cluster.Config != nil && len(resp.Cluster.Config.BearerToken) != 0 {
 			resp.Cluster.Config.BearerToken = attr.(string)
 		}
 	}
 	setClusterDetails(d, &resp)
+	preserveClusterWoVersions(d)
 	return nil
 }
 
@@ -522,8 +623,17 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
+	if helpers.WoActive(d, "request.0.cluster.0.config.0.password_wo", "request.0.cluster.0.config.0.password_wo_version") {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.Password = ""
+		}
+	}
 	connType, _ := d.GetOk("request.0.cluster.0.config.0.cluster_connection_type")
 	if connTypeStr, ok := connType.(string); ok && connTypeStr == "IRSA" {
+		if resp.Cluster.Config != nil {
+			resp.Cluster.Config.BearerToken = ""
+		}
+	} else if helpers.WoActive(d, "request.0.cluster.0.config.0.bearer_token_wo", "request.0.cluster.0.config.0.bearer_token_wo_version") {
 		if resp.Cluster.Config != nil {
 			resp.Cluster.Config.BearerToken = ""
 		}
@@ -534,6 +644,7 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	setClusterDetails(d, &resp)
+	preserveClusterWoVersions(d)
 	return nil
 }
 
@@ -576,8 +687,16 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 			configList := []interface{}{}
 			config := map[string]interface{}{}
 			config["username"] = cl.Cluster.Config.Username
-			config["password"] = cl.Cluster.Config.Password
-			config["bearer_token"] = cl.Cluster.Config.BearerToken
+			if helpers.WoActive(d, "request.0.cluster.0.config.0.password_wo", "request.0.cluster.0.config.0.password_wo_version") {
+				config["password"] = ""
+			} else if len(cl.Cluster.Config.Password) > 0 {
+				config["password"] = cl.Cluster.Config.Password
+			}
+			if helpers.WoActive(d, "request.0.cluster.0.config.0.bearer_token_wo", "request.0.cluster.0.config.0.bearer_token_wo_version") {
+				config["bearer_token"] = ""
+			} else {
+				config["bearer_token"] = cl.Cluster.Config.BearerToken
+			}
 			if cl.Cluster.Config.TlsClientConfig != nil {
 				tlsClientConfigList := []interface{}{}
 				tlsClientConfig := map[string]interface{}{}
@@ -586,6 +705,15 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 				tlsClientConfig["cert_data"] = cl.Cluster.Config.TlsClientConfig.CertData
 				tlsClientConfig["key_data"] = cl.Cluster.Config.TlsClientConfig.KeyData
 				tlsClientConfig["ca_data"] = cl.Cluster.Config.TlsClientConfig.CaData
+				if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version"); ok {
+					tlsClientConfig["cert_data_wo_version"] = v.(int)
+				}
+				if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version"); ok {
+					tlsClientConfig["key_data_wo_version"] = v.(int)
+				}
+				if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version"); ok {
+					tlsClientConfig["ca_data_wo_version"] = v.(int)
+				}
 				tlsClientConfigList = append(tlsClientConfigList, tlsClientConfig)
 				config["tls_client_config"] = tlsClientConfigList
 			}
@@ -613,6 +741,14 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 			config["cluster_connection_type"] = cl.Cluster.Config.ClusterConnectionType
 			config["disable_compression"] = cl.Cluster.Config.DisableCompression
 			config["proxy_url"] = cl.Cluster.Config.ProxyUrl
+
+			// Preserve _wo_version integers before d.Set("request", ...) zeroes them out.
+			if v, ok := d.GetOk("request.0.cluster.0.config.0.password_wo_version"); ok {
+				config["password_wo_version"] = v.(int)
+			}
+			if v, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token_wo_version"); ok {
+				config["bearer_token_wo_version"] = v.(int)
+			}
 
 			configList = append(configList, config)
 			cluster["config"] = configList
@@ -762,11 +898,17 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 				if clusterConfig["username"] != nil && clusterConnectionType != "IRSA" {
 					clusterDetails.Config.Username = clusterConfig["username"].(string)
 				}
-				if clusterConfig["password"] != nil && clusterConnectionType != "IRSA" {
-					clusterDetails.Config.Password = clusterConfig["password"].(string)
-				}
-				if clusterConfig["bearer_token"] != nil && clusterConnectionType != "IRSA" {
-					clusterDetails.Config.BearerToken = clusterConfig["bearer_token"].(string)
+				if clusterConnectionType != "IRSA" {
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.password_wo"); ok {
+						clusterDetails.Config.Password = val
+					} else if clusterConfig["password"] != nil {
+						clusterDetails.Config.Password = clusterConfig["password"].(string)
+					}
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.bearer_token_wo"); ok {
+						clusterDetails.Config.BearerToken = val
+					} else if clusterConfig["bearer_token"] != nil {
+						clusterDetails.Config.BearerToken = clusterConfig["bearer_token"].(string)
+					}
 				}
 
 				if clusterConfig["tls_client_config"] != nil && len(clusterConfig["tls_client_config"].([]interface{})) > 0 {
@@ -778,13 +920,19 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 					if configTlsClientConfig["server_name"] != nil {
 						clusterDetails.Config.TlsClientConfig.ServerName = configTlsClientConfig["server_name"].(string)
 					}
-					if configTlsClientConfig["cert_data"] != nil {
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo"); ok {
+						clusterDetails.Config.TlsClientConfig.CertData = val
+					} else if configTlsClientConfig["cert_data"] != nil {
 						clusterDetails.Config.TlsClientConfig.CertData = configTlsClientConfig["cert_data"].(string)
 					}
-					if configTlsClientConfig["key_data"] != nil {
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.tls_client_config.0.key_data_wo"); ok {
+						clusterDetails.Config.TlsClientConfig.KeyData = val
+					} else if configTlsClientConfig["key_data"] != nil {
 						clusterDetails.Config.TlsClientConfig.KeyData = configTlsClientConfig["key_data"].(string)
 					}
-					if configTlsClientConfig["ca_data"] != nil {
+					if val, ok := helpers.WoStringValue(d, "request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo"); ok {
+						clusterDetails.Config.TlsClientConfig.CaData = val
+					} else if configTlsClientConfig["ca_data"] != nil {
 						clusterDetails.Config.TlsClientConfig.CaData = configTlsClientConfig["ca_data"].(string)
 					}
 				}
@@ -914,4 +1062,71 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 
 func getUpdateFieldFromPath(path string) string {
 	return strings.Split(path, ".")[len(strings.Split(path, "."))-1]
+}
+
+func preserveClusterWoVersions(d *schema.ResourceData) {
+	requestRaw, ok := d.GetOk("request")
+	if !ok {
+		return
+	}
+
+	requestList, ok := requestRaw.([]interface{})
+	if !ok || len(requestList) == 0 || requestList[0] == nil {
+		return
+	}
+	requestMap, ok := requestList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	clusterList, ok := requestMap["cluster"].([]interface{})
+	if !ok || len(clusterList) == 0 || clusterList[0] == nil {
+		return
+	}
+	clusterMap, ok := clusterList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	configList, _ := clusterMap["config"].([]interface{})
+	if len(configList) == 0 || configList[0] == nil {
+		configList = []interface{}{map[string]interface{}{}}
+	}
+	configMap, ok := configList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	if v, ok := d.GetOk("request.0.cluster.0.config.0.password_wo_version"); ok {
+		configMap["password_wo_version"] = v.(int)
+	}
+	if v, ok := d.GetOk("request.0.cluster.0.config.0.bearer_token_wo_version"); ok {
+		configMap["bearer_token_wo_version"] = v.(int)
+	}
+
+	tlsList, _ := configMap["tls_client_config"].([]interface{})
+	if len(tlsList) == 0 || tlsList[0] == nil {
+		tlsList = []interface{}{map[string]interface{}{}}
+	}
+	tlsMap, ok := tlsList[0].(map[string]interface{})
+	if !ok {
+		return
+	}
+	if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.cert_data_wo_version"); ok {
+		tlsMap["cert_data_wo_version"] = v.(int)
+	}
+	if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.key_data_wo_version"); ok {
+		tlsMap["key_data_wo_version"] = v.(int)
+	}
+	if v, ok := d.GetOk("request.0.cluster.0.config.0.tls_client_config.0.ca_data_wo_version"); ok {
+		tlsMap["ca_data_wo_version"] = v.(int)
+	}
+
+	configMap["tls_client_config"] = []interface{}{tlsMap}
+	configList[0] = configMap
+	clusterMap["config"] = configList
+	clusterList[0] = clusterMap
+	requestMap["cluster"] = clusterList
+	requestList[0] = requestMap
+	d.Set("request", requestList)
 }

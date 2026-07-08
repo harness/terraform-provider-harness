@@ -343,6 +343,8 @@ func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
 		pt := har.PackageType(attr.(string))
 		registry.PackageType = &pt
 	}
+
+	registry.IsPublic = d.Get("is_public").(bool)
 	if attr, ok := d.GetOk("config"); ok {
 		configList := attr.([]interface{})
 		if len(configList) > 0 { // Ensure config is not empty before accessing index
@@ -472,6 +474,7 @@ func readRegistry(d *schema.ResourceData, registry *har.Registry) {
 	d.Set("created_at", registry.CreatedAt)
 	d.Set("allowed_pattern", registry.AllowedPattern)
 	d.Set("blocked_pattern", registry.BlockedPattern)
+	d.Set("is_public", registry.IsPublic)
 
 	if registry.Config != nil {
 		configMap := map[string]interface{}{

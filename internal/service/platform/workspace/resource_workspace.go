@@ -56,7 +56,7 @@ func ResourceWorkspace() *schema.Resource {
 				Optional:    true,
 			},
 			"provisioner_type": {
-				Description: "Provisioner type defines the provisioning tool to use (terraform or opentofu)",
+				Description: "Provisioner type defines the provisioning tool to use (terraform, opentofu, or awscdk)",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -236,10 +236,61 @@ func ResourceWorkspace() *schema.Resource {
 							Required:    true,
 						},
 						"type": {
-							Description:  "Type is the connector type of the connector. Supported types: aws, azure, gcp",
+							Description:  "Type is the connector type of the connector. Supported types: aws, azure, gcp, vault",
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"aws", "azure", "gcp"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"aws", "azure", "gcp", "vault"}, false),
+						},
+					},
+				},
+			},
+			"associated_template": {
+				Description: "Template associated with the workspace.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"template_id": {
+							Description: "Template identifier. Changing this forces a new resource.",
+							Type:        schema.TypeString,
+							Required:    true,
+							ForceNew:    true,
+						},
+						"version": {
+							Description: "Template version. Can be updated in place.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"provisioner_config": {
+				Description: "Provisioner configuration for awscdk provisioner type. Required when provisioner_type is awscdk.",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"language": {
+							Description: "Programming language for AWS CDK (e.g., python, typescript)",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"language_version": {
+							Description: "Version of the programming language (e.g., 3.12 for Python)",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"package_manager": {
+							Description: "Package manager to use (e.g., pip, npm)",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"package_manager_version": {
+							Description: "Version of the package manager (e.g., 25.3 for pip)",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 					},
 				},
@@ -265,6 +316,11 @@ func resourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, meta int
 		c.AccountId,
 	)
 	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
@@ -344,6 +400,35 @@ func resourceWorkspaceUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		return parseError(err, httpResp)
 	}
 
+	if d.HasChange("associated_template") {
+		// template_id is ForceNew, so associating a template, removing it, or switching to
+		// a different template all recreate the workspace via the Create path (which embeds
+		// the association and, on removal, drops it when the old workspace is destroyed).
+		// The only change that reaches Update is an in-place version bump of an
+		// already-associated template, handled here via the workspace templates API.
+		if v, ok := d.GetOk("associated_template"); ok {
+			templateList := v.([]interface{})
+			if len(templateList) > 0 {
+				tpl := templateList[0].(map[string]interface{})
+				body := nextgen.IacmUpdateWorkspaceTemplateRequestBody{
+					Version: tpl["version"].(string),
+				}
+				_, httpResp, err := c.WorkspaceTemplatesApi.WorkspaceTemplatesUpdateWorkspaceTemplate(
+					ctx,
+					body,
+					c.AccountId,
+					d.Get("org_id").(string),
+					d.Get("project_id").(string),
+					tpl["template_id"].(string),
+					d.Get("identifier").(string),
+				)
+				if err != nil {
+					return parseError(err, httpResp)
+				}
+			}
+		}
+	}
+
 	resourceWorkspaceRead(ctx, d, meta)
 	return nil
 }
@@ -418,6 +503,20 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 		}
 		d.Set("connector", providerConnectors)
 	}
+
+	// Only reflect associated_template when it is declared on the workspace itself.
+	// The association can alternatively be managed by the standalone
+	// harness_platform_iacm_workspace_template resource, in which case unconditionally
+	// writing it here would produce a perpetual diff (config has no block, server does).
+	if _, ok := d.GetOk("associated_template"); ok && ws.AssociatedTemplate != nil {
+		d.Set("associated_template", []interface{}{
+			map[string]interface{}{
+				"template_id": ws.AssociatedTemplate.TemplateID,
+				"version":     ws.AssociatedTemplate.Version,
+			},
+		})
+	}
+
 	d.Set("tags", helpers.FlattenTags(ws.Tags))
 }
 
@@ -497,6 +596,8 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 		return nextgen.IacmUpdateWorkspaceRequestBody{}, err
 	}
 	ws.ProviderConnectors = providerConnectors
+
+	ws.ProvisionerConfiguration = buildProvisionerConfig(d)
 
 	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
 		ws.Tags = helpers.ExpandTags(attr)
@@ -583,6 +684,19 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 	}
 	ws.ProviderConnectors = providerConnectors
 
+	ws.ProvisionerConfiguration = buildProvisionerConfig(d)
+
+	if v, ok := d.GetOk("associated_template"); ok {
+		templateList := v.([]interface{})
+		if len(templateList) > 0 {
+			tpl := templateList[0].(map[string]interface{})
+			ws.AssociatedTemplate = &nextgen.IacmAssociatedTemplate{
+				TemplateID: tpl["template_id"].(string),
+				Version:    tpl["version"].(string),
+			}
+		}
+	}
+
 	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
 		ws.Tags = helpers.ExpandTags(attr)
 	}
@@ -667,6 +781,23 @@ func buildProviderConnectors(d *schema.ResourceData) ([]nextgen.VariableSetConne
 		}
 	}
 	return connectors, nil
+}
+
+func buildProvisionerConfig(d *schema.ResourceData) *nextgen.IacmProvisionerConfiguration {
+	if provisionerConfigSet, ok := d.GetOk("provisioner_config"); ok {
+		provisionerConfigList := provisionerConfigSet.(*schema.Set).List()
+		if len(provisionerConfigList) > 0 {
+			if config, ok := provisionerConfigList[0].(map[string]interface{}); ok {
+				return &nextgen.IacmProvisionerConfiguration{
+					Language:              config["language"].(string),
+					LanguageVersion:       config["language_version"].(string),
+					PackageManager:        config["package_manager"].(string),
+					PackageManagerVersion: config["package_manager_version"].(string),
+				}
+			}
+		}
+	}
+	return nil
 }
 
 // iacm errors are in a different format from other harness services

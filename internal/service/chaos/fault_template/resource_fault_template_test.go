@@ -122,8 +122,7 @@ func TestAccResourceFaultTemplate_withVolumes(t *testing.T) {
 	})
 }
 
-// Skipped: API returns different fault_name than what was sent (drift issue)
-func TestAccResourceFaultTemplate_withTargets_SKIPPED(t *testing.T) {
+func TestAccResourceFaultTemplate_withTargets(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	resourceName := "harness_chaos_fault_template.test"
 
@@ -149,8 +148,9 @@ func TestAccResourceFaultTemplate_withTargets_SKIPPED(t *testing.T) {
 	})
 }
 
-// Skipped: API returns different fault_name than what was sent (drift issue)
-func TestAccResourceFaultTemplate_withVariables_SKIPPED(t *testing.T) {
+// Variables are returned by GetFaultTemplate in the `fault` payload (parsed
+// from the stored template YAML), so they now survive Read/import.
+func TestAccResourceFaultTemplate_withVariables(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	resourceName := "harness_chaos_fault_template.test"
 

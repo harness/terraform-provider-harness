@@ -68,7 +68,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Optional:    true,
 						Description: "Upstream source",
 						ValidateFunc: validation.StringInSlice([]string{
-							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates",
+							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo",
 						}, false),
 					},
 					"url": {
@@ -179,7 +179,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			},
 		},
 		"package_type": {
-			Description: "Type of package (DOCKER, HELM, MAVEN, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, etc.)",
 			Type:        schema.TypeString,
 			Required:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -193,7 +193,17 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.RPM_PackageType),
 				(string)(har.CARGO_PackageType),
 				(string)(har.RAW_PackageType),
+				(string)(har.PUPPET_PackageType),
+				(string)(har.GO_PackageType),
+				(string)(har.CONDA_PackageType),
+				(string)(har.HELM_HTTP_PackageType),
 			}, false),
+		},
+		"is_public": {
+			Description: "Whether the registry is public. When set to true, the registry is publicly accessible without authentication. Defaults to false (private).",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
 		},
 		"url": {
 			Description: "URL of the registry",
@@ -251,8 +261,13 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 	}
 
 	if readOnly {
+		mainSchema["is_public"] = &schema.Schema{
+			Description: "Whether the registry is public. When true, the registry is publicly accessible without authentication.",
+			Type:        schema.TypeBool,
+			Computed:    true,
+		}
 		mainSchema["package_type"] = &schema.Schema{
-			Description: "Type of package (DOCKER, HELM, MAVEN, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, etc.)",
 			Type:        schema.TypeString,
 			Optional:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -266,6 +281,10 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.RPM_PackageType),
 				(string)(har.CARGO_PackageType),
 				(string)(har.RAW_PackageType),
+				(string)(har.PUPPET_PackageType),
+				(string)(har.GO_PackageType),
+				(string)(har.CONDA_PackageType),
+				(string)(har.HELM_HTTP_PackageType),
 			}, false),
 		}
 	}
@@ -283,7 +302,7 @@ func getUpstreamRegistrySchema() *schema.Resource {
 				Required:    true,
 				Description: "Upstream source",
 				ValidateFunc: validation.StringInSlice([]string{
-					"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates",
+					"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo",
 				}, false),
 			},
 			"url": {

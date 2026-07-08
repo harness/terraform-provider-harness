@@ -70,10 +70,55 @@ func TestAccResourceVirtualDockerRegistry(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
 					resource.TestCheckResourceAttr(resourceName, "parent_ref", accountId),
 					resource.TestCheckResourceAttr(resourceName, "space_ref", accountId),
+					// is_public defaults to false (private)
+					resource.TestCheckResourceAttr(resourceName, "is_public", "false"),
 					// Validate computed fields
 					resource.TestCheckResourceAttrSet(resourceName, "url"),
 					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests creating a public virtual Docker registry at account level with import
+func TestAccResourcePublicVirtualDockerRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_pub_docker_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourcePublicVirtualDockerRegistry(id, accountId, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "DOCKER"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "is_public", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				// Toggle back to private
+				Config: testAccResourcePublicVirtualDockerRegistry(id, accountId, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "is_public", "false"),
 				),
 			},
 			{
@@ -275,6 +320,24 @@ func testAccResourceVirtualDockerRegistry(id string, accId string) string {
    parent_ref = "%[2]s"
  }
 `, id, accId)
+}
+
+// Generates Terraform config for a public/private virtual Docker registry at account level
+func testAccResourcePublicVirtualDockerRegistry(id string, accId string, isPublic bool) string {
+	return fmt.Sprintf(`
+
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+   is_public    = %[3]t
+
+   config {
+    type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, isPublic)
 }
 
 // Generates Terraform config for a virtual Docker registry at organization level
@@ -1939,6 +2002,53 @@ func TestAccResourceUpstreamNpmRegistryFirewallUpdate(t *testing.T) {
 	})
 }
 
+// Tests the Progress Software scenario: a public upstream NPM proxy registry with dependency firewall enabled.
+// Verifies is_public works alongside firewall_mode on an UPSTREAM NPM registry, and can be toggled to private.
+func TestAccResourceUpstreamNpmRegistryPublicFirewall(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_pub_npm_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamNpmRegistryPublicFirewall(id, accountId, true, "ENABLED"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "NPM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "NpmJs"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
+					resource.TestCheckResourceAttr(resourceName, "is_public", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				// Toggle to private, keep firewall enabled
+				Config: testAccResourceUpstreamNpmRegistryPublicFirewall(id, accountId, false, "ENABLED"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "is_public", "false"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.firewall_mode", "ENABLED"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 // Tests that firewall_mode is rejected for DOCKER upstream registries
 func TestAccResourceUpstreamDockerRegistryFirewallRejected(t *testing.T) {
 	id := fmt.Sprintf("tfauto_up_fw_dk_%s", randAlphanumeric(5))
@@ -2216,6 +2326,26 @@ func testAccResourceUpstreamNpmRegistryFirewall(id string, accId string, firewal
 `, id, accId, firewallMode)
 }
 
+// Generates Terraform config for a public/private upstream NPM proxy registry with a firewall_mode (Progress Software scenario)
+func testAccResourceUpstreamNpmRegistryPublicFirewall(id string, accId string, isPublic bool, firewallMode string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "NPM"
+   is_public    = %[3]t
+
+   config {
+    type          = "UPSTREAM"
+    auth_type     = "Anonymous"
+    source        = "NpmJs"
+    firewall_mode = "%[4]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, isPublic, firewallMode)
+}
+
 // Generates Terraform config for upstream DOCKER registry with firewall_mode (should be rejected)
 func testAccResourceUpstreamDockerRegistryFirewall(id string, accId string, firewallMode string) string {
 	return fmt.Sprintf(`
@@ -2270,4 +2400,460 @@ func testAccResourceVirtualRegistryFirewall(id string, accId string, firewallMod
    parent_ref = "%[2]s"
  }
 `, id, accId, firewallMode)
+}
+
+// ---------------------------------------------------------------------------
+// GO / CONDA / HELM_HTTP package types
+// ---------------------------------------------------------------------------
+
+// Tests create/read/update/import for a VIRTUAL Go registry
+func TestAccResourceVirtualGoRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_go_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "GO", "initial description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "GO"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "description", "initial description"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "GO", "updated description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "updated description"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/import for an UPSTREAM Go registry using the GoProxy source (no url required)
+func TestAccResourceUpstreamGoRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_go_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamAnonRegistry(id, accountId, "GO", "GoProxy", ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "GO"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "GoProxy"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/update/import for a VIRTUAL Conda registry
+func TestAccResourceVirtualCondaRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_conda_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "CONDA", "initial description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "CONDA"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "description", "initial description"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "CONDA", "updated description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "updated description"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/import for an UPSTREAM Conda registry using the Anaconda source (no url required)
+func TestAccResourceUpstreamCondaRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_conda_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamAnonRegistry(id, accountId, "CONDA", "Anaconda", ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "CONDA"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "Anaconda"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/update/import for a VIRTUAL Helm HTTP registry
+func TestAccResourceVirtualHelmHTTPRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_helmhttp_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "HELM_HTTP", "initial description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "HELM_HTTP"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "description", "initial description"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "HELM_HTTP", "updated description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "updated description"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/import for an UPSTREAM Helm HTTP registry using the HelmChartRepo source (url required)
+func TestAccResourceUpstreamHelmHTTPRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_helmhttp_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamAnonRegistry(id, accountId, "HELM_HTTP", "HelmChartRepo", "https://charts.bitnami.com/bitnami"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "HELM_HTTP"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "HelmChartRepo"),
+					resource.TestCheckResourceAttrSet(resourceName, "config.0.url"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Generates Terraform config for a VIRTUAL registry of the given package type
+func testAccResourceVirtualRegistryByType(id, accId, packageType, description string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   description  = "%[4]s"
+   package_type = "%[3]s"
+
+   config {
+    type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, packageType, description)
+}
+
+// Generates Terraform config for an UPSTREAM registry with Anonymous auth.
+// When url is empty it is omitted (for sources like GoProxy/Anaconda that don't require one).
+func testAccResourceUpstreamAnonRegistry(id, accId, packageType, source, url string) string {
+	urlLine := ""
+	if url != "" {
+		urlLine = fmt.Sprintf("\n\t\turl = \"%s\"", url)
+	}
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "%[3]s"
+
+   config {
+		type = "UPSTREAM"
+		auth_type = "Anonymous"
+		source = "%[4]s"%[5]s
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, packageType, source, urlLine)
+}
+
+// Tests creating a VIRTUAL registry of the given package type at organization level
+func TestOrgResourceVirtualGoRegistry(t *testing.T)       { testVirtualRegistryOrg(t, "GO") }
+func TestOrgResourceVirtualCondaRegistry(t *testing.T)    { testVirtualRegistryOrg(t, "CONDA") }
+func TestOrgResourceVirtualHelmHTTPRegistry(t *testing.T) { testVirtualRegistryOrg(t, "HELM_HTTP") }
+
+// Tests creating a VIRTUAL registry of the given package type at project level
+func TestProjectResourceVirtualGoRegistry(t *testing.T)       { testVirtualRegistryProject(t, "GO") }
+func TestProjectResourceVirtualCondaRegistry(t *testing.T)    { testVirtualRegistryProject(t, "CONDA") }
+func TestProjectResourceVirtualHelmHTTPRegistry(t *testing.T) { testVirtualRegistryProject(t, "HELM_HTTP") }
+
+// Tests creating an UPSTREAM registry with Custom source + UserPassword auth
+func TestAccResourceUpstreamGoCustomAuthRegistry(t *testing.T)    { testUpstreamCustomAuthRegistry(t, "GO") }
+func TestAccResourceUpstreamCondaCustomAuthRegistry(t *testing.T) { testUpstreamCustomAuthRegistry(t, "CONDA") }
+func TestAccResourceUpstreamHelmHTTPCustomAuthRegistry(t *testing.T) {
+	testUpstreamCustomAuthRegistry(t, "HELM_HTTP")
+}
+
+func testVirtualRegistryOrg(t *testing.T, packageType string) {
+	id := fmt.Sprintf("tfauto_org_virt_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryByTypeOrg(id, accountId, packageType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", packageType),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+		},
+	})
+}
+
+func testVirtualRegistryProject(t *testing.T, packageType string) {
+	id := fmt.Sprintf("tfauto_proj_virt_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryByTypeProject(id, accountId, packageType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", packageType),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+		},
+	})
+}
+
+func testUpstreamCustomAuthRegistry(t *testing.T, packageType string) {
+	id := fmt.Sprintf("tfauto_up_custauth_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamCustomAuthRegistry(id, accountId, packageType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", packageType),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "Custom"),
+					resource.TestCheckResourceAttrSet(resourceName, "config.0.url"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+		},
+	})
+}
+
+// Generates Terraform config for a VIRTUAL registry of the given package type at organization level
+func testAccResourceVirtualRegistryByTypeOrg(id, accId, packageType string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_organization" "test" {
+  identifier = "%[1]s_org"
+  name = "%[1]s"
+ }
+
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s/${harness_platform_organization.test.identifier}"
+   package_type = "%[3]s"
+
+   config {
+    type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s/${harness_platform_organization.test.identifier}"
+ }
+`, id, accId, packageType)
+}
+
+// Generates Terraform config for a VIRTUAL registry of the given package type at project level
+func testAccResourceVirtualRegistryByTypeProject(id, accId, packageType string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_organization" "test" {
+  identifier = "%[1]s_org"
+  name = "%[1]s"
+ }
+
+ resource "harness_platform_project" "test" {
+  identifier = "%[1]s_project"
+  name = "%[1]s"
+  org_id = harness_platform_organization.test.id
+  color = "#472848"
+ }
+
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s/${harness_platform_organization.test.identifier}/${harness_platform_project.test.identifier}"
+   package_type = "%[3]s"
+
+   config {
+    type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s/${harness_platform_organization.test.identifier}/${harness_platform_project.test.identifier}"
+ }
+`, id, accId, packageType)
+}
+
+// Generates Terraform config for an UPSTREAM registry with Custom source + UserPassword auth at account level
+func testAccResourceUpstreamCustomAuthRegistry(id, accId, packageType string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_secret_text" "test" {
+   identifier  = "Secret_Token_Terraform_%[1]s"
+   name        = "Secret Token Terraform"
+   secret_manager_identifier = "harnessSecretManager"
+   value_type  = "Inline"
+   value       = "test_password"
+ }
+
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "%[3]s"
+
+   config {
+		type = "UPSTREAM"
+		auth_type = "UserPassword"
+		source = "Custom"
+		url = "https://har-registry.default.svc.cluster.local"
+		auth {
+			auth_type = "UserPassword"
+			user_name = "username"
+			secret_identifier = harness_platform_secret_text.test.identifier
+			secret_space_path = "%[2]s"
+		}
+   }
+   parent_ref = "%[2]s"
+   depends_on = [harness_platform_secret_text.test]
+ }
+`, id, accId, packageType)
 }

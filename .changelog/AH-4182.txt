@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/harness_platform_har_registry: Added `is_public` attribute to configure public vs private registry type when creating or updating registries
+```
+
+```release-note:enhancement
+data-source/harness_platform_har_registry: Added `is_public` attribute to read whether a registry is public or private
+```

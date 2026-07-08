@@ -158,6 +158,11 @@ func ResourceGitopsApplication() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
+			"force_delete": {
+				Description: "Indicates if the GitOps application should be force deleted from harness.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"name": {
 				Description: "Name of the GitOps application.",
 				Type:        schema.TypeString,
@@ -515,7 +520,7 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var agentIdentifier, orgIdentifier, projectIdentifier, requestName, requestPropagationPolicy string
-	var requestCascade, optionsRemoveExistingFinalizers bool
+	var requestCascade, optionsRemoveExistingFinalizers, forceDelete bool
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
@@ -534,6 +539,9 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 	if attr, ok := d.GetOk("options_remove_existing_finalizers"); ok {
 		optionsRemoveExistingFinalizers = attr.(bool)
 	}
+	if attr, ok := d.GetOk("force_delete"); ok {
+		forceDelete = attr.(bool)
+	}
 	if attr, ok := d.GetOk("name"); ok {
 		requestName = attr.(string)
 	}
@@ -545,6 +553,7 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 		RequestCascade:                  optional.NewBool(requestCascade),
 		RequestPropagationPolicy:        optional.NewString(requestPropagationPolicy),
 		OptionsRemoveExistingFinalizers: optional.NewBool(optionsRemoveExistingFinalizers),
+		OptionsForceDelete:              optional.NewBool(forceDelete),
 	})
 
 	if err != nil {
@@ -947,6 +956,7 @@ func getSourceForState(appSpec *nextgen.ApplicationsApplicationSpec) map[string]
 		kustomize["common_annotations"] = appSpec.Source.Kustomize.CommonAnnotations
 		kustomize["force_common_labels"] = appSpec.Source.Kustomize.ForceCommonLabels
 		kustomize["force_common_annotations"] = appSpec.Source.Kustomize.ForceCommonAnnotations
+		kustomize["namespace"] = appSpec.Source.Kustomize.Namespace
 		kustomizeList = append(kustomizeList, kustomize)
 		source["kustomize"] = kustomizeList
 	}
@@ -1094,6 +1104,7 @@ func getSourcesForState(appSpec *nextgen.ApplicationsApplicationSpec) []interfac
 			kustomize["common_annotations"] = sourceSpec.Kustomize.CommonAnnotations
 			kustomize["force_common_labels"] = sourceSpec.Kustomize.ForceCommonLabels
 			kustomize["force_common_annotations"] = sourceSpec.Kustomize.ForceCommonAnnotations
+			kustomize["namespace"] = sourceSpec.Kustomize.Namespace
 
 			kustomizeList = append(kustomizeList, kustomize)
 			source["kustomize"] = kustomizeList
@@ -1320,6 +1331,9 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 		}
 		if kustomizeSource["force_common_annotations"] != nil {
 			kustomizeData.ForceCommonAnnotations = kustomizeSource["force_common_annotations"].(bool)
+		}
+		if kustomizeSource["namespace"] != nil && len(kustomizeSource["namespace"].(string)) > 0 {
+			kustomizeData.Namespace = kustomizeSource["namespace"].(string)
 		}
 
 		specSource.Kustomize = &kustomizeData

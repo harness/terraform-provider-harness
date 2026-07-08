@@ -115,6 +115,8 @@ resource "harness_platform_gitops_cluster" "example" {
 
 ### Optional
 
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
 - `account_id` (String, Deprecated) Account identifier of the GitOps cluster.
 - `force_delete` (Boolean) Indicates if the cluster should be deleted forcefully, regardless of existing applications using that cluster.
 - `force_update` (Boolean) Indicates if the cluster should be updated forcefully, regardless of existing applications using that cluster.
@@ -131,6 +133,8 @@ resource "harness_platform_gitops_cluster" "example" {
 
 Optional:
 
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
 - `cluster` (Block List, Max: 1) GitOps cluster details. (see [below for nested schema](#nestedblock--request--cluster))
 - `tags` (Set of String) Tags for the GitOps cluster. These can be used to search or filter the GitOps agents.
 - `updated_fields` (List of String) Fields which are updated.
@@ -140,6 +144,8 @@ Optional:
 ### Nested Schema for `request.cluster`
 
 Required:
+
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
 
 - `config` (Block List, Min: 1, Max: 1) GitOps cluster config. (see [below for nested schema](#nestedblock--request--cluster--config))
 - `server` (String) API server URL of the kubernetes cluster.
@@ -164,9 +170,13 @@ Read-Only:
 
 Optional:
 
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
 - `aws_cluster_name` (String) AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster.
-- `bearer_token` (String, Sensitive) Bearer authentication token the cluster.
-- `cluster_connection_type` (String) Identifies the authentication method used to connect to the cluster. Valid values:
+- `bearer_token` (String, Sensitive) Bearer authentication token the cluster. Use bearer_token_wo for write-only support (Terraform >= 1.11).
+- `bearer_token_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Bearer authentication token for the cluster. Write-only: never stored in state. Requires Terraform >= 1.11.
+- `bearer_token_wo_version` (Number) Increment to rotate the credential when using bearer_token_wo.
+- `cluster_connection_type` (String) Identifies the authentication method used to connect to the cluster.
   - `IN_CLUSTER` - Uses the GitOps Agent's own ServiceAccount credentials. Only valid when `server` is `https://kubernetes.default.svc` (the cluster where the agent is deployed)
   - `SERVICE_ACCOUNT` - Authenticates using an explicit ServiceAccount bearer token provided in the `bearer_token` field
   - `USERNAME_PASSWORD` - Authenticates using basic authentication with `username` and `password` fields (deprecated in modern Kubernetes, not recommended)
@@ -176,7 +186,9 @@ Optional:
   - `CLUSTER_CONNECTION_TYPE_NOT_SET` - Connection type will be automatically detected based on provided credentials
 - `disable_compression` (Boolean) DisableCompression bypasses automatic GZip compression requests to to the cluster's API server. Corresponds to running kubectl with --disable-compression
 - `exec_provider_config` (Block List, Max: 1) Configuration for an exec provider. (see [below for nested schema](#nestedblock--request--cluster--config--exec_provider_config))
-- `password` (String) Password of the server of the cluster.
+- `password` (String, Sensitive) Password of the server of the cluster. Use password_wo for write-only support (Terraform >= 1.11).
+- `password_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Password of the server of the cluster. Write-only: never stored in state. Requires Terraform >= 1.11.
+- `password_wo_version` (Number) Increment to rotate the credential when using password_wo.
 - `proxy_url` (String) The URL to the proxy to be used for all requests send to the cluster's API server
 - `role_a_r_n` (String) Optional role ARN. If set then used for AWS IAM Authenticator.
 - `tls_client_config` (Block List, Max: 1) Settings to enable transport layer security. (see [below for nested schema](#nestedblock--request--cluster--config--tls_client_config))
@@ -199,10 +211,18 @@ Optional:
 
 Optional:
 
-- `ca_data` (String) CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile. The value should be base64 encoded.
-- `cert_data` (String) Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS. The value should be base64 encoded.
+> **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
+
+- `ca_data` (String) CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile. The value should be base64 encoded. Use ca_data_wo for write-only support (Terraform >= 1.11).
+- `ca_data_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) CA data holds PEM-encoded bytes. Write-only: never stored in state. Requires Terraform >= 1.11.
+- `ca_data_wo_version` (Number) Increment to rotate the credential when using ca_data_wo.
+- `cert_data` (String, Sensitive) Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS. The value should be base64 encoded. Use cert_data_wo for write-only support (Terraform >= 1.11).
+- `cert_data_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Certificate data for mTLS authentication. Write-only: never stored in state. Requires Terraform >= 1.11.
+- `cert_data_wo_version` (Number) Increment to rotate the credential when using cert_data_wo.
 - `insecure` (Boolean) Indicates if the TLS connection to the cluster should be insecure.
-- `key_data` (String) Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS. The value should be base64 encoded.
+- `key_data` (String, Sensitive) Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS. The value should be base64 encoded. Use key_data_wo for write-only support (Terraform >= 1.11).
+- `key_data_wo` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Key data for mTLS authentication. Write-only: never stored in state. Requires Terraform >= 1.11.
+- `key_data_wo_version` (Number) Increment to rotate the credential when using key_data_wo.
 - `server_name` (String) Server name for SNI in the client to check server certificates against. If ServerName is empty, the hostname used to contact the server is used.
 
 

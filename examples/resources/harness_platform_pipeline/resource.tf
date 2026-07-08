@@ -117,6 +117,7 @@ resource "harness_platform_pipeline" "test" {
     file_path     = ".harness/gitx.yaml"
     connector_ref = "account.DoNotDeleteGithub"
     repo_name     = "open-repo"
+    is_force_import = true
   }
   pipeline_import_request {
     pipeline_name        = "gitx"

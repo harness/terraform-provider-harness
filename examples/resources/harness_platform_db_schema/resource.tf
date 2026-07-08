@@ -62,3 +62,17 @@ resource "harness_platform_db_schema" "percona_enabled" {
     archive_path = "path/to/archive.zip"
   }
 }
+
+resource "harness_platform_db_schema" "harness_code_repo" {
+  identifier = "identifier"
+  org_id     = "org_id"
+  project_id = "project_id"
+  name       = "name"
+  service    = "service1"
+  type       = "Repository"
+  tags       = ["foo:bar", "bar:foo"]
+  schema_source {
+    repo     = "my-harness-code-repo"
+    location = "db/example-changelog.yaml"
+  }
+}

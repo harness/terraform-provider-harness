@@ -138,6 +138,15 @@ func resourceFaultTemplateRead(ctx context.Context, d *schema.ResourceData, meta
 		return diag.FromErr(err)
 	}
 
+	// Variables are not included in the `data` payload; the backend returns
+	// them in the `fault` payload (parsed from the stored template YAML), so
+	// populate them from there to ensure they survive Read/import.
+	if resp.Fault != nil && len(resp.Fault.Variables) > 0 {
+		if err := d.Set("variables", flattenTemplateVariables(resp.Fault.Variables)); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
 	return nil
 }
 
@@ -173,8 +182,15 @@ func resourceFaultTemplateUpdate(ctx context.Context, d *schema.ResourceData, me
 		return diag.FromErr(err)
 	}
 
-	// Update fault template - using CreateFaultTemplate with same identity updates it
-	_, httpResp, err := c.FaulttemplateApi.CreateFaultTemplate(ctx, req, c.AccountId, orgID, projectID, hubIdentity, nil)
+	// Ensure spec is initialized (API might require it)
+	if req.Spec == nil {
+		req.Spec = &chaos.FaulttemplateSpec{}
+	}
+
+	// Update fault template via the dedicated PUT endpoint. The backend's
+	// create endpoint (POST) rejects an existing identity/revision with a
+	// duplicate-key 500, so updates must use UpdateFaultTemplate.
+	_, httpResp, err := c.FaulttemplateApi.UpdateFaultTemplate(ctx, req, c.AccountId, orgID, projectID, hubIdentity, identity, nil)
 	if err != nil {
 		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
@@ -777,6 +793,36 @@ func buildChaosTLS(chaosConfig map[string]interface{}, chaosSpec *chaos.Faulttem
 	return nil
 }
 
+// flattenTemplateVariables converts the SDK template variables into the
+// Terraform schema representation. It is shared between the `data` and `fault`
+// payloads, since both expose variables as []chaos.TemplateVariable.
+func flattenTemplateVariables(vars []chaos.TemplateVariable) []map[string]interface{} {
+	variables := make([]map[string]interface{}, len(vars))
+	for i, variable := range vars {
+		varMap := map[string]interface{}{
+			"name":     variable.Name,
+			"required": variable.Required,
+		}
+
+		if variable.Value != nil {
+			if val, ok := (*variable.Value).(string); ok {
+				varMap["value"] = val
+			}
+		}
+
+		if variable.Description != "" {
+			varMap["description"] = variable.Description
+		}
+
+		if variable.Type_ != nil {
+			varMap["type"] = strings.ToLower(string(*variable.Type_))
+		}
+
+		variables[i] = varMap
+	}
+	return variables
+}
+
 func setFaultTemplateData(d *schema.ResourceData, template *chaos.ChaosfaulttemplateChaosFaultTemplate) error {
 	// Basic identifiers
 	d.Set("account_id", template.AccountID)
@@ -815,32 +861,10 @@ func setFaultTemplateData(d *schema.ResourceData, template *chaos.Chaosfaulttemp
 		d.Set("links", links)
 	}
 
-	// Variables
+	// Variables (populated from the `fault` payload in Read; the `data`
+	// payload does not carry them).
 	if len(template.Variables) > 0 {
-		variables := make([]map[string]interface{}, len(template.Variables))
-		for i, variable := range template.Variables {
-			varMap := map[string]interface{}{
-				"name":     variable.Name,
-				"required": variable.Required,
-			}
-
-			if variable.Value != nil {
-				if val, ok := (*variable.Value).(string); ok {
-					varMap["value"] = val
-				}
-			}
-
-			if variable.Description != "" {
-				varMap["description"] = variable.Description
-			}
-
-			if variable.Type_ != nil {
-				varMap["type"] = strings.ToLower(string(*variable.Type_))
-			}
-
-			variables[i] = varMap
-		}
-		d.Set("variables", variables)
+		d.Set("variables", flattenTemplateVariables(template.Variables))
 	}
 
 	// Parse spec from template YAML

@@ -35,7 +35,6 @@ func buildClusterOrch(d *schema.ResourceData) nextgen.CreateClusterOrchestratorD
 }
 func setId(d *schema.ResourceData, id string) {
 	d.SetId(id)
-	d.Set("identifier", id)
 }
 func buildClusterOrchConfig(d *schema.ResourceData) nextgen.ClusterOrchConfig {
 	config := &nextgen.ClusterOrchConfig{}

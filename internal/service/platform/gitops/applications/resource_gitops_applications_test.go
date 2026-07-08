@@ -33,6 +33,8 @@ func TestAccResourceGitopsApplication_AllTypes(t *testing.T) {
 	helmChart := os.Getenv("HARNESS_TEST_GITOPS_HELM_REPO_CHART")
 	namespace := "test"
 	namespaceUpdated := namespace + "_updated"
+	kustomizeNamespace := "kustomize-ns"
+	kustomizeNamespaceUpdated := kustomizeNamespace + "-updated"
 
 	// Resource names for each application type
 	helmAppResource := "harness_platform_gitops_applications.helm_app"
@@ -54,7 +56,7 @@ func TestAccResourceGitopsApplication_AllTypes(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Step 1: Create all applications
-				Config: testAccResourceGitopsApplicationAllTypes(id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, helmRepoURL, helmChart, namespace),
+				Config: testAccResourceGitopsApplicationAllTypes(id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, helmRepoURL, helmChart, namespace, kustomizeNamespace),
 				Check: resource.ComposeTestCheckFunc(
 					// Helm app checks
 					resource.TestCheckResourceAttr(helmAppResource, "id", id+"helm"),
@@ -62,6 +64,7 @@ func TestAccResourceGitopsApplication_AllTypes(t *testing.T) {
 					// Kustomize app checks
 					resource.TestCheckResourceAttr(kustomizeAppResource, "id", id+"kustomize"),
 					resource.TestCheckResourceAttr(kustomizeAppResource, "application.0.spec.0.destination.0.namespace", namespace),
+					resource.TestCheckResourceAttr(kustomizeAppResource, "application.0.spec.0.source.0.kustomize.0.namespace", kustomizeNamespace),
 					// Multi-source app checks
 					resource.TestCheckResourceAttr(multiSourceAppResource, "name", id+"multisource"),
 					resource.TestCheckResourceAttr(multiSourceAppResource, "application.0.spec.0.destination.0.namespace", namespace),
@@ -71,18 +74,21 @@ func TestAccResourceGitopsApplication_AllTypes(t *testing.T) {
 					// Skip repo validation app checks
 					resource.TestCheckResourceAttr(skipRepoAppResource, "id", id+"skiprepo"),
 					resource.TestCheckResourceAttr(skipRepoAppResource, "skip_repo_validation", "true"),
+					resource.TestCheckResourceAttr(skipRepoAppResource, "application.0.spec.0.source.0.kustomize.0.namespace", kustomizeNamespace),
 				),
 			},
 			{
 				// Step 2: Update namespace on all applications
-				Config: testAccResourceGitopsApplicationAllTypes(id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, helmRepoURL, helmChart, namespaceUpdated),
+				Config: testAccResourceGitopsApplicationAllTypes(id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, helmRepoURL, helmChart, namespaceUpdated, kustomizeNamespaceUpdated),
 				Check: resource.ComposeTestCheckFunc(
 					// Verify namespace updated on all apps
 					resource.TestCheckResourceAttr(helmAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
 					resource.TestCheckResourceAttr(kustomizeAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+					resource.TestCheckResourceAttr(kustomizeAppResource, "application.0.spec.0.source.0.kustomize.0.namespace", kustomizeNamespaceUpdated),
 					resource.TestCheckResourceAttr(multiSourceAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
 					resource.TestCheckResourceAttr(helmChartAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
 					resource.TestCheckResourceAttr(skipRepoAppResource, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+					resource.TestCheckResourceAttr(skipRepoAppResource, "application.0.spec.0.source.0.kustomize.0.namespace", kustomizeNamespaceUpdated),
 				),
 			},
 			{
@@ -732,6 +738,7 @@ func testAccResourceGitopsApplicationKustomize(id string, accountId string, name
 							images = [
 									"gcr.io/heptio-images/ks-guestbook-demo:0.1"
 									]
+							namespace = "kustomize-ns-from-helper"
 						}
 					}
 					destination {
@@ -813,6 +820,7 @@ func testAccResourceGitopsApplicationGitSkipRepoValidation(id string, accountId 
 							images = [
 									"gcr.io/heptio-images/ks-guestbook-demo:0.1"
 									]
+							namespace = "kustomize-ns-skiprepo"
 						}
 					}
 					destination {
@@ -833,7 +841,7 @@ func testAccResourceGitopsApplicationGitSkipRepoValidation(id string, accountId 
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, skipRepoValidation)
 }
 
-func testAccResourceGitopsApplicationAllTypes(id string, accountId string, agentId string, clusterServer string, clusterId string, clusterToken string, repo string, helmRepoURL string, helmChart string, namespace string) string {
+func testAccResourceGitopsApplicationAllTypes(id string, accountId string, agentId string, clusterServer string, clusterId string, clusterToken string, repo string, helmRepoURL string, helmChart string, namespace string, kustomizeNamespace string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -1002,6 +1010,7 @@ func testAccResourceGitopsApplicationAllTypes(id string, accountId string, agent
 							images = [
 								"gcr.io/heptio-images/ks-guestbook-demo:0.1"
 							]
+							namespace = "%[11]s"
 						}
 					}
 					destination {
@@ -1156,6 +1165,7 @@ func testAccResourceGitopsApplicationAllTypes(id string, accountId string, agent
 							images = [
 								"gcr.io/heptio-images/ks-guestbook-demo:0.1"
 							]
+							namespace = "%[11]s"
 						}
 					}
 					destination {
@@ -1173,5 +1183,5 @@ func testAccResourceGitopsApplicationAllTypes(id string, accountId string, agent
 			name = "%[1]sskiprepo"
 			skip_repo_validation = true
 		}
-		`, id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, helmRepoURL, helmChart, namespace)
+		`, id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, helmRepoURL, helmChart, namespace, kustomizeNamespace)
 }
