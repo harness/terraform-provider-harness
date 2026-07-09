@@ -131,9 +131,11 @@ resource "harness_chaos_probe_template" "cmd_probe" {
   tags                = ["cmd", "probe", "custom"]
 
   # CMD probe configuration
+  # Omit `source` for inline execution (command runs in the experiment pod).
+  # If set, `source` must be a serialized SourceDetails object, not a keyword
+  # like "inline" (which fails at experiment execution).
   cmd_probe {
     command = "kubectl get pods -n <+input> | grep Running"
-    source  = "inline"
   }
 
   # Run properties

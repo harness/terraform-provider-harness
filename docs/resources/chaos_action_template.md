@@ -4,11 +4,29 @@ page_title: "harness_chaos_action_template Resource - terraform-provider-harness
 subcategory: "Next Gen"
 description: |-
   Resource for managing Harness Chaos Action Templates. Action templates define reusable actions that can be used in chaos experiments.
+  Supported action types
+  The type attribute accepts the following values, each configured via its matching block:
+  delay (delay_action) - wait for a configured duration.customScript (custom_script_action) - run a custom script.container (container_action) - run a container.
+  Not currently supported
+  Action types other than delay, customScript, and container.Runtime input (<+input>) is not supported for container resources limits/requests due to API validation; use concrete values or template variables.
 ---
 
 # harness_chaos_action_template (Resource)
 
 Resource for managing Harness Chaos Action Templates. Action templates define reusable actions that can be used in chaos experiments.
+
+## Supported action types
+
+The `type` attribute accepts the following values, each configured via its matching block:
+
+- `delay` (`delay_action`) - wait for a configured duration.
+- `customScript` (`custom_script_action`) - run a custom script.
+- `container` (`container_action`) - run a container.
+
+## Not currently supported
+
+- Action types other than `delay`, `customScript`, and `container`.
+- Runtime input (`<+input>`) is not supported for container `resources` limits/requests due to API validation; use concrete values or template `variables`.
 
 ## Example Usage
 

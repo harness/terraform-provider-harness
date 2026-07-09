@@ -4,11 +4,20 @@ page_title: "harness_chaos_experiment_template Resource - terraform-provider-har
 subcategory: "Next Gen"
 description: |-
   Resource for managing Harness Chaos Experiment Templates. Experiment templates define reusable chaos experiments with actions, faults, and probes.
+  Execution conditions for faults, probes, and actions are configured via the conditions_v2 block (operator = AND/OR, plus values which support the <+input> runtime input).
+  Deprecated / not supported
+  The probe conditions (execute_upon) block is deprecated and ignored - it is not part of the current experiment template API. Use conditions_v2 instead.
 ---
 
 # harness_chaos_experiment_template (Resource)
 
 Resource for managing Harness Chaos Experiment Templates. Experiment templates define reusable chaos experiments with actions, faults, and probes.
+
+Execution conditions for faults, probes, and actions are configured via the `conditions_v2` block (`operator` = `AND`/`OR`, plus `values` which support the `<+input>` runtime input).
+
+## Deprecated / not supported
+
+- The probe `conditions` (`execute_upon`) block is **deprecated and ignored** - it is not part of the current experiment template API. Use `conditions_v2` instead.
 
 ## Example Usage
 
@@ -257,7 +266,12 @@ resource "harness_chaos_experiment_template" "complex" {
       weightage              = 10
       enable_data_collection = false
 
-      conditions = ["onChaosStart", "duringChaos", "afterChaos"]
+      # Execution conditions: operator (AND/OR) + boolean values.
+      # values support runtime input via "<+input>".
+      conditions_v2 {
+        operator = "AND"
+        values   = ["true"]
+      }
 
       values {
         name  = "TARGET_NAMESPACE"
@@ -275,7 +289,10 @@ resource "harness_chaos_experiment_template" "complex" {
       weightage              = 10
       enable_data_collection = false
 
-      conditions = ["duringChaos", "afterChaos"]
+      conditions_v2 {
+        operator = "OR"
+        values   = ["true", "<+input>"]
+      }
 
       values {
         name  = "URL"
@@ -359,7 +376,9 @@ resource "harness_chaos_experiment_template" "complex" {
 #   - duration: Probe duration in seconds
 #   - weightage: Probe importance (0-100)
 #   - enable_data_collection: Collect probe data
-#   - conditions: When to run (onChaosStart, duringChaos, afterChaos)
+#   - conditions_v2: Execution conditions block { operator = AND|OR, values = [..] }
+#                    values are boolean-parseable and support "<+input>".
+#   - conditions (execute_upon): DEPRECATED and ignored - use conditions_v2 instead.
 #
 # Vertices (Workflow):
 #   - name: Stage name
@@ -431,11 +450,21 @@ Required:
 
 Optional:
 
+- `conditions_v2` (Block List, Max: 1) Execution conditions gating whether this action runs, evaluated as boolean values combined by the operator. (see [below for nested schema](#nestedblock--spec--actions--conditions_v2))
 - `continue_on_completion` (Boolean) Whether to continue on completion
 - `infra_id` (String) Infrastructure identifier for this action
 - `is_enterprise` (Boolean) Whether this is an enterprise action
 - `revision` (Number) Action template revision
 - `values` (Block List) Variable values for the action (see [below for nested schema](#nestedblock--spec--actions--values))
+
+<a id="nestedblock--spec--actions--conditions_v2"></a>
+### Nested Schema for `spec.actions.conditions_v2`
+
+Required:
+
+- `operator` (String) Logical operator combining values: AND (all true) or OR (any true).
+- `values` (List of String) Boolean-parseable condition values (supports runtime input: <+input>).
+
 
 <a id="nestedblock--spec--actions--values"></a>
 ### Nested Schema for `spec.actions.values`
@@ -458,10 +487,20 @@ Required:
 Optional:
 
 - `auth_enabled` (Boolean) Whether authentication is enabled
+- `conditions_v2` (Block List, Max: 1) Execution conditions gating whether this fault runs, evaluated as boolean values combined by the operator. (see [below for nested schema](#nestedblock--spec--faults--conditions_v2))
 - `infra_id` (String) Infrastructure identifier for this fault
 - `is_enterprise` (Boolean) Whether this is an enterprise fault
 - `revision` (String) Fault template revision
 - `values` (Block List) Variable values for the fault (see [below for nested schema](#nestedblock--spec--faults--values))
+
+<a id="nestedblock--spec--faults--conditions_v2"></a>
+### Nested Schema for `spec.faults.conditions_v2`
+
+Required:
+
+- `operator` (String) Logical operator combining values: AND (all true) or OR (any true).
+- `values` (List of String) Boolean-parseable condition values (supports runtime input: <+input>).
+
 
 <a id="nestedblock--spec--faults--values"></a>
 ### Nested Schema for `spec.faults.values`
@@ -483,7 +522,8 @@ Required:
 
 Optional:
 
-- `conditions` (Block List) Probe execution conditions (see [below for nested schema](#nestedblock--spec--probes--conditions))
+- `conditions` (Block List, Deprecated) Deprecated: no longer part of the experiment template API; use conditions_v2 instead. This field is ignored. (see [below for nested schema](#nestedblock--spec--probes--conditions))
+- `conditions_v2` (Block List, Max: 1) Execution conditions gating whether this probe runs, evaluated as boolean values combined by the operator. (see [below for nested schema](#nestedblock--spec--probes--conditions_v2))
 - `duration` (String) Probe duration
 - `enable_data_collection` (Boolean) Whether to enable data collection
 - `infra_id` (String) Infrastructure identifier for this probe
@@ -495,9 +535,18 @@ Optional:
 <a id="nestedblock--spec--probes--conditions"></a>
 ### Nested Schema for `spec.probes.conditions`
 
-Required:
+Optional:
 
 - `execute_upon` (String) When to execute the probe (onChaosStart, duringChaos, afterChaos)
+
+
+<a id="nestedblock--spec--probes--conditions_v2"></a>
+### Nested Schema for `spec.probes.conditions_v2`
+
+Required:
+
+- `operator` (String) Logical operator combining values: AND (all true) or OR (any true).
+- `values` (List of String) Boolean-parseable condition values (supports runtime input: <+input>).
 
 
 <a id="nestedblock--spec--probes--values"></a>

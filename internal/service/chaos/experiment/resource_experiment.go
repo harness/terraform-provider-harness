@@ -17,7 +17,11 @@ import (
 
 func ResourceChaosExperiment() *schema.Resource {
 	return &schema.Resource{
-		Description: "Resource for creating chaos experiments from experiment templates.",
+		Description: "Resource for creating chaos experiments from experiment templates.\n\n" +
+			"## Not currently supported\n\n" +
+			"- In-place updates: experiments are created from templates and cannot be updated directly. " +
+			"Changing `template_identity`, `hub_identity`, `infra_ref`, or `revision` forces recreation, " +
+			"and changing `name`, `description`, or `tags` alone is not supported by the API.\n",
 
 		CreateContext: resourceExperimentCreate,
 		ReadContext:   resourceExperimentRead,
@@ -387,19 +391,29 @@ func resourceExperimentDelete(ctx context.Context, d *schema.ResourceData, meta 
 	return nil
 }
 
+// parseExperimentImportID parses an experiment import ID of the form
+// "org_id/project_id/experiment_identity". All three segments are required.
+func parseExperimentImportID(id string) (orgID, projectID, experimentID string, err error) {
+	parts := strings.Split(id, "/")
+	if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" {
+		return "", "", "", fmt.Errorf("invalid import ID format, expected: org_id/project_id/experiment_identity, got: %s", id)
+	}
+	return parts[0], parts[1], parts[2], nil
+}
+
 // resourceExperimentImport imports an existing experiment
 func resourceExperimentImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// Import format: org_id/project_id/experiment_identity
-	parts := strings.Split(d.Id(), "/")
-	if len(parts) != 3 {
-		return nil, fmt.Errorf("invalid import ID format, expected: org_id/project_id/experiment_identity, got: %s", d.Id())
+	orgID, projectID, _, err := parseExperimentImportID(d.Id())
+	if err != nil {
+		return nil, err
 	}
 
 	log.Printf("[DEBUG] Importing experiment with ID: %s", d.Id())
 
 	// Set scope fields
-	d.Set("org_id", parts[0])
-	d.Set("project_id", parts[1])
+	d.Set("org_id", orgID)
+	d.Set("project_id", projectID)
 
 	// Read to populate all fields
 	diags := resourceExperimentRead(ctx, d, meta)

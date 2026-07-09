@@ -3,12 +3,30 @@
 page_title: "harness_chaos_infrastructure_v2 Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for managing Harness Chaos Infrastructure V2.
+  Resource for managing Harness Chaos Infrastructure V2 (the chaos execution infrastructure installed into a Kubernetes cluster).
+  After terraform apply, use the computed install_command output to deploy the infrastructure manifest into your target cluster - creating this resource registers the infrastructure with Harness but does not itself install anything into the cluster.
+  Notes
+  infra_type: use KubernetesV2 (recommended); Kubernetes is the legacy V1 type.infra_scope (NAMESPACE or CLUSTER) is immutable - changing it forces recreation.containers is a raw JSON string used to override container specs; leave unset unless you need advanced overrides.Some fields (volumes, volume_mounts, env, image_registry, label, annotation, containers, insecure_skip_verify) are applied via an automatic update immediately after creation; this is transparent and should not produce drift.
+  Import
+  Import uses the 4-part ID org_id/project_id/environment_id/infra_id.
 ---
 
 # harness_chaos_infrastructure_v2 (Resource)
 
-Resource for managing Harness Chaos Infrastructure V2.
+Resource for managing Harness Chaos Infrastructure V2 (the chaos execution infrastructure installed into a Kubernetes cluster).
+
+After `terraform apply`, use the computed `install_command` output to deploy the infrastructure manifest into your target cluster - creating this resource registers the infrastructure with Harness but does not itself install anything into the cluster.
+
+## Notes
+
+- `infra_type`: use `KubernetesV2` (recommended); `Kubernetes` is the legacy V1 type.
+- `infra_scope` (`NAMESPACE` or `CLUSTER`) is immutable - changing it forces recreation.
+- `containers` is a raw JSON string used to override container specs; leave unset unless you need advanced overrides.
+- Some fields (`volumes`, `volume_mounts`, `env`, `image_registry`, `label`, `annotation`, `containers`, `insecure_skip_verify`) are applied via an automatic update immediately after creation; this is transparent and should not produce drift.
+
+## Import
+
+Import uses the 4-part ID `org_id/project_id/environment_id/infra_id`.
 
 ## Example Usage
 

@@ -4,11 +4,36 @@ page_title: "harness_chaos_probe_template Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
   Resource for managing Harness Chaos Probe Templates.
+  Supported probe types
+  The type attribute accepts the following values, each configured via its matching block:
+  httpProbe (http_probe) - HTTP/HTTPS endpoint checks.cmdProbe (cmd_probe) - command / shell output checks.k8sProbe (k8s_probe) - Kubernetes resource checks.apmProbe (apm_probe) - APM provider checks.
+  For apm_probe, the following providers are supported: Prometheus, Datadog, Dynatrace, AppDynamics, New Relic, Splunk Observability, and GCP Cloud Monitoring.
+  Not currently supported
+  The following exist in the Harness API but are not yet supported by this resource:
+  Probe types other than httpProbe, cmdProbe, k8sProbe, and apmProbe.http_probe: the headers, auth, and tls_config options are not yet configurable.
 ---
 
 # harness_chaos_probe_template (Resource)
 
 Resource for managing Harness Chaos Probe Templates.
+
+## Supported probe types
+
+The `type` attribute accepts the following values, each configured via its matching block:
+
+- `httpProbe` (`http_probe`) - HTTP/HTTPS endpoint checks.
+- `cmdProbe` (`cmd_probe`) - command / shell output checks.
+- `k8sProbe` (`k8s_probe`) - Kubernetes resource checks.
+- `apmProbe` (`apm_probe`) - APM provider checks.
+
+For `apm_probe`, the following providers are supported: Prometheus, Datadog, Dynatrace, AppDynamics, New Relic, Splunk Observability, and GCP Cloud Monitoring.
+
+## Not currently supported
+
+The following exist in the Harness API but are **not yet supported** by this resource:
+
+- Probe types other than `httpProbe`, `cmdProbe`, `k8sProbe`, and `apmProbe`.
+- `http_probe`: the `headers`, `auth`, and `tls_config` options are not yet configurable.
 
 ## Example Usage
 
@@ -146,9 +171,11 @@ resource "harness_chaos_probe_template" "cmd_probe" {
   tags                = ["cmd", "probe", "custom"]
 
   # CMD probe configuration
+  # Omit `source` for inline execution (command runs in the experiment pod).
+  # If set, `source` must be a serialized SourceDetails object, not a keyword
+  # like "inline" (which fails at experiment execution).
   cmd_probe {
     command = "kubectl get pods -n <+input> | grep Running"
-    source  = "inline"
   }
 
   # Run properties
@@ -425,7 +452,7 @@ Optional:
 
 - `comparator` (Block List, Max: 1) Comparator for command output validation. (see [below for nested schema](#nestedblock--cmd_probe--comparator))
 - `env` (Block List) Environment variables for the command. (see [below for nested schema](#nestedblock--cmd_probe--env))
-- `source` (String) Source of the command (inline, configMap, secret).
+- `source` (String) Optional source for the command probe. Leave UNSET for inline execution (the command runs inside the experiment pod). If set, it must be a YAML/JSON-encoded SourceDetails object describing an external source pod (e.g. `image`, `command`, `args`, `env`, `imagePullPolicy`, `nodeSelector`). At experiment execution the backend unmarshals this string into a SourceDetails object, so a bare keyword such as "inline", "configMap", or "secret" is INVALID and fails with "cannot unmarshal string into Go value of type v1.SourceDetails". To run inline, omit this field entirely.
 
 <a id="nestedblock--cmd_probe--comparator"></a>
 ### Nested Schema for `cmd_probe.comparator`

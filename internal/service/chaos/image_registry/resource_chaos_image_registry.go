@@ -11,7 +11,10 @@ const (
 
 func ResourceChaosImageRegistry() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for managing a Harness Chaos Image Registry",
+		Description: "Resource for managing a Harness Chaos Image Registry.\n\n" +
+			"## Not currently supported\n\n" +
+			"- Importing account-scoped registries: `terraform import` requires an `org_id` " +
+			"(`org_id/project_id` or `org_id/project_id/infra_id`).\n",
 		CreateContext: resourceChaosImageRegistryCreate,
 		ReadContext:   resourceChaosImageRegistryRead,
 		UpdateContext: resourceChaosImageRegistryUpdate,

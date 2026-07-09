@@ -75,13 +75,21 @@ func resourceChaosImageRegistryCreate(ctx context.Context, d *schema.ResourceDat
 		},
 	)
 
-	// If the registry already exists (duplicate key error), log a warning instead of erroring
+	// If the registry already exists (duplicate key error), reconcile it to the
+	// desired configuration instead of silently adopting whatever values are
+	// already stored. Simply reading existing state here would drop configured
+	// fields such as is_override_allowed: a pre-existing org/project registry
+	// with is_override_allowed=false would stay false, which the backend treats
+	// as a higher scope blocking infra-scoped image registry creation
+	// ("a higher scope is blocking infrastructure scoped image registry
+	// creation, please enable override from <scope>"). Updating pushes the
+	// configured values so the override chain (org -> project -> infra) is
+	// actually applied.
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key error") {
-			log.Printf("[WARN] Chaos image registry already exists, reading existing state: %s", err)
-			// Set the ID and update the state
+			log.Printf("[WARN] Chaos image registry already exists, reconciling existing registry to configuration: %s", err)
 			d.SetId(generateID(identifiers, req.RegistryAccount))
-			return resourceChaosImageRegistryRead(ctx, d, meta)
+			return resourceChaosImageRegistryUpdate(ctx, d, meta)
 		}
 		log.Printf("[ERROR] Chaos image registry creation failed: %s", err)
 		d.SetId("")
@@ -233,17 +241,14 @@ func resourceChaosImageRegistryDelete(ctx context.Context, d *schema.ResourceDat
 // Account-scoped registries cannot be imported via this function as the import
 // ID requires an org_id.
 func resourceChaosImageRegistryImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	parts := strings.Split(d.Id(), "/")
-	switch len(parts) {
-	case 2:
-		d.Set("org_id", parts[0])
-		d.Set("project_id", parts[1])
-	case 3:
-		d.Set("org_id", parts[0])
-		d.Set("project_id", parts[1])
-		d.Set("infra_id", parts[2])
-	default:
-		return nil, fmt.Errorf("invalid import ID %q, expected org_id/project_id or org_id/project_id/infra_id", d.Id())
+	orgID, projectID, infraID, err := parseImageRegistryImportID(d.Id())
+	if err != nil {
+		return nil, err
+	}
+	d.Set("org_id", orgID)
+	d.Set("project_id", projectID)
+	if infraID != "" {
+		d.Set("infra_id", infraID)
 	}
 
 	if diags := resourceChaosImageRegistryRead(ctx, d, meta); diags.HasError() {
@@ -251,6 +256,25 @@ func resourceChaosImageRegistryImport(ctx context.Context, d *schema.ResourceDat
 	}
 
 	return []*schema.ResourceData{d}, nil
+}
+
+// parseImageRegistryImportID parses the import ID for an image registry.
+// Supported formats (an org_id is always required - account-scoped registries
+// cannot be imported):
+//   - org_id/project_id                -> project-scoped
+//   - org_id/project_id/infra_id       -> infrastructure-scoped
+//
+// A single segment (account scope) is intentionally rejected.
+func parseImageRegistryImportID(id string) (orgID, projectID, infraID string, err error) {
+	parts := strings.Split(id, "/")
+	switch len(parts) {
+	case 2:
+		return parts[0], parts[1], "", nil
+	case 3:
+		return parts[0], parts[1], parts[2], nil
+	default:
+		return "", "", "", fmt.Errorf("invalid import ID %q, expected org_id/project_id or org_id/project_id/infra_id", id)
+	}
 }
 
 // Helper functions

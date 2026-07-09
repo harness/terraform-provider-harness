@@ -17,7 +17,15 @@ import (
 
 func ResourceChaosInfrastructureV2() *schema.Resource {
 	return &schema.Resource{
-		Description: "Resource for managing Harness Chaos Infrastructure V2.",
+		Description: "Resource for managing Harness Chaos Infrastructure V2 (the chaos execution infrastructure installed into a Kubernetes cluster).\n\n" +
+			"After `terraform apply`, use the computed `install_command` output to deploy the infrastructure manifest into your target cluster - creating this resource registers the infrastructure with Harness but does not itself install anything into the cluster.\n\n" +
+			"## Notes\n\n" +
+			"- `infra_type`: use `KubernetesV2` (recommended); `Kubernetes` is the legacy V1 type.\n" +
+			"- `infra_scope` (`NAMESPACE` or `CLUSTER`) is immutable - changing it forces recreation.\n" +
+			"- `containers` is a raw JSON string used to override container specs; leave unset unless you need advanced overrides.\n" +
+			"- Some fields (`volumes`, `volume_mounts`, `env`, `image_registry`, `label`, `annotation`, `containers`, `insecure_skip_verify`) are applied via an automatic update immediately after creation; this is transparent and should not produce drift.\n\n" +
+			"## Import\n\n" +
+			"Import uses the 4-part ID `org_id/project_id/environment_id/infra_id`.\n",
 
 		CreateContext: resourceInfrastructureV2Create,
 		ReadContext:   resourceInfrastructureV2Read,
@@ -992,15 +1000,10 @@ func expandEnvVars(in []interface{}) []chaos.InfraV2Env {
 // ImportStateContext handles importing an existing infrastructure
 func resourceInfrastructureV2Import(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// The import ID is expected to be in the format: "org_id/project_id/environment_id/infra_id"
-	parts := strings.Split(d.Id(), "/")
-	if len(parts) != 4 {
-		return nil, fmt.Errorf("invalid import ID format. Expected: org_id/project_id/environment_id/infra_id, got: %s", d.Id())
+	orgID, projectID, environmentID, infraID, err := parseInfrastructureV2ID(d.Id())
+	if err != nil {
+		return nil, err
 	}
-
-	orgID := parts[0]
-	projectID := parts[1]
-	environmentID := parts[2]
-	infraID := parts[3]
 
 	log.Printf("[DEBUG] Importing infrastructure with ID: %s/%s/%s/%s", orgID, projectID, environmentID, infraID)
 
