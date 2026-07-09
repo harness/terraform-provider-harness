@@ -75,6 +75,19 @@ func TestIsTransientPostCreateReadError(t *testing.T) {
 	require.False(t, isTransientPostCreateReadError(nil, &http.Response{StatusCode: http.StatusNotFound}))
 }
 
+func TestReadGitDetailsWithUnsetConnectorRef(t *testing.T) {
+	gitDetails := readGitDetails(idp_sdk.EntityResponse{
+		GitDetails: &idp_sdk.GitDetails{
+			BranchName: "main",
+			FilePath:   "catalog/entity.yaml",
+			RepoName:   "catalog",
+		},
+	}, optional.EmptyString(), optional.EmptyString(), optional.EmptyString(), optional.EmptyString())
+
+	require.NotContains(t, gitDetails, "connector_ref")
+	require.Equal(t, true, gitDetails["is_harness_code_repo"])
+}
+
 func TestIDPAPIErrorMessage(t *testing.T) {
 	err := idpErrorWithBody{body: []byte(`{"code":"INVALID_REQUEST","message":"Invalid request: Entity identifier = tf-idp is invalid"}`)}
 

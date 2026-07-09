@@ -485,7 +485,7 @@ func readGitDetails(entity idp.EntityResponse, store_type optional.String, base_
 	if connector_ref.IsSet() {
 		git_details["connector_ref"] = connector_ref.Value()
 	}
-	if connector_ref.Value() == "" {
+	if !connector_ref.IsSet() || connector_ref.Value() == "" {
 		git_details["is_harness_code_repo"] = true
 	}
 
