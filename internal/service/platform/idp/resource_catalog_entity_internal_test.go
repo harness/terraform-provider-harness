@@ -7,6 +7,7 @@ import (
 
 	"github.com/antihax/optional"
 	idp_sdk "github.com/harness/harness-go-sdk/harness/idp"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,6 +21,48 @@ func (e idpErrorWithBody) Error() string {
 
 func (e idpErrorWithBody) Body() []byte {
 	return e.body
+}
+
+func TestGetCatalogEntityInfoFromResourceData(t *testing.T) {
+	resource := ResourceCatalogEntity()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"identifier": "my_service_dev_landing_zone",
+		"kind":       "resource",
+		"org_id":     "default",
+		"project_id": "idp",
+	})
+
+	info, err := getCatalogEntityInfoFromResourceData(data)
+
+	require.NoError(t, err)
+	require.Equal(t, "my_service_dev_landing_zone", info.Identifier)
+	require.Equal(t, "resource", info.Kind)
+	require.Equal(t, "account.default.idp", info.Scope)
+	require.True(t, info.OrgId.IsSet())
+	require.Equal(t, "default", info.OrgId.Value())
+	require.True(t, info.ProjectId.IsSet())
+	require.Equal(t, "idp", info.ProjectId.Value())
+}
+
+func TestGetCatalogEntityInfoFromImportResourceDataAllowsComputedKind(t *testing.T) {
+	resource := ResourceCatalogEntity()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"identifier":      "my_service_dev_landing_zone",
+		"import_from_git": true,
+		"org_id":          "default",
+		"project_id":      "idp",
+	})
+
+	info, err := getCatalogEntityInfoFromImportResourceData(data)
+
+	require.NoError(t, err)
+	require.Equal(t, "my_service_dev_landing_zone", info.Identifier)
+	require.Empty(t, info.Kind)
+	require.Equal(t, "account.default.idp", info.Scope)
+	require.True(t, info.OrgId.IsSet())
+	require.Equal(t, "default", info.OrgId.Value())
+	require.True(t, info.ProjectId.IsSet())
+	require.Equal(t, "idp", info.ProjectId.Value())
 }
 
 func TestGetCatalogEntityInfoFromResponseUsesCanonicalResponseFields(t *testing.T) {
@@ -66,13 +109,99 @@ func TestGetCatalogEntityInfoFromResponseFallsBackWhenResponseIsPartial(t *testi
 	require.False(t, info.ProjectId.IsSet())
 }
 
-func TestIsTransientPostCreateReadError(t *testing.T) {
+func TestGetCatalogEntityInfoFromResponsePreservesFallbackProjectScope(t *testing.T) {
+	fallback := catalogEntityInfo{
+		Scope:      "account.default.idp",
+		Kind:       "resource",
+		Identifier: "my_service_dev_landing_zone",
+		OrgId:      optional.NewString("default"),
+		ProjectId:  optional.NewString("idp"),
+	}
+
+	info := getCatalogEntityInfoFromResponse(idp_sdk.EntityResponse{
+		Identifier: "my_service_dev_landing_zone",
+		Kind:       "resource",
+	}, fallback)
+
+	require.Equal(t, "account.default.idp", info.Scope)
+	require.True(t, info.OrgId.IsSet())
+	require.Equal(t, "default", info.OrgId.Value())
+	require.True(t, info.ProjectId.IsSet())
+	require.Equal(t, "idp", info.ProjectId.Value())
+}
+
+func TestGetCatalogEntityInfoFromResponseDoesNotMixResponseOrgWithFallbackProject(t *testing.T) {
+	fallback := catalogEntityInfo{
+		Scope:      "account.old_org.old_project",
+		Kind:       "resource",
+		Identifier: "my_service_dev_landing_zone",
+		OrgId:      optional.NewString("old_org"),
+		ProjectId:  optional.NewString("old_project"),
+	}
+
+	info := getCatalogEntityInfoFromResponse(idp_sdk.EntityResponse{
+		Identifier:    "my_service_dev_landing_zone",
+		Kind:          "resource",
+		OrgIdentifier: "new_org",
+	}, fallback)
+
+	require.Equal(t, "account.old_org.old_project", info.Scope)
+	require.True(t, info.OrgId.IsSet())
+	require.Equal(t, "old_org", info.OrgId.Value())
+	require.True(t, info.ProjectId.IsSet())
+	require.Equal(t, "old_project", info.ProjectId.Value())
+}
+
+func TestGetCatalogEntityInfoFromResponseUsesOrgOnlyScopeForOrgFallback(t *testing.T) {
+	fallback := catalogEntityInfo{
+		Scope:      "account.old_org",
+		Kind:       "resource",
+		Identifier: "my_service_dev_landing_zone",
+		OrgId:      optional.NewString("old_org"),
+		ProjectId:  optional.EmptyString(),
+	}
+
+	info := getCatalogEntityInfoFromResponse(idp_sdk.EntityResponse{
+		Identifier:    "my_service_dev_landing_zone",
+		Kind:          "resource",
+		OrgIdentifier: "new_org",
+	}, fallback)
+
+	require.Equal(t, "account.new_org", info.Scope)
+	require.True(t, info.OrgId.IsSet())
+	require.Equal(t, "new_org", info.OrgId.Value())
+	require.False(t, info.ProjectId.IsSet())
+}
+
+func TestGetCatalogEntityInfoFromResponseIgnoresProjectOnlyScope(t *testing.T) {
+	fallback := catalogEntityInfo{
+		Scope:      "account.default.idp",
+		Kind:       "resource",
+		Identifier: "my_service_dev_landing_zone",
+		OrgId:      optional.NewString("default"),
+		ProjectId:  optional.NewString("idp"),
+	}
+
+	info := getCatalogEntityInfoFromResponse(idp_sdk.EntityResponse{
+		Identifier:        "my_service_dev_landing_zone",
+		Kind:              "resource",
+		ProjectIdentifier: "new_project",
+	}, fallback)
+
+	require.Equal(t, "account.default.idp", info.Scope)
+	require.True(t, info.OrgId.IsSet())
+	require.Equal(t, "default", info.OrgId.Value())
+	require.True(t, info.ProjectId.IsSet())
+	require.Equal(t, "idp", info.ProjectId.Value())
+}
+
+func TestIsTransientPostWriteReadError(t *testing.T) {
 	err := errors.New("read failed")
 
-	require.True(t, isTransientPostCreateReadError(err, &http.Response{StatusCode: http.StatusNotFound}))
-	require.False(t, isTransientPostCreateReadError(err, &http.Response{StatusCode: http.StatusUnauthorized}))
-	require.False(t, isTransientPostCreateReadError(err, &http.Response{StatusCode: http.StatusForbidden}))
-	require.False(t, isTransientPostCreateReadError(nil, &http.Response{StatusCode: http.StatusNotFound}))
+	require.True(t, isTransientPostWriteReadError(err, &http.Response{StatusCode: http.StatusNotFound}))
+	require.False(t, isTransientPostWriteReadError(err, &http.Response{StatusCode: http.StatusUnauthorized}))
+	require.False(t, isTransientPostWriteReadError(err, &http.Response{StatusCode: http.StatusForbidden}))
+	require.False(t, isTransientPostWriteReadError(nil, &http.Response{StatusCode: http.StatusNotFound}))
 }
 
 func TestReadGitDetailsWithUnsetConnectorRef(t *testing.T) {
@@ -98,4 +227,93 @@ func TestIsIDPNotFoundError(t *testing.T) {
 	require.True(t, isIDPNotFoundError(errors.New("not found"), &http.Response{StatusCode: http.StatusNotFound}))
 	require.True(t, isIDPNotFoundError(idpErrorWithBody{body: []byte(`{"code":"ENTITY_NOT_FOUND","message":"missing"}`)}, nil))
 	require.False(t, isIDPNotFoundError(idpErrorWithBody{body: []byte(`{"code":"INVALID_REQUEST","message":"bad request"}`)}, nil))
+}
+
+func TestCatalogEntityImportInfoFromID(t *testing.T) {
+	tests := []struct {
+		name           string
+		id             string
+		expectedScope  string
+		expectedKind   string
+		expectedID     string
+		expectedOrg    string
+		expectedProj   string
+		expectedErrMsg string
+	}{
+		{
+			name:          "account",
+			id:            "component/my_component",
+			expectedScope: "account",
+			expectedKind:  "component",
+			expectedID:    "my_component",
+		},
+		{
+			name:          "org",
+			id:            "my_org/component/my_component",
+			expectedScope: "account.my_org",
+			expectedKind:  "component",
+			expectedID:    "my_component",
+			expectedOrg:   "my_org",
+		},
+		{
+			name:          "project",
+			id:            "my_org/my_project/component/my_component",
+			expectedScope: "account.my_org.my_project",
+			expectedKind:  "component",
+			expectedID:    "my_component",
+			expectedOrg:   "my_org",
+			expectedProj:  "my_project",
+		},
+		{
+			name:          "legacy dot project",
+			id:            "my_org.my_project/component/my_component",
+			expectedScope: "account.my_org.my_project",
+			expectedKind:  "component",
+			expectedID:    "my_component",
+			expectedOrg:   "my_org",
+			expectedProj:  "my_project",
+		},
+		{
+			name:           "invalid",
+			id:             "my_org/my_project/component/my_component/extra",
+			expectedErrMsg: "invalid import ID format",
+		},
+		{
+			name:           "invalid empty dot project",
+			id:             "my_org./component/my_component",
+			expectedErrMsg: "invalid import scope",
+		},
+		{
+			name:           "invalid overlong dot project",
+			id:             "my_org.my_project.extra/component/my_component",
+			expectedErrMsg: "invalid import scope",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			info, err := catalogEntityInfoFromImportID(tt.id)
+			if tt.expectedErrMsg != "" {
+				require.ErrorContains(t, err, tt.expectedErrMsg)
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, tt.expectedScope, info.Scope)
+			require.Equal(t, tt.expectedKind, info.Kind)
+			require.Equal(t, tt.expectedID, info.Identifier)
+			if tt.expectedOrg == "" {
+				require.False(t, info.OrgId.IsSet())
+			} else {
+				require.True(t, info.OrgId.IsSet())
+				require.Equal(t, tt.expectedOrg, info.OrgId.Value())
+			}
+			if tt.expectedProj == "" {
+				require.False(t, info.ProjectId.IsSet())
+			} else {
+				require.True(t, info.ProjectId.IsSet())
+				require.Equal(t, tt.expectedProj, info.ProjectId.Value())
+			}
+		})
+	}
 }

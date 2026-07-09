@@ -104,16 +104,16 @@ func testAccCatalogEntityYaml(id string, description string) string {
 	return fmt.Sprintf(`
 	        apiVersion: harness.io/v1
 	        kind: Component
-	        type: service
-	        identifier: "%[1]s"
 	        name: Example Catalog
+	        identifier: "%[1]s"
+	        type: service
 	        owner: user:account/admin@harness.io
 	        spec:
 	            lifecycle: prod
 	        metadata:
-	            description: "%[2]s"
 	            tags:
-		            - test`, id, description)
+		            - test
+	            description: "%[2]s"`, id, description)
 }
 
 func TestAccResourceRemoteCatalogEntity(t *testing.T) {
