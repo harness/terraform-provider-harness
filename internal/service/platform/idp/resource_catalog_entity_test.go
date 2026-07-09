@@ -11,6 +11,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
 
@@ -48,29 +49,71 @@ func TestAccResourceCatalogEntity(t *testing.T) {
 	})
 }
 
+func TestAccResourceCatalogEntityDetectsDrift(t *testing.T) {
+	description := t.Name()
+	id := fmt.Sprintf("%s_%s", description, utils.RandStringBytes(5))
+	driftedDescription := fmt.Sprintf("%s_drifted", description)
+	resourceName := "harness_platform_idp_catalog_entity.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccCatalogEntityDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceCatalogEntity(id, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					testAccEntityCheckYamlField(resourceName, "metadata.description", description),
+				),
+			},
+			{
+				PreConfig: func() {
+					testAccUpdateCatalogEntity(t, id, testAccCatalogEntityYaml(id, driftedDescription))
+				},
+				Config:             testAccResourceCatalogEntity(id, description),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config: testAccResourceCatalogEntity(id, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					testAccEntityCheckYamlField(resourceName, "metadata.description", description),
+				),
+			},
+		},
+	})
+}
+
 func testAccResourceCatalogEntity(id string, description string) string {
 	str := fmt.Sprintf(`
 		resource "harness_platform_idp_catalog_entity" "test" {
 			identifier = "%[1]s"
 			kind = "component"
 			yaml = <<-EOT
+%[2]s
+	        EOT
+		}
+	`, id, testAccCatalogEntityYaml(id, description))
+
+	return str
+}
+
+func testAccCatalogEntityYaml(id string, description string) string {
+	return fmt.Sprintf(`
 	        apiVersion: harness.io/v1
 	        kind: Component
-	        name: Example Catalog
-	        identifier: "%[1]s"
 	        type: service
+	        identifier: "%[1]s"
+	        name: Example Catalog
 	        owner: user:account/admin@harness.io
 	        spec:
 	            lifecycle: prod
 	        metadata:
-	            tags:
-		            - test
 	            description: "%[2]s"
-	        EOT
-		}
-	`, id, description)
-
-	return str
+	            tags:
+		            - test`, id, description)
 }
 
 func TestAccResourceRemoteCatalogEntity(t *testing.T) {
@@ -201,6 +244,20 @@ func testAccGetCatalogEntity(resourceName string, state *terraform.State) (*idp.
 
 	return &resp, nil
 
+}
+
+func testAccUpdateCatalogEntity(t *testing.T, id string, yaml string) {
+	t.Helper()
+
+	acctest.TestAccConfigureProvider()
+	c, ctx := acctest.TestAccGetIDPClientWithContext()
+
+	_, _, err := c.EntitiesApi.UpdateEntity(ctx, idp.EntityUpdateRequest{
+		Yaml: yaml,
+	}, "account", "component", id, &idp.EntitiesApiUpdateEntityOpts{
+		HarnessAccount: optional.NewString(c.AccountId),
+	})
+	require.NoError(t, err)
 }
 
 func testAccCatalogEntityDestroy(resourceName string) resource.TestCheckFunc {
