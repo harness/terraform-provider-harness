@@ -70,7 +70,7 @@ func TestIsTransientPostCreateReadError(t *testing.T) {
 	err := errors.New("read failed")
 
 	require.True(t, isTransientPostCreateReadError(err, &http.Response{StatusCode: http.StatusNotFound}))
-	require.True(t, isTransientPostCreateReadError(err, &http.Response{StatusCode: http.StatusUnauthorized}))
+	require.False(t, isTransientPostCreateReadError(err, &http.Response{StatusCode: http.StatusUnauthorized}))
 	require.False(t, isTransientPostCreateReadError(err, &http.Response{StatusCode: http.StatusForbidden}))
 	require.False(t, isTransientPostCreateReadError(nil, &http.Response{StatusCode: http.StatusNotFound}))
 }

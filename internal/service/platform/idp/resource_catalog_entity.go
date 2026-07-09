@@ -330,7 +330,7 @@ func isTransientPostCreateReadError(err error, httpResp *http.Response) bool {
 		return false
 	}
 	if httpResp != nil {
-		return httpResp.StatusCode == http.StatusNotFound || httpResp.StatusCode == http.StatusUnauthorized
+		return httpResp.StatusCode == http.StatusNotFound
 	}
 	return isNotFoundError(err)
 }
