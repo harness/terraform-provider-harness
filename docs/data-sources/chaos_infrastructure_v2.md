@@ -13,28 +13,27 @@ Data source for retrieving a Harness Chaos Infrastructure V2.
 ## Example Usage
 
 ```terraform
-// Data source to fetch a specific agent by name
-data "harness_service_discovery_agent" "by_name" {
-  name                   = "example-agent"
-  org_identifier         = var.org_identifier
-  project_identifier     = var.project_identifier
-  environment_identifier = var.environment_identifier
+// Fetch an existing chaos infrastructure V2 by its identifiers
+data "harness_chaos_infrastructure_v2" "example" {
+  org_id         = "<org_id>"
+  project_id     = "<project_id>"
+  environment_id = "<environment_id>"
+  infra_id       = "<infra_id>"
 }
 
-output "agent_details_by_name" {
-  value = data.harness_service_discovery_agent.by_name
+// The data source exposes the pod resource requirements, autopilot mode, and
+// the associated discovery agent, alongside the rest of the infrastructure
+// attributes.
+output "chaos_infra_resources" {
+  value = data.harness_chaos_infrastructure_v2.example.resources
 }
 
-// Data source to fetch a specific agent by identity
-data "harness_service_discovery_agent" "by_identity" {
-  identity               = "example-infra"
-  org_identifier         = var.org_identifier
-  project_identifier     = var.project_identifier
-  environment_identifier = var.environment_identifier
+output "chaos_infra_autopilot_enabled" {
+  value = data.harness_chaos_infrastructure_v2.example.autopilot_enabled
 }
 
-output "agent_details_by_identity" {
-  value = data.harness_service_discovery_agent.by_identity
+output "chaos_infra_discovery_agent_id" {
+  value = data.harness_chaos_infrastructure_v2.example.discovery_agent_id
 }
 ```
 
@@ -53,6 +52,7 @@ output "agent_details_by_identity" {
 - `image_registry` (Block List) Configuration for the container image registry. (see [below for nested schema](#nestedblock--image_registry))
 - `mtls` (Block List, Max: 1) mTLS configuration for the infrastructure. (see [below for nested schema](#nestedblock--mtls))
 - `proxy` (Block List, Max: 1) Proxy configuration for the infrastructure. (see [below for nested schema](#nestedblock--proxy))
+- `resources` (Block List, Max: 1) Compute resource requirements (requests and limits) for the chaos infrastructure pods. (see [below for nested schema](#nestedblock--resources))
 - `tolerations` (Block List) If specified, the pod's tolerations. (see [below for nested schema](#nestedblock--tolerations))
 - `volume_mounts` (Block List) Volume mounts for the container. (see [below for nested schema](#nestedblock--volume_mounts))
 - `volumes` (Block List) Volumes to be created in the infrastructure. (see [below for nested schema](#nestedblock--volumes))
@@ -60,10 +60,12 @@ output "agent_details_by_identity" {
 ### Read-Only
 
 - `annotation` (Map of String)
+- `autopilot_enabled` (Boolean) Whether autopilot mode is enabled for the infrastructure.
 - `containers` (String) List of containers in the infrastructure.
 - `created_at` (String) Created at of the infrastructure.
 - `created_by` (String) Created by of the infrastructure.
 - `description` (String) Description of the infrastructure.
+- `discovery_agent_id` (String) ID of the discovery agent used by the infrastructure.
 - `id` (String) The ID of this resource.
 - `identifier` (String) Identifier of the infrastructure.
 - `identity` (String) Identity of the infrastructure.
@@ -155,6 +157,33 @@ Optional:
 - `http_proxy` (String) HTTP proxy URL.
 - `https_proxy` (String) HTTPS proxy URL.
 - `no_proxy` (String) List of hosts that should not use proxy.
+
+
+<a id="nestedblock--resources"></a>
+### Nested Schema for `resources`
+
+Optional:
+
+- `limits` (Block List, Max: 1) Maximum compute resources allowed for the infrastructure pods. (see [below for nested schema](#nestedblock--resources--limits))
+- `requests` (Block List, Max: 1) Minimum compute resources requested for the infrastructure pods. (see [below for nested schema](#nestedblock--resources--requests))
+
+<a id="nestedblock--resources--limits"></a>
+### Nested Schema for `resources.limits`
+
+Optional:
+
+- `cpu` (String) CPU quantity as a Kubernetes resource string. Example: '250m', '1'.
+- `memory` (String) Memory quantity as a Kubernetes resource string. Example: '256Mi', '1Gi'.
+
+
+<a id="nestedblock--resources--requests"></a>
+### Nested Schema for `resources.requests`
+
+Optional:
+
+- `cpu` (String) CPU quantity as a Kubernetes resource string. Example: '250m', '1'.
+- `memory` (String) Memory quantity as a Kubernetes resource string. Example: '256Mi', '1Gi'.
+
 
 
 <a id="nestedblock--tolerations"></a>

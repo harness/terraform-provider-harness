@@ -23,7 +23,9 @@ func ResourceChaosInfrastructureV2() *schema.Resource {
 			"- `infra_type`: use `KubernetesV2` (recommended); `Kubernetes` is the legacy V1 type.\n" +
 			"- `infra_scope` (`NAMESPACE` or `CLUSTER`) is immutable - changing it forces recreation.\n" +
 			"- `containers` is a raw JSON string used to override container specs; leave unset unless you need advanced overrides.\n" +
-			"- Some fields (`volumes`, `volume_mounts`, `env`, `image_registry`, `label`, `annotation`, `containers`, `insecure_skip_verify`) are applied via an automatic update immediately after creation; this is transparent and should not produce drift.\n\n" +
+			"- Some fields (`volumes`, `volume_mounts`, `env`, `image_registry`, `label`, `annotation`, `containers`, `insecure_skip_verify`) are applied via an automatic update immediately after creation; this is transparent and should not produce drift.\n" +
+			"- `resources` (CPU/memory `requests` and `limits`) and `autopilot_enabled` can be set both at creation and on update. Resource values are standard Kubernetes quantity strings (e.g. `250m`, `1`, `256Mi`, `1Gi`).\n" +
+			"- `discovery_agent_id` is applied at registration (create) time only; it is not sent on update, so changing it on an existing resource has no effect unless the resource is recreated.\n\n" +
 			"## Import\n\n" +
 			"Import uses the 4-part ID `org_id/project_id/environment_id/infra_id`.\n",
 
@@ -178,6 +180,14 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 	if err := d.Set("insecure_skip_verify", infra.InsecureSkipVerify); err != nil {
 		return diag.FromErr(fmt.Errorf("failed to set insecure_skip_verify: %v", err))
 	}
+	if err := d.Set("autopilot_enabled", infra.IsAutopilotEnabled); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to set autopilot_enabled: %v", err))
+	}
+	if infra.DiscoveryAgentID != "" {
+		if err := d.Set("discovery_agent_id", infra.DiscoveryAgentID); err != nil {
+			return diag.FromErr(fmt.Errorf("failed to set discovery_agent_id: %v", err))
+		}
+	}
 	if infra.InfraNamespace != "" {
 		if err := d.Set("namespace", infra.InfraNamespace); err != nil {
 			return diag.FromErr(fmt.Errorf("failed to set namespace: %v", err))
@@ -256,6 +266,9 @@ func resourceInfrastructureV2Read(ctx context.Context, d *schema.ResourceData, m
 		return diag.FromErr(err)
 	}
 	if err := setEnvVars(d, infra.Env); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := setResources(d, infra.Resources); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -596,6 +609,8 @@ func buildRegisterInfrastructureV2Request(d *schema.ResourceData, accountID stri
 		EnvironmentID:      d.Get("environment_id").(string),
 		AiEnabled:          d.Get("ai_enabled").(bool),
 		InsecureSkipVerify: d.Get("insecure_skip_verify").(bool),
+		AutopilotEnabled:   d.Get("autopilot_enabled").(bool),
+		DiscoveryAgentID:   d.Get("discovery_agent_id").(string),
 		Containers:         d.Get("containers").(string),
 		RunAsUser:          int32(d.Get("run_as_user").(int)),
 		RunAsGroup:         int32(d.Get("run_as_group").(int)),
@@ -610,6 +625,9 @@ func buildRegisterInfrastructureV2Request(d *schema.ResourceData, accountID stri
 	}
 	if v, ok := d.GetOk("node_selector"); ok {
 		req.NodeSelector = expandStringMap(v.(map[string]interface{}))
+	}
+	if v, ok := d.GetOk("resources"); ok {
+		req.Resources = expandResources(v.([]interface{}))
 	}
 
 	// Set nested objects
@@ -665,6 +683,7 @@ func buildUpdateInfrastructureV2Request(d *schema.ResourceData, accountID string
 		EnvironmentID:      d.Get("environment_id").(string),
 		AiEnabled:          d.Get("ai_enabled").(bool),
 		InsecureSkipVerify: d.Get("insecure_skip_verify").(bool),
+		AutopilotEnabled:   d.Get("autopilot_enabled").(bool),
 		Containers:         d.Get("containers").(string),
 		RunAsUser:          int32(d.Get("run_as_user").(int)),
 		RunAsGroup:         int32(d.Get("run_as_group").(int)),
@@ -682,6 +701,9 @@ func buildUpdateInfrastructureV2Request(d *schema.ResourceData, accountID string
 	}
 	if v, ok := d.GetOk("tags"); ok {
 		req.Tags = expandStringList(v.([]interface{}))
+	}
+	if v, ok := d.GetOk("resources"); ok {
+		req.Resources = expandResources(v.([]interface{}))
 	}
 
 	// Set nested objects
@@ -887,6 +909,72 @@ func expandProxy(in []interface{}) *chaos.InfraV2ProxyConfiguration {
 	}
 
 	return proxy
+}
+
+func expandResources(in []interface{}) *chaos.InfraV2ResourceRequirements {
+	if len(in) == 0 || in[0] == nil {
+		return nil
+	}
+
+	m, ok := in[0].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	res := &chaos.InfraV2ResourceRequirements{}
+	if v, ok := m["limits"].([]interface{}); ok {
+		res.Limits = expandResourceList(v)
+	}
+	if v, ok := m["requests"].([]interface{}); ok {
+		res.Requests = expandResourceList(v)
+	}
+
+	if res.Limits == nil && res.Requests == nil {
+		return nil
+	}
+	return res
+}
+
+func expandResourceList(in []interface{}) *chaos.InfraV2ResourceList {
+	if len(in) == 0 || in[0] == nil {
+		return nil
+	}
+
+	m, ok := in[0].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	rl := &chaos.InfraV2ResourceList{
+		Cpu:    getString(m, "cpu"),
+		Memory: getString(m, "memory"),
+	}
+	if rl.Cpu == "" && rl.Memory == "" {
+		return nil
+	}
+	return rl
+}
+
+func setResources(d *schema.ResourceData, r *chaos.InfraV2ResourceRequirements) error {
+	if r == nil || (r.Limits == nil && r.Requests == nil) {
+		return d.Set("resources", nil)
+	}
+
+	result := map[string]interface{}{}
+	if r.Limits != nil {
+		result["limits"] = []interface{}{map[string]interface{}{
+			"cpu":    r.Limits.Cpu,
+			"memory": r.Limits.Memory,
+		}}
+	}
+	if r.Requests != nil {
+		result["requests"] = []interface{}{map[string]interface{}{
+			"cpu":    r.Requests.Cpu,
+			"memory": r.Requests.Memory,
+		}}
+	}
+
+	return d.Set("resources", []interface{}{result})
 }
 
 func expandTolerations(in []interface{}) []chaos.V1Toleration {
