@@ -27,30 +27,37 @@ func resourceChaosHubV2Schema() map[string]*schema.Schema {
 			Description:  "The ID of the organization.",
 			Type:         schema.TypeString,
 			Optional:     true,
+			ForceNew:     true,
 			ValidateFunc: validation.StringIsNotEmpty,
 		},
 		"project_id": {
 			Description:  "The ID of the project.",
 			Type:         schema.TypeString,
 			Optional:     true,
+			ForceNew:     true,
 			ValidateFunc: validation.StringIsNotEmpty,
 		},
 		"connector_ref": {
-			Description:  "Reference to the Git connector (format: scope.connectorId, e.g., org.myconnector or account.myconnector).",
+			// ForceNew: the update API (Chaoshubv2UpdateHubRequest) only accepts
+			// name/description/tags, so connector_ref cannot be changed in place.
+			Description:  "Reference to the Git connector (format: scope.connectorId, e.g., org.myconnector or account.myconnector). Git-backed Chaos Hub V2 is not supported yet, so this field has no functional effect today. Changing this forces recreation.",
 			Type:         schema.TypeString,
 			Optional:     true,
+			ForceNew:     true,
 			ValidateFunc: validation.StringIsNotEmpty,
 		},
 		"repo_branch": {
-			Description:  "Git repository branch.",
+			Description:  "Git repository branch. Git-backed Chaos Hub V2 is not supported yet, so this field has no functional effect today. Changing this forces recreation (not updatable via the API).",
 			Type:         schema.TypeString,
 			Optional:     true,
+			ForceNew:     true,
 			ValidateFunc: validation.StringIsNotEmpty,
 		},
 		"repo_name": {
-			Description:  "Name of the Git repository (required for account-level connectors).",
+			Description:  "Name of the Git repository (required for account-level connectors). Git-backed Chaos Hub V2 is not supported yet, so this field has no functional effect today. Changing this forces recreation (not updatable via the API).",
 			Type:         schema.TypeString,
 			Optional:     true,
+			ForceNew:     true,
 			ValidateFunc: validation.StringIsNotEmpty,
 		},
 		"description": {

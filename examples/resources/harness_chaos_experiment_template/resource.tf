@@ -242,7 +242,12 @@ resource "harness_chaos_experiment_template" "complex" {
       weightage              = 10
       enable_data_collection = false
 
-      conditions = ["onChaosStart", "duringChaos", "afterChaos"]
+      # Execution conditions: operator (AND/OR) + boolean values.
+      # values support runtime input via "<+input>".
+      conditions_v2 {
+        operator = "AND"
+        values   = ["true"]
+      }
 
       values {
         name  = "TARGET_NAMESPACE"
@@ -260,7 +265,10 @@ resource "harness_chaos_experiment_template" "complex" {
       weightage              = 10
       enable_data_collection = false
 
-      conditions = ["duringChaos", "afterChaos"]
+      conditions_v2 {
+        operator = "OR"
+        values   = ["true", "<+input>"]
+      }
 
       values {
         name  = "URL"
@@ -344,7 +352,9 @@ resource "harness_chaos_experiment_template" "complex" {
 #   - duration: Probe duration in seconds
 #   - weightage: Probe importance (0-100)
 #   - enable_data_collection: Collect probe data
-#   - conditions: When to run (onChaosStart, duringChaos, afterChaos)
+#   - conditions_v2: Execution conditions block { operator = AND|OR, values = [..] }
+#                    values are boolean-parseable and support "<+input>".
+#   - conditions (execute_upon): DEPRECATED and ignored - use conditions_v2 instead.
 #
 # Vertices (Workflow):
 #   - name: Stage name

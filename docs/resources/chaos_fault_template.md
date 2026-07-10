@@ -3,12 +3,34 @@
 page_title: "harness_chaos_fault_template Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for managing Harness Chaos Fault Templates. Phase 1: Core fields (identity, name, description, tags, category, infrastructure, basic spec)
+  Resource for managing Harness Chaos Fault Templates.
+  Supports the core fault template fields (identity, name, description, tags, category, infrastructure type), the Kubernetes chaos spec (fault name, params, volumes, resources, tolerations, environment variables), Kubernetes and application targets, variables, and links.
+  Deletion behavior (custom fault templates)
+  When a chaos experiment is created from an experiment template that references a custom (non-enterprise) fault template, the backend creates a fault instance that points at this template. Deleting the experiment does not remove that fault instance, and the backend blocks deletion of a fault template while any fault instance still references it, returning fault template is referenced by faults. If the template lives in a chaos hub, the hub delete then also fails with hub has fault templates.
+  As a result, terraform destroy can fail on a custom fault template (and its hub) until the referencing fault instances are removed. Terraform does not manage fault instances (there is no harness_chaos_fault resource); they can only be removed via the REST API (DELETE /rest/faults/{identity}). Enterprise faults (e.g. pod-delete, pod-network-latency) do not create such instances, so experiment templates built on enterprise faults destroy cleanly. Prefer referencing custom fault templates only from experiment templates you do not launch experiments from, or clean up the fault instances before destroying the template.
+  Not currently supported
+  The following exist in the Harness API but are not yet supported by this resource:
+  Chaos spec auth and tls configuration. These blocks are present in the schema but are not plumbed through to the API; setting either returns an error (rather than silently dropping the values). Configure fault authentication/TLS in the Harness UI/API instead.Advanced pod/container security context options beyond the basic fields.
 ---
 
 # harness_chaos_fault_template (Resource)
 
-Resource for managing Harness Chaos Fault Templates. Phase 1: Core fields (identity, name, description, tags, category, infrastructure, basic spec)
+Resource for managing Harness Chaos Fault Templates.
+
+Supports the core fault template fields (identity, name, description, tags, category, infrastructure type), the Kubernetes chaos spec (fault name, params, volumes, resources, tolerations, environment variables), Kubernetes and application targets, variables, and links.
+
+## Deletion behavior (custom fault templates)
+
+When a chaos experiment is created from an experiment template that references a **custom (non-enterprise) fault template**, the backend creates a **fault instance** that points at this template. Deleting the experiment does **not** remove that fault instance, and the backend blocks deletion of a fault template while any fault instance still references it, returning `fault template is referenced by faults`. If the template lives in a chaos hub, the hub delete then also fails with `hub has fault templates`.
+
+As a result, `terraform destroy` can fail on a custom fault template (and its hub) until the referencing fault instances are removed. Terraform does not manage fault instances (there is no `harness_chaos_fault` resource); they can only be removed via the REST API (`DELETE /rest/faults/{identity}`). Enterprise faults (e.g. `pod-delete`, `pod-network-latency`) do **not** create such instances, so experiment templates built on enterprise faults destroy cleanly. Prefer referencing custom fault templates only from experiment templates you do not launch experiments from, or clean up the fault instances before destroying the template.
+
+## Not currently supported
+
+The following exist in the Harness API but are **not yet supported** by this resource:
+
+- Chaos spec `auth` and `tls` configuration. These blocks are present in the schema but are not plumbed through to the API; setting either returns an error (rather than silently dropping the values). Configure fault authentication/TLS in the Harness UI/API instead.
+- Advanced pod/container security context options beyond the basic fields.
 
 ## Example Usage
 
@@ -375,12 +397,12 @@ Optional:
 
 Optional:
 
-- `auth` (Block List, Max: 1) Authentication configuration (see [below for nested schema](#nestedblock--spec--chaos--auth))
+- `auth` (Block List, Max: 1) Authentication configuration. NOT YET SUPPORTED: setting this block returns an error (it is not plumbed through to the API). Configure fault authentication in the Harness UI/API instead. (see [below for nested schema](#nestedblock--spec--chaos--auth))
 - `fault_name` (String) Name of the fault. Note: API may return a default value (e.g., 'byoc-injector') instead of the configured value due to API limitations.
 - `kubernetes` (Block List, Max: 1) Kubernetes-specific chaos configuration (see [below for nested schema](#nestedblock--spec--chaos--kubernetes))
 - `params` (Block List) Fault parameters (see [below for nested schema](#nestedblock--spec--chaos--params))
 - `status_check_timeouts` (Block List, Max: 1) Status check timeout configuration (see [below for nested schema](#nestedblock--spec--chaos--status_check_timeouts))
-- `tls` (Block List, Max: 1) TLS configuration (see [below for nested schema](#nestedblock--spec--chaos--tls))
+- `tls` (Block List, Max: 1) TLS configuration. NOT YET SUPPORTED: setting this block returns an error (it is not plumbed through to the API). Configure fault TLS in the Harness UI/API instead. (see [below for nested schema](#nestedblock--spec--chaos--tls))
 
 <a id="nestedblock--spec--chaos--auth"></a>
 ### Nested Schema for `spec.chaos.auth`

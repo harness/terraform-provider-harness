@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/antihax/optional"
@@ -16,7 +17,19 @@ import (
 
 func ResourceProbeTemplate() *schema.Resource {
 	return &schema.Resource{
-		Description: "Resource for managing Harness Chaos Probe Templates.",
+		Description: "Resource for managing Harness Chaos Probe Templates.\n\n" +
+			"## Supported probe types\n\n" +
+			"The `type` attribute accepts the following values, each configured via its matching block:\n\n" +
+			"- `httpProbe` (`http_probe`) - HTTP/HTTPS endpoint checks.\n" +
+			"- `cmdProbe` (`cmd_probe`) - command / shell output checks.\n" +
+			"- `k8sProbe` (`k8s_probe`) - Kubernetes resource checks.\n" +
+			"- `apmProbe` (`apm_probe`) - APM provider checks.\n\n" +
+			"For `apm_probe`, the following providers are supported: Prometheus, Datadog, " +
+			"Dynatrace, AppDynamics, New Relic, Splunk Observability, and GCP Cloud Monitoring.\n\n" +
+			"## Not currently supported\n\n" +
+			"The following exist in the Harness API but are **not yet supported** by this resource:\n\n" +
+			"- Probe types other than `httpProbe`, `cmdProbe`, `k8sProbe`, and `apmProbe`.\n" +
+			"- `http_probe`: the `headers`, `auth`, and `tls_config` options are not yet configurable.\n",
 
 		CreateContext: resourceProbeTemplateCreate,
 		ReadContext:   resourceProbeTemplateRead,
@@ -250,41 +263,40 @@ func resourceProbeTemplateDelete(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func resourceProbeTemplateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	// Import ID formats:
-	// 1. org_id/project_id/hub_identity/identity (project level)
-	// 2. org_id/hub_identity/identity (org level)
-	// 3. hub_identity/identity (account level)
+// parseProbeTemplateImportID parses a terraform import ID into its scope
+// components. Supported formats:
+//  1. hub_identity/identity                          (account scope)
+//  2. org_id/hub_identity/identity                   (org scope)
+//  3. org_id/project_id/hub_identity/identity        (project scope)
+func parseProbeTemplateImportID(id string) (orgID, projectID, hubIdentity, identity string, err error) {
+	parts := strings.Split(id, "/")
+	switch len(parts) {
+	case 4:
+		orgID, projectID, hubIdentity, identity = parts[0], parts[1], parts[2], parts[3]
+	case 3:
+		orgID, hubIdentity, identity = parts[0], parts[1], parts[2]
+	case 2:
+		hubIdentity, identity = parts[0], parts[1]
+	default:
+		return "", "", "", "", fmt.Errorf("invalid import ID format. Expected: org_id/project_id/hub_identity/identity or org_id/hub_identity/identity or hub_identity/identity, got: %s", id)
+	}
+	if hubIdentity == "" || identity == "" {
+		return "", "", "", "", fmt.Errorf("invalid import ID format: %q (hub_identity and identity are required)", id)
+	}
+	return orgID, projectID, hubIdentity, identity, nil
+}
 
-	parts := strings.Split(d.Id(), "/")
+func resourceProbeTemplateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	orgID, projectID, hubIdentity, identity, err := parseProbeTemplateImportID(d.Id())
+	if err != nil {
+		return nil, err
+	}
 
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 
 	accountID := c.AccountId
 	if accountID == "" {
 		return nil, fmt.Errorf("account ID must be configured in the provider")
-	}
-
-	var orgID, projectID, hubIdentity, identity string
-
-	switch len(parts) {
-	case 4:
-		// Project level: org_id/project_id/hub_identity/identity
-		orgID = parts[0]
-		projectID = parts[1]
-		hubIdentity = parts[2]
-		identity = parts[3]
-	case 3:
-		// Org level: org_id/hub_identity/identity
-		orgID = parts[0]
-		hubIdentity = parts[1]
-		identity = parts[2]
-	case 2:
-		// Account level: hub_identity/identity
-		hubIdentity = parts[0]
-		identity = parts[1]
-	default:
-		return nil, fmt.Errorf("invalid import ID format. Expected: org_id/project_id/hub_identity/identity or org_id/hub_identity/identity or hub_identity/identity, got: %s", d.Id())
 	}
 
 	d.SetId(generateID(accountID, orgID, projectID, hubIdentity, identity))
@@ -721,10 +733,8 @@ func setProbeTemplateDataSimplified(d *schema.ResourceData, template *chaos.Gith
 		varsList := make([]map[string]interface{}, len(template.Variables))
 		for i, v := range template.Variables {
 			varMap := map[string]interface{}{
-				"name": v.Name,
-			}
-			if v.Value != nil {
-				varMap["value"] = *v.Value
+				"name":  v.Name,
+				"value": stringifyTemplateVarValue(v.Value),
 			}
 			if v.Description != "" {
 				varMap["description"] = v.Description
@@ -1118,6 +1128,33 @@ func buildRunPropertiesSimplified(d *schema.ResourceData, req *chaos.Chaosprobet
 	}
 
 	return nil
+}
+
+// stringifyTemplateVarValue converts a template variable value (typed as
+// *interface{} in the SDK, since the API can echo JSON scalars of any type)
+// into the string the Terraform schema expects. Without this, a non-string
+// value returned by the API fails d.Set and, since that error is ignored,
+// silently drops the entire variables block, producing a perpetual diff.
+func stringifyTemplateVarValue(v *interface{}) string {
+	if v == nil || *v == nil {
+		return ""
+	}
+	switch val := (*v).(type) {
+	case string:
+		return val
+	case bool:
+		return strconv.FormatBool(val)
+	case float64:
+		return strconv.FormatFloat(val, 'f', -1, 64)
+	case float32:
+		return strconv.FormatFloat(float64(val), 'f', -1, 32)
+	case int:
+		return strconv.Itoa(val)
+	case int64:
+		return strconv.FormatInt(val, 10)
+	default:
+		return fmt.Sprintf("%v", val)
+	}
 }
 
 func buildVariablesSimplified(d *schema.ResourceData, req *chaos.ChaosprobetemplateProbeTemplate) {

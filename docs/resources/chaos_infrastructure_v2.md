@@ -3,12 +3,32 @@
 page_title: "harness_chaos_infrastructure_v2 Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for managing Harness Chaos Infrastructure V2.
+  Resource for managing Harness Chaos Infrastructure V2 (the chaos execution infrastructure installed into a Kubernetes cluster).
+  After terraform apply, use the computed install_command output to deploy the infrastructure manifest into your target cluster - creating this resource registers the infrastructure with Harness but does not itself install anything into the cluster.
+  Notes
+  infra_type: use KubernetesV2 (recommended); Kubernetes is the legacy V1 type.infra_scope (NAMESPACE or CLUSTER) is immutable - changing it forces recreation.containers is a raw JSON string used to override container specs; leave unset unless you need advanced overrides.Some fields (volumes, volume_mounts, env, image_registry, label, annotation, containers, insecure_skip_verify) are applied via an automatic update immediately after creation; this is transparent and should not produce drift.resources (CPU/memory requests and limits) and autopilot_enabled can be set both at creation and on update. Resource values are standard Kubernetes quantity strings (e.g. 250m, 1, 256Mi, 1Gi).discovery_agent_id is applied at registration (create) time only; it is not sent on update, so changing it on an existing resource has no effect unless the resource is recreated.
+  Import
+  Import uses the 4-part ID org_id/project_id/environment_id/infra_id.
 ---
 
 # harness_chaos_infrastructure_v2 (Resource)
 
-Resource for managing Harness Chaos Infrastructure V2.
+Resource for managing Harness Chaos Infrastructure V2 (the chaos execution infrastructure installed into a Kubernetes cluster).
+
+After `terraform apply`, use the computed `install_command` output to deploy the infrastructure manifest into your target cluster - creating this resource registers the infrastructure with Harness but does not itself install anything into the cluster.
+
+## Notes
+
+- `infra_type`: use `KubernetesV2` (recommended); `Kubernetes` is the legacy V1 type.
+- `infra_scope` (`NAMESPACE` or `CLUSTER`) is immutable - changing it forces recreation.
+- `containers` is a raw JSON string used to override container specs; leave unset unless you need advanced overrides.
+- Some fields (`volumes`, `volume_mounts`, `env`, `image_registry`, `label`, `annotation`, `containers`, `insecure_skip_verify`) are applied via an automatic update immediately after creation; this is transparent and should not produce drift.
+- `resources` (CPU/memory `requests` and `limits`) and `autopilot_enabled` can be set both at creation and on update. Resource values are standard Kubernetes quantity strings (e.g. `250m`, `1`, `256Mi`, `1Gi`).
+- `discovery_agent_id` is applied at registration (create) time only; it is not sent on update, so changing it on an existing resource has no effect unless the resource is recreated.
+
+## Import
+
+Import uses the 4-part ID `org_id/project_id/environment_id/infra_id`.
 
 ## Example Usage
 
@@ -45,6 +65,25 @@ resource "harness_chaos_infrastructure_v2" "test" {
 
   ai_enabled           = "<ai_enabled>"
   insecure_skip_verify = "<insecure_skip_verify>"
+
+  # Enable autopilot mode for the infrastructure (optional, defaults to false)
+  autopilot_enabled = true
+
+  # ID of the discovery agent to associate at registration time (optional)
+  discovery_agent_id = "<discovery_agent_id>"
+
+  # Compute resource requests and limits applied to the chaos infrastructure pods.
+  # Values are standard Kubernetes quantity strings.
+  resources {
+    requests {
+      cpu    = "250m"
+      memory = "256Mi"
+    }
+    limits {
+      cpu    = "500m"
+      memory = "512Mi"
+    }
+  }
 
   # Example of node selector
   node_selector = {
@@ -140,6 +179,7 @@ resource "harness_chaos_infrastructure_v2" "test" {
 
 - `ai_enabled` (Boolean) Enable AI features for the infrastructure.
 - `annotation` (Map of String) Annotations to apply to the infrastructure pods.
+- `autopilot_enabled` (Boolean) Enable autopilot mode for the infrastructure.
 - `containers` (String) Container configurations.
 - `correlation_id` (String) Correlation ID for the request.
 - `description` (String) Description of the infrastructure.
@@ -154,6 +194,7 @@ resource "harness_chaos_infrastructure_v2" "test" {
 - `namespace` (String) Kubernetes namespace where the infrastructure will be installed. Maps to the infrastructure namespace.
 - `node_selector` (Map of String) Node selector for the infrastructure pods.
 - `proxy` (Block List, Max: 1) Proxy configuration for the infrastructure. (see [below for nested schema](#nestedblock--proxy))
+- `resources` (Block List, Max: 1) Compute resource requirements (requests and limits) for the chaos infrastructure pods. (see [below for nested schema](#nestedblock--resources))
 - `run_as_group` (Number) Group ID to run the infrastructure as.
 - `run_as_user` (Number) User ID to run the infrastructure as.
 - `service_account` (String) Service account used by the infrastructure.
@@ -254,6 +295,33 @@ Optional:
 - `http_proxy` (String) HTTP proxy URL.
 - `https_proxy` (String) HTTPS proxy URL.
 - `no_proxy` (String) List of hosts that should not use proxy.
+
+
+<a id="nestedblock--resources"></a>
+### Nested Schema for `resources`
+
+Optional:
+
+- `limits` (Block List, Max: 1) Maximum compute resources allowed for the infrastructure pods. (see [below for nested schema](#nestedblock--resources--limits))
+- `requests` (Block List, Max: 1) Minimum compute resources requested for the infrastructure pods. (see [below for nested schema](#nestedblock--resources--requests))
+
+<a id="nestedblock--resources--limits"></a>
+### Nested Schema for `resources.limits`
+
+Optional:
+
+- `cpu` (String) CPU quantity as a Kubernetes resource string. Example: '250m', '1'.
+- `memory` (String) Memory quantity as a Kubernetes resource string. Example: '256Mi', '1Gi'.
+
+
+<a id="nestedblock--resources--requests"></a>
+### Nested Schema for `resources.requests`
+
+Optional:
+
+- `cpu` (String) CPU quantity as a Kubernetes resource string. Example: '250m', '1'.
+- `memory` (String) Memory quantity as a Kubernetes resource string. Example: '256Mi', '1Gi'.
+
 
 
 <a id="nestedblock--tolerations"></a>

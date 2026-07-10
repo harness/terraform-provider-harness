@@ -236,7 +236,6 @@ func testAccDataSourceProbeTemplate_cmdProbe(name string) string {
 
 			cmd_probe {
 				command = "echo 'test'"
-				source  = "inline"
 			}
 
 			run_properties {

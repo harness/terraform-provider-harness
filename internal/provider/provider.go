@@ -34,6 +34,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/probe_template"
 	chaos_security_governance "github.com/harness/terraform-provider-harness/internal/service/chaos/security_governance"
 	chaos_security_governance_v3 "github.com/harness/terraform-provider-harness/internal/service/chaos/security_governance_v3"
+	har_lifecycle "github.com/harness/terraform-provider-harness/internal/service/har/lifecycle"
 	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/dashboards"
@@ -563,6 +564,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                         pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                             workspace.ResourceWorkspace(),
 				"harness_platform_iacm_default_pipeline":                 iacm.ResourceIacmDefaultPipeline(),
+				"harness_platform_iacm_workspace_template":               iacm.ResourceIacmWorkspaceTemplate(),
 				"harness_platform_iacm_ansible_inventory":                ansible_inventory.ResourceAnsibleInventory(),
 				"harness_platform_iacm_ansible_playbook":                 ansible_playbook.ResourceAnsiblePlaybook(),
 				"harness_platform_ip_allowlist":                          ip_allowlist.ResourceIPAllowlist(),
@@ -601,6 +603,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_service_discovery_agent":                        service_discovery_agent.ResourceServiceDiscoveryAgent(),
 				"harness_service_discovery_setting":                      service_discovery_setting.ResourceSetting(),
 				"harness_platform_har_registry":                          har_registry.ResourceRegistry(),
+				"harness_platform_har_lifecycle_rule":                    har_lifecycle.ResourceLifecycleRule(),
 				"harness_platform_infra_variable_set":                    variable_set.ResourceVariableSet(),
 				"harness_platform_gitops_filters":                        gitops_filters.ResourceGitOpsFilters(),
 				"harness_platform_idp_catalog_entity":                    idp_resource.ResourceCatalogEntity(),

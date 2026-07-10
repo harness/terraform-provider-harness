@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 func ResourceVariables() *schema.Resource {
@@ -93,7 +94,18 @@ func resourceVariablesRead(ctx context.Context, d *schema.ResourceData, meta int
 	})
 
 	if err != nil {
+		tflog.Error(ctx, "Failed to read variable", map[string]interface{}{
+			"id":    id,
+			"error": err.Error(),
+		})
 		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
+	if resp.Data == nil || resp.Data.Variable == nil {
+		tflog.Error(ctx, "Received empty response from variable API during read", map[string]interface{}{
+			"id": id,
+		})
+		return diag.Errorf("received empty response from variable API for id '%s': resp.Data or resp.Data.Variable is nil", id)
 	}
 
 	readVariable(d, resp.Data.Variable)
@@ -118,7 +130,31 @@ func resourceVariablesCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 	}
 
 	if err != nil {
+		tflog.Error(ctx, "Failed to create/update variable", map[string]interface{}{
+			"id":    id,
+			"error": err.Error(),
+		})
 		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	if resp.Data == nil || resp.Data.Variable == nil {
+		tflog.Error(ctx, "Received empty response from variable API after create/update", map[string]interface{}{
+			"id": id,
+		})
+		return diag.Errorf("received empty response from variable API for id '%s': resp.Data or resp.Data.Variable is nil", id)
+	}
+
+	tflog.Debug(ctx, "Variable API response after create/update", map[string]interface{}{
+		"identifier": resp.Data.Variable.Identifier,
+		"name":       resp.Data.Variable.Name,
+		"spec_nil":   resp.Data.Variable.Spec == nil,
+	})
+
+	if resp.Data.Variable.Identifier == "" {
+		tflog.Error(ctx, "Variable API returned empty identifier after create/update", map[string]interface{}{
+			"id": id,
+		})
+		return diag.Errorf("variable API returned an empty identifier after create/update for id '%s': the operation may have been blocked or the response was incomplete", id)
 	}
 
 	readVariable(d, resp.Data.Variable)
@@ -184,6 +220,9 @@ func buildVariables(d *schema.ResourceData) *nextgen.VariableDto {
 }
 
 func readVariable(d *schema.ResourceData, variable *nextgen.VariableDto) {
+	if variable == nil {
+		return
+	}
 	d.SetId(variable.Identifier)
 	d.Set("identifier", variable.Identifier)
 	d.Set("org_id", variable.OrgIdentifier)
@@ -191,10 +230,12 @@ func readVariable(d *schema.ResourceData, variable *nextgen.VariableDto) {
 	d.Set("name", variable.Name)
 	d.Set("description", variable.Description)
 	d.Set("type", variable.Type_)
-	d.Set("spec", []interface{}{
-		map[string]interface{}{
-			"value_type":  variable.Spec.ValueType,
-			"fixed_value": variable.Spec.FixedValue,
-		},
-	})
+	if variable.Spec != nil {
+		d.Set("spec", []interface{}{
+			map[string]interface{}{
+				"value_type":  variable.Spec.ValueType,
+				"fixed_value": variable.Spec.FixedValue,
+			},
+		})
+	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/antihax/optional"
@@ -16,7 +17,15 @@ import (
 
 func ResourceActionTemplate() *schema.Resource {
 	return &schema.Resource{
-		Description: "Resource for managing Harness Chaos Action Templates. Action templates define reusable actions that can be used in chaos experiments.",
+		Description: "Resource for managing Harness Chaos Action Templates. Action templates define reusable actions that can be used in chaos experiments.\n\n" +
+			"## Supported action types\n\n" +
+			"The `type` attribute accepts the following values, each configured via its matching block:\n\n" +
+			"- `delay` (`delay_action`) - wait for a configured duration.\n" +
+			"- `customScript` (`custom_script_action`) - run a custom script.\n" +
+			"- `container` (`container_action`) - run a container.\n\n" +
+			"## Not currently supported\n\n" +
+			"- Action types other than `delay`, `customScript`, and `container`.\n" +
+			"- Runtime input (`<+input>`) is not supported for container `resources` limits/requests due to API validation; use concrete values or template `variables`.\n",
 
 		CreateContext: resourceActionTemplateCreate,
 		ReadContext:   resourceActionTemplateRead,
@@ -258,41 +267,40 @@ func resourceActionTemplateDelete(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceActionTemplateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	// Import ID formats:
-	// 1. org_id/project_id/hub_identity/identity (project level)
-	// 2. org_id/hub_identity/identity (org level)
-	// 3. hub_identity/identity (account level)
+// parseActionTemplateImportID parses a terraform import ID into its scope
+// components. Supported formats:
+//  1. hub_identity/identity                          (account scope)
+//  2. org_id/hub_identity/identity                   (org scope)
+//  3. org_id/project_id/hub_identity/identity        (project scope)
+func parseActionTemplateImportID(id string) (orgID, projectID, hubIdentity, identity string, err error) {
+	parts := strings.Split(id, "/")
+	switch len(parts) {
+	case 4:
+		orgID, projectID, hubIdentity, identity = parts[0], parts[1], parts[2], parts[3]
+	case 3:
+		orgID, hubIdentity, identity = parts[0], parts[1], parts[2]
+	case 2:
+		hubIdentity, identity = parts[0], parts[1]
+	default:
+		return "", "", "", "", fmt.Errorf("invalid import ID format. Expected: org_id/project_id/hub_identity/identity or org_id/hub_identity/identity or hub_identity/identity, got: %s", id)
+	}
+	if hubIdentity == "" || identity == "" {
+		return "", "", "", "", fmt.Errorf("invalid import ID format: %q (hub_identity and identity are required)", id)
+	}
+	return orgID, projectID, hubIdentity, identity, nil
+}
 
-	parts := strings.Split(d.Id(), "/")
+func resourceActionTemplateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	orgID, projectID, hubIdentity, identity, err := parseActionTemplateImportID(d.Id())
+	if err != nil {
+		return nil, err
+	}
 
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 
 	accountID := c.AccountId
 	if accountID == "" {
 		return nil, fmt.Errorf("account ID must be configured in the provider")
-	}
-
-	var orgID, projectID, hubIdentity, identity string
-
-	switch len(parts) {
-	case 4:
-		// Project level: org_id/project_id/hub_identity/identity
-		orgID = parts[0]
-		projectID = parts[1]
-		hubIdentity = parts[2]
-		identity = parts[3]
-	case 3:
-		// Org level: org_id/hub_identity/identity
-		orgID = parts[0]
-		hubIdentity = parts[1]
-		identity = parts[2]
-	case 2:
-		// Account level: hub_identity/identity
-		hubIdentity = parts[0]
-		identity = parts[1]
-	default:
-		return nil, fmt.Errorf("invalid import ID format. Expected: org_id/project_id/hub_identity/identity or org_id/hub_identity/identity or hub_identity/identity, got: %s", d.Id())
 	}
 
 	// Set the ID in the proper format
@@ -1132,6 +1140,33 @@ func setRunPropertiesData(d *schema.ResourceData, props *chaos.ActionActionTempl
 	return nil
 }
 
+// stringifyTemplateVarValue converts a template variable value (typed as
+// *interface{} in the SDK, since the API can echo JSON scalars of any type)
+// into the string the Terraform schema expects. Without this, a non-string
+// value returned by the API (e.g. a JSON number or bool) fails the read with
+// "expected type 'string', got unconvertible type ...".
+func stringifyTemplateVarValue(v *interface{}) string {
+	if v == nil || *v == nil {
+		return ""
+	}
+	switch val := (*v).(type) {
+	case string:
+		return val
+	case bool:
+		return strconv.FormatBool(val)
+	case float64:
+		return strconv.FormatFloat(val, 'f', -1, 64)
+	case float32:
+		return strconv.FormatFloat(float64(val), 'f', -1, 32)
+	case int:
+		return strconv.Itoa(val)
+	case int64:
+		return strconv.FormatInt(val, 10)
+	default:
+		return fmt.Sprintf("%v", val)
+	}
+}
+
 // setVariablesData populates variables block from API response
 func setVariablesData(d *schema.ResourceData, vars []chaos.TemplateVariable) error {
 	if len(vars) == 0 {
@@ -1142,7 +1177,7 @@ func setVariablesData(d *schema.ResourceData, vars []chaos.TemplateVariable) err
 	for i, v := range vars {
 		varMap := map[string]interface{}{
 			"name":  v.Name,
-			"value": v.Value,
+			"value": stringifyTemplateVarValue(v.Value),
 		}
 		if v.Description != "" {
 			varMap["description"] = v.Description

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
@@ -17,8 +18,31 @@ import (
 // ResourceFaultTemplate returns the fault template resource
 func ResourceFaultTemplate() *schema.Resource {
 	return &schema.Resource{
-		Description: "Resource for managing Harness Chaos Fault Templates. " +
-			"Phase 1: Core fields (identity, name, description, tags, category, infrastructure, basic spec)",
+		Description: "Resource for managing Harness Chaos Fault Templates.\n\n" +
+			"Supports the core fault template fields (identity, name, description, tags, category, " +
+			"infrastructure type), the Kubernetes chaos spec (fault name, params, volumes, resources, " +
+			"tolerations, environment variables), Kubernetes and application targets, variables, and links.\n\n" +
+			"## Deletion behavior (custom fault templates)\n\n" +
+			"When a chaos experiment is created from an experiment template that references a **custom " +
+			"(non-enterprise) fault template**, the backend creates a **fault instance** that points at " +
+			"this template. Deleting the experiment does **not** remove that fault instance, and the " +
+			"backend blocks deletion of a fault template while any fault instance still references it, " +
+			"returning `fault template is referenced by faults`. If the template lives in a chaos hub, " +
+			"the hub delete then also fails with `hub has fault templates`.\n\n" +
+			"As a result, `terraform destroy` can fail on a custom fault template (and its hub) until the " +
+			"referencing fault instances are removed. Terraform does not manage fault instances (there is " +
+			"no `harness_chaos_fault` resource); they can only be removed via the REST API " +
+			"(`DELETE /rest/faults/{identity}`). Enterprise faults (e.g. `pod-delete`, " +
+			"`pod-network-latency`) do **not** create such instances, so experiment templates built on " +
+			"enterprise faults destroy cleanly. Prefer referencing custom fault templates only from " +
+			"experiment templates you do not launch experiments from, or clean up the fault instances " +
+			"before destroying the template.\n\n" +
+			"## Not currently supported\n\n" +
+			"The following exist in the Harness API but are **not yet supported** by this resource:\n\n" +
+			"- Chaos spec `auth` and `tls` configuration. These blocks are present in the schema but " +
+			"are not plumbed through to the API; setting either returns an error (rather than silently " +
+			"dropping the values). Configure fault authentication/TLS in the Harness UI/API instead.\n" +
+			"- Advanced pod/container security context options beyond the basic fields.\n",
 
 		CreateContext: resourceFaultTemplateCreate,
 		ReadContext:   resourceFaultTemplateRead,
@@ -222,17 +246,59 @@ func resourceFaultTemplateDelete(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func resourceFaultTemplateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	// Import format: org_id/project_id/hub_identity/identity
-	parts := strings.Split(d.Id(), "/")
-	if len(parts) != 4 {
-		return nil, fmt.Errorf("invalid import ID format: %s (expected: org_id/project_id/hub_identity/identity)", d.Id())
+// parseFaultTemplateImportID parses a terraform import ID into its scope
+// components and returns the canonical 4-part ID used internally
+// (org_id/project_id/hub_identity/identity, with empty leading segments for
+// account/org scope).
+//
+// Supported input formats (mirrors action_template/probe_template):
+//  1. hub_identity/identity                          (account scope)
+//  2. org_id/hub_identity/identity                   (org scope)
+//  3. org_id/project_id/hub_identity/identity        (project scope)
+//
+// The 4-part account/org forms with empty leading segments
+// (e.g. "//hub/identity") are also accepted for backward compatibility.
+func parseFaultTemplateImportID(id string) (orgID, projectID, hubIdentity, identity, canonicalID string, err error) {
+	parts := strings.Split(id, "/")
+	switch len(parts) {
+	case 4:
+		orgID, projectID, hubIdentity, identity = parts[0], parts[1], parts[2], parts[3]
+	case 3:
+		orgID, hubIdentity, identity = parts[0], parts[1], parts[2]
+	case 2:
+		hubIdentity, identity = parts[0], parts[1]
+	default:
+		return "", "", "", "", "", fmt.Errorf(
+			"invalid import ID format: %q (expected one of: hub_identity/identity, org_id/hub_identity/identity, org_id/project_id/hub_identity/identity)", id)
 	}
 
-	d.Set("org_id", parts[0])
-	d.Set("project_id", parts[1])
-	d.Set("hub_identity", parts[2])
-	d.Set("identity", parts[3])
+	if hubIdentity == "" || identity == "" {
+		return "", "", "", "", "", fmt.Errorf(
+			"invalid import ID format: %q (hub_identity and identity are required)", id)
+	}
+
+	canonicalID = fmt.Sprintf("%s/%s/%s/%s", orgID, projectID, hubIdentity, identity)
+	return orgID, projectID, hubIdentity, identity, canonicalID, nil
+}
+
+func resourceFaultTemplateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	orgID, projectID, hubIdentity, identity, canonicalID, err := parseFaultTemplateImportID(d.Id())
+	if err != nil {
+		return nil, err
+	}
+
+	// Normalize to the canonical 4-part ID so Read/Update/Delete (which expect
+	// exactly 4 parts) work regardless of the import format used.
+	d.SetId(canonicalID)
+
+	if orgID != "" {
+		d.Set("org_id", orgID)
+	}
+	if projectID != "" {
+		d.Set("project_id", projectID)
+	}
+	d.Set("hub_identity", hubIdentity)
+	d.Set("identity", identity)
 
 	return []*schema.ResourceData{d}, nil
 }
@@ -381,14 +447,14 @@ func buildSpecComplete(d *schema.ResourceData, req *chaos.ChaosfaulttemplateCrea
 				return err
 			}
 
-			// TODO: Auth and TLS - SDK types don't match schema, need to fix schema first
-			// See FAULT_TEMPLATE_SDK_TYPE_MISMATCH.md for details
-			// if err := buildChaosAuth(chaosConfig, req.Spec.Chaos); err != nil {
-			// 	return err
-			// }
-			// if err := buildChaosTLS(chaosConfig, req.Spec.Chaos); err != nil {
-			// 	return err
-			// }
+			// Guard: spec.chaos.auth / spec.chaos.tls are declared in the schema but
+			// are NOT yet wired into the request (the build/read round-trip and the
+			// schema<->backend field mapping are incomplete). Rather than silently
+			// dropping security-sensitive configuration, fail loudly so the user is
+			// never given a false sense that auth/TLS was applied.
+			if err := guardUnsupportedChaosAuthTLS(chaosConfig); err != nil {
+				return err
+			}
 		}
 
 		// Build target spec - Phase 1: basic kubernetes targets only
@@ -712,85 +778,47 @@ func buildChaosKubernetesSpec(chaosConfig map[string]interface{}, chaosSpec *cha
 	return nil
 }
 
-func buildChaosAuth(chaosConfig map[string]interface{}, chaosSpec *chaos.FaulttemplateChaosSpec) error {
-	if authV, ok := chaosConfig["auth"].([]interface{}); ok && len(authV) > 0 {
-		authConfig := authV[0].(map[string]interface{})
-		chaosSpec.Auth = &chaos.FaulttemplateAuth{}
-
-		// AWS Auth
-		if awsV, ok := authConfig["aws"].([]interface{}); ok && len(awsV) > 0 {
-			awsConfig := awsV[0].(map[string]interface{})
-			chaosSpec.Auth.Aws = &chaos.FaulttemplateAwsAuth{
-				Identifier: awsConfig["identifier"].(string),
-			}
-		}
-
-		// Azure Auth
-		if azureV, ok := authConfig["azure"].([]interface{}); ok && len(azureV) > 0 {
-			azureConfig := azureV[0].(map[string]interface{})
-			chaosSpec.Auth.Azure = &chaos.FaulttemplateAzureAuth{
-				Identifier: azureConfig["identifier"].(string),
-			}
-		}
-
-		// GCP Auth
-		if gcpV, ok := authConfig["gcp"].([]interface{}); ok && len(gcpV) > 0 {
-			gcpConfig := gcpV[0].(map[string]interface{})
-			chaosSpec.Auth.Gcp = &chaos.FaulttemplateGcpAuth{
-				Identifier: gcpConfig["identifier"].(string),
-			}
-		}
-
-		// Redis Auth
-		if redisV, ok := authConfig["redis"].([]interface{}); ok && len(redisV) > 0 {
-			redisConfig := redisV[0].(map[string]interface{})
-			chaosSpec.Auth.Redis = &chaos.FaulttemplateRedisAuth{
-				Password: redisConfig["password"].(string),
-			}
-		}
-
-		// SSH Auth
-		if sshV, ok := authConfig["ssh"].([]interface{}); ok && len(sshV) > 0 {
-			sshConfig := sshV[0].(map[string]interface{})
-			chaosSpec.Auth.Ssh = &chaos.FaulttemplateSshAuth{
-				Key:      sshConfig["key"].(string),
-				Password: sshConfig["password"].(string),
-			}
-		}
-
-		// VMware Auth
-		if vmwareV, ok := authConfig["vmware"].([]interface{}); ok && len(vmwareV) > 0 {
-			vmwareConfig := vmwareV[0].(map[string]interface{})
-			chaosSpec.Auth.Vmware = &chaos.FaulttemplateVmWareAuth{
-				VCenterServer:   vmwareConfig["vcenter_server"].(string),
-				VCenterUsername: vmwareConfig["vcenter_username"].(string),
-				VCenterPassword: vmwareConfig["vcenter_password"].(string),
-				VmPassword:      vmwareConfig["vm_password"].(string),
-			}
-		}
+// guardUnsupportedChaosAuthTLS returns a descriptive error if the user has set
+// spec.chaos.auth or spec.chaos.tls. These blocks exist in the schema but are not
+// yet plumbed through the create/read path, so accepting them would silently drop
+// security-sensitive values (and leave them only in state). Failing here is safe
+// and non-regressive because the feature never actually worked.
+func guardUnsupportedChaosAuthTLS(chaosConfig map[string]interface{}) error {
+	if v, ok := chaosConfig["auth"].([]interface{}); ok && len(v) > 0 {
+		return fmt.Errorf("spec.chaos.auth is not yet supported by the Harness Terraform provider and would be silently ignored; " +
+			"remove the auth block and configure fault authentication in the Harness UI/API until provider support is added")
+	}
+	if v, ok := chaosConfig["tls"].([]interface{}); ok && len(v) > 0 {
+		return fmt.Errorf("spec.chaos.tls is not yet supported by the Harness Terraform provider and would be silently ignored; " +
+			"remove the tls block and configure fault TLS in the Harness UI/API until provider support is added")
 	}
 	return nil
 }
 
-func buildChaosTLS(chaosConfig map[string]interface{}, chaosSpec *chaos.FaulttemplateChaosSpec) error {
-	if tlsV, ok := chaosConfig["tls"].([]interface{}); ok && len(tlsV) > 0 {
-		tlsConfig := tlsV[0].(map[string]interface{})
-		chaosSpec.Tls = &chaos.FaulttemplateTls{}
-
-		if caFile, ok := tlsConfig["ca_file"].(string); ok && caFile != "" {
-			chaosSpec.Tls.CaFile = caFile
-		}
-		if clientCertFile, ok := tlsConfig["client_cert_file"].(string); ok && clientCertFile != "" {
-			chaosSpec.Tls.ClientCertFile = clientCertFile
-		}
-		if certFile, ok := tlsConfig["cert_file"].(string); ok && certFile != "" {
-			chaosSpec.Tls.CertFile = certFile
-		}
-		if keyFile, ok := tlsConfig["key_file"].(string); ok && keyFile != "" {
-			chaosSpec.Tls.KeyFile = keyFile
-		}
+// stringifyTemplateVarValue converts a template variable value (typed as
+// *interface{} in the SDK, since the API can echo JSON scalars of any type)
+// into the string the Terraform schema expects. Previously only string values
+// were kept and any other scalar was dropped, causing a perpetual diff.
+func stringifyTemplateVarValue(v *interface{}) string {
+	if v == nil || *v == nil {
+		return ""
 	}
-	return nil
+	switch val := (*v).(type) {
+	case string:
+		return val
+	case bool:
+		return strconv.FormatBool(val)
+	case float64:
+		return strconv.FormatFloat(val, 'f', -1, 64)
+	case float32:
+		return strconv.FormatFloat(float64(val), 'f', -1, 32)
+	case int:
+		return strconv.Itoa(val)
+	case int64:
+		return strconv.FormatInt(val, 10)
+	default:
+		return fmt.Sprintf("%v", val)
+	}
 }
 
 // flattenTemplateVariables converts the SDK template variables into the
@@ -805,9 +833,7 @@ func flattenTemplateVariables(vars []chaos.TemplateVariable) []map[string]interf
 		}
 
 		if variable.Value != nil {
-			if val, ok := (*variable.Value).(string); ok {
-				varMap["value"] = val
-			}
+			varMap["value"] = stringifyTemplateVarValue(variable.Value)
 		}
 
 		if variable.Description != "" {

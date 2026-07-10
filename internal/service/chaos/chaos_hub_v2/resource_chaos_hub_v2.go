@@ -16,7 +16,16 @@ import (
 
 func ResourceChaosHubV2() *schema.Resource {
 	return &schema.Resource{
-		Description: "Resource for managing Harness Chaos Hub V2.",
+		Description: "Resource for managing Harness Chaos Hub V2.\n\n" +
+			"## Git-backed hubs (not supported yet)\n\n" +
+			"The `connector_ref`, `repo_branch`, and `repo_name` fields describe a Git-backed " +
+			"chaos hub. **Git-backed Chaos Hub V2 is not supported yet** - these fields are " +
+			"accepted by the schema but have no functional effect today. Create hubs without " +
+			"them; they are retained only for forward compatibility and may be deprecated.\n\n" +
+			"## Updatable vs. immutable fields\n\n" +
+			"Only `name`, `description`, and `tags` can be updated in place. Changing any of " +
+			"`identity`, `org_id`, `project_id`, `connector_ref`, `repo_branch`, or `repo_name` " +
+			"forces recreation, because the update API does not accept those fields.\n",
 
 		CreateContext: resourceChaosHubV2Create,
 		ReadContext:   resourceChaosHubV2Read,
@@ -170,37 +179,37 @@ func resourceChaosHubV2Delete(ctx context.Context, d *schema.ResourceData, meta 
 	return nil
 }
 
+// parseChaosHubV2ImportID parses a terraform import ID into its scope
+// components. Supported formats:
+//  1. hub_identity                                 (account scope)
+//  2. org_id/hub_identity                          (org scope)
+//  3. org_id/project_id/hub_identity              (project scope)
+func parseChaosHubV2ImportID(id string) (orgID, projectID, hubIdentity string, err error) {
+	parts := strings.Split(id, "/")
+	switch len(parts) {
+	case 1:
+		hubIdentity = parts[0]
+	case 2:
+		orgID, hubIdentity = parts[0], parts[1]
+	case 3:
+		orgID, projectID, hubIdentity = parts[0], parts[1], parts[2]
+	default:
+		return "", "", "", fmt.Errorf("invalid import ID format. Expected \"org-id/project-id/hub-identity\" or \"org-id/hub-identity\" or \"hub-identity\", got: %s", id)
+	}
+
+	if hubIdentity == "" {
+		return "", "", "", fmt.Errorf("hub identity cannot be empty")
+	}
+	return orgID, projectID, hubIdentity, nil
+}
+
 // resourceChaosHubV2Import handles the import of a chaos hub resource
 func resourceChaosHubV2Import(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 
-	// Parse the import ID which can be in one of these formats:
-	// 1. Org level: "org-id/project-id/hub-identity"
-	// 2. Account level: "hub-identity"
-	importID := d.Id()
-	parts := strings.Split(importID, "/")
-
-	var hubIdentity, orgID, projectID string
-
-	switch len(parts) {
-	case 1:
-		// Account level: "hub-identity"
-		hubIdentity = parts[0]
-	case 2:
-		// Org level: "org-id/hub-identity"
-		orgID = parts[0]
-		hubIdentity = parts[1]
-	case 3:
-		// Project level: "org-id/project-id/hub-identity"
-		orgID = parts[0]
-		projectID = parts[1]
-		hubIdentity = parts[2]
-	default:
-		return nil, fmt.Errorf("invalid import ID format. Expected \"org-id/project-id/hub-identity\" or \"org-id/hub-identity\" or \"hub-identity\", got: %s", importID)
-	}
-
-	if hubIdentity == "" {
-		return nil, fmt.Errorf("hub identity cannot be empty")
+	orgID, projectID, hubIdentity, err := parseChaosHubV2ImportID(d.Id())
+	if err != nil {
+		return nil, err
 	}
 
 	log.Printf("[DEBUG] Importing chaos hub with identity: %s, org: %s, project: %s", hubIdentity, orgID, projectID)

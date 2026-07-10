@@ -62,4 +62,9 @@ resource "harness_platform_workspace" "example" {
     "plan"    = "plan_pipeline_id"
     "apply"   = "apply_pipeline_id"
   }
+
+  associated_template {
+    template_id = "my_template"
+    version     = "v1.0.0"
+  }
 }

@@ -1,0 +1,15 @@
+```release-note:fix
+harness_chaos_experiment_template: fixed import for account-scoped (`hub_identity/identity`) and org-scoped (`org_id/hub_identity/identity`) templates, which previously failed by requiring the 4-part `org_id/project_id/hub_identity/identity` form.
+harness_chaos_experiment_template: fixed a perpetual "update in-place" plan by persisting `spec.probes[].enable_data_collection` and a concrete `spec.infra_id` in the template manifest.
+harness_chaos_experiment_template: added `conditions_v2` (operator + values, supports `<+input>`) to probes, faults, and actions to match the backend `conditionsV2` schema, and deprecated the non-functional `conditions` (execute_upon) field.
+harness_chaos_fault_template: fixed import for account-scoped and org-scoped templates.
+harness_chaos_action_template: fixed read failure/perpetual diff when a template variable value is a non-string scalar (the `*interface{}` value is now coerced to the schema string type).
+harness_chaos_probe_template: fixed the variables block being silently dropped (perpetual diff) when a variable value is a non-string scalar.
+harness_chaos_fault_template: fixed non-string template variable values being dropped on read (perpetual diff).
+harness_chaos_hub_v2: marked `org_id`, `project_id`, `connector_ref`, `repo_branch`, and `repo_name` as ForceNew, since the update API only accepts `name`/`description`/`tags`; changing them previously produced a silent no-op / perpetual diff.
+harness_chaos_fault_template: setting `spec.chaos.auth` or `spec.chaos.tls` now returns a clear error instead of silently dropping the (security-sensitive) values, since those blocks are not yet plumbed through to the API.
+```
+
+```release-note:note
+harness_chaos_probe_template, harness_chaos_action_template, harness_chaos_fault_template, harness_chaos_experiment_template, harness_chaos_experiment, harness_chaos_hub_v2, harness_chaos_image_registry, harness_chaos_security_governance_condition_v3: documented supported vs. not-supported features (probe/action types, HTTP probe headers/auth/tls, fault auth/tls, experiment in-place updates, hub immutable fields, fault_type normalization) in the resource docs.
+```

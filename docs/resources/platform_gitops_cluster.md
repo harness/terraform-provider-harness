@@ -74,6 +74,35 @@ resource "harness_platform_gitops_cluster" "example" {
 }
 
 
+# Cluster with secret_expressions (agent resolves secrets at connect time)
+resource "harness_platform_gitops_cluster" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  agent_id   = "account.agent_id"
+
+  request {
+    upsert = true
+    secret_expressions = {
+      bearerToken = "account.my_k8s_token_secret"
+    }
+    cluster {
+      server = "https://my-cluster.example.com"
+      name   = "name"
+      config {
+        cluster_connection_type = "SERVICE_ACCOUNT"
+        tls_client_config {
+          insecure = true
+        }
+      }
+    }
+  }
+  lifecycle {
+    ignore_changes = [
+      request.0.upsert, request.0.cluster.0.config.0.bearer_token,
+    ]
+  }
+}
+
 # Cluster with self signed certificate
 resource "harness_platform_gitops_cluster" "example" {
   identifier = "identifier"
@@ -136,6 +165,7 @@ Optional:
 > **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
 
 - `cluster` (Block List, Max: 1) GitOps cluster details. (see [below for nested schema](#nestedblock--request--cluster))
+- `secret_expressions` (Map of String) Maps credential field names (e.g. "username", "password", "bearerToken", "certData", "keyData", "caData") to Harness secret identifiers (e.g. "account.my_secret"). The agent resolves these at connect time instead of using plaintext credentials.
 - `tags` (Set of String) Tags for the GitOps cluster. These can be used to search or filter the GitOps agents.
 - `updated_fields` (List of String) Fields which are updated.
 - `upsert` (Boolean) Indicates if the GitOps cluster should be updated if existing and inserted if not.
