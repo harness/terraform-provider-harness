@@ -99,6 +99,12 @@ func resourceChaosInfrastructureV2Schema() map[string]*schema.Schema {
 			Optional:    true,
 			Default:     false,
 		},
+		"autopilot_enabled": {
+			Description: "Enable autopilot mode for the infrastructure.",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+		},
 		"run_as_user": {
 			Description: "User ID to run the infrastructure as.",
 			Type:        schema.TypeInt,
@@ -165,6 +171,7 @@ func resourceChaosInfrastructureV2Schema() map[string]*schema.Schema {
 		"volume_mounts":  volumeMountsSchema(),
 		"env":            envVarsSchema(),
 		"tolerations":    tolerationsSchema(),
+		"resources":      resourcesSchema(),
 
 		// Computed Fields
 		"identity": {

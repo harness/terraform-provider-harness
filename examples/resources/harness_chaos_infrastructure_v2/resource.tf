@@ -31,6 +31,25 @@ resource "harness_chaos_infrastructure_v2" "test" {
   ai_enabled           = "<ai_enabled>"
   insecure_skip_verify = "<insecure_skip_verify>"
 
+  # Enable autopilot mode for the infrastructure (optional, defaults to false)
+  autopilot_enabled = true
+
+  # ID of the discovery agent to associate at registration time (optional)
+  discovery_agent_id = "<discovery_agent_id>"
+
+  # Compute resource requests and limits applied to the chaos infrastructure pods.
+  # Values are standard Kubernetes quantity strings.
+  resources {
+    requests {
+      cpu    = "250m"
+      memory = "256Mi"
+    }
+    limits {
+      cpu    = "500m"
+      memory = "512Mi"
+    }
+  }
+
   # Example of node selector
   node_selector = {
     "kubernetes.io/os"   = "linux"
