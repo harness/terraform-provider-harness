@@ -111,6 +111,22 @@ resource "harness_platform_har_registry" "debian_upstream" {
   }
   parent_ref = "accountId/orgId/projectId"
 }
+
+# Example of an Upstream Debian Registry (Debian source needs no url)
+resource "harness_platform_har_registry" "rubygems_upstream" {
+  identifier   = "upstream_ruby_registry"
+  description  = "Upstream ruby Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "RUBY"
+  config {
+    type      = "UPSTREAM"
+    source    = "RubyGems"
+    url       = "https://rubygems.org"
+
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
 ```
 
 ## Schema
@@ -118,7 +134,11 @@ resource "harness_platform_har_registry" "debian_upstream" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
+<<<<<<< HEAD
 - `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN)
+=======
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, RUBY)
+>>>>>>> 30753054 (add support for ruby)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 
