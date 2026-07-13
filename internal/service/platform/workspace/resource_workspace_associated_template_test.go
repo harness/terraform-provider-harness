@@ -102,6 +102,159 @@ func TestAccResourceWorkspaceAssociatedTemplate_AddAndRemove(t *testing.T) {
 	})
 }
 
+// TestAccResourceWorkspaceAssociatedTemplate_LockedFields verifies that a workspace can be
+// associated with a template that locks repository fields (repository, connector, branch,
+// path) without supplying those fields on the workspace. Previously these were required and
+// always sent, so the create failed with "Attempted to update locked fields" (IAC-7604).
+// The locked values are inherited from the template and reflected back on read.
+func TestAccResourceWorkspaceAssociatedTemplate_LockedFields(t *testing.T) {
+	resourceName := "harness_platform_workspace.test_tpl"
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccResourceWorkspaceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceWorkspaceLockedFields(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "associated_template.0.template_id", id),
+					resource.TestCheckResourceAttr(resourceName, "associated_template.0.version", "v1"),
+					// Repository fields are omitted from config and inherited from the template.
+					resource.TestCheckResourceAttrSet(resourceName, "repository"),
+					resource.TestCheckResourceAttrSet(resourceName, "provisioner_version"),
+				),
+			},
+		},
+	})
+}
+
+// testAccResourceWorkspaceLockedFields builds a workspace that associates a template locking
+// the repository, provisioner and cost-estimation fields, while omitting those fields on the
+// workspace itself so they are inherited from the template.
+func testAccResourceWorkspaceLockedFields(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name       = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name       = "%[2]s"
+			org_id     = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_secret_text" "test" {
+			identifier                = "%[1]s"
+			name                      = "%[2]s"
+			description               = "test"
+			tags                      = ["foo:bar"]
+			secret_manager_identifier = "harnessSecretManager"
+			value_type                = "Inline"
+			value                     = "secret"
+		}
+
+		resource "harness_platform_connector_github" "test" {
+			identifier         = "%[1]s"
+			name               = "%[2]s"
+			description        = "test"
+			tags               = ["foo:bar"]
+			url                = "https://github.com/account"
+			connection_type    = "Account"
+			validation_repo    = "some_repo"
+			delegate_selectors = ["harness-delegate"]
+			credentials {
+				http {
+					username  = "admin"
+					token_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
+		}
+
+		resource "harness_platform_template" "test_v1" {
+			identifier   = "%[1]s"
+			org_id       = harness_platform_organization.test.id
+			project_id   = harness_platform_project.test.id
+			name         = "%[2]s"
+			version      = "v1"
+			is_stable    = true
+			force_delete = true
+			template_yaml = <<-EOT
+%[3]s
+			EOT
+		}
+
+		resource "harness_platform_workspace" "test_tpl" {
+			identifier          = "%[1]s"
+			name                = "%[2]s"
+			org_id              = harness_platform_organization.test.id
+			project_id          = harness_platform_project.test.id
+			provisioner_type    = "opentofu"
+			provider_connector  = "account.${harness_platform_connector_github.test.id}"
+
+			associated_template {
+				template_id = harness_platform_template.test_v1.identifier
+				version     = "v1"
+			}
+
+			depends_on = [harness_platform_template.test_v1]
+		}
+`, id, name, testAccWorkspaceLockedFieldsYaml(id, name))
+}
+
+// testAccWorkspaceLockedFieldsYaml renders a Workspace-type template whose repository,
+// provisioner and cost-estimation blocks are locked, so the associated workspace must not
+// send those fields.
+func testAccWorkspaceLockedFieldsYaml(id string, name string) string {
+	return fmt.Sprintf(`template:
+  name: "%[2]s"
+  identifier: "%[1]s"
+  versionLabel: v1
+  type: Workspace
+  projectIdentifier: ${harness_platform_project.test.id}
+  orgIdentifier: ${harness_platform_organization.test.id}
+  tags: {}
+  spec:
+    provider:
+      type: others
+      title: thirdPartyGitProvider
+      info: thirdPartyGitProviderInfo
+      icon: service-github
+      size: 20
+      disabled: false
+    tags: []
+    description: ""
+    cost_estimation:
+      enabled: false
+      locked: true
+    default_pipelines:
+      plan: ""
+      apply: ""
+      destroy: ""
+      drift: ""
+    provisioner:
+      type: opentofu
+      version: 1.12.3
+      locked: true
+    repository:
+      isHarnessCode: false
+      connector: account.${harness_platform_connector_github.test.id}
+      name: spring5-oauth2-resource-server
+      branch: master
+      gitFetchType: branch
+      locked: true
+    variables: []
+    terraform_variables: []
+    terraform_variable_files: []`, id, name)
+}
+
 // testAccResourceWorkspaceAssociatedTemplate builds a workspace with an associated_template
 // block (version v1/v2) pointing at a Workspace-type harness_platform_template.
 func testAccResourceWorkspaceAssociatedTemplate(id string, name string, version string) string {
