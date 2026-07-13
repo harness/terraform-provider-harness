@@ -95,6 +95,22 @@ resource "harness_platform_har_registry" "helm_http_upstream" {
   }
   parent_ref = "accountId/orgId/projectId"
 }
+
+# Example of an Upstream Custom Debian Registry (Debian source needs url)
+resource "harness_platform_har_registry" "debian_upstream" {
+  identifier   = "upstream_debian_registry"
+  description  = "Upstream Debian Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "DEBIAN"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "Custom"
+    url       = "http://deb.debian.org/debian"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
 ```
 
 ## Schema
@@ -102,7 +118,7 @@ resource "harness_platform_har_registry" "helm_http_upstream" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 

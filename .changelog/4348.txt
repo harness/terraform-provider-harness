@@ -1,0 +1,3 @@
+```release-note:feature
+harness_platform_har_registry: Added support for `DEBIAN` package types, including its upstream source (`Custom`).
+```

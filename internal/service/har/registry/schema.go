@@ -179,7 +179,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			},
 		},
 		"package_type": {
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, etc.)",
 			Type:        schema.TypeString,
 			Required:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -197,6 +197,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.GO_PackageType),
 				(string)(har.CONDA_PackageType),
 				(string)(har.HELM_HTTP_PackageType),
+				(string)(har.DEBIAN_PackageType),
 			}, false),
 		},
 		"is_public": {
@@ -267,7 +268,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Computed:    true,
 		}
 		mainSchema["package_type"] = &schema.Schema{
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, etc.)",
 			Type:        schema.TypeString,
 			Optional:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -285,6 +286,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.GO_PackageType),
 				(string)(har.CONDA_PackageType),
 				(string)(har.HELM_HTTP_PackageType),
+				(string)(har.DEBIAN_PackageType),
 			}, false),
 		}
 	}
