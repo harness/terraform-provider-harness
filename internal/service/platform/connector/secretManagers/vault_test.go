@@ -1452,7 +1452,7 @@ func testAccResourceConnectorVault_vault_agent(id string, name string) string {
 		tags = ["foo:bar"]
 
 		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Reference"
+		value_type = "Inline"
 		value = "secret"
 	}
 
@@ -1534,7 +1534,7 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string, conne
 		org_id= harness_platform_organization.test.id
 		project_id=harness_platform_project.test.id
 		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Reference"
+		value_type = "Inline"
 		value = "secret"
 		depends_on = [time_sleep.wait_8_seconds_2]
 	}
