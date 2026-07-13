@@ -127,8 +127,25 @@ func resourceIacmWorkspaceTemplateRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceIacmWorkspaceTemplateDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// There is no API endpoint to delete workspace template associations.
-	// The association is removed when the workspace itself is deleted (ON DELETE CASCADE).
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	orgId := d.Get("org_id").(string)
+	projectId := d.Get("project_id").(string)
+	templateId := d.Get("template_id").(string)
+	workspaceId := d.Get("workspace_id").(string)
+
+	httpResp, err := c.WorkspaceTemplatesApi.WorkspaceTemplatesRemoveWorkspaceTemplate(
+		ctx,
+		c.AccountId,
+		orgId,
+		projectId,
+		templateId,
+		workspaceId,
+	)
+	if err != nil {
+		return parseIacmError(err, httpResp)
+	}
+
 	d.SetId("")
 	return nil
 }

@@ -53,8 +53,31 @@ func TestAccResourceIacmWorkspaceTemplate(t *testing.T) {
 				ImportStateIdFunc: testAccIacmWorkspaceTemplateImportStateIdFunc(resourceName),
 				ImportStateVerify: true,
 			},
+			{
+				Config: testAccResourceIacmWorkspaceTemplateBase(id, name),
+				Check:  testAccResourceIacmWorkspaceTemplateAssociationRemoved(id, name),
+			},
 		},
 	})
+}
+
+// testAccResourceIacmWorkspaceTemplateAssociationRemoved asserts, via a direct API
+// call, that no association exists for the template/workspace pair after the
+// association resource has been destroyed while its workspace is kept.
+func testAccResourceIacmWorkspaceTemplateAssociationRemoved(id string, name string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		c, ctx := acctest.TestAccGetPlatformClientWithContext()
+		results, _, err := c.WorkspaceTemplatesApi.WorkspaceTemplatesGetWorkspacesByTemplateID(ctx, c.AccountId, id, id, id)
+		if err != nil {
+			return err
+		}
+		for i := range results {
+			if results[i].WorkspaceID == id {
+				return fmt.Errorf("workspace template association still exists after delete: %s/%s", results[i].TemplateID, results[i].WorkspaceID)
+			}
+		}
+		return nil
+	}
 }
 
 // testAccIacmWorkspaceTemplateImportStateIdFunc builds the 4-part import id
@@ -105,10 +128,26 @@ func testAccGetIacmWorkspaceTemplate(resourceName string, state *terraform.State
 	return nil, nil
 }
 
-// testAccResourceIacmWorkspaceTemplate builds a config with all dependencies: an org,
-// project, github connector, a workspace, a Workspace-type template with versions v1
-// and v2, and the association pointing at the requested version.
+// testAccResourceIacmWorkspaceTemplate builds a config with all dependencies (see
+// testAccResourceIacmWorkspaceTemplateBase) plus the association pointing at the
+// requested version.
 func testAccResourceIacmWorkspaceTemplate(id string, name string, version string) string {
+	return fmt.Sprintf(`
+		%[1]s
+
+		resource "harness_platform_iacm_workspace_template" "test" {
+			org_id       = harness_platform_organization.test.id
+			project_id   = harness_platform_project.test.id
+			workspace_id = harness_platform_workspace.test.identifier
+			template_id  = harness_platform_template.test_v1.identifier
+			version      = "%[2]s"
+
+			depends_on = [harness_platform_template.test_v2]
+		}
+`, testAccResourceIacmWorkspaceTemplateBase(id, name), version)
+}
+
+func testAccResourceIacmWorkspaceTemplateBase(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -164,17 +203,7 @@ func testAccResourceIacmWorkspaceTemplate(id string, name string, version string
 		}
 
 		%[3]s
-
-		resource "harness_platform_iacm_workspace_template" "test" {
-			org_id       = harness_platform_organization.test.id
-			project_id   = harness_platform_project.test.id
-			workspace_id = harness_platform_workspace.test.identifier
-			template_id  = harness_platform_template.test_v1.identifier
-			version      = "%[4]s"
-
-			depends_on = [harness_platform_template.test_v2]
-		}
-`, id, name, testAccWorkspaceTemplateVersions(id, name), version)
+`, id, name, testAccWorkspaceTemplateVersions(id, name))
 }
 
 // testAccWorkspaceTemplateVersions returns two versions (v1, v2) of a Workspace-type
