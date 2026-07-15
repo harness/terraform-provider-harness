@@ -455,7 +455,7 @@ func testAccResourceGitopsApplicationHelm(id string, accountId string, name stri
 						target_revision = "master"
 						repo_url = "%[9]s"
 						path = "helm-guestbook"
-						
+
 					}
 					destination {
 						namespace = "%[6]s"
@@ -642,7 +642,7 @@ func testAccResourceGitopsApplicationHelmSkipRepoValidation(id string, accountId
 						target_revision = "18.0.1"
 						repo_url = "%[9]s"
 						chart = "%[10]s"
-						
+
 					}
 					destination {
 						namespace = "%[6]s"
@@ -689,7 +689,7 @@ func testAccResourceGitopsApplicationKustomize(id string, accountId string, name
 			tags = ["foo:bar", "baz"]
 			type = "PreProduction"
   		}
-		
+
 		resource "harness_platform_gitops_repository" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
@@ -786,7 +786,7 @@ func testAccResourceGitopsApplicationGitSkipRepoValidation(id string, accountId 
 			tags = ["foo:bar", "baz"]
 			type = "PreProduction"
   		}
-		
+
 
 		resource "harness_platform_gitops_applications" "test" {
 			application {
@@ -839,6 +839,188 @@ func testAccResourceGitopsApplicationGitSkipRepoValidation(id string, accountId 
             skip_repo_validation = %[10]t
 		}
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, skipRepoValidation)
+}
+
+func TestAccResourceGitopsApplication_ForceDelete(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
+	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
+	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
+	namespace := "test"
+	resourceName := "harness_platform_gitops_applications.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with force_delete = true and verify it is persisted in state
+				Config: testAccResourceGitopsApplicationWithForceDelete(id, accountId, agentId, clusterServer, clusterId, repo, namespace),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
+					resource.TestCheckResourceAttr(resourceName, "name", id),
+				),
+			},
+			{
+				// Step 2: Remove force_delete so the test-framework destroy succeeds on a connected agent
+				Config: testAccResourceGitopsApplicationWithoutForceDelete(id, accountId, agentId, clusterServer, clusterId, repo, namespace),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", id),
+				),
+			},
+		},
+	})
+}
+
+func testAccResourceGitopsApplicationWithForceDelete(id string, accountId string, agentId string, clusterServer string, clusterId string, repo string, namespace string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			org_id = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_gitops_repository" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[3]s"
+			repo {
+				repo = "%[6]s"
+				name = "%[1]s"
+				insecure = true
+				connection_type = "HTTPS_ANONYMOUS"
+			}
+			upsert = true
+		}
+
+		resource "harness_platform_gitops_applications" "test" {
+			depends_on = [harness_platform_gitops_repository.test]
+			application {
+				metadata {
+					annotations = {}
+					name = "%[1]s"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					source {
+						target_revision = "master"
+						repo_url = "%[6]s"
+						path = "helm-guestbook"
+					}
+					destination {
+						namespace = "%[7]s"
+						server = "%[4]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]s"
+			cluster_id = "%[5]s"
+			repo_id = "%[1]s"
+			agent_id = "%[3]s"
+			name = "%[1]s"
+			force_delete = true
+		}
+		`, id, accountId, agentId, clusterServer, clusterId, repo, namespace)
+}
+
+func testAccResourceGitopsApplicationWithoutForceDelete(id string, accountId string, agentId string, clusterServer string, clusterId string, repo string, namespace string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			org_id = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_gitops_repository" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[3]s"
+			repo {
+				repo = "%[6]s"
+				name = "%[1]s"
+				insecure = true
+				connection_type = "HTTPS_ANONYMOUS"
+			}
+			upsert = true
+		}
+
+		resource "harness_platform_gitops_applications" "test" {
+			depends_on = [harness_platform_gitops_repository.test]
+			application {
+				metadata {
+					annotations = {}
+					name = "%[1]s"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					source {
+						target_revision = "master"
+						repo_url = "%[6]s"
+						path = "helm-guestbook"
+					}
+					destination {
+						namespace = "%[7]s"
+						server = "%[4]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]s"
+			cluster_id = "%[5]s"
+			repo_id = "%[1]s"
+			agent_id = "%[3]s"
+			name = "%[1]s"
+		}
+		`, id, accountId, agentId, clusterServer, clusterId, repo, namespace)
 }
 
 func testAccResourceGitopsApplicationAllTypes(id string, accountId string, agentId string, clusterServer string, clusterId string, clusterToken string, repo string, helmRepoURL string, helmChart string, namespace string, kustomizeNamespace string) string {
@@ -900,7 +1082,7 @@ func testAccResourceGitopsApplicationAllTypes(id string, accountId string, agent
 			upsert = true
 		}
 
-		
+
 
 		resource "harness_platform_gitops_cluster" "test" {
 			identifier = "%[1]s"
