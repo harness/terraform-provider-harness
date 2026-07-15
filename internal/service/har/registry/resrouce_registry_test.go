@@ -2635,6 +2635,82 @@ func TestAccResourceUpstreamHelmHTTPRegistry(t *testing.T) {
 	})
 }
 
+// Tests create/read/update/import for a VIRTUAL Conan registry
+func TestAccResourceVirtualConanRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_conan_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "CONAN", "initial description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "CONAN"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "description", "initial description"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "CONAN", "updated description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "updated description"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/import for an UPSTREAM Conan registry using the ConanCenter source (no url required)
+func TestAccResourceUpstreamConanRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_conan_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamAnonRegistry(id, accountId, "CONAN", "ConanCenter", ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "CONAN"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "ConanCenter"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 // Generates Terraform config for a VIRTUAL registry of the given package type
 func testAccResourceVirtualRegistryByType(id, accId, packageType, description string) string {
 	return fmt.Sprintf(`
@@ -2679,15 +2755,26 @@ func testAccResourceUpstreamAnonRegistry(id, accId, packageType, source, url str
 func TestOrgResourceVirtualGoRegistry(t *testing.T)       { testVirtualRegistryOrg(t, "GO") }
 func TestOrgResourceVirtualCondaRegistry(t *testing.T)    { testVirtualRegistryOrg(t, "CONDA") }
 func TestOrgResourceVirtualHelmHTTPRegistry(t *testing.T) { testVirtualRegistryOrg(t, "HELM_HTTP") }
+func TestOrgResourceVirtualConanRegistry(t *testing.T)    { testVirtualRegistryOrg(t, "CONAN") }
 
 // Tests creating a VIRTUAL registry of the given package type at project level
-func TestProjectResourceVirtualGoRegistry(t *testing.T)       { testVirtualRegistryProject(t, "GO") }
-func TestProjectResourceVirtualCondaRegistry(t *testing.T)    { testVirtualRegistryProject(t, "CONDA") }
-func TestProjectResourceVirtualHelmHTTPRegistry(t *testing.T) { testVirtualRegistryProject(t, "HELM_HTTP") }
+func TestProjectResourceVirtualGoRegistry(t *testing.T)    { testVirtualRegistryProject(t, "GO") }
+func TestProjectResourceVirtualCondaRegistry(t *testing.T) { testVirtualRegistryProject(t, "CONDA") }
+func TestProjectResourceVirtualHelmHTTPRegistry(t *testing.T) {
+	testVirtualRegistryProject(t, "HELM_HTTP")
+}
+func TestProjectResourceVirtualConanRegistry(t *testing.T) { testVirtualRegistryProject(t, "CONAN") }
 
 // Tests creating an UPSTREAM registry with Custom source + UserPassword auth
-func TestAccResourceUpstreamGoCustomAuthRegistry(t *testing.T)    { testUpstreamCustomAuthRegistry(t, "GO") }
-func TestAccResourceUpstreamCondaCustomAuthRegistry(t *testing.T) { testUpstreamCustomAuthRegistry(t, "CONDA") }
+func TestAccResourceUpstreamGoCustomAuthRegistry(t *testing.T) {
+	testUpstreamCustomAuthRegistry(t, "GO")
+}
+func TestAccResourceUpstreamCondaCustomAuthRegistry(t *testing.T) {
+	testUpstreamCustomAuthRegistry(t, "CONDA")
+}
+func TestAccResourceUpstreamConanCustomAuthRegistry(t *testing.T) {
+	testUpstreamCustomAuthRegistry(t, "CONAN")
+}
 func TestAccResourceUpstreamHelmHTTPCustomAuthRegistry(t *testing.T) {
 	testUpstreamCustomAuthRegistry(t, "HELM_HTTP")
 }

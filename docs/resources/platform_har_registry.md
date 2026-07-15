@@ -111,6 +111,21 @@ resource "harness_platform_har_registry" "debian_upstream" {
   }
   parent_ref = "accountId/orgId/projectId"
 }
+
+# Example of an Upstream Conan Registry (ConanCenter source needs no url)
+resource "harness_platform_har_registry" "conan_upstream" {
+  identifier   = "upstream_conan_registry"
+  description  = "Upstream Conan Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "CONAN"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "ConanCenter"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
 ```
 
 ## Schema
@@ -118,7 +133,7 @@ resource "harness_platform_har_registry" "debian_upstream" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 

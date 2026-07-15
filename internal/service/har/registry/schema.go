@@ -68,7 +68,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Optional:    true,
 						Description: "Upstream source",
 						ValidateFunc: validation.StringInSlice([]string{
-							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo",
+							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter",
 						}, false),
 					},
 					"url": {
@@ -179,7 +179,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			},
 		},
 		"package_type": {
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, CONAN, etc.)",
 			Type:        schema.TypeString,
 			Required:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -198,6 +198,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.CONDA_PackageType),
 				(string)(har.HELM_HTTP_PackageType),
 				(string)(har.DEBIAN_PackageType),
+				(string)(har.CONAN_PackageType),
 			}, false),
 		},
 		"is_public": {
@@ -268,7 +269,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Computed:    true,
 		}
 		mainSchema["package_type"] = &schema.Schema{
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, CONAN, etc.)",
 			Type:        schema.TypeString,
 			Optional:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -287,6 +288,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.CONDA_PackageType),
 				(string)(har.HELM_HTTP_PackageType),
 				(string)(har.DEBIAN_PackageType),
+				(string)(har.CONAN_PackageType),
 			}, false),
 		}
 	}
@@ -304,7 +306,7 @@ func getUpstreamRegistrySchema() *schema.Resource {
 				Required:    true,
 				Description: "Upstream source",
 				ValidateFunc: validation.StringInSlice([]string{
-					"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo",
+					"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter",
 				}, false),
 			},
 			"url": {
