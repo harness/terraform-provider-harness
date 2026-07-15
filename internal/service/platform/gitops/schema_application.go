@@ -795,7 +795,7 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 				},
 				"sources": {
 					Type:        schema.TypeList,
-					Description: "Location of the application's manifests or chart. Use when specifying multiple fields",
+					Description: "List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`.",
 					Optional:    true,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
@@ -1020,9 +1020,9 @@ func ArgoAppSpecSchemaV2(allOptional bool) *schema.Schema {
 				},
 				"source": {
 					Type:        schema.TypeList,
-					Description: "Location of the application's manifests or chart.",
-					Optional:    allOptional,
-					Required:    !allOptional,
+					Description: "Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`.",
+					Optional:    true,
+					MaxItems:    1,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"repo_url": {

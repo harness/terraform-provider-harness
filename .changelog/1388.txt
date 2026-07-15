@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_gitops_applicationset: Make the singular `source` block optional in the Application template spec so ApplicationSets can be defined with multiple `sources` (ArgoCD multi-source) alone. Previously a `sources`-only template failed with "At least 1 source blocks are required". The provider now validates at plan time that a template sets exactly one of `source` or `sources`.
+```
