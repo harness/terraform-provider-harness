@@ -1,0 +1,3 @@
+```release-note:enhancement
+data-source/harness_platform_gitops_agent_deploy_yaml: Added `application_namespaces` to `argocd_settings` block to configure namespaces where Application CRs are permitted to reside.
+```
