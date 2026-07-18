@@ -17,7 +17,7 @@ func TestAccResourceDashboardFolder(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_dashboard_folders.folder"
+	resourceName := "harness_platform_dashboard_folder.folder"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -72,7 +72,7 @@ func testAccDashboardFolderDestroy(resourceName string) resource.TestCheckFunc {
 
 func testAccResourceDashboardFolder(name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_dashboard_folders" "folder" {
+	resource "harness_platform_dashboard_folder" "folder" {
 		name = "%[1]s"
 	}
 	`, name)
