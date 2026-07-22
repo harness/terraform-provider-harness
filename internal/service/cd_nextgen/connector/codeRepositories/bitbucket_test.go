@@ -294,7 +294,7 @@ func testAccResourceConnectorBitbucket_api_token(id string, name string) string 
 
 			api_authentication {
 				username = "admin"
-				token_ref = "account.${harness_platform_secret_text.test.id}"
+				token_ref = "account.%[1]s"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
@@ -339,7 +339,7 @@ func testAccResourceConnectorBitbucket_email_and_api_token(id string, name strin
 			api_authentication {
 				auth_type = "EmailAndApiToken"
 				email     = "user@example.com"
-				token_ref = "account.${harness_platform_secret_text.test.id}"
+				token_ref = "account.%[1]s"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
@@ -383,7 +383,7 @@ func testAccResourceConnectorBitbucket_access_token(id string, name string) stri
 
 			api_authentication {
 				auth_type = "AccessToken"
-				token_ref = "account.${harness_platform_secret_text.test.id}"
+				token_ref = "account.%[1]s"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
