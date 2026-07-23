@@ -1,5 +1,4 @@
 resource "harness_governance_rule_enforcement" "example" {
-  identifier         = "identifier"
   name               = "name"
   cloud_provider     = "AWS/AZURE/GCP"
   rule_ids           = ["rule_id1"]

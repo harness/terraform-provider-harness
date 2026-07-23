@@ -1,5 +1,4 @@
 resource "harness_governance_rule" "example" {
-  identifier     = "identifier"
   name           = "name"
   cloud_provider = "AWS/AZURE/GCP"
   description    = "description"
