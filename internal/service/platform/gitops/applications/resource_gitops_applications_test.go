@@ -848,6 +848,7 @@ func TestAccResourceGitopsApplication_ForceDelete(t *testing.T) {
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
 	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
+	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
 	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
 	namespace := "test"
 	resourceName := "harness_platform_gitops_applications.test"
@@ -859,7 +860,7 @@ func TestAccResourceGitopsApplication_ForceDelete(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				// Step 1: Create with force_delete = true and verify it is persisted in state
-				Config: testAccResourceGitopsApplicationWithForceDelete(id, accountId, agentId, clusterServer, clusterId, repo, namespace),
+				Config: testAccResourceGitopsApplicationWithForceDelete(id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, namespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
@@ -868,7 +869,7 @@ func TestAccResourceGitopsApplication_ForceDelete(t *testing.T) {
 			},
 			{
 				// Step 2: Remove force_delete so the test-framework destroy succeeds on a connected agent
-				Config: testAccResourceGitopsApplicationWithoutForceDelete(id, accountId, agentId, clusterServer, clusterId, repo, namespace),
+				Config: testAccResourceGitopsApplicationWithoutForceDelete(id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, namespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", id),
@@ -878,7 +879,7 @@ func TestAccResourceGitopsApplication_ForceDelete(t *testing.T) {
 	})
 }
 
-func testAccResourceGitopsApplicationWithForceDelete(id string, accountId string, agentId string, clusterServer string, clusterId string, repo string, namespace string) string {
+func testAccResourceGitopsApplicationWithForceDelete(id string, accountId string, agentId string, clusterServer string, clusterId string, clusterToken string, repo string, namespace string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -898,7 +899,7 @@ func testAccResourceGitopsApplicationWithForceDelete(id string, accountId string
 			org_id = harness_platform_organization.test.id
 			agent_id = "%[3]s"
 			repo {
-				repo = "%[6]s"
+				repo = "%[7]s"
 				name = "%[1]s"
 				insecure = true
 				connection_type = "HTTPS_ANONYMOUS"
@@ -906,8 +907,35 @@ func testAccResourceGitopsApplicationWithForceDelete(id string, accountId string
 			upsert = true
 		}
 
+		resource "harness_platform_gitops_cluster" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			agent_id = "%[3]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			request {
+				upsert = true
+				cluster {
+					server = "%[4]s"
+					name = "%[1]s"
+					config {
+						bearer_token = "%[6]s"
+						tls_client_config {
+							insecure = true
+						}
+						cluster_connection_type = "SERVICE_ACCOUNT"
+					}
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info, request.0.cluster.0.config.0.cluster_connection_type,
+				]
+			}
+		}
+
 		resource "harness_platform_gitops_applications" "test" {
-			depends_on = [harness_platform_gitops_repository.test]
+			depends_on = [harness_platform_gitops_repository.test, harness_platform_gitops_cluster.test]
 			application {
 				metadata {
 					annotations = {}
@@ -929,11 +957,11 @@ func testAccResourceGitopsApplicationWithForceDelete(id string, accountId string
 					}
 					source {
 						target_revision = "master"
-						repo_url = "%[6]s"
+						repo_url = "%[7]s"
 						path = "helm-guestbook"
 					}
 					destination {
-						namespace = "%[7]s"
+						namespace = "%[8]s"
 						server = "%[4]s"
 					}
 				}
@@ -948,10 +976,10 @@ func testAccResourceGitopsApplicationWithForceDelete(id string, accountId string
 			name = "%[1]s"
 			force_delete = true
 		}
-		`, id, accountId, agentId, clusterServer, clusterId, repo, namespace)
+		`, id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, namespace)
 }
 
-func testAccResourceGitopsApplicationWithoutForceDelete(id string, accountId string, agentId string, clusterServer string, clusterId string, repo string, namespace string) string {
+func testAccResourceGitopsApplicationWithoutForceDelete(id string, accountId string, agentId string, clusterServer string, clusterId string, clusterToken string, repo string, namespace string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -971,7 +999,7 @@ func testAccResourceGitopsApplicationWithoutForceDelete(id string, accountId str
 			org_id = harness_platform_organization.test.id
 			agent_id = "%[3]s"
 			repo {
-				repo = "%[6]s"
+				repo = "%[7]s"
 				name = "%[1]s"
 				insecure = true
 				connection_type = "HTTPS_ANONYMOUS"
@@ -979,8 +1007,35 @@ func testAccResourceGitopsApplicationWithoutForceDelete(id string, accountId str
 			upsert = true
 		}
 
+		resource "harness_platform_gitops_cluster" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			agent_id = "%[3]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			request {
+				upsert = true
+				cluster {
+					server = "%[4]s"
+					name = "%[1]s"
+					config {
+						bearer_token = "%[6]s"
+						tls_client_config {
+							insecure = true
+						}
+						cluster_connection_type = "SERVICE_ACCOUNT"
+					}
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info, request.0.cluster.0.config.0.cluster_connection_type,
+				]
+			}
+		}
+
 		resource "harness_platform_gitops_applications" "test" {
-			depends_on = [harness_platform_gitops_repository.test]
+			depends_on = [harness_platform_gitops_repository.test, harness_platform_gitops_cluster.test]
 			application {
 				metadata {
 					annotations = {}
@@ -1002,11 +1057,11 @@ func testAccResourceGitopsApplicationWithoutForceDelete(id string, accountId str
 					}
 					source {
 						target_revision = "master"
-						repo_url = "%[6]s"
+						repo_url = "%[7]s"
 						path = "helm-guestbook"
 					}
 					destination {
-						namespace = "%[7]s"
+						namespace = "%[8]s"
 						server = "%[4]s"
 					}
 				}
@@ -1020,7 +1075,7 @@ func testAccResourceGitopsApplicationWithoutForceDelete(id string, accountId str
 			agent_id = "%[3]s"
 			name = "%[1]s"
 		}
-		`, id, accountId, agentId, clusterServer, clusterId, repo, namespace)
+		`, id, accountId, agentId, clusterServer, clusterId, clusterToken, repo, namespace)
 }
 
 func testAccResourceGitopsApplicationAllTypes(id string, accountId string, agentId string, clusterServer string, clusterId string, clusterToken string, repo string, helmRepoURL string, helmChart string, namespace string, kustomizeNamespace string) string {
