@@ -20,7 +20,8 @@ func capturePanic(fn func()) (panicked bool, value interface{}) {
 
 // TestCCM33032Class_ReadNilNestedFields covers user-exposed connector read paths
 // where optional billing blocks are omitted in Terraform but the API returns BILLING
-// enabled without nested export/CUR details (CCM-33032).
+// enabled without nested export/CUR details. GCP/AWS cases reproduce CCM-33032;
+// Azure cases are CCM-32488 regression guards (fixed, expected to pass).
 func TestCCM33032Class_ReadNilNestedFields(t *testing.T) {
 	cases := []struct {
 		name        string
@@ -63,6 +64,48 @@ func TestCCM33032Class_ReadNilNestedFields(t *testing.T) {
 					},
 				}
 				_ = readConnectorAwsCC(d, conn)
+			},
+		},
+		{
+			name: "azure_cloud_cost: BILLING enabled, billingExportSpec2 null (CCM-32488 scenario)",
+			resourceSch: func() map[string]*schema.Schema {
+				return ResourceConnectorAzureCloudCost().Schema
+			}(),
+			run: func(d *schema.ResourceData) {
+				conn := &nextgen.ConnectorInfo{
+					AzureCloudCost: &nextgen.CeAzureConnector{
+						TenantId:          "tenant",
+						SubscriptionId:    "sub",
+						FeaturesEnabled:   []string{"BILLING"},
+						BillingExportSpec: &nextgen.BillingExportSpec{
+							StorageAccountName: "sa",
+							ContainerName:      "c",
+							ReportName:         "r",
+						},
+						BillingExportSpec2: nil,
+					},
+				}
+				_ = readConnectorAzureCloudCost(d, conn)
+			},
+		},
+		{
+			name: "azure_cloud_cost: BILLING enabled, billingExportSpec null",
+			resourceSch: func() map[string]*schema.Schema {
+				return ResourceConnectorAzureCloudCost().Schema
+			}(),
+			run: func(d *schema.ResourceData) {
+				conn := &nextgen.ConnectorInfo{
+					AzureCloudCost: &nextgen.CeAzureConnector{
+						TenantId:          "tenant",
+						SubscriptionId:    "sub",
+						FeaturesEnabled:   []string{"BILLING"},
+						BillingExportSpec: nil,
+						BillingExportSpec2: &nextgen.BillingExportSpec{
+							StorageAccountName: "sa2",
+						},
+					},
+				}
+				_ = readConnectorAzureCloudCost(d, conn)
 			},
 		},
 	}
