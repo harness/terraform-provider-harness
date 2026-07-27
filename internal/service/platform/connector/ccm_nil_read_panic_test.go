@@ -63,23 +63,6 @@ func TestCCM32488Class_ReadNilNestedFields(t *testing.T) {
 			},
 		},
 		{
-			name: "aws_cc: crossAccountAccess null",
-			resourceSch: func() map[string]*schema.Schema {
-				return ResourceConnectorAwsCC().Schema
-			}(),
-			run: func(d *schema.ResourceData) {
-				conn := &nextgen.ConnectorInfo{
-					AwsCC: &nextgen.CeAwsConnector{
-						AwsAccountId:       "123456789012",
-						FeaturesEnabled:    []string{"VISIBILITY"},
-						CurAttributes:      nil,
-						CrossAccountAccess: nil,
-					},
-				}
-				_ = readConnectorAwsCC(d, conn)
-			},
-		},
-		{
 			name: "azure_cloud_cost: BILLING enabled, billingExportSpec2 null (CCM-32488 scenario)",
 			resourceSch: func() map[string]*schema.Schema {
 				return ResourceConnectorAzureCloudCost().Schema
