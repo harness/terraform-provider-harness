@@ -2,9 +2,11 @@ package idp
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/idp"
@@ -140,9 +142,9 @@ func ResourceCatalogEntity() *schema.Resource {
 func resourceCatalogEntityRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetIDPClientWithContext(ctx)
 
-	entityInfo, err := getAndVerifyCatalogEntityInfo(d)
+	entityInfo, err := getCatalogEntityInfoFromResourceData(d)
 	if err != nil {
-		return diag.Errorf("error in validating yaml and inputs: %v", err)
+		return diag.Errorf("error in reading catalog entity inputs: %v", err)
 	}
 
 	id := d.Id()
@@ -157,7 +159,7 @@ func resourceCatalogEntityRead(ctx context.Context, d *schema.ResourceData, meta
 	})
 
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return handleIDPReadApiError(err, d, httpResp)
 	}
 
 	readCatalogEntity(d, resp)
@@ -171,10 +173,17 @@ func resourceCatalogEntityUpdateOrCreate(ctx context.Context, d *schema.Resource
 	var err error
 	var resp idp.EntityResponse
 	var httpResp *http.Response
+	var entityInfo catalogEntityInfo
 
 	id := d.Id()
+	isNewResource := id == ""
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
+			entityInfo, err = getCatalogEntityInfoFromImportResourceData(d)
+			if err != nil {
+				return diag.Errorf("failed to get catalog entity info: %v", err)
+			}
+
 			importInfo := idp.GitImportDetails{}
 			if attr, ok := d.GetOk("git_details"); ok {
 				config := attr.([]interface{})[0].(map[string]interface{})
@@ -213,8 +222,12 @@ func resourceCatalogEntityUpdateOrCreate(ctx context.Context, d *schema.Resource
 				OrgIdentifier:     orgId,
 				ProjectIdentifier: projectId,
 			})
+			if err != nil {
+				return handleIDPApiError(err, d, httpResp)
+			}
+			entityInfo = getCatalogEntityInfoFromResponse(resp, entityInfo)
 		} else {
-			entityInfo, err := getAndVerifyCatalogEntityInfo(d)
+			entityInfo, err = getAndVerifyCatalogEntityInfo(d)
 			if err != nil {
 				return diag.Errorf("failed to get and verify catalog entity info: %v", err)
 			}
@@ -230,6 +243,10 @@ func resourceCatalogEntityUpdateOrCreate(ctx context.Context, d *schema.Resource
 					ProjectIdentifier: entityInfo.ProjectId,
 					HarnessAccount:    optional.NewString(c.AccountId),
 				})
+			if err != nil {
+				return handleIDPApiError(err, d, httpResp)
+			}
+			entityInfo = getCatalogEntityInfoFromResponse(resp, entityInfo)
 		}
 	} else {
 		gitDetails := buildGitUpdateDetails(d)
@@ -240,7 +257,7 @@ func resourceCatalogEntityUpdateOrCreate(ctx context.Context, d *schema.Resource
 		shouldUpdateGitDetails := connectorRefChanged || filePathChanged || repoNameChanged
 
 		yaml := d.Get("yaml").(string)
-		entityInfo, err := getAndVerifyCatalogEntityInfo(d)
+		entityInfo, err = getAndVerifyCatalogEntityInfo(d)
 		if err != nil {
 			return diag.Errorf("failed to get and verify catalog entity info: %v", err)
 		}
@@ -248,12 +265,14 @@ func resourceCatalogEntityUpdateOrCreate(ctx context.Context, d *schema.Resource
 		resp, httpResp, err = c.EntitiesApi.UpdateEntity(ctx, idp.EntityUpdateRequest{
 			Yaml:       yaml,
 			GitDetails: gitDetails,
-		},
-			entityInfo.Scope, entityInfo.Kind, id, &idp.EntitiesApiUpdateEntityOpts{
-				OrgIdentifier:     entityInfo.OrgId,
-				ProjectIdentifier: entityInfo.ProjectId,
-				HarnessAccount:    optional.NewString(c.AccountId),
-			})
+		}, entityInfo.Scope, entityInfo.Kind, id, &idp.EntitiesApiUpdateEntityOpts{
+			OrgIdentifier:     entityInfo.OrgId,
+			ProjectIdentifier: entityInfo.ProjectId,
+			HarnessAccount:    optional.NewString(c.AccountId),
+		})
+		if err != nil {
+			return handleIDPApiError(err, d, httpResp)
+		}
 
 		if shouldUpdateGitDetails {
 			diags := resourceCatalogEntityUpdateGitMetadata(ctx, c, d, entityInfo)
@@ -263,13 +282,130 @@ func resourceCatalogEntityUpdateOrCreate(ctx context.Context, d *schema.Resource
 		}
 	}
 
+	if isNewResource {
+		resp, httpResp, err = getCatalogEntityWithRetry(ctx, c, entityInfo)
+	} else {
+		resp, httpResp, err = getCatalogEntity(ctx, c, entityInfo)
+	}
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return handleIDPApiError(err, d, httpResp)
 	}
 
 	readCatalogEntity(d, resp)
-
 	return nil
+}
+
+func getCatalogEntity(ctx context.Context, c *idp.APIClient, info catalogEntityInfo) (idp.EntityResponse, *http.Response, error) {
+	return c.EntitiesApi.GetEntity(ctx, info.Scope, info.Kind, info.Identifier, &idp.EntitiesApiGetEntityOpts{
+		OrgIdentifier:     info.OrgId,
+		ProjectIdentifier: info.ProjectId,
+		HarnessAccount:    optional.NewString(c.AccountId),
+	})
+}
+
+func getCatalogEntityWithRetry(ctx context.Context, c *idp.APIClient, info catalogEntityInfo) (idp.EntityResponse, *http.Response, error) {
+	const attempts = 6
+	const delay = 2 * time.Second
+
+	var resp idp.EntityResponse
+	var httpResp *http.Response
+	var err error
+
+	for attempt := 0; attempt < attempts; attempt++ {
+		resp, httpResp, err = getCatalogEntity(ctx, c, info)
+		if err == nil {
+			return resp, httpResp, nil
+		}
+
+		if !isTransientPostWriteReadError(err, httpResp) || attempt == attempts-1 {
+			return resp, httpResp, err
+		}
+
+		timer := time.NewTimer(delay)
+		select {
+		case <-ctx.Done():
+			if !timer.Stop() {
+				<-timer.C
+			}
+			return resp, httpResp, ctx.Err()
+		case <-timer.C:
+		}
+	}
+
+	return resp, httpResp, err
+}
+
+func isTransientPostWriteReadError(err error, httpResp *http.Response) bool {
+	if err == nil {
+		return false
+	}
+	if httpResp != nil {
+		return httpResp.StatusCode == http.StatusNotFound
+	}
+	return isNotFoundError(err)
+}
+
+func handleIDPApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	if msg := idpAPIErrorMessage(err); msg != "" {
+		return diag.Errorf("%s", msg)
+	}
+
+	return helpers.HandleApiError(err, d, httpResp)
+}
+
+func handleIDPReadApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	if msg := idpAPIErrorMessage(err); msg != "" && !isIDPNotFoundError(err, httpResp) {
+		return diag.Errorf("%s", msg)
+	}
+
+	return helpers.HandleReadApiError(err, d, httpResp)
+}
+
+func idpAPIErrorMessage(err error) string {
+	if err == nil {
+		return ""
+	}
+
+	swaggerErr, ok := err.(interface {
+		Body() []byte
+	})
+	if !ok {
+		return ""
+	}
+
+	var body struct {
+		Code    string `json:"code"`
+		Message string `json:"message"`
+	}
+	if json.Unmarshal(swaggerErr.Body(), &body) != nil || body.Message == "" {
+		return ""
+	}
+	if body.Code != "" {
+		return fmt.Sprintf("%s: %s", body.Code, body.Message)
+	}
+	return body.Message
+}
+
+func isIDPNotFoundError(err error, httpResp *http.Response) bool {
+	if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		return true
+	}
+
+	swaggerErr, ok := err.(interface {
+		Body() []byte
+	})
+	if !ok {
+		return false
+	}
+
+	var body struct {
+		Code string `json:"code"`
+	}
+	if json.Unmarshal(swaggerErr.Body(), &body) != nil {
+		return false
+	}
+
+	return body.Code == "ENTITY_NOT_FOUND" || body.Code == "RESOURCE_NOT_FOUND"
 }
 
 func resourceCatalogEntityUpdateGitMetadata(ctx context.Context, c *idp.APIClient, d *schema.ResourceData, info catalogEntityInfo) diag.Diagnostics {
@@ -293,9 +429,9 @@ func resourceCatalogEntityDelete(ctx context.Context, d *schema.ResourceData, me
 	c, ctx := meta.(*internal.Session).GetIDPClientWithContext(ctx)
 
 	id := d.Id()
-	entityInfo, err := getAndVerifyCatalogEntityInfo(d)
+	entityInfo, err := getCatalogEntityInfoFromResourceData(d)
 	if err != nil {
-		return diag.Errorf("failed to parse yaml: %v", err)
+		return diag.Errorf("failed to get catalog entity info: %v", err)
 	}
 
 	httpResp, err := c.EntitiesApi.DeleteEntity(ctx, entityInfo.Scope, entityInfo.Kind, id, &idp.EntitiesApiDeleteEntityOpts{
@@ -314,7 +450,7 @@ func resourceCatalogEntityDelete(ctx context.Context, d *schema.ResourceData, me
 			return nil
 		}
 
-		return helpers.HandleApiError(err, d, httpResp)
+		return handleIDPApiError(err, d, httpResp)
 	}
 
 	return nil
@@ -326,11 +462,7 @@ func readCatalogEntity(d *schema.ResourceData, entity idp.EntityResponse) {
 	d.Set("kind", entity.Kind)
 	d.Set("org_id", entity.OrgIdentifier)
 	d.Set("project_id", entity.ProjectIdentifier)
-	if v, ok := d.GetOk("yaml"); ok && v.(string) != "" {
-		d.Set("yaml", v.(string))
-	} else {
-		d.Set("yaml", entity.Yaml)
-	}
+	d.Set("yaml", entity.Yaml)
 	if entity.GitDetails != nil {
 		storeType := helpers.BuildField(d, "git_details.0.store_type")
 		baseBranch := helpers.BuildField(d, "git_details.0.base_branch")
@@ -338,6 +470,8 @@ func readCatalogEntity(d *schema.ResourceData, entity idp.EntityResponse) {
 		connectorRef := helpers.BuildField(d, "git_details.0.connector_ref")
 
 		d.Set("git_details", []any{readGitDetails(entity, storeType, baseBranch, commitMessage, connectorRef)})
+	} else {
+		d.Set("git_details", []interface{}{})
 	}
 }
 
@@ -361,7 +495,7 @@ func readGitDetails(entity idp.EntityResponse, store_type optional.String, base_
 	if connector_ref.IsSet() {
 		git_details["connector_ref"] = connector_ref.Value()
 	}
-	if connector_ref.Value() == "" {
+	if !connector_ref.IsSet() || connector_ref.Value() == "" {
 		git_details["is_harness_code_repo"] = true
 	}
 
@@ -380,12 +514,18 @@ func getAndVerifyCatalogEntityInfo(d *schema.ResourceData) (catalogEntityInfo, e
 		return catalogEntityInfo{}, err
 	}
 
-	yamlKind := yamlData["kind"].(string)
+	yamlKind, ok := yamlData["kind"].(string)
+	if !ok || yamlKind == "" {
+		return catalogEntityInfo{}, fmt.Errorf("kind is missing from YAML")
+	}
 	if !strings.EqualFold(yamlKind, kind) {
 		return catalogEntityInfo{}, fmt.Errorf("kind in YAML (%s) does not match kind parameter (%s)", yamlKind, kind)
 	}
 
-	yamlIdentifier := yamlData["identifier"].(string)
+	yamlIdentifier, ok := yamlData["identifier"].(string)
+	if !ok || yamlIdentifier == "" {
+		return catalogEntityInfo{}, fmt.Errorf("identifier is missing from YAML")
+	}
 	if yamlIdentifier != identifier {
 		return catalogEntityInfo{}, fmt.Errorf("identifier in YAML (%s) does not match identifier parameter (%s)", yamlIdentifier, identifier)
 	}
@@ -424,6 +564,180 @@ func getAndVerifyCatalogEntityInfo(d *schema.ResourceData) (catalogEntityInfo, e
 	if yamlProject != "" {
 		catalogInfo.ProjectId = optional.NewString(yamlProject)
 		catalogInfo.Scope = fmt.Sprintf("%s.%s", catalogInfo.Scope, yamlProject)
+	} else {
+		catalogInfo.ProjectId = optional.EmptyString()
+	}
+
+	return catalogInfo, nil
+}
+
+func getCatalogEntityInfoFromResourceData(d *schema.ResourceData) (catalogEntityInfo, error) {
+	kind := d.Get("kind").(string)
+	identifier := d.Get("identifier").(string)
+	orgId := d.Get("org_id").(string)
+	projectId := d.Get("project_id").(string)
+
+	if identifier == "" {
+		identifier = d.Id()
+	}
+	if identifier == "" {
+		return catalogEntityInfo{}, fmt.Errorf("identifier is required")
+	}
+	if kind == "" {
+		return catalogEntityInfo{}, fmt.Errorf("kind is required")
+	}
+
+	catalogInfo := catalogEntityInfo{
+		Kind:       kind,
+		Scope:      "account",
+		Identifier: identifier,
+	}
+
+	if orgId != "" {
+		catalogInfo.OrgId = optional.NewString(orgId)
+		catalogInfo.Scope = fmt.Sprintf("%s.%s", catalogInfo.Scope, orgId)
+	} else {
+		catalogInfo.OrgId = optional.EmptyString()
+	}
+
+	if projectId != "" {
+		catalogInfo.ProjectId = optional.NewString(projectId)
+		catalogInfo.Scope = fmt.Sprintf("%s.%s", catalogInfo.Scope, projectId)
+	} else {
+		catalogInfo.ProjectId = optional.EmptyString()
+	}
+
+	return catalogInfo, nil
+}
+
+func getCatalogEntityInfoFromImportResourceData(d *schema.ResourceData) (catalogEntityInfo, error) {
+	identifier := d.Get("identifier").(string)
+	if identifier == "" {
+		identifier = d.Id()
+	}
+	if identifier == "" {
+		return catalogEntityInfo{}, fmt.Errorf("identifier is required")
+	}
+
+	orgId := optional.EmptyString()
+	if v, ok := d.GetOk("org_id"); ok && v.(string) != "" {
+		orgId = optional.NewString(v.(string))
+	}
+
+	projectId := optional.EmptyString()
+	if v, ok := d.GetOk("project_id"); ok && v.(string) != "" {
+		projectId = optional.NewString(v.(string))
+	}
+
+	return catalogEntityInfo{
+		Kind:       d.Get("kind").(string),
+		Scope:      catalogEntityScope(orgId, projectId),
+		Identifier: identifier,
+		OrgId:      orgId,
+		ProjectId:  projectId,
+	}, nil
+}
+
+func getCatalogEntityInfoFromResponse(entity idp.EntityResponse, fallback catalogEntityInfo) catalogEntityInfo {
+	catalogInfo := fallback
+
+	if entity.Identifier != "" {
+		catalogInfo.Identifier = entity.Identifier
+	}
+	if entity.Kind != "" {
+		catalogInfo.Kind = entity.Kind
+	}
+	if catalogInfo.Scope == "" {
+		catalogInfo.Scope = "account"
+	}
+
+	responseHasScope := hasUsableResponseScope(entity, fallback)
+	if responseHasScope {
+		catalogInfo.OrgId = optional.NewString(entity.OrgIdentifier)
+		if entity.ProjectIdentifier != "" {
+			catalogInfo.ProjectId = optional.NewString(entity.ProjectIdentifier)
+		} else {
+			catalogInfo.ProjectId = optional.EmptyString()
+		}
+		catalogInfo.Scope = catalogEntityScope(catalogInfo.OrgId, catalogInfo.ProjectId)
+	}
+
+	return catalogInfo
+}
+
+func hasUsableResponseScope(entity idp.EntityResponse, fallback catalogEntityInfo) bool {
+	if entity.OrgIdentifier == "" {
+		return false
+	}
+
+	return !fallback.ProjectId.IsSet() || fallback.ProjectId.Value() == "" || entity.ProjectIdentifier != ""
+}
+
+func catalogEntityScope(orgId optional.String, projectId optional.String) string {
+	scope := "account"
+	if orgId.IsSet() && orgId.Value() != "" {
+		scope = fmt.Sprintf("%s.%s", scope, orgId.Value())
+	}
+	if projectId.IsSet() && projectId.Value() != "" {
+		scope = fmt.Sprintf("%s.%s", scope, projectId.Value())
+	}
+
+	return scope
+}
+
+func catalogEntityInfoFromImportID(id string) (catalogEntityInfo, error) {
+	parts := strings.Split(id, "/")
+
+	if len(parts) < 2 || len(parts) > 4 {
+		return catalogEntityInfo{}, fmt.Errorf("invalid import ID format: %s. Expected: <kind>/<identifier>, <org>/<kind>/<identifier>, or <org>/<project>/<kind>/<identifier>", id)
+	}
+
+	catalogInfo := catalogEntityInfo{
+		Scope: "account",
+	}
+
+	if len(parts) == 2 {
+		catalogInfo.Kind = parts[0]
+		catalogInfo.Identifier = parts[1]
+	} else if len(parts) == 3 {
+		scopePrefix, err := catalogEntityScopeFromImportPrefix(parts[0])
+		if err != nil {
+			return catalogEntityInfo{}, err
+		}
+		catalogInfo.Scope = scopePrefix.Scope
+		catalogInfo.OrgId = scopePrefix.OrgId
+		catalogInfo.ProjectId = scopePrefix.ProjectId
+		catalogInfo.Kind = parts[1]
+		catalogInfo.Identifier = parts[2]
+	} else {
+		catalogInfo.OrgId = optional.NewString(parts[0])
+		catalogInfo.ProjectId = optional.NewString(parts[1])
+		catalogInfo.Scope = fmt.Sprintf("%s.%s.%s", catalogInfo.Scope, parts[0], parts[1])
+		catalogInfo.Kind = parts[2]
+		catalogInfo.Identifier = parts[3]
+	}
+
+	return catalogInfo, nil
+}
+
+func catalogEntityScopeFromImportPrefix(prefix string) (catalogEntityInfo, error) {
+	scopeParts := strings.Split(prefix, ".")
+	if len(scopeParts) < 1 || len(scopeParts) > 2 || scopeParts[0] == "" {
+		return catalogEntityInfo{}, fmt.Errorf("invalid import scope: %s. Expected: <org> or <org>.<project>", prefix)
+	}
+
+	catalogInfo := catalogEntityInfo{
+		Scope: "account",
+		OrgId: optional.NewString(scopeParts[0]),
+	}
+	catalogInfo.Scope = fmt.Sprintf("%s.%s", catalogInfo.Scope, scopeParts[0])
+
+	if len(scopeParts) == 2 {
+		if scopeParts[1] == "" {
+			return catalogEntityInfo{}, fmt.Errorf("invalid import scope: %s. Expected: <org> or <org>.<project>", prefix)
+		}
+		catalogInfo.ProjectId = optional.NewString(scopeParts[1])
+		catalogInfo.Scope = fmt.Sprintf("%s.%s", catalogInfo.Scope, scopeParts[1])
 	} else {
 		catalogInfo.ProjectId = optional.EmptyString()
 	}
@@ -510,44 +824,18 @@ func buildGitUpdateDetails(d *schema.ResourceData) *idp.GitUpdateDetails {
 
 var entityImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-		// Expected format: <scope>/<kind>/<identifier>
+		// Expected format: <kind>/<identifier>, <org>/<kind>/<identifier>, or <org>/<project>/<kind>/<identifier>
 		// If account-level: <kind>/<identifier>
-		// Scope examples: "org", "org.project"
-		id := d.Id()
-		parts := strings.Split(id, "/")
-
-		if len(parts) < 2 || len(parts) > 3 {
-			return nil, fmt.Errorf("invalid import ID format: %s. Expected: <scope>/<kind>/<identifier>", id)
-		}
-
-		var scope string
-		var kind string
-		var identifier string
-		if len(parts) == 2 {
-			scope = "account"
-			kind = parts[0]
-			identifier = parts[1]
-		} else {
-			scope = fmt.Sprintf("account.%s", parts[0])
-			kind = parts[1]
-			identifier = parts[2]
-		}
-
-		// Extract org and project from scope if present
-		var orgId, projectId optional.String
-		scopeParts := strings.Split(scope, ".")
-		if len(scopeParts) > 1 {
-			orgId = optional.NewString(scopeParts[1])
-		}
-		if len(scopeParts) > 2 {
-			projectId = optional.NewString(scopeParts[2])
+		info, err := catalogEntityInfoFromImportID(d.Id())
+		if err != nil {
+			return nil, err
 		}
 
 		c, ctx := meta.(*internal.Session).GetIDPClientWithContext(context.Background())
 
-		resp, _, err := c.EntitiesApi.GetEntity(ctx, scope, kind, identifier, &idp.EntitiesApiGetEntityOpts{
-			OrgIdentifier:     orgId,
-			ProjectIdentifier: projectId,
+		resp, _, err := c.EntitiesApi.GetEntity(ctx, info.Scope, info.Kind, info.Identifier, &idp.EntitiesApiGetEntityOpts{
+			OrgIdentifier:     info.OrgId,
+			ProjectIdentifier: info.ProjectId,
 			HarnessAccount:    optional.NewString(c.AccountId),
 		})
 		if err != nil {
