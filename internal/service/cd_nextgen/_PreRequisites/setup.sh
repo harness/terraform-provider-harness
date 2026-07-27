@@ -42,18 +42,20 @@ declare -a secrets=(
 for secret in "${secrets[@]}"; do
     echo -e "\n${YELLOW}Checking secret: $secret${NC}"
     if check_secret "$secret"; then
-        echo -e "${GREEN}✓ Secret '$secret' already exists${NC}"
+        echo -e "${YELLOW}Secret '$secret' already exists. Updating...${NC}"
+        action="update"
     else
         echo -e "${RED}Secret '$secret' not found. Creating...${NC}"
-        terraform apply -auto-approve \
-            -var="github_token_value=${github_token_value}" \
-            -var="harness_automation_github_token=${harness_automation_github_token}" \
-            -target="harness_platform_secret_text.$secret"
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}✓ Successfully created secret: $secret${NC}"
-        else
-            echo -e "${RED}✗ Failed to create secret: $secret${NC}"
-        fi
+        action="create"
+    fi
+    terraform apply -auto-approve \
+        -var="github_token_value=${github_token_value}" \
+        -var="harness_automation_github_token=${harness_automation_github_token}" \
+        -target="harness_platform_secret_text.$secret"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Successfully ${action}d secret: $secret${NC}"
+    else
+        echo -e "${RED}✗ Failed to ${action} secret: $secret${NC}"
     fi
 done
 
@@ -72,18 +74,20 @@ declare -a connectors=(
 for connector in "${connectors[@]}"; do
     echo -e "\n${YELLOW}Checking connector: $connector${NC}"
     if check_connector "$connector"; then
-        echo -e "${GREEN}✓ Connector '$connector' already exists${NC}"
+        echo -e "${YELLOW}Connector '$connector' already exists. Updating...${NC}"
+        action="update"
     else
         echo -e "${RED}Connector '$connector' not found. Creating...${NC}"
-        terraform apply -auto-approve \
-            -var="github_token_value=${github_token_value}" \
-            -var="harness_automation_github_token=${harness_automation_github_token}" \
-            -target="harness_platform_connector_github.$connector"
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}✓ Successfully created connector: $connector${NC}"
-        else
-            echo -e "${RED}✗ Failed to create connector: $connector${NC}"
-        fi
+        action="create"
+    fi
+    terraform apply -auto-approve \
+        -var="github_token_value=${github_token_value}" \
+        -var="harness_automation_github_token=${harness_automation_github_token}" \
+        -target="harness_platform_connector_github.$connector"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Successfully ${action}d connector: $connector${NC}"
+    else
+        echo -e "${RED}✗ Failed to ${action} connector: $connector${NC}"
     fi
 done
 
