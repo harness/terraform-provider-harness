@@ -194,6 +194,11 @@ func parseTimeInDay(timeInDayStr string, defaultTimeInDay nextgen.TimeInDayForWi
 func readClusterOrchConfig(d *schema.ResourceData, orch *nextgen.ClusterOrchestrator) {
 	d.SetId(orch.ID)
 	d.Set("disabled", orch.Disabled)
+
+	if orch.Config == nil {
+		return
+	}
+
 	d.Set("distribution", []interface{}{map[string]interface{}{
 		"base_ondemand_capacity":      orch.Config.BaseOnDemandCapacity,
 		"ondemand_replica_percentage": orch.Config.OnDemandSplit,
@@ -219,7 +224,7 @@ func readClusterOrchConfig(d *schema.ResourceData, orch *nextgen.ClusterOrchestr
 }
 
 func getCommitmentIntegrationIfExists(cfg *nextgen.ClusterOrchConfig) []interface{} {
-	if cfg.CommitmentIntegration == nil {
+	if cfg == nil || cfg.CommitmentIntegration == nil {
 		return nil
 	}
 	return []interface{}{map[string]interface{}{
@@ -229,7 +234,7 @@ func getCommitmentIntegrationIfExists(cfg *nextgen.ClusterOrchConfig) []interfac
 }
 
 func getReplacementWindowIfExists(cfg *nextgen.ClusterOrchConfig) []interface{} {
-	if cfg.ReplacementWindow == nil {
+	if cfg == nil || cfg.ReplacementWindow == nil {
 		return nil
 	}
 	replacementWindow := map[string]interface{}{
@@ -273,6 +278,9 @@ func getWindowDetails(cfg *nextgen.ClusterOrchConfig) []interface{} {
 }
 
 func getPodEvictionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
+	if orch.Config == nil {
+		return nil
+	}
 	podEvictorCfg := orch.Config.Consolidation.PodEvictor
 	if podEvictorCfg.Enabled {
 		return []interface{}{
@@ -288,6 +296,9 @@ func getPodEvictionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
 }
 
 func getDisruptionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
+	if orch.Config == nil {
+		return nil
+	}
 	disruptionCfg := orch.Config.Consolidation
 	disruptionDto := map[string]interface{}{
 		"criteria": disruptionCfg.ConsolidationPolicy,
@@ -311,7 +322,7 @@ func getDisruptionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
 }
 
 func getReverseFBInterval(orch *nextgen.ClusterOrchestrator) string {
-	if orch.Config.ReverseFallback != nil {
+	if orch.Config != nil && orch.Config.ReverseFallback != nil {
 		return orch.Config.ReverseFallback.RetryInterval
 	}
 	return ""
