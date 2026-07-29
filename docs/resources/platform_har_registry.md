@@ -126,6 +126,19 @@ resource "harness_platform_har_registry" "conan_upstream" {
   }
   parent_ref = "accountId/orgId/projectId"
 }
+
+# Example of a Virtual Terraform Registry
+resource "harness_platform_har_registry" "terraform_virtual" {
+  identifier   = "virtual_terraform_registry"
+  description  = "Virtual Terraform Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "TERRAFORM"
+
+  config {
+    type = "VIRTUAL"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
 ```
 
 ## Schema
@@ -133,7 +146,7 @@ resource "harness_platform_har_registry" "conan_upstream" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, TERRAFORM)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 

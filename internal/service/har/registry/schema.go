@@ -199,6 +199,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.HELM_HTTP_PackageType),
 				(string)(har.DEBIAN_PackageType),
 				(string)(har.CONAN_PackageType),
+				(string)(har.TERRAFORM_PackageType),
 			}, false),
 		},
 		"is_public": {
@@ -289,6 +290,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.HELM_HTTP_PackageType),
 				(string)(har.DEBIAN_PackageType),
 				(string)(har.CONAN_PackageType),
+				(string)(har.TERRAFORM_PackageType),
 			}, false),
 		}
 	}
