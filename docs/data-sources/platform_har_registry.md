@@ -56,6 +56,7 @@ Optional:
 - `auth` (Block List, Max: 1) Authentication configuration for UPSTREAM registry type (see [below for nested schema](#nestedblock--config--auth))
 - `auth_type` (String) Type of authentication for UPSTREAM registry type (UserPassword, Anonymous, AccessKeySecretKey)
 - `firewall_mode` (String) Dependency firewall mode for UPSTREAM registry type. Valid values: `ALLOW` (default - no policy evaluation), `ENABLED` (firewall active, artifacts scanned against policies), `QUARANTINE` (artifacts that fail policy evaluation are blocked). Not supported for DOCKER or HELM package types.
+- `remote_url_suffix` (String) Optional path suffix for Python UPSTREAM registries with Custom source. Overrides the default `simple` path used for PyPI-compatible indexes. Requires `config.url` when source is Custom. Not supported for non-PYTHON package types. Leading and trailing slashes are normalized.
 - `source` (String) Upstream source
 - `upstream_proxies` (List of String) List of upstream proxies for VIRTUAL registry type
 - `url` (String) URL of the upstream (required if type=UPSTREAM & package_type=HELM)

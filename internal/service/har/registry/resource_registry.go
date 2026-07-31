@@ -135,6 +135,26 @@ func resourceRegistryCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, 
 		}
 	}
 
+	if d.HasChange("config.0.remote_url_suffix") || d.HasChange("package_type") ||
+		d.HasChange("config.0.type") || d.HasChange("config.0.source") || d.Id() == "" {
+		if suffix, ok := d.GetOk("config.0.remote_url_suffix"); ok && normalizeRemoteURLSuffix(suffix.(string)) != "" {
+			if configType != "UPSTREAM" {
+				return fmt.Errorf("'remote_url_suffix' is only valid for UPSTREAM registry type")
+			}
+			if packageType != "PYTHON" {
+				return fmt.Errorf("'remote_url_suffix' is only supported for PYTHON package type")
+			}
+			source, _ := d.Get("config.0.source").(string)
+			if source != "Custom" {
+				return fmt.Errorf("'remote_url_suffix' is only supported for PYTHON upstream registries with Custom source")
+			}
+			url, _ := d.Get("config.0.url").(string)
+			if url == "" {
+				return fmt.Errorf("'url' is required when 'remote_url_suffix' is set for Custom PYTHON upstream registries")
+			}
+		}
+	}
+
 	if configType == "UPSTREAM" {
 		// Source is required for UPSTREAM
 		if source, ok := d.GetOk("config.0.source"); !ok || source.(string) == "" {
@@ -378,6 +398,9 @@ func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
 					} else {
 						upstreamConfig.Url = ""
 					}
+					if remoteURLSuffix, ok := config["remote_url_suffix"].(string); ok && remoteURLSuffix != "" {
+						upstreamConfig.RemoteUrlSuffix = normalizeRemoteURLSuffix(remoteURLSuffix)
+					}
 
 					if fm, ok := config["firewall_mode"].(string); ok && fm != "" {
 						mode := har.UpstreamProxyConfigFirewallMode(fm)
@@ -495,6 +518,9 @@ func readRegistry(d *schema.ResourceData, registry *har.Registry) {
 			}
 			if registry.Config.UpstreamConfig.Url != "" {
 				configMap["url"] = registry.Config.UpstreamConfig.Url
+			}
+			if suffix := normalizeRemoteURLSuffix(registry.Config.UpstreamConfig.RemoteUrlSuffix); suffix != "" {
+				configMap["remote_url_suffix"] = suffix
 			}
 			if registry.Config.UpstreamConfig.AuthType != nil {
 				configMap["auth_type"] = *registry.Config.UpstreamConfig.AuthType
