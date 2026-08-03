@@ -4,28 +4,80 @@ page_title: "harness_platform_infra_variable_set Data Source - terraform-provide
 subcategory: "Next Gen"
 description: |-
   Data source for retrieving Variable Sets.
+  The Variable Set is looked up with identifier at the scope implied by org_id and project_id:
+  omit both for an account level Variable Set, set org_id for an org level Variable Set, and set both for a
+  project level Variable Set.
+  The exported id is the bare identifier, without a scope prefix. When referencing a Variable Set from a
+  resource in a lower scope, such as harness_platform_workspace, prefix the reference with account. for an
+  account level Variable Set or org. for an org level Variable Set. An unprefixed reference is resolved against
+  the consuming resource's own project.
 ---
 
 # harness_platform_infra_variable_set (Data Source)
 
 Data source for retrieving Variable Sets.
 
+The Variable Set is looked up with `identifier` at the scope implied by `org_id` and `project_id`:
+omit both for an account level Variable Set, set `org_id` for an org level Variable Set, and set both for a
+project level Variable Set.
+
+The exported `id` is the bare identifier, without a scope prefix. When referencing a Variable Set from a
+resource in a lower scope, such as `harness_platform_workspace`, prefix the reference with `account.` for an
+account level Variable Set or `org.` for an org level Variable Set. An unprefixed reference is resolved against
+the consuming resource's own project.
+
 ## Example Usage
 
 ```terraform
-data "harness_platform_infra_variable_set" "test" {
-  identifier = "identifier"
+# Look up an account level Variable Set. Omit both org_id and project_id.
+data "harness_platform_infra_variable_set" "account_level" {
+  identifier = "account_variable_set"
 }
 
-data "harness_platform_infra_variable_set" "testorg" {
-  identifier = "identifier"
-  org_id     = "someorg"
+# Look up an org level Variable Set. Set org_id only.
+data "harness_platform_infra_variable_set" "org_level" {
+  identifier = "org_variable_set"
+  org_id     = harness_platform_organization.example.id
 }
 
-data "harness_platform_infra_variable_set" "testproj" {
-  identifier = "identifier"
-  org_id     = "someorg"
-  project_id = "someproj"
+# Look up a project level Variable Set. Set both org_id and project_id.
+data "harness_platform_infra_variable_set" "project_level" {
+  identifier = "project_variable_set"
+  org_id     = harness_platform_organization.example.id
+  project_id = harness_platform_project.example.id
+}
+
+# Consuming a Variable Set from a Workspace.
+#
+# The exported `id` is the bare identifier, with no scope prefix. Harness resolves an
+# unprefixed reference against the Workspace's own org and project, so a Variable Set
+# that lives above the Workspace must be referenced with a scope prefix:
+#
+#   account level -> "account.${...id}"
+#   org level     -> "org.${...id}"
+#   project level -> "${...id}" (no prefix, must be the same project as the Workspace)
+#
+# Referencing an account or org level Variable Set without the prefix fails with
+# "404 Not Found ... variable set not found", because the lookup is scoped to the project.
+resource "harness_platform_workspace" "example" {
+  identifier          = "example"
+  name                = "example"
+  org_id              = harness_platform_organization.example.id
+  project_id          = harness_platform_project.example.id
+  provisioner_type    = "terraform"
+  provisioner_version = "1.5.7"
+
+  repository           = "https://github.com/org/repo"
+  repository_branch    = "main"
+  repository_path      = "tf/aws/basic"
+  repository_connector = harness_platform_connector_github.example.id
+  provider_connector   = harness_platform_connector_aws.example.id
+
+  variable_sets = [
+    "account.${data.harness_platform_infra_variable_set.account_level.id}",
+    "org.${data.harness_platform_infra_variable_set.org_level.id}",
+    data.harness_platform_infra_variable_set.project_level.id,
+  ]
 }
 ```
 
@@ -34,64 +86,61 @@ data "harness_platform_infra_variable_set" "testproj" {
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource.
+- `identifier` (String) Identifier of the Variable Set. Do not include a scope prefix here; use org_id and project_id to select the scope.
 
 ### Optional
 
-- `connector` (Block Set) Provider connectors configured on the Variable Set. Only one connector of a type is supported (see [below for nested schema](#nestedblock--connector))
-- `environment_variable` (Block Set) Environment variables configured on the Variable Set (see [below for nested schema](#nestedblock--environment_variable))
-- `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
-- `terraform_variable` (Block Set) Terraform variables configured on the Variable Set. Terraform variable keys must be unique within the Variable Set. (see [below for nested schema](#nestedblock--terraform_variable))
-- `terraform_variable_file` (Block Set) Terraform variables files configured on the Variable Set (see [below for nested schema](#nestedblock--terraform_variable_file))
+- `name` (String) Name of the Variable Set. This is an output; a value set here is ignored by the lookup.
+- `org_id` (String) Organization identifier of the organization the Variable Set resides in. Leave empty to look up an account level Variable Set.
+- `project_id` (String) Project identifier of the project the Variable Set resides in. Leave empty to look up an account or org level Variable Set.
 
 ### Read-Only
 
-- `description` (String) Description of the resource.
+- `connector` (Set of Object) Provider connectors configured on the Variable Set. (see [below for nested schema](#nestedatt--connector))
+- `description` (String) Description of the Variable Set.
+- `environment_variable` (Set of Object) Environment variables configured on the Variable Set (see [below for nested schema](#nestedatt--environment_variable))
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags are not supported on Variable Sets. This attribute is always empty.
+- `terraform_variable` (Set of Object) Terraform variables configured on the Variable Set. (see [below for nested schema](#nestedatt--terraform_variable))
+- `terraform_variable_file` (Set of Object) Terraform variables files configured on the Variable Set (see [below for nested schema](#nestedatt--terraform_variable_file))
 
-<a id="nestedblock--connector"></a>
+<a id="nestedatt--connector"></a>
 ### Nested Schema for `connector`
 
-Required:
+Read-Only:
 
-- `connector_ref` (String) Connector Ref is the reference to the connector
-- `type` (String) Type is the connector type of the connector. Supported types: aws, azure, gcp
+- `connector_ref` (String)
+- `type` (String)
 
 
-<a id="nestedblock--environment_variable"></a>
+<a id="nestedatt--environment_variable"></a>
 ### Nested Schema for `environment_variable`
 
-Required:
+Read-Only:
 
-- `key` (String) Key is the identifier for the variable. Must be unique within the Variable Set.
-- `value` (String) Value is the value of the variable. For string value types this field should contain the value of the variable. For secret value types this should contain a reference to a valid harness secret.
-- `value_type` (String) Value type indicates the value type of the variable. Currently we support string and secret.
+- `key` (String)
+- `value` (String)
+- `value_type` (String)
 
 
-<a id="nestedblock--terraform_variable"></a>
+<a id="nestedatt--terraform_variable"></a>
 ### Nested Schema for `terraform_variable`
 
-Required:
+Read-Only:
 
-- `key` (String) Key is the identifier for the variable. Must be unique within the Variable Set.
-- `value` (String) Value is the value of the variable. For string value types this field should contain the value of the variable. For secret value types this should contain a reference to a valid harness secret.
-- `value_type` (String) Value type indicates the value type of the variable. Currently we support string and secret.
+- `key` (String)
+- `value` (String)
+- `value_type` (String)
 
 
-<a id="nestedblock--terraform_variable_file"></a>
+<a id="nestedatt--terraform_variable_file"></a>
 ### Nested Schema for `terraform_variable_file`
 
-Required:
+Read-Only:
 
-- `repository` (String) Repository is the name of the repository to fetch the code from.
-- `repository_connector` (String) Repository connector is the reference to the connector used to fetch the variables.
-
-Optional:
-
-- `repository_branch` (String) Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit or sha is set
-- `repository_commit` (String) Repository commit is tag to fetch the variables from. This cannot be set if repository branch or sha is set.
-- `repository_path` (String) Repository path is the path in which the variables reside.
-- `repository_sha` (String) Repository commit is SHA to fetch the variables from. This cannot be set if repository branch or commit is set.
+- `repository` (String)
+- `repository_branch` (String)
+- `repository_commit` (String)
+- `repository_connector` (String)
+- `repository_path` (String)
+- `repository_sha` (String)
