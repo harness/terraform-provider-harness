@@ -141,7 +141,7 @@ func resourceVariablesCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		tflog.Error(ctx, "Received empty response from variable API after create/update", map[string]interface{}{
 			"id": id,
 		})
-		return diag.Errorf("received empty response from variable API for id '%s': resp.Data or resp.Data.Variable is nil", id)
+		return helpers.HandleEmptyCreateUpdateResponse(nil, "variable")
 	}
 
 	tflog.Debug(ctx, "Variable API response after create/update", map[string]interface{}{
@@ -154,7 +154,7 @@ func resourceVariablesCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		tflog.Error(ctx, "Variable API returned empty identifier after create/update", map[string]interface{}{
 			"id": id,
 		})
-		return diag.Errorf("variable API returned an empty identifier after create/update for id '%s': the operation may have been blocked or the response was incomplete", id)
+		return helpers.HandleEmptyCreateUpdateResponse(resp.Data.Variable.GovernanceMetadata, "variable")
 	}
 
 	readVariable(d, resp.Data.Variable)

@@ -280,10 +280,14 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		}
 	}
 
+	if resp.Data == nil {
+		return helpers.HandleEmptyCreateUpdateResponse(nil, "registry")
+	}
+
 	readRegistry(d, resp.Data)
 
 	// Handle metadata via V3 API (separate from registry CRUD which uses V1)
-	if resp.Data == nil || resp.Data.Uuid == "" {
+	if resp.Data.Uuid == "" {
 		if _, ok := d.GetOk("metadata"); ok {
 			return diag.Errorf("registry created/updated but UUID missing from response; cannot sync metadata")
 		}
