@@ -78,7 +78,12 @@ func TestResourceClusterOrchestrator(t *testing.T) {
 //
 // Regression test for CCM-32336 (lwd GET returning HTTP 500 for a deleted entity
 // causes terraform plan to fail with "giving up after 11 attempt(s)").
+//
+// Skipped until CCM-34967: DELETE of a missing orchestrator still returns HTTP 500
+// ("invalid cluster id"), so post-test destroy fails after OOB delete.
 func TestResourceClusterOrchestrator_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
+	t.Skip("CCM-34967: cluster orchestrator DELETE returns 500 for missing ID; re-enable after fix")
+
 	name := "terraform-co-ccm32336-test"
 	resourceName := "harness_cluster_orchestrator.test"
 
