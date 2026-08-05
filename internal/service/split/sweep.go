@@ -32,9 +32,14 @@ func testSweepFMEFlagSets(_ string) error {
 		return nil
 	}
 
+	basePath, err := resolveFMESweepBasePath(os.Getenv("FME_ADMIN_API_ENDPOINT"), os.Getenv("HARNESS_ENDPOINT"))
+	if err != nil {
+		log.Printf("[WARN] Skipping harness_fme_flag_set sweep: %v; set FME_ADMIN_API_ENDPOINT to the FME admin API endpoint", err)
+		return nil
+	}
 	cfg := &splitsdk.Configuration{
 		AccountId:     accountID,
-		BasePath:      splitsdk.DefaultSplitBasePath,
+		BasePath:      basePath,
 		ApiKey:        apiKey,
 		UserAgent:     "terraform-provider-harness-fme-sweep",
 		HTTPClient:    nil,
@@ -65,6 +70,22 @@ func testSweepFMEFlagSets(_ string) error {
 		}
 	}
 	return nil
+}
+
+func resolveFMESweepBasePath(fmeAdminAPIEndpoint, harnessEndpoint string) (string, error) {
+	if fmeAdminAPIEndpoint != "" {
+		return fmeAdminAPIEndpoint, nil
+	}
+
+	if harnessEndpoint == "" {
+		harnessEndpoint = "https://app.harness.io/gateway"
+	}
+	harnessEndpoint = strings.TrimRight(harnessEndpoint, "/")
+	if !strings.HasSuffix(harnessEndpoint, "/gateway") {
+		return "", fmt.Errorf("cannot derive FME admin API endpoint from HARNESS_ENDPOINT %q: endpoint must end in /gateway", harnessEndpoint)
+	}
+
+	return strings.TrimSuffix(harnessEndpoint, "/gateway") + "/fme", nil
 }
 
 func fmeFlagSetNameMatchesSweepPrefixes(name string) bool {

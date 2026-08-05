@@ -1,0 +1,3 @@
+```release-note:enhancement
+provider: FME (Split) resources now derive their API endpoint by replacing a trailing `/gateway` in the Harness endpoint with `/fme`, with the `fme_admin_api_endpoint` provider attribute or `FME_ADMIN_API_ENDPOINT` available as an override
+```

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"strings"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/module_registry_testing"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/provider_registry"
@@ -184,6 +185,12 @@ func Provider(version string) func() *schema.Provider {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.Endpoint.String(), utils.BaseUrl),
+				},
+				"fme_admin_api_endpoint": {
+					Description: "The URL of the Harness FME admin API endpoint. When unset, it is derived from the Harness API endpoint. This can also be set using the `FME_ADMIN_API_ENDPOINT` environment variable.",
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc("FME_ADMIN_API_ENDPOINT", nil),
 				},
 				"account_id": {
 					Description: fmt.Sprintf("The Harness account id. This can also be set using the `%s` environment variable.", helpers.EnvVars.AccountId.String()),
@@ -771,13 +778,25 @@ func getPOClient(d *schema.ResourceData, version string) *po.APIClient {
 	return client
 }
 
+func resolveFMEAdminAPIEndpoint(endpoint, override string) (string, error) {
+	if override != "" {
+		return override, nil
+	}
+
+	endpoint = strings.TrimRight(endpoint, "/")
+	if !strings.HasSuffix(endpoint, "/gateway") {
+		return "", fmt.Errorf("cannot derive FME admin API endpoint from %q: endpoint must end in /gateway", endpoint)
+	}
+
+	return strings.TrimSuffix(endpoint, "/gateway") + "/fme", nil
+}
+
 // getSplitClient returns a Split API client for FME resources using account_id and platform_api_key.
-// BasePath is split.DefaultSplitBasePath (https://api.split.io) from the harness-go-sdk, not the Harness gateway endpoint.
-func getSplitClient(d *schema.ResourceData, version string) *split.APIClient {
+func getSplitClient(d *schema.ResourceData, version, basePath string) *split.APIClient {
 	apiKey := d.Get("platform_api_key").(string)
 	cfg := &split.Configuration{
 		AccountId:     d.Get("account_id").(string),
-		BasePath:      split.DefaultSplitBasePath,
+		BasePath:      basePath,
 		ApiKey:        apiKey,
 		UserAgent:     fmt.Sprintf("terraform-provider-harness-%s", version),
 		HTTPClient:    nil, // Split SDK creates client with rate-limit/retry transport
@@ -792,6 +811,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 		var diags diag.Diagnostics
 
 		endpoint := d.Get("endpoint").(string)
+		fmeAdminAPIEndpointOverride := d.Get("fme_admin_api_endpoint").(string)
 		accountId := d.Get("account_id").(string)
 		apiKey := d.Get("api_key").(string)
 		platformApiKey := d.Get("platform_api_key").(string)
@@ -832,20 +852,27 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			})
 		}
 
-		return &internal.Session{
-			AccountId:   accountId,
-			Endpoint:    endpoint,
-			CDClient:    getCDClient(d, version),
-			PLClient:    getPLClient(d, version),
-			Client:      getClient(d, version),
-			CodeClient:  getCodeClient(d, version),
-			DBOpsClient: getDBOpsClient(d, version),
-			ChaosClient: getChaosClient(d, version),
-			SDClient:    getServiceDiscoveryClient(d, version),
-			SplitClient: getSplitClient(d, version),
-			HARClient:   getHarClient(d, version),
-			IDPClient:   getIDPClient(d, version),
-			POClient:    getPOClient(d, version),
-		}, diags
+		fmeAdminAPIEndpoint, fmeAdminAPIEndpointErr := resolveFMEAdminAPIEndpoint(endpoint, fmeAdminAPIEndpointOverride)
+
+		session := &internal.Session{
+			AccountId:                accountId,
+			Endpoint:                 endpoint,
+			CDClient:                 getCDClient(d, version),
+			PLClient:                 getPLClient(d, version),
+			Client:                   getClient(d, version),
+			CodeClient:               getCodeClient(d, version),
+			DBOpsClient:              getDBOpsClient(d, version),
+			ChaosClient:              getChaosClient(d, version),
+			SDClient:                 getServiceDiscoveryClient(d, version),
+			FMEAdminAPIEndpointError: fmeAdminAPIEndpointErr,
+			HARClient:                getHarClient(d, version),
+			IDPClient:                getIDPClient(d, version),
+			POClient:                 getPOClient(d, version),
+		}
+		if fmeAdminAPIEndpointErr == nil {
+			session.SplitClient = getSplitClient(d, version, fmeAdminAPIEndpoint)
+		}
+
+		return session, diags
 	}
 }
