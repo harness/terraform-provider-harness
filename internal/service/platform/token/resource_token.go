@@ -150,6 +150,10 @@ func resourceTokenCreateOrUpdate(ctx context.Context, d *schema.ResourceData, me
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	if resp.Data == nil {
+		return helpers.HandleEmptyCreateUpdateResponse(nil, "token")
+	}
+
 	readToken(d, resp.Data)
 
 	return nil

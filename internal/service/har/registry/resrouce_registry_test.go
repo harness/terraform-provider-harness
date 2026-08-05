@@ -2402,6 +2402,200 @@ func testAccResourceVirtualRegistryFirewall(id string, accId string, firewallMod
 `, id, accId, firewallMode)
 }
 
+// Tests creating an upstream Python registry with remote_url_suffix
+func TestAccResourceUpstreamPythonRegistryRemoteUrlSuffix(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_py_sfx_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamPythonRegistryRemoteUrlSuffix(id, accountId, "Custom", "https://pypi.example.com", "simple"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "PYTHON"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "Custom"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.url", "https://pypi.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.remote_url_suffix", "simple"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests updating remote_url_suffix on an upstream Python registry
+func TestAccResourceUpstreamPythonRegistryRemoteUrlSuffixUpdate(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_py_sfx_upd_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamPythonRegistryRemoteUrlSuffix(id, accountId, "Custom", "https://pypi.example.com", "simple"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "config.0.remote_url_suffix", "simple"),
+				),
+			},
+			{
+				Config: testAccResourceUpstreamPythonRegistryRemoteUrlSuffix(id, accountId, "Custom", "https://pypi.example.com", "custom-index"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "config.0.remote_url_suffix", "custom-index"),
+				),
+			},
+		},
+	})
+}
+
+// Generates Terraform config for upstream Python registry with remote_url_suffix
+func testAccResourceUpstreamPythonRegistryRemoteUrlSuffix(id, accId, source, url, remoteUrlSuffix string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "PYTHON"
+
+   config {
+    type              = "UPSTREAM"
+    auth_type         = "Anonymous"
+    source            = "%[3]s"
+    url               = "%[4]s"
+    remote_url_suffix = "%[5]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, source, url, remoteUrlSuffix)
+}
+
+func testAccResourceUpstreamPythonRegistryRemoteUrlSuffixNoURL(id, accId, source, remoteUrlSuffix string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "PYTHON"
+
+   config {
+    type              = "UPSTREAM"
+    auth_type         = "Anonymous"
+    source            = "%[3]s"
+    remote_url_suffix = "%[4]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, source, remoteUrlSuffix)
+}
+
+// Tests that remote_url_suffix is rejected for DOCKER upstream registries
+func TestAccResourceUpstreamDockerRegistryRemoteUrlSuffixRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_py_sfx_dk_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamDockerRegistryRemoteUrlSuffix(id, accountId, "simple"),
+				ExpectError: regexp.MustCompile("'remote_url_suffix' is only supported for PYTHON package type"),
+			},
+		},
+	})
+}
+
+// Tests that remote_url_suffix is rejected for PYTHON upstream with PyPi source (UI uses Custom source)
+func TestAccResourceUpstreamPythonRegistryRemoteUrlSuffixPyPiSourceRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_py_sfx_pi_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamPythonRegistryRemoteUrlSuffixNoURL(id, accountId, "PyPi", "simple"),
+				ExpectError: regexp.MustCompile("'remote_url_suffix' is only supported for PYTHON upstream registries with Custom source"),
+			},
+		},
+	})
+}
+
+// Tests that remote_url_suffix is rejected for VIRTUAL registries
+func TestAccResourceVirtualRegistryRemoteUrlSuffixRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_vr_py_sfx_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceVirtualRegistryRemoteUrlSuffix(id, accountId, "simple"),
+				ExpectError: regexp.MustCompile("'remote_url_suffix' is only valid for UPSTREAM registry type"),
+			},
+		},
+	})
+}
+
+func testAccResourceUpstreamDockerRegistryRemoteUrlSuffix(id, accId, remoteUrlSuffix string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+
+   config {
+    type              = "UPSTREAM"
+    auth_type         = "Anonymous"
+    source            = "Dockerhub"
+    remote_url_suffix = "%[3]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, remoteUrlSuffix)
+}
+
+func testAccResourceVirtualRegistryRemoteUrlSuffix(id, accId, remoteUrlSuffix string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "PYTHON"
+
+   config {
+    type              = "VIRTUAL"
+    remote_url_suffix = "%[3]s"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, remoteUrlSuffix)
+}
+
 // ---------------------------------------------------------------------------
 // GO / CONDA / HELM_HTTP package types
 // ---------------------------------------------------------------------------

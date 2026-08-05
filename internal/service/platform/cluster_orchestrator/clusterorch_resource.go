@@ -16,8 +16,7 @@ func ResourceClusterOrchestrator() *schema.Resource {
 		Description: "Resource for creating ClusterOrchestrators.",
 
 		CreateContext: resourceClusterOrchestratorCreate,
-		UpdateContext: resourceClusterOrchestratorCreate,
-		ReadContext:   resourceClusterOrchestratorCreate,
+		ReadContext:   resourceClusterOrchestratorRead,
 		DeleteContext: resourceClusterOrchestratorDelete,
 
 		Schema: map[string]*schema.Schema{
@@ -25,21 +24,25 @@ func ResourceClusterOrchestrator() *schema.Resource {
 				Description: "Name of the Orchestrator",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"cluster_endpoint": {
 				Description: "Endpoint of the k8s cluster being onboarded under the orchestrator",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"k8s_connector_id": {
 				Description: "ID of the Harness Kubernetes Connector Being used",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"region": {
 				Description: "Region of the k8s cluster",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 		},
 	}
@@ -69,14 +72,14 @@ func resourceClusterOrchestratorCreate(ctx context.Context, d *schema.ResourceDa
 
 func resourceClusterOrchestratorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	
+
 	orchestratorID := d.Id()
-	
+
 	httpResp, err := c.CloudCostClusterOrchestratorApi.DeleteClusterOrchestrator(ctx, c.AccountId, orchestratorID)
-	
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
-	
+
 	return nil
 }

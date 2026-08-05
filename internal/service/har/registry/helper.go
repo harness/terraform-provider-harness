@@ -28,6 +28,12 @@ func getRef(params ...string) string {
 	return strings.Join(result, "/")
 }
 
+// normalizeRemoteURLSuffix trims leading and trailing slashes, matching artifact-registry
+// runtime behavior (pypi adapter uses strings.Trim(s, "/")).
+func normalizeRemoteURLSuffix(s string) string {
+	return strings.Trim(s, "/")
+}
+
 // expandStringSet converts a Terraform schema.Set into a slice of strings
 func expandStringSet(s *schema.Set) []string {
 	if s == nil {

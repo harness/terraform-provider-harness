@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceDashboardFolders() *schema.Resource {
+func ResourceDashboardFolder() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Resource for a Harness Custom Dashboard Folder.",
 
@@ -19,6 +19,8 @@ func ResourceDashboardFolders() *schema.Resource {
 		ReadContext:   resourceFolderRead,
 		UpdateContext: resourceFolderUpdate,
 		DeleteContext: resourceFolderDelete,
+
+		Importer: &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
 
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -39,6 +41,14 @@ func ResourceDashboardFolders() *schema.Resource {
 		},
 	}
 
+	return resource
+}
+
+// ResourceDashboardFolders is the backward-compatible alias for the plural type name.
+func ResourceDashboardFolders() *schema.Resource {
+	resource := ResourceDashboardFolder()
+	resource.Description = "Deprecated alias for `harness_platform_dashboard_folder`. Resource for a Harness Custom Dashboard Folder."
+	resource.DeprecationMessage = "This resource is deprecated. Please use `harness_platform_dashboard_folder` instead."
 	return resource
 }
 

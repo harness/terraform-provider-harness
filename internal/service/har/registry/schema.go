@@ -85,6 +85,20 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 							"config.0.upstream_proxies",
 						},
 					},
+					"remote_url_suffix": {
+						Description: "Optional path suffix for Python UPSTREAM registries with Custom source. " +
+							"Overrides the default `simple` path segment used for PyPI-compatible indexes. " +
+							"Requires `config.url` when source is Custom. Not supported for non-PYTHON package types. " +
+							"Leading and trailing slashes are normalized.",
+						Type:     schema.TypeString,
+						Optional: true,
+						DiffSuppressFunc: func(_, old, new string, _ *schema.ResourceData) bool {
+							return normalizeRemoteURLSuffix(old) == normalizeRemoteURLSuffix(new)
+						},
+						ConflictsWith: []string{
+							"config.0.upstream_proxies",
+						},
+					},
 					"auth": {
 						Description: "Authentication configuration for UPSTREAM registry type",
 						Type:        schema.TypeList,
@@ -199,6 +213,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.HELM_HTTP_PackageType),
 				(string)(har.DEBIAN_PackageType),
 				(string)(har.CONAN_PackageType),
+				(string)(har.TERRAFORM_PackageType),
 			}, false),
 		},
 		"is_public": {
@@ -289,6 +304,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.HELM_HTTP_PackageType),
 				(string)(har.DEBIAN_PackageType),
 				(string)(har.CONAN_PackageType),
+				(string)(har.TERRAFORM_PackageType),
 			}, false),
 		}
 	}
