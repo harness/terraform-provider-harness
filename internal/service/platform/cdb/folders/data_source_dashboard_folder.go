@@ -20,16 +20,6 @@ func DataSourceDashboardFolder() *schema.Resource {
 		ReadContext: dataSourceFolderRead,
 
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Description: "Identifier of the folder. Required if name is not provided.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"name": {
-				Description: "Name of the folder. Required if id is not provided.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"created_at": {
 				Description: "Created DateTime of the folder.",
 				Type:        schema.TypeString,
@@ -39,6 +29,20 @@ func DataSourceDashboardFolder() *schema.Resource {
 	}
 
 	helpers.SetCommonDataSourceSchema(resource.Schema)
+
+	// Override common schema: lookup by exactly one of id or name.
+	resource.Schema["id"] = &schema.Schema{
+		Description:  "Identifier of the folder. Required if name is not provided.",
+		Type:         schema.TypeString,
+		Optional:     true,
+		ExactlyOneOf: []string{"id", "name"},
+	}
+	resource.Schema["name"] = &schema.Schema{
+		Description:  "Name of the folder. Required if id is not provided.",
+		Type:         schema.TypeString,
+		Optional:     true,
+		ExactlyOneOf: []string{"id", "name"},
+	}
 
 	return resource
 }
@@ -64,20 +68,11 @@ func dataSourceFolderRead(ctx context.Context, d *schema.ResourceData, meta inte
 		var all []nextgen.Folder
 		all, httpResp, err = listDashboardFolders(c)
 		if err == nil {
-			for i := range all {
-				if all[i].Name == name {
-					folder = &all[i]
+			flat := flattenFolders(all)
+			for i := range flat {
+				if flat[i].Name == name {
+					folder = &flat[i]
 					break
-				}
-			}
-			if folder == nil {
-				// also search inside subfolders (listDashboardFolders already flattens? but call flatten to be sure)
-				flat := flattenFolders(all)
-				for i := range flat {
-					if flat[i].Name == name {
-						folder = &flat[i]
-						break
-					}
 				}
 			}
 		}
@@ -90,9 +85,10 @@ func dataSourceFolderRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	if folder == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
+		if id != "" {
+			return diag.Errorf("no dashboard folder found with id %q", id)
+		}
+		return diag.Errorf("no dashboard folder found with name %q", name)
 	}
 
 	readFolder(d, folder)

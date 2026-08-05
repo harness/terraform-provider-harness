@@ -457,7 +457,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_pdc":                         cdng_connector_cloudProviders.ResourceConnectorPdc(),
 				"harness_platform_environment":                           cdng_environment.ResourceEnvironment(),
 				"harness_platform_dashboard_folder":                      folders.ResourceDashboardFolder(),
-				"harness_platform_dashboard_folders":                     folders.ResourceDashboardFolder(),
+				"harness_platform_dashboard_folders":                     folders.ResourceDashboardFolders(),
 				"harness_platform_dashboards":                            dashboards.ResourceDashboards(),
 				"harness_platform_db_schema":                             dbschema.ResourceDBSchema(),
 				"harness_platform_db_instance":                           dbinstance.ResourceDBInstance(),

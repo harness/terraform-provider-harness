@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -113,7 +114,7 @@ func listDashboardFolders(c *nextgen.APIClient) ([]nextgen.Folder, *http.Respons
 	}
 	base := strings.TrimRight(c.Endpoint, "/")
 	// accountId query param is required by the API (same as other folder ops)
-	u := fmt.Sprintf("%s/dashboard/folders?accountId=%s", base, c.AccountId)
+	u := fmt.Sprintf("%s/dashboard/folders?accountId=%s", base, url.QueryEscape(c.AccountId))
 
 	req, err := retryablehttp.NewRequest("GET", u, nil)
 	if err != nil {

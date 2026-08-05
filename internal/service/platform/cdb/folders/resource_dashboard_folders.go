@@ -44,6 +44,13 @@ func ResourceDashboardFolder() *schema.Resource {
 	return resource
 }
 
+// ResourceDashboardFolders is the backward-compatible alias for the plural type name.
+func ResourceDashboardFolders() *schema.Resource {
+	resource := ResourceDashboardFolder()
+	resource.DeprecationMessage = "This resource is deprecated. Please use `harness_platform_dashboard_folder` instead."
+	return resource
+}
+
 func resourceFolderRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
