@@ -38,7 +38,7 @@ data "harness_chaos_hub_v2" "project_level" {
 - `account_id` (String) Account ID.
 - `action_template_count` (Number) Number of action templates in the hub.
 - `connector_id` (String) Connector ID (deprecated).
-- `connector_ref` (String) Reference to the Git connector.
+- `connector_ref` (String) Reference to the Git connector. Git-backed Chaos Hub V2 is not supported yet.
 - `created_at` (Number) Creation timestamp (Unix epoch).
 - `created_by` (String) User who created the chaos hub.
 - `description` (String) Description of the chaos hub.
@@ -50,9 +50,9 @@ data "harness_chaos_hub_v2" "project_level" {
 - `is_removed` (Boolean) Whether the chaos hub has been removed.
 - `last_synced_at` (Number) Timestamp of the last sync (Unix epoch).
 - `probe_template_count` (Number) Number of probe templates in the hub.
-- `repo_branch` (String) Git repository branch.
-- `repo_name` (String) Name of the Git repository.
-- `repo_url` (String) Git repository URL.
+- `repo_branch` (String) Git repository branch. Git-backed Chaos Hub V2 is not supported yet.
+- `repo_name` (String) Name of the Git repository. Git-backed Chaos Hub V2 is not supported yet.
+- `repo_url` (String) Git repository URL. Git-backed Chaos Hub V2 is not supported yet.
 - `tags` (List of String) Tags associated with the chaos hub.
 - `updated_at` (Number) Last update timestamp (Unix epoch).
 - `updated_by` (String) User who last updated the chaos hub.

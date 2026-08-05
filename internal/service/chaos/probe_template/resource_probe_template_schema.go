@@ -259,9 +259,15 @@ func resourceProbeTemplateSchema() map[string]*schema.Schema {
 						ValidateFunc: validation.StringIsNotEmpty,
 					},
 					"source": {
-						Description: "Source of the command (inline, configMap, secret).",
-						Type:        schema.TypeString,
-						Optional:    true,
+						Description: "Optional source for the command probe. Leave UNSET for inline execution " +
+							"(the command runs inside the experiment pod). If set, it must be a YAML/JSON-encoded " +
+							"SourceDetails object describing an external source pod (e.g. `image`, `command`, `args`, " +
+							"`env`, `imagePullPolicy`, `nodeSelector`). At experiment execution the backend unmarshals " +
+							"this string into a SourceDetails object, so a bare keyword such as \"inline\", \"configMap\", " +
+							"or \"secret\" is INVALID and fails with \"cannot unmarshal string into Go value of type " +
+							"v1.SourceDetails\". To run inline, omit this field entirely.",
+						Type:     schema.TypeString,
+						Optional: true,
 					},
 					"env": {
 						Description: "Environment variables for the command.",

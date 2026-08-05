@@ -254,6 +254,24 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 	return handleApiError(err, d, httpResp, true)
 }
 
+// HandleIacmReadApiError handles read errors from IaCM endpoints (e.g. Ansible
+// inventory/playbook). IaCM endpoints return an IacmError body which has no "code"
+// field, so the generic code-based not-found detection in handleApiError never fires
+// for them (and erro.Code() would panic, since the decoded model is a ModelError, not
+// a Failure). Instead, detect a deleted resource by the HTTP status directly and clear
+// it from state so Terraform can recreate it.
+func HandleIacmReadApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	if httpResp != nil && httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+	if isUndefinedResponseTypeError(err) {
+		return handleUndefinedResponseTypeError(httpResp)
+	}
+	return diag.Errorf("%s", err.Error())
+}
+
 func HandleDBOpsReadApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
 	_, ok := err.(dbops.GenericSwaggerError)
 	if ok && httpResp != nil {

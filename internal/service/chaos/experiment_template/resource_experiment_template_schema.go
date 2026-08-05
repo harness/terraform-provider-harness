@@ -142,6 +142,7 @@ func ResourceExperimentTemplateSchema() map[string]*schema.Schema {
 									Type:        schema.TypeBool,
 									Optional:    true,
 								},
+								"conditions_v2": conditionsV2Schema("action"),
 								"values": {
 									Description: "Variable values for the action",
 									Type:        schema.TypeList,
@@ -202,6 +203,7 @@ func ResourceExperimentTemplateSchema() map[string]*schema.Schema {
 									Type:        schema.TypeBool,
 									Optional:    true,
 								},
+								"conditions_v2": conditionsV2Schema("fault"),
 								"values": {
 									Description: "Variable values for the fault",
 									Type:        schema.TypeList,
@@ -272,8 +274,10 @@ func ResourceExperimentTemplateSchema() map[string]*schema.Schema {
 									Type:        schema.TypeBool,
 									Optional:    true,
 								},
+								"conditions_v2": conditionsV2Schema("probe"),
 								"conditions": {
-									Description: "Probe execution conditions",
+									Description: "Deprecated: no longer part of the experiment template API; use conditions_v2 instead. This field is ignored.",
+									Deprecated:  "conditions (execute_upon) is not supported by the experiment template API and is ignored. Use conditions_v2 (operator + values) instead.",
 									Type:        schema.TypeList,
 									Optional:    true,
 									Elem: &schema.Resource{
@@ -281,7 +285,7 @@ func ResourceExperimentTemplateSchema() map[string]*schema.Schema {
 											"execute_upon": {
 												Description: "When to execute the probe (onChaosStart, duringChaos, afterChaos)",
 												Type:        schema.TypeString,
-												Required:    true,
+												Optional:    true,
 											},
 										},
 									},
@@ -461,6 +465,36 @@ func ResourceExperimentTemplateSchema() map[string]*schema.Schema {
 							},
 						},
 					},
+				},
+			},
+		},
+	}
+}
+
+// conditionsV2Schema returns the shared conditions_v2 block used by faults,
+// probes and actions. It mirrors the backend experiment.Conditions schema:
+// operator (AND/OR) combining a list of boolean-parseable values, each of which
+// may be a "<+input>" runtime input.
+func conditionsV2Schema(resourceKind string) *schema.Schema {
+	return &schema.Schema{
+		Description: "Execution conditions gating whether this " + resourceKind +
+			" runs, evaluated as boolean values combined by the operator.",
+		Type:     schema.TypeList,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"operator": {
+					Description:  "Logical operator combining values: AND (all true) or OR (any true).",
+					Type:         schema.TypeString,
+					Required:     true,
+					ValidateFunc: validation.StringInSlice([]string{"AND", "OR"}, false),
+				},
+				"values": {
+					Description: "Boolean-parseable condition values (supports runtime input: <+input>).",
+					Type:        schema.TypeList,
+					Required:    true,
+					Elem:        &schema.Schema{Type: schema.TypeString},
 				},
 			},
 		},

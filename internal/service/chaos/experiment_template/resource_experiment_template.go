@@ -19,7 +19,13 @@ import (
 func ResourceExperimentTemplate() *schema.Resource {
 	return &schema.Resource{
 		Description: "Resource for managing Harness Chaos Experiment Templates. " +
-			"Experiment templates define reusable chaos experiments with actions, faults, and probes.",
+			"Experiment templates define reusable chaos experiments with actions, faults, and probes.\n\n" +
+			"Execution conditions for faults, probes, and actions are configured via the " +
+			"`conditions_v2` block (`operator` = `AND`/`OR`, plus `values` which support the " +
+			"`<+input>` runtime input).\n\n" +
+			"## Deprecated / not supported\n\n" +
+			"- The probe `conditions` (`execute_upon`) block is **deprecated and ignored** - it is not " +
+			"part of the current experiment template API. Use `conditions_v2` instead.\n",
 
 		CreateContext: resourceExperimentTemplateCreate,
 		ReadContext:   resourceExperimentTemplateRead,
@@ -212,21 +218,62 @@ func resourceExperimentTemplateDelete(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourceExperimentTemplateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	// Import format: org_id/project_id/hub_identity/identity
-	parts := strings.Split(d.Id(), "/")
-	if len(parts) != 4 {
-		return nil, fmt.Errorf("invalid import ID format: %s (expected: org_id/project_id/hub_identity/identity)", d.Id())
+// parseExperimentTemplateImportID parses a terraform import ID into its scope
+// components and returns the canonical 4-part ID used internally
+// (org_id/project_id/hub_identity/identity, with empty leading segments for
+// account/org scope).
+//
+// Supported input formats (mirrors the sibling chaos template resources):
+//  1. hub_identity/identity                          (account scope)
+//  2. org_id/hub_identity/identity                   (org scope)
+//  3. org_id/project_id/hub_identity/identity        (project scope)
+//
+// The 4-part account/org forms with empty leading segments
+// (e.g. "//hub/identity") are also accepted for backward compatibility.
+func parseExperimentTemplateImportID(id string) (orgID, projectID, hubIdentity, identity, canonicalID string, err error) {
+	parts := strings.Split(id, "/")
+	switch len(parts) {
+	case 4:
+		// org_id/project_id/hub_identity/identity (also covers account/org
+		// canonical forms with empty leading segments, e.g. "//hub/id").
+		orgID, projectID, hubIdentity, identity = parts[0], parts[1], parts[2], parts[3]
+	case 3:
+		// org_id/hub_identity/identity (org scope)
+		orgID, hubIdentity, identity = parts[0], parts[1], parts[2]
+	case 2:
+		// hub_identity/identity (account scope)
+		hubIdentity, identity = parts[0], parts[1]
+	default:
+		return "", "", "", "", "", fmt.Errorf(
+			"invalid import ID format: %q (expected one of: hub_identity/identity, org_id/hub_identity/identity, org_id/project_id/hub_identity/identity)", id)
 	}
 
-	orgID := parts[0]
-	projectID := parts[1]
-	hubIdentity := parts[2]
-	identity := parts[3]
+	if hubIdentity == "" || identity == "" {
+		return "", "", "", "", "", fmt.Errorf(
+			"invalid import ID format: %q (hub_identity and identity are required)", id)
+	}
+
+	canonicalID = fmt.Sprintf("%s/%s/%s/%s", orgID, projectID, hubIdentity, identity)
+	return orgID, projectID, hubIdentity, identity, canonicalID, nil
+}
+
+func resourceExperimentTemplateImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	orgID, projectID, hubIdentity, identity, canonicalID, err := parseExperimentTemplateImportID(d.Id())
+	if err != nil {
+		return nil, err
+	}
+
+	// Normalize to the canonical 4-part ID so Read/Update/Delete (which expect
+	// exactly 4 parts) work regardless of the import format used.
+	d.SetId(canonicalID)
 
 	// Set the scope identifiers
-	d.Set("org_id", orgID)
-	d.Set("project_id", projectID)
+	if orgID != "" {
+		d.Set("org_id", orgID)
+	}
+	if projectID != "" {
+		d.Set("project_id", projectID)
+	}
 	d.Set("hub_identity", hubIdentity)
 	d.Set("identity", identity)
 
@@ -273,9 +320,17 @@ func buildExperimentTemplateManifest(d *schema.ResourceData) (string, error) {
 		spec := map[string]interface{}{}
 
 		// Infrastructure
-		// Note: infraId is NOT included in the manifest - it's only used at runtime
 		if v, ok := specData["infra_type"].(string); ok && v != "" {
 			spec["infraType"] = v
+		}
+		// Send a concrete infra_id so it round-trips symmetrically with read
+		// (which always sets spec.infra_id from the API response). A runtime
+		// input ("<+input>") is intentionally omitted - it is resolved at
+		// experiment-launch time and the schema DiffSuppressFunc absorbs the
+		// resulting empty-vs-"<+input>" diff. Omitting a *concrete* value
+		// caused a perpetual "update in-place" diff.
+		if v, ok := specData["infra_id"].(string); ok && v != "" && v != "<+input>" {
+			spec["infraId"] = v
 		}
 
 		// Actions
@@ -330,6 +385,31 @@ func buildExperimentTemplateManifest(d *schema.ResourceData) (string, error) {
 	return string(jsonBytes), nil
 }
 
+// buildConditionsV2 converts the Terraform conditions_v2 block into the manifest
+// conditionsV2 object {operator, values}. Returns nil when unset so the field is
+// omitted. Matches the backend experiment.Conditions schema (operator: AND/OR,
+// values: []string where each entry may be a "<+input>" runtime input).
+func buildConditionsV2(raw interface{}) map[string]interface{} {
+	list, ok := raw.([]interface{})
+	if !ok || len(list) == 0 || list[0] == nil {
+		return nil
+	}
+	cfg := list[0].(map[string]interface{})
+	values := make([]string, 0)
+	if vs, ok := cfg["values"].([]interface{}); ok {
+		for _, v := range vs {
+			if s, ok := v.(string); ok {
+				values = append(values, s)
+			}
+		}
+	}
+	operator, _ := cfg["operator"].(string)
+	return map[string]interface{}{
+		"operator": operator,
+		"values":   values,
+	}
+}
+
 func buildActions(actions []interface{}) []map[string]interface{} {
 	result := make([]map[string]interface{}, 0, len(actions))
 	for _, actionItem := range actions {
@@ -350,6 +430,9 @@ func buildActions(actions []interface{}) []map[string]interface{} {
 		}
 		if v, ok := actionData["continue_on_completion"].(bool); ok {
 			action["continueOnCompletion"] = v
+		}
+		if cv2 := buildConditionsV2(actionData["conditions_v2"]); cv2 != nil {
+			action["conditionsV2"] = cv2
 		}
 
 		// Values - Always include, even if empty
@@ -384,6 +467,9 @@ func buildFaults(faults []interface{}) []map[string]interface{} {
 		}
 		if v, ok := faultData["auth_enabled"].(bool); ok {
 			fault["authEnabled"] = v
+		}
+		if cv2 := buildConditionsV2(faultData["conditions_v2"]); cv2 != nil {
+			fault["conditionsV2"] = cv2
 		}
 
 		// Values - Always include, even if empty
@@ -422,8 +508,21 @@ func buildProbes(probes []interface{}) []map[string]interface{} {
 		if v, ok := probeData["weightage"].(int); ok && v > 0 {
 			probe["weightage"] = v
 		}
-		// Note: enableDataCollection and conditions are NOT sent in the manifest
-		// They are only present in the API response, not in the request
+		// enable_data_collection must be sent in the manifest so it round-trips
+		// symmetrically with readProbes (which always sets it from the API
+		// response). Omitting it caused a perpetual "update in-place" diff for
+		// any probe that enabled data collection.
+		if v, ok := probeData["enable_data_collection"].(bool); ok {
+			probe["enableDataCollection"] = v
+		}
+
+		// conditions_v2 (operator + values) is the current backend field for
+		// probe execution conditions. Emitted here so it round-trips with
+		// readProbes. The legacy "conditions" (execute_upon) field is not part
+		// of the current experimenttemplate schema and is intentionally omitted.
+		if cv2 := buildConditionsV2(probeData["conditions_v2"]); cv2 != nil {
+			probe["conditionsV2"] = cv2
+		}
 
 		// Values - Always include, even if empty
 		if values, ok := probeData["values"].([]interface{}); ok && len(values) > 0 {
@@ -637,6 +736,22 @@ func setExperimentTemplateData(d *schema.ResourceData, template *chaos.Chaosexpe
 	return nil
 }
 
+// readConditionsV2 flattens the SDK conditionsV2 object into the Terraform
+// conditions_v2 block. Returns nil when unset so no empty block is written.
+func readConditionsV2(c *chaos.ExperimentConditions) []map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	values := make([]interface{}, 0, len(c.Values))
+	for _, v := range c.Values {
+		values = append(values, v)
+	}
+	return []map[string]interface{}{{
+		"operator": c.Operator,
+		"values":   values,
+	}}
+}
+
 func readActions(actions []chaos.ExperimenttemplateAction) []map[string]interface{} {
 	result := make([]map[string]interface{}, 0, len(actions))
 	for _, action := range actions {
@@ -653,6 +768,9 @@ func readActions(actions []chaos.ExperimenttemplateAction) []map[string]interfac
 		}
 		actionBlock["is_enterprise"] = action.IsEnterprise
 		actionBlock["continue_on_completion"] = action.ContinueOnCompletion
+		if cv2 := readConditionsV2(action.ConditionsV2); cv2 != nil {
+			actionBlock["conditions_v2"] = cv2
+		}
 
 		// Values
 		if len(action.Values) > 0 {
@@ -680,6 +798,9 @@ func readFaults(faults []chaos.ExperimenttemplateFault) []map[string]interface{}
 		}
 		faultBlock["is_enterprise"] = fault.IsEnterprise
 		faultBlock["auth_enabled"] = fault.AuthEnabled
+		if cv2 := readConditionsV2(fault.ConditionsV2); cv2 != nil {
+			faultBlock["conditions_v2"] = cv2
+		}
 
 		// Values
 		if len(fault.Values) > 0 {
@@ -714,15 +835,9 @@ func readProbes(probes []chaos.ExperimenttemplateProbe) []map[string]interface{}
 		}
 		probeBlock["enable_data_collection"] = probe.EnableDataCollection
 
-		// Conditions
-		if len(probe.Conditions) > 0 {
-			condList := make([]map[string]interface{}, 0, len(probe.Conditions))
-			for _, cond := range probe.Conditions {
-				condList = append(condList, map[string]interface{}{
-					"execute_upon": cond.ExecuteUpon,
-				})
-			}
-			probeBlock["conditions"] = condList
+		// conditions_v2 (operator + values) is the current backend field.
+		if cv2 := readConditionsV2(probe.ConditionsV2); cv2 != nil {
+			probeBlock["conditions_v2"] = cv2
 		}
 
 		// Values

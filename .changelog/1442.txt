@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_db_instance: Added support for `commit_sha` and `git_tag` fields to pin changelog to a specific revision or tagged revision.
+```

@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_gitops_applications: Added `force_delete` field to support force deletion of GitOps applications.
+```

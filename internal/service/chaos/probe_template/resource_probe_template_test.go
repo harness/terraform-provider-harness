@@ -29,6 +29,11 @@ func TestAccResourceProbeTemplate_httpProbe_basic(t *testing.T) {
 				),
 			},
 			{
+				// Drift check: re-planning the identical config must be a no-op.
+				Config:   testAccResourceProbeTemplate_httpProbe_basic(name),
+				PlanOnly: true,
+			},
+			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -317,7 +322,6 @@ func testAccResourceProbeTemplate_cmdProbe_basic(name string) string {
 
 			cmd_probe {
 				command = "echo 'test'"
-				source  = "inline"
 			}
 
 			run_properties {

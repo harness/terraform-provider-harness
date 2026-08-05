@@ -3,12 +3,33 @@
 page_title: "harness_chaos_security_governance_condition_v3 Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for managing a Harness Chaos Security Governance Condition (V3 / REST API).
+  Resource for managing a Harness Chaos Security Governance Condition (V3 / REST API). A condition defines which faults and infrastructure a governance rule applies to.
+  Usage notes
+  infra_type (required, immutable) accepts Kubernetes, KubernetesV2, Linux, Windows, CloudFoundry, Container.fault_spec is always required.Use k8s_spec when infra_type is Kubernetes or KubernetesV2; use machine_spec when infra_type is Linux or Windows. For CloudFoundry/Container, only fault_spec applies.All operator fields accept EQUAL_TO or NOT_EQUAL_TO.
+  Behavior notes
+  fault_spec.fault_type: the legacy value FAULT_NAME is normalized to FAULT to stay consistent with the Harness UI, GraphQL, and existing conditions. If you set FAULT_NAME, it is stored and read back as FAULT. Use FAULT or FAULT_GROUP.
+  Import
+  Import uses the 3-part ID org_id/project_id/condition_id.
 ---
 
 # harness_chaos_security_governance_condition_v3 (Resource)
 
-Resource for managing a Harness Chaos Security Governance Condition (V3 / REST API).
+Resource for managing a Harness Chaos Security Governance Condition (V3 / REST API). A condition defines which faults and infrastructure a governance rule applies to.
+
+## Usage notes
+
+- `infra_type` (required, immutable) accepts `Kubernetes`, `KubernetesV2`, `Linux`, `Windows`, `CloudFoundry`, `Container`.
+- `fault_spec` is always required.
+- Use `k8s_spec` when `infra_type` is `Kubernetes` or `KubernetesV2`; use `machine_spec` when `infra_type` is `Linux` or `Windows`. For `CloudFoundry`/`Container`, only `fault_spec` applies.
+- All `operator` fields accept `EQUAL_TO` or `NOT_EQUAL_TO`.
+
+## Behavior notes
+
+- `fault_spec.fault_type`: the legacy value `FAULT_NAME` is normalized to `FAULT` to stay consistent with the Harness UI, GraphQL, and existing conditions. If you set `FAULT_NAME`, it is stored and read back as `FAULT`. Use `FAULT` or `FAULT_GROUP`.
+
+## Import
+
+Import uses the 3-part ID `org_id/project_id/condition_id`.
 
 ## Example Usage
 

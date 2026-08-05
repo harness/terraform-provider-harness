@@ -44,22 +44,22 @@ func DataSourceChaosHubV2() *schema.Resource {
 
 			// All other fields are computed
 			"connector_ref": {
-				Description: "Reference to the Git connector.",
+				Description: "Reference to the Git connector. Git-backed Chaos Hub V2 is not supported yet.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"repo_branch": {
-				Description: "Git repository branch.",
+				Description: "Git repository branch. Git-backed Chaos Hub V2 is not supported yet.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"repo_name": {
-				Description: "Name of the Git repository.",
+				Description: "Name of the Git repository. Git-backed Chaos Hub V2 is not supported yet.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"repo_url": {
-				Description: "Git repository URL.",
+				Description: "Git repository URL. Git-backed Chaos Hub V2 is not supported yet.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},

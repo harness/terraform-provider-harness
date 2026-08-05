@@ -61,9 +61,10 @@ func ResourceWorkspace() *schema.Resource {
 				Required:    true,
 			},
 			"provisioner_version": {
-				Description: "Provisioner version defines the provisioner version to use. The latest version of Opentofu should always be supported, Terraform is only supported up to version 1.5.7.",
+				Description: "Provisioner version defines the provisioner version to use. The latest version of Opentofu should always be supported, Terraform is only supported up to version 1.5.7. Optional: when omitted the value is inherited from the associated template. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"terragrunt_provider": {
 				Description: "Set to true to enable Terragrunt mode",
@@ -86,43 +87,50 @@ func ResourceWorkspace() *schema.Resource {
 				Optional:    true,
 			},
 			"repository": {
-				Description: "Repository is the name of the repository to fetch the code from.",
+				Description: "Repository is the name of the repository to fetch the code from. Optional: when omitted the value is inherited from the associated template. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"repository_branch": {
-				Description:  "Repository branch is the name of the branch to fetch the code from. This cannot be set if repository commit or sha is set.",
-				Type:         schema.TypeString,
-				Optional:     true,
-				ExactlyOneOf: []string{"repository_commit", "repository_branch", "repository_sha"},
+				Description:   "Repository branch is the name of the branch to fetch the code from. This cannot be set if repository commit or sha is set. All three of repository_branch, repository_commit and repository_sha may be omitted only when an associated template supplies the value; otherwise exactly one must be set. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"repository_commit", "repository_sha"},
 			},
 
 			"repository_commit": {
-				Description:  "Repository commit is tag to fetch the code from. This cannot be set if repository branch or sha is set.",
-				Type:         schema.TypeString,
-				Optional:     true,
-				ExactlyOneOf: []string{"repository_commit", "repository_branch", "repository_sha"},
+				Description:   "Repository commit is tag to fetch the code from. This cannot be set if repository branch or sha is set. All three of repository_branch, repository_commit and repository_sha may be omitted only when an associated template supplies the value; otherwise exactly one must be set. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"repository_branch", "repository_sha"},
 			},
 			"repository_sha": {
-				Description:  "Repository commit is commit SHA to fetch the code from. This cannot be set if repository branch or commit is set.",
-				Type:         schema.TypeString,
-				Optional:     true,
-				ExactlyOneOf: []string{"repository_commit", "repository_branch", "repository_sha"},
+				Description:   "Repository commit is commit SHA to fetch the code from. This cannot be set if repository branch or commit is set. All three of repository_branch, repository_commit and repository_sha may be omitted only when an associated template supplies the value; otherwise exactly one must be set. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				Computed:      true,
+				ConflictsWith: []string{"repository_branch", "repository_commit"},
 			},
 			"repository_connector": {
-				Description: "Repository connector is the reference to the connector used to fetch the code.",
+				Description: "Repository connector is the reference to the connector used to fetch the code. Optional: when omitted the value is inherited from the associated template. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"repository_path": {
-				Description: "Repository path is the path in which the code resides.",
+				Description: "Repository path is the path in which the code resides. Optional: when omitted the value is inherited from the associated template. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"cost_estimation_enabled": {
-				Description: "Cost estimation enabled determines if cost estimation operations are performed.",
+				Description: "Cost estimation enabled determines if cost estimation operations are performed. Optional: when omitted the value is inherited from the associated template. An explicit value (including false) is always sent to the API. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.",
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"terraform_variable": {
 				Description: "Terraform variables configured on the workspace. Terraform variable keys must be unique within the workspace.",
@@ -244,6 +252,27 @@ func ResourceWorkspace() *schema.Resource {
 					},
 				},
 			},
+			"associated_template": {
+				Description: "Template associated with the workspace.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"template_id": {
+							Description: "Template identifier. Changing this forces a new resource.",
+							Type:        schema.TypeString,
+							Required:    true,
+							ForceNew:    true,
+						},
+						"version": {
+							Description: "Template version. Can be updated in place.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
 			"provisioner_config": {
 				Description: "Provisioner configuration for awscdk provisioner type. Required when provisioner_type is awscdk.",
 				Type:        schema.TypeSet,
@@ -295,6 +324,11 @@ func resourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, meta int
 		c.AccountId,
 	)
 	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
@@ -374,6 +408,35 @@ func resourceWorkspaceUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		return parseError(err, httpResp)
 	}
 
+	if d.HasChange("associated_template") {
+		// template_id is ForceNew, so associating a template, removing it, or switching to
+		// a different template all recreate the workspace via the Create path (which embeds
+		// the association and, on removal, drops it when the old workspace is destroyed).
+		// The only change that reaches Update is an in-place version bump of an
+		// already-associated template, handled here via the workspace templates API.
+		if v, ok := d.GetOk("associated_template"); ok {
+			templateList := v.([]interface{})
+			if len(templateList) > 0 {
+				tpl := templateList[0].(map[string]interface{})
+				body := nextgen.IacmUpdateWorkspaceTemplateRequestBody{
+					Version: tpl["version"].(string),
+				}
+				_, httpResp, err := c.WorkspaceTemplatesApi.WorkspaceTemplatesUpdateWorkspaceTemplate(
+					ctx,
+					body,
+					c.AccountId,
+					d.Get("org_id").(string),
+					d.Get("project_id").(string),
+					tpl["template_id"].(string),
+					d.Get("identifier").(string),
+				)
+				if err != nil {
+					return parseError(err, httpResp)
+				}
+			}
+		}
+	}
+
 	resourceWorkspaceRead(ctx, d, meta)
 	return nil
 }
@@ -449,18 +512,60 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 		d.Set("connector", providerConnectors)
 	}
 
+	// Only reflect associated_template when it is declared on the workspace itself.
+	// The association can alternatively be managed by the standalone
+	// harness_platform_iacm_workspace_template resource, in which case unconditionally
+	// writing it here would produce a perpetual diff (config has no block, server does).
+	if _, ok := d.GetOk("associated_template"); ok && ws.AssociatedTemplate != nil {
+		d.Set("associated_template", []interface{}{
+			map[string]interface{}{
+				"template_id": ws.AssociatedTemplate.TemplateID,
+				"version":     ws.AssociatedTemplate.Version,
+			},
+		})
+	}
+
 	d.Set("tags", helpers.FlattenTags(ws.Tags))
+}
+
+// configHas reports whether the given top-level attribute is explicitly set in the
+// configuration (as opposed to being absent). Unlike d.GetOk it does not treat a zero
+// value as "unset", so an explicit cost_estimation_enabled = false is distinguishable from
+// an omitted field. Returns false when the config is unknown (e.g. values not yet resolved).
+func configHas(d *schema.ResourceData, key string) bool {
+	raw := d.GetRawConfig()
+	if raw.IsNull() || !raw.IsKnown() {
+		return false
+	}
+	v := raw.GetAttr(key)
+	return !v.IsNull()
 }
 
 func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRequestBody, error) {
 	ws := nextgen.IacmUpdateWorkspaceRequestBody{
-		Name:                  d.Get("name").(string),
-		Provisioner:           d.Get("provisioner_type").(string),
-		ProvisionerVersion:    d.Get("provisioner_version").(string),
-		Repository:            d.Get("repository").(string),
-		RepositoryPath:        d.Get("repository_path").(string),
-		RepositoryConnector:   d.Get("repository_connector").(string),
-		CostEstimationEnabled: d.Get("cost_estimation_enabled").(bool),
+		Name:        d.Get("name").(string),
+		Provisioner: d.Get("provisioner_type").(string),
+	}
+
+	// Repository, provisioner version and cost estimation are only sent when set on the
+	// config. When omitted they are inherited from the associated template; sending them
+	// would fail against templates that lock those fields (see IAC-7604).
+	if provisionerVersion, ok := d.GetOk("provisioner_version"); ok {
+		ws.ProvisionerVersion = provisionerVersion.(string)
+	}
+
+	if repository, ok := d.GetOk("repository"); ok {
+		ws.Repository = repository.(string)
+	}
+
+	if repositoryConnector, ok := d.GetOk("repository_connector"); ok {
+		ws.RepositoryConnector = repositoryConnector.(string)
+	}
+
+	// Read cost_estimation_enabled from the raw config so an explicit "false" is sent to the
+	// API (d.GetOk would treat false as unset, making it impossible to force off).
+	if configHas(d, "cost_estimation_enabled") {
+		ws.CostEstimationEnabled = d.Get("cost_estimation_enabled").(bool)
 	}
 
 	if providerConnector, ok := d.GetOk("provider_connector"); ok {
@@ -540,14 +645,30 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 
 func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRequestBody, error) {
 	ws := nextgen.IacmCreateWorkspaceRequestBody{
-		Identifier:            d.Get("identifier").(string),
-		Name:                  d.Get("name").(string),
-		Provisioner:           d.Get("provisioner_type").(string),
-		ProvisionerVersion:    d.Get("provisioner_version").(string),
-		Repository:            d.Get("repository").(string),
-		RepositoryPath:        d.Get("repository_path").(string),
-		RepositoryConnector:   d.Get("repository_connector").(string),
-		CostEstimationEnabled: d.Get("cost_estimation_enabled").(bool),
+		Identifier:  d.Get("identifier").(string),
+		Name:        d.Get("name").(string),
+		Provisioner: d.Get("provisioner_type").(string),
+	}
+
+	// Repository, provisioner version and cost estimation are only sent when set on the
+	// config. When omitted they are inherited from the associated template; sending them
+	// would fail against templates that lock those fields (see IAC-7604).
+	if provisionerVersion, ok := d.GetOk("provisioner_version"); ok {
+		ws.ProvisionerVersion = provisionerVersion.(string)
+	}
+
+	if repository, ok := d.GetOk("repository"); ok {
+		ws.Repository = repository.(string)
+	}
+
+	if repositoryConnector, ok := d.GetOk("repository_connector"); ok {
+		ws.RepositoryConnector = repositoryConnector.(string)
+	}
+
+	// Read cost_estimation_enabled from the raw config so an explicit "false" is sent to the
+	// API (d.GetOk would treat false as unset, making it impossible to force off).
+	if configHas(d, "cost_estimation_enabled") {
+		ws.CostEstimationEnabled = d.Get("cost_estimation_enabled").(bool)
 	}
 
 	if providerConnector, ok := d.GetOk("provider_connector"); ok {
@@ -617,6 +738,17 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 	ws.ProviderConnectors = providerConnectors
 
 	ws.ProvisionerConfiguration = buildProvisionerConfig(d)
+
+	if v, ok := d.GetOk("associated_template"); ok {
+		templateList := v.([]interface{})
+		if len(templateList) > 0 {
+			tpl := templateList[0].(map[string]interface{})
+			ws.AssociatedTemplate = &nextgen.IacmAssociatedTemplate{
+				TemplateID: tpl["template_id"].(string),
+				Version:    tpl["version"].(string),
+			}
+		}
+	}
 
 	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
 		ws.Tags = helpers.ExpandTags(attr)

@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 func DataSourceVariables() *schema.Resource {
@@ -89,19 +90,26 @@ func dataSourceVariablesRead(ctx context.Context, d *schema.ResourceData, meta i
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
-		variable = resp.Data.Variable
+		if resp.Data != nil {
+			variable = resp.Data.Variable
+		}
 	} else {
 		return diag.FromErr(errors.New(" identifier  must be specified"))
 	}
 
 	if err != nil {
+		tflog.Error(ctx, "Failed to read variable data source", map[string]interface{}{
+			"id":    id,
+			"error": err.Error(),
+		})
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if variable == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
+		tflog.Error(ctx, "Variable not found in data source read", map[string]interface{}{
+			"id": id,
+		})
+		return diag.Errorf("variable with id '%s' not found or API returned empty response", id)
 	}
 
 	readVariable(d, variable)

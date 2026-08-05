@@ -290,7 +290,7 @@ func ResourceFaultTemplateSchema() map[string]*schema.Schema {
 
 								// TLS configuration
 								"tls": {
-									Description: "TLS configuration",
+									Description: "TLS configuration. NOT YET SUPPORTED: setting this block returns an error (it is not plumbed through to the API). Configure fault TLS in the Harness UI/API instead.",
 									Type:        schema.TypeList,
 									Optional:    true,
 									MaxItems:    1,
@@ -318,7 +318,7 @@ func ResourceFaultTemplateSchema() map[string]*schema.Schema {
 
 								// Authentication
 								"auth": {
-									Description: "Authentication configuration",
+									Description: "Authentication configuration. NOT YET SUPPORTED: setting this block returns an error (it is not plumbed through to the API). Configure fault authentication in the Harness UI/API instead.",
 									Type:        schema.TypeList,
 									Optional:    true,
 									MaxItems:    1,

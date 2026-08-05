@@ -150,28 +150,23 @@ func resourceIacmDefaultPipelineUpdate(ctx context.Context, d *schema.ResourceDa
 func parseError(err error, httpResp *http.Response) diag.Diagnostics {
 	// copied from helpers/errors.go
 	if httpResp != nil && httpResp.StatusCode == 401 {
-		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-			"1) Please check if token has expired or is wrong.\n" +
-			"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
+		return diag.Errorf("%s\nHint:\n1) Please check if token has expired or is wrong.\n2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.", httpResp.Status)
 	}
 	if httpResp != nil && httpResp.StatusCode == 403 {
-		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-			"1) Please check if the token has required permission for this operation.\n" +
-			"2) Please check if the token has expired or is wrong.")
+		return diag.Errorf("%s\nHint:\n1) Please check if the token has required permission for this operation.\n2) Please check if the token has expired or is wrong.", httpResp.Status)
 	}
 
 	se, ok := err.(nextgen.GenericSwaggerError)
 	if !ok {
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	}
 
 	iacmErrBody := se.Body()
 	iacmErr := nextgen.IacmError{}
 	jsonErr := json.Unmarshal(iacmErrBody, &iacmErr)
 	if jsonErr != nil {
-		return diag.Errorf(err.Error())
+		return diag.Errorf("%s", err.Error())
 	}
 
-	return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-		"1) " + iacmErr.Message)
+	return diag.Errorf("%s\nHint:\n1) %s", httpResp.Status, iacmErr.Message)
 }

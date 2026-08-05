@@ -1,0 +1,3 @@
+```release-note:feature
+resource/harness_platform_gitops_cluster: Added `secret_expressions` field to map credential field names to Harness secret identifiers, enabling agent-side secret resolution at connect time.
+```

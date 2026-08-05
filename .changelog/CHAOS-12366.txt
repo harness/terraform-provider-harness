@@ -1,0 +1,12 @@
+```release-note:enhancement
+harness_chaos_infrastructure_v2: added a `resources` block (CPU/memory `requests` and `limits`, as standard Kubernetes quantity strings) to configure the compute resource requirements applied to the chaos infrastructure pods. Supported on both create and update.
+harness_chaos_infrastructure_v2: added `autopilot_enabled` (bool, defaults to `false`) to enable autopilot mode for the infrastructure. Supported on both create and update.
+```
+
+```release-note:fix
+harness_chaos_infrastructure_v2: `discovery_agent_id` is now actually sent to the API at registration (create) time and read back into state; previously the field was accepted in configuration but silently dropped.
+```
+
+```release-note:note
+harness_chaos_infrastructure_v2: documented that `resources` and `autopilot_enabled` apply on create and update, and that `discovery_agent_id` is applied at registration (create) time only. The data source now also exposes `resources`, `autopilot_enabled`, and `discovery_agent_id`.
+```

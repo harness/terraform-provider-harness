@@ -76,6 +76,14 @@ func resourceSecretCreateOrUpdateBase(ctx context.Context, d *schema.ResourceDat
 		return nil, helpers.HandleApiError(err, d, httpResp)
 	}
 
+	if resp.Data == nil || resp.Data.Secret == nil {
+		var governance *nextgen.GovernanceMetadata
+		if resp.Data != nil {
+			governance = resp.Data.GovernanceMetadata
+		}
+		return nil, helpers.HandleEmptyCreateUpdateResponse(governance, "secret")
+	}
+
 	readCommonSecretData(d, resp.Data.Secret)
 
 	return resp.Data.Secret, nil

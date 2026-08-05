@@ -98,6 +98,14 @@ func ResourceGitopsCluster() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
+						"secret_expressions": {
+							Description: "Maps credential field names to Harness secret expressions. Keys are credential field names (e.g. \"username\", \"password\", \"bearerToken\", \"certData\", \"keyData\", \"caData\") and values are Harness expressions referencing secrets (e.g. \"<+secrets.getValue(\\\"account.my_secret\\\")>\").",
+							Type:        schema.TypeMap,
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 						"cluster": {
 							Description: "GitOps cluster details.",
 							Type:        schema.TypeList,
@@ -793,6 +801,9 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 		clusterList = append(clusterList, cluster)
 		request["cluster"] = clusterList
 		request["tags"] = helpers.FlattenTags(cl.Tags)
+		if cl.SecretExpressions != nil {
+			request["secret_expressions"] = cl.SecretExpressions
+		}
 		if v, ok := d.GetOk("request.0.updated_fields"); ok {
 			request["updated_fields"] = v.([]interface{})
 		}
@@ -804,28 +815,43 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 func buildCreateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterCreateRequest {
 	var upsert bool
 	var tags map[string]string
+	var secretExpressions map[string]string
 	if attr, ok := d.GetOk("request"); ok {
 		request := attr.([]interface{})[0].(map[string]interface{})
 		upsert = request["upsert"].(bool)
 		if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
 			tags = helpers.ExpandTags(tag)
 		}
+		if se, ok := request["secret_expressions"].(map[string]interface{}); ok && len(se) > 0 {
+			secretExpressions = make(map[string]string, len(se))
+			for k, v := range se {
+				secretExpressions[k] = v.(string)
+			}
+		}
 	}
 	return &nextgen.ClustersClusterCreateRequest{
-		Upsert:  upsert,
-		Tags:    tags,
-		Cluster: buildClusterDetails(d),
+		Upsert:            upsert,
+		Tags:              tags,
+		SecretExpressions: secretExpressions,
+		Cluster:           buildClusterDetails(d),
 	}
 }
 
 func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterUpdateRequest {
 	var request map[string]interface{}
 	var tags map[string]string
+	var secretExpressions map[string]string
 	if attr, ok := d.GetOk("request"); ok {
 		request = attr.([]interface{})[0].(map[string]interface{})
 	}
 	if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
 		tags = helpers.ExpandTags(tag)
+	}
+	secretExpressions = make(map[string]string)
+	if se, ok := request["secret_expressions"].(map[string]interface{}); ok {
+		for k, v := range se {
+			secretExpressions[k] = v.(string)
+		}
 	}
 
 	var updatedFields []string
@@ -842,6 +868,7 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 	// only the following fields hold meaning in updatedFields section
 	fieldsToCheckForDiff := []string{
 		"request.0.tags",
+		"request.0.secret_expressions",
 		"request.0.cluster.0.server",
 		"request.0.cluster.0.name",
 		"request.0.cluster.0.namespaces",
@@ -860,9 +887,10 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 	}
 
 	return &nextgen.ClustersClusterUpdateRequest{
-		Cluster:       buildClusterDetails(d),
-		UpdatedFields: updatedFields,
-		Tags:          tags,
+		Cluster:           buildClusterDetails(d),
+		UpdatedFields:     updatedFields,
+		Tags:              tags,
+		SecretExpressions: secretExpressions,
 	}
 }
 
@@ -1061,7 +1089,15 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 }
 
 func getUpdateFieldFromPath(path string) string {
-	return strings.Split(path, ".")[len(strings.Split(path, "."))-1]
+	field := strings.Split(path, ".")[len(strings.Split(path, "."))-1]
+	fieldNameMap := map[string]string{
+		"secret_expressions": "secretExpressions",
+		"cluster_resources":  "clusterResources",
+	}
+	if mapped, ok := fieldNameMap[field]; ok {
+		return mapped
+	}
+	return field
 }
 
 func preserveClusterWoVersions(d *schema.ResourceData) {

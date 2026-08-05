@@ -176,6 +176,47 @@ func mtlsSchema() *schema.Schema {
 	}
 }
 
+// resourceListSchema defines the schema for a single compute resource list (cpu/memory).
+func resourceListSchema(description string) *schema.Schema {
+	return &schema.Schema{
+		Description: description,
+		Type:        schema.TypeList,
+		Optional:    true,
+		MaxItems:    1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"cpu": {
+					Description: "CPU quantity as a Kubernetes resource string. Example: '250m', '1'.",
+					Type:        schema.TypeString,
+					Optional:    true,
+				},
+				"memory": {
+					Description: "Memory quantity as a Kubernetes resource string. Example: '256Mi', '1Gi'.",
+					Type:        schema.TypeString,
+					Optional:    true,
+				},
+			},
+		},
+	}
+}
+
+// resourcesSchema defines the schema for the compute resource requirements (requests and limits)
+// applied to the chaos infrastructure pods.
+func resourcesSchema() *schema.Schema {
+	return &schema.Schema{
+		Description: "Compute resource requirements (requests and limits) for the chaos infrastructure pods.",
+		Type:        schema.TypeList,
+		Optional:    true,
+		MaxItems:    1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"limits":   resourceListSchema("Maximum compute resources allowed for the infrastructure pods."),
+				"requests": resourceListSchema("Minimum compute resources requested for the infrastructure pods."),
+			},
+		},
+	}
+}
+
 func identifierSchema() *schema.Schema {
 	return &schema.Schema{
 		Description: "Identifier for the infrastructure.",

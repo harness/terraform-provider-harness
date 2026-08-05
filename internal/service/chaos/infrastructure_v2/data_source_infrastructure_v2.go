@@ -149,6 +149,17 @@ func DataSourceChaosInfrastructureV2() *schema.Resource {
 			"volumes":        volumesSchema(),
 			"volume_mounts":  volumeMountsSchema(),
 			"tolerations":    tolerationsSchema(),
+			"resources":      resourcesSchema(),
+			"discovery_agent_id": {
+				Description: "ID of the discovery agent used by the infrastructure.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"autopilot_enabled": {
+				Description: "Whether autopilot mode is enabled for the infrastructure.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
 			"node_selector": {
 				Type:     schema.TypeMap,
 				Computed: true,
@@ -257,6 +268,8 @@ func setInfrastructureFields(d *schema.ResourceData, infra *chaos.InfraV2Kuberne
 	d.Set("run_as_group", infra.RunAsGroup)
 	d.Set("containers", infra.Containers)
 	d.Set("identity", infra.Identity)
+	d.Set("autopilot_enabled", infra.IsAutopilotEnabled)
+	d.Set("discovery_agent_id", infra.DiscoveryAgentID)
 
 	// Set maps
 	if err := d.Set("node_selector", infra.NodeSelector); err != nil {
@@ -298,6 +311,11 @@ func setInfrastructureFields(d *schema.ResourceData, infra *chaos.InfraV2Kuberne
 	if len(infra.Tolerations) > 0 {
 		if err := setTolerations(d, infra.Tolerations); err != nil {
 			return fmt.Errorf("failed to set tolerations: %v", err)
+		}
+	}
+	if infra.Resources != nil {
+		if err := setResources(d, infra.Resources); err != nil {
+			return fmt.Errorf("failed to set resources: %v", err)
 		}
 	}
 

@@ -29,9 +29,22 @@ func ResourceDBInstance() *schema.Resource {
 				Required:    true,
 			},
 			"branch": {
-				Description: "The branch of changeSet repository",
-				Type:        schema.TypeString,
-				Optional:    true,
+				Description:   "The branch of changeSet repository",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"commit_sha", "git_tag"},
+			},
+			"commit_sha": {
+				Description:   "The commit SHA to pin the changelog to a specific revision. Mutually exclusive with branch and git_tag.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"branch", "git_tag"},
+			},
+			"git_tag": {
+				Description:   "The git tag to pin the changelog to a specific tagged revision. Mutually exclusive with branch and commit_sha.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"branch", "commit_sha"},
 			},
 			"connector": {
 				Description: "The connector to database",
@@ -139,6 +152,8 @@ func buildDbInstance(d *schema.ResourceData) *dbops.DbInstanceIn {
 		Name:                 d.Get("name").(string),
 		Tags:                 helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
 		Branch:               d.Get("branch").(string),
+		CommitSha:            d.Get("commit_sha").(string),
+		GitTag:               d.Get("git_tag").(string),
 		Connector:            d.Get("connector").(string),
 		Context:              d.Get("context").(string),
 		SubstituteProperties: substituteProperties,
@@ -151,6 +166,8 @@ func readDBInstance(d *schema.ResourceData, dbInstance *dbops.DbInstanceOut) {
 	d.Set("name", dbInstance.Name)
 	d.Set("tags", helpers.FlattenTags(dbInstance.Tags))
 	d.Set("branch", dbInstance.Branch)
+	d.Set("commit_sha", dbInstance.CommitSha)
+	d.Set("git_tag", dbInstance.GitTag)
 	d.Set("connector", dbInstance.Connector)
 	d.Set("context", dbInstance.Context)
 

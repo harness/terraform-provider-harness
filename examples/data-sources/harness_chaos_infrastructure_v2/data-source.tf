@@ -1,23 +1,22 @@
-// Data source to fetch a specific agent by name
-data "harness_service_discovery_agent" "by_name" {
-  name                   = "example-agent"
-  org_identifier         = var.org_identifier
-  project_identifier     = var.project_identifier
-  environment_identifier = var.environment_identifier
+// Fetch an existing chaos infrastructure V2 by its identifiers
+data "harness_chaos_infrastructure_v2" "example" {
+  org_id         = "<org_id>"
+  project_id     = "<project_id>"
+  environment_id = "<environment_id>"
+  infra_id       = "<infra_id>"
 }
 
-output "agent_details_by_name" {
-  value = data.harness_service_discovery_agent.by_name
+// The data source exposes the pod resource requirements, autopilot mode, and
+// the associated discovery agent, alongside the rest of the infrastructure
+// attributes.
+output "chaos_infra_resources" {
+  value = data.harness_chaos_infrastructure_v2.example.resources
 }
 
-// Data source to fetch a specific agent by identity
-data "harness_service_discovery_agent" "by_identity" {
-  identity               = "example-infra"
-  org_identifier         = var.org_identifier
-  project_identifier     = var.project_identifier
-  environment_identifier = var.environment_identifier
+output "chaos_infra_autopilot_enabled" {
+  value = data.harness_chaos_infrastructure_v2.example.autopilot_enabled
 }
 
-output "agent_details_by_identity" {
-  value = data.harness_service_discovery_agent.by_identity
+output "chaos_infra_discovery_agent_id" {
+  value = data.harness_chaos_infrastructure_v2.example.discovery_agent_id
 }

@@ -56,6 +56,10 @@ func TestAccResourceChaosInfrastructureV2_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "infra_scope", "NAMESPACE"),
 					resource.TestCheckResourceAttr(resourceName, "namespace", "chaos"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "litmus"),
+					// Security context (run_as_user/run_as_group) set at create time.
+					resource.TestCheckResourceAttr(resourceName, "run_as_user", "1000"),
+					resource.TestCheckResourceAttr(resourceName, "run_as_group", "2000"),
+					resource.TestCheckResourceAttr(resourceName, "insecure_skip_verify", "true"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 				),
 			},
@@ -94,9 +98,50 @@ func TestAccResourceChaosInfrastructureV2_Update(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "infra_scope", "NAMESPACE"),
 					resource.TestCheckResourceAttr(resourceName, "namespace", "chaos-updated"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "litmus-admin"),
+					// Security context is updatable: run_as_user/run_as_group change on update.
 					resource.TestCheckResourceAttr(resourceName, "run_as_user", "1001"),
+					resource.TestCheckResourceAttr(resourceName, "run_as_group", "2001"),
 					resource.TestCheckResourceAttr(resourceName, "insecure_skip_verify", "true"),
+					// New fields exercised on the update (register did not set them):
+					resource.TestCheckResourceAttr(resourceName, "autopilot_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "resources.0.requests.0.cpu", "250m"),
+					resource.TestCheckResourceAttr(resourceName, "resources.0.requests.0.memory", "256Mi"),
+					resource.TestCheckResourceAttr(resourceName, "resources.0.limits.0.cpu", "500m"),
+					resource.TestCheckResourceAttr(resourceName, "resources.0.limits.0.memory", "512Mi"),
 				),
+			},
+		},
+	})
+}
+
+// TestAccResourceChaosInfrastructureV2_Resources verifies that resource requirements and
+// autopilot are set at registration (create) time and round-trip without drift.
+func TestAccResourceChaosInfrastructureV2_Resources(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	rName := id
+	resourceName := "harness_chaos_infrastructure_v2.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccChaosInfrastructureV2Destroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceChaosInfrastructureV2ConfigResources(rName, id, "KUBERNETESV2", "NAMESPACE"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "autopilot_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "run_as_user", "1500"),
+					resource.TestCheckResourceAttr(resourceName, "run_as_group", "2500"),
+					resource.TestCheckResourceAttr(resourceName, "resources.0.requests.0.cpu", "500m"),
+					resource.TestCheckResourceAttr(resourceName, "resources.0.requests.0.memory", "512Mi"),
+					resource.TestCheckResourceAttr(resourceName, "resources.0.limits.0.cpu", "1"),
+					resource.TestCheckResourceAttr(resourceName, "resources.0.limits.0.memory", "1Gi"),
+				),
+			},
+			{
+				// A no-op re-apply must show no diff (drift sentinel for the new fields).
+				Config:   testAccResourceChaosInfrastructureV2ConfigResources(rName, id, "KUBERNETESV2", "NAMESPACE"),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -254,6 +299,7 @@ func testAccResourceChaosInfrastructureV2ConfigBasic(id, name, infraType, infraS
 			service_account     = "litmus"
 			tags                = ["test:true", "chaos:true"]
 			run_as_user         = 1000
+			run_as_group        = 2000
 			insecure_skip_verify = true
 		}
 	`, id, name, infraType, infraScope)
@@ -339,7 +385,112 @@ func testAccResourceChaosInfrastructureV2ConfigUpdate(name, id, infraType, infra
 			service_account     = "litmus-admin"
 			tags                = ["test:true", "chaos:true", "updated:true"]
 			run_as_user         = 1001
+			run_as_group        = 2001
 			insecure_skip_verify = true
+			autopilot_enabled   = true
+
+			resources {
+				requests {
+					cpu    = "250m"
+					memory = "256Mi"
+				}
+				limits {
+					cpu    = "500m"
+					memory = "512Mi"
+				}
+			}
+		}
+	`, id, name, infraType, infraScope)
+}
+
+// testAccResourceChaosInfrastructureV2ConfigResources creates a chaos infrastructure with
+// resource requirements and autopilot enabled at registration (create) time.
+func testAccResourceChaosInfrastructureV2ConfigResources(id, name, infraType, infraScope string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name       = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name       = "%[2]s"
+			org_id     = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_connector_kubernetes" "test" {
+			identifier = "%[1]s"
+			name       = "%[2]s"
+			org_id     = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+
+			inherit_from_delegate {
+				delegate_selectors = ["kubernetes-delegate"]
+			}
+
+			tags = []
+		}
+
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name       = "%[2]s"
+			org_id     = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			type       = "PreProduction"
+		}
+
+		resource "harness_platform_infrastructure" "test" {
+			identifier      = "%[1]s"
+			name            = "%[2]s"
+			org_id          = harness_platform_organization.test.id
+			project_id      = harness_platform_project.test.id
+			env_id          = harness_platform_environment.test.id
+			deployment_type = "Kubernetes"
+			type            = "KubernetesDirect"
+
+			yaml = <<-EOT
+        infrastructureDefinition:
+            name: "%[2]s"
+            identifier: "%[1]s"
+            orgIdentifier: ${harness_platform_organization.test.id}
+            projectIdentifier: ${harness_platform_project.test.id}
+            environmentRef: ${harness_platform_environment.test.id}
+            type: KubernetesDirect
+            deploymentType: Kubernetes
+            allowSimultaneousDeployments: false
+            spec:
+                connectorRef: ${harness_platform_connector_kubernetes.test.id}
+                namespace: "chaos"
+                releaseName: "release-%[1]s"
+		EOT
+			tags = []
+		}
+
+		resource "harness_chaos_infrastructure_v2" "test" {
+			org_id            = harness_platform_organization.test.id
+			project_id        = harness_platform_project.test.id
+			environment_id    = harness_platform_environment.test.id
+			name              = "%[2]s"
+			infra_id          = harness_platform_infrastructure.test.id
+			description       = "Test Infrastructure with resources"
+			infra_type        = "%[3]s"
+			infra_scope       = "%[4]s"
+			namespace         = "chaos"
+			service_account   = "litmus"
+			run_as_user       = 1500
+			run_as_group      = 2500
+			autopilot_enabled = true
+
+			resources {
+				requests {
+					cpu    = "500m"
+					memory = "512Mi"
+				}
+				limits {
+					cpu    = "1"
+					memory = "1Gi"
+				}
+			}
 		}
 	`, id, name, infraType, infraScope)
 }

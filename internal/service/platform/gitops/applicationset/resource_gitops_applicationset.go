@@ -15,6 +15,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
 	"github.com/harness/terraform-provider-harness/internal/utils"
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -57,6 +58,13 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 					e = fmt.Errorf("field 'name' cannot be changed after the resource is created:%w", e)
 				} else {
 					e = fmt.Errorf("field 'name' cannot be changed after the resource is created")
+				}
+			}
+			if srcErr := validateTemplateSpecSource(diff); srcErr != nil {
+				if e != nil {
+					e = fmt.Errorf("%v:%w", srcErr, e)
+				} else {
+					e = srcErr
 				}
 			}
 			return e
@@ -277,6 +285,79 @@ func ResourceGitopsApplicationSet() *schema.Resource {
 			},
 		},
 	}
+}
+
+// validateTemplateSpecSource enforces the ArgoCD contract that an Application
+// template must reference exactly one of `source` (single source) or `sources`
+// (multiple sources). The check is intentionally limited to the spec-level
+// template (applicationset.spec.template.spec). Generator-level template overrides
+// are partial and may legitimately omit both, so they are not validated here.
+func validateTemplateSpecSource(diff *schema.ResourceDiff) error {
+	templateSpec, ok := rawTemplateSpec(diff)
+	if !ok {
+		return nil
+	}
+	sourceCount, sourceOk := rawBlockLen(templateSpec, "source")
+	sourcesCount, sourcesOk := rawBlockLen(templateSpec, "sources")
+	if !sourceOk || !sourcesOk {
+		return nil
+	}
+	return checkExactlyOneSource(sourceCount, sourcesCount)
+}
+
+// checkExactlyOneSource validates that exactly one of the singular `source` or the
+// plural `sources` block is configured on an Application template spec.
+func checkExactlyOneSource(sourceCount, sourcesCount int) error {
+	if sourceCount == 0 && sourcesCount == 0 {
+		return fmt.Errorf("applicationset.spec.template.spec requires exactly one of 'source' or 'sources' to be set")
+	}
+	if sourceCount > 0 && sourcesCount > 0 {
+		return fmt.Errorf("applicationset.spec.template.spec fields 'source' and 'sources' are mutually exclusive; set only one")
+	}
+	return nil
+}
+
+// rawTemplateSpec navigates the raw config to the spec-level template spec object
+// (applicationset[0].spec[0].template[0].spec[0]). It returns ok=false when the
+// value is not statically known (e.g. computed/unknown), so validation is skipped.
+func rawTemplateSpec(diff *schema.ResourceDiff) (cty.Value, bool) {
+	cur := diff.GetRawConfig()
+	for _, attr := range []string{"applicationset", "spec", "template", "spec"} {
+		next, ok := rawFirstBlock(cur, attr)
+		if !ok {
+			return cty.NilVal, false
+		}
+		cur = next
+	}
+	return cur, true
+}
+
+// rawFirstBlock returns the first element of a block list attribute on obj.
+func rawFirstBlock(obj cty.Value, attr string) (cty.Value, bool) {
+	if obj.IsNull() || !obj.IsKnown() || !obj.Type().IsObjectType() || !obj.Type().HasAttribute(attr) {
+		return cty.NilVal, false
+	}
+	list := obj.GetAttr(attr)
+	if list.IsNull() || !list.IsKnown() || !list.CanIterateElements() || list.LengthInt() == 0 {
+		return cty.NilVal, false
+	}
+	return list.Index(cty.NumberIntVal(0)), true
+}
+
+// rawBlockLen returns the number of elements configured for a block list attribute
+// on obj. ok is false when the value cannot be determined statically.
+func rawBlockLen(obj cty.Value, attr string) (int, bool) {
+	if obj.IsNull() || !obj.IsKnown() || !obj.Type().IsObjectType() || !obj.Type().HasAttribute(attr) {
+		return 0, false
+	}
+	list := obj.GetAttr(attr)
+	if list.IsNull() {
+		return 0, true
+	}
+	if !list.IsKnown() || !list.CanIterateElements() {
+		return 0, false
+	}
+	return list.LengthInt(), true
 }
 
 func resourceGitopsApplicationsetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

@@ -96,6 +96,13 @@ func resourceApiKeyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	if resp.Data == nil {
+		return helpers.HandleEmptyCreateUpdateResponse(nil, "API key")
+	}
+	if resp.Data.Identifier == "" {
+		return helpers.HandleEmptyCreateUpdateResponse(resp.Data.GovernanceMetadata, "API key")
+	}
+
 	readApiKey(d, resp.Data)
 
 	return nil

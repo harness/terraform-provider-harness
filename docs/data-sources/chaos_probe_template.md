@@ -56,132 +56,356 @@ resource "harness_chaos_experiment" "example" {
 
 ### Required
 
-- `hub_identity` (String) Identity of the chaos hub.
+- `hub_identity` (String) Identity of the chaos hub this probe template belongs to.
 
 ### Optional
 
-- `identity` (String) Unique identifier of the probe template.
+- `apm_probe` (Block List, Max: 1) APM probe configuration. Required when type is 'apmProbe'. (see [below for nested schema](#nestedblock--apm_probe))
+- `cmd_probe` (Block List, Max: 1) Command probe configuration. Required when type is 'cmdProbe'. (see [below for nested schema](#nestedblock--cmd_probe))
+- `description` (String) Description of the probe template.
+- `http_probe` (Block List, Max: 1) HTTP probe configuration. Required when type is 'httpProbe'. (see [below for nested schema](#nestedblock--http_probe))
+- `identity` (String) Unique identifier for the probe template (immutable).
+- `infrastructure_type` (String) Infrastructure type for the probe template. Valid values: Kubernetes, KubernetesV2, Windows, Linux, CloudFoundry, Container.
+- `k8s_probe` (Block List, Max: 1) Kubernetes probe configuration. Required when type is 'k8sProbe'. (see [below for nested schema](#nestedblock--k8s_probe))
 - `name` (String) Name of the probe template.
 - `org_id` (String) Organization identifier.
 - `project_id` (String) Project identifier.
+- `run_properties` (Block List, Max: 1) Run properties for the probe template execution. (see [below for nested schema](#nestedblock--run_properties))
+- `tags` (List of String) Tags to associate with the probe template.
+- `type` (String) Type of the probe template. Valid values: httpProbe, cmdProbe, k8sProbe, promProbe, sloProbe, datadogProbe, dynatraceProbe, containerProbe, apmProbe.
+- `variables` (Block List) Template variables that can be used in the probe. (see [below for nested schema](#nestedblock--variables))
 
 ### Read-Only
 
 - `account_id` (String) Account identifier.
-- `cmd_probe` (List of Object) Command probe configuration. (see [below for nested schema](#nestedatt--cmd_probe))
-- `description` (String) Description of the probe template.
-- `http_probe` (List of Object) HTTP probe configuration. (see [below for nested schema](#nestedatt--http_probe))
 - `hub_ref` (String) Hub reference.
 - `id` (String) The ID of this resource.
-- `infrastructure_type` (String) Infrastructure type.
-- `is_default` (Boolean) Whether this is the default version.
-- `k8s_probe` (List of Object) Kubernetes probe configuration. (see [below for nested schema](#nestedatt--k8s_probe))
-- `revision` (Number) Revision number.
-- `run_properties` (List of Object) Run properties. (see [below for nested schema](#nestedatt--run_properties))
-- `tags` (List of String) Tags associated with the probe template.
-- `type` (String) Type of the probe template.
-- `variables` (List of Object) Template variables. (see [below for nested schema](#nestedatt--variables))
+- `is_default` (Boolean) Whether this is the default version for predefined probes.
+- `revision` (Number) Revision number of the probe template.
 
-<a id="nestedatt--cmd_probe"></a>
+<a id="nestedblock--apm_probe"></a>
+### Nested Schema for `apm_probe`
+
+Required:
+
+- `apm_type` (String) APM provider type. Valid values: Prometheus, AppDynamics, SplunkObservability, Dynatrace, NewRelic, Datadog, GCPCloudMonitoring.
+
+Optional:
+
+- `app_dynamics_inputs` (Block List, Max: 1) AppDynamics-specific inputs. Required when apm_type is 'AppDynamics'. (see [below for nested schema](#nestedblock--apm_probe--app_dynamics_inputs))
+- `comparator` (Block List, Max: 1) Comparator for APM metric validation. (see [below for nested schema](#nestedblock--apm_probe--comparator))
+- `datadog_inputs` (Block List, Max: 1) Datadog-specific inputs. Required when apm_type is 'Datadog'. (see [below for nested schema](#nestedblock--apm_probe--datadog_inputs))
+- `dynatrace_inputs` (Block List, Max: 1) Dynatrace-specific inputs. Required when apm_type is 'Dynatrace'. (see [below for nested schema](#nestedblock--apm_probe--dynatrace_inputs))
+- `gcp_cloud_monitoring_inputs` (Block List, Max: 1) GCP Cloud Monitoring-specific inputs. Required when apm_type is 'GCPCloudMonitoring'. (see [below for nested schema](#nestedblock--apm_probe--gcp_cloud_monitoring_inputs))
+- `new_relic_inputs` (Block List, Max: 1) NewRelic-specific inputs. Required when apm_type is 'NewRelic'. (see [below for nested schema](#nestedblock--apm_probe--new_relic_inputs))
+- `prometheus_inputs` (Block List, Max: 1) Prometheus-specific inputs. Required when apm_type is 'Prometheus'. (see [below for nested schema](#nestedblock--apm_probe--prometheus_inputs))
+- `splunk_observability_inputs` (Block List, Max: 1) SplunkObservability-specific inputs. Required when apm_type is 'SplunkObservability'. (see [below for nested schema](#nestedblock--apm_probe--splunk_observability_inputs))
+
+<a id="nestedblock--apm_probe--app_dynamics_inputs"></a>
+### Nested Schema for `apm_probe.app_dynamics_inputs`
+
+Required:
+
+- `connector_id` (String) Harness connector ID for AppDynamics.
+
+Optional:
+
+- `appd_metrics` (Block List, Max: 1) AppDynamics metrics configuration. (see [below for nested schema](#nestedblock--apm_probe--app_dynamics_inputs--appd_metrics))
+
+<a id="nestedblock--apm_probe--app_dynamics_inputs--appd_metrics"></a>
+### Nested Schema for `apm_probe.app_dynamics_inputs.appd_metrics`
+
+Optional:
+
+- `application_name` (String) AppDynamics application name.
+- `duration_in_min` (Number) Duration in minutes for the AppDynamics query.
+- `metrics_full_path` (String) Full path to the AppDynamics metric.
+
+
+
+<a id="nestedblock--apm_probe--comparator"></a>
+### Nested Schema for `apm_probe.comparator`
+
+Required:
+
+- `criteria` (String) Comparison criteria (==, !=, <, >, <=, >=, contains, matches, notMatches, oneOf).
+- `type` (String) Comparator type (string, int, float).
+- `value` (String) Expected value.
+
+
+<a id="nestedblock--apm_probe--datadog_inputs"></a>
+### Nested Schema for `apm_probe.datadog_inputs`
+
+Required:
+
+- `connector_id` (String) Harness connector ID for Datadog.
+
+Optional:
+
+- `duration_in_min` (Number) Duration in minutes for the Datadog query.
+- `query` (String) Datadog query string.
+- `synthetics_test` (Block List, Max: 1) Datadog Synthetics test configuration. (see [below for nested schema](#nestedblock--apm_probe--datadog_inputs--synthetics_test))
+
+<a id="nestedblock--apm_probe--datadog_inputs--synthetics_test"></a>
+### Nested Schema for `apm_probe.datadog_inputs.synthetics_test`
+
+Required:
+
+- `public_id` (String) Public ID of the Datadog Synthetics test.
+
+Optional:
+
+- `test_type` (String) Type of Synthetics test (api, browser).
+
+
+
+<a id="nestedblock--apm_probe--dynatrace_inputs"></a>
+### Nested Schema for `apm_probe.dynatrace_inputs`
+
+Required:
+
+- `connector_id` (String) Harness connector ID for Dynatrace.
+
+Optional:
+
+- `duration_in_min` (Number) Duration in minutes for the Dynatrace query.
+- `metrics` (Block List, Max: 1) Dynatrace metrics configuration. (see [below for nested schema](#nestedblock--apm_probe--dynatrace_inputs--metrics))
+
+<a id="nestedblock--apm_probe--dynatrace_inputs--metrics"></a>
+### Nested Schema for `apm_probe.dynatrace_inputs.metrics`
+
+Optional:
+
+- `entity_selector` (String) Dynatrace entity selector.
+- `metrics_selector` (String) Dynatrace metrics selector.
+
+
+
+<a id="nestedblock--apm_probe--gcp_cloud_monitoring_inputs"></a>
+### Nested Schema for `apm_probe.gcp_cloud_monitoring_inputs`
+
+Required:
+
+- `project_id` (String) GCP project ID.
+- `query` (String) GCP monitoring query string.
+- `service_account_key` (String, Sensitive) GCP service account key (JSON).
+
+
+<a id="nestedblock--apm_probe--new_relic_inputs"></a>
+### Nested Schema for `apm_probe.new_relic_inputs`
+
+Required:
+
+- `connector_id` (String) Harness connector ID for NewRelic.
+
+Optional:
+
+- `new_relic_metric` (Block List, Max: 1) NewRelic metric configuration. (see [below for nested schema](#nestedblock--apm_probe--new_relic_inputs--new_relic_metric))
+
+<a id="nestedblock--apm_probe--new_relic_inputs--new_relic_metric"></a>
+### Nested Schema for `apm_probe.new_relic_inputs.new_relic_metric`
+
+Optional:
+
+- `query` (String) NRQL query string.
+- `query_metric` (String) NewRelic query metric name.
+
+
+
+<a id="nestedblock--apm_probe--prometheus_inputs"></a>
+### Nested Schema for `apm_probe.prometheus_inputs`
+
+Required:
+
+- `connector_id` (String) Harness connector ID for Prometheus.
+- `query` (String) PromQL query string.
+
+Optional:
+
+- `tls_config` (Block List, Max: 1) TLS configuration for Prometheus connection. (see [below for nested schema](#nestedblock--apm_probe--prometheus_inputs--tls_config))
+
+<a id="nestedblock--apm_probe--prometheus_inputs--tls_config"></a>
+### Nested Schema for `apm_probe.prometheus_inputs.tls_config`
+
+Optional:
+
+- `ca_cert_secret` (String) Harness secret identifier for CA certificate.
+- `client_cert_secret` (String) Harness secret identifier for client certificate.
+- `client_key_secret` (String) Harness secret identifier for client key.
+- `insecure_skip_verify` (Boolean) Skip TLS certificate verification.
+
+
+
+<a id="nestedblock--apm_probe--splunk_observability_inputs"></a>
+### Nested Schema for `apm_probe.splunk_observability_inputs`
+
+Required:
+
+- `connector_id` (String) Harness connector ID for Splunk Observability.
+
+Optional:
+
+- `splunk_observability_metrics` (Block List, Max: 1) Splunk Observability metrics configuration. (see [below for nested schema](#nestedblock--apm_probe--splunk_observability_inputs--splunk_observability_metrics))
+
+<a id="nestedblock--apm_probe--splunk_observability_inputs--splunk_observability_metrics"></a>
+### Nested Schema for `apm_probe.splunk_observability_inputs.splunk_observability_metrics`
+
+Optional:
+
+- `duration_in_min` (Number) Duration in minutes for the Splunk query.
+- `query` (String) Splunk Observability query string.
+
+
+
+
+<a id="nestedblock--cmd_probe"></a>
 ### Nested Schema for `cmd_probe`
 
-Read-Only:
+Required:
 
-- `command` (String)
-- `comparator` (List of Object) (see [below for nested schema](#nestedobjatt--cmd_probe--comparator))
-- `env` (List of Object) (see [below for nested schema](#nestedobjatt--cmd_probe--env))
-- `source` (String)
+- `command` (String) Command to execute.
 
-<a id="nestedobjatt--cmd_probe--comparator"></a>
+Optional:
+
+- `comparator` (Block List, Max: 1) Comparator for command output validation. (see [below for nested schema](#nestedblock--cmd_probe--comparator))
+- `env` (Block List) Environment variables for the command. (see [below for nested schema](#nestedblock--cmd_probe--env))
+- `source` (String) Optional source for the command probe. Leave UNSET for inline execution (the command runs inside the experiment pod). If set, it must be a YAML/JSON-encoded SourceDetails object describing an external source pod (e.g. `image`, `command`, `args`, `env`, `imagePullPolicy`, `nodeSelector`). At experiment execution the backend unmarshals this string into a SourceDetails object, so a bare keyword such as "inline", "configMap", or "secret" is INVALID and fails with "cannot unmarshal string into Go value of type v1.SourceDetails". To run inline, omit this field entirely.
+
+<a id="nestedblock--cmd_probe--comparator"></a>
 ### Nested Schema for `cmd_probe.comparator`
 
-Read-Only:
+Required:
 
-- `criteria` (String)
-- `type` (String)
-- `value` (String)
+- `criteria` (String) Comparison criteria (==, !=, <, >, <=, >=, contains, matches, notMatches, oneOf).
+- `type` (String) Comparator type (string, int, float).
+- `value` (String) Expected value.
 
 
-<a id="nestedobjatt--cmd_probe--env"></a>
+<a id="nestedblock--cmd_probe--env"></a>
 ### Nested Schema for `cmd_probe.env`
 
-Read-Only:
+Required:
 
-- `name` (String)
-- `value` (String)
+- `name` (String) Environment variable name.
+- `value` (String) Environment variable value.
 
 
 
-<a id="nestedatt--http_probe"></a>
+<a id="nestedblock--http_probe"></a>
 ### Nested Schema for `http_probe`
 
-Read-Only:
+Required:
 
-- `method` (List of Object) (see [below for nested schema](#nestedobjatt--http_probe--method))
-- `url` (String)
+- `url` (String) URL to probe.
 
-<a id="nestedobjatt--http_probe--method"></a>
+Optional:
+
+- `auth` (Block List, Max: 1) Authentication configuration. (see [below for nested schema](#nestedblock--http_probe--auth))
+- `headers` (Map of String) HTTP headers.
+- `method` (Block List, Max: 1) HTTP method configuration with GET or POST. (see [below for nested schema](#nestedblock--http_probe--method))
+- `tls_config` (Block List, Max: 1) TLS configuration. (see [below for nested schema](#nestedblock--http_probe--tls_config))
+
+<a id="nestedblock--http_probe--auth"></a>
+### Nested Schema for `http_probe.auth`
+
+Required:
+
+- `type` (String) Auth type (basic, bearer, etc.).
+
+Optional:
+
+- `password` (String, Sensitive) Password for basic auth.
+- `token` (String, Sensitive) Token for bearer auth.
+- `username` (String) Username for basic auth.
+
+
+<a id="nestedblock--http_probe--method"></a>
 ### Nested Schema for `http_probe.method`
 
-Read-Only:
+Optional:
 
-- `get` (List of Object) (see [below for nested schema](#nestedobjatt--http_probe--method--get))
-- `post` (List of Object) (see [below for nested schema](#nestedobjatt--http_probe--method--post))
+- `get` (Block List, Max: 1) GET method configuration. (see [below for nested schema](#nestedblock--http_probe--method--get))
+- `post` (Block List, Max: 1) POST method configuration. (see [below for nested schema](#nestedblock--http_probe--method--post))
 
-<a id="nestedobjatt--http_probe--method--get"></a>
+<a id="nestedblock--http_probe--method--get"></a>
 ### Nested Schema for `http_probe.method.get`
 
-Read-Only:
+Optional:
 
-- `criteria` (String)
-- `response_body` (String)
-- `response_code` (String)
+- `criteria` (String) Response criteria (e.g., '==', '!=', 'contains').
+- `response_body` (String) Expected response body.
+- `response_code` (String) Expected HTTP response code (e.g., '200', '404').
 
 
-<a id="nestedobjatt--http_probe--method--post"></a>
+<a id="nestedblock--http_probe--method--post"></a>
 ### Nested Schema for `http_probe.method.post`
 
-Read-Only:
+Optional:
 
-- `body` (String)
-- `body_path` (String)
-- `content_type` (String)
-- `criteria` (String)
-- `response_body` (String)
-- `response_code` (String)
-
-
+- `body` (String) POST request body.
+- `body_path` (String) Path to file containing POST body.
+- `content_type` (String) Content-Type header for POST request.
+- `criteria` (String) Response criteria (e.g., '==', '!=', 'contains').
+- `response_body` (String) Expected response body.
+- `response_code` (String) Expected HTTP response code (e.g., '200', '404').
 
 
-<a id="nestedatt--k8s_probe"></a>
+
+<a id="nestedblock--http_probe--tls_config"></a>
+### Nested Schema for `http_probe.tls_config`
+
+Optional:
+
+- `ca_cert` (String) CA certificate.
+- `client_cert` (String) Client certificate.
+- `client_key` (String, Sensitive) Client key.
+- `insecure_skip_verify` (Boolean) Skip TLS certificate verification.
+
+
+
+<a id="nestedblock--k8s_probe"></a>
 ### Nested Schema for `k8s_probe`
 
-Read-Only:
+Required:
 
-- `field_selector` (String)
-- `label_selector` (String)
-- `namespace` (String)
-- `operation` (String)
-- `resource` (String)
-- `version` (String)
+- `resource` (String) Resource type (e.g., 'pods', 'deployments').
+- `version` (String) API version (e.g., 'v1', 'v1beta1').
+
+Optional:
+
+- `field_selector` (String) Field selector for filtering resources.
+- `group` (String) API group (e.g., 'apps', 'batch').
+- `label_selector` (String) Label selector for filtering resources.
+- `namespace` (String) Kubernetes namespace.
+- `operation` (String) Operation to perform (create, delete, present, absent, etc.).
+- `resource_names` (String) Comma-separated list of resource names.
 
 
-<a id="nestedatt--run_properties"></a>
+<a id="nestedblock--run_properties"></a>
 ### Nested Schema for `run_properties`
 
-Read-Only:
+Optional:
 
-- `interval` (String)
-- `stop_on_failure` (Boolean)
-- `timeout` (String)
+- `attempt` (Number) Number of attempts.
+- `initial_delay` (String) Initial delay before probe execution (e.g., '5s', '1m').
+- `interval` (String) Interval between probe executions (e.g., '10s', '30s').
+- `polling_interval` (String) Polling interval for continuous probes (e.g., '2s', '5s').
+- `retry` (Number) Number of retries.
+- `stop_on_failure` (Boolean) Whether to stop on failure.
+- `timeout` (String) Timeout for probe execution (e.g., '30s', '5m').
+- `verbosity` (String) Verbosity level for logging.
 
 
-<a id="nestedatt--variables"></a>
+<a id="nestedblock--variables"></a>
 ### Nested Schema for `variables`
 
-Read-Only:
+Required:
 
-- `name` (String)
-- `required` (Boolean)
-- `type` (String)
-- `value` (String)
+- `name` (String) Variable name.
+- `value` (String) Variable value.
+
+Optional:
+
+- `description` (String) Variable description.
+- `required` (Boolean) Whether the variable is required.
+- `type` (String) Variable type (e.g., 'string', 'number', 'boolean').

@@ -3,12 +3,18 @@
 page_title: "harness_chaos_image_registry Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for managing a Harness Chaos Image Registry
+  Resource for managing a Harness Chaos Image Registry.
+  Not currently supported
+  Importing account-scoped registries: terraform import requires an org_id (org_id/project_id or org_id/project_id/infra_id).
 ---
 
 # harness_chaos_image_registry (Resource)
 
-Resource for managing a Harness Chaos Image Registry
+Resource for managing a Harness Chaos Image Registry.
+
+## Not currently supported
+
+- Importing account-scoped registries: `terraform import` requires an `org_id` (`org_id/project_id` or `org_id/project_id/infra_id`).
 
 ## Example Usage
 
@@ -70,3 +76,17 @@ Optional:
 - `ddcr_fault` (String)
 - `ddcr_lib` (String)
 - `log_watcher` (String)
+
+## Import
+
+Import is supported using the following syntax:
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+# Import a project-level Chaos Image Registry
+terraform import harness_chaos_image_registry.example <org_id>/<project_id>
+
+# Import an infrastructure-scoped Chaos Image Registry
+terraform import harness_chaos_image_registry.example <org_id>/<project_id>/<infra_id>
+```

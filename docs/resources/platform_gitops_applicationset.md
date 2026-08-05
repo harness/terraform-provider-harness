@@ -344,8 +344,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--cluster_decision_resource--template--spec--destination"></a>
@@ -749,8 +749,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--clusters--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--clusters--template--spec--destination"></a>
@@ -1160,8 +1160,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--git--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--git--template--spec--destination"></a>
@@ -1547,8 +1547,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--list--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--list--template--spec--destination"></a>
@@ -1983,8 +1983,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--cluster_decision_resource--template--spec--destination"></a>
@@ -2388,8 +2388,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--clusters--template--spec--destination"></a>
@@ -2799,8 +2799,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--git--template--spec--destination"></a>
@@ -3186,8 +3186,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--list--template--spec--destination"></a>
@@ -3620,8 +3620,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--cluster_decision_resource--template--spec--destination"></a>
@@ -4025,8 +4025,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--clusters--template--spec--destination"></a>
@@ -4436,8 +4436,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--git--template--spec--destination"></a>
@@ -4823,8 +4823,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--list--template--spec--destination"></a>
@@ -5325,8 +5325,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--pull_request--template--spec--destination"></a>
@@ -5890,8 +5890,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--generator--scm_provider--template--spec--destination"></a>
@@ -6286,8 +6286,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--matrix--template--spec--destination"></a>
@@ -6721,8 +6721,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--cluster_decision_resource--template--spec--destination"></a>
@@ -7126,8 +7126,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--clusters--template--spec--destination"></a>
@@ -7537,8 +7537,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--git--template--spec--destination"></a>
@@ -7924,8 +7924,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--list--template--spec--destination"></a>
@@ -8426,8 +8426,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--pull_request--template--spec--destination"></a>
@@ -8991,8 +8991,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--generator--scm_provider--template--spec--destination"></a>
@@ -9387,8 +9387,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--merge--template--spec--destination"></a>
@@ -9889,8 +9889,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--pull_request--template--spec--destination"></a>
@@ -10454,8 +10454,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--generator--scm_provider--template--spec--destination"></a>
@@ -10850,8 +10850,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--matrix--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--matrix--template--spec--destination"></a>
@@ -11287,8 +11287,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--cluster_decision_resource--template--spec--destination"></a>
@@ -11692,8 +11692,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--clusters--template--spec--destination"></a>
@@ -12103,8 +12103,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--git--template--spec--destination"></a>
@@ -12490,8 +12490,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--list--template--spec--destination"></a>
@@ -12924,8 +12924,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--cluster_decision_resource--template--spec--destination"></a>
@@ -13329,8 +13329,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--clusters--template--spec--destination"></a>
@@ -13740,8 +13740,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--git--template--spec--destination"></a>
@@ -14127,8 +14127,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--list--template--spec--destination"></a>
@@ -14629,8 +14629,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--pull_request--template--spec--destination"></a>
@@ -15194,8 +15194,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--generator--scm_provider--template--spec--destination"></a>
@@ -15590,8 +15590,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--matrix--template--spec--destination"></a>
@@ -16025,8 +16025,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--cluster_decision_resource--template--spec--destination"></a>
@@ -16430,8 +16430,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--clusters--template--spec--destination"></a>
@@ -16841,8 +16841,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--git--template--spec--destination"></a>
@@ -17228,8 +17228,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--list--template--spec--destination"></a>
@@ -17730,8 +17730,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--pull_request--template--spec--destination"></a>
@@ -18295,8 +18295,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--generator--scm_provider--template--spec--destination"></a>
@@ -18691,8 +18691,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--merge--template--spec--destination"></a>
@@ -19193,8 +19193,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--pull_request--template--spec--destination"></a>
@@ -19758,8 +19758,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--generator--scm_provider--template--spec--destination"></a>
@@ -20154,8 +20154,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--merge--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--merge--template--spec--destination"></a>
@@ -20656,8 +20656,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--pull_request--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--pull_request--template--spec--destination"></a>
@@ -21221,8 +21221,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `source` (Block List) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--source))
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--generator--scm_provider--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--generator--scm_provider--template--spec--destination"></a>
@@ -21616,7 +21616,6 @@ Optional:
 Required:
 
 - `destination` (Block List, Min: 1, Max: 1) Reference to the Kubernetes server and namespace in which the application will be deployed. (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--destination))
-- `source` (Block List, Min: 1) Location of the application's manifests or chart. (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--source))
 
 Optional:
 
@@ -21624,7 +21623,8 @@ Optional:
 - `info` (Block List) List of information (URLs, email addresses, and plain text) that relates to the application. (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--info))
 - `project` (String) The project the application belongs to.
 - `revision_history_limit` (String) Limits the number of items kept in the application's revision history, which is used for informational purposes as well as for rollbacks to previous versions. This should only be changed in exceptional circumstances. Setting to zero will store no history. This will reduce storage used. Increasing will increase the space used to store the history, so we do not recommend increasing it. Default is 10.
-- `sources` (Block List) Location of the application's manifests or chart. Use when specifying multiple fields (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--sources))
+- `source` (Block List, Max: 1) Location of the application's manifests or chart. Mutually exclusive with `sources`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--source))
+- `sources` (Block List) List of sources for the application, used to specify multiple sources for a multi-source application. Mutually exclusive with `source`; specify exactly one of `source` or `sources`. (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--sources))
 - `sync_policy` (Block List, Max: 1) Controls when and how a sync will be performed. (see [below for nested schema](#nestedblock--applicationset--spec--template--spec--sync_policy))
 
 <a id="nestedblock--applicationset--spec--template--spec--destination"></a>
@@ -21635,6 +21635,28 @@ Optional:
 - `name` (String) Name of the target cluster. Can be used instead of `server`.
 - `namespace` (String) Target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace.
 - `server` (String) URL of the target cluster and must be set to the Kubernetes control plane API.
+
+
+<a id="nestedblock--applicationset--spec--template--spec--ignore_difference"></a>
+### Nested Schema for `applicationset.spec.template.spec.ignore_difference`
+
+Optional:
+
+- `group` (String) The Kubernetes resource Group to match for.
+- `jq_path_expressions` (List of String) List of JQ path expression strings targeting the field(s) to ignore.
+- `json_pointers` (List of String) List of JSONPaths strings targeting the field(s) to ignore.
+- `kind` (String) The Kubernetes resource Kind to match for.
+- `name` (String) The Kubernetes resource Name to match for.
+- `namespace` (String) The Kubernetes resource Namespace to match for.
+
+
+<a id="nestedblock--applicationset--spec--template--spec--info"></a>
+### Nested Schema for `applicationset.spec.template.spec.info`
+
+Optional:
+
+- `name` (String) Name of the information.
+- `value` (String) Value of the information.
 
 
 <a id="nestedblock--applicationset--spec--template--spec--source"></a>
@@ -21767,28 +21789,6 @@ Optional:
 - `value` (String) Value of the environment variable.
 
 
-
-
-<a id="nestedblock--applicationset--spec--template--spec--ignore_difference"></a>
-### Nested Schema for `applicationset.spec.template.spec.ignore_difference`
-
-Optional:
-
-- `group` (String) The Kubernetes resource Group to match for.
-- `jq_path_expressions` (List of String) List of JQ path expression strings targeting the field(s) to ignore.
-- `json_pointers` (List of String) List of JSONPaths strings targeting the field(s) to ignore.
-- `kind` (String) The Kubernetes resource Kind to match for.
-- `name` (String) The Kubernetes resource Name to match for.
-- `namespace` (String) The Kubernetes resource Namespace to match for.
-
-
-<a id="nestedblock--applicationset--spec--template--spec--info"></a>
-### Nested Schema for `applicationset.spec.template.spec.info`
-
-Optional:
-
-- `name` (String) Name of the information.
-- `value` (String) Value of the information.
 
 
 <a id="nestedblock--applicationset--spec--template--spec--sources"></a>

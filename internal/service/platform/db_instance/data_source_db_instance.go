@@ -29,6 +29,16 @@ func DataSourceDBInstance() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"commit_sha": {
+				Description: "The commit SHA to pin the changelog to a specific revision. Mutually exclusive with branch and git_tag.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"git_tag": {
+				Description: "The git tag to pin the changelog to a specific tagged revision. Mutually exclusive with branch and commit_sha.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"connector": {
 				Description: "The connector to database",
 				Type:        schema.TypeString,
@@ -81,6 +91,8 @@ func readDataSourceDBInstance(d *schema.ResourceData, dbInstance *dbops.DbInstan
 	d.Set("name", dbInstance.Name)
 	d.Set("tags", helpers.FlattenTags(dbInstance.Tags))
 	d.Set("branch", dbInstance.Branch)
+	d.Set("commit_sha", dbInstance.CommitSha)
+	d.Set("git_tag", dbInstance.GitTag)
 	d.Set("connector", dbInstance.Connector)
 	d.Set("context", dbInstance.Context)
 

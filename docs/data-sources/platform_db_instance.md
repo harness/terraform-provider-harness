@@ -39,8 +39,10 @@ data "harness_platform_db_instance" "example" {
 ### Read-Only
 
 - `branch` (String) The branch of changeSet repository
+- `commit_sha` (String) The commit SHA to pin the changelog to a specific revision. Mutually exclusive with branch and git_tag.
 - `connector` (String) The connector to database
 - `context` (String) The liquibase context
 - `description` (String) Description of the resource.
+- `git_tag` (String) The git tag to pin the changelog to a specific tagged revision. Mutually exclusive with branch and commit_sha.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.

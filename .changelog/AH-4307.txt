@@ -1,0 +1,3 @@
+```release-note:feature
+harness_platform_har_registry: Added support for `GO`, `CONDA`, and `HELM_HTTP` package types, including their upstream sources (`GoProxy`, `Anaconda`, `HelmChartRepo`).
+```

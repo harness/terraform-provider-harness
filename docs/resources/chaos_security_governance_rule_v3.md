@@ -3,12 +3,26 @@
 page_title: "harness_chaos_security_governance_rule_v3 Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for managing a Harness Chaos Security Governance Rule (V3 / REST API).
+  Resource for managing a Harness Chaos Security Governance Rule (V3 / REST API). A rule binds one or more governance conditions to user groups and active time windows to control when chaos experiments may run.
+  Usage notes
+  condition_ids is required and must contain at least one condition (references may be bare IDs or org/project/condition-id - only the trailing ID segment is used).time_windows is required. Within a window, provide either duration or end_time (they are mutually exclusive; the backend derives the other). end_time must be within one year of start_time, so duration is often easier.recurrence.type accepts None, Daily, Weekly, Monthly, Yearly; recurrence.value (day of month) applies only when type = Monthly; use until = -1 for no end.
+  Import
+  Import uses the 3-part ID org_id/project_id/rule_id.
 ---
 
 # harness_chaos_security_governance_rule_v3 (Resource)
 
-Resource for managing a Harness Chaos Security Governance Rule (V3 / REST API).
+Resource for managing a Harness Chaos Security Governance Rule (V3 / REST API). A rule binds one or more governance conditions to user groups and active time windows to control when chaos experiments may run.
+
+## Usage notes
+
+- `condition_ids` is required and must contain at least one condition (references may be bare IDs or `org/project/condition-id` - only the trailing ID segment is used).
+- `time_windows` is required. Within a window, provide **either** `duration` **or** `end_time` (they are mutually exclusive; the backend derives the other). `end_time` must be within one year of `start_time`, so `duration` is often easier.
+- `recurrence.type` accepts `None`, `Daily`, `Weekly`, `Monthly`, `Yearly`; `recurrence.value` (day of month) applies only when `type = Monthly`; use `until = -1` for no end.
+
+## Import
+
+Import uses the 3-part ID `org_id/project_id/rule_id`.
 
 ## Example Usage
 

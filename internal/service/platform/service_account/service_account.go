@@ -87,6 +87,13 @@ func resourceServiceAccountCreateOrUpdate(ctx context.Context, d *schema.Resourc
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
+
+	if resp.Data == nil {
+		return helpers.HandleEmptyCreateUpdateResponse(nil, "service account")
+	}
+	if resp.Data.Identifier == "" {
+		return helpers.HandleEmptyCreateUpdateResponse(resp.Data.GovernanceMetadata, "service account")
+	}
 	readServiceAccount(d, resp.Data)
 	return nil
 }

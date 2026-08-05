@@ -247,6 +247,13 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	if d.Get("git_details.0.import_from_git").(bool) {
+		if importResp.Data == nil || importResp.Data.EnvIdentifier == "" {
+			var governance *nextgen.GovernanceMetadata
+			if importResp.Data != nil {
+				governance = importResp.Data.GovernanceMetadata
+			}
+			return helpers.HandleEmptyCreateUpdateResponse(governance, "environment")
+		}
 		readImportRes(d, importResp.Data.EnvIdentifier)
 	} else {
 		if shouldUpdateGitDetails {
@@ -256,6 +263,13 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 			if err != nil {
 				return helpers.HandleReadApiError(err, d, httpResp)
 			}
+		}
+		if resp.Data == nil || resp.Data.Environment == nil {
+			var governance *nextgen.GovernanceMetadata
+			if resp.Data != nil {
+				governance = resp.Data.GovernanceMetadata
+			}
+			return helpers.HandleEmptyCreateUpdateResponse(governance, "environment")
 		}
 		readEnvironment(d, resp.Data.Environment)
 	}
@@ -277,6 +291,10 @@ func resourceEnviornmentEditGitDetails(ctx context.Context, c *nextgen.APIClient
 
 	if err != nil {
 		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
+	}
+
+	if resp.Data == nil {
+		return helpers.HandleEmptyCreateUpdateResponse(nil, "environment")
 	}
 
 	d.SetId(resp.Data.Identifier)

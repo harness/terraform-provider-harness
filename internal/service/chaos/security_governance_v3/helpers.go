@@ -1,8 +1,27 @@
 package security_governance_v3
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/harness/harness-go-sdk/harness/chaos"
 )
+
+// parseScopedImportIDV3 parses a project-scoped import ID of the form
+// "<org_id>/<project_id>/<resource_id>". idLabel names the trailing segment
+// (e.g. "rule-id" or "condition-id") for use in the error message. All three
+// segments are required and must be non-empty.
+func parseScopedImportIDV3(importID, idLabel string) (orgID, projectID, resourceID string, err error) {
+	parts := strings.Split(importID, "/")
+	if len(parts) != 3 {
+		return "", "", "", fmt.Errorf("invalid import ID format. Expected \"<org-id>/<project-id>/<%s>\", got: %s", idLabel, importID)
+	}
+	orgID, projectID, resourceID = parts[0], parts[1], parts[2]
+	if orgID == "" || projectID == "" || resourceID == "" {
+		return "", "", "", fmt.Errorf("org_id, project_id, and %s cannot be empty", strings.ReplaceAll(idLabel, "-", "_"))
+	}
+	return orgID, projectID, resourceID, nil
+}
 
 // operatorPtr returns a pointer to a SecurityGovernanceOperator from a string.
 func operatorPtr(s string) *chaos.SecurityGovernanceOperator {

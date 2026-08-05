@@ -7,6 +7,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceFaultTemplate_basic(t *testing.T) {
@@ -168,6 +169,11 @@ func TestAccResourceFaultTemplate_withVariables(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "variables.1.name", "CHAOS_DURATION"),
 					resource.TestCheckResourceAttr(resourceName, "variables.1.type", "string"),
 				),
+			},
+			{
+				// Drift check: variables must round-trip with no perpetual diff.
+				Config:   testAccResourceFaultTemplate_withVariables(name),
+				PlanOnly: true,
 			},
 			{
 				ResourceName:      resourceName,
@@ -613,6 +619,154 @@ func testAccResourceFaultTemplate_withLinks(name string) string {
 				name = "Source"
 				url  = "https://github.com/example/fault"
 			}
+
+			spec {
+				chaos {
+					fault_name = "byoc-injector"
+
+					params {
+						name  = "TOTAL_CHAOS_DURATION"
+						value = "60"
+					}
+				}
+			}
+		}
+	`, name)
+}
+
+// TestAccResourceFaultTemplate_accountScopeImport reproduces the customer-reported
+// import failure for an ACCOUNT-scoped fault template imported via the short
+// "hub_identity/identity" (2-part) form. Before the fix the import handler only
+// accepted the 4-part org_id/project_id/hub_identity/identity form.
+func TestAccResourceFaultTemplate_accountScopeImport(t *testing.T) {
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_chaos_fault_template.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceFaultTemplate_accountScope(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", ""),
+					resource.TestCheckResourceAttr(resourceName, "project_id", ""),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: faultTemplateImportIDFunc(resourceName, 2),
+			},
+		},
+	})
+}
+
+// TestAccResourceFaultTemplate_orgScopeImport reproduces the import failure for an
+// ORG-scoped fault template imported via the "org_id/hub_identity/identity"
+// (3-part) form.
+func TestAccResourceFaultTemplate_orgScopeImport(t *testing.T) {
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_chaos_fault_template.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceFaultTemplate_orgScope(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttrSet(resourceName, "org_id"),
+					resource.TestCheckResourceAttr(resourceName, "project_id", ""),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: faultTemplateImportIDFunc(resourceName, 3),
+			},
+		},
+	})
+}
+
+// faultTemplateImportIDFunc builds a scoped import ID from resource state:
+//   - parts == 2: hub_identity/identity            (account scope)
+//   - parts == 3: org_id/hub_identity/identity     (org scope)
+func faultTemplateImportIDFunc(resourceName string, parts int) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("resource not found: %s", resourceName)
+		}
+		hub := rs.Primary.Attributes["hub_identity"]
+		identity := rs.Primary.Attributes["identity"]
+		switch parts {
+		case 3:
+			return fmt.Sprintf("%s/%s/%s", rs.Primary.Attributes["org_id"], hub, identity), nil
+		default:
+			return fmt.Sprintf("%s/%s", hub, identity), nil
+		}
+	}
+}
+
+func testAccResourceFaultTemplate_accountScope(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_chaos_hub_v2" "test" {
+			identity    = "%[1]s"
+			name        = "%[1]s"
+			description = "Account-scope chaos hub for fault template"
+		}
+
+		resource "harness_chaos_fault_template" "test" {
+			hub_identity    = harness_chaos_hub_v2.test.identity
+			identity        = "%[1]s"
+			name            = "%[1]s"
+			description     = "Account-scope fault template"
+			category        = ["Kubernetes"]
+			infrastructures = ["KubernetesV2"]
+			type            = "Custom"
+
+			spec {
+				chaos {
+					fault_name = "byoc-injector"
+
+					params {
+						name  = "TOTAL_CHAOS_DURATION"
+						value = "60"
+					}
+				}
+			}
+		}
+	`, name)
+}
+
+func testAccResourceFaultTemplate_orgScope(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name       = "%[1]s"
+		}
+
+		resource "harness_chaos_hub_v2" "test" {
+			org_id      = harness_platform_organization.test.id
+			identity    = "%[1]s"
+			name        = "%[1]s"
+			description = "Org-scope chaos hub for fault template"
+		}
+
+		resource "harness_chaos_fault_template" "test" {
+			org_id          = harness_platform_organization.test.id
+			hub_identity    = harness_chaos_hub_v2.test.identity
+			identity        = "%[1]s"
+			name            = "%[1]s"
+			description     = "Org-scope fault template"
+			category        = ["Kubernetes"]
+			infrastructures = ["KubernetesV2"]
+			type            = "Custom"
 
 			spec {
 				chaos {

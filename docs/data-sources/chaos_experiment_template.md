@@ -123,6 +123,7 @@ Read-Only:
 
 Read-Only:
 
+- `conditions_v2` (List of Object) (see [below for nested schema](#nestedobjatt--spec--actions--conditions_v2))
 - `continue_on_completion` (Boolean)
 - `identity` (String)
 - `infra_id` (String)
@@ -130,6 +131,15 @@ Read-Only:
 - `name` (String)
 - `revision` (Number)
 - `values` (List of Object) (see [below for nested schema](#nestedobjatt--spec--actions--values))
+
+<a id="nestedobjatt--spec--actions--conditions_v2"></a>
+### Nested Schema for `spec.actions.conditions_v2`
+
+Read-Only:
+
+- `operator` (String)
+- `values` (List of String)
+
 
 <a id="nestedobjatt--spec--actions--values"></a>
 ### Nested Schema for `spec.actions.values`
@@ -147,12 +157,22 @@ Read-Only:
 Read-Only:
 
 - `auth_enabled` (Boolean)
+- `conditions_v2` (List of Object) (see [below for nested schema](#nestedobjatt--spec--faults--conditions_v2))
 - `identity` (String)
 - `infra_id` (String)
 - `is_enterprise` (Boolean)
 - `name` (String)
 - `revision` (String)
 - `values` (List of Object) (see [below for nested schema](#nestedobjatt--spec--faults--values))
+
+<a id="nestedobjatt--spec--faults--conditions_v2"></a>
+### Nested Schema for `spec.faults.conditions_v2`
+
+Read-Only:
+
+- `operator` (String)
+- `values` (List of String)
+
 
 <a id="nestedobjatt--spec--faults--values"></a>
 ### Nested Schema for `spec.faults.values`
@@ -170,6 +190,7 @@ Read-Only:
 Read-Only:
 
 - `conditions` (List of Object) (see [below for nested schema](#nestedobjatt--spec--probes--conditions))
+- `conditions_v2` (List of Object) (see [below for nested schema](#nestedobjatt--spec--probes--conditions_v2))
 - `duration` (String)
 - `enable_data_collection` (Boolean)
 - `identity` (String)
@@ -186,6 +207,15 @@ Read-Only:
 Read-Only:
 
 - `execute_upon` (String)
+
+
+<a id="nestedobjatt--spec--probes--conditions_v2"></a>
+### Nested Schema for `spec.probes.conditions_v2`
+
+Read-Only:
+
+- `operator` (String)
+- `values` (List of String)
 
 
 <a id="nestedobjatt--spec--probes--values"></a>

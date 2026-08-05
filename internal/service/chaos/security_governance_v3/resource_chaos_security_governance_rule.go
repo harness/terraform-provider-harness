@@ -20,7 +20,14 @@ import (
 
 func ResourceChaosSecurityGovernanceRuleV3() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for managing a Harness Chaos Security Governance Rule (V3 / REST API).",
+		Description: "Resource for managing a Harness Chaos Security Governance Rule (V3 / REST API). " +
+			"A rule binds one or more governance conditions to user groups and active time windows to control when chaos experiments may run.\n\n" +
+			"## Usage notes\n\n" +
+			"- `condition_ids` is required and must contain at least one condition (references may be bare IDs or `org/project/condition-id` - only the trailing ID segment is used).\n" +
+			"- `time_windows` is required. Within a window, provide **either** `duration` **or** `end_time` (they are mutually exclusive; the backend derives the other). `end_time` must be within one year of `start_time`, so `duration` is often easier.\n" +
+			"- `recurrence.type` accepts `None`, `Daily`, `Weekly`, `Monthly`, `Yearly`; `recurrence.value` (day of month) applies only when `type = Monthly`; use `until = -1` for no end.\n\n" +
+			"## Import\n\n" +
+			"Import uses the 3-part ID `org_id/project_id/rule_id`.\n",
 		CreateContext: resourceChaosSecurityGovernanceRuleV3Create,
 		ReadContext:   resourceChaosSecurityGovernanceRuleV3Read,
 		UpdateContext: resourceChaosSecurityGovernanceRuleV3Update,
@@ -343,18 +350,9 @@ func resourceChaosSecurityGovernanceRuleV3Delete(ctx context.Context, d *schema.
 
 func resourceChaosSecurityGovernanceRuleV3Import(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	// Expected format: <org_id>/<project_id>/<rule_id>
-	importID := d.Id()
-	parts := strings.Split(importID, "/")
-	if len(parts) != 3 {
-		return nil, fmt.Errorf("invalid import ID format. Expected \"<org-id>/<project-id>/<rule-id>\", got: %s", importID)
-	}
-
-	orgID := parts[0]
-	projectID := parts[1]
-	ruleID := parts[2]
-
-	if orgID == "" || projectID == "" || ruleID == "" {
-		return nil, fmt.Errorf("org_id, project_id, and rule_id cannot be empty")
+	orgID, projectID, ruleID, err := parseScopedImportIDV3(d.Id(), "rule-id")
+	if err != nil {
+		return nil, err
 	}
 
 	d.SetId(ruleID)

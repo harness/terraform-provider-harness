@@ -136,6 +136,7 @@ func DataSourceExperimentTemplate() *schema.Resource {
 										Type:        schema.TypeBool,
 										Computed:    true,
 									},
+									"conditions_v2": conditionsV2DataSourceSchema(),
 									"values": {
 										Description: "Variable values for the action",
 										Type:        schema.TypeList,
@@ -194,6 +195,7 @@ func DataSourceExperimentTemplate() *schema.Resource {
 										Type:        schema.TypeBool,
 										Computed:    true,
 									},
+									"conditions_v2": conditionsV2DataSourceSchema(),
 									"values": {
 										Description: "Variable values for the fault",
 										Type:        schema.TypeList,
@@ -262,8 +264,10 @@ func DataSourceExperimentTemplate() *schema.Resource {
 										Type:        schema.TypeBool,
 										Computed:    true,
 									},
+									"conditions_v2": conditionsV2DataSourceSchema(),
 									"conditions": {
-										Description: "Probe execution conditions",
+										Description: "Deprecated: not part of the experiment template API; use conditions_v2.",
+										Deprecated:  "conditions (execute_upon) is not supported by the experiment template API. Use conditions_v2 instead.",
 										Type:        schema.TypeList,
 										Computed:    true,
 										Elem: &schema.Resource{
@@ -439,6 +443,31 @@ func DataSourceExperimentTemplate() *schema.Resource {
 							},
 						},
 					},
+				},
+			},
+		},
+	}
+}
+
+// conditionsV2DataSourceSchema returns the computed conditions_v2 block for the
+// data source (operator + values), mirroring the backend experiment.Conditions.
+func conditionsV2DataSourceSchema() *schema.Schema {
+	return &schema.Schema{
+		Description: "Execution conditions (operator + values) gating whether this runs.",
+		Type:        schema.TypeList,
+		Computed:    true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"operator": {
+					Description: "Logical operator combining values (AND/OR).",
+					Type:        schema.TypeString,
+					Computed:    true,
+				},
+				"values": {
+					Description: "Boolean-parseable condition values (may include <+input>).",
+					Type:        schema.TypeList,
+					Computed:    true,
+					Elem:        &schema.Schema{Type: schema.TypeString},
 				},
 			},
 		},

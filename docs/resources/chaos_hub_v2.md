@@ -4,11 +4,23 @@ page_title: "harness_chaos_hub_v2 Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
   Resource for managing Harness Chaos Hub V2.
+  Git-backed hubs (not supported yet)
+  The connector_ref, repo_branch, and repo_name fields describe a Git-backed chaos hub. Git-backed Chaos Hub V2 is not supported yet - these fields are accepted by the schema but have no functional effect today. Create hubs without them; they are retained only for forward compatibility and may be deprecated.
+  Updatable vs. immutable fields
+  Only name, description, and tags can be updated in place. Changing any of identity, org_id, project_id, connector_ref, repo_branch, or repo_name forces recreation, because the update API does not accept those fields.
 ---
 
 # harness_chaos_hub_v2 (Resource)
 
 Resource for managing Harness Chaos Hub V2.
+
+## Git-backed hubs (not supported yet)
+
+The `connector_ref`, `repo_branch`, and `repo_name` fields describe a Git-backed chaos hub. **Git-backed Chaos Hub V2 is not supported yet** - these fields are accepted by the schema but have no functional effect today. Create hubs without them; they are retained only for forward compatibility and may be deprecated.
+
+## Updatable vs. immutable fields
+
+Only `name`, `description`, and `tags` can be updated in place. Changing any of `identity`, `org_id`, `project_id`, `connector_ref`, `repo_branch`, or `repo_name` forces recreation, because the update API does not accept those fields.
 
 ## Example Usage
 
@@ -131,12 +143,12 @@ resource "harness_chaos_hub_v2" "project_level" {
 
 ### Optional
 
-- `connector_ref` (String) Reference to the Git connector (format: scope.connectorId, e.g., org.myconnector or account.myconnector).
+- `connector_ref` (String) Reference to the Git connector (format: scope.connectorId, e.g., org.myconnector or account.myconnector). Git-backed Chaos Hub V2 is not supported yet, so this field has no functional effect today. Changing this forces recreation.
 - `description` (String) Description of the chaos hub.
 - `org_id` (String) The ID of the organization.
 - `project_id` (String) The ID of the project.
-- `repo_branch` (String) Git repository branch.
-- `repo_name` (String) Name of the Git repository (required for account-level connectors).
+- `repo_branch` (String) Git repository branch. Git-backed Chaos Hub V2 is not supported yet, so this field has no functional effect today. Changing this forces recreation (not updatable via the API).
+- `repo_name` (String) Name of the Git repository (required for account-level connectors). Git-backed Chaos Hub V2 is not supported yet, so this field has no functional effect today. Changing this forces recreation (not updatable via the API).
 - `tags` (List of String) Tags to associate with the chaos hub.
 
 ### Read-Only
