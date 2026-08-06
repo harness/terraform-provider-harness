@@ -1539,16 +1539,17 @@ func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) st
 /*
 # Needs different API keys for org and account scope tests.
 # set HARNESS_PLATFORM_API_KEY, TF_VAR_harness_api_key
+
 # project level import test
   HARNESS_TEST_ORG_ID=default \
-  HARNESS_TEST_PROJECT_ID=senthilproj01 \
+  HARNESS_TEST_PROJECT_ID=proj01 \
   TF_ACC=1 go test -v ./internal/service/pipeline/template/... \
       -run TestAccTemplateImport_ProjectScope \
       -timeout 20m
 
 # org level import test
   export HARNESS_PLATFORM_API_KEY=<org-scoped-token>
-  HARNESS_TEST_ORG_ID=senthilorg01 \
+  HARNESS_TEST_ORG_ID=org01 \
   TF_ACC=1 go test -v ./internal/service/pipeline/template/... \
       -run TestAccTemplateImport_OrgScope \
       -timeout 20m
