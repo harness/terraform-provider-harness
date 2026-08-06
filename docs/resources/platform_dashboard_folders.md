@@ -13,7 +13,7 @@ Resource for a Harness Custom Dashboard Folder.
 ## Example Usage
 
 ```terraform
-resource "harness_platform_dashboard_folders" "folder" {
+resource "harness_platform_dashboard_folder" "folder" {
   name = "name"
 }
 ```

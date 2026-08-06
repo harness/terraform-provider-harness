@@ -105,6 +105,11 @@ func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
+						"application_namespaces": {
+							Description: "Comma-separated list of namespaces where Application CRs are permitted to reside. Use \"*\" for all namespaces.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -168,6 +173,9 @@ func dataSourceGitopsAgentDeployYamlRead(ctx context.Context, d *schema.Resource
 					var v1ArgoCdSettings nextgen.V1ArgoCdSettings
 					if argocd["enable_helm_path_traversal"] != nil {
 						v1ArgoCdSettings.EnableHelmPathTraversal = argocd["enable_helm_path_traversal"].(bool)
+					}
+					if argocd["application_namespaces"] != nil {
+						v1ArgoCdSettings.ApplicationNamespaces = argocd["application_namespaces"].(string)
 					}
 					yamlQuery.ArgocdSettings = &v1ArgoCdSettings
 				}

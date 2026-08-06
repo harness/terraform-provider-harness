@@ -51,6 +51,7 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 
 Optional:
 
+- `application_namespaces` (String) Comma-separated list of namespaces where Application CRs are permitted to reside. Use "*" for all namespaces.
 - `enable_helm_path_traversal` (Boolean) Controls the Environment variable HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL to allow or deny dot-dot-slash values file paths. Disabled by default for security reasons. This config is pushed as an env variable to the repo-server.
 
 

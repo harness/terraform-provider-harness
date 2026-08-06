@@ -49,18 +49,21 @@ TARGET_DOCS_FILE="$BACKUP_DIR/target-docs.txt"
 FULL_REGEN_REQUIRED="false"
 DOCS_SCOPE="targeted"
 
+get_changed_files() {
+    {
+        git diff --name-only
+        git diff --name-only --cached
+        git ls-files --others --exclude-standard
+        git diff --name-only "$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main 2>/dev/null)" HEAD 2>/dev/null || true
+    } | sort -u
+}
+
 should_generate_docs() {
     if [ "$FORCE_DOCS" = "true" ]; then
         return 0
     fi
 
-    changed_files="$(
-        {
-            git diff --name-only
-            git diff --name-only --cached
-            git ls-files --others --exclude-standard
-        } | sort -u
-    )"
+    changed_files="$(get_changed_files)"
 
     if [ -z "$changed_files" ]; then
         return 1
@@ -80,13 +83,7 @@ should_generate_docs() {
 collect_target_docs() {
     : > "$TARGET_DOCS_FILE"
 
-    changed_files="$(
-        {
-            git diff --name-only
-            git diff --name-only --cached
-            git ls-files --others --exclude-standard
-        } | sort -u
-    )"
+    changed_files="$(get_changed_files)"
 
     if [ -z "$changed_files" ]; then
         return 0

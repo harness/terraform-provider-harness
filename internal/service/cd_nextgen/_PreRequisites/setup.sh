@@ -9,26 +9,42 @@ NC='\033[0m' # No Color
 
 echo -e "${BLUE}=== Starting Harness Resource Setup ===${NC}\n"
 
-# Function to check if a secret exists
-check_secret() {
-    local secret_name=$1
-    terraform state list | grep -q "harness_platform_secret_text.$secret_name"
-    return $?
+TF_VARS=(-var="github_token_value=${github_token_value}" -var="harness_automation_github_token=${harness_automation_github_token}")
+
+# Try to import a resource into the ephemeral state for this run.
+# If the resource doesn't exist in Harness yet, the import fails and apply will create it.
+try_import() {
+    local resource_address=$1
+    local import_id=$2
+    echo -e "${YELLOW}  Importing $resource_address...${NC}"
+    import_output=$(terraform import "${TF_VARS[@]}" "$resource_address" "$import_id" 2>&1)
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}  ✓ Imported (will update)${NC}"
+    else
+        if echo "$import_output" | grep -qi "not found\|does not exist\|404\|cannot be found"; then
+            echo -e "${YELLOW}  Not found in Harness (will create)${NC}"
+        else
+            echo -e "${RED}  Import error: $import_output${NC}"
+        fi
+    fi
 }
 
-# Function to check if a connector exists
-check_connector() {
-    local connector_name=$1
-    terraform state list | grep -q "harness_platform_connector_github.$connector_name"
-    return $?
+apply_target() {
+    local resource_address=$1
+    terraform apply -auto-approve "${TF_VARS[@]}" -target="$resource_address"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ $resource_address is up to date${NC}"
+    else
+        echo -e "${RED}✗ Failed: $resource_address${NC}"
+    fi
 }
 
 # Initialize Terraform
 echo -e "${YELLOW}Initializing Terraform...${NC}"
 terraform init
 
-# First phase: Check and create secrets
-echo -e "\n${BLUE}=== Phase 1: Checking and Creating Secrets ===${NC}"
+# ── Secrets ──────────────────────────────────────────────────────────────────
+echo -e "\n${BLUE}=== Phase 1: Secrets ===${NC}"
 
 declare -a secrets=(
     "TF_spot_account_id"
@@ -40,25 +56,13 @@ declare -a secrets=(
 )
 
 for secret in "${secrets[@]}"; do
-    echo -e "\n${YELLOW}Checking secret: $secret${NC}"
-    if check_secret "$secret"; then
-        echo -e "${GREEN}✓ Secret '$secret' already exists${NC}"
-    else
-        echo -e "${RED}Secret '$secret' not found. Creating...${NC}"
-        terraform apply -auto-approve \
-            -var="github_token_value=${github_token_value}" \
-            -var="harness_automation_github_token=${harness_automation_github_token}" \
-            -target="harness_platform_secret_text.$secret"
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}✓ Successfully created secret: $secret${NC}"
-        else
-            echo -e "${RED}✗ Failed to create secret: $secret${NC}"
-        fi
-    fi
+    echo -e "\n${YELLOW}Secret: $secret${NC}"
+    try_import "harness_platform_secret_text.$secret" "$secret"
+    apply_target "harness_platform_secret_text.$secret"
 done
 
-# Second phase: Check and create connectors
-echo -e "\n${BLUE}=== Phase 2: Checking and Creating Connectors ===${NC}"
+# ── Connectors ───────────────────────────────────────────────────────────────
+echo -e "\n${BLUE}=== Phase 2: Connectors ===${NC}"
 
 declare -a connectors=(
     "TF_GitX_connector"
@@ -70,21 +74,9 @@ declare -a connectors=(
 )
 
 for connector in "${connectors[@]}"; do
-    echo -e "\n${YELLOW}Checking connector: $connector${NC}"
-    if check_connector "$connector"; then
-        echo -e "${GREEN}✓ Connector '$connector' already exists${NC}"
-    else
-        echo -e "${RED}Connector '$connector' not found. Creating...${NC}"
-        terraform apply -auto-approve \
-            -var="github_token_value=${github_token_value}" \
-            -var="harness_automation_github_token=${harness_automation_github_token}" \
-            -target="harness_platform_connector_github.$connector"
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}✓ Successfully created connector: $connector${NC}"
-        else
-            echo -e "${RED}✗ Failed to create connector: $connector${NC}"
-        fi
-    fi
+    echo -e "\n${YELLOW}Connector: $connector${NC}"
+    try_import "harness_platform_connector_github.$connector" "$connector"
+    apply_target "harness_platform_connector_github.$connector"
 done
 
 echo -e "\n${GREEN}=== Setup Complete ===${NC}"

@@ -95,6 +95,67 @@ resource "harness_platform_har_registry" "helm_http_upstream" {
   }
   parent_ref = "accountId/orgId/projectId"
 }
+
+# Example of an Upstream Custom Debian Registry (Debian source needs url)
+resource "harness_platform_har_registry" "debian_upstream" {
+  identifier   = "upstream_debian_registry"
+  description  = "Upstream Debian Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "DEBIAN"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "Custom"
+    url       = "http://deb.debian.org/debian"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of an Upstream Python Registry with a custom remote URL suffix
+resource "harness_platform_har_registry" "python_upstream" {
+  identifier   = "upstream_python_registry"
+  description  = "Upstream Python Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "PYTHON"
+
+  config {
+    type              = "UPSTREAM"
+    source            = "Custom"
+    url               = "https://pypi.example.com"
+    remote_url_suffix = "simple"
+    auth_type         = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of an Upstream Conan Registry (ConanCenter source needs no url)
+resource "harness_platform_har_registry" "conan_upstream" {
+  identifier   = "upstream_conan_registry"
+  description  = "Upstream Conan Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "CONAN"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "ConanCenter"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of a Virtual Terraform Registry
+resource "harness_platform_har_registry" "terraform_virtual" {
+  identifier   = "virtual_terraform_registry"
+  description  = "Virtual Terraform Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "TERRAFORM"
+
+  config {
+    type = "VIRTUAL"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
 ```
 
 ## Schema
@@ -102,7 +163,7 @@ resource "harness_platform_har_registry" "helm_http_upstream" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, TERRAFORM)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 
@@ -133,6 +194,7 @@ Optional:
 - `auth` (Block List, Max: 1) Authentication configuration for UPSTREAM registry type (see [below for nested schema](#nestedblock--config--auth))
 - `auth_type` (String) Type of authentication for UPSTREAM registry type (UserPassword, Anonymous, AccessKeySecretKey)
 - `firewall_mode` (String) Dependency firewall mode for UPSTREAM registry type. Valid values: `ALLOW` (default - no policy evaluation), `ENABLED` (firewall active, artifacts scanned against policies), `QUARANTINE` (artifacts that fail policy evaluation are blocked). Not supported for DOCKER or HELM package types.
+- `remote_url_suffix` (String) Optional path suffix for Python UPSTREAM registries with Custom source. Overrides the default `simple` path used for PyPI-compatible indexes. Requires `config.url` when source is Custom. Not supported for non-PYTHON package types. Leading and trailing slashes are normalized.
 - `source` (String) Upstream source
 - `upstream_proxies` (List of String) List of upstream proxies for VIRTUAL registry type
 - `url` (String) URL of the upstream (required if type=UPSTREAM & package_type=HELM)

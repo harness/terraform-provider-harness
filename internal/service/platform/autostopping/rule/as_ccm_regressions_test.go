@@ -102,6 +102,52 @@ func TestAccResourceECSRule_CCM32012_DependsOrderNoPerpetualPlan(t *testing.T) {
 	})
 }
 
+// TestAccResourceVMRule_DryRunFalseOnUpdate verifies that dry_run can be updated from
+// true to false without perpetual plan drift after refresh (regression for the same
+// provider/SDK boolean serialization class as CCM-32482 governance enforcement).
+func TestAccResourceVMRule_DryRunFalseOnUpdate(t *testing.T) {
+	name := fmt.Sprintf("terr-c32482-%s", randAlnum(5))
+	proxyName := fmt.Sprintf("terr-c32482p-%s", randAlnum(5))
+	apiKey := os.Getenv(platformAPIKeyEnv)
+	resourceName := "harness_autostopping_rule_vm.test"
+
+	var proxyID string
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			cleanupStaleRulesForVM(t)
+		},
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testVMRule(name, proxyName, apiKey, true),
+				Check: resource.ComposeTestCheckFunc(
+					extractAttr("harness_autostopping_azure_proxy.test", "identifier", &proxyID),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "dry_run", "true"),
+				),
+			},
+			{
+				PreConfig: func() {
+					if err := waitForProxyReady(proxyID, 3*time.Minute); err != nil {
+						t.Fatalf("Proxy not ready: %v", err)
+					}
+				},
+				Config: testVMRule(name, proxyName, apiKey, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "dry_run", "false"),
+				),
+			},
+			{
+				Config:   testVMRule(name, proxyName, apiKey, false),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 // TestAccResourceECSRule_CCM32336_OutOfBandDeleteRecreates verifies that when an
 // AutoStopping rule is deleted out-of-band (UI / direct API), the next refresh
 // treats the GET as "not found" (HTTP 404 + ENTITY_NOT_FOUND) and re-plans a

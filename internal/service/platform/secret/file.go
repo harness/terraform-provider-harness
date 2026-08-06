@@ -120,6 +120,14 @@ func resourceSecretFileCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 
+	if resp.Data == nil || resp.Data.Secret == nil {
+		var governance *nextgen.GovernanceMetadata
+		if resp.Data != nil {
+			governance = resp.Data.GovernanceMetadata
+		}
+		return helpers.HandleEmptyCreateUpdateResponse(governance, "secret")
+	}
+
 	if err := readSecretFile(d, resp.Data.Secret); err != nil {
 		return diag.FromErr(err)
 	}

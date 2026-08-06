@@ -68,7 +68,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Optional:    true,
 						Description: "Upstream source",
 						ValidateFunc: validation.StringInSlice([]string{
-							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo",
+							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter",
 						}, false),
 					},
 					"url": {
@@ -81,6 +81,20 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 								"URL must start with http:// or https://",
 							),
 						),
+						ConflictsWith: []string{
+							"config.0.upstream_proxies",
+						},
+					},
+					"remote_url_suffix": {
+						Description: "Optional path suffix for Python UPSTREAM registries with Custom source. " +
+							"Overrides the default `simple` path segment used for PyPI-compatible indexes. " +
+							"Requires `config.url` when source is Custom. Not supported for non-PYTHON package types. " +
+							"Leading and trailing slashes are normalized.",
+						Type:     schema.TypeString,
+						Optional: true,
+						DiffSuppressFunc: func(_, old, new string, _ *schema.ResourceData) bool {
+							return normalizeRemoteURLSuffix(old) == normalizeRemoteURLSuffix(new)
+						},
 						ConflictsWith: []string{
 							"config.0.upstream_proxies",
 						},
@@ -179,7 +193,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			},
 		},
 		"package_type": {
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, CONAN, etc.)",
 			Type:        schema.TypeString,
 			Required:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -197,6 +211,9 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.GO_PackageType),
 				(string)(har.CONDA_PackageType),
 				(string)(har.HELM_HTTP_PackageType),
+				(string)(har.DEBIAN_PackageType),
+				(string)(har.CONAN_PackageType),
+				(string)(har.TERRAFORM_PackageType),
 			}, false),
 		},
 		"is_public": {
@@ -267,7 +284,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Computed:    true,
 		}
 		mainSchema["package_type"] = &schema.Schema{
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, CONAN, etc.)",
 			Type:        schema.TypeString,
 			Optional:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -285,6 +302,9 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.GO_PackageType),
 				(string)(har.CONDA_PackageType),
 				(string)(har.HELM_HTTP_PackageType),
+				(string)(har.DEBIAN_PackageType),
+				(string)(har.CONAN_PackageType),
+				(string)(har.TERRAFORM_PackageType),
 			}, false),
 		}
 	}
@@ -302,7 +322,7 @@ func getUpstreamRegistrySchema() *schema.Resource {
 				Required:    true,
 				Description: "Upstream source",
 				ValidateFunc: validation.StringInSlice([]string{
-					"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo",
+					"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter",
 				}, false),
 			},
 			"url": {

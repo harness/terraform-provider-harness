@@ -29,6 +29,8 @@ type Session struct {
 	ChaosClient *chaos.APIClient
 	SDClient    *svcdiscovery.APIClient
 	SplitClient *split.APIClient
+	// FMEAdminAPIEndpointError records why the FME admin API endpoint could not be derived during provider configuration.
+	FMEAdminAPIEndpointError error
 	// fmeWorkspaces caches Split workspace lookups by Harness org_id + project_id (see split.WorkspaceByOrganizationAndProject).
 	fmeWorkspaceMu sync.Mutex
 	fmeWorkspaces  map[string]split.Workspace

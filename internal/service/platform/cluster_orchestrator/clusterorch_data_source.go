@@ -55,6 +55,12 @@ func resourceClusterOrchestratorRead(ctx context.Context, d *schema.ResourceData
 
 	if resp.Response != nil {
 		setId(d, resp.Response.ID)
+		d.Set("name", resp.Response.Name)
+		d.Set("k8s_connector_id", resp.Response.K8sConnectorID)
+		if resp.Response.UserConfig != nil {
+			d.Set("cluster_endpoint", resp.Response.UserConfig.ClusterEndPoint)
+			d.Set("region", resp.Response.UserConfig.Region)
+		}
 	}
 
 	return nil

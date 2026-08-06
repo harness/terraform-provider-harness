@@ -18,6 +18,12 @@ func SplitClientFromMeta(ctx context.Context, meta interface{}) (*split.APIClien
 	}
 	client, _ := session.GetSplitClientWithContext(ctx)
 	if client == nil {
+		if session.FMEAdminAPIEndpointError != nil {
+			return nil, diag.FromErr(fmt.Errorf(
+				"Split client is not configured because the FME admin API endpoint could not be derived: %w; set fme_admin_api_endpoint in the provider configuration or FME_ADMIN_API_ENDPOINT in the environment",
+				session.FMEAdminAPIEndpointError,
+			))
+		}
 		return nil, diag.FromErr(fmt.Errorf("Split client is not configured; ensure platform_api_key and account_id are set"))
 	}
 	return client, nil

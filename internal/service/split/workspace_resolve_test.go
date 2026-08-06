@@ -1,9 +1,28 @@
 package split
 
 import (
+	"context"
 	"errors"
 	"testing"
+
+	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/stretchr/testify/require"
 )
+
+func TestSplitClientFromMeta_FMEEndpointDerivationError(t *testing.T) {
+	derivationErr := errors.New(`endpoint "https://app.harness.io/api" must end in /gateway`)
+
+	client, diags := SplitClientFromMeta(context.Background(), &internal.Session{
+		FMEAdminAPIEndpointError: derivationErr,
+	})
+
+	require.Nil(t, client)
+	require.True(t, diags.HasError())
+	require.Len(t, diags, 1)
+	require.Contains(t, diags[0].Summary, derivationErr.Error())
+	require.Contains(t, diags[0].Summary, "fme_admin_api_endpoint")
+	require.Contains(t, diags[0].Summary, "FME_ADMIN_API_ENDPOINT")
+}
 
 func TestIsWorkspaceListRetriable(t *testing.T) {
 	t.Parallel()

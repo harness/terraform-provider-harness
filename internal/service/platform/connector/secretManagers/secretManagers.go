@@ -98,6 +98,14 @@ func resourceConnectorCreateOrUpdateBase(ctx context.Context, d *schema.Resource
 		return nil, helpers.HandleApiError(err, d, httpResp)
 	}
 
+	if resp.Data == nil || resp.Data.Connector == nil {
+		var governance *nextgen.GovernanceMetadata
+		if resp.Data != nil {
+			governance = resp.Data.GovernanceMetadata
+		}
+		return nil, helpers.HandleEmptyCreateUpdateResponse(governance, "connector")
+	}
+
 	readCommonConnectorData(d, resp.Data.Connector)
 
 	return resp.Data.Connector, nil

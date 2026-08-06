@@ -1,0 +1,3 @@
+```release-note:improvement
+data-source/harness_platform_infra_variable_set: Documented the scope lookup rules and the `account.`/`org.` prefix required when referencing a Variable Set from a resource in a lower scope, such as `harness_platform_workspace`. The connector and variable attributes are now correctly reported as read-only instead of appearing as configurable inputs copied from the resource schema.
+```

@@ -1,0 +1,9 @@
+```release-note:new-resource
+resource/harness_platform_dashboard_folder: Renamed (from the previous misleading plural harness_platform_dashboard_folders) to manage a single Custom Dashboard Folder. The old plural resource name is registered for backward compatibility.
+```
+```release-note:new-data-source
+data-source/harness_platform_dashboard_folder: New data source to retrieve a single dashboard folder by id or name.
+```
+```release-note:new-data-source
+data-source/harness_platform_dashboard_folders: New data source (list) to retrieve all (or filtered by name) Custom Dashboard Folders. This addresses the original design where the plural name only supported single lookup.
+```

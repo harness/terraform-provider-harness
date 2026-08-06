@@ -90,29 +90,29 @@ resource "harness_platform_workspace" "example" {
 
 ### Required
 
-- `cost_estimation_enabled` (Boolean) Cost estimation enabled determines if cost estimation operations are performed.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `provisioner_type` (String) Provisioner type defines the provisioning tool to use (terraform, opentofu, or awscdk)
-- `provisioner_version` (String) Provisioner version defines the provisioner version to use. The latest version of Opentofu should always be supported, Terraform is only supported up to version 1.5.7.
-- `repository` (String) Repository is the name of the repository to fetch the code from.
-- `repository_connector` (String) Repository connector is the reference to the connector used to fetch the code.
-- `repository_path` (String) Repository path is the path in which the code resides.
 
 ### Optional
 
 - `associated_template` (Block List, Max: 1) Template associated with the workspace. (see [below for nested schema](#nestedblock--associated_template))
 - `connector` (Block Set) Provider connectors configured on the Workspace. Only one connector of a type is supported (see [below for nested schema](#nestedblock--connector))
+- `cost_estimation_enabled` (Boolean) Cost estimation enabled determines if cost estimation operations are performed. Optional: when omitted the value is inherited from the associated template. An explicit value (including false) is always sent to the API. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.
 - `default_pipelines` (Map of String) Default pipelines associated with this workspace
 - `description` (String) Description of the resource.
 - `environment_variable` (Block Set) Environment variables configured on the workspace (see [below for nested schema](#nestedblock--environment_variable))
 - `provider_connector` (String) Provider connector is the reference to the connector for the infrastructure provider
 - `provisioner_config` (Block Set, Max: 1) Provisioner configuration for awscdk provisioner type. Required when provisioner_type is awscdk. (see [below for nested schema](#nestedblock--provisioner_config))
-- `repository_branch` (String) Repository branch is the name of the branch to fetch the code from. This cannot be set if repository commit or sha is set.
-- `repository_commit` (String) Repository commit is tag to fetch the code from. This cannot be set if repository branch or sha is set.
-- `repository_sha` (String) Repository commit is commit SHA to fetch the code from. This cannot be set if repository branch or commit is set.
+- `provisioner_version` (String) Provisioner version defines the provisioner version to use. The latest version of Opentofu should always be supported, Terraform is only supported up to version 1.5.7. Optional: when omitted the value is inherited from the associated template. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.
+- `repository` (String) Repository is the name of the repository to fetch the code from. Optional: when omitted the value is inherited from the associated template. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.
+- `repository_branch` (String) Repository branch is the name of the branch to fetch the code from. This cannot be set if repository commit or sha is set. All three of repository_branch, repository_commit and repository_sha may be omitted only when an associated template supplies the value; otherwise exactly one must be set. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.
+- `repository_commit` (String) Repository commit is tag to fetch the code from. This cannot be set if repository branch or sha is set. All three of repository_branch, repository_commit and repository_sha may be omitted only when an associated template supplies the value; otherwise exactly one must be set. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.
+- `repository_connector` (String) Repository connector is the reference to the connector used to fetch the code. Optional: when omitted the value is inherited from the associated template. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.
+- `repository_path` (String) Repository path is the path in which the code resides. Optional: when omitted the value is inherited from the associated template. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.
+- `repository_sha` (String) Repository commit is commit SHA to fetch the code from. This cannot be set if repository branch or commit is set. All three of repository_branch, repository_commit and repository_sha may be omitted only when an associated template supplies the value; otherwise exactly one must be set. Note: because this field is computed, removing it from config after it was set does not clear it (the previous value is retained) - taint or replace the workspace to switch back to a template-inherited value.
 - `run_all` (Boolean) Boolean flag for run-all terragrunt modules
 - `tags` (Set of String) Tags to associate with the resource.
 - `terraform_variable` (Block Set) Terraform variables configured on the workspace. Terraform variable keys must be unique within the workspace. (see [below for nested schema](#nestedblock--terraform_variable))

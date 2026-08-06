@@ -122,6 +122,10 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	if resp.Data == nil || resp.Data.EnvGroup == nil {
+		return helpers.HandleEmptyCreateUpdateResponse(nil, "environment group")
+	}
+
 	readEnvironmentGroup(d, resp.Data.EnvGroup)
 
 	return nil
