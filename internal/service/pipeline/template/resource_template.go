@@ -24,7 +24,7 @@ func ResourceTemplate() *schema.Resource {
 		UpdateContext: resourceTemplateCreateOrUpdate,
 		DeleteContext: resourceTemplateDelete,
 		CreateContext: resourceTemplateCreateOrUpdate,
-		Importer:      helpers.MultiLevelResourceImporter,
+		Importer:      helpers.MultiLevelTemplateImporter,
 		CustomizeDiff: validateIdentifierMatchesYaml,
 
 		Schema: map[string]*schema.Schema{
@@ -228,6 +228,9 @@ func ResourceTemplate() *schema.Resource {
 }
 
 func resourceTemplateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+
+	//panic("HSF-86 DEBUG: resourceTemplateRead entry point hit")
+
 	c, ctx := meta.(*internal.Session).GetClientWithContext(ctx)
 
 	template_id := d.Id()
@@ -242,27 +245,33 @@ func resourceTemplateRead(ctx context.Context, d *schema.ResourceData, meta inte
 	branch_name = helpers.BuildField(d, "git_details.0.branch_name")
 	version := d.Get("version").(string)
 
+	log.Printf("[DEBUG] resourceTemplateRead: template_id=%s org_id=%s project_id=%s version=%q", template_id, org_id, project_id, version)
+
 	var err error
 	var resp nextgen.TemplateWithInputsResponse
 	var httpResp *http.Response
 
 	if project_id != "" {
 		if version == "" {
+			log.Printf("[DEBUG] resourceTemplateRead: calling GetTemplateStableProject (no version set)")
 			resp, httpResp, err = c.ProjectTemplateApi.GetTemplateStableProject(ctx, org_id, project_id, template_id, &nextgen.ProjectTemplateApiGetTemplateStableProjectOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     branch_name})
 		} else {
+			log.Printf("[DEBUG] resourceTemplateRead: calling GetTemplateProject with version=%q", version)
 			resp, httpResp, err = c.ProjectTemplateApi.GetTemplateProject(ctx, project_id, template_id, org_id, version, &nextgen.ProjectTemplateApiGetTemplateProjectOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     branch_name})
 		}
 	} else if org_id != "" && project_id == "" {
 		if version == "" {
+			log.Printf("[DEBUG] resourceTemplateRead: calling GetTemplateStableOrg (no version set)")
 			resp, httpResp, err = c.OrgTemplateApi.GetTemplateStableOrg(ctx, org_id, template_id, &nextgen.OrgTemplateApiGetTemplateStableOrgOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     branch_name,
 			})
 		} else {
+			log.Printf("[DEBUG] resourceTemplateRead: calling GetTemplateOrg with version=%q", version)
 			resp, httpResp, err = c.OrgTemplateApi.GetTemplateOrg(ctx, template_id, org_id, version, &nextgen.OrgTemplateApiGetTemplateOrgOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     branch_name,
@@ -270,17 +279,21 @@ func resourceTemplateRead(ctx context.Context, d *schema.ResourceData, meta inte
 		}
 	} else {
 		if version == "" {
+			log.Printf("[DEBUG] resourceTemplateRead: calling GetTemplateStableAcc (no version set)")
 			resp, httpResp, err = c.AccountTemplateApi.GetTemplateStableAcc(ctx, template_id, &nextgen.AccountTemplateApiGetTemplateStableAccOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     branch_name,
 			})
 		} else {
+			log.Printf("[DEBUG] resourceTemplateRead: calling GetTemplateAcc with version=%q", version)
 			resp, httpResp, err = c.AccountTemplateApi.GetTemplateAcc(ctx, template_id, version, &nextgen.AccountTemplateApiGetTemplateAccOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     branch_name,
 			})
 		}
 	}
+
+	log.Printf("[DEBUG] resourceTemplateRead: API response version=%q is_stable=%v", resp.Template.VersionLabel, resp.Template.StableTemplate)
 
 	if httpResp.StatusCode == 404 {
 		d.SetId("")
@@ -329,7 +342,6 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		if d.Get("import_from_git").(bool) {
 
 			template_id = d.Get("identifier").(string)
-
 			template_import_request_body := createImportFromGitRequestForTemplates(d)
 
 			if project_id != "" {
