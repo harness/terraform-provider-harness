@@ -144,6 +144,21 @@ resource "harness_platform_har_registry" "conan_upstream" {
   parent_ref = "accountId/orgId/projectId"
 }
 
+# Example of an Upstream Ruby Registry (RubyGems source needs no url)
+resource "harness_platform_har_registry" "rubygems_upstream" {
+  identifier   = "upstream_ruby_registry"
+  description  = "Upstream Ruby Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "RUBY"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "RubyGems"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
 # Example of a Virtual Terraform Registry
 resource "harness_platform_har_registry" "terraform_virtual" {
   identifier   = "virtual_terraform_registry"
@@ -163,7 +178,7 @@ resource "harness_platform_har_registry" "terraform_virtual" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, TERRAFORM)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 

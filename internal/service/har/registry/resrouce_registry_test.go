@@ -2905,6 +2905,86 @@ func TestAccResourceUpstreamConanRegistry(t *testing.T) {
 	})
 }
 
+// ---------------------------------------------------------------------------
+// RUBY package type
+// ---------------------------------------------------------------------------
+
+// Tests create/read/update/import for a VIRTUAL Ruby registry
+func TestAccResourceVirtualRubyRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_ruby_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "RUBY", "initial description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "RUBY"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "description", "initial description"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "RUBY", "updated description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "updated description"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/import for an UPSTREAM Ruby registry using the RubyGems source (no url required)
+func TestAccResourceUpstreamRubyRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_up_ruby_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamAnonRegistry(id, accountId, "RUBY", "RubyGems", ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "RUBY"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.source", "RubyGems"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 // Generates Terraform config for a VIRTUAL registry of the given package type
 func testAccResourceVirtualRegistryByType(id, accId, packageType, description string) string {
 	return fmt.Sprintf(`
@@ -2950,6 +3030,7 @@ func TestOrgResourceVirtualGoRegistry(t *testing.T)       { testVirtualRegistryO
 func TestOrgResourceVirtualCondaRegistry(t *testing.T)    { testVirtualRegistryOrg(t, "CONDA") }
 func TestOrgResourceVirtualHelmHTTPRegistry(t *testing.T) { testVirtualRegistryOrg(t, "HELM_HTTP") }
 func TestOrgResourceVirtualConanRegistry(t *testing.T)    { testVirtualRegistryOrg(t, "CONAN") }
+func TestOrgResourceVirtualRubyRegistry(t *testing.T)     { testVirtualRegistryOrg(t, "RUBY") }
 
 // Tests creating a VIRTUAL registry of the given package type at project level
 func TestProjectResourceVirtualGoRegistry(t *testing.T)    { testVirtualRegistryProject(t, "GO") }
@@ -2958,6 +3039,7 @@ func TestProjectResourceVirtualHelmHTTPRegistry(t *testing.T) {
 	testVirtualRegistryProject(t, "HELM_HTTP")
 }
 func TestProjectResourceVirtualConanRegistry(t *testing.T) { testVirtualRegistryProject(t, "CONAN") }
+func TestProjectResourceVirtualRubyRegistry(t *testing.T)  { testVirtualRegistryProject(t, "RUBY") }
 
 // Tests creating an UPSTREAM registry with Custom source + UserPassword auth
 func TestAccResourceUpstreamGoCustomAuthRegistry(t *testing.T) {
@@ -2968,6 +3050,9 @@ func TestAccResourceUpstreamCondaCustomAuthRegistry(t *testing.T) {
 }
 func TestAccResourceUpstreamConanCustomAuthRegistry(t *testing.T) {
 	testUpstreamCustomAuthRegistry(t, "CONAN")
+}
+func TestAccResourceUpstreamRubyCustomAuthRegistry(t *testing.T) {
+	testUpstreamCustomAuthRegistry(t, "RUBY")
 }
 func TestAccResourceUpstreamHelmHTTPCustomAuthRegistry(t *testing.T) {
 	testUpstreamCustomAuthRegistry(t, "HELM_HTTP")
