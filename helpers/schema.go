@@ -104,7 +104,11 @@ func SetCommonResourceSchema(s map[string]*schema.Schema) {
 	s["identifier"] = GetIdentifierSchema(SchemaFlagTypes.Required)
 	s["description"] = GetDescriptionSchema(SchemaFlagTypes.Optional)
 	s["name"] = GetNameSchema(SchemaFlagTypes.Required)
+	// Optional+Computed so empty tags persist as [] in state instead of null (PL-73759).
+	// With Optional alone, terraform-plugin-sdk omits empty TypeSets from state as null,
+	// which then drifts to [] on refresh.
 	s["tags"] = GetTagsSchema(SchemaFlagTypes.Optional)
+	s["tags"].Computed = true
 }
 
 // SetCommonDataSourceSchema sets the default schema objects used for most data sources.

@@ -21,7 +21,8 @@ func ExpandTags(tags []interface{}) map[string]string {
 }
 
 func FlattenTags(tags map[string]string) []string {
-	var result []string
+	// Non-nil empty slice so Terraform stores tags=[] instead of null (PL-73759).
+	result := make([]string, 0, len(tags))
 	for k, v := range tags {
 		if v == "" {
 			result = append(result, k)

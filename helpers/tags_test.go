@@ -222,3 +222,42 @@ func TestFlattenTagsWithColons(t *testing.T) {
 		})
 	}
 }
+
+func TestFlattenTags_NilOrEmptyMapReturnsNonNilEmptySlice(t *testing.T) {
+	cases := []struct {
+		name  string
+		input map[string]string
+	}{
+		{name: "nil map", input: nil},
+		{name: "empty map", input: map[string]string{}},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			result := FlattenTags(tt.input)
+			if result == nil {
+				t.Fatalf("FlattenTags() returned nil; want non-nil empty slice")
+			}
+			if len(result) != 0 {
+				t.Fatalf("FlattenTags() len = %d, want 0 (got %#v)", len(result), result)
+			}
+		})
+	}
+}
+
+func TestFlattenTags_KeyOnlyAndKeyValue(t *testing.T) {
+	result := FlattenTags(map[string]string{
+		"env":   "prod",
+		"owned": "",
+	})
+
+	want := map[string]bool{"env:prod": true, "owned": true}
+	if len(result) != 2 {
+		t.Fatalf("FlattenTags() len = %d, want 2 (got %#v)", len(result), result)
+	}
+	for _, tag := range result {
+		if !want[tag] {
+			t.Errorf("unexpected tag %q in %#v", tag, result)
+		}
+	}
+}
