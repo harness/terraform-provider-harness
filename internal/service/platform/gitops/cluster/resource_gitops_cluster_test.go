@@ -225,7 +225,6 @@ func TestAccResourceGitopsClusterSecretExpressions(t *testing.T) {
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
 	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
-	secretIdentifier := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SECRET_IDENTIFIER")
 	clusterName := id
 	resourceName := "harness_platform_gitops_cluster.test"
 
@@ -235,17 +234,18 @@ func TestAccResourceGitopsClusterSecretExpressions(t *testing.T) {
 		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				// Step 1: Create cluster with secret_expressions
-				Config: testAccResourceGitopsClusterWithSecretExpressions(id, accountId, agentId, clusterName, clusterServer, clusterToken, secretIdentifier),
+				// Step 1: Create cluster with secret_expressions backed by a TF-managed secret
+				Config: testAccResourceGitopsClusterWithSecretExpressions(id, accountId, agentId, clusterName, clusterServer, clusterToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "request.0.secret_expressions.bearerToken", "account."+secretIdentifier),
+					resource.TestCheckResourceAttr(resourceName, "request.0.secret_expressions.bearerToken", "account."+id),
 				),
 			},
 			{
-				// Step 2: Remove secret_expressions — should be cleared on the server
-				Config: testAccResourceGitopsClusterAccountLevel(id, accountId, id, agentId, clusterName, clusterServer, clusterToken),
+				// Step 2: Remove secret_expressions — should be cleared on the server.
+				// The secret itself is kept so the cluster keeps working credentials.
+				Config: testAccResourceGitopsClusterSecretExpressionsRemoved(id, accountId, agentId, clusterName, clusterServer, clusterToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -256,8 +256,17 @@ func TestAccResourceGitopsClusterSecretExpressions(t *testing.T) {
 	})
 }
 
-func testAccResourceGitopsClusterWithSecretExpressions(id string, accountId string, agentId string, clusterName string, clusterServer string, clusterToken string, secretIdentifier string) string {
+func testAccResourceGitopsClusterWithSecretExpressions(id string, accountId string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_secret_text" "test" {
+			identifier                = "%[1]s"
+			name                      = "%[1]s"
+			description               = "gitops cluster bearer token for secret_expressions test"
+			secret_manager_identifier = "harnessSecretManager"
+			value_type                = "Inline"
+			value                     = "%[6]s"
+		}
+
 		resource "harness_platform_gitops_cluster" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
@@ -266,7 +275,7 @@ func testAccResourceGitopsClusterWithSecretExpressions(id string, accountId stri
 			request {
 				upsert = true
 				secret_expressions = {
-					bearerToken = "account.%[7]s"
+					bearerToken = "account.${harness_platform_secret_text.test.id}"
 				}
 				cluster {
 					server = "%[5]s"
@@ -286,7 +295,46 @@ func testAccResourceGitopsClusterWithSecretExpressions(id string, accountId stri
 				]
 			}
 		}
-		`, id, accountId, agentId, clusterName, clusterServer, clusterToken, secretIdentifier)
+		`, id, accountId, agentId, clusterName, clusterServer, clusterToken)
+}
+
+func testAccResourceGitopsClusterSecretExpressionsRemoved(id string, accountId string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_secret_text" "test" {
+			identifier                = "%[1]s"
+			name                      = "%[1]s"
+			description               = "gitops cluster bearer token for secret_expressions test"
+			secret_manager_identifier = "harnessSecretManager"
+			value_type                = "Inline"
+			value                     = "%[6]s"
+		}
+
+		resource "harness_platform_gitops_cluster" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			agent_id   = "%[3]s"
+
+			request {
+				upsert = true
+				cluster {
+					server = "%[5]s"
+					name   = "%[4]s"
+					config {
+						bearer_token            = "%[6]s"
+						cluster_connection_type = "SERVICE_ACCOUNT"
+						tls_client_config {
+							insecure = true
+						}
+					}
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
+				]
+			}
+		}
+		`, id, accountId, agentId, clusterName, clusterServer, clusterToken)
 }
 
 func testAccGetCluster(resourceName string, state *terraform.State) (*nextgen.Servicev1Cluster, error) {

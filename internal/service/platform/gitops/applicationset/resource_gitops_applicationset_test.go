@@ -1549,3 +1549,160 @@ func testAccResourceGitopsApplicationsetMultiSource(id, accountId, name, agentId
 		}
 	`, id, accountId, name, agentId, namespace)
 }
+
+func TestAccResourceGitopsApplicationSet_GitGeneratorWithSelector(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name := id
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	namespace := os.Getenv("HARNESS_TEST_GITOPS_NAMESPACE")
+	resourceName := "harness_platform_gitops_applicationset.test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsApplicationsetGitGeneratorWithSelector(id, accountId, name, agentId, namespace),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.metadata.0.name", id),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.generator.0.selector.0.match_expressions.0.key", "chart"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.generator.0.selector.0.match_expressions.0.operator", "Exists"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.generator.0.selector.0.match_labels.team", "platform"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+			},
+			// Re-applying the unchanged config must leave an empty plan. Before the selector was sent
+			// on create and read back into state, this step failed with a diff re-adding the selector.
+			{
+				Config: testAccResourceGitopsApplicationsetGitGeneratorWithSelector(id, accountId, name, agentId, namespace),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.generator.0.selector.0.match_expressions.0.key", "chart"),
+				),
+			},
+		},
+	})
+}
+
+func testAccResourceGitopsApplicationsetGitGeneratorWithSelector(id, accountId, name, agentId, namespace string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[3]s"
+	}
+
+	resource "harness_platform_project" "test" {
+		identifier = "%[1]s"
+		name = "%[3]s"
+		org_id = harness_platform_organization.test.id
+	}
+
+	resource "harness_platform_gitops_app_project" "test" {
+		account_id = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		project_id = harness_platform_project.test.id
+		agent_id = "%[4]s"
+		upsert = true
+		project {
+			metadata {
+				name = "appset"
+				namespace = "%[5]s"
+			}
+			spec {
+				cluster_resource_whitelist {
+					group = "*"
+					kind = "*"
+				}
+				destinations {
+					namespace = "*"
+					server = "*"
+				}
+				source_repos = ["*"]
+			}
+		}
+		lifecycle {
+			ignore_changes = [
+				project.0.metadata.0.namespace,
+				project.0.metadata.0.finalizers,
+				project.0.metadata.0.labels,
+				project.0.spec.0.source_namespaces,
+			]
+		}
+	}
+
+	resource "harness_platform_gitops_app_project_mapping" "test" {
+		depends_on = [harness_platform_gitops_app_project.test]
+		account_id = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		project_id = harness_platform_project.test.id
+		agent_id = "%[4]s"
+		argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+	}
+
+	resource "harness_platform_gitops_applicationset" "test" {
+		depends_on = [harness_platform_gitops_app_project_mapping.test]
+		applicationset {
+			metadata {
+			  name      = "%[1]s"
+			  namespace = "%[5]s"
+			}
+			spec {
+			  go_template = true
+
+			  generator {
+				git {
+				  repo_url = "https://github.com/argoproj/argocd-example-apps.git"
+				  revision = "HEAD"
+				  file {
+					path = "applicationset/examples/git-generator-files-discovery/cluster-config/**/config.json"
+				  }
+				}
+				selector {
+				  match_labels = {
+					team = "platform"
+				  }
+				  match_expressions {
+					key      = "chart"
+					operator = "Exists"
+				  }
+				}
+			  }
+
+			  template {
+				metadata {
+				  name = "{{.cluster.name}}-guestbook"
+				}
+				spec {
+				  project = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+				  source {
+					repo_url        = "https://github.com/argoproj/argocd-example-apps.git"
+					path            = "helm-guestbook"
+					target_revision = "HEAD"
+				  }
+				  destination {
+					server    = "{{.cluster.address}}"
+					namespace = "%[5]s"
+				  }
+				}
+			  }
+			}
+		  }
+		project_id = harness_platform_project.test.id
+		org_id = harness_platform_organization.test.id
+		agent_id   = "%[4]s"
+		upsert     = true
+		lifecycle {
+		  ignore_changes = [
+			applicationset.0.spec.0.template.0.metadata.0.annotations,
+			applicationset.0.spec.0.template.0.metadata.0.labels,
+			applicationset.0.spec.0.template.0.metadata.0.finalizers,
+			applicationset.0.spec.0.template.0.spec.0.project,
+		  ]
+		}
+	}
+	`, id, accountId, name, agentId, namespace)
+}

@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_gitops_applicationset: Fixed `generator.selector` being silently dropped on create/update and never read back into state, which disabled label-based generator filtering and caused a perpetual `terraform plan` diff. Selectors on nested matrix generators are now persisted as well.
+```

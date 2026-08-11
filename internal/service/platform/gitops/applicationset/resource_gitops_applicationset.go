@@ -951,11 +951,19 @@ func setApplicationSet(d *schema.ResourceData, appset *nextgen.Servicev1Applicat
 									nestedGenMap["scm_provider"] = []interface{}{scmProviderMap}
 								}
 
+								if selector := flattenLabelSelector(nestedGen.Selector); selector != nil {
+									nestedGenMap["selector"] = selector
+								}
+
 								nestedGeneratorsList = append(nestedGeneratorsList, nestedGenMap)
 							}
 							matrixMap["generator"] = nestedGeneratorsList
 						}
 						generatorMap["matrix"] = []interface{}{matrixMap}
+					}
+
+					if selector := flattenLabelSelector(generator.Selector); selector != nil {
+						generatorMap["selector"] = selector
 					}
 
 					generatorsList = append(generatorsList, generatorMap)
@@ -1685,6 +1693,11 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 									}
 								}
 
+								// selector: requires spec.applyNestedSelectors on the ApplicationSet to take effect
+								if selector, ok := nestedGenMap["selector"]; ok && len(selector.([]interface{})) > 0 {
+									nestedGenerator.Selector = expandLabelSelector(selector.([]interface{}))
+								}
+
 								nestedGenList = append(nestedGenList, nestedGenerator)
 							}
 							matrixGen.Generators = nestedGenList
@@ -1847,6 +1860,11 @@ func buildApplicationSet(d *schema.ResourceData) *nextgen.ApplicationsApplicatio
 						}
 
 						generator.ScmProvider = &scmProviderGen
+					}
+
+					// selector: post-filters the params produced by the generator above
+					if selector, ok := generatorMap["selector"]; ok && len(selector.([]interface{})) > 0 {
+						generator.Selector = expandLabelSelector(selector.([]interface{}))
 					}
 
 					generatorsList = append(generatorsList, generator)
@@ -2783,6 +2801,81 @@ func applicationSetPullRequestGeneratorSchema() *schema.Schema {
 			},
 		},
 	}
+}
+
+func expandLabelSelector(selector []interface{}) *nextgen.V1LabelSelector {
+	if len(selector) == 0 {
+		return nil
+	}
+	selectorData, ok := selector[0].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	var labelSelector nextgen.V1LabelSelector
+
+	if matchLabels, ok := selectorData["match_labels"]; ok && len(matchLabels.(map[string]interface{})) > 0 {
+		labelSelector.MatchLabels = make(map[string]string)
+		for k, v := range matchLabels.(map[string]interface{}) {
+			labelSelector.MatchLabels[k] = v.(string)
+		}
+	}
+
+	if matchExpressions, ok := selectorData["match_expressions"]; ok && len(matchExpressions.([]interface{})) > 0 {
+		var expressions []nextgen.V1LabelSelectorRequirement
+		for _, expr := range matchExpressions.([]interface{}) {
+			exprData := expr.(map[string]interface{})
+			var requirement nextgen.V1LabelSelectorRequirement
+
+			if key, ok := exprData["key"]; ok && len(key.(string)) > 0 {
+				requirement.Key = key.(string)
+			}
+			if operator, ok := exprData["operator"]; ok && len(operator.(string)) > 0 {
+				requirement.Operator = operator.(string)
+			}
+			if values, ok := exprData["values"]; ok && len(values.([]interface{})) > 0 {
+				var valuesList []string
+				for _, val := range values.([]interface{}) {
+					valuesList = append(valuesList, val.(string))
+				}
+				requirement.Values = valuesList
+			}
+
+			expressions = append(expressions, requirement)
+		}
+		labelSelector.MatchExpressions = expressions
+	}
+
+	return &labelSelector
+}
+
+func flattenLabelSelector(selector *nextgen.V1LabelSelector) []interface{} {
+	if selector == nil {
+		return nil
+	}
+
+	var selectorMap = map[string]interface{}{}
+
+	if len(selector.MatchLabels) > 0 {
+		selectorMap["match_labels"] = selector.MatchLabels
+	}
+	if len(selector.MatchExpressions) > 0 {
+		var expressions []interface{}
+		for _, expr := range selector.MatchExpressions {
+			expressions = append(expressions, map[string]interface{}{
+				"key":      expr.Key,
+				"operator": expr.Operator,
+				"values":   expr.Values,
+			})
+		}
+		selectorMap["match_expressions"] = expressions
+	}
+
+	if len(selectorMap) == 0 {
+		return nil
+	}
+
+	return []interface{}{selectorMap}
 }
 
 func labelSelectorSchema() map[string]*schema.Schema {
