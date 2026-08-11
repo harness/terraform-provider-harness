@@ -68,7 +68,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Optional:    true,
 						Description: "Upstream source",
 						ValidateFunc: validation.StringInSlice([]string{
-							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter", "RubyGems",
+							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter", "RubyGems", "CRAN",
 						}, false),
 					},
 					"url": {
@@ -215,6 +215,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.CONAN_PackageType),
 				(string)(har.RUBY_PackageType),
 				(string)(har.TERRAFORM_PackageType),
+				(string)(har.CRAN_PackageType),
 			}, false),
 		},
 		"is_public": {
@@ -307,6 +308,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.CONAN_PackageType),
 				(string)(har.RUBY_PackageType),
 				(string)(har.TERRAFORM_PackageType),
+				(string)(har.CRAN_PackageType),
 			}, false),
 		}
 	}
@@ -324,7 +326,7 @@ func getUpstreamRegistrySchema() *schema.Resource {
 				Required:    true,
 				Description: "Upstream source",
 				ValidateFunc: validation.StringInSlice([]string{
-					"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter", "RubyGems",
+					"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter", "RubyGems", "CRAN",
 				}, false),
 			},
 			"url": {

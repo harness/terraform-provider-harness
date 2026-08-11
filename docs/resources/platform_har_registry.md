@@ -171,6 +171,34 @@ resource "harness_platform_har_registry" "terraform_virtual" {
   }
   parent_ref = "accountId/orgId/projectId"
 }
+
+# Example of a Virtual CRAN Registry
+resource "harness_platform_har_registry" "cran_virtual" {
+  identifier   = "virtual_cran_registry"
+  description  = "Virtual CRAN Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "CRAN"
+
+  config {
+    type = "VIRTUAL"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of an Upstream CRAN Registry (CRAN source needs no url)
+resource "harness_platform_har_registry" "cran_upstream" {
+  identifier   = "upstream_cran_registry"
+  description  = "Upstream CRAN Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "CRAN"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "CRAN"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
 ```
 
 ## Schema
@@ -178,7 +206,7 @@ resource "harness_platform_har_registry" "terraform_virtual" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, CRAN)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 
