@@ -118,6 +118,12 @@ func DatasourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
+						"oidc_session_tag_keys": {
+							Description: "List of Harness context keys to pass as AWS OIDC session tags when assuming the IAM role. Supported values include account_id, organization_id, project_id, environment_id, environment_type, pipeline_id, connector_id, connector_name, delegate_selectors, context, step_type, stage_type, triggered_by_email, triggered_by_name, service_name, and service_id.",
+							Type:        schema.TypeList,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
 					},
 				},
 			},

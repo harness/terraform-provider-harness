@@ -224,6 +224,7 @@ Required:
 Optional:
 
 - `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
+- `oidc_session_tag_keys` (List of String) List of Harness context keys to pass as AWS OIDC session tags when assuming the IAM role. Supported values include `account_id`, `organization_id`, `project_id`, `environment_id`, `environment_type`, `pipeline_id`, `connector_id`, `connector_name`, `delegate_selectors`, `context`, `step_type`, `stage_type`, `triggered_by_email`, `triggered_by_name`, `service_name`, and `service_id`.
 - `region` (String) Test Region to perform Connection test of AWS Connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ## Import

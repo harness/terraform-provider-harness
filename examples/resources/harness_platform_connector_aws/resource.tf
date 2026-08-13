@@ -85,5 +85,23 @@ resource "harness_platform_connector_aws" "aws" {
     iam_role_arn       = "test"
     delegate_selectors = ["harness-delegate"]
     region             = "aws_region"
+    oidc_session_tag_keys = [
+      "account_id",
+      "organization_id",
+      "project_id",
+      "environment_id",
+      "environment_type",
+      "pipeline_id",
+      "connector_id",
+      "connector_name",
+      "delegate_selectors",
+      "context",
+      "step_type",
+      "stage_type",
+      "triggered_by_email",
+      "triggered_by_name",
+      "service_name",
+      "service_id",
+    ]
   }
 }

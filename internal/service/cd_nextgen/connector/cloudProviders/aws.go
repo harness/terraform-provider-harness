@@ -175,6 +175,15 @@ func ResourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
+						"oidc_session_tag_keys": {
+							Description: "List of Harness context keys to pass as AWS OIDC session tags when assuming the IAM role. Supported values include account_id, organization_id, project_id, environment_id, environment_type, pipeline_id, connector_id, connector_name, delegate_selectors, context, step_type, stage_type, triggered_by_email, triggered_by_name, service_name, and service_id.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							DiffSuppressFunc: func(_, old, new string, _ *schema.ResourceData) bool {
+								return old == new || (old == "" && new == "0") || (old == "0" && new == "")
+							},
+						},
 					},
 				},
 			},
@@ -428,6 +437,12 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := config["region"].(string); attr != "" {
 			connector.Aws.Credential.Region = attr
 		}
+
+		if attr, ok := config["oidc_session_tag_keys"]; ok {
+			if tagKeys := attr.([]interface{}); len(tagKeys) > 0 {
+				connector.Aws.Credential.OidcConfig.OidcSessionTagKeys = utils.InterfaceSliceToStringSlice(tagKeys)
+			}
+		}
 	}
 
 	if attr, ok := d.GetOk("cross_account_access"); ok {
@@ -522,13 +537,17 @@ func readConnectorAws(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 			},
 		})
 	case nextgen.AwsAuthTypes.OidcAuthentication:
-		d.Set("oidc_authentication", []map[string]interface{}{
-			{
-				"iam_role_arn":       connector.Aws.Credential.OidcConfig.IamRoleArn,
-				"delegate_selectors": connector.Aws.DelegateSelectors,
-				"region":             connector.Aws.Credential.Region,
-			},
-		})
+		oidcAuth := map[string]interface{}{
+			"iam_role_arn":       connector.Aws.Credential.OidcConfig.IamRoleArn,
+			"delegate_selectors": connector.Aws.DelegateSelectors,
+			"region":             connector.Aws.Credential.Region,
+		}
+		if len(connector.Aws.Credential.OidcConfig.OidcSessionTagKeys) > 0 {
+			oidcAuth["oidc_session_tag_keys"] = utils.FlattenDelgateSelectors(connector.Aws.Credential.OidcConfig.OidcSessionTagKeys)
+		} else {
+			oidcAuth["oidc_session_tag_keys"] = nil
+		}
+		d.Set("oidc_authentication", []map[string]interface{}{oidcAuth})
 	default:
 		return fmt.Errorf("unsupported aws credential type: %s", connector.Aws.Credential.Type_)
 	}
