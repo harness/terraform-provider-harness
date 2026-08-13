@@ -970,7 +970,7 @@ func testAccResourceGitopsApplicationWithForceDelete(id string, accountId string
 			org_id = harness_platform_organization.test.id
 			account_id = "%[2]s"
 			identifier = "%[1]s"
-			cluster_id = "%[5]s"
+			cluster_id = "%[1]s"
 			repo_id = "%[1]s"
 			agent_id = "%[3]s"
 			name = "%[1]s"
@@ -1070,7 +1070,7 @@ func testAccResourceGitopsApplicationWithoutForceDelete(id string, accountId str
 			org_id = harness_platform_organization.test.id
 			account_id = "%[2]s"
 			identifier = "%[1]s"
-			cluster_id = "%[5]s"
+			cluster_id = "%[1]s"
 			repo_id = "%[1]s"
 			agent_id = "%[3]s"
 			name = "%[1]s"
