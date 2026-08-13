@@ -581,6 +581,62 @@ var GitOpsFilterImporter = &schema.ResourceImporter{
 	},
 }
 
+// MultiLevelTemplateImporter defines the importer configuration for template resources.
+// When no version is specified, the stable version is fetched.
+// Account level stable:          <template_id>
+// Account level specific version: <template_id>/versions/<version>
+// Org level stable:              <org_id>/<template_id>
+// Org level specific version:    <org_id>/<template_id>/versions/<version>
+// Project level stable:          <org_id>/<project_id>/<template_id>
+// Project level specific version: <org_id>/<project_id>/<template_id>/versions/<version>
+var MultiLevelTemplateImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		partCount := len(parts)
+
+		// "versions" is only a marker when it is the second-to-last segment
+		var version string
+		idParts := parts
+		hasVersion := partCount >= 3 && parts[partCount-2] == "versions" && parts[partCount-1] != ""
+		if hasVersion {
+			version = parts[partCount-1]
+			idParts = parts[:partCount-2]
+		}
+
+		switch len(idParts) {
+		case 1:
+			// Account level: <template_id>
+			d.SetId(idParts[0])
+			d.Set("identifier", idParts[0])
+			if hasVersion {
+				d.Set("version", version)
+			}
+			return []*schema.ResourceData{d}, nil
+		case 2:
+			// Org level: <org_id>/<template_id>
+			d.SetId(idParts[1])
+			d.Set("identifier", idParts[1])
+			d.Set("org_id", idParts[0])
+			if hasVersion {
+				d.Set("version", version)
+			}
+			return []*schema.ResourceData{d}, nil
+		case 3:
+			// Project level: <org_id>/<project_id>/<template_id>
+			d.SetId(idParts[2])
+			d.Set("identifier", idParts[2])
+			d.Set("org_id", idParts[0])
+			d.Set("project_id", idParts[1])
+			if hasVersion {
+				d.Set("version", version)
+			}
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s, expected format: [org_id/][project_id/]template_id[/versions/version]", d.Id())
+	},
+}
+
 // MultiLevelResourceImporter defines the importer configuration for all multi level resources.
 // The format used for the id is as follows:
 //   - Account Level: <identifier>

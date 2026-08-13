@@ -24,7 +24,7 @@ func ResourceTemplate() *schema.Resource {
 		UpdateContext: resourceTemplateCreateOrUpdate,
 		DeleteContext: resourceTemplateDelete,
 		CreateContext: resourceTemplateCreateOrUpdate,
-		Importer:      helpers.MultiLevelResourceImporter,
+		Importer:      helpers.MultiLevelTemplateImporter,
 		CustomizeDiff: validateIdentifierMatchesYaml,
 
 		Schema: map[string]*schema.Schema{
@@ -329,7 +329,6 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		if d.Get("import_from_git").(bool) {
 
 			template_id = d.Get("identifier").(string)
-
 			template_import_request_body := createImportFromGitRequestForTemplates(d)
 
 			if project_id != "" {

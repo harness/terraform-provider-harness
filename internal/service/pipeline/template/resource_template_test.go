@@ -2,6 +2,7 @@ package template_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -491,7 +492,7 @@ func testAccGetTemplate(resourceName string, state *terraform.State) (*openapi_c
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     buildField(r, branch_name)})
 		} else {
-			resp, _, err = c.ProjectTemplateApi.GetTemplateProject(ctx, orgId, projId, id, version, &openapi_client_nextgen.ProjectTemplateApiGetTemplateProjectOpts{
+			resp, _, err = c.ProjectTemplateApi.GetTemplateProject(ctx, projId, id, orgId, version, &openapi_client_nextgen.ProjectTemplateApiGetTemplateProjectOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     buildField(r, branch_name)})
 		}
@@ -1509,7 +1510,7 @@ func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) st
                         identifier = "%[1]s"
                         name = "%[2]s"
 						version = "v2"
-				
+
                         import_from_git = true
                         git_import_details {
                             branch_name = "main"
@@ -1528,9 +1529,537 @@ func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) st
 			depends_on = [harness_platform_template.test]
 			destroy_duration = "4s"
 		}
-		
+
 		resource "null_resource" "next" {
   			depends_on = [time_sleep.wait_4_seconds]
 		}
         `, id, name)
+}
+
+/*
+# Needs different API keys for org and account scope tests.
+# set HARNESS_PLATFORM_API_KEY, TF_VAR_harness_api_key
+
+# project level import test
+  HARNESS_TEST_ORG_ID=default \
+  HARNESS_TEST_PROJECT_ID=proj01 \
+  TF_ACC=1 go test -v ./internal/service/pipeline/template/... \
+      -run TestAccTemplateImport_ProjectScope \
+      -timeout 20m
+
+# org level import test
+  export HARNESS_PLATFORM_API_KEY=<org-scoped-token>
+  HARNESS_TEST_ORG_ID=org01 \
+  TF_ACC=1 go test -v ./internal/service/pipeline/template/... \
+      -run TestAccTemplateImport_OrgScope \
+      -timeout 20m
+
+# account level import test
+  TF_ACC=1 go test -v ./internal/service/pipeline/template/... \
+      -run TestAccTemplateImport_AccountScope \
+      -timeout 20m
+*/
+
+// TestAccTemplateImport_ProjectScope_StableVersion verifies that importing without version
+// (org_id/project_id/template_id) fetches the stable version.
+// Requires env vars: HARNESS_TEST_ORG_ID, HARNESS_TEST_PROJECT_ID
+func TestAccTemplateImport_ProjectScope_StableVersion(t *testing.T) {
+	orgID := os.Getenv("HARNESS_TEST_ORG_ID")
+	projectID := os.Getenv("HARNESS_TEST_PROJECT_ID")
+	if orgID == "" || projectID == "" {
+		t.Skip("HARNESS_TEST_ORG_ID and HARNESS_TEST_PROJECT_ID must be set")
+	}
+	id := fmt.Sprintf("hsf86proj_%s", utils.RandStringBytes(6))
+	name := id
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				// Create only v1 (stable) — single resource avoids ImportStateVerify confusion
+				Config: testAccTemplateImportProjectSingleVersion(id, name, orgID, projectID, "v1", true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "version", "v1"),
+					resource.TestCheckResourceAttr(resourceName, "is_stable", "true"),
+				),
+			},
+			{
+				// Import using stable format (no version) — must get v1 (the stable one)
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"comments", "force_delete", "git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type"},
+			},
+		},
+	})
+}
+
+// TestAccTemplateImport_ProjectScope_NonStableVersion verifies that importing a non-stable
+// version fetches that specific version, not the stable one.
+// Requires env vars: HARNESS_TEST_ORG_ID, HARNESS_TEST_PROJECT_ID
+func TestAccTemplateImport_ProjectScope_NonStableVersion(t *testing.T) {
+	orgID := os.Getenv("HARNESS_TEST_ORG_ID")
+	projectID := os.Getenv("HARNESS_TEST_PROJECT_ID")
+	if orgID == "" || projectID == "" {
+		t.Skip("HARNESS_TEST_ORG_ID and HARNESS_TEST_PROJECT_ID must be set")
+	}
+	id := fmt.Sprintf("hsf86projns_%s", utils.RandStringBytes(6))
+	name := id
+	resourceName := "harness_platform_template.test_v2"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				// Create v1 (stable) and v2 (non-stable)
+				Config: testAccTemplateImportProjectTwoVersions(id, name, orgID, projectID, "v1", "v2", true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "version", "v2"),
+					resource.TestCheckResourceAttr(resourceName, "is_stable", "false"),
+				),
+			},
+			{
+				// Import v2 (non-stable) — must get v2, not v1 (stable)
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: false,
+				ImportStateIdFunc: templateProjectImportStateIdWithVersion(resourceName, "v2"),
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) == 0 {
+						return fmt.Errorf("no state after import")
+					}
+					attrs := s[0].Attributes
+					if attrs["version"] != "v2" {
+						return fmt.Errorf("expected version=v2 after import, got %q", attrs["version"])
+					}
+					if attrs["is_stable"] != "false" {
+						return fmt.Errorf("expected is_stable=false after import, got %q", attrs["is_stable"])
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
+
+// TestAccTemplateImport_OrgScope_StableVersion verifies import at org scope with stable version.
+// Requires env var: HARNESS_TEST_ORG_ID
+func TestAccTemplateImport_OrgScope_StableVersion(t *testing.T) {
+	orgID := os.Getenv("HARNESS_TEST_ORG_ID")
+	if orgID == "" {
+		t.Skip("HARNESS_TEST_ORG_ID must be set")
+	}
+	id := fmt.Sprintf("hsf86org_%s", utils.RandStringBytes(6))
+	name := id
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTemplateImportOrgSingleVersion(id, name, orgID, "v1", true),
+
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "version", "v1"),
+					resource.TestCheckResourceAttr(resourceName, "is_stable", "true"),
+				),
+			},
+			{
+				// Import using stable format (no version) — must get v1 (the stable one)
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"force_delete", "comments", "git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type"},
+			},
+		},
+	})
+}
+
+// TestAccTemplateImport_OrgScope_NonStableVersion verifies import of a non-stable version at org scope.
+// Requires env var: HARNESS_TEST_ORG_ID
+func TestAccTemplateImport_OrgScope_NonStableVersion(t *testing.T) {
+	orgID := os.Getenv("HARNESS_TEST_ORG_ID")
+	if orgID == "" {
+		t.Skip("HARNESS_TEST_ORG_ID must be set")
+	}
+	id := fmt.Sprintf("hsf86orgns_%s", utils.RandStringBytes(6))
+	name := id
+	resourceName := "harness_platform_template.test_v2"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTemplateImportOrgTwoVersions(id, name, orgID, "v1", "v2", true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "version", "v2"),
+					resource.TestCheckResourceAttr(resourceName, "is_stable", "false"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: false,
+				ImportStateIdFunc: templateOrgImportStateIdWithVersion(resourceName, "v2"),
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) == 0 {
+						return fmt.Errorf("no state after import")
+					}
+					attrs := s[0].Attributes
+					if attrs["version"] != "v2" {
+						return fmt.Errorf("expected version=v2 after import, got %q", attrs["version"])
+					}
+					if attrs["is_stable"] != "false" {
+						return fmt.Errorf("expected is_stable=false after import, got %q", attrs["is_stable"])
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
+
+// TestAccTemplateImport_AccountScope_StableVersion verifies import at account scope with stable version.
+func TestAccTemplateImport_AccountScope_StableVersion(t *testing.T) {
+	id := fmt.Sprintf("hsf86acc_%s", utils.RandStringBytes(6))
+	name := id
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTemplateImportAccountSingleVersion(id, name, "v1", true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "version", "v1"),
+					resource.TestCheckResourceAttr(resourceName, "is_stable", "true"),
+				),
+			},
+			{
+				// Import using stable format (no version) — must get v1 (the stable one)
+				ResourceName:  resourceName,
+				ImportState:   true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{"force_delete", "comments", "git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type"},
+			},
+		},
+	})
+}
+
+// TestAccTemplateImport_AccountScope_NonStableVersion verifies import of a non-stable version at account scope.
+func TestAccTemplateImport_AccountScope_NonStableVersion(t *testing.T) {
+	id := fmt.Sprintf("hsf86accns_%s", utils.RandStringBytes(6))
+	name := id
+	resourceName := "harness_platform_template.test_v2"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccTemplateImportAccountTwoVersions(id, name, "v1", "v2", true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "version", "v2"),
+					resource.TestCheckResourceAttr(resourceName, "is_stable", "false"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: false,
+				ImportStateIdFunc: templateAccountImportStateIdWithVersion(resourceName, "v2"),
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) == 0 {
+						return fmt.Errorf("no state after import")
+					}
+					attrs := s[0].Attributes
+					if attrs["version"] != "v2" {
+						return fmt.Errorf("expected version=v2 after import, got %q", attrs["version"])
+					}
+					if attrs["is_stable"] != "false" {
+						return fmt.Errorf("expected is_stable=false after import, got %q", attrs["is_stable"])
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
+
+func templateProjectImportStateIdWithVersion(resourceName, version string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		return fmt.Sprintf("%s/%s/%s/versions/%s", orgId, projId, id, version), nil
+	}
+}
+
+func templateOrgImportStateIdWithVersion(resourceName, version string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		return fmt.Sprintf("%s/%s/versions/%s", orgId, id, version), nil
+	}
+}
+
+func templateAccountImportStateIdWithVersion(resourceName, version string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		return fmt.Sprintf("%s/versions/%s", id, version), nil
+	}
+}
+
+func testAccTemplateImportProjectSingleVersion(id, name, orgID, projectID, version string, isStable bool) string {
+	return fmt.Sprintf(`
+resource "harness_platform_template" "test" {
+  identifier   = "%[1]s"
+  name         = "%[2]s"
+  org_id       = "%[3]s"
+  project_id   = "%[4]s"
+  version      = "%[5]s"
+  is_stable    = %[6]t
+  force_delete = true
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: %[5]s
+      type: Step
+      projectIdentifier: %[4]s
+      orgIdentifier: %[3]s
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo %[5]s
+  EOT
+}
+`, id, name, orgID, projectID, version, isStable)
+}
+
+func testAccTemplateImportProjectTwoVersions(id, name, orgID, projectID, stableVersion, secondVersion string, firstIsStable bool) string {
+	return fmt.Sprintf(`
+resource "harness_platform_template" "test" {
+  identifier   = "%[1]s"
+  name         = "%[2]s"
+  org_id       = "%[3]s"
+  project_id   = "%[4]s"
+  version      = "%[5]s"
+  is_stable    = %[7]t
+  force_delete = true
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: %[5]s
+      type: Step
+      projectIdentifier: %[4]s
+      orgIdentifier: %[3]s
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo %[5]s
+  EOT
+}
+
+resource "harness_platform_template" "test_v2" {
+  identifier   = "%[1]s"
+  name         = "%[2]s"
+  org_id       = "%[3]s"
+  project_id   = "%[4]s"
+  version      = "%[6]s"
+  is_stable    = false
+  force_delete = true
+  depends_on   = [harness_platform_template.test]
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: %[6]s
+      type: Step
+      projectIdentifier: %[4]s
+      orgIdentifier: %[3]s
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo %[6]s
+  EOT
+}
+`, id, name, orgID, projectID, stableVersion, secondVersion, firstIsStable)
+}
+
+func testAccTemplateImportOrgSingleVersion(id, name, orgID, version string, isStable bool) string {
+	return fmt.Sprintf(`
+resource "harness_platform_template" "test" {
+  identifier   = "%[1]s"
+  name         = "%[2]s"
+  org_id       = "%[3]s"
+  version      = "%[4]s"
+  is_stable    = %[5]t
+  force_delete = true
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: %[4]s
+      type: Step
+      orgIdentifier: %[3]s
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo %[4]s
+  EOT
+}
+`, id, name, orgID, version, isStable)
+}
+
+func testAccTemplateImportOrgTwoVersions(id, name, orgID, stableVersion, secondVersion string, firstIsStable bool) string {
+	return fmt.Sprintf(`
+resource "harness_platform_template" "test" {
+  identifier   = "%[1]s"
+  name         = "%[2]s"
+  org_id       = "%[3]s"
+  version      = "%[4]s"
+  is_stable    = %[6]t
+  force_delete = true
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: %[4]s
+      type: Step
+      orgIdentifier: %[3]s
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo %[4]s
+  EOT
+}
+
+resource "harness_platform_template" "test_v2" {
+  identifier   = "%[1]s"
+  name         = "%[2]s"
+  org_id       = "%[3]s"
+  version      = "%[5]s"
+  is_stable    = false
+  force_delete = true
+  depends_on   = [harness_platform_template.test]
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: %[5]s
+      type: Step
+      orgIdentifier: %[3]s
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo %[5]s
+  EOT
+}
+`, id, name, orgID, stableVersion, secondVersion, firstIsStable)
+}
+
+func testAccTemplateImportAccountSingleVersion(id, name, version string, isStable bool) string {
+	return fmt.Sprintf(`
+resource "harness_platform_template" "test" {
+  identifier   = "%[1]s"
+  name         = "%[2]s"
+  version      = "%[3]s"
+  is_stable    = %[4]t
+  force_delete = true
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: %[3]s
+      type: Step
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo %[3]s
+  EOT
+}
+`, id, name, version, isStable)
+}
+
+func testAccTemplateImportAccountTwoVersions(id, name, stableVersion, secondVersion string, firstIsStable bool) string {
+	return fmt.Sprintf(`
+resource "harness_platform_template" "test" {
+  identifier   = "%[1]s"
+  name         = "%[2]s"
+  version      = "%[3]s"
+  is_stable    = %[5]t
+  force_delete = true
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: %[3]s
+      type: Step
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo %[3]s
+  EOT
+}
+
+resource "harness_platform_template" "test_v2" {
+  identifier   = "%[1]s"
+  name         = "%[2]s"
+  version      = "%[4]s"
+  is_stable    = false
+  force_delete = true
+  depends_on   = [harness_platform_template.test]
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: %[4]s
+      type: Step
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo %[4]s
+  EOT
+}
+`, id, name, stableVersion, secondVersion, firstIsStable)
 }
