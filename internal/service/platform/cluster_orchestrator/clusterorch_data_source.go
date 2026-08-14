@@ -50,18 +50,30 @@ func resourceClusterOrchestratorRead(ctx context.Context, d *schema.ResourceData
 	resp, httpResp, err := c.CloudCostClusterOrchestratorApi.ClusterOrchestratorDetails(ctx, c.AccountId, Identifier)
 
 	if err != nil {
+		if isClusterOrchestratorNotFound(err, httpResp) {
+			clearClusterOrchestratorFromState(d)
+			return nil
+		}
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	if resp.Response != nil {
-		setId(d, resp.Response.ID)
-		d.Set("name", resp.Response.Name)
-		d.Set("k8s_connector_id", resp.Response.K8sConnectorID)
-		if resp.Response.UserConfig != nil {
-			d.Set("cluster_endpoint", resp.Response.UserConfig.ClusterEndPoint)
-			d.Set("region", resp.Response.UserConfig.Region)
-		}
+	if resp.Response == nil {
+		clearClusterOrchestratorFromState(d)
+		return nil
+	}
+
+	setId(d, resp.Response.ID)
+	d.Set("name", resp.Response.Name)
+	d.Set("k8s_connector_id", resp.Response.K8sConnectorID)
+	if resp.Response.UserConfig != nil {
+		d.Set("cluster_endpoint", resp.Response.UserConfig.ClusterEndPoint)
+		d.Set("region", resp.Response.UserConfig.Region)
 	}
 
 	return nil
+}
+
+func clearClusterOrchestratorFromState(d *schema.ResourceData) {
+	d.SetId("")
+	d.MarkNewResource()
 }
