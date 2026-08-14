@@ -281,7 +281,7 @@ func readResourceGroup(d *schema.ResourceData, resourceGroup *nextgen.ResourceGr
 	d.Set("project_id", resourceGroup.ProjectIdentifier)
 	d.Set("account_id", resourceGroup.AccountIdentifier)
 	d.Set("color", resourceGroup.Color)
-	d.Set("tags", helpers.FlattenTags(resourceGroup.Tags))
+	helpers.SetTags(d, resourceGroup.Tags)
 	d.Set("description", resourceGroup.Description)
 	d.Set("allowed_scope_levels", resourceGroup.AllowedScopeLevels)
 	d.Set("included_scopes", expandIncludedScope(resourceGroup.IncludedScopes))

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func ExpandTags(tags []interface{}) map[string]string {
@@ -30,6 +31,29 @@ func FlattenTags(tags map[string]string) []string {
 		}
 	}
 	return result
+}
+
+// SetTags writes resource tags into state, leaving the attribute untouched when the API reports no
+// tags and prior state also had none.
+//
+// d.Set always writes the flatmap count key "tags.#", and the SDK's flatmap-to-cty shim treats that
+// key's presence as the difference between null and an empty set. Since the null/empty
+// reconciliation in normalizeNullValues only runs during apply, an apply settles on null (the config
+// wins) while a refresh settles on [], and Terraform reports that disagreement as drift on every
+// run even though nothing changed remotely (PL-73759).
+//
+// GetRawState is non-null only on the resource refresh path: ReadResource populates it from the
+// prior state, whereas ReadDataSource reads with no prior state at all. That keeps the guard off the
+// data source paths, where tags must stay [] so expressions like length(data.x.tags) keep working.
+func SetTags(d *schema.ResourceData, tags map[string]string) error {
+	if len(tags) == 0 {
+		raw := d.GetRawState()
+		if !raw.IsNull() && raw.Type().IsObjectType() && raw.Type().HasAttribute("tags") &&
+			raw.GetAttr("tags").IsNull() {
+			return nil
+		}
+	}
+	return d.Set("tags", FlattenTags(tags))
 }
 
 func ExpandScopeSelector(scopeSelectors []interface{}) []nextgen.ScopeSelector {
