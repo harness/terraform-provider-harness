@@ -354,10 +354,17 @@ func TestResourceImportRemoteService(t *testing.T) {
 		CheckDestroy:      testAccServiceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testResourceImportRemoteService(),
+				Config: testResourceImportRemoteService("accSvc"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", "accSvc"),
 					resource.TestCheckResourceAttr(resourceName, "name", "accSvc"),
+				),
+			},
+			{
+				Config: testResourceImportRemoteService("accSvcUpdated"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "accSvc"),
+					resource.TestCheckResourceAttr(resourceName, "name", "accSvcUpdated"),
 				),
 			},
 			{
@@ -887,12 +894,12 @@ func testResourceRemoteService(id string, name string) string {
 `, id, name)
 }
 
-func testResourceImportRemoteService() string {
+func testResourceImportRemoteService(name string) string {
 	return fmt.Sprintf(`
 
   resource "harness_platform_service" "test" {
     identifier  = "accSvc"
-    name = "accSvc"
+    name = "%[1]s"
     import_from_git = "true"
     git_details {
     store_type = "REMOTE"
@@ -902,5 +909,5 @@ func testResourceImportRemoteService() string {
     branch = "main"
     }
   }
-`)
+`, name)
 }
