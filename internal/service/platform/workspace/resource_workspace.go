@@ -588,16 +588,16 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 		ws.Description = desc.(string)
 	}
 
-	if desc, ok := d.GetOk("repository_branch"); ok {
-		ws.RepositoryBranch = desc.(string)
+	if configHas(d, "repository_branch") {
+		ws.RepositoryBranch = d.Get("repository_branch").(string)
 	}
 
-	if desc, ok := d.GetOk("repository_commit"); ok {
-		ws.RepositoryCommit = desc.(string)
+	if configHas(d, "repository_commit") {
+		ws.RepositoryCommit = d.Get("repository_commit").(string)
 	}
 
-	if desc, ok := d.GetOk("repository_sha"); ok {
-		ws.RepositorySha = desc.(string)
+	if configHas(d, "repository_sha") {
+		ws.RepositorySha = d.Get("repository_sha").(string)
 	}
 
 	if desc, ok := d.GetOk("repository_path"); ok {
@@ -691,16 +691,16 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 		ws.Description = desc.(string)
 	}
 
-	if desc, ok := d.GetOk("repository_branch"); ok {
-		ws.RepositoryBranch = desc.(string)
+	if configHas(d, "repository_branch") {
+		ws.RepositoryBranch = d.Get("repository_branch").(string)
 	}
 
-	if desc, ok := d.GetOk("repository_commit"); ok {
-		ws.RepositoryCommit = desc.(string)
+	if configHas(d, "repository_commit") {
+		ws.RepositoryCommit = d.Get("repository_commit").(string)
 	}
 
-	if desc, ok := d.GetOk("repository_sha"); ok {
-		ws.RepositorySha = desc.(string)
+	if configHas(d, "repository_sha") {
+		ws.RepositorySha = d.Get("repository_sha").(string)
 	}
 
 	if desc, ok := d.GetOk("repository_path"); ok {
