@@ -1,7 +1,7 @@
 internal/service/platform/connector/connector.go rathod.meetsatish@harness.io ritek.rounak@harness.io
 internal/service/cd/** ritek.rounak@harness.io
 internal/service/cd_nextgen/** ritek.rounak@harness.io
-internal/service/har/** ritek.rounak@harness.io
+internal/service/har/** ritek.rounak@harness.io shivakumar.ningappa@harness.io saksham.golcha@harness.io jatin.agrawal@harness.io sharique.arshi@harness.io tudor.macari@harness.io arvind.choudhary@harness.io praveenkumar.gt@harness.io akash.kumar@harness.io shubham.agrawal@harness.io
 internal/service/pipeline/** ritek.rounak@harness.io
 internal/service/platform/** ritek.rounak@harness.io imran.khan@harness.io
 .github/** ritek.rounak@harness.io
