@@ -17,7 +17,7 @@ func setTagsTestResource() *schema.Resource {
 		},
 		ReadContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			apiTags, _ := meta.(map[string]string)
-			return diag.FromErr(SetTags(d, apiTags))
+			return diag.FromErr(SetOptionalCollection(d, "tags", FlattenTags(apiTags)))
 		},
 	}
 }

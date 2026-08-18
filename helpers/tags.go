@@ -74,11 +74,6 @@ func isEmptyCollection(value interface{}) bool {
 	}
 }
 
-// SetTags writes resource tags into state using SetOptionalCollection (PL-73759).
-func SetTags(d *schema.ResourceData, tags map[string]string) error {
-	return SetOptionalCollection(d, "tags", FlattenTags(tags))
-}
-
 func ExpandScopeSelector(scopeSelectors []interface{}) []nextgen.ScopeSelector {
 	var result []nextgen.ScopeSelector
 	for _, scopeSelector := range scopeSelectors {
