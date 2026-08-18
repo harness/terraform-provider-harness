@@ -1,7 +1,9 @@
 package cluster_orchestrator
 
 import (
+	"context"
 	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -9,6 +11,44 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+var clusterOrchNotFoundMarkers = []string{
+	"invalid cluster id",
+	"could not find cluster orchestrator",
+}
+
+func isClusterOrchestratorNotFound(err error, httpResp *http.Response) bool {
+	if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		return true
+	}
+	if err == nil {
+		return false
+	}
+
+	candidates := []string{err.Error()}
+	if swaggerErr, ok := err.(nextgen.GenericSwaggerError); ok {
+		candidates = append(candidates, string(swaggerErr.Body()))
+	}
+
+	for _, candidate := range candidates {
+		candidate = strings.ToLower(candidate)
+		for _, marker := range clusterOrchNotFoundMarkers {
+			if strings.Contains(candidate, marker) {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func clusterOrchestratorMissing(ctx context.Context, c *nextgen.APIClient, orchestratorID string) bool {
+	resp, httpResp, err := c.CloudCostClusterOrchestratorApi.ClusterOrchestratorDetails(ctx, c.AccountId, orchestratorID)
+	if err != nil {
+		return isClusterOrchestratorNotFound(err, httpResp)
+	}
+	return resp.Response == nil
+}
 
 func buildClusterOrch(d *schema.ResourceData) nextgen.CreateClusterOrchestratorDto {
 
