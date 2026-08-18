@@ -197,10 +197,12 @@ func resourcePluginDelete(ctx context.Context, d *schema.ResourceData, meta inte
 
 func buildPluginAppConfigRequest(d *schema.ResourceData) idp.PluginAppConfigRequest {
 	appConfig := idp.PluginAppConfig{
-		ConfigId:   d.Get("identifier").(string),
-		ConfigName: d.Get("name").(string),
-		Enabled:    true,
-		Configs:    d.Get("configs").(string),
+		ConfigId:     d.Get("identifier").(string),
+		ConfigName:   d.Get("name").(string),
+		Enabled:      true,
+		Configs:      d.Get("configs").(string),
+		EnvVariables: []idp.PluginAppConfigEnvVar{},
+		Proxy:        []idp.PluginAppConfigProxy{},
 	}
 
 	if v, ok := d.GetOk("env_variables"); ok {

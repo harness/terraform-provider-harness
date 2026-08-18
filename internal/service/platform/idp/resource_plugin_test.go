@@ -1,5 +1,16 @@
 package idp
 
+// Unit tests for harness_platform_idp_plugin resource.
+//
+// These tests use mock data and a local HTTP server — no real Harness API calls.
+// No environment variables required.
+//
+// Run all unit tests:
+//   go test -v ./internal/service/platform/idp/... -run "TestBuildPlugin|TestReadPlugin|TestPluginResource|TestGetPluginError" -timeout=60s
+//
+// Run a single test:
+//   go test -v ./internal/service/platform/idp/... -run TestBuildPluginAppConfigRequest -timeout=60s
+
 import (
 	"context"
 	"encoding/json"
@@ -15,6 +26,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestBuildPluginAppConfigRequest verifies that buildPluginAppConfigRequest correctly
+// maps all Terraform resource data fields (identifier, name, configs, env_variables, proxy)
+// into the SDK request struct.
 func TestBuildPluginAppConfigRequest(t *testing.T) {
 	raw := map[string]interface{}{
 		"identifier": "harness-proxy",
@@ -55,6 +69,9 @@ func TestBuildPluginAppConfigRequest(t *testing.T) {
 	assert.Equal(t, []string{"delegate1"}, req.AppConfig.Proxy[0].Selectors)
 }
 
+// TestBuildPluginAppConfigRequest_Minimal verifies that when only required fields
+// (identifier, name, configs) are provided, env_variables and proxy default to
+// empty arrays (not nil) since the API rejects null values for these fields.
 func TestBuildPluginAppConfigRequest_Minimal(t *testing.T) {
 	raw := map[string]interface{}{
 		"identifier": "my-plugin",
@@ -71,10 +88,13 @@ func TestBuildPluginAppConfigRequest_Minimal(t *testing.T) {
 	assert.Equal(t, "My Plugin", req.AppConfig.ConfigName)
 	assert.True(t, req.AppConfig.Enabled)
 	assert.Equal(t, "key: value", req.AppConfig.Configs)
-	assert.Nil(t, req.AppConfig.EnvVariables)
-	assert.Nil(t, req.AppConfig.Proxy)
+	assert.Empty(t, req.AppConfig.EnvVariables)
+	assert.Empty(t, req.AppConfig.Proxy)
 }
 
+// TestReadPluginState verifies that readPluginState correctly writes API response data
+// into Terraform state. Specifically tests that env_variables with IsDeleted=true are
+// filtered out (soft-deleted entries should not appear in state).
 func TestReadPluginState(t *testing.T) {
 	config := "proxy:\n  /harness-api:\n    target: https://app.harness.io\n"
 	resp := idp.PluginInfoResponse{
@@ -135,6 +155,10 @@ func TestReadPluginState(t *testing.T) {
 	assert.Equal(t, "app.harness.io", p["host"])
 }
 
+// TestPluginResourceCRUD_MockServer spins up a local httptest server that mimics the
+// Harness IDP Plugin API (POST /v1/app-config, GET /v1/plugins-info/{id},
+// POST /v1/plugin-toggle/{id}). It creates a real SDK client pointed at this server
+// and exercises the full CRUD flow: SaveOrUpdate -> GetPluginInfo -> Toggle(disable).
 func TestPluginResourceCRUD_MockServer(t *testing.T) {
 	pluginConfig := "proxy:\n  /test:\n    target: https://test.harness.io\n"
 
@@ -220,6 +244,8 @@ func TestPluginResourceCRUD_MockServer(t *testing.T) {
 	assert.False(t, toggleResp.AppConfig.Enabled)
 }
 
+// TestGetPluginErrorMessage verifies that getPluginErrorMessage correctly extracts
+// human-readable error messages from various error types (plain errors, API errors).
 func TestGetPluginErrorMessage(t *testing.T) {
 	tests := []struct {
 		name     string
