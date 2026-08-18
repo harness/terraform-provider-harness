@@ -134,6 +134,6 @@ func readRoles(d *schema.ResourceData, role *nextgen.Role) {
 	d.Set("name", role.Name)
 	d.Set("description", role.Description)
 	helpers.SetTags(d, role.Tags)
-	d.Set("permissions", role.Permissions)
+	helpers.SetOptionalCollection(d, "permissions", role.Permissions)
 	d.Set("allowed_scope_levels", role.AllowedScopeLevels)
 }

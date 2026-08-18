@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"reflect"
 	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -33,27 +34,49 @@ func FlattenTags(tags map[string]string) []string {
 	return result
 }
 
-// SetTags writes resource tags into state, leaving the attribute untouched when the API reports no
-// tags and prior state also had none.
+// SetOptionalCollection writes an Optional collection into state, leaving the attribute untouched
+// when the API reports none and prior state also had none (null).
 //
-// d.Set always writes the flatmap count key "tags.#", and the SDK's flatmap-to-cty shim treats that
-// key's presence as the difference between null and an empty set. Since the null/empty
+// d.Set always writes the flatmap count key "attr.#", and the SDK's flatmap-to-cty shim treats that
+// key's presence as the difference between null and an empty set/list. Since the null/empty
 // reconciliation in normalizeNullValues only runs during apply, an apply settles on null (the config
 // wins) while a refresh settles on [], and Terraform reports that disagreement as drift on every
 // run even though nothing changed remotely (PL-73759).
 //
 // GetRawState is non-null only on the resource refresh path: ReadResource populates it from the
 // prior state, whereas ReadDataSource reads with no prior state at all. That keeps the guard off the
-// data source paths, where tags must stay [] so expressions like length(data.x.tags) keep working.
-func SetTags(d *schema.ResourceData, tags map[string]string) error {
-	if len(tags) == 0 {
+// data source paths, where empty collections must stay [] so expressions like length(data.x.attr)
+// keep working.
+func SetOptionalCollection(d *schema.ResourceData, attr string, value interface{}) error {
+	if isEmptyCollection(value) {
 		raw := d.GetRawState()
-		if !raw.IsNull() && raw.Type().IsObjectType() && raw.Type().HasAttribute("tags") &&
-			raw.GetAttr("tags").IsNull() {
+		if !raw.IsNull() && raw.Type().IsObjectType() && raw.Type().HasAttribute(attr) &&
+			raw.GetAttr(attr).IsNull() {
 			return nil
 		}
 	}
-	return d.Set("tags", FlattenTags(tags))
+	return d.Set(attr, value)
+}
+
+func isEmptyCollection(value interface{}) bool {
+	if value == nil {
+		return true
+	}
+	if s, ok := value.(*schema.Set); ok {
+		return s == nil || s.Len() == 0
+	}
+	v := reflect.ValueOf(value)
+	switch v.Kind() {
+	case reflect.Slice, reflect.Array, reflect.Map:
+		return v.Len() == 0
+	default:
+		return false
+	}
+}
+
+// SetTags writes resource tags into state using SetOptionalCollection (PL-73759).
+func SetTags(d *schema.ResourceData, tags map[string]string) error {
+	return SetOptionalCollection(d, "tags", FlattenTags(tags))
 }
 
 func ExpandScopeSelector(scopeSelectors []interface{}) []nextgen.ScopeSelector {
