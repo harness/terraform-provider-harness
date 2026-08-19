@@ -13,11 +13,11 @@ helpers/** ritek.rounak@harness.io
 internal/service/platform/db_instance/** abhishek.abhishek@harness.io archit.singla@harness.io hemanth.sridhar@harness.io ritek.rounak@harness.io
 internal/service/platform/db_schema/** abhishek.abhishek@harness.io archit.singla@harness.io hemanth.sridhar@harness.io ritek.rounak@harness.io
 internal/service/platform/gitops/** ashin.sabu@harness.io manish.singh@harness.io mirko.teodorovic@harness.io alexandru.casian@harness.io ritek.rounak@harness.io
-/internal/service/platform/workspace/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
-/internal/service/platform/iacm/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
-/internal/service/platform/ansible_inventory/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
-/internal/service/platform/ansible_playbook/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
-/internal/service/platform/module_registry/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
-/internal/service/platform/module_registry_testing/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
-/internal/service/platform/variable_set/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
-/internal/service/platform/provider_registry/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
+internal/service/platform/workspace/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
+internal/service/platform/iacm/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
+internal/service/platform/ansible_inventory/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
+internal/service/platform/ansible_playbook/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
+internal/service/platform/module_registry/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
+internal/service/platform/module_registry_testing/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
+internal/service/platform/variable_set/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
+internal/service/platform/provider_registry/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
