@@ -2,6 +2,7 @@ package ansible_inventory
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"reflect"
 
@@ -225,26 +226,41 @@ func updateInventoryVars(ctx context.Context, c *nextgen.APIClient, d *schema.Re
 	return nil
 }
 
-// updateInventoryTopLevel pushes name/tags changes through the existing
-// UpdateInventory endpoint. The service side ignores the nested `data` field
-// now, so we only need to set name/tags here.
+// updateInventoryTopLevel pushes name/description/tags changes through the
+// UpdateInventory endpoint. That endpoint is a PUT and the service writes name,
+// description, data and tags unconditionally, so the current data document has
+// to be carried through the request or the update would blank it. The document
+// is read back from the show endpoint rather than rebuilt from state because the
+// group/host/vars reconcile has already run by this point, which makes the
+// stored document - not the config - the authoritative copy.
 func updateInventoryTopLevel(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData, s inventoryScope) diag.Diagnostics {
-	body := nextgen.UpdateInventoryRequest{
-		Name: d.Get("name").(string),
+	current, httpResp, err := c.AnsibleApi.AnsibleShowInventory(ctx, s.org, s.project, s.invID, s.account, nil)
+	if err != nil {
+		return parseError(fmt.Errorf("read inventory before update: %w", err), httpResp)
 	}
-	if tagAttr, ok := d.GetOk("tags"); ok {
-		tags, err := marshalTags(tagAttr)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		body.Tags = tags
-	}
+
 	if httpResp, err := c.AnsibleApi.AnsibleUpdateInventory(
-		ctx, body, s.account, s.org, s.project, s.invID,
+		ctx, buildUpdateInventory(d, current.Data), s.account, s.org, s.project, s.invID,
 	); err != nil {
 		return parseError(err, httpResp)
 	}
 	return nil
+}
+
+// buildUpdateInventory assembles the update body, carrying the inventory's
+// current data document through unchanged.
+func buildUpdateInventory(d *schema.ResourceData, current json.RawMessage) nextgen.UpdateInventoryRequest {
+	// An absent or empty data field is rejected as "invalid inventory data", so an
+	// inventory whose document is empty still needs a JSON object to update against.
+	if len(current) == 0 {
+		current = json.RawMessage("{}")
+	}
+	return nextgen.UpdateInventoryRequest{
+		Name:        d.Get("name").(string),
+		Description: d.Get("description").(string),
+		Tags:        expandTags(d),
+		Data:        current,
+	}
 }
 
 // --- diff helpers ---
@@ -419,4 +435,3 @@ func toInventoryVarCreate(vars []nextgen.AnsibleVariable) []nextgen.HarnessIacmI
 	}
 	return out
 }
-
