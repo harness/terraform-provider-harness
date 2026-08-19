@@ -17,6 +17,7 @@ type inventoryScope struct {
 	invID   string
 }
 
+
 func reconcileManualInventory(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData, s inventoryScope) diag.Diagnostics {
 	oldG, newG := changedGroupSets(d, "groups")
 	oldMap := manualGroupsByID(oldG)
