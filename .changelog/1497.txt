@@ -1,0 +1,7 @@
+```release-note:bug
+`harness_platform_ansible_inventory`, `harness_platform_ansible_playbook`: `tags` are now sent to the API as a list of strings rather than a JSON-encoded map, so tagged inventories and playbooks can be created and updated. Removing every tag now takes effect, and tags changed outside Terraform are reconciled back to the configuration on the next apply instead of being orphaned in state.
+```
+
+```release-note:bug
+`harness_platform_ansible_inventory`: updates no longer fail with `400 invalid inventory data`. The inventory's current data document is carried through the update request, and `description` changes are now applied.
+```

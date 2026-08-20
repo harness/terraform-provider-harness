@@ -8,6 +8,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -346,10 +347,7 @@ func resourceAnsibleInventoryDelete(ctx context.Context, d *schema.ResourceData,
 func resourceAnsibleInventoryCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	body, err := buildCreateInventory(d)
-	if err != nil {
-		return diag.Errorf("%s", err.Error())
-	}
+	body := buildCreateInventory(d)
 
 	_, httpResp, err := c.AnsibleApi.AnsibleCreateInventory(
 		ctx,
@@ -390,7 +388,7 @@ func resourceAnsibleInventoryUpdate(ctx context.Context, d *schema.ResourceData,
 		}
 	}
 
-	if d.HasChanges("name", "tags") {
+	if d.HasChanges("name", "description", "tags") {
 		if diags := updateInventoryTopLevel(ctx, c, d, scope); diags != nil {
 			return diags
 		}
@@ -399,24 +397,29 @@ func resourceAnsibleInventoryUpdate(ctx context.Context, d *schema.ResourceData,
 	return resourceAnsibleInventoryRead(ctx, d, meta)
 }
 
-func buildCreateInventory(d *schema.ResourceData) (nextgen.CreateInventoryRequest, error) {
-	req := nextgen.CreateInventoryRequest{
+func buildCreateInventory(d *schema.ResourceData) nextgen.CreateInventoryRequest {
+	return nextgen.CreateInventoryRequest{
 		Identifier:    d.Get("identifier").(string),
 		Name:          d.Get("name").(string),
+		Description:   d.Get("description").(string),
 		Type_:         d.Get("type").(string),
 		Groups:        buildManualGroups(d),
 		DynamicGroups: buildDynamicGroups(d),
 		PluginOptions: buildPluginOptions(d),
 		Vars:          buildVariableList(d, "vars"),
+		Tags:          expandTags(d),
 	}
-	if tagAttr, ok := d.GetOk("tags"); ok {
-		tags, err := marshalTags(tagAttr)
-		if err != nil {
-			return req, err
-		}
-		req.Tags = tags
+}
+
+// expandTags passes the tag set through to the API as a list of strings. d.Get
+// rather than d.GetOk is deliberate: GetOk reports an empty set as unset, which
+// would stop "remove every tag" from ever reaching the API.
+func expandTags(d *schema.ResourceData) []string {
+	set, ok := d.Get("tags").(*schema.Set)
+	if !ok {
+		return nil
 	}
-	return req, nil
+	return utils.InterfaceSliceToStringSlice(set.List())
 }
 
 func buildManualGroups(d *schema.ResourceData) []nextgen.CreateManualGroup {
@@ -539,14 +542,11 @@ func readInventory(d *schema.ResourceData, resp *nextgen.ShowInventoryResponse) 
 	d.Set("org_id", resp.Org)
 	d.Set("project_id", resp.Project)
 	d.Set("name", resp.Name)
+	d.Set("description", resp.Description)
 	d.Set("type", resp.Type_)
-	if resp.Tags != "" {
-		tags, err := unmarshalTags(resp.Tags)
-		if err != nil {
-			return diag.Errorf("failed to decode inventory tags: %s", err.Error())
-		}
-		d.Set("tags", tags)
-	}
+	// Set unconditionally: gating on a non-empty response would leave tags that
+	// were removed server-side orphaned in state.
+	d.Set("tags", resp.Tags)
 
 	if len(resp.Data) == 0 {
 		return nil
@@ -669,47 +669,6 @@ func flattenVariableMap(vars map[string]nextgen.AnsibleVariable) []interface{} {
 		})
 	}
 	return out
-}
-
-// marshalTags renders the provider's tag set schema as the JSON map format
-// expected by the IaCM ansible endpoints (wire type is a single string).
-func marshalTags(v interface{}) (string, error) {
-	set, ok := v.(*schema.Set)
-	if !ok {
-		return "", nil
-	}
-	tags := helpers.ExpandTags(set.List())
-	if len(tags) == 0 {
-		return "", nil
-	}
-	b, err := json.Marshal(tags)
-	if err != nil {
-		return "", err
-	}
-	return string(b), nil
-}
-
-func unmarshalTags(data string) ([]interface{}, error) {
-	if data == "" {
-		return nil, nil
-	}
-	var m map[string]string
-	if err := json.Unmarshal([]byte(data), &m); err == nil {
-		out := make([]interface{}, 0, len(m))
-		for _, t := range helpers.FlattenTags(m) {
-			out = append(out, t)
-		}
-		return out, nil
-	}
-	var list []string
-	if err := json.Unmarshal([]byte(data), &list); err == nil {
-		out := make([]interface{}, 0, len(list))
-		for _, t := range list {
-			out = append(out, t)
-		}
-		return out, nil
-	}
-	return nil, nil
 }
 
 func parseError(err error, httpResp *http.Response) diag.Diagnostics {

@@ -3223,3 +3223,173 @@ func testAccResourceUpstreamCustomAuthRegistry(id, accId, packageType string) st
  }
 `, id, accId, packageType)
 }
+
+// ---------------------------------------------------------------------------
+// DEBIAN package type / debian_config
+// ---------------------------------------------------------------------------
+
+// Tests create/read/update/import for a VIRTUAL Debian registry with debian_config
+func TestAccResourceVirtualDebianRegistryWithDebianConfig(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_deb_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualDebianRegistryWithDebianConfig(id, accountId, "DEBIAN", []string{"amd64", "arm64"}, []string{".xz"}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "DEBIAN"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.debian_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.debian_config.0.remote_indexed_architectures.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.debian_config.0.remote_indexed_architectures.0", "amd64"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.debian_config.0.remote_indexed_architectures.1", "arm64"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.debian_config.0.optional_index_compression_formats.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.debian_config.0.optional_index_compression_formats.0", ".xz"),
+				),
+			},
+			{
+				Config: testAccResourceVirtualDebianRegistryWithDebianConfig(id, accountId, "DEBIAN", []string{"amd64", "i386", "arm64"}, []string{}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "config.0.debian_config.0.remote_indexed_architectures.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.debian_config.0.optional_index_compression_formats.#", "0"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/import for a VIRTUAL Debian registry without debian_config (optional block)
+func TestAccResourceVirtualDebianRegistryWithoutDebianConfig(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_deb_nc_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "DEBIAN", "Virtual Debian registry without debian_config"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "DEBIAN"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.debian_config.#", "0"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests that debian_config is rejected for non-DEBIAN package types
+func TestAccResourceDebianConfigWrongPackageTypeRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_deb_wpt_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceVirtualDebianRegistryWithDebianConfig(id, accountId, "DOCKER", []string{"amd64"}, []string{}),
+				ExpectError: regexp.MustCompile("'debian_config' is only supported for DEBIAN package type"),
+			},
+		},
+	})
+}
+
+// Tests that debian_config is rejected for UPSTREAM registry type
+func TestAccResourceDebianConfigUpstreamRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_deb_up_%s", randAlphanumeric(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceUpstreamDebianRegistryWithDebianConfigRejected(id, accountId),
+				ExpectError: regexp.MustCompile(`"config.0.debian_config": conflicts with config.0.source`),
+			},
+		},
+	})
+}
+
+// Generates Terraform config for a registry with debian_config; packageType is parameterized so
+// this can also exercise the "only supported for DEBIAN package type" rejection path.
+func testAccResourceVirtualDebianRegistryWithDebianConfig(id, accId, packageType string, architectures []string, compressionFormats []string) string {
+	quote := func(items []string) string {
+		quoted := make([]string, len(items))
+		for i, item := range items {
+			quoted[i] = fmt.Sprintf("%q", item)
+		}
+		return strings.Join(quoted, ", ")
+	}
+
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "%[3]s"
+
+   config {
+    type = "VIRTUAL"
+    debian_config {
+      remote_indexed_architectures       = [%[4]s]
+      optional_index_compression_formats = [%[5]s]
+    }
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, packageType, quote(architectures), quote(compressionFormats))
+}
+
+// Generates Terraform config for an UPSTREAM Debian registry incorrectly declaring debian_config,
+// used to exercise the "'debian_config' is only valid for VIRTUAL registry type" rejection.
+func testAccResourceUpstreamDebianRegistryWithDebianConfigRejected(id, accId string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DEBIAN"
+
+   config {
+    type      = "UPSTREAM"
+    auth_type = "Anonymous"
+    source    = "Custom"
+    url       = "http://deb.debian.org/debian"
+    debian_config {
+      remote_indexed_architectures = ["amd64"]
+    }
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId)
+}

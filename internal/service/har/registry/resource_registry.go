@@ -155,6 +155,15 @@ func resourceRegistryCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, 
 		}
 	}
 
+	if d.HasChange("config.0.debian_config") || d.HasChange("package_type") ||
+		d.HasChange("config.0.type") || d.Id() == "" {
+		if debianConfig, ok := d.GetOk("config.0.debian_config"); ok && len(debianConfig.([]interface{})) > 0 {
+			if packageType != "DEBIAN" {
+				return fmt.Errorf("'debian_config' is only supported for DEBIAN package type")
+			}
+		}
+	}
+
 	if configType == "UPSTREAM" {
 		// Source is required for UPSTREAM
 		if source, ok := d.GetOk("config.0.source"); !ok || source.(string) == "" {
@@ -388,6 +397,27 @@ func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
 								registry.Config.VirtualConfig.UpstreamProxies, proxy.(string))
 						}
 					}
+
+					if debianConfigAttr, ok := config["debian_config"].([]interface{}); ok && len(debianConfigAttr) > 0 {
+						debianConfig := debianConfigAttr[0].(map[string]interface{})
+						sdkDebianConfig := &har.DebianConfig{}
+
+						if architectures, ok := debianConfig["remote_indexed_architectures"].([]interface{}); ok {
+							for _, arch := range architectures {
+								sdkDebianConfig.RemoteIndexedArchitectures = append(
+									sdkDebianConfig.RemoteIndexedArchitectures, arch.(string))
+							}
+						}
+
+						if formats, ok := debianConfig["optional_index_compression_formats"].([]interface{}); ok {
+							for _, format := range formats {
+								sdkDebianConfig.OptionalIndexCompressionFormats = append(
+									sdkDebianConfig.OptionalIndexCompressionFormats, format.(string))
+							}
+						}
+
+						registry.Config.VirtualConfig.DebianConfig = sdkDebianConfig
+					}
 				}
 
 				// Handle UPSTREAM type
@@ -512,6 +542,15 @@ func readRegistry(d *schema.ResourceData, registry *har.Registry) {
 		if registry.Config.Type_ != nil && *registry.Config.Type_ == har.VIRTUAL_RegistryType {
 			if len(registry.Config.VirtualConfig.UpstreamProxies) > 0 {
 				configMap["upstream_proxies"] = registry.Config.VirtualConfig.UpstreamProxies
+			}
+
+			if debianConfig := registry.Config.VirtualConfig.DebianConfig; debianConfig != nil {
+				configMap["debian_config"] = []interface{}{
+					map[string]interface{}{
+						"remote_indexed_architectures":       debianConfig.RemoteIndexedArchitectures,
+						"optional_index_compression_formats": debianConfig.OptionalIndexCompressionFormats,
+					},
+				}
 			}
 		}
 
