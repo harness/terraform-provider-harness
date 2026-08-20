@@ -346,11 +346,33 @@ func isTransientPostWriteReadError(err error, httpResp *http.Response) bool {
 }
 
 func handleIDPApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	if isReferencedError(err) {
+		msg := idpAPIErrorMessage(err)
+		if msg == "" {
+			msg = err.Error()
+		}
+		return diag.Errorf("%s. Remove the check from those scorecards first, then retry destroy.", msg)
+	}
 	if msg := idpAPIErrorMessage(err); msg != "" {
 		return diag.Errorf("%s", msg)
 	}
 
 	return helpers.HandleApiError(err, d, httpResp)
+}
+
+func handleIDPWriteApiError(terraformType string, err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	if isAlreadyExistsError(err) {
+		id, _ := d.Get("identifier").(string)
+		if id == "" {
+			id = d.Id()
+		}
+		msg := idpAPIErrorMessage(err)
+		if msg == "" {
+			msg = err.Error()
+		}
+		return diag.Errorf("%s. Import the existing resource instead of creating it again: terraform import %s.<name> %s", msg, terraformType, id)
+	}
+	return handleIDPApiError(err, d, httpResp)
 }
 
 func handleIDPReadApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
@@ -405,7 +427,7 @@ func isIDPNotFoundError(err error, httpResp *http.Response) bool {
 		return false
 	}
 
-	return body.Code == "ENTITY_NOT_FOUND" || body.Code == "RESOURCE_NOT_FOUND"
+	return body.Code == "ENTITY_NOT_FOUND" || body.Code == "RESOURCE_NOT_FOUND" || isNotFoundError(err)
 }
 
 func resourceCatalogEntityUpdateGitMetadata(ctx context.Context, c *idp.APIClient, d *schema.ResourceData, info catalogEntityInfo) diag.Diagnostics {

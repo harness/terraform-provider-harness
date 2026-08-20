@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_platform_idp_scorecard and harness_platform_idp_scorecard_check: Added Terraform resources and data sources for IDP scorecards and checks
+```

@@ -45,3 +45,19 @@ func isNotFoundError(err error) bool {
 	msg := strings.ToLower(body.Message)
 	return strings.Contains(msg, "not found")
 }
+
+func isAlreadyExistsError(err error) bool {
+	body, newErr := toIDPErrBody(err)
+	if newErr != nil {
+		return false
+	}
+	return strings.Contains(strings.ToLower(body.Message), "already created")
+}
+
+func isReferencedError(err error) bool {
+	body, newErr := toIDPErrBody(err)
+	if newErr != nil {
+		return false
+	}
+	return strings.Contains(strings.ToLower(body.Message), "referenced by")
+}
