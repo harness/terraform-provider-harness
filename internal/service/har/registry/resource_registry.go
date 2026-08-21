@@ -441,6 +441,14 @@ func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
 						upstreamConfig.FirewallMode = &mode
 					}
 
+					// Handle cache TTL properties (0 is a valid value)
+					if metadataCacheTTL, ok := config["metadata_cache_ttl"].(int); ok && metadataCacheTTL >= 0 {
+						upstreamConfig.MetadataCacheTTL = int64(metadataCacheTTL)
+					}
+					if negativeCacheTTL, ok := config["negative_cache_ttl"].(int); ok && negativeCacheTTL >= 0 {
+						upstreamConfig.NegativeCacheTTL = int64(negativeCacheTTL)
+					}
+
 					// Handle authType at the top level
 					if authType, ok := config["auth_type"].(string); ok {
 						upstreamConfig.AuthType = (*har.AuthType)(&authType)
@@ -570,6 +578,14 @@ func readRegistry(d *schema.ResourceData, registry *har.Registry) {
 			}
 			if registry.Config.UpstreamConfig.FirewallMode != nil {
 				configMap["firewall_mode"] = string(*registry.Config.UpstreamConfig.FirewallMode)
+			}
+
+			// Read cache TTL properties (0 is a valid value)
+			if registry.Config.UpstreamConfig.MetadataCacheTTL >= 0 {
+				configMap["metadata_cache_ttl"] = int(registry.Config.UpstreamConfig.MetadataCacheTTL)
+			}
+			if registry.Config.UpstreamConfig.NegativeCacheTTL >= 0 {
+				configMap["negative_cache_ttl"] = int(registry.Config.UpstreamConfig.NegativeCacheTTL)
 			}
 
 			// Handle Authentication

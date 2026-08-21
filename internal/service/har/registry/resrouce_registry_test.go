@@ -3565,3 +3565,207 @@ func testAccResourceUpstreamDebianRegistryWithDebianConfigRejected(id, accId str
  }
 `, id, accId)
 }
+
+// ---------------------------------------------------------------------------
+// Metadata Cache TTL and Negative Cache TTL tests
+// ---------------------------------------------------------------------------
+
+// Tests create/read/update/import for an UPSTREAM Maven registry with cache TTL properties
+func TestAccResourceUpstreamMavenRegistryWithCacheTTL(t *testing.T) {
+	id := fmt.Sprintf("tfauto_cache_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamRegistryWithCacheTTL(id, accountId, "MAVEN", 3600, 600),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "MAVEN"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "UPSTREAM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.metadata_cache_ttl", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.negative_cache_ttl", "600"),
+				),
+			},
+			{
+				Config: testAccResourceUpstreamRegistryWithCacheTTL(id, accountId, "MAVEN", 7200, 1200),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "config.0.metadata_cache_ttl", "7200"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.negative_cache_ttl", "1200"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/import for an UPSTREAM Maven registry with only metadata_cache_ttl
+func TestAccResourceUpstreamMavenRegistryWithMetadataCacheTTLOnly(t *testing.T) {
+	id := fmt.Sprintf("tfauto_mcache_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamRegistryWithMetadataCacheTTLOnly(id, accountId, "MAVEN", 5400),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "MAVEN"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.metadata_cache_ttl", "5400"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/import for an UPSTREAM Maven registry with only negative_cache_ttl
+func TestAccResourceUpstreamMavenRegistryWithNegativeCacheTTLOnly(t *testing.T) {
+	id := fmt.Sprintf("tfauto_ncache_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamRegistryWithNegativeCacheTTLOnly(id, accountId, "MAVEN", 900),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "MAVEN"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.negative_cache_ttl", "900"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Tests create/read/import for an UPSTREAM Maven registry with zero TTL values
+func TestAccResourceUpstreamMavenRegistryWithZeroCacheTTL(t *testing.T) {
+	id := fmt.Sprintf("tfauto_zcache_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceUpstreamRegistryWithCacheTTL(id, accountId, "MAVEN", 0, 0),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "MAVEN"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.metadata_cache_ttl", "0"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.negative_cache_ttl", "0"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Generates Terraform config for an UPSTREAM registry with both cache TTL properties
+func testAccResourceUpstreamRegistryWithCacheTTL(id, accId, packageType string, metadataCacheTTL, negativeCacheTTL int) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "%[3]s"
+
+   config {
+    type      = "UPSTREAM"
+    auth_type = "Anonymous"
+    source    = "MavenCentral"
+    metadata_cache_ttl  = %[4]d
+    negative_cache_ttl  = %[5]d
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, packageType, metadataCacheTTL, negativeCacheTTL)
+}
+
+// Generates Terraform config for an UPSTREAM registry with only metadata_cache_ttl
+func testAccResourceUpstreamRegistryWithMetadataCacheTTLOnly(id, accId, packageType string, metadataCacheTTL int) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "%[3]s"
+
+   config {
+    type      = "UPSTREAM"
+    auth_type = "Anonymous"
+    source    = "MavenCentral"
+    metadata_cache_ttl = %[4]d
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, packageType, metadataCacheTTL)
+}
+
+// Generates Terraform config for an UPSTREAM registry with only negative_cache_ttl
+func testAccResourceUpstreamRegistryWithNegativeCacheTTLOnly(id, accId, packageType string, negativeCacheTTL int) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "%[3]s"
+
+   config {
+    type      = "UPSTREAM"
+    auth_type = "Anonymous"
+    source    = "MavenCentral"
+    negative_cache_ttl = %[4]d
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId, packageType, negativeCacheTTL)
+}
