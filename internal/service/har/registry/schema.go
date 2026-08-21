@@ -61,6 +61,39 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 							"config.0.auth_type",
 						},
 					},
+					"debian_config": {
+						Description: "Debian-specific configuration, applicable only when package_type is DEBIAN and config.type is VIRTUAL",
+						Type:        schema.TypeList,
+						Optional:    true,
+						MaxItems:    1,
+						ConflictsWith: []string{
+							"config.0.source",
+							"config.0.url",
+							"config.0.auth",
+							"config.0.auth_type",
+						},
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								"remote_indexed_architectures": {
+									Description: "Architectures to index when building metadata from linked remote (upstream) registries. Defaults to amd64, i386, arm64",
+									Type:        schema.TypeList,
+									Optional:    true,
+									Elem:        &schema.Schema{Type: schema.TypeString},
+								},
+								"optional_index_compression_formats": {
+									Description: "Optional additional compression formats to generate for index/metadata files",
+									Type:        schema.TypeList,
+									Optional:    true,
+									Elem: &schema.Schema{
+										Type: schema.TypeString,
+										ValidateFunc: validation.StringInSlice([]string{
+											".xz",
+										}, false),
+									},
+								},
+							},
+						},
+					},
 
 					// Upstream Config
 					"source": {

@@ -8,6 +8,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -158,10 +159,7 @@ func resourceAnsiblePlaybookDelete(ctx context.Context, d *schema.ResourceData, 
 func resourceAnsiblePlaybookCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	body, err := buildCreatePlaybook(d)
-	if err != nil {
-		return diag.Errorf("%s", err.Error())
-	}
+	body := buildCreatePlaybook(d)
 
 	_, httpResp, err := c.AnsibleApi.AnsibleCreatePlaybook(
 		ctx,
@@ -181,10 +179,7 @@ func resourceAnsiblePlaybookCreate(ctx context.Context, d *schema.ResourceData, 
 func resourceAnsiblePlaybookUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	body, err := buildUpdatePlaybook(d)
-	if err != nil {
-		return diag.Errorf("%s", err.Error())
-	}
+	body := buildUpdatePlaybook(d)
 
 	httpResp, err := c.AnsibleApi.AnsibleUpdatePlaybook(
 		ctx,
@@ -201,8 +196,8 @@ func resourceAnsiblePlaybookUpdate(ctx context.Context, d *schema.ResourceData, 
 	return resourceAnsiblePlaybookRead(ctx, d, meta)
 }
 
-func buildCreatePlaybook(d *schema.ResourceData) (nextgen.CreatePlaybookRequest, error) {
-	req := nextgen.CreatePlaybookRequest{
+func buildCreatePlaybook(d *schema.ResourceData) nextgen.CreatePlaybookRequest {
+	return nextgen.CreatePlaybookRequest{
 		Identifier:                    d.Get("identifier").(string),
 		Name:                          d.Get("name").(string),
 		Repository:                    d.Get("repository").(string),
@@ -214,19 +209,12 @@ func buildCreatePlaybook(d *schema.ResourceData) (nextgen.CreatePlaybookRequest,
 		AnsibleGalaxyRequirementsFile: d.Get("ansible_galaxy_requirements_file").(string),
 		Vars:                          variablesFromSet(d.Get("vars")),
 		EnvVars:                       variablesFromSet(d.Get("env_vars")),
+		Tags:                          expandTags(d),
 	}
-	if tagAttr, ok := d.GetOk("tags"); ok {
-		tags, err := marshalTags(tagAttr)
-		if err != nil {
-			return req, err
-		}
-		req.Tags = tags
-	}
-	return req, nil
 }
 
-func buildUpdatePlaybook(d *schema.ResourceData) (nextgen.UpdatePlaybookRequest, error) {
-	req := nextgen.UpdatePlaybookRequest{
+func buildUpdatePlaybook(d *schema.ResourceData) nextgen.UpdatePlaybookRequest {
+	return nextgen.UpdatePlaybookRequest{
 		Name:                          d.Get("name").(string),
 		Repository:                    d.Get("repository").(string),
 		RepositoryBranch:              d.Get("repository_branch").(string),
@@ -237,15 +225,20 @@ func buildUpdatePlaybook(d *schema.ResourceData) (nextgen.UpdatePlaybookRequest,
 		AnsibleGalaxyRequirementsFile: d.Get("ansible_galaxy_requirements_file").(string),
 		Vars:                          variablesFromSet(d.Get("vars")),
 		EnvVars:                       variablesFromSet(d.Get("env_vars")),
+		Tags:                          expandTags(d),
 	}
-	if tagAttr, ok := d.GetOk("tags"); ok {
-		tags, err := marshalTags(tagAttr)
-		if err != nil {
-			return req, err
-		}
-		req.Tags = tags
+}
+
+// expandTags passes the tag set through to the API as a list of strings. d.Get
+// rather than d.GetOk is deliberate: GetOk reports an empty set as unset, which
+// would stop "remove every tag" from ever reaching the API. Update is a PUT, so
+// an empty list is how the caller says "no tags".
+func expandTags(d *schema.ResourceData) []string {
+	set, ok := d.Get("tags").(*schema.Set)
+	if !ok {
+		return nil
 	}
-	return req, nil
+	return utils.InterfaceSliceToStringSlice(set.List())
 }
 
 func variablesFromSet(v interface{}) map[string]nextgen.AnsibleVariable {
@@ -287,13 +280,9 @@ func readPlaybook(d *schema.ResourceData, resp *nextgen.ShowPlaybookResponse) di
 	d.Set("ansible_galaxy", resp.AnsibleGalaxy)
 	d.Set("ansible_galaxy_requirements_file", resp.AnsibleGalaxyRequirementsFile)
 
-	if resp.Tags != "" {
-		tags, err := unmarshalTags(resp.Tags)
-		if err != nil {
-			return diag.Errorf("failed to decode playbook tags: %s", err.Error())
-		}
-		d.Set("tags", tags)
-	}
+	// Set unconditionally: gating on a non-empty response would leave tags that
+	// were removed server-side orphaned in state.
+	d.Set("tags", resp.Tags)
 
 	vars, err := unmarshalVariables(resp.Vars)
 	if err != nil {
@@ -335,45 +324,6 @@ func flattenVariables(vars map[string]nextgen.AnsibleVariable) []interface{} {
 		})
 	}
 	return out
-}
-
-func marshalTags(v interface{}) (string, error) {
-	set, ok := v.(*schema.Set)
-	if !ok {
-		return "", nil
-	}
-	tags := helpers.ExpandTags(set.List())
-	if len(tags) == 0 {
-		return "", nil
-	}
-	b, err := json.Marshal(tags)
-	if err != nil {
-		return "", err
-	}
-	return string(b), nil
-}
-
-func unmarshalTags(data string) ([]interface{}, error) {
-	if data == "" {
-		return nil, nil
-	}
-	var m map[string]string
-	if err := json.Unmarshal([]byte(data), &m); err == nil {
-		out := make([]interface{}, 0, len(m))
-		for _, t := range helpers.FlattenTags(m) {
-			out = append(out, t)
-		}
-		return out, nil
-	}
-	var list []string
-	if err := json.Unmarshal([]byte(data), &list); err == nil {
-		out := make([]interface{}, 0, len(list))
-		for _, t := range list {
-			out = append(out, t)
-		}
-		return out, nil
-	}
-	return nil, nil
 }
 
 func parseError(err error, httpResp *http.Response) diag.Diagnostics {

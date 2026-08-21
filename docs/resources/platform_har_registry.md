@@ -96,6 +96,24 @@ resource "harness_platform_har_registry" "helm_http_upstream" {
   parent_ref = "accountId/orgId/projectId"
 }
 
+# Example of a Virtual Debian Registry with Debian-specific configuration
+resource "harness_platform_har_registry" "debian_virtual" {
+  identifier   = "virtual_debian_registry"
+  description  = "Virtual Debian Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "DEBIAN"
+
+  config {
+    type              = "VIRTUAL"
+    upstream_proxies  = ["debian_upstream_registry"]
+    debian_config {
+      remote_indexed_architectures       = ["amd64", "arm64"]
+      optional_index_compression_formats = [".xz"]
+    }
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
 # Example of an Upstream Custom Debian Registry (Debian source needs url)
 resource "harness_platform_har_registry" "debian_upstream" {
   identifier   = "upstream_debian_registry"
@@ -236,6 +254,7 @@ Optional:
 
 - `auth` (Block List, Max: 1) Authentication configuration for UPSTREAM registry type (see [below for nested schema](#nestedblock--config--auth))
 - `auth_type` (String) Type of authentication for UPSTREAM registry type (UserPassword, Anonymous, AccessKeySecretKey)
+- `debian_config` (Block List, Max: 1) Debian-specific configuration, applicable only when package_type is DEBIAN and config.type is VIRTUAL (see [below for nested schema](#nestedblock--config--debian_config))
 - `firewall_mode` (String) Dependency firewall mode for UPSTREAM registry type. Valid values: `ALLOW` (default - no policy evaluation), `ENABLED` (firewall active, artifacts scanned against policies), `QUARANTINE` (artifacts that fail policy evaluation are blocked). Not supported for DOCKER or HELM package types.
 - `remote_url_suffix` (String) Optional path suffix for Python UPSTREAM registries with Custom source. Overrides the default `simple` path used for PyPI-compatible indexes. Requires `config.url` when source is Custom. Not supported for non-PYTHON package types. Leading and trailing slashes are normalized.
 - `source` (String) Upstream source
@@ -261,6 +280,14 @@ Optional:
 - `secret_key_secret_path` (String)
 - `secret_space_path` (String) Secret space path for UserPassword auth type
 - `user_name` (String) Username for UserPassword auth type
+
+<a id="nestedblock--config--debian_config"></a>
+### Nested Schema for `config.debian_config`
+
+Optional:
+
+- `optional_index_compression_formats` (List of String) Optional additional compression formats to generate for index/metadata files
+- `remote_indexed_architectures` (List of String) Architectures to index when building metadata from linked remote (upstream) registries. Defaults to amd64, i386, arm64
 
 ## Import
 

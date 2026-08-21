@@ -1,0 +1,3 @@
+```release-note:bug
+data-source/harness_platform_dashboard_folders: Fixed a crash ("unexpected list folders response shape") when the underlying API returns `resource` as a single root folder object (e.g. the account's implicit "Shared Folder") instead of an array of folders.
+```
