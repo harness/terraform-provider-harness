@@ -179,9 +179,10 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 	var httpResp *http.Response
 	svc := buildService(d)
 	id := d.Id()
+	isNewResource := id == ""
 	shouldUpdateGitDetails := false
 
-	if id == "" {
+	if isNewResource {
 		if d.Get("import_from_git").(bool) {
 			svcParams := svcImportParam(svc, d)
 			importResp, httpResp, err = c.ServicesApi.ImportService(ctx, c.AccountId, &svcParams)
@@ -213,7 +214,7 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
-	if d.Get("import_from_git").(bool) {
+	if isNewResource && d.Get("import_from_git").(bool) {
 		if importResp.Data == nil || importResp.Data.Identifier == "" {
 			var governance *nextgen.GovernanceMetadata
 			if importResp.Data != nil {
@@ -223,7 +224,10 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 		}
 		readImportRes(d, importResp.Data.Identifier)
 	} else {
-		if shouldUpdateGitDetails {
+		// Git-import updates may return an import-shaped response without
+		// service data. Read the canonical resource to populate state from
+		// the same endpoint used by Read.
+		if shouldUpdateGitDetails || (!isNewResource && d.Get("import_from_git").(bool)) {
 			svcParams := getSvcParams(d)
 			resp, httpResp, err = c.ServicesApi.GetServiceV2(ctx, id, c.AccountId, svcParams)
 
