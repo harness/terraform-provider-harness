@@ -135,7 +135,8 @@ func TestReadPluginState(t *testing.T) {
 		"configs":    "",
 	})
 
-	readPluginState(d, resp)
+	err := readPluginState(d, resp)
+	require.NoError(t, err)
 
 	assert.Equal(t, "harness-proxy", d.Id())
 	assert.Equal(t, "harness-proxy", d.Get("identifier"))

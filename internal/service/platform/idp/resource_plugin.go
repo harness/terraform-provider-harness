@@ -30,7 +30,9 @@ func ResourcePlugin() *schema.Resource {
 				if resp.Plugin == nil {
 					return nil, fmt.Errorf("plugin %s not found", d.Id())
 				}
-				readPluginState(d, resp)
+				if err := readPluginState(d, resp); err != nil {
+					return nil, fmt.Errorf("failed to read plugin state for import: %w", err)
+				}
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -175,7 +177,9 @@ func resourcePluginRead(ctx context.Context, d *schema.ResourceData, meta interf
 		return nil
 	}
 
-	readPluginState(d, resp)
+	if err := readPluginState(d, resp); err != nil {
+		return diag.Errorf("failed to read plugin %s state: %s", pluginId, err.Error())
+	}
 	return nil
 }
 
@@ -243,8 +247,11 @@ func buildPluginAppConfigRequest(d *schema.ResourceData) idp.PluginAppConfigRequ
 	return idp.PluginAppConfigRequest{AppConfig: appConfig}
 }
 
-func readPluginState(d *schema.ResourceData, resp idp.PluginInfoResponse) {
+func readPluginState(d *schema.ResourceData, resp idp.PluginInfoResponse) error {
 	plugin := resp.Plugin
+	if plugin == nil || plugin.PluginDetails == nil {
+		return fmt.Errorf("API returned incomplete plugin response (plugin or plugin_details is nil)")
+	}
 
 	d.SetId(plugin.PluginDetails.Id)
 	d.Set("identifier", plugin.PluginDetails.Id)
@@ -297,6 +304,7 @@ func readPluginState(d *schema.ResourceData, resp idp.PluginInfoResponse) {
 	} else {
 		d.Set("proxy", []map[string]interface{}{})
 	}
+	return nil
 }
 
 func getPluginErrorMessage(err error) string {

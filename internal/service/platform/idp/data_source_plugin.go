@@ -153,7 +153,9 @@ func dataSourcePluginRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return diag.Errorf("plugin %s not found", pluginId)
 	}
 
-	readPluginState(d, resp)
+	if err := readPluginState(d, resp); err != nil {
+		return diag.Errorf("failed to read plugin %s state: %s", pluginId, err.Error())
+	}
 
 	if resp.Plugin.PluginDetails != nil {
 		details := resp.Plugin.PluginDetails
