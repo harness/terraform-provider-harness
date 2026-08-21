@@ -217,6 +217,62 @@ resource "harness_platform_har_registry" "cran_upstream" {
   }
   parent_ref = "accountId/orgId/projectId"
 }
+
+# Example of a Virtual Alpine Registry
+resource "harness_platform_har_registry" "alpine_virtual" {
+  identifier   = "virtual_alpine_registry"
+  description  = "Virtual Alpine Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "ALPINE"
+
+  config {
+    type = "VIRTUAL"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of an Upstream Alpine Registry (Alpine source needs no url)
+resource "harness_platform_har_registry" "alpine_upstream" {
+  identifier   = "upstream_alpine_registry"
+  description  = "Upstream Alpine Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "ALPINE"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "Alpine"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of a Virtual Wolfi Registry
+resource "harness_platform_har_registry" "wolfi_virtual" {
+  identifier   = "virtual_wolfi_registry"
+  description  = "Virtual Wolfi Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "WOLFI"
+
+  config {
+    type = "VIRTUAL"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of an Upstream Wolfi Registry (Wolfi source needs no url)
+resource "harness_platform_har_registry" "wolfi_upstream" {
+  identifier   = "upstream_wolfi_registry"
+  description  = "Upstream Wolfi Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "WOLFI"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "Wolfi"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
 ```
 
 ## Schema
@@ -224,7 +280,7 @@ resource "harness_platform_har_registry" "cran_upstream" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, CRAN)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, CRAN, ALPINE, WOLFI)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 
