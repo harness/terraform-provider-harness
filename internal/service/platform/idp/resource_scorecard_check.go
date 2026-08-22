@@ -97,7 +97,7 @@ func scorecardCheckSchema(dataSource bool) map[string]*schema.Schema {
 		"rules": {
 			Type:        schema.TypeList,
 			Optional:    !computed,
-			Computed:    true,
+			Computed:    computed,
 			Description: "Basic rules evaluated by the check. Required when rule_strategy is ALL_OF or ANY_OF.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -140,7 +140,7 @@ func scorecardCheckSchema(dataSource bool) map[string]*schema.Schema {
 					"input_values": {
 						Type:        schema.TypeList,
 						Optional:    !computed,
-						Computed:    true,
+						Computed:    computed,
 						Description: "Input values passed to the data point.",
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{

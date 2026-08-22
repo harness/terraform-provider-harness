@@ -244,6 +244,28 @@ func TestHandleIDPWriteApiErrorAlreadyExists(t *testing.T) {
 	require.Contains(t, diags[0].Summary, "terraform import harness_platform_idp_scorecard_check.<name> tf_sanity_readme_exists")
 }
 
+func TestHandleIDPWriteApiErrorScorecardAlreadyExists(t *testing.T) {
+	resource := ResourceScorecard()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"identifier": "tf_sanity_gold_standard",
+		"name":       "Gold Standard",
+	})
+	err := idpErrorWithBody{body: []byte(
+		`{"message":"A scorecard with identifier 'tf_sanity_gold_standard' already exists. Please use a different identifier."}`,
+	)}
+
+	diags := handleIDPWriteApiError(
+		"harness_platform_idp_scorecard",
+		err,
+		data,
+		&http.Response{StatusCode: http.StatusInternalServerError},
+	)
+	require.True(t, diags.HasError())
+	require.Contains(t, diags[0].Summary, "already exists")
+	require.Contains(t, diags[0].Summary,
+		"terraform import harness_platform_idp_scorecard.<name> tf_sanity_gold_standard")
+}
+
 func TestHandleIDPApiErrorReferencedCheck(t *testing.T) {
 	resource := ResourceScorecardCheck()
 	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{

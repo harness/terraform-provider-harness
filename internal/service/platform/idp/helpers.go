@@ -51,7 +51,8 @@ func isAlreadyExistsError(err error) bool {
 	if newErr != nil {
 		return false
 	}
-	return strings.Contains(strings.ToLower(body.Message), "already created")
+	msg := strings.ToLower(body.Message)
+	return strings.Contains(msg, "already created") || strings.Contains(msg, "already exists")
 }
 
 func isReferencedError(err error) bool {

@@ -44,14 +44,30 @@ func TestExpandScorecardRequest(t *testing.T) {
 	require.True(t, req.Checks[0].Custom)
 }
 
+func TestScorecardCheckInputValuesSchemaTracksRemoval(t *testing.T) {
+	resourceRules := ResourceScorecardCheck().Schema["rules"]
+	require.True(t, resourceRules.Optional)
+	require.False(t, resourceRules.Computed)
+	resourceInputValues := resourceRules.Elem.(*schema.Resource).Schema["input_values"]
+	require.True(t, resourceInputValues.Optional)
+	require.False(t, resourceInputValues.Computed)
+
+	dataSourceRules := DataSourceScorecardCheck().Schema["rules"]
+	require.False(t, dataSourceRules.Optional)
+	require.True(t, dataSourceRules.Computed)
+	dataSourceInputValues := dataSourceRules.Elem.(*schema.Resource).Schema["input_values"]
+	require.False(t, dataSourceInputValues.Optional)
+	require.True(t, dataSourceInputValues.Computed)
+}
+
 func TestExpandCheckDetails(t *testing.T) {
 	resource := ResourceScorecardCheck()
 	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
-		"identifier":         "readme",
-		"name":               "README exists",
-		"description":        "Ensure README",
-		"rule_strategy":      "ALL_OF",
-		"default_behaviour":  "FAIL",
+		"identifier":        "readme",
+		"name":              "README exists",
+		"description":       "Ensure README",
+		"rule_strategy":     "ALL_OF",
+		"default_behaviour": "FAIL",
 		"rules": []interface{}{
 			map[string]interface{}{
 				"data_source_identifier": "github",
