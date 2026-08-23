@@ -179,6 +179,7 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 	var httpResp *http.Response
 	svc := buildService(d)
 	id := d.Id()
+	importing := id == "" && d.Get("import_from_git").(bool)
 	shouldUpdateGitDetails := false
 
 	if id == "" {
@@ -213,7 +214,7 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 		return helpers.HandleGitApiErrorWithResourceData(err, d, httpResp)
 	}
 
-	if d.Get("import_from_git").(bool) {
+	if importing {
 		if importResp.Data == nil || importResp.Data.Identifier == "" {
 			var governance *nextgen.GovernanceMetadata
 			if importResp.Data != nil {
