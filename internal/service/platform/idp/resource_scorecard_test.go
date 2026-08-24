@@ -75,11 +75,12 @@ func testAccResourceIdpScorecard(id, name string) string {
 	%[3]s
 
 	resource "harness_platform_idp_scorecard" "test" {
-		identifier          = "%[1]s"
-		name                = "%[2]s"
-		description         = "Gold standard scorecard"
-		published           = true
-		weightage_strategy  = "EQUAL_WEIGHTS"
+		identifier            = "%[1]s"
+		name                  = "%[2]s"
+		description           = "Gold standard scorecard"
+		published             = true
+		tier_group_identifier = "default_tiers"
+		weightage_strategy    = "EQUAL_WEIGHTS"
 
 		filter {
 			kind = "component"
