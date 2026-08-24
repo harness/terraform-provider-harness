@@ -228,6 +228,17 @@ func TestAccResourceInputSetImportFromGit(t *testing.T) {
 				),
 			},
 			{
+				// Any in-place update of an input set created with import_from_git used to
+				// read back the empty import response, so the resource was reported absent
+				// after a successful apply and dropped from state. Changing the import-only
+				// description forces an update without touching the git-stored YAML.
+				Config: testAccResourceInputSetImportFromGitUpdated(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "inputset2"),
+					resource.TestCheckResourceAttr(resourceName, "pipeline_id", "DoNotDeletePipeline"),
+				),
+			},
+			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
@@ -797,6 +808,39 @@ func testAccResourceInputSetImportFromGit(id string, name string) string {
                         input_set_import_request {
                             input_set_name = "inputset2"
                             input_set_description = ""
+                        }
+                }
+        `, id, name)
+}
+
+func testAccResourceInputSetImportFromGitUpdated(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+		resource "harness_platform_project" "Project_Test" {
+				identifier = "TF_InputSet_Pipeline_Test"
+				name = "TF_InputSet_Pipeline_Test"
+				color = "#0063F7"
+				org_id = "default"
+		}
+        resource "harness_platform_input_set" "test" {
+                        identifier = "inputset2"
+                        org_id = "default"
+						project_id = harness_platform_project.Project_Test.identifier
+                        name = "inputset2"
+                        pipeline_id = "DoNotDeletePipeline"
+                        import_from_git = true
+                        git_import_info {
+                            branch_name = "main"
+                            file_path = ".harness/inputset2.yaml"
+                            connector_ref = "account.TF_open_repo_github_connector"
+                            repo_name = "open-repo"
+                        }
+                        input_set_import_request {
+                            input_set_name = "inputset2"
+                            input_set_description = "updated by terraform acceptance test"
                         }
                 }
         `, id, name)
