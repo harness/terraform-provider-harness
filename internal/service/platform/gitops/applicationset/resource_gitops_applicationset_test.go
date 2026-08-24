@@ -1706,3 +1706,168 @@ func testAccResourceGitopsApplicationsetGitGeneratorWithSelector(id, accountId, 
 	}
 	`, id, accountId, name, agentId, namespace)
 }
+
+func TestAccResourceGitopsApplicationSet_IgnoreDifference(t *testing.T) {
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	namespace := os.Getenv("HARNESS_TEST_GITOPS_NAMESPACE")
+	if agentId == "" || namespace == "" {
+		t.Skip("HARNESS_TEST_GITOPS_AGENT_ID and HARNESS_TEST_GITOPS_NAMESPACE must be set")
+	}
+
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name := id
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	resourceName := "harness_platform_gitops_applicationset.test"
+
+	createIgnore := `
+					  ignore_difference {
+						kind          = "Service"
+						json_pointers = ["/spec/selector/rollouts-pod-template-hash"]
+					  }`
+	updateIgnore := `
+					  ignore_difference {
+						kind                = "Service"
+						json_pointers       = ["/spec/selector/rollouts-pod-template-hash"]
+						jq_path_expressions = [".spec.replicas"]
+					  }`
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsApplicationsetIgnoreDifference(id, accountId, name, agentId, namespace, createIgnore),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.metadata.0.name", id),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.template.0.spec.0.ignore_difference.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.template.0.spec.0.ignore_difference.0.kind", "Service"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.template.0.spec.0.ignore_difference.0.json_pointers.0", "/spec/selector/rollouts-pod-template-hash"),
+				),
+			},
+			{
+				Config: testAccResourceGitopsApplicationsetIgnoreDifference(id, accountId, name, agentId, namespace, createIgnore),
+			},
+			{
+				Config: testAccResourceGitopsApplicationsetIgnoreDifference(id, accountId, name, agentId, namespace, updateIgnore),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.template.0.spec.0.ignore_difference.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.template.0.spec.0.ignore_difference.0.kind", "Service"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.template.0.spec.0.ignore_difference.0.json_pointers.0", "/spec/selector/rollouts-pod-template-hash"),
+					resource.TestCheckResourceAttr(resourceName, "applicationset.0.spec.0.template.0.spec.0.ignore_difference.0.jq_path_expressions.0", ".spec.replicas"),
+				),
+			},
+			{
+				Config: testAccResourceGitopsApplicationsetIgnoreDifference(id, accountId, name, agentId, namespace, updateIgnore),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"upsert", "account_id"},
+				ImportStateIdFunc:       acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func testAccResourceGitopsApplicationsetIgnoreDifference(id, accountId, name, agentId, namespace, ignoreDifferenceBlock string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+			org_id = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_gitops_app_project" "test" {
+			account_id = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			agent_id = "%[4]s"
+			upsert = true
+			project {
+				metadata {
+					name = "%[1]s"
+					namespace = "%[5]s"
+				}
+				spec {
+					cluster_resource_whitelist {
+						group = "*"
+						kind = "*"
+					}
+					destinations {
+						namespace = "*"
+						server = "*"
+					}
+					source_repos = ["*"]
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					project.0.metadata.0.namespace,
+					project.0.metadata.0.finalizers,
+					project.0.metadata.0.labels,
+					project.0.spec.0.source_namespaces,
+				]
+			}
+		}
+
+		resource "harness_platform_gitops_app_project_mapping" "test" {
+			depends_on = [harness_platform_gitops_app_project.test]
+			account_id = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			agent_id = "%[4]s"
+			argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+		}
+
+		resource "harness_platform_gitops_applicationset" "test" {
+			depends_on = [harness_platform_gitops_app_project_mapping.test]
+			applicationset {
+				metadata {
+				  name      = "%[1]s"
+				  namespace = "%[5]s"
+				}
+				spec {
+				  generator {
+					list {
+						elements = [
+							{
+								cluster = "in-cluster"
+								url     = "https://kubernetes.default.svc"
+							}
+						]
+					}
+				  }
+				  template {
+					metadata {
+					  name = "%[1]s-guestbook"
+					}
+					spec {
+					  project = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+					  source {
+						repo_url        = "https://github.com/argoproj/argocd-example-apps.git"
+						path            = "helm-guestbook"
+						target_revision = "HEAD"
+					  }
+					  destination {
+						server    = "https://kubernetes.default.svc"
+						namespace = "%[5]s"
+					  }
+%[6]s
+					}
+				  }
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id   = "%[4]s"
+			upsert     = true
+		}
+	`, id, accountId, name, agentId, namespace, ignoreDifferenceBlock)
+}
