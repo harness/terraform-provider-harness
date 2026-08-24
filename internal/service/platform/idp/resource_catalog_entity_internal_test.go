@@ -226,7 +226,58 @@ func TestIDPAPIErrorMessage(t *testing.T) {
 func TestIsIDPNotFoundError(t *testing.T) {
 	require.True(t, isIDPNotFoundError(errors.New("not found"), &http.Response{StatusCode: http.StatusNotFound}))
 	require.True(t, isIDPNotFoundError(idpErrorWithBody{body: []byte(`{"code":"ENTITY_NOT_FOUND","message":"missing"}`)}, nil))
+	require.True(t, isIDPNotFoundError(idpErrorWithBody{body: []byte(`{"message":"Check details not found for checkId [x]"}`)}, &http.Response{StatusCode: http.StatusInternalServerError}))
 	require.False(t, isIDPNotFoundError(idpErrorWithBody{body: []byte(`{"code":"INVALID_REQUEST","message":"bad request"}`)}, nil))
+}
+
+func TestHandleIDPWriteApiErrorAlreadyExists(t *testing.T) {
+	resource := ResourceScorecardCheck()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"identifier": "tf_sanity_readme_exists",
+		"name":       "README exists",
+	})
+	err := idpErrorWithBody{body: []byte(`{"message":"Check [tf_sanity_readme_exists] already created for accountId [account-123]"}`)}
+
+	diags := handleIDPWriteApiError("harness_platform_idp_scorecard_check", err, data, &http.Response{StatusCode: http.StatusInternalServerError})
+	require.True(t, diags.HasError())
+	require.Contains(t, diags[0].Summary, "already created")
+	require.Contains(t, diags[0].Summary, "terraform import harness_platform_idp_scorecard_check.<name> tf_sanity_readme_exists")
+}
+
+func TestHandleIDPWriteApiErrorScorecardAlreadyExists(t *testing.T) {
+	resource := ResourceScorecard()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"identifier": "tf_sanity_gold_standard",
+		"name":       "Gold Standard",
+	})
+	err := idpErrorWithBody{body: []byte(
+		`{"message":"A scorecard with identifier 'tf_sanity_gold_standard' already exists. Please use a different identifier."}`,
+	)}
+
+	diags := handleIDPWriteApiError(
+		"harness_platform_idp_scorecard",
+		err,
+		data,
+		&http.Response{StatusCode: http.StatusInternalServerError},
+	)
+	require.True(t, diags.HasError())
+	require.Contains(t, diags[0].Summary, "already exists")
+	require.Contains(t, diags[0].Summary,
+		"terraform import harness_platform_idp_scorecard.<name> tf_sanity_gold_standard")
+}
+
+func TestHandleIDPApiErrorReferencedCheck(t *testing.T) {
+	resource := ResourceScorecardCheck()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"identifier": "tf_sanity_readme_exists",
+		"name":       "README exists",
+	})
+	err := idpErrorWithBody{body: []byte(`{"message":"Could not delete the check [tf_sanity_readme_exists] as it is referenced by other scorecards"}`)}
+
+	diags := handleIDPApiError(err, data, &http.Response{StatusCode: http.StatusInternalServerError})
+	require.True(t, diags.HasError())
+	require.Contains(t, diags[0].Summary, "referenced by other scorecards")
+	require.Contains(t, diags[0].Summary, "Remove the check from those scorecards first")
 }
 
 func TestCatalogEntityImportInfoFromID(t *testing.T) {
