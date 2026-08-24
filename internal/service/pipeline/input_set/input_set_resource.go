@@ -243,6 +243,7 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var httpResp *http.Response
 
 	id := d.Id()
+	importing := id == "" && d.Get("import_from_git").(bool)
 	orgIdentifier := d.Get("org_id").(string)
 	projectIdentifier := d.Get("project_id").(string)
 	pipelineIdentifier := d.Get("pipeline_id").(string)
@@ -318,7 +319,7 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	if d.Get("import_from_git").(bool) {
+	if importing {
 
 		inputSet_id = response.Identifier
 

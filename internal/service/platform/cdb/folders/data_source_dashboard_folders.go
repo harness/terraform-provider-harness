@@ -23,6 +23,13 @@ type folderListResponse struct {
 	Resource []nextgen.Folder `json:"resource"`
 }
 
+// folderSingleResponse matches API responses where "resource" is a single root folder
+// (e.g. the account's implicit "Shared Folder") rather than an array of folders. This is
+// the shape the /dashboard/folders endpoint actually returns for most accounts.
+type folderSingleResponse struct {
+	Resource *nextgen.Folder `json:"resource"`
+}
+
 func DataSourceDashboardFolders() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a list of Harness Custom Dashboard Folders.",
@@ -144,18 +151,35 @@ func listDashboardFolders(c *nextgen.APIClient) ([]nextgen.Folder, *http.Respons
 		return nil, httpResp, fmt.Errorf("API error: status=%s body=%s", httpResp.Status, string(body))
 	}
 
+	folders, parseErr := parseListFoldersResponse(body)
+	if parseErr != nil {
+		return nil, httpResp, parseErr
+	}
+	return folders, httpResp, nil
+}
+
+// parseListFoldersResponse decodes the body of a /dashboard/folders response. The API has
+// been observed to return "resource" as either a single root folder object (the common case,
+// e.g. the account's implicit "Shared Folder") or an array of folders, and (defensively) as a
+// bare top-level array with no envelope.
+func parseListFoldersResponse(body []byte) ([]nextgen.Folder, error) {
 	var listResp folderListResponse
 	if jsonErr := json.Unmarshal(body, &listResp); jsonErr == nil && listResp.Resource != nil {
-		return listResp.Resource, httpResp, nil
+		return listResp.Resource, nil
+	}
+
+	var singleResp folderSingleResponse
+	if jsonErr := json.Unmarshal(body, &singleResp); jsonErr == nil && singleResp.Resource != nil {
+		return []nextgen.Folder{*singleResp.Resource}, nil
 	}
 
 	// Fallback: response might be a bare array of folders
 	var direct []nextgen.Folder
 	if jsonErr := json.Unmarshal(body, &direct); jsonErr == nil {
-		return direct, httpResp, nil
+		return direct, nil
 	}
 
-	return nil, httpResp, fmt.Errorf("unexpected list folders response shape: %s", string(body))
+	return nil, fmt.Errorf("unexpected list folders response shape: %s", string(body))
 }
 
 func flattenFolders(input []nextgen.Folder) []nextgen.Folder {

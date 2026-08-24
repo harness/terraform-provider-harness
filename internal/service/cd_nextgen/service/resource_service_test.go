@@ -361,6 +361,18 @@ func TestResourceImportRemoteService(t *testing.T) {
 				),
 			},
 			{
+				// Any in-place update of a service created with import_from_git used to
+				// panic, because the post-write read used the import response that is only
+				// populated on the create path. Changing commit_message is the least
+				// invasive way to force an update while leaving the git-stored YAML alone.
+				Config: testResourceImportRemoteServiceUpdated(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "accSvc"),
+					resource.TestCheckResourceAttr(resourceName, "name", "accSvc"),
+					resource.TestCheckResourceAttr(resourceName, "git_details.0.commit_message", "terraform acceptance test update"),
+				),
+			},
+			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -900,6 +912,25 @@ func testResourceImportRemoteService() string {
     repo_name = "pcf_practice"
     file_path = ".harness/accountService.yaml"
     branch = "main"
+    }
+  }
+`)
+}
+
+func testResourceImportRemoteServiceUpdated() string {
+	return fmt.Sprintf(`
+
+  resource "harness_platform_service" "test" {
+    identifier  = "accSvc"
+    name = "accSvc"
+    import_from_git = "true"
+    git_details {
+    store_type = "REMOTE"
+    connector_ref = "account.TF_GitX_connector"
+    repo_name = "pcf_practice"
+    file_path = ".harness/accountService.yaml"
+    branch = "main"
+    commit_message = "terraform acceptance test update"
     }
   }
 `)
