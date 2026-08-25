@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestResourceClusterOrchestratorConfig(t *testing.T) {
-	orchName := "terraform-clusterorch-config-test"
+	suffix := utils.RandStringBytes(5)
+	orchName := fmt.Sprintf("tf-co-cfg-%s", suffix)
+	connectorID := fmt.Sprintf("tfcocfg_%s", suffix)
 	resourceName := "harness_cluster_orchestrator_config.test"
 	orchResourceName := "harness_cluster_orchestrator.setup"
 
@@ -18,7 +21,7 @@ func TestResourceClusterOrchestratorConfig(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testClusterOrchWithConfig(orchName),
+				Config: testClusterOrchWithConfig(orchName, connectorID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrPair(resourceName, "orchestrator_id", orchResourceName, "id"),
 					resource.TestCheckResourceAttr(resourceName, "distribution.0.strategy", "CostOptimized"),
@@ -35,7 +38,9 @@ func TestResourceClusterOrchestratorConfig(t *testing.T) {
 // model tags Disabled with `json:"-"`, so it is never deserialized from the API
 // response. The toggle_state write works, but subsequent reads always return false.
 func TestResourceClusterOrchestratorConfigDisabled(t *testing.T) {
-	orchName := "terraform-clusterorch-disabled-test"
+	suffix := utils.RandStringBytes(5)
+	orchName := fmt.Sprintf("tf-co-dis-%s", suffix)
+	connectorID := fmt.Sprintf("tfcodis_%s", suffix)
 	resourceName := "harness_cluster_orchestrator_config.test"
 	orchResourceName := "harness_cluster_orchestrator.setup"
 
@@ -44,7 +49,7 @@ func TestResourceClusterOrchestratorConfigDisabled(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testClusterOrchWithConfig(orchName),
+				Config: testClusterOrchWithConfig(orchName, connectorID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrPair(resourceName, "orchestrator_id", orchResourceName, "id"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
@@ -54,12 +59,12 @@ func TestResourceClusterOrchestratorConfigDisabled(t *testing.T) {
 	})
 }
 
-func testClusterOrchWithConfig(orchName string) string {
-	return fmt.Sprintf(`
+func testClusterOrchWithConfig(orchName, connectorID string) string {
+	return testOrchK8sConnectorHCL(connectorID, orchName+"_k8s") + fmt.Sprintf(`
 	resource "harness_cluster_orchestrator" "setup" {
 		name             = "%[1]s"
 		cluster_endpoint = "http://test.com"
-		k8s_connector_id = "TestDoNotDelete"
+		k8s_connector_id = harness_platform_connector_kubernetes_cloud_cost.orch_k8s_ccm.id
 	}
 
 	resource "harness_cluster_orchestrator_config" "test" {

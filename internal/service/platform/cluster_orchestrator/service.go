@@ -325,9 +325,11 @@ func getPodEvictionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
 	if podEvictorCfg.Enabled {
 		return []interface{}{
 			map[string]interface{}{
-				"threshold": map[string]interface{}{
-					"cpu":    podEvictorCfg.MinCPU,
-					"memory": podEvictorCfg.MinMem,
+				"threshold": []interface{}{
+					map[string]interface{}{
+						"cpu":    podEvictorCfg.MinCPU,
+						"memory": podEvictorCfg.MinMem,
+					},
 				},
 			},
 		}
@@ -346,17 +348,26 @@ func getDisruptionConfig(orch *nextgen.ClusterOrchestrator) []interface{} {
 	}
 	var budgets []interface{}
 	for _, budget := range disruptionCfg.Budgets {
-		budgets = append(budgets, map[string]interface{}{
+		budgetDto := map[string]interface{}{
 			"reasons": budget.Reasons,
 			"nodes":   budget.Nodes,
-			"schedule": map[string]interface{}{
-				"frequency": budget.Schedule,
-				"duration":  budget.Duration,
-			},
-		})
+		}
+		if budget.Schedule != nil || budget.Duration != "" {
+			freq := ""
+			if budget.Schedule != nil {
+				freq = *budget.Schedule
+			}
+			budgetDto["schedule"] = []interface{}{
+				map[string]interface{}{
+					"frequency": freq,
+					"duration":  budget.Duration,
+				},
+			}
+		}
+		budgets = append(budgets, budgetDto)
 	}
 	if len(budgets) > 0 {
-		disruptionDto["budgets"] = budgets
+		disruptionDto["budget"] = budgets
 	}
 	return []interface{}{disruptionDto}
 }
