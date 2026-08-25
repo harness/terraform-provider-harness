@@ -152,10 +152,12 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 
 	var err error
 	var httpResp *http.Response
+	var addUsersResp nextgen.ResponseDtoAddUsersResponse
+	var addUserToGroupsResp nextgen.ResponseDtoBoolean
 
 	if id == "" {
 		addUserBody := createAddUserBody(d)
-		_, httpResp, err = c.UserApi.AddUsers(ctx, *addUserBody, c.AccountId, &nextgen.UserApiAddUsersOpts{
+		addUsersResp, httpResp, err = c.UserApi.AddUsers(ctx, *addUserBody, c.AccountId, &nextgen.UserApiAddUsersOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
@@ -168,11 +170,20 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 		userOpts.ProjectIdentifier = helpers.BuildField(d, "project_id")
 		body.UserGroupIdsToAdd = updateUserBody.UserGroups
 		userOpts.Body = body
-		_, httpResp, err = c.UserApi.AddUserToUserGroups(ctx, c.AccountId, d.Get("identifier").(string), &userOpts)
+		addUserToGroupsResp, httpResp, err = c.UserApi.AddUserToUserGroups(ctx, c.AccountId, d.Get("identifier").(string), &userOpts)
 	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	if addUsersResp.Data != nil {
+		if diags := helpers.CheckGovernanceMetadata(addUsersResp.Data.GovernanceMetadata, "user"); diags != nil {
+			return diags
+		}
+	}
+	if diags := helpers.CheckGovernanceMetadata(addUserToGroupsResp.GovernanceMetadata, "user"); diags != nil {
+		return diags
 	}
 
 	var email = ""

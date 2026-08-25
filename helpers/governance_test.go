@@ -59,7 +59,7 @@ func TestCheckGovernanceMetadata(t *testing.T) {
 	})
 
 	t.Run("deny=false returns no error", func(t *testing.T) {
-		diags := CheckGovernanceMetadata(&nextgen.UserGroupGovernanceMetadata{
+		diags := CheckGovernanceMetadata(&nextgen.GovernanceMetadata{
 			Deny:   false,
 			Status: "pass",
 		}, "user group")
@@ -69,11 +69,11 @@ func TestCheckGovernanceMetadata(t *testing.T) {
 	})
 
 	t.Run("deny=true with deny messages returns formatted error", func(t *testing.T) {
-		diags := CheckGovernanceMetadata(&nextgen.UserGroupGovernanceMetadata{
+		diags := CheckGovernanceMetadata(&nextgen.GovernanceMetadata{
 			Deny: true,
-			Details: []nextgen.UserGroupPolicySetMetadata{
+			Details: []nextgen.PolicySetMetadata{
 				{
-					PolicyMetadata: []nextgen.UserGroupPolicyMetadata{
+					PolicyMetadata: []nextgen.PolicyMetadata{
 						{
 							PolicyName:   "P_UG_Combined",
 							Status:       "error",
@@ -93,7 +93,7 @@ func TestCheckGovernanceMetadata(t *testing.T) {
 	})
 
 	t.Run("deny=true with no messages returns fallback error", func(t *testing.T) {
-		diags := CheckGovernanceMetadata(&nextgen.UserGroupGovernanceMetadata{
+		diags := CheckGovernanceMetadata(&nextgen.GovernanceMetadata{
 			Deny: true,
 		}, "user group")
 		if !diags.HasError() {
@@ -106,11 +106,11 @@ func TestCheckGovernanceMetadata(t *testing.T) {
 	})
 
 	t.Run("deny=true with multiple policies concatenates messages", func(t *testing.T) {
-		diags := CheckGovernanceMetadata(&nextgen.UserGroupGovernanceMetadata{
+		diags := CheckGovernanceMetadata(&nextgen.GovernanceMetadata{
 			Deny: true,
-			Details: []nextgen.UserGroupPolicySetMetadata{
+			Details: []nextgen.PolicySetMetadata{
 				{
-					PolicyMetadata: []nextgen.UserGroupPolicyMetadata{
+					PolicyMetadata: []nextgen.PolicyMetadata{
 						{
 							PolicyName:   "P_UG_Naming",
 							Status:       "error",
@@ -135,11 +135,11 @@ func TestCheckGovernanceMetadata(t *testing.T) {
 	})
 
 	t.Run("policies with passing status are not included in messages", func(t *testing.T) {
-		diags := CheckGovernanceMetadata(&nextgen.UserGroupGovernanceMetadata{
+		diags := CheckGovernanceMetadata(&nextgen.GovernanceMetadata{
 			Deny: true,
-			Details: []nextgen.UserGroupPolicySetMetadata{
+			Details: []nextgen.PolicySetMetadata{
 				{
-					PolicyMetadata: []nextgen.UserGroupPolicyMetadata{
+					PolicyMetadata: []nextgen.PolicyMetadata{
 						{
 							PolicyName:   "P_UG_Pass",
 							Status:       "pass",

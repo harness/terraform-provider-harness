@@ -27,7 +27,7 @@ func formatGovernanceDenial(governance *nextgen.GovernanceMetadata, resourceKind
 	return msg
 }
 
-func CheckGovernanceMetadata(gm *nextgen.UserGroupGovernanceMetadata, entityType string) diag.Diagnostics {
+func CheckGovernanceMetadata(gm *nextgen.GovernanceMetadata, entityType string) diag.Diagnostics {
 	if gm == nil || !gm.Deny {
 		return nil
 	}
@@ -40,7 +40,7 @@ func CheckGovernanceMetadata(gm *nextgen.UserGroupGovernanceMetadata, entityType
 	return diag.Errorf("OPA policy evaluation failed for %s: %s", entityType, strings.Join(messages, "; "))
 }
 
-func extractDenyMessages(gm *nextgen.UserGroupGovernanceMetadata) []string {
+func extractDenyMessages(gm *nextgen.GovernanceMetadata) []string {
 	var messages []string
 	for _, detail := range gm.Details {
 		for _, policy := range detail.PolicyMetadata {
