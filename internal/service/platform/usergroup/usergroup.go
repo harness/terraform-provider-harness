@@ -251,6 +251,10 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 			return helpers.HandleApiError(err, d, httpResp)
 		}
 
+		if resp.Data == nil {
+			return helpers.HandleEmptyCreateUpdateResponse(nil, "user group")
+		}
+
 		if diags := helpers.CheckGovernanceMetadata(resp.Data.GovernanceMetadata, "user group"); diags != nil {
 			return diags
 		}
@@ -286,6 +290,10 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	if resp.Data == nil {
+		return helpers.HandleEmptyCreateUpdateResponse(nil, "user group")
 	}
 
 	if diags := helpers.CheckGovernanceMetadata(resp.Data.GovernanceMetadata, "user group"); diags != nil {
