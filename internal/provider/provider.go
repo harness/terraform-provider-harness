@@ -138,7 +138,6 @@ import (
 	pipeline_template_filters "github.com/harness/terraform-provider-harness/internal/service/pipeline/template_filters"
 	pipeline_triggers "github.com/harness/terraform-provider-harness/internal/service/pipeline/triggers"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/default_images"
-	time_sleep "github.com/harness/terraform-provider-harness/internal/service/platform/time_sleep"
 	idp_resource "github.com/harness/terraform-provider-harness/internal/service/platform/idp"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -151,6 +150,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/roles"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/slo"
+	time_sleep "github.com/harness/terraform-provider-harness/internal/service/platform/time_sleep"
 	pl_token "github.com/harness/terraform-provider-harness/internal/service/platform/token"
 
 	"github.com/harness/harness-go-sdk/logging"
@@ -401,6 +401,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_idp_catalog_entity":                 idp_resource.DataSourceCatalogEntity(),
 				"harness_platform_idp_environment_blueprint":          idp_resource.DataSourceEnvironmentBlueprint(),
 				"harness_platform_idp_environment":                    idp_resource.DataSourceEnvironment(),
+				"harness_platform_idp_plugin":                         idp_resource.DataSourcePlugin(),
 				"harness_platform_idp_scorecard":                      idp_resource.DataSourceScorecard(),
 				"harness_platform_idp_scorecard_check":                idp_resource.DataSourceScorecardCheck(),
 				"harness_platform_default_images":                     default_images.DataSourceDefaultImages(),
@@ -621,10 +622,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_idp_catalog_entity":                    idp_resource.ResourceCatalogEntity(),
 				"harness_platform_idp_environment_blueprint":             idp_resource.ResourceEnvironmentBlueprint(),
 				"harness_platform_idp_environment":                       idp_resource.ResourceEnvironment(),
+				"harness_platform_idp_plugin":                            idp_resource.ResourcePlugin(),
 				"harness_platform_idp_scorecard":                         idp_resource.ResourceScorecard(),
 				"harness_platform_idp_scorecard_check":                   idp_resource.ResourceScorecardCheck(),
 				"harness_platform_default_images":                        default_images.ResourceDefaultImages(),
-				"harness_time_sleep":                                      time_sleep.ResourceTimeSleep(),
+				"harness_time_sleep":                                     time_sleep.ResourceTimeSleep(),
 			},
 		}
 
