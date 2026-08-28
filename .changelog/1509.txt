@@ -1,0 +1,4 @@
+```release-note:feature
+resource/harness_platform_gitops_agent: Added `existing_installation` to the `metadata` block to support BYOA (Bring Your Own Argo CD) agents. The field cannot be changed after create. Updated the `type` enum description to replace deprecated `CONNECTED_ARGO_PROVIDER` with `HOSTED_ARGO_PROVIDER`.
+data-source/harness_platform_gitops_agent: Added computed `existing_installation` to the `metadata` block.
+```

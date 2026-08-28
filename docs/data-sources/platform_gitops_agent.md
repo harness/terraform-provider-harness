@@ -58,13 +58,14 @@ data "harness_platform_gitops_agent" "example" {
 - `prefixed_identifier` (String) Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
 - `type` (String) Default: "AGENT_TYPE_UNSET"
-Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
+Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
 
 Read-Only:
 
+- `existing_installation` (Boolean)
 - `high_availability` (Boolean)
 - `is_namespaced` (Boolean)
 - `namespace` (String)

@@ -35,7 +35,7 @@ resource "harness_platform_gitops_agent" "example" {
 - `identifier` (String) Identifier of the GitOps agent.
 - `name` (String) Name of the GitOps agent.
 - `type` (String) Default: "AGENT_TYPE_UNSET"
-Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
+Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 
 ### Optional
 
@@ -58,6 +58,7 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 Optional:
 
+- `existing_installation` (Boolean) Indicates if the agent connects to an existing Argo CD installation (BYOA). When true, Harness skips CRD and Argo CD component installation. This field cannot be changed after the agent is created.
 - `high_availability` (Boolean) Indicates if the agent is deployed in HA mode.
 - `is_namespaced` (Boolean) Indicates if the agent is namespaced.
 - `namespace` (String) The kubernetes namespace where the agent should be installed.
