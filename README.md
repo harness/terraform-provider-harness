@@ -154,6 +154,7 @@ Run `make help` to see all available commands. Here's a summary:
 | `make docs` | Generate provider documentation |
 | `make docs-validate` | Validate provider documentation |
 | `make changelog` | Generate changelog from `.changelog` entries |
+| `make changelog-entry` | Scaffold a `.changelog` entry for the current branch/ticket/PR (override with `ENTRY=`, `TYPE=`) |
 
 #### Development Commands
 
@@ -228,6 +229,18 @@ resource/harness_platform_connector: Added support for new authentication method
 ```
 
 Supported types: `enhancement`, `bug`, `feature`, `new-resource`, `new-data-source`, `breaking-change`, `note`
+
+To scaffold this file automatically, run:
+
+```sh
+make changelog-entry
+```
+
+This detects a JIRA-style ticket in the current branch name (e.g. `CDS-130810-my-fix` -> `CDS-130810`), falling back to the open PR number for the branch (via `gh`), and creates `.changelog/<name>.txt` with a `release-note:enhancement` template. Override the name or type explicitly:
+
+```sh
+make changelog-entry ENTRY=CDS-130810 TYPE=bug
+```
 
 ### Cleaning Up
 

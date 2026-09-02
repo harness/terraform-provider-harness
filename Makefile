@@ -295,6 +295,11 @@ changelog: ## Generate changelog from .changelog entries
 	$(call log_header,Generating Changelog)
 	@./scripts/generate-changelog.sh
 
+.PHONY: changelog-entry
+changelog-entry: ## Scaffold a .changelog entry for the current branch/ticket/PR (override with ENTRY=, TYPE=)
+	$(call log_header,Scaffolding Changelog Entry)
+	@./scripts/new-changelog-entry.sh "$(ENTRY)" "$(TYPE)"
+
 # ============================================================================
 # Development Setup Targets
 # ============================================================================
