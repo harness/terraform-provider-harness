@@ -120,23 +120,27 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 		email = attr.(string)
 	}
 
-	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+	resp, httpResp, err := c.UserApi.GetUsers(ctx, c.AccountId, &nextgen.UserApiGetUsersOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		SearchTerm:        optional.NewString(email),
+		Body:              optional.NewInterface(nextgen.UserFilter{Emails: []string{email}}),
 	})
-
-	if &resp == nil || resp.Data == nil || resp.Data.Empty {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readUserList(d, resp.Data)
+	if &resp == nil || resp.Data == nil || resp.Data.Empty || len(resp.Data.Content) == 0 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	if len(resp.Data.Content) > 1 {
+		return diag.Errorf("multiple users found with email %s", email)
+	}
+
+	readUser(d, &resp.Data.Content[0])
 
 	return nil
 }
@@ -191,17 +195,25 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 		email = attr.(string)
 	}
 
-	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+	resp, httpResp, err := c.UserApi.GetUsers(ctx, c.AccountId, &nextgen.UserApiGetUsersOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		SearchTerm:        optional.NewString(email),
+		Body:              optional.NewInterface(nextgen.UserFilter{Emails: []string{email}}),
 	})
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readUserList(d, resp.Data)
+	if &resp == nil || resp.Data == nil || resp.Data.Empty || len(resp.Data.Content) == 0 {
+		return diag.Errorf("no user found with email %s", email)
+	}
+
+	if len(resp.Data.Content) > 1 {
+		return diag.Errorf("multiple users found with email %s", email)
+	}
+
+	readUser(d, &resp.Data.Content[0])
 
 	return nil
 }
@@ -292,19 +304,12 @@ func createUpdateUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 	return &addUsersDto
 }
 
-func readUserList(d *schema.ResourceData, userInfo *nextgen.PageResponseUserAggregate) {
-	userInfoList := userInfo.Content
-	for _, value := range userInfoList {
-		readUser(d, &value)
-	}
-}
-
-func readUser(d *schema.ResourceData, UserAggregate *nextgen.UserAggregate) {
-	d.SetId(UserAggregate.User.Email)
-	d.Set("identifier", UserAggregate.User.Uuid)
-	d.Set("name", UserAggregate.User.Name)
-	d.Set("email", UserAggregate.User.Email)
-	d.Set("locked", UserAggregate.User.Locked)
-	d.Set("disabled", UserAggregate.User.Disabled)
-	d.Set("externally_managed", UserAggregate.User.ExternallyManaged)
+func readUser(d *schema.ResourceData, user *nextgen.UserMetadata) {
+	d.SetId(user.Email)
+	d.Set("identifier", user.Uuid)
+	d.Set("name", user.Name)
+	d.Set("email", user.Email)
+	d.Set("locked", user.Locked)
+	d.Set("disabled", user.Disabled)
+	d.Set("externally_managed", user.ExternallyManaged)
 }
