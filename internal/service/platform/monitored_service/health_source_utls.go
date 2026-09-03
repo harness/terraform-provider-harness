@@ -97,6 +97,10 @@ func getStackDriverHealthSource(hs map[string]interface{}) nextgen.StackdriverMe
 
 	healthSource.ConnectorRef = hs["connectorRef"].(string)
 
+	if hs["gcpProjectId"] != nil {
+		healthSource.GcpProjectId = hs["gcpProjectId"].(string)
+	}
+
 	metricDefinitions := hs["metricDefinitions"].([]interface{})
 	healthSourceMetricDefinitions := make([]nextgen.StackdriverDefinition, len(metricDefinitions))
 	for i, metricDefinition := range metricDefinitions {
