@@ -1,0 +1,3 @@
+```release-note:bug
+`harness_platform_idp_catalog_entity`: Read now requests entity YAML from `git_details.branch_name`, and update no longer sends the create-only `base_branch`, so plan/apply succeed for entities on non-default branches.
+```

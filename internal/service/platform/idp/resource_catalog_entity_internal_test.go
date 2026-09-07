@@ -1,8 +1,10 @@
 package idp
 
 import (
+	"context"
 	"errors"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -42,6 +44,122 @@ func TestGetCatalogEntityInfoFromResourceData(t *testing.T) {
 	require.Equal(t, "default", info.OrgId.Value())
 	require.True(t, info.ProjectId.IsSet())
 	require.Equal(t, "idp", info.ProjectId.Value())
+}
+
+func TestGetCatalogEntityInfoFromResourceDataIncludesBranchName(t *testing.T) {
+	resource := ResourceCatalogEntity()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"identifier": "my_service_dev_landing_zone",
+		"kind":       "resource",
+		"org_id":     "default",
+		"project_id": "idp",
+		"git_details": []interface{}{
+			map[string]interface{}{
+				"branch_name": "feat/idp-workflow",
+				"base_branch": "main",
+				"store_type":  "REMOTE",
+			},
+		},
+	})
+
+	info, err := getCatalogEntityInfoFromResourceData(data)
+
+	require.NoError(t, err)
+	require.True(t, info.BranchName.IsSet())
+	require.Equal(t, "feat/idp-workflow", info.BranchName.Value())
+}
+
+func TestBaseBranchIsOnlySentDuringCreate(t *testing.T) {
+	resource := ResourceCatalogEntity()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"git_details": []interface{}{
+			map[string]interface{}{
+				"branch_name": "feat/idp-workflow",
+				"base_branch": "develop",
+				"store_type":  "REMOTE",
+			},
+		},
+	})
+
+	createDetails := buildGitCreateDetails(data)
+	updateDetails := buildGitUpdateDetails(data)
+
+	require.Equal(t, "develop", createDetails.BaseBranch)
+	require.Equal(t, "feat/idp-workflow", createDetails.BranchName)
+	require.Empty(t, updateDetails.BaseBranch)
+	require.Equal(t, "feat/idp-workflow", updateDetails.BranchName)
+}
+
+func TestCatalogEntityGetOptsUsesBranchName(t *testing.T) {
+	c := &idp_sdk.APIClient{AccountId: "account-123"}
+	opts := catalogEntityGetOpts(c, catalogEntityInfo{
+		OrgId:      optional.NewString("default"),
+		ProjectId:  optional.NewString("idp"),
+		BranchName: optional.NewString("feat/idp-workflow"),
+	})
+
+	require.True(t, opts.BranchName.IsSet())
+	require.Equal(t, "feat/idp-workflow", opts.BranchName.Value())
+	require.False(t, opts.LoadFromFallbackBranch.IsSet())
+	require.Equal(t, "account-123", opts.HarnessAccount.Value())
+}
+
+func TestCatalogEntityGetOptsOmitsBranchWhenMissing(t *testing.T) {
+	c := &idp_sdk.APIClient{AccountId: "account-123"}
+	opts := catalogEntityGetOpts(c, catalogEntityInfo{})
+
+	require.False(t, opts.BranchName.IsSet())
+	require.False(t, opts.LoadFromFallbackBranch.IsSet())
+}
+
+func TestGetCatalogEntitySendsBranchName(t *testing.T) {
+	requestQuery := make(chan string, 1)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requestQuery <- r.URL.Query().Get("branch_name")
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{}`))
+	}))
+	t.Cleanup(server.Close)
+
+	config := idp_sdk.NewConfiguration()
+	config.BasePath = server.URL
+	config.AccountId = "account-123"
+	client := idp_sdk.NewAPIClient(config)
+
+	_, _, err := getCatalogEntity(context.Background(), client, catalogEntityInfo{
+		Scope:      "account.default.idp",
+		Kind:       "resource",
+		Identifier: "my_service",
+		OrgId:      optional.NewString("default"),
+		ProjectId:  optional.NewString("idp"),
+		BranchName: optional.NewString("feat/idp-workflow"),
+	})
+
+	require.NoError(t, err)
+	require.Equal(t, "feat/idp-workflow", <-requestQuery)
+}
+
+func TestGetCatalogEntityInfoFromResponseCopiesGitBranch(t *testing.T) {
+	fallback := catalogEntityInfo{
+		Scope:      "account",
+		Kind:       "resource",
+		Identifier: "my_service",
+		OrgId:      optional.EmptyString(),
+		ProjectId:  optional.EmptyString(),
+	}
+
+	info := getCatalogEntityInfoFromResponse(idp_sdk.EntityResponse{
+		Identifier:        "my_service",
+		Kind:              "resource",
+		OrgIdentifier:     "default",
+		ProjectIdentifier: "idp",
+		GitDetails: &idp_sdk.GitDetails{
+			BranchName: "feat/idp-workflow",
+		},
+	}, fallback)
+
+	require.True(t, info.BranchName.IsSet())
+	require.Equal(t, "feat/idp-workflow", info.BranchName.Value())
 }
 
 func TestGetCatalogEntityInfoFromImportResourceDataAllowsComputedKind(t *testing.T) {

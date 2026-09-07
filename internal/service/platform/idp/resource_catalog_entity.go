@@ -24,6 +24,7 @@ type catalogEntityInfo struct {
 	Identifier string
 	OrgId      optional.String
 	ProjectId  optional.String
+	BranchName optional.String
 }
 
 func ResourceCatalogEntity() *schema.Resource {
@@ -69,7 +70,7 @@ func ResourceCatalogEntity() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_name": {
-							Description: "Name of the branch.",
+							Description: "Name of the branch the entity YAML is stored on. Terraform reads and writes this branch.",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
@@ -87,7 +88,7 @@ func ResourceCatalogEntity() *schema.Resource {
 							Computed:    true,
 						},
 						"base_branch": {
-							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
+							Description: "Existing branch to create branch_name from when that branch does not already exist. Terraform does not read this branch on refresh.",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
@@ -151,12 +152,9 @@ func resourceCatalogEntityRead(ctx context.Context, d *schema.ResourceData, meta
 	if id == "" {
 		id = entityInfo.Identifier
 	}
+	entityInfo.Identifier = id
 
-	resp, httpResp, err := c.EntitiesApi.GetEntity(ctx, entityInfo.Scope, entityInfo.Kind, id, &idp.EntitiesApiGetEntityOpts{
-		OrgIdentifier:     entityInfo.OrgId,
-		ProjectIdentifier: entityInfo.ProjectId,
-		HarnessAccount:    optional.NewString(c.AccountId),
-	})
+	resp, httpResp, err := getCatalogEntity(ctx, c, entityInfo)
 
 	if err != nil {
 		return handleIDPReadApiError(err, d, httpResp)
@@ -295,12 +293,20 @@ func resourceCatalogEntityUpdateOrCreate(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func getCatalogEntity(ctx context.Context, c *idp.APIClient, info catalogEntityInfo) (idp.EntityResponse, *http.Response, error) {
-	return c.EntitiesApi.GetEntity(ctx, info.Scope, info.Kind, info.Identifier, &idp.EntitiesApiGetEntityOpts{
+func catalogEntityGetOpts(c *idp.APIClient, info catalogEntityInfo) *idp.EntitiesApiGetEntityOpts {
+	opts := &idp.EntitiesApiGetEntityOpts{
 		OrgIdentifier:     info.OrgId,
 		ProjectIdentifier: info.ProjectId,
 		HarnessAccount:    optional.NewString(c.AccountId),
-	})
+	}
+	if info.BranchName.IsSet() && info.BranchName.Value() != "" {
+		opts.BranchName = info.BranchName
+	}
+	return opts
+}
+
+func getCatalogEntity(ctx context.Context, c *idp.APIClient, info catalogEntityInfo) (idp.EntityResponse, *http.Response, error) {
+	return c.EntitiesApi.GetEntity(ctx, info.Scope, info.Kind, info.Identifier, catalogEntityGetOpts(c, info))
 }
 
 func getCatalogEntityWithRetry(ctx context.Context, c *idp.APIClient, info catalogEntityInfo) (idp.EntityResponse, *http.Response, error) {
@@ -574,6 +580,7 @@ func getAndVerifyCatalogEntityInfo(d *schema.ResourceData) (catalogEntityInfo, e
 		Kind:       kind,
 		Scope:      "account",
 		Identifier: identifier,
+		BranchName: helpers.BuildField(d, "git_details.0.branch_name"),
 	}
 
 	if yamlOrg != "" {
@@ -613,6 +620,7 @@ func getCatalogEntityInfoFromResourceData(d *schema.ResourceData) (catalogEntity
 		Kind:       kind,
 		Scope:      "account",
 		Identifier: identifier,
+		BranchName: helpers.BuildField(d, "git_details.0.branch_name"),
 	}
 
 	if orgId != "" {
@@ -657,6 +665,7 @@ func getCatalogEntityInfoFromImportResourceData(d *schema.ResourceData) (catalog
 		Identifier: identifier,
 		OrgId:      orgId,
 		ProjectId:  projectId,
+		BranchName: helpers.BuildField(d, "git_details.0.branch_name"),
 	}, nil
 }
 
@@ -668,6 +677,9 @@ func getCatalogEntityInfoFromResponse(entity idp.EntityResponse, fallback catalo
 	}
 	if entity.Kind != "" {
 		catalogInfo.Kind = entity.Kind
+	}
+	if entity.GitDetails != nil && entity.GitDetails.BranchName != "" {
+		catalogInfo.BranchName = optional.NewString(entity.GitDetails.BranchName)
 	}
 	if catalogInfo.Scope == "" {
 		catalogInfo.Scope = "account"
@@ -816,9 +828,6 @@ func buildGitUpdateDetails(d *schema.ResourceData) *idp.GitUpdateDetails {
 	if attr, ok := config["commit_message"]; ok {
 		details.CommitMessage = attr.(string)
 	}
-	if attr, ok := config["base_branch"]; ok {
-		details.BaseBranch = attr.(string)
-	}
 	if attr, ok := config["last_object_id"]; ok {
 		details.LastObjectId = attr.(string)
 	}
@@ -855,11 +864,7 @@ var entityImporter = &schema.ResourceImporter{
 
 		c, ctx := meta.(*internal.Session).GetIDPClientWithContext(context.Background())
 
-		resp, _, err := c.EntitiesApi.GetEntity(ctx, info.Scope, info.Kind, info.Identifier, &idp.EntitiesApiGetEntityOpts{
-			OrgIdentifier:     info.OrgId,
-			ProjectIdentifier: info.ProjectId,
-			HarnessAccount:    optional.NewString(c.AccountId),
-		})
+		resp, _, err := getCatalogEntity(ctx, c, info)
 		if err != nil {
 			return nil, fmt.Errorf("failed to fetch entity for import: %w", err)
 		}

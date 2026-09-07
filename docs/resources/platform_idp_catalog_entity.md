@@ -145,8 +145,8 @@ resource "harness_platform_idp_catalog_entity" "test_with_git_import" {
 
 Optional:
 
-- `base_branch` (String) Name of the default branch (this checks out a new branch titled by branch_name).
-- `branch_name` (String) Name of the branch.
+- `base_branch` (String) Existing branch to create branch_name from when that branch does not already exist. Terraform does not read this branch on refresh.
+- `branch_name` (String) Name of the branch the entity YAML is stored on. Terraform reads and writes this branch.
 - `commit_message` (String) Commit message used for the merge commit.
 - `connector_ref` (String) Identifier of the Harness Connector used for importing entity from Git To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `file_path` (String) File path of the Entity in the repository.
