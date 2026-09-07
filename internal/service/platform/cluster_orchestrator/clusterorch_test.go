@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -54,7 +55,9 @@ func TestResourceClusterOrchestratorLifecycleWiring(t *testing.T) {
 }
 
 func TestResourceClusterOrchestrator(t *testing.T) {
-	name := "terraform-clusterorch-test"
+	suffix := utils.RandStringBytes(5)
+	name := fmt.Sprintf("tf-co-%s", suffix)
+	connectorID := fmt.Sprintf("tfco_%s", suffix)
 	resourceName := "harness_cluster_orchestrator.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -63,7 +66,7 @@ func TestResourceClusterOrchestrator(t *testing.T) {
 		// CheckDestroy:      testRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testClusterOrch(name),
+				Config: testClusterOrch(name, connectorID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
@@ -83,7 +86,9 @@ func TestResourceClusterOrchestrator(t *testing.T) {
 // orchestrator answers HTTP 500 ("invalid cluster id"), which destroy now treats
 // as already deleted instead of failing.
 func TestResourceClusterOrchestrator_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
-	name := "terraform-co-ccm32336-test"
+	suffix := utils.RandStringBytes(5)
+	name := fmt.Sprintf("tf-co-ccm32336-%s", suffix)
+	connectorID := fmt.Sprintf("tfco32336_%s", suffix)
 	resourceName := "harness_cluster_orchestrator.test"
 
 	var orchIDBefore string
@@ -93,7 +98,7 @@ func TestResourceClusterOrchestrator_CCM32336_OutOfBandDeleteRecreates(t *testin
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testClusterOrch(name),
+				Config: testClusterOrch(name, connectorID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttrWith(resourceName, "id", func(value string) error {
@@ -111,7 +116,7 @@ func TestResourceClusterOrchestrator_CCM32336_OutOfBandDeleteRecreates(t *testin
 						t.Fatalf("CCM-32336: out-of-band delete failed: %v", err)
 					}
 				},
-				Config: testClusterOrch(name),
+				Config: testClusterOrch(name, connectorID),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
@@ -120,12 +125,33 @@ func TestResourceClusterOrchestrator_CCM32336_OutOfBandDeleteRecreates(t *testin
 	})
 }
 
-func testClusterOrch(name string) string {
+func testOrchK8sConnectorHCL(connectorID, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_connector_kubernetes" "orch_k8s" {
+		identifier = "%[1]sk8s"
+		name       = "%[2]s"
+
+		inherit_from_delegate {
+			delegate_selectors = ["harness-delegate"]
+		}
+	}
+
+	resource "harness_platform_connector_kubernetes_cloud_cost" "orch_k8s_ccm" {
+		identifier = "%[1]s"
+		name       = "%[2]s"
+
+		features_enabled = ["VISIBILITY", "OPTIMIZATION"]
+		connector_ref    = harness_platform_connector_kubernetes.orch_k8s.id
+	}
+`, connectorID, name)
+}
+
+func testClusterOrch(name, connectorID string) string {
+	return testOrchK8sConnectorHCL(connectorID, name+"_k8s") + fmt.Sprintf(`
 	resource "harness_cluster_orchestrator" "test" {
-		name = "%s"  
-		cluster_endpoint = "http://test.com" 
-		k8s_connector_id = "TestDoNotDelete"                    
+		name             = "%s"
+		cluster_endpoint = "http://test.com"
+		k8s_connector_id = harness_platform_connector_kubernetes_cloud_cost.orch_k8s_ccm.id
 	}
 `, name)
 }

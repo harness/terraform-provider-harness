@@ -127,6 +127,38 @@ func TestAccResourceConnector_oci_helm_ForceDelete(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnector_oci_helm_UsernameRef(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_oci_helm.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnector_oci_helm_usernameref(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "url", "admin.azurecr.io"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.username_ref", fmt.Sprintf("account.%s", id)),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccResourceConnector_oci_helm_usernamepassword(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
@@ -159,6 +191,41 @@ func testAccResourceConnector_oci_helm_usernamepassword(id string, name string) 
 			depends_on = [harness_platform_secret_text.test]
 			destroy_duration = "4s"
 		}
+`, id, name)
+}
+
+func testAccResourceConnector_oci_helm_usernameref(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+	resource "harness_platform_connector_oci_helm" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		url = "admin.azurecr.io"
+		delegate_selectors = ["harness-delegate"]
+		credentials {
+			username_ref = "account.${harness_platform_secret_text.test.id}"
+			password_ref = "account.${harness_platform_secret_text.test.id}"
+		}
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
+	}
 `, id, name)
 }
 

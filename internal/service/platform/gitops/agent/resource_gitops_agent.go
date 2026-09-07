@@ -41,6 +41,13 @@ func ResourceGitopsAgent() *schema.Resource {
 					e = fmt.Errorf("field 'identifier' cannot be changed after the resource is created")
 				}
 			}
+			if diff.HasChange("metadata.0.existing_installation") && diff.Id() != "" {
+				if e != nil {
+					e = fmt.Errorf("field 'metadata.existing_installation' cannot be changed after the agent is created:%w", e)
+				} else {
+					e = fmt.Errorf("field 'metadata.existing_installation' cannot be changed after the agent is created")
+				}
+			}
 			return e
 		},
 
@@ -78,7 +85,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				Optional:    true,
 			},
 			"type": {
-				Description: "Default: \"AGENT_TYPE_UNSET\"\nEnum: \"AGENT_TYPE_UNSET\" \"CONNECTED_ARGO_PROVIDER\" \"MANAGED_ARGO_PROVIDER\"",
+				Description: "Default: \"AGENT_TYPE_UNSET\"\nEnum: \"AGENT_TYPE_UNSET\" \"MANAGED_ARGO_PROVIDER\" \"HOSTED_ARGO_PROVIDER\"",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -111,6 +118,12 @@ func ResourceGitopsAgent() *schema.Resource {
 							Description: "Indicates if the agent is namespaced.",
 							Type:        schema.TypeBool,
 							Optional:    true,
+						},
+						"existing_installation": {
+							Description: "Indicates if the agent connects to an existing Argo CD installation (BYOA). When true, Harness skips CRD and Argo CD component installation. This field cannot be changed after the agent is created.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
 						},
 					}},
 			},
@@ -293,7 +306,6 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 		metadata := attr.([]interface{})
 		if attr != nil && len(metadata) > 0 {
 			meta := metadata[0].(map[string]interface{})
-			fmt.Println("META: ", meta)
 			var v1MetaData nextgen.V1AgentMetadata
 
 			if meta["high_availability"] != nil {
@@ -304,6 +316,9 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 			}
 			if meta["is_namespaced"] != nil {
 				v1MetaData.IsNamespaced = meta["is_namespaced"].(bool)
+			}
+			if meta["existing_installation"] != nil {
+				v1MetaData.ExistingInstallation = meta["existing_installation"].(bool)
 			}
 
 			v1Agent.Metadata = &v1MetaData
@@ -338,6 +353,7 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	metaDataMap["namespace"] = agent.Metadata.Namespace
 	metaDataMap["high_availability"] = agent.Metadata.HighAvailability
 	metaDataMap["is_namespaced"] = agent.Metadata.IsNamespaced
+	metaDataMap["existing_installation"] = agent.Metadata.ExistingInstallation
 	metadata = append(metadata, metaDataMap)
 	d.Set("metadata", metadata)
 	if agent.Credentials != nil && agent.Credentials.PrivateKey != "" {

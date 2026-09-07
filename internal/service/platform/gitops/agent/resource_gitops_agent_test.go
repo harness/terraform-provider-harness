@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -209,6 +210,41 @@ func TestAccResourceGitopsAgentNS(t *testing.T) {
 
 }
 
+func TestAccResourceGitopsAgentBYOA(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	resourceName := "harness_platform_gitops_agent.test"
+	agentName := id
+	namespace := "terraform-test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsAgentDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsAgentBYOAAccountLevel(id, accountId, agentName, namespace, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", agentName),
+					resource.TestCheckResourceAttr(resourceName, "metadata.0.existing_installation", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "agent_token"),
+				),
+			},
+			{
+				Config:      testAccResourceGitopsAgentBYOAAccountLevel(id, accountId, agentName, namespace, false),
+				ExpectError: regexp.MustCompile(`field 'metadata.existing_installation' cannot be changed after the agent is created`),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"account_id", "agent_token"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func testAccGetAgent(resourceName string, state *terraform.State) (*nextgen.V1Agent, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
@@ -240,6 +276,23 @@ func testAccResourceGitopsAgentDestroy(resourceName string) resource.TestCheckFu
 		return nil
 	}
 
+}
+
+func testAccResourceGitopsAgentBYOAAccountLevel(agentId string, accountId string, agentName string, namespace string, existingInstallation bool) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_agent" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			name = "%[3]s"
+			type = "MANAGED_ARGO_PROVIDER"
+			metadata {
+				namespace = "%[4]s"
+        		high_availability = false
+				existing_installation = %[5]t
+    		}
+			operator = "ARGO"		
+		}
+		`, agentId, accountId, agentName, namespace, existingInstallation)
 }
 
 func testAccResourceGitopsAgentAccountLevel(agentId string, accountId string, agentName string, namespace string, isNamespaced string) string {

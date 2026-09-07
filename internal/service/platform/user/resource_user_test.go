@@ -398,16 +398,16 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 	return optional.EmptyString()
 }
 
-func testAccGetPlatformUser(resourceName string, state *terraform.State) (*nextgen.UserAggregate, error) {
+func testAccGetPlatformUser(resourceName string, state *terraform.State) (*nextgen.UserMetadata, error) {
 
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	email := r.Primary.Attributes["email"]
 
-	resp, _, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+	resp, _, err := c.UserApi.GetUsers(ctx, c.AccountId, &nextgen.UserApiGetUsersOpts{
 		OrgIdentifier:     buildField(r, "org_id"),
 		ProjectIdentifier: buildField(r, "project_id"),
-		SearchTerm:        optional.NewString(email),
+		Body:              optional.NewInterface(nextgen.UserFilter{Emails: []string{email}}),
 	})
 
 	if err != nil || resp.Data.Empty {
@@ -423,9 +423,9 @@ func testGetUserUUID(email string, projectId, orgId string) (string, error) {
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 
 	if orgId != "" {
-		resp, _, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+		resp, _, err := c.UserApi.GetUsers(ctx, c.AccountId, &nextgen.UserApiGetUsersOpts{
 			OrgIdentifier: optional.NewString(orgId),
-			SearchTerm:    optional.NewString(email),
+			Body:          optional.NewInterface(nextgen.UserFilter{Emails: []string{email}}),
 		})
 		if err != nil {
 			return "", err
@@ -433,12 +433,12 @@ func testGetUserUUID(email string, projectId, orgId string) (string, error) {
 		if resp.Data.Empty || len(resp.Data.Content) == 0 {
 			return "", fmt.Errorf("no user found with email %s", email)
 		}
-		return resp.Data.Content[0].User.Uuid, nil
+		return resp.Data.Content[0].Uuid, nil
 	} else if orgId != "" && projectId != "" {
-		resp, _, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+		resp, _, err := c.UserApi.GetUsers(ctx, c.AccountId, &nextgen.UserApiGetUsersOpts{
 			ProjectIdentifier: optional.NewString(projectId),
 			OrgIdentifier:     optional.NewString(orgId),
-			SearchTerm:        optional.NewString(email),
+			Body:              optional.NewInterface(nextgen.UserFilter{Emails: []string{email}}),
 		})
 		if err != nil {
 			return "", err
@@ -446,10 +446,10 @@ func testGetUserUUID(email string, projectId, orgId string) (string, error) {
 		if resp.Data.Empty || len(resp.Data.Content) == 0 {
 			return "", fmt.Errorf("no user found with email %s", email)
 		}
-		return resp.Data.Content[0].User.Uuid, nil
+		return resp.Data.Content[0].Uuid, nil
 	} else {
-		resp, _, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
-			SearchTerm: optional.NewString(email),
+		resp, _, err := c.UserApi.GetUsers(ctx, c.AccountId, &nextgen.UserApiGetUsersOpts{
+			Body: optional.NewInterface(nextgen.UserFilter{Emails: []string{email}}),
 		})
 		if err != nil {
 			return "", err
@@ -457,7 +457,7 @@ func testGetUserUUID(email string, projectId, orgId string) (string, error) {
 		if resp.Data.Empty || len(resp.Data.Content) == 0 {
 			return "", fmt.Errorf("no user found with email %s", email)
 		}
-		return resp.Data.Content[0].User.Uuid, nil
+		return resp.Data.Content[0].Uuid, nil
 	}
 }
 
@@ -465,7 +465,7 @@ func testAccUserDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		user, _ := testAccGetPlatformUser(resourceName, state)
 		if user != nil {
-			return fmt.Errorf("Found user: %s", user.User.Uuid)
+			return fmt.Errorf("Found user: %s", user.Uuid)
 		}
 
 		return nil

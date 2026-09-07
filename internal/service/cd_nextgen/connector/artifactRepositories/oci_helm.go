@@ -134,7 +134,7 @@ func buildConnectorOciHelm(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			connector.OciHelm.Auth.UsernamePassword.Username = attr.(string)
 		}
 
-		if attr, ok := config["credentials.0.username_ref"]; ok {
+		if attr, ok := config["username_ref"]; ok {
 			connector.OciHelm.Auth.UsernamePassword.UsernameRef = attr.(string)
 		}
 

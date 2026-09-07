@@ -21,3 +21,9 @@ internal/service/platform/module_registry/** david.warren@harness.io james.cox@h
 internal/service/platform/module_registry_testing/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
 internal/service/platform/variable_set/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
 internal/service/platform/provider_registry/** david.warren@harness.io james.cox@harness.io ritek.rounak@harness.io
+internal/service/platform/ccm_filters/** riyas.yash@harness.io ramya.maripuri@harness.io hitesh.aringa@harness.io ritek.rounak@harness.io
+internal/service/platform/governance/** riyas.yash@harness.io ramya.maripuri@harness.io hitesh.aringa@harness.io ritek.rounak@harness.io
+internal/service/platform/autostopping/** riyas.yash@harness.io ramya.maripuri@harness.io hitesh.aringa@harness.io ritek.rounak@harness.io
+internal/service/platform/connector/*_cc* riyas.yash@harness.io ramya.maripuri@harness.io hitesh.aringa@harness.io ritek.rounak@harness.io
+internal/service/platform/connector/*_cloud_cost* riyas.yash@harness.io ramya.maripuri@harness.io hitesh.aringa@harness.io ritek.rounak@harness.io
+internal/service/platform/connector/ccm_regression_test.go riyas.yash@harness.io ramya.maripuri@harness.io hitesh.aringa@harness.io ritek.rounak@harness.io

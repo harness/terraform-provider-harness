@@ -53,7 +53,7 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Computed:    true,
 			},
 			"type": {
-				Description: "Default: \"AGENT_TYPE_UNSET\"\nEnum: \"AGENT_TYPE_UNSET\" \"CONNECTED_ARGO_PROVIDER\" \"MANAGED_ARGO_PROVIDER\"",
+				Description: "Default: \"AGENT_TYPE_UNSET\"\nEnum: \"AGENT_TYPE_UNSET\" \"MANAGED_ARGO_PROVIDER\" \"HOSTED_ARGO_PROVIDER\"",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -85,6 +85,11 @@ func DataSourceGitopsAgent() *schema.Resource {
 							Description: "Indicates if the agent is namespaced.",
 							Type:        schema.TypeBool,
 							Optional:    true,
+						},
+						"existing_installation": {
+							Description: "Indicates if the agent connects to an existing Argo CD installation (BYOA).",
+							Type:        schema.TypeBool,
+							Computed:    true,
 						},
 					},
 				},

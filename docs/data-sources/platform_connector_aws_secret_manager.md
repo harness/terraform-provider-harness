@@ -81,3 +81,4 @@ Read-Only:
 Read-Only:
 
 - `iam_role_arn` (String)
+- `oidc_session_tag_keys` (List of String) Supported values include `account_id`, `organization_id`, `project_id`, `environment_id`, `environment_type`, `pipeline_id`, `connector_id`, `connector_name`, `delegate_selectors`, `context`, `step_type`, `stage_type`, `triggered_by_email`, `triggered_by_name`, `service_name`, and `service_id`.

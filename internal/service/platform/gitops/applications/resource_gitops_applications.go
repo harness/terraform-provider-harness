@@ -696,6 +696,34 @@ func BuildAppSpecMap(appSpec *nextgen.ApplicationsApplicationSpec) map[string]in
 		syncPolicyList = append(syncPolicyList, syncPolicy)
 		spec["sync_policy"] = syncPolicyList
 	}
+
+	if len(appSpec.IgnoreDifferences) > 0 {
+		var ignoreList []interface{}
+		for _, diff := range appSpec.IgnoreDifferences {
+			diffMap := map[string]interface{}{}
+			if diff.Group != "" {
+				diffMap["group"] = diff.Group
+			}
+			if diff.Kind != "" {
+				diffMap["kind"] = diff.Kind
+			}
+			if diff.Name != "" {
+				diffMap["name"] = diff.Name
+			}
+			if diff.Namespace != "" {
+				diffMap["namespace"] = diff.Namespace
+			}
+			if len(diff.JsonPointers) > 0 {
+				diffMap["json_pointers"] = diff.JsonPointers
+			}
+			if len(diff.JqPathExpressions) > 0 {
+				diffMap["jq_path_expressions"] = diff.JqPathExpressions
+			}
+			ignoreList = append(ignoreList, diffMap)
+		}
+		spec["ignore_difference"] = ignoreList
+	}
+
 	return spec
 }
 
@@ -897,6 +925,45 @@ func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.Applic
 		}
 		spec.SyncPolicy = &syncPolicyData
 	}
+
+	if ignoreDiffs, ok := specData["ignore_difference"]; ok && len(ignoreDiffs.([]interface{})) > 0 {
+		var ignoreList []nextgen.ApplicationsResourceIgnoreDifferences
+		for _, diff := range ignoreDiffs.([]interface{}) {
+			diffData := diff.(map[string]interface{})
+			var ignoreDiff nextgen.ApplicationsResourceIgnoreDifferences
+
+			if group, ok := diffData["group"]; ok && len(group.(string)) > 0 {
+				ignoreDiff.Group = group.(string)
+			}
+			if kind, ok := diffData["kind"]; ok && len(kind.(string)) > 0 {
+				ignoreDiff.Kind = kind.(string)
+			}
+			if name, ok := diffData["name"]; ok && len(name.(string)) > 0 {
+				ignoreDiff.Name = name.(string)
+			}
+			if namespace, ok := diffData["namespace"]; ok && len(namespace.(string)) > 0 {
+				ignoreDiff.Namespace = namespace.(string)
+			}
+			if jsonPointers, ok := diffData["json_pointers"]; ok && len(jsonPointers.([]interface{})) > 0 {
+				var pointers []string
+				for _, ptr := range jsonPointers.([]interface{}) {
+					pointers = append(pointers, ptr.(string))
+				}
+				ignoreDiff.JsonPointers = pointers
+			}
+			if jqPathExpressions, ok := diffData["jq_path_expressions"]; ok && len(jqPathExpressions.([]interface{})) > 0 {
+				var expressions []string
+				for _, expr := range jqPathExpressions.([]interface{}) {
+					expressions = append(expressions, expr.(string))
+				}
+				ignoreDiff.JqPathExpressions = expressions
+			}
+
+			ignoreList = append(ignoreList, ignoreDiff)
+		}
+		spec.IgnoreDifferences = ignoreList
+	}
+
 	return spec
 }
 

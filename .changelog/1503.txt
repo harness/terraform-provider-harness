@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_gitops_applicationset: Fixed template `spec.ignore_difference` not being persisted in state because the shared Application spec expand/flatten helpers omitted the field.
+```

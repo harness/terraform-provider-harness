@@ -70,23 +70,27 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interf
 		email = attr.(string)
 	}
 
-	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+	resp, httpResp, err := c.UserApi.GetUsers(ctx, c.AccountId, &nextgen.UserApiGetUsersOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		SearchTerm:        optional.NewString(email),
+		Body:              optional.NewInterface(nextgen.UserFilter{Emails: []string{email}}),
 	})
-
-	if &resp == nil || resp.Data == nil || resp.Data.Empty {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	readUserList(d, resp.Data)
+	if &resp == nil || resp.Data == nil || resp.Data.Empty || len(resp.Data.Content) == 0 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	if len(resp.Data.Content) > 1 {
+		return diag.Errorf("multiple users found with email %s", email)
+	}
+
+	readUser(d, &resp.Data.Content[0])
 
 	return nil
 }
