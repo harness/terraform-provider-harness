@@ -118,6 +118,7 @@ func testAccCatalogEntityYaml(id string, description string) string {
 
 func TestAccResourceRemoteCatalogEntity(t *testing.T) {
 	description := t.Name()
+	updatedDescription := description + "_updated"
 	id := fmt.Sprintf("%s_%s", description, utils.RandStringBytes(5))
 	resourceName := "harness_platform_idp_catalog_entity.test"
 
@@ -130,13 +131,20 @@ func TestAccResourceRemoteCatalogEntity(t *testing.T) {
 				Config: testAccResourceRemoteCatalogEntity(id, description),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "git_details.0.branch_name", "terraform/"+id),
 					testAccEntityCheckYamlField(resourceName, "metadata.description", description),
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateIdFunc: testAccCatalogEntityImportStateIdFunc(resourceName),
+				Config:   testAccResourceRemoteCatalogEntity(id, description),
+				PlanOnly: true,
+			},
+			{
+				Config: testAccResourceRemoteCatalogEntity(id, updatedDescription),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "git_details.0.branch_name", "terraform/"+id),
+					testAccEntityCheckYamlField(resourceName, "metadata.description", updatedDescription),
+				),
 			},
 		},
 	})
@@ -144,18 +152,49 @@ func TestAccResourceRemoteCatalogEntity(t *testing.T) {
 
 func testAccResourceRemoteCatalogEntity(id string, description string) string {
 	str := fmt.Sprintf(`
+		resource "harness_platform_idp_catalog_entity" "base" {
+			identifier = "%[1]s_base"
+			org_id = "default"
+			project_id = "ssem"
+			kind = "component"
+			git_details {
+				store_type = "REMOTE"
+				connector_ref = "demossem"
+				repo_name = "catalog"
+				branch_name = "terraform/base/%[1]s"
+				base_branch = "main"
+				file_path = "gitimport/%[1]s_base.yaml"
+			}
+			yaml = <<-EOT
+	        apiVersion: harness.io/v1
+	        kind: Component
+	        orgIdentifier: default
+	        projectIdentifier: ssem
+	        name: Base Branch Catalog Entity
+	        identifier: "%[1]s_base"
+	        type: service
+	        owner: user:account/admin@harness.io
+	        spec:
+	            lifecycle: prod
+	        metadata:
+	            description: "Base branch fixture for %[1]s"
+	        EOT
+		}
+
 		resource "harness_platform_idp_catalog_entity" "test" {
 			identifier = "%[1]s"
 			org_id = "default"
 			project_id = "ssem"
 			kind = "component"
 			git_details {
-		    store_type = "REMOTE"
-			connector_ref = "demossem"
-			repo_name = "catalog"
-			branch_name = "main"
-			file_path = "gitimport/%[1]s.yaml"
+				store_type = "REMOTE"
+				connector_ref = "demossem"
+				repo_name = "catalog"
+				branch_name = "terraform/%[1]s"
+				base_branch = "terraform/base/%[1]s"
+				file_path = "gitimport/%[1]s.yaml"
 			}
+			depends_on = [harness_platform_idp_catalog_entity.base]
 			yaml = <<-EOT
 	        apiVersion: harness.io/v1
 	        kind: Component

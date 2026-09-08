@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/antihax/optional"
-	"github.com/harness/harness-go-sdk/harness/idp"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -42,7 +41,7 @@ func DataSourceCatalogEntity() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_name": {
-							Description: "Name of the branch.",
+							Description: "Name of the branch the entity YAML is stored on.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -57,7 +56,7 @@ func DataSourceCatalogEntity() *schema.Resource {
 							Computed:    true,
 						},
 						"base_branch": {
-							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
+							Description: "Existing branch used to create branch_name when that branch did not already exist. Not used on data source read.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -109,11 +108,7 @@ func dataSourceCatalogEntityRead(ctx context.Context, d *schema.ResourceData, me
 		return diag.Errorf("failed to get catalog entity info: %v", err)
 	}
 
-	resp, httpResp, err := c.EntitiesApi.GetEntity(ctx, info.Scope, info.Kind, info.Identifier, &idp.EntitiesApiGetEntityOpts{
-		OrgIdentifier:     info.OrgId,
-		ProjectIdentifier: info.ProjectId,
-		HarnessAccount:    optional.NewString(c.AccountId),
-	})
+	resp, httpResp, err := getCatalogEntity(ctx, c, info)
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
