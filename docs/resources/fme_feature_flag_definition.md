@@ -3,12 +3,12 @@
 page_title: "harness_fme_feature_flag_definition Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Create, update, and remove a Harness FME (Split) feature flag definition in an environment. definition is JSON matching Split's definition payload (see Split API). Create and update write the definition directly; they do not create or approve change requests. If the environment requires approvals, those calls typically fail with HTTP 403. Import id format: org_id/project_id/environment_id/flag_name.
+  Create, update, and remove a Harness FME (Split) feature flag definition in an environment. definition is JSON matching Split's definition payload (see Split API). Create and update write the definition directly; they do not create or approve change requests. If the environment requires approvals, those calls typically fail with HTTP 403. For gated environments, submit a change request with one identity and approve with another (the same user or SAT cannot approve its own request). This provider has no change-request resource; use the Split change-request API, the FME UI, or pipeline FME steps. approval_skippable_by on the environment is a group/user skip list, not a Terraform SAT bypass. Import id format: org_id/project_id/environment_id/flag_name.
 ---
 
 # harness_fme_feature_flag_definition (Resource)
 
-Create, update, and remove a Harness FME (Split) feature flag definition in an environment. `definition` is JSON matching Split's definition payload (see Split API). Create and update write the definition directly; they do not create or approve change requests. If the environment requires approvals, those calls typically fail with HTTP 403. Import id format: `org_id/project_id/environment_id/flag_name`.
+Create, update, and remove a Harness FME (Split) feature flag definition in an environment. `definition` is JSON matching Split's definition payload (see Split API). Create and update write the definition directly; they do not create or approve change requests. If the environment requires approvals, those calls typically fail with HTTP 403. For gated environments, submit a change request with one identity and approve with another (the same user or SAT cannot approve its own request). This provider has no change-request resource; use the Split change-request API, the FME UI, or pipeline FME steps. `approval_skippable_by` on the environment is a group/user skip list, not a Terraform SAT bypass. Import id format: `org_id/project_id/environment_id/flag_name`.
 
 
 

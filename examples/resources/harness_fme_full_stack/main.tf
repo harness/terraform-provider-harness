@@ -9,6 +9,16 @@
 #   terraform apply -var="name_prefix=mydemo"
 #
 # Optional: set -var="skip_api_key=true" to skip harness_fme_api_key (avoids minting a real Split API key).
+#
+# Typical split of concerns (this example follows it):
+#   Terraform: org/project, FME environments, traffic types, segments, API keys,
+#   project-level flags, and definitions only on environments that do not require
+#   approvals (alpha/beta here).
+#   Gated targeting (staging_with_approvals): do not attach
+#   harness_fme_feature_flag_definition. Use the FME UI, pipeline FME steps, or the
+#   Split change-request API. A change request must be submitted and approved by
+#   two different identities; the SAT Terraform uses cannot approve its own request.
+#   approval_skippable_by is a group/user skip list, not a Terraform SAT bypass.
 
 terraform {
   required_version = ">= 1.3.0"
@@ -184,10 +194,9 @@ resource "harness_platform_usergroup" "approvers" {
 }
 
 # Demonstrates change_permissions (approvals) on an extra environment.
-# harness_fme_feature_flag_definition below only covers local.fme_environment_keys
-# (alpha/beta). Do not attach a definition to this environment: create/update
-# write the Split definition API directly and typically return HTTP 403 when
-# approvals are required. This resource does not create or approve change requests.
+# Definitions below only cover local.fme_environment_keys (alpha/beta).
+# Do not attach harness_fme_feature_flag_definition here: direct writes return 403.
+# Gated targeting needs a change request (submitter SAT != approver SAT).
 resource "harness_fme_environment" "staging_with_approvals" {
   org_id     = harness_platform_organization.this.id
   project_id = harness_platform_project.this.id
