@@ -12,6 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+// Data source reads existing_installation = true for BYOA agent
+// Data source reads existing_installation = false for standard agent
 func TestAccDataSourceGitopsAgent(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	id = strings.ReplaceAll(id, "_", "")
@@ -19,6 +21,7 @@ func TestAccDataSourceGitopsAgent(t *testing.T) {
 	agentId := id
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "data.harness_platform_gitops_agent.test"
+	byoaResourceName := "data.harness_platform_gitops_agent.byoa"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
@@ -29,6 +32,8 @@ func TestAccDataSourceGitopsAgent(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "metadata.0.existing_installation", "false"),
+					resource.TestCheckResourceAttr(byoaResourceName, "metadata.0.existing_installation", "true"),
 				),
 			},
 		},
@@ -88,9 +93,33 @@ func testAccDataSourceGitopsAgent(agentId string, name string, accountId string,
 			operator = "ARGO"	
 		}
 
+		resource "harness_platform_gitops_agent" "byoa" {
+			identifier = "%[1]sbyoa"
+			account_id = "%[3]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			name = "%[4]sbyoa"
+			type = "MANAGED_ARGO_PROVIDER"
+			metadata {
+        		namespace = "terraform-test"
+        		high_availability = false
+                is_namespaced = true
+				existing_installation = true
+			}
+			operator = "ARGO"
+		}
+
 		data "harness_platform_gitops_agent" "test" {
 			depends_on = [harness_platform_gitops_agent.test]
 			identifier = harness_platform_gitops_agent.test.id
+			account_id = "%[3]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+		}
+
+		data "harness_platform_gitops_agent" "byoa" {
+			depends_on = [harness_platform_gitops_agent.byoa]
+			identifier = harness_platform_gitops_agent.byoa.id
 			account_id = "%[3]s"
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id

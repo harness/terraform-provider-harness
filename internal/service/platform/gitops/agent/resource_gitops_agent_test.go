@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// Create standard agent omitting existing_installation (backward compat)
 func TestAccResourceGitopsAgent(t *testing.T) {
 	// Account Level
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -36,6 +37,7 @@ func TestAccResourceGitopsAgent(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", agentName),
 					resource.TestCheckResourceAttrSet(resourceName, "agent_token"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.0.existing_installation", "false"),
 				),
 			},
 			{
@@ -210,6 +212,9 @@ func TestAccResourceGitopsAgentNS(t *testing.T) {
 
 }
 
+// Create BYOA agent with existing_installation = true
+// No perpetual drift on BYOA agent after apply
+// Destroy BYOA agent via Terraform
 func TestAccResourceGitopsAgentBYOA(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	id = strings.ReplaceAll(id, "_", "")
@@ -231,6 +236,10 @@ func TestAccResourceGitopsAgentBYOA(t *testing.T) {
 				),
 			},
 			{
+				Config:   testAccResourceGitopsAgentBYOAAccountLevel(id, accountId, agentName, namespace, true),
+				PlanOnly: true,
+			},
+			{
 				Config:      testAccResourceGitopsAgentBYOAAccountLevel(id, accountId, agentName, namespace, false),
 				ExpectError: regexp.MustCompile(`field 'metadata.existing_installation' cannot be changed after the agent is created`),
 			},
@@ -240,6 +249,58 @@ func TestAccResourceGitopsAgentBYOA(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"account_id", "agent_token"},
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Create BYOA agent at org scope
+// Create BYOA agent at project scope
+func TestAccResourceGitopsAgentBYOAScopes(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	orgResourceName := "harness_platform_gitops_agent.org"
+	projectResourceName := "harness_platform_gitops_agent.project"
+	namespace := "terraform-test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy: func(s *terraform.State) error {
+			if err := testAccResourceGitopsAgentDestroy(orgResourceName)(s); err != nil {
+				return err
+			}
+			return testAccResourceGitopsAgentDestroy(projectResourceName)(s)
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsAgentBYOAScopes(id, accountId, namespace),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(orgResourceName, "metadata.0.existing_installation", "true"),
+					resource.TestCheckResourceAttr(projectResourceName, "metadata.0.existing_installation", "true"),
+				),
+			},
+			{
+				Config:   testAccResourceGitopsAgentBYOAScopes(id, accountId, namespace),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+// type = HOSTED_ARGO_PROVIDER is accepted by the provider
+func TestAccResourceGitopsAgentHostedType(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:             testAccResourceGitopsAgentHostedType(id, accountId),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -276,6 +337,67 @@ func testAccResourceGitopsAgentDestroy(resourceName string) resource.TestCheckFu
 		return nil
 	}
 
+}
+
+func testAccResourceGitopsAgentBYOAScopes(id string, accountId string, namespace string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			org_id = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_gitops_agent" "org" {
+			identifier = "%[1]sorg"
+			account_id = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[1]sorg"
+			type = "MANAGED_ARGO_PROVIDER"
+			metadata {
+				namespace = "%[3]s"
+				high_availability = false
+				existing_installation = true
+			}
+			operator = "ARGO"
+		}
+
+		resource "harness_platform_gitops_agent" "project" {
+			identifier = "%[1]sproj"
+			account_id = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			name = "%[1]sproj"
+			type = "MANAGED_ARGO_PROVIDER"
+			metadata {
+				namespace = "%[3]s"
+				high_availability = false
+				existing_installation = true
+			}
+			operator = "ARGO"
+		}
+		`, id, accountId, namespace)
+}
+
+func testAccResourceGitopsAgentHostedType(agentId string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_agent" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			name = "%[1]s"
+			type = "HOSTED_ARGO_PROVIDER"
+			metadata {
+				namespace = "terraform-test"
+				high_availability = false
+				existing_installation = true
+			}
+			operator = "ARGO"
+		}
+		`, agentId, accountId)
 }
 
 func testAccResourceGitopsAgentBYOAAccountLevel(agentId string, accountId string, agentName string, namespace string, existingInstallation bool) string {
