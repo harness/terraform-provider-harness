@@ -183,6 +183,11 @@ resource "harness_platform_usergroup" "approvers" {
   project_id = harness_platform_project.this.id
 }
 
+# Demonstrates change_permissions (approvals) on an extra environment.
+# harness_fme_feature_flag_definition below only covers local.fme_environment_keys
+# (alpha/beta). Do not attach a definition to this environment: create/update
+# write the Split definition API directly and typically return HTTP 403 when
+# approvals are required. This resource does not create or approve change requests.
 resource "harness_fme_environment" "staging_with_approvals" {
   org_id     = harness_platform_organization.this.id
   project_id = harness_platform_project.this.id
@@ -261,6 +266,7 @@ resource "harness_fme_feature_flag" "toggle" {
   tags            = ["terraform-example", "fme-stack"]
 }
 
+# Definitions only for alpha/beta (no approvals). Not for staging_with_approvals.
 resource "harness_fme_feature_flag_definition" "toggle" {
   for_each       = local.fme_environment_keys
   org_id         = harness_platform_organization.this.id

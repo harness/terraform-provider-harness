@@ -3,12 +3,12 @@
 page_title: "harness_fme_feature_flag_definition Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Create, update, and remove a Harness FME (Split) feature flag definition in an environment. definition is JSON matching Split's definition payload (see Split API). Import id format: org_id/project_id/environment_id/flag_name.
+  Create, update, and remove a Harness FME (Split) feature flag definition in an environment. definition is JSON matching Split's definition payload (see Split API). Create and update write the definition directly; they do not create or approve change requests. If the environment requires approvals, those calls typically fail with HTTP 403. Import id format: org_id/project_id/environment_id/flag_name.
 ---
 
 # harness_fme_feature_flag_definition (Resource)
 
-Create, update, and remove a Harness FME (Split) feature flag definition in an environment. `definition` is JSON matching Split's definition payload (see Split API). Import id format: `org_id/project_id/environment_id/flag_name`.
+Create, update, and remove a Harness FME (Split) feature flag definition in an environment. `definition` is JSON matching Split's definition payload (see Split API). Create and update write the definition directly; they do not create or approve change requests. If the environment requires approvals, those calls typically fail with HTTP 403. Import id format: `org_id/project_id/environment_id/flag_name`.
 
 
 
@@ -17,7 +17,7 @@ Create, update, and remove a Harness FME (Split) feature flag definition in an e
 
 ### Required
 
-- `definition` (String) JSON object for the split definition (treatments, defaultTreatment, defaultRule, trafficAllocation, rules, etc.).
+- `definition` (String) JSON object for the split definition (treatments, defaultTreatment, defaultRule, trafficAllocation, rules, etc.). Written directly to the Split definition API. Fails with HTTP 403 when the environment requires approvals.
 - `environment_id` (String) Split environment ID.
 - `flag_name` (String) Feature flag (split) name.
 - `org_id` (String) Harness organization identifier.

@@ -1,0 +1,3 @@
+```release-note:bug
+docs: Clarify that harness_fme_feature_flag_definition writes Split definitions directly and fails with HTTP 403 when the environment requires approvals; the full-stack example does not apply definitions to staging_with_approvals
+```

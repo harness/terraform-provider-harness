@@ -13,7 +13,7 @@ import (
 // ResourceFMEFeatureFlagDefinition manages a Split feature flag definition in one environment.
 func ResourceFMEFeatureFlagDefinition() *schema.Resource {
 	return &schema.Resource{
-		Description: "Create, update, and remove a Harness FME (Split) feature flag definition in an environment. `definition` is JSON matching Split's definition payload (see Split API). Import id format: `org_id/project_id/environment_id/flag_name`.",
+		Description: "Create, update, and remove a Harness FME (Split) feature flag definition in an environment. `definition` is JSON matching Split's definition payload (see Split API). Create and update write the definition directly; they do not create or approve change requests. If the environment requires approvals, those calls typically fail with HTTP 403. Import id format: `org_id/project_id/environment_id/flag_name`.",
 
 		CreateContext: resourceFMEFeatureFlagDefinitionCreate,
 		ReadContext:   resourceFMEFeatureFlagDefinitionRead,
@@ -50,7 +50,7 @@ func ResourceFMEFeatureFlagDefinition() *schema.Resource {
 				ForceNew:    true,
 			},
 			"definition": {
-				Description: "JSON object for the split definition (treatments, defaultTreatment, defaultRule, trafficAllocation, rules, etc.).",
+				Description: "JSON object for the split definition (treatments, defaultTreatment, defaultRule, trafficAllocation, rules, etc.). Written directly to the Split definition API. Fails with HTTP 403 when the environment requires approvals.",
 				Type:        schema.TypeString,
 				Required:    true,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
