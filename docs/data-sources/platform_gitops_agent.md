@@ -57,7 +57,7 @@ data "harness_platform_gitops_agent" "example" {
 - `operator` (String) The Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `prefixed_identifier` (String) Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
-- `type` (String) Default: "AGENT_TYPE_UNSET"
+- `type` (String) Use `MANAGED_ARGO_PROVIDER` for agents in your cluster (recommended). `HOSTED_ARGO_PROVIDER` is for Harness-hosted agents and is not customer-provisioned.
 Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 
 <a id="nestedatt--metadata"></a>

@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/harness_platform_gitops_agent: Clarified `type` field docs — use `MANAGED_ARGO_PROVIDER` for customer cluster agents; `HOSTED_ARGO_PROVIDER` is Harness-hosted and not customer-provisioned.
+data-source/harness_platform_gitops_agent: Same `type` field documentation update.
+```

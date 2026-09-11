@@ -85,7 +85,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				Optional:    true,
 			},
 			"type": {
-				Description: "Default: \"AGENT_TYPE_UNSET\"\nEnum: \"AGENT_TYPE_UNSET\" \"MANAGED_ARGO_PROVIDER\" \"HOSTED_ARGO_PROVIDER\"",
+				Description: "Use `MANAGED_ARGO_PROVIDER` for agents in your cluster (recommended). `HOSTED_ARGO_PROVIDER` is for Harness-hosted agents and is not customer-provisioned.\nEnum: \"AGENT_TYPE_UNSET\" \"MANAGED_ARGO_PROVIDER\" \"HOSTED_ARGO_PROVIDER\"",
 				Type:        schema.TypeString,
 				Required:    true,
 			},

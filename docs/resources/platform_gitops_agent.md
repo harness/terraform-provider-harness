@@ -34,7 +34,7 @@ resource "harness_platform_gitops_agent" "example" {
 
 - `identifier` (String) Identifier of the GitOps agent.
 - `name` (String) Name of the GitOps agent.
-- `type` (String) Default: "AGENT_TYPE_UNSET"
+- `type` (String) Use `MANAGED_ARGO_PROVIDER` for agents in your cluster (recommended). `HOSTED_ARGO_PROVIDER` is for Harness-hosted agents and is not customer-provisioned.
 Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 
 ### Optional
