@@ -71,7 +71,3 @@ Optional:
 Required:
 
 - `proxy_id` (String) Id of the proxy
-
-Read-Only:
-
-- `proxy_cloud_connector_id` (String) Id of the cloud connector for the proxy. Set when the proxy lives in a different cloud account than the target resource.
