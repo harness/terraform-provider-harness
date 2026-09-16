@@ -95,6 +95,12 @@ func ResourceECSRule() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 						},
+						"proxy_cloud_connector_id": {
+							Description: "Id of the cloud connector for the proxy. Required when the proxy lives in a different cloud account than the target resource.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
 					},
 				},
 			},

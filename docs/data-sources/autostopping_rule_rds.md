@@ -70,6 +70,10 @@ Optional:
 
 - `forward_rule` (Block List) Additional tcp forwarding rules (see [below for nested schema](#nestedblock--tcp--forward_rule))
 
+Read-Only:
+
+- `proxy_cloud_connector_id` (String) Id of the cloud connector for the proxy. Set when the proxy lives in a different cloud account than the target resource.
+
 <a id="nestedblock--tcp--forward_rule"></a>
 ### Nested Schema for `tcp.forward_rule`
 
