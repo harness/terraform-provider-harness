@@ -396,6 +396,9 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 			proxy := &nextgen.Proxy{
 				Id: attr.(string),
 			}
+			if attr, ok := httpRoutingObj["proxy_cloud_connector_id"]; ok && attr.(string) != "" {
+				proxy.CloudAccountId = attr.(string)
+			}
 			httpProxy.Proxy = proxy
 		}
 		if attr, ok := httpRoutingObj["routing"]; ok {
@@ -461,6 +464,9 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 		if attr, ok := tcpRoutingObj["proxy_id"]; ok {
 			proxy := &nextgen.Proxy{
 				Id: attr.(string),
+			}
+			if attr, ok := tcpRoutingObj["proxy_cloud_connector_id"]; ok && attr.(string) != "" {
+				proxy.CloudAccountId = attr.(string)
 			}
 			tcpProxy.Proxy = proxy
 		}
@@ -534,6 +540,9 @@ func setHttpConfig(d *schema.ResourceData, routing *nextgen.RoutingDataV2, healt
 
 		if routing.Http.Proxy != nil && routing.Http.Proxy.Id != "" {
 			httpConfig["proxy_id"] = routing.Http.Proxy.Id
+			if routing.Http.Proxy.CloudAccountId != "" {
+				httpConfig["proxy_cloud_connector_id"] = routing.Http.Proxy.CloudAccountId
+			}
 		}
 
 		if len(routing.Http.Ports) > 0 {
@@ -582,6 +591,9 @@ func setTcpConfig(routing *nextgen.RoutingDataV2, d *schema.ResourceData, setCon
 		// Set proxy_id
 		if routing.Tcp.Proxy != nil && routing.Tcp.Proxy.Id != "" {
 			tcpConfig["proxy_id"] = routing.Tcp.Proxy.Id
+			if routing.Tcp.Proxy.CloudAccountId != "" {
+				tcpConfig["proxy_cloud_connector_id"] = routing.Tcp.Proxy.CloudAccountId
+			}
 		}
 		// Set SSH config
 		if routing.Tcp.SshConf != nil {

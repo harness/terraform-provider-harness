@@ -10,6 +10,8 @@ description: |-
 
 Resource for creating a Harness AutoStopping rule for Scaling Groups.
 
+~> **Note:** Cross-account proxy-based AutoStopping (`proxy_cloud_connector_id`) is not supported for Scale Group rules. This feature is only available for [VM rules](autostopping_rule_vm.md).
+
 ## Example Usage
 
 ```terraform

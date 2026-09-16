@@ -49,3 +49,43 @@ resource "harness_autostopping_rule_vm" "test" {
     delay_in_sec = 5
   }
 }
+
+# Cross-account AutoStopping rule: the target VM is in a different cloud account
+# than the proxy (access point). Use proxy_cloud_connector_id to specify the
+# cloud connector that owns the proxy.
+resource "harness_autostopping_rule_vm" "cross_account" {
+  name               = "cross-account-vm-rule"
+  cloud_connector_id = "target_account_connector_id"
+  idle_time_mins     = 10
+  dry_run            = true
+  filter {
+    vm_ids  = ["i-0123456789abcdef0"]
+    regions = ["us-east-1"]
+  }
+  http {
+    proxy_id                 = "proxy_id"
+    proxy_cloud_connector_id = "proxy_account_connector_id"
+    routing {
+      source_protocol = "https"
+      target_protocol = "https"
+      source_port     = 443
+      target_port     = 443
+      action          = "forward"
+    }
+    health {
+      protocol         = "http"
+      port             = 80
+      path             = "/"
+      timeout          = 30
+      status_code_from = 200
+      status_code_to   = 299
+    }
+  }
+  tcp {
+    proxy_id                 = "proxy_id"
+    proxy_cloud_connector_id = "proxy_account_connector_id"
+    ssh {
+      port = 22
+    }
+  }
+}

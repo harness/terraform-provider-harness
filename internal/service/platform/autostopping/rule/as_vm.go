@@ -123,6 +123,12 @@ func ResourceVMRule() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 						},
+						"proxy_cloud_connector_id": {
+							Description: "Id of the cloud connector for the proxy. Required when the proxy lives in a different cloud account than the target resource.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
 						"routing": {
 							Description: "Routing configuration used to access the instances",
 							Type:        schema.TypeList,
@@ -215,6 +221,12 @@ func ResourceVMRule() *schema.Resource {
 							Description: "Id of the Proxy",
 							Type:        schema.TypeString,
 							Required:    true,
+						},
+						"proxy_cloud_connector_id": {
+							Description: "Id of the cloud connector for the proxy. Required when the proxy lives in a different cloud account than the target resource.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
 						},
 						"ssh": {
 							Description: "SSH configuration",
