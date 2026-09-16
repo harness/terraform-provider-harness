@@ -3,6 +3,8 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/pipeline/policy"
+	"github.com/harness/terraform-provider-harness/internal/service/pipeline/policyset"
 	"log"
 	"net/url"
 	"strings"
@@ -66,8 +68,6 @@ import (
 	gitops_filters "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/iacm"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ip_allowlist"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"

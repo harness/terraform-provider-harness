@@ -267,22 +267,42 @@ func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet) {
 	_ = d.Set("action", policy.Action)
 	_ = d.Set("type", policy.Type_)
 	_ = d.Set("enabled", policy.Enabled)
-	_ = d.Set("policies", flattenPolicies(policy.Policies))
-	_ = d.Set("policy_references", flattenPoliciesForSet(policy.Policies))
+	_ = d.Set("policies", flattenPolicies(policy.Policies, policy.OrgId, policy.ProjectId))
+	_ = d.Set("policy_references", flattenPoliciesForSet(policy.Policies, policy.OrgId, policy.ProjectId))
 }
 
-func flattenPolicies(policies []policymgmt.LinkedPolicy) []map[string]interface{} {
+// scopedPolicyIdentifier mirrors the Harness scoping convention: a linked policy's identifier is
+// only prefixed when it lives at a broader scope than the policyset referencing it (relative to
+// the policyset's own org/project), matching how the UI renders cross-scope references.
+func scopedPolicyIdentifier(policy policymgmt.LinkedPolicy, policySetOrgId, policySetProjectId string) string {
+	switch {
+	case policy.ProjectId != "":
+		return policy.Identifier
+	case policy.OrgId != "":
+		if policy.OrgId == policySetOrgId && policySetProjectId == "" {
+			return policy.Identifier
+		}
+		return "org." + policy.Identifier
+	default:
+		if policySetOrgId == "" && policySetProjectId == "" {
+			return policy.Identifier
+		}
+		return "account." + policy.Identifier
+	}
+}
+
+func flattenPolicies(policies []policymgmt.LinkedPolicy, policySetOrgId, policySetProjectId string) []map[string]interface{} {
 	var policyList []map[string]interface{}
 	for _, policy := range policies {
 		policyList = append(policyList, map[string]interface{}{
-			"identifier": policy.Identifier,
+			"identifier": scopedPolicyIdentifier(policy, policySetOrgId, policySetProjectId),
 			"severity":   policy.Severity,
 		})
 	}
 	return policyList
 }
 
-func flattenPoliciesForSet(policies []policymgmt.LinkedPolicy) *schema.Set {
+func flattenPoliciesForSet(policies []policymgmt.LinkedPolicy, policySetOrgId, policySetProjectId string) *schema.Set {
 	set := &schema.Set{
 		F: schema.HashResource(&schema.Resource{
 			Schema: map[string]*schema.Schema{
@@ -300,7 +320,7 @@ func flattenPoliciesForSet(policies []policymgmt.LinkedPolicy) *schema.Set {
 
 	for _, policy := range policies {
 		set.Add(map[string]interface{}{
-			"identifier": policy.Identifier,
+			"identifier": scopedPolicyIdentifier(policy, policySetOrgId, policySetProjectId),
 			"severity":   policy.Severity,
 		})
 	}
