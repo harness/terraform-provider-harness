@@ -1,0 +1,7 @@
+```release-note:bug
+resource/harness_platform_policyset: Fixed a perpetual plan diff on `policies`/`policy_references` when a linked policy lives at a broader scope than the policyset (e.g. an account-scoped policy linked into an org- or project-scoped policyset via a scope-qualified identifier like `account.my_policy`). The provider now reconstructs the scope prefix on read to match what was applied, instead of always returning the bare identifier.
+```
+
+```release-note:bug
+resource/harness_platform_policyset: Fixed a spurious "reordering" plan diff on the deprecated `policies` list when the underlying API returns linked policies in a different order across reads. The provider now pins unchanged entries to their previous position instead of mirroring the API's unstable order.
+```

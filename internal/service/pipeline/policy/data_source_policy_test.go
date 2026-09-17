@@ -23,6 +23,8 @@ func TestAccDataSourcePolicy(t *testing.T) {
 				Config: testAccDataSourcePolicy(id, rego),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", id),
+					resource.TestCheckResourceAttr(resourceName, "rego", rego),
 				),
 				PreConfig: func() {
 					log.Printf("Configuring test with ID: %s and Rego: %s\n", id, rego)

@@ -40,8 +40,8 @@ data "harness_platform_policyset" "test" {
 - `enabled` (Boolean) Enabled for the policyset.
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
-- `policies` (Block List, Deprecated) List of policy identifiers / severity for the policyset. Deprecated: Use 'policy_references' instead. (see [below for nested schema](#nestedblock--policies))
-- `policy_references` (Block Set) Set of policy identifiers / severity for the policyset. Order is not significant. (see [below for nested schema](#nestedblock--policy_references))
+- `policies` (Block List, Deprecated) List of policy identifiers / severity for the policyset. Deprecated: use 'policy_references' instead - this field is order-sensitive and the underlying API does not guarantee a stable order for linked policies across reads. (see [below for nested schema](#nestedblock--policies))
+- `policy_references` (Block Set) Set of policy identifiers / severity for the policyset. Order is not significant. Preferred over the deprecated 'policies' field. (see [below for nested schema](#nestedblock--policy_references))
 - `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
@@ -55,7 +55,7 @@ data "harness_platform_policyset" "test" {
 
 Required:
 
-- `identifier` (String) Unique identifier of the policy
+- `identifier` (String) Identifier of the policy. Policies at a broader scope than the policyset are returned with a scope-qualified identifier (e.g. 'account.my_policy' or 'org.my_policy').
 - `severity` (String) Policy failure response - 'warning' for continuation, 'error' for exit
 
 
@@ -64,5 +64,5 @@ Required:
 
 Required:
 
-- `identifier` (String) Unique identifier of the policy
+- `identifier` (String) Identifier of the policy. Policies at a broader scope than the policyset are returned with a scope-qualified identifier (e.g. 'account.my_policy' or 'org.my_policy').
 - `severity` (String) Policy failure response - 'warning' for continuation, 'error' for exit

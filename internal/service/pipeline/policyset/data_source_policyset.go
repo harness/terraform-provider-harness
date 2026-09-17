@@ -44,16 +44,16 @@ func DataSourcePolicyset() *schema.Resource {
 				Computed:    false,
 			},
 			"policies": {
-				Description: "List of policy identifiers / severity for the policyset. Deprecated: Use 'policy_references' instead.",
+				Description: "List of policy identifiers / severity for the policyset. Deprecated: use 'policy_references' instead - this field is order-sensitive and the underlying API does not guarantee a stable order for linked policies across reads.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
 				MinItems:    1,
-				Deprecated:  "Use 'policy_references' instead. This field will be removed in a future version.",
+				Deprecated:  "The 'policies' field is deprecated. Use 'policy_references' instead. This field will be removed in a future version.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
-							Description: "Unique identifier of the policy",
+							Description: "Identifier of the policy. Policies at a broader scope than the policyset are returned with a scope-qualified identifier (e.g. 'account.my_policy' or 'org.my_policy').",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -66,7 +66,7 @@ func DataSourcePolicyset() *schema.Resource {
 				},
 			},
 			"policy_references": {
-				Description: "Set of policy identifiers / severity for the policyset. Order is not significant.",
+				Description: "Set of policy identifiers / severity for the policyset. Order is not significant. Preferred over the deprecated 'policies' field.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Optional:    true,
@@ -81,7 +81,7 @@ func DataSourcePolicyset() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
-							Description: "Unique identifier of the policy",
+							Description: "Identifier of the policy. Policies at a broader scope than the policyset are returned with a scope-qualified identifier (e.g. 'account.my_policy' or 'org.my_policy').",
 							Type:        schema.TypeString,
 							Required:    true,
 						},

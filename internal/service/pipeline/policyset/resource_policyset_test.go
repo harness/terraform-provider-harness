@@ -40,6 +40,11 @@ func TestAccResourcePolicyset(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action", action),
 					resource.TestCheckResourceAttr(resourceName, "type", policyType),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "policies.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "policies.0.identifier", policyFirstIdentifier),
+					resource.TestCheckResourceAttr(resourceName, "policies.0.severity", "warning"),
+					resource.TestCheckResourceAttr(resourceName, "policies.1.identifier", policySecondIdentifier),
+					resource.TestCheckResourceAttr(resourceName, "policies.1.severity", "warning"),
 				),
 			},
 			{
@@ -50,6 +55,10 @@ func TestAccResourcePolicyset(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action", action),
 					resource.TestCheckResourceAttr(resourceName, "type", policyType),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					// re-applying the same policies block with no changes must not reorder the
+					// list, guarding against the API's unstable linked-policy ordering.
+					resource.TestCheckResourceAttr(resourceName, "policies.0.identifier", policyFirstIdentifier),
+					resource.TestCheckResourceAttr(resourceName, "policies.1.identifier", policySecondIdentifier),
 				),
 			},
 			{
@@ -60,6 +69,15 @@ func TestAccResourcePolicyset(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action", action),
 					resource.TestCheckResourceAttr(resourceName, "type", policyType),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "policy_references.#", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "policy_references.*", map[string]string{
+						"identifier": policyFirstIdentifier,
+						"severity":   "warning",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "policy_references.*", map[string]string{
+						"identifier": policySecondIdentifier,
+						"severity":   "warning",
+					}),
 				),
 			},
 			{
@@ -70,6 +88,66 @@ func TestAccResourcePolicyset(t *testing.T) {
 			},
 		},
 	})
+}
+
+// TestAccResourcePolicysetCrossScope covers PIPE-37472: an org-scoped policyset linking an
+// account-scoped policy via a scope-qualified identifier ("account.<id>") must keep that prefix
+// on every subsequent read, not just at create time. The SDK test framework's automatic
+// post-apply plan check fails if a spurious diff (prefix dropped/reordered) reappears on refresh.
+func TestAccResourcePolicysetCrossScope(t *testing.T) {
+	id := fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_platform_policyset.test"
+	policyIdentifier := fmt.Sprintf("policy%s", utils.RandStringBytes(5))
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccPolicysetDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePolicysetCrossScope(id, policyIdentifier),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "policies.0.identifier", "account."+policyIdentifier),
+				),
+			},
+			{
+				// re-apply the identical config: must be a no-op, proving the prefix survives read.
+				Config: testAccResourcePolicysetCrossScope(id, policyIdentifier),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "policies.0.identifier", "account."+policyIdentifier),
+				),
+			},
+		},
+	})
+}
+
+func testAccResourcePolicysetCrossScope(id, policyIdentifier string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name       = "%[1]s"
+		}
+
+		resource "harness_platform_policy" "test" {
+			identifier = "%[2]s"
+			name       = "%[2]s"
+			rego       = "some text"
+		}
+
+		resource "harness_platform_policyset" "test" {
+			identifier = "%[1]s"
+			name       = "%[1]s"
+			org_id     = harness_platform_organization.test.id
+			action     = "onrun"
+			type       = "pipeline"
+			enabled    = false
+
+			policies {
+				identifier = "account.${harness_platform_policy.test.identifier}"
+				severity   = "warning"
+			}
+		}
+`, id, policyIdentifier)
 }
 
 func testAccResourcePolicyset(id, name, action, policyType string, policyFirstIdentifier, policySecondIdentifier string, enabled bool) string {

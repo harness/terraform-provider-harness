@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"sort"
+	"strings"
 
 	"hash/fnv"
 
@@ -25,6 +27,7 @@ func ResourcePolicyset() *schema.Resource {
 		DeleteContext: resourcePolicysetDelete,
 		CreateContext: resourcePolicysetCreateOrUpdate,
 		Importer:      helpers.MultiLevelResourceImporter,
+		CustomizeDiff: resourcePolicysetCustomizeDiff,
 
 		Schema: map[string]*schema.Schema{
 			"type": {
@@ -45,15 +48,16 @@ func ResourcePolicyset() *schema.Resource {
 				Optional:    true,
 			},
 			"policies": {
-				Description: "List of policy identifiers / severity for the policyset.",
+				Description: "List of policy identifiers / severity for the policyset. Deprecated: use 'policy_references' instead - this field is order-sensitive and the underlying API does not guarantee a stable order for linked policies across reads, which can produce a plan diff that only reorders entries.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Optional:    true,
 				MinItems:    1,
+				Deprecated:  "The 'policies' field is deprecated. Use 'policy_references' instead. This field will be removed in a future version.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
-							Description: "Account Identifier of the account",
+							Description: "Identifier of the policy. For a policy at a broader scope than the policyset, use a scope-qualified identifier (e.g. 'account.my_policy' or 'org.my_policy').",
 							Type:        schema.TypeString,
 							Optional:    false,
 							Required:    true,
@@ -68,7 +72,7 @@ func ResourcePolicyset() *schema.Resource {
 				},
 			},
 			"policy_references": {
-				Description: "Set of policy identifiers / severity for the policyset. Order is not significant.",
+				Description: "Set of policy identifiers / severity for the policyset. Order is not significant. Preferred over the deprecated 'policies' field.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Computed:    true,
@@ -83,7 +87,7 @@ func ResourcePolicyset() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
-							Description: "Unique identifier of the policy",
+							Description: "Identifier of the policy. For a policy at a broader scope than the policyset, use a scope-qualified identifier (e.g. 'account.my_policy' or 'org.my_policy').",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -209,6 +213,48 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
+// resourcePolicysetCustomizeDiff rejects configs that link the same policy identifier more than
+// once within "policies" or "policy_references" - the API only keeps one severity per identifier
+// per policyset, so a duplicate block silently loses instead of erroring at plan time.
+func resourcePolicysetCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+	if err := checkDuplicatePolicyIdentifiers("policies", severitiesByIdentifierFromList(d.Get("policies").([]interface{}))); err != nil {
+		return err
+	}
+	if err := checkDuplicatePolicyIdentifiers("policy_references", severitiesByIdentifierFromSet(d.Get("policy_references").(*schema.Set))); err != nil {
+		return err
+	}
+	return nil
+}
+
+func severitiesByIdentifierFromList(policies []interface{}) map[string][]string {
+	severities := map[string][]string{}
+	for _, p := range policies {
+		m := p.(map[string]interface{})
+		identifier := m["identifier"].(string)
+		severities[identifier] = append(severities[identifier], m["severity"].(string))
+	}
+	return severities
+}
+
+func severitiesByIdentifierFromSet(policies *schema.Set) map[string][]string {
+	severities := map[string][]string{}
+	for _, p := range policies.List() {
+		m := p.(map[string]interface{})
+		identifier := m["identifier"].(string)
+		severities[identifier] = append(severities[identifier], m["severity"].(string))
+	}
+	return severities
+}
+
+func checkDuplicatePolicyIdentifiers(field string, severities map[string][]string) error {
+	for identifier, sev := range severities {
+		if len(sev) > 1 {
+			return fmt.Errorf("duplicate policy identifier %q in %s (severities: %s) - each policy may only be linked once per policyset", identifier, field, strings.Join(sev, ", "))
+		}
+	}
+	return nil
+}
+
 func buildPolicies(d *schema.ResourceData) []policymgmt.Linkedpolicyidentifier {
 	policies := []policymgmt.Linkedpolicyidentifier{}
 
@@ -267,7 +313,7 @@ func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet) {
 	_ = d.Set("action", policy.Action)
 	_ = d.Set("type", policy.Type_)
 	_ = d.Set("enabled", policy.Enabled)
-	_ = d.Set("policies", flattenPolicies(policy.Policies, policy.OrgId, policy.ProjectId))
+	_ = d.Set("policies", flattenPolicies(policy.Policies, policy.OrgId, policy.ProjectId, d.Get("policies").([]interface{})))
 	_ = d.Set("policy_references", flattenPoliciesForSet(policy.Policies, policy.OrgId, policy.ProjectId))
 }
 
@@ -291,14 +337,38 @@ func scopedPolicyIdentifier(policy policymgmt.LinkedPolicy, policySetOrgId, poli
 	}
 }
 
-func flattenPolicies(policies []policymgmt.LinkedPolicy, policySetOrgId, policySetProjectId string) []map[string]interface{} {
-	var policyList []map[string]interface{}
-	for _, policy := range policies {
-		policyList = append(policyList, map[string]interface{}{
+// flattenPolicies builds the (order-sensitive) "policies" list. The policy-mgmt API does not
+// guarantee a stable order for linked policies across reads, which otherwise produces a spurious
+// reorder-only diff every apply. previousOrder (the current state/config value) is used to pin
+// unchanged entries to their prior position; only genuinely new entries fall back to API order.
+func flattenPolicies(policies []policymgmt.LinkedPolicy, policySetOrgId, policySetProjectId string, previousOrder []interface{}) []map[string]interface{} {
+	position := make(map[string]int, len(previousOrder))
+	for i, e := range previousOrder {
+		if m, ok := e.(map[string]interface{}); ok {
+			if identifier, ok := m["identifier"].(string); ok {
+				position[identifier] = i
+			}
+		}
+	}
+
+	policyList := make([]map[string]interface{}, len(policies))
+	for i, policy := range policies {
+		policyList[i] = map[string]interface{}{
 			"identifier": scopedPolicyIdentifier(policy, policySetOrgId, policySetProjectId),
 			"severity":   policy.Severity,
-		})
+		}
 	}
+
+	sort.SliceStable(policyList, func(i, j int) bool {
+		pi, oki := position[policyList[i]["identifier"].(string)]
+		pj, okj := position[policyList[j]["identifier"].(string)]
+		if oki && okj {
+			return pi < pj
+		}
+		// known entries sort before unknown (new) ones; ties keep API-returned relative order
+		return oki && !okj
+	})
+
 	return policyList
 }
 
