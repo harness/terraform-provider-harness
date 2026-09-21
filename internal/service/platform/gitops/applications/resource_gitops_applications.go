@@ -839,19 +839,35 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 	}
 }
 
+// firstBlock returns the first element of a nested block list. Terraform SDK v2
+// can expand an empty or partially known block into a one element list holding
+// nil, so the element itself is checked rather than only the list length.
+func firstBlock(raw interface{}) (map[string]interface{}, bool) {
+	list, ok := raw.([]interface{})
+	if !ok || len(list) == 0 {
+		return nil, false
+	}
+	block, ok := list[0].(map[string]interface{})
+	return block, ok
+}
+
 func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.ApplicationsApplicationSpec {
 	var spec nextgen.ApplicationsApplicationSpec
-	project := specData["project"].(string)
-	spec.Project = project
-	if specData["source"] != nil && len(specData["source"].([]interface{})) > 0 {
-		sourceMap := specData["source"].([]interface{})[0].(map[string]interface{})
+	if project, ok := specData["project"].(string); ok {
+		spec.Project = project
+	}
+	if sourceMap, ok := firstBlock(specData["source"]); ok {
 		source := setSpecSourceForRequest(sourceMap)
 		spec.Source = source
 	}
-	if specData["sources"] != nil && len(specData["sources"].([]interface{})) > 0 {
+	if sourceList, ok := specData["sources"].([]interface{}); ok && len(sourceList) > 0 {
 		var sources []nextgen.ApplicationsApplicationSource
-		for _, v := range specData["sources"].([]interface{}) {
-			source := setSpecSourceForRequest(v.(map[string]interface{}))
+		for _, v := range sourceList {
+			sourceMap, ok := v.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			source := setSpecSourceForRequest(sourceMap)
 			sources = append(sources, *source)
 		}
 		spec.Sources = sources
@@ -862,9 +878,8 @@ func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.Applic
 		spec.RevisionHistoryLimit = revisionHistoryLimit
 	}
 	//Destination
-	if specData["destination"] != nil && len(specData["destination"].([]interface{})) > 0 {
+	if specDestination, ok := firstBlock(specData["destination"]); ok {
 		var specDestinationData nextgen.ApplicationsApplicationDestination
-		var specDestination = specData["destination"].([]interface{})[0].(map[string]interface{})
 		if specDestination["name"] != nil && len(specDestination["name"].(string)) > 0 {
 			specDestinationData.Name = specDestination["name"].(string)
 		}
@@ -877,9 +892,8 @@ func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.Applic
 		spec.Destination = &specDestinationData
 	}
 	//sync policy
-	if specData["sync_policy"] != nil && len(specData["sync_policy"].([]interface{})) > 0 {
+	if syncPolicy, ok := firstBlock(specData["sync_policy"]); ok {
 		var syncPolicyData nextgen.ApplicationsSyncPolicy
-		var syncPolicy = specData["sync_policy"].([]interface{})[0].(map[string]interface{})
 		if syncPolicy["sync_options"] != nil && len(syncPolicy["sync_options"].([]interface{})) > 0 {
 			var syncOptions []string
 			for _, v := range syncPolicy["sync_options"].([]interface{}) {
@@ -887,9 +901,8 @@ func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.Applic
 			}
 			syncPolicyData.SyncOptions = syncOptions
 		}
-		if syncPolicy["automated"] != nil && len(syncPolicy["automated"].([]interface{})) > 0 {
+		if automatedSyncPolicy, ok := firstBlock(syncPolicy["automated"]); ok {
 			var automatedSyncPolicyData nextgen.ApplicationsSyncPolicyAutomated
-			var automatedSyncPolicy = syncPolicy["automated"].([]interface{})[0].(map[string]interface{})
 			if automatedSyncPolicy["prune"] != nil {
 				automatedSyncPolicyData.Prune = automatedSyncPolicy["prune"].(bool)
 			}
@@ -901,14 +914,12 @@ func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.Applic
 			}
 			syncPolicyData.Automated = &automatedSyncPolicyData
 		}
-		if syncPolicy["retry"] != nil && len(syncPolicy["retry"].([]interface{})) > 0 {
-			var retrySync = syncPolicy["retry"].([]interface{})[0].(map[string]interface{})
+		if retrySync, ok := firstBlock(syncPolicy["retry"]); ok {
 			var retrySyncData nextgen.ApplicationsRetryStrategy
 			if retrySync["limit"] != nil && len(retrySync["limit"].(string)) > 0 {
 				retrySyncData.Limit = retrySync["limit"].(string)
 			}
-			if retrySync["backoff"] != nil && len(retrySync["backoff"].([]interface{})) > 0 {
-				var syncBackoff = retrySync["backoff"].([]interface{})[0].(map[string]interface{})
+			if syncBackoff, ok := firstBlock(retrySync["backoff"]); ok {
 				var syncBackoffData nextgen.ApplicationsBackoff
 				if syncBackoff["duration"] != nil && len(syncBackoff["duration"].(string)) > 0 {
 					syncBackoffData.Duration = syncBackoff["duration"].(string)
@@ -929,7 +940,10 @@ func BuildApplicationSpecFromMap(specData map[string]interface{}) nextgen.Applic
 	if ignoreDiffs, ok := specData["ignore_difference"]; ok && len(ignoreDiffs.([]interface{})) > 0 {
 		var ignoreList []nextgen.ApplicationsResourceIgnoreDifferences
 		for _, diff := range ignoreDiffs.([]interface{}) {
-			diffData := diff.(map[string]interface{})
+			diffData, ok := diff.(map[string]interface{})
+			if !ok {
+				continue
+			}
 			var ignoreDiff nextgen.ApplicationsResourceIgnoreDifferences
 
 			if group, ok := diffData["group"]; ok && len(group.(string)) > 0 {
@@ -1284,8 +1298,7 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 		specSource.Ref = source["ref"].(string)
 	}
 	//Helm Source Details
-	if source["helm"] != nil && len(source["helm"].([]interface{})) > 0 {
-		var helm = source["helm"].([]interface{})[0].(map[string]interface{})
+	if helm, ok := firstBlock(source["helm"]); ok {
 		var helmData nextgen.ApplicationsApplicationSourceHelm
 		if helm["value_files"] != nil && len(helm["value_files"].([]interface{})) > 0 {
 			var valueFiles []string
@@ -1360,8 +1373,7 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 	}
 
 	//Kustomize Source details
-	if source["kustomize"] != nil && len(source["kustomize"].([]interface{})) > 0 {
-		var kustomizeSource = source["kustomize"].([]interface{})[0].(map[string]interface{})
+	if kustomizeSource, ok := firstBlock(source["kustomize"]); ok {
 		var kustomizeData nextgen.ApplicationsApplicationSourceKustomize
 		if kustomizeSource["name_prefix"] != nil && len(kustomizeSource["name_prefix"].(string)) > 0 {
 			kustomizeData.NamePrefix = kustomizeSource["name_prefix"].(string)
@@ -1407,8 +1419,7 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 	}
 
 	//Ksonnet
-	if source["ksonnet"] != nil && len(source["ksonnet"].([]interface{})) > 0 {
-		var ksonnetSource = source["ksonnet"].([]interface{})[0].(map[string]interface{})
+	if ksonnetSource, ok := firstBlock(source["ksonnet"]); ok {
 		var ksonnetData nextgen.ApplicationsApplicationSourceKsonnet
 		if ksonnetSource["environment"] != nil && len(ksonnetSource["environment"].(string)) > 0 {
 			ksonnetData.Environment = ksonnetSource["environment"].(string)
@@ -1436,8 +1447,7 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 		specSource.Ksonnet = &ksonnetData
 	}
 	//Directory
-	if source["directory"] != nil && len(source["directory"].([]interface{})) > 0 {
-		var directorySource = source["directory"].([]interface{})[0].(map[string]interface{})
+	if directorySource, ok := firstBlock(source["directory"]); ok {
 		var directoryData nextgen.ApplicationsApplicationSourceDirectory
 		if directorySource["recurse"] != nil {
 			directoryData.Recurse = directorySource["recurse"].(bool)
@@ -1449,8 +1459,7 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 			directoryData.Exclude = directorySource["include"].(string)
 		}
 
-		if directorySource["jsonnet"] != nil && len(directorySource["jsonnet"].([]interface{})) > 0 {
-			var directoryJsonnet = directorySource["jsonnet"].([]interface{})[0].(map[string]interface{})
+		if directoryJsonnet, ok := firstBlock(directorySource["jsonnet"]); ok {
 			var jsonnetData nextgen.ApplicationsApplicationSourceJsonnet
 			if directoryJsonnet["libs"] != nil && len(directoryJsonnet["libs"].([]interface{})) > 0 {
 				var jsonnetLibs []string
@@ -1507,8 +1516,7 @@ func setSpecSourceForRequest(source map[string]interface{}) *nextgen.Application
 	}
 
 	//Plugin
-	if source["plugin"] != nil && len(source["plugin"].([]interface{})) > 0 {
-		var pluginSource = source["plugin"].([]interface{})[0].(map[string]interface{})
+	if pluginSource, ok := firstBlock(source["plugin"]); ok {
 		var pluginData nextgen.ApplicationsApplicationSourcePlugin
 		if pluginSource["name"] != nil && len(pluginSource["name"].(string)) > 0 {
 			pluginData.Name = pluginSource["name"].(string)
