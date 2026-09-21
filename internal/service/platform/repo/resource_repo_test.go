@@ -2,6 +2,7 @@ package repo_test
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -189,6 +190,24 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 				Config:             testProjResourceRepo(identifier, description),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+// TestAccResourceRepo_ImportNonExistentGithubRepo verifies that importing a
+// non-existent GitHub repository surfaces the actual API error message instead
+// of a bare "400 Bad Request".
+func TestAccResourceRepo_ImportNonExistentGithubRepo(t *testing.T) {
+	id := identifier(t.Name())
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceRepoImport(id, description, "nonexistent-org-abc123/nonexistent-repo-xyz789"),
+				ExpectError: regexp.MustCompile(`Bad Request:.*nonexistent-org-abc123/nonexistent-repo-xyz789`),
 			},
 		},
 	})

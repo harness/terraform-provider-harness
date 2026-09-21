@@ -41,7 +41,7 @@ func dataSourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interf
 		},
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, resp)
+		return helpers.HandleCodeApiError(err, d, resp)
 	}
 
 	readRepo(d, &repo, orgID.Value(), projectID.Value())

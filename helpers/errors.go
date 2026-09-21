@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
+	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -295,6 +296,72 @@ func HandleDBOpsReadApiError(err error, d *schema.ResourceData, httpResp *http.R
 		return handleUndefinedResponseTypeError(httpResp)
 	}
 	return diag.Errorf(err.Error())
+}
+
+// HandleCodeApiError Provide helpful error messages like
+// Error: Bad Request: Couldn't find <user>/<repo> at <gitprovider>: Not Found
+func HandleCodeApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	return handleCodeApiError(err, d, httpResp, false)
+}
+
+// HandleCodeReadApiError Provide helpful error messages like
+// Error: Bad Request: Couldn't find <user>/<repo> at <git provider>: Not Found
+func HandleCodeReadApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	return handleCodeApiError(err, d, httpResp, true)
+}
+
+// HandleCodeReadApiError Provide helpful error messages like
+// Error: Bad Request: Couldn't find <user>/<repo> at <git provider>: Not Found
+// instead of unhelpful errors like "Error: 400 Bad Request"
+func handleCodeApiError(err error, d *schema.ResourceData, httpResp *http.Response, read bool) diag.Diagnostics {
+	codeErr, ok := err.(code.GenericSwaggerError)
+	if !ok {
+		if isUndefinedResponseTypeError(err) {
+			return handleUndefinedResponseTypeError(httpResp)
+		}
+		return handleApiError(err, d, httpResp, read)
+	}
+	if httpResp == nil {
+		if isUndefinedResponseTypeError(err) {
+			return handleUndefinedResponseTypeError(nil)
+		}
+		return diag.Errorf(codeErr.Error())
+	}
+
+	var errorMessage string
+	if len(codeErr.Body()) > 0 {
+		var jsonMap map[string]interface{}
+		if jsonErr := json.Unmarshal(codeErr.Body(), &jsonMap); jsonErr == nil {
+			if msg, exists := jsonMap["message"]; exists {
+				errorMessage = fmt.Sprintf("%v", msg)
+			}
+		}
+	}
+	if errorMessage == "" {
+		errorMessage = codeErr.Error()
+	}
+
+	switch httpResp.StatusCode {
+	case 400:
+		return diag.Errorf("Bad Request: %s", errorMessage)
+	case 401:
+		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+			"1) Please check if token has expired or is wrong.\n" +
+			"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
+	case 403:
+		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+			"1) Please check if the token has required permission for this operation.\n" +
+			"2) Please check if the token has expired or is wrong.")
+	case 404:
+		if read {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+		return diag.Errorf("resource with ID %s not found: %s", d.Id(), errorMessage)
+	default:
+		return diag.Errorf("%s: %s", httpResp.Status, errorMessage)
+	}
 }
 
 // HandleChaosApiError handles errors from Chaos Engineering SDK
