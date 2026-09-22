@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_platform_trigger_pipeline: Trigger a Harness pipeline execution with optional input set YAML. Changing `org_id`, `project_id`, `pipeline_id`, `module_type`, `input_set_yaml`, or `branch` re-runs the pipeline. Set `wait_for_completion` to block until the run finishes and expose `status` and `outputs` (JSON-encoded execution node outcomes).
+```
