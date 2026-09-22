@@ -3,6 +3,7 @@ package template_test
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -1558,6 +1559,14 @@ func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) st
   TF_ACC=1 go test -v ./internal/service/pipeline/template/... \
       -run TestAccTemplateImport_AccountScope \
       -timeout 20m
+
+# OPA policy denial test (HSF-94)
+# Requires OPA Governance enabled on the account
+  HARNESS_TEST_ORG_ID=default \
+  HARNESS_TEST_PROJECT_ID=<project> \
+  TF_ACC=1 go test -v ./internal/service/pipeline/template/... \
+      -run TestAccResourceTemplate_OPAPolicyDenial \
+      -timeout 10m
 */
 
 // TestAccTemplateImport_ProjectScope_StableVersion verifies that importing without version
@@ -1753,9 +1762,9 @@ func TestAccTemplateImport_AccountScope_StableVersion(t *testing.T) {
 			},
 			{
 				// Import using stable format (no version) — must get v1 (the stable one)
-				ResourceName:  resourceName,
-				ImportState:   true,
-				ImportStateVerify: true,
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"force_delete", "comments", "git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type"},
 			},
 		},
@@ -2062,4 +2071,100 @@ resource "harness_platform_template" "test_v2" {
   EOT
 }
 `, id, name, stableVersion, secondVersion, firstIsStable)
+}
+
+/*
+TestAccResourceTemplate_OPAPolicyDenial
+Verifies that when an OPA policy denies template creation, the provider returns
+a clear error message instead of retrying in a loop.
+
+Run:
+
+	export HARNESS_ACCOUNT_ID="<account-id>"
+	export HARNESS_PLATFORM_API_KEY="<api-key>"
+	HARNESS_TEST_ORG_ID=default \
+	HARNESS_TEST_PROJECT_ID=<project> \
+	TF_ACC=1 go test -v -run TestAccResourceTemplate_OPAPolicyDenial \
+	  ./internal/service/pipeline/template/ -timeout 10m
+*/
+func TestAccResourceTemplate_OPAPolicyDenial(t *testing.T) {
+	orgID := os.Getenv("HARNESS_TEST_ORG_ID")
+	projectID := os.Getenv("HARNESS_TEST_PROJECT_ID")
+	if orgID == "" || projectID == "" {
+		t.Skip("HARNESS_TEST_ORG_ID and HARNESS_TEST_PROJECT_ID must be set")
+	}
+	id := fmt.Sprintf("hsf94_opa_%s", utils.RandStringBytes(6))
+	name := id
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceTemplateOPADenial(id, name, orgID, projectID),
+				ExpectError: regexp.MustCompile(`template operation denied by OPA policy`),
+			},
+		},
+	})
+}
+
+func testAccResourceTemplateOPADenial(id, name, orgID, projectID string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_policy" "opa_deny_policy" {
+  identifier = "%[1]s_policy"
+  name       = "%[1]s_policy"
+  org_id     = "%[3]s"
+  project_id = "%[4]s"
+  rego       = <<-EOT
+    package template
+
+    deny[msg] {
+      input.template.versionLabel != ""
+      not startswith(input.template.versionLabel, "v")
+      msg := sprintf("version (%%s) must start with 'v'", [input.template.versionLabel])
+    }
+  EOT
+}
+
+resource "harness_platform_policyset" "opa_deny_policyset" {
+  identifier = "%[1]s_policyset"
+  name       = "%[1]s_policyset"
+  org_id     = "%[3]s"
+  project_id = "%[4]s"
+  action     = "onsave"
+  type       = "template"
+  enabled    = true
+
+  policies {
+    identifier = harness_platform_policy.opa_deny_policy.identifier
+    severity   = "error"
+  }
+}
+
+resource "harness_platform_template" "opa_deny_template" {
+  identifier = "%[1]s"
+  name       = "%[2]s"
+  org_id     = "%[3]s"
+  project_id = "%[4]s"
+  version    = "1.0"
+  is_stable  = true
+  template_yaml = <<-EOT
+    template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: "1.0"
+      type: Step
+      projectIdentifier: %[4]s
+      orgIdentifier: %[3]s
+      tags: {}
+      spec:
+        type: Run
+        spec:
+          shell: Sh
+          command: echo hello
+  EOT
+
+  depends_on = [harness_platform_policyset.opa_deny_policyset]
+}
+`, id, name, orgID, projectID)
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-openapi-go-client/nextgen"
@@ -461,6 +462,16 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	if isOPADeniedResponse(template_id, resp) {
+		denyMessages := formatOPADenyMessages(resp)
+		if denyMessages != "" {
+			return diag.Errorf("template operation denied by OPA policy: %s", denyMessages)
+		}
+		return diag.Errorf("template operation failed: template ID is empty, check for OPA policy denials. " +
+			"Run with TF_LOG=DEBUG to see the governance_metadata in the API response, " +
+			"or view deny details in the Harness UI under Governance > Policy Evaluations.")
+	}
+
 	var respGet nextgen.TemplateWithInputsResponse
 
 	if project_id != "" {
@@ -588,6 +599,33 @@ func resourceTemplateDelete(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	return nil
+}
+
+func isOPADeniedResponse(templateID string, resp nextgen.TemplateResponse) bool {
+	if resp.GovernanceMetadata != nil && resp.GovernanceMetadata.Deny {
+		return true
+	}
+	return false
+}
+
+func formatOPADenyMessages(resp nextgen.TemplateResponse) string {
+	if resp.GovernanceMetadata == nil {
+		return ""
+	}
+	var messages []string
+	for _, detail := range resp.GovernanceMetadata.Details {
+		for _, policy := range detail.PolicyMetadata {
+			if policy.Status == "ERROR" || policy.Status == "error" {
+				for _, msg := range policy.DenyMessages {
+					messages = append(messages, fmt.Sprintf("[%s] %s", policy.PolicyName, msg))
+				}
+			}
+		}
+	}
+	if len(messages) > 0 {
+		return strings.Join(messages, "; ")
+	}
+	return ""
 }
 
 func buildUpdateTemplate(d *schema.ResourceData) nextgen.TemplateUpdateRequestBody {
