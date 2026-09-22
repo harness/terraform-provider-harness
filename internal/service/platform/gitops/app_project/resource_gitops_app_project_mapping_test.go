@@ -34,6 +34,8 @@ func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProject),
 					resource.TestCheckResourceAttr(resourceName, "auto_create_service_env", "true"),
+					// block_if_referenced is not set in this config, so it should default to true (fail-safe on delete).
+					resource.TestCheckResourceAttr(resourceName, "block_if_referenced", "true"),
 				),
 			},
 			{
@@ -42,14 +44,16 @@ func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProject),
 					resource.TestCheckResourceAttr(resourceName, "auto_create_service_env", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_if_referenced", "true"),
 				),
 			},
 			{
-				// Test Case 3: Omit field (should default to false)
+				// Test Case 3: Omit field (should default to true)
 				Config: testAccResourceGitopsAppProjectMappingWithoutAutoCreate(id, accountId, argoProject, id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProject),
 					resource.TestCheckResourceAttr(resourceName, "auto_create_service_env", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_if_referenced", "true"),
 				),
 			},
 			{
@@ -58,6 +62,9 @@ func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProjectUpdated),
 					resource.TestCheckResourceAttr(resourceName, "auto_create_service_env", "true"),
+					// argo_project_name is ForceNew, so this step replaces the resource (delete+create).
+					// Confirms the replace path doesn't require block_if_referenced to be set.
+					resource.TestCheckResourceAttr(resourceName, "block_if_referenced", "true"),
 				),
 			},
 			{

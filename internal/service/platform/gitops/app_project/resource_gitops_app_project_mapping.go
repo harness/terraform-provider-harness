@@ -63,6 +63,12 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 			Optional:    true,
 			Default:     false,
 		},
+		"block_if_referenced": {
+			Description: "If true, fails the delete with an error instead of removing Applications, Clusters, Repositories, or ApplicationSets that still reference this mapping. Defaults to true. Set to false only if you intend for the delete to remove those resources as well. Also applies when this resource is replaced due to a change in agent_id or argo_project_name.",
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     true,
+		},
 	},
 }
 	return resource
@@ -150,6 +156,7 @@ func resourceGitopsAppProjectMappingDelete(ctx context.Context, d *schema.Resour
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		BlockIfReferenced: optional.NewBool(d.Get("block_if_referenced").(bool)),
 	})
 
 	if err != nil {

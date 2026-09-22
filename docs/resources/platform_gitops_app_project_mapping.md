@@ -37,6 +37,7 @@ resource "harness_platform_gitops_app_project_mapping" "example" {
 
 - `account_id` (String, Deprecated) Account identifier of the GitOps agent's Application Project.
 - `auto_create_service_env` (Boolean) Enable automated creation of service, environment and cluster-env link. Defaults to false.
+- `block_if_referenced` (Boolean) If true, fails the delete with an error instead of removing Applications, Clusters, Repositories, or ApplicationSets that still reference this mapping. Defaults to true. Set to false only if you intend for the delete to remove those resources as well. Also applies when this resource is replaced due to a change in agent_id or argo_project_name.
 
 ### Read-Only
 
