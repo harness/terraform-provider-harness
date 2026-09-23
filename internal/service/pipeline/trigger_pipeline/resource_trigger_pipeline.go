@@ -3,6 +3,7 @@ package trigger_pipeline
 import (
 	"context"
 	"encoding/json"
+	"sort"
 	"time"
 
 	"github.com/antihax/optional"
@@ -98,7 +99,7 @@ func ResourceTriggerPipeline() *schema.Resource {
 				Computed:    true,
 			},
 			"outputs": {
-				Description: "JSON-encoded map of output variables exported by the pipeline execution, keyed by execution node identifier. Only populated once the execution has finished.",
+				Description: "JSON-encoded map of output variables exported by the pipeline execution, keyed by step/stage identifier. Each value is a list of outcome objects (one per node execution; more than one when a matrix/parallel looping strategy runs the same identifier multiple times). Only populated once the execution has finished.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -235,13 +236,23 @@ func waitAndPopulate(ctx context.Context, c *pipeline_go_sdk.APIClient, d *schem
 }
 
 func flattenOutcomes(graph *pipeline_go_sdk.ExecutionGraph) (string, error) {
-	outcomes := map[string]map[string]map[string]interface{}{}
+	// NodeMap is keyed by node execution id, not by step/stage identifier: matrix/parallel
+	// looping strategies expand a single identifier into multiple nodes, so group by
+	// identifier into a list (sorted by node id for stable output) instead of overwriting.
+	outcomes := map[string][]map[string]map[string]interface{}{}
 	if graph != nil {
-		for _, node := range graph.NodeMap {
+		nodeIds := make([]string, 0, len(graph.NodeMap))
+		for nodeId := range graph.NodeMap {
+			nodeIds = append(nodeIds, nodeId)
+		}
+		sort.Strings(nodeIds)
+
+		for _, nodeId := range nodeIds {
+			node := graph.NodeMap[nodeId]
 			if len(node.Outcomes) == 0 {
 				continue
 			}
-			outcomes[node.Identifier] = node.Outcomes
+			outcomes[node.Identifier] = append(outcomes[node.Identifier], node.Outcomes)
 		}
 	}
 
