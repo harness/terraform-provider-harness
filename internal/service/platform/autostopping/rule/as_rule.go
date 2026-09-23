@@ -3,7 +3,9 @@ package as_rule
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -39,6 +41,135 @@ func resourceASRuleRead(ctx context.Context, d *schema.ResourceData, meta interf
 	if resp.Response != nil {
 		readASRule(d, resp.Response.Service)
 		setDependencies(d, resp.Response.Deps)
+	}
+
+	return nil
+}
+
+func dataSourceRuleSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"identifier": {
+			Description:  "Unique identifier of the resource. Either `identifier` or `name` must be specified.",
+			Type:         schema.TypeString,
+			Optional:     true,
+			Computed:     true,
+			AtLeastOneOf: []string{"identifier", "name"},
+		},
+		"name": {
+			Description:  "Name or regex pattern to match the rule name. Either `identifier` or `name` must be specified.",
+			Type:         schema.TypeString,
+			Optional:     true,
+			Computed:     true,
+			AtLeastOneOf: []string{"identifier", "name"},
+		},
+		"cloud_connector_id": {
+			Description: "Id of the cloud connector",
+			Type:        schema.TypeString,
+			Computed:    true,
+		},
+		"idle_time_mins": {
+			Description: "Idle time in minutes. This is the time that the AutoStopping rule waits before stopping the idle instances.",
+			Type:        schema.TypeInt,
+			Computed:    true,
+		},
+		"dry_run": {
+			Description: "Boolean that indicates whether the AutoStopping rule is in DryRun mode",
+			Type:        schema.TypeBool,
+			Computed:    true,
+		},
+		"depends": {
+			Description: "Dependent rules",
+			Type:        schema.TypeList,
+			Computed:    true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"rule_id": {
+						Description: "Rule id of the dependent rule",
+						Type:        schema.TypeInt,
+						Computed:    true,
+					},
+					"delay_in_sec": {
+						Description: "Number of seconds the rule should wait after warming up the dependent rule",
+						Type:        schema.TypeInt,
+						Computed:    true,
+					},
+				},
+			},
+		},
+	}
+}
+
+func dataSourceRuleReadByIdOrName(ctx context.Context, d *schema.ResourceData, meta interface{}, kind string) diag.Diagnostics {
+	if v, ok := d.GetOk("identifier"); ok {
+		d.SetId(v.(string))
+		return dataSourceASRuleRead(ctx, d, meta)
+	}
+
+	namePattern, ok := d.GetOk("name")
+	if !ok || namePattern.(string) == "" {
+		return diag.Errorf("one of `identifier` or `name` must be specified")
+	}
+
+	re, err := regexp.Compile(namePattern.(string))
+	if err != nil {
+		return diag.Errorf("invalid name regex %q: %s", namePattern.(string), err)
+	}
+
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	resp, httpResp, err := c.CloudCostAutoStoppingRulesApi.ListAutoStoppingRules(ctx, c.AccountId, c.AccountId)
+	if err != nil {
+		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
+	var matched []nextgen.Service
+	for _, rule := range resp.Response {
+		if rule.Kind == kind && re.MatchString(rule.Name) {
+			matched = append(matched, rule)
+		}
+	}
+
+	if len(matched) == 0 {
+		return diag.Errorf("no %s rule found matching name pattern %q", kind, namePattern.(string))
+	}
+	if len(matched) > 1 {
+		names := make([]string, len(matched))
+		for i, r := range matched {
+			names[i] = fmt.Sprintf("%s (id: %v)", r.Name, r.Id)
+		}
+		return diag.Errorf("name pattern %q matched %d rules: %v — use a more specific pattern or use `identifier`", namePattern.(string), len(matched), names)
+	}
+
+	ruleId := strconv.Itoa(int(matched[0].Id))
+	d.SetId(ruleId)
+	return dataSourceASRuleRead(ctx, d, meta)
+}
+
+func dataSourceASRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	ruleId, err := strconv.ParseFloat(d.Id(), 64)
+	if err != nil {
+		return diag.Errorf("invalid rule id")
+	}
+	resp, httpResp, err := c.CloudCostAutoStoppingRulesV2Api.GetAutoStoppingRuleV2(ctx, c.AccountId, ruleId, c.AccountId)
+	if err != nil {
+		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
+	if resp.Response != nil && resp.Response.Service != nil {
+		svc := resp.Response.Service
+		identifier := strconv.Itoa(int(svc.Id))
+		d.SetId(identifier)
+		d.Set("identifier", identifier)
+		d.Set("name", svc.Name)
+		d.Set("cloud_connector_id", svc.CloudAccountId)
+		d.Set("idle_time_mins", svc.IdleTimeMins)
+		if svc.Opts != nil {
+			d.Set("dry_run", svc.Opts.DryRun)
+		}
+		if resp.Response.Deps != nil {
+			setDependencies(d, resp.Response.Deps)
+		}
 	}
 
 	return nil
