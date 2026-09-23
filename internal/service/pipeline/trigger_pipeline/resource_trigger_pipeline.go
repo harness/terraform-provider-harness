@@ -196,6 +196,9 @@ func resourceTriggerPipelineDelete(ctx context.Context, d *schema.ResourceData, 
 // state or the timeout elapses, then stores the final status and outputs.
 func waitAndPopulate(ctx context.Context, c *pipeline_go_sdk.APIClient, d *schema.ResourceData, orgId string, projectId string, planExecutionId string, timeout time.Duration) diag.Diagnostics {
 	pollInterval := time.Duration(d.Get("poll_interval_seconds").(int)) * time.Second
+	if pollInterval <= 0 {
+		pollInterval = 10 * time.Second
+	}
 	deadline := time.Now().Add(timeout)
 
 	for {
