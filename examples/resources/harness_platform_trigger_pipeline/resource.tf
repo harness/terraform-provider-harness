@@ -43,7 +43,7 @@ resource "harness_platform_trigger_pipeline" "scs_ecs_timing_test" {
                 value: latest
               - name: ecr_account
                 type: String
-                value: "664418987337"
+                value: "000000000000"
               - name: region
                 type: String
                 value: us-west-2
