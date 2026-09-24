@@ -20,6 +20,7 @@ resource "harness_autostopping_aws_alb" "test" {
   region                            = "region"
   vpc                               = "vpc"
   security_groups                   = ["sg1", "sg2"]
+  api_key                           = "api_key"
   delete_cloud_resources_on_destroy = true
 }
 
@@ -31,6 +32,7 @@ resource "harness_autostopping_aws_alb" "harness_alb" {
   region                            = "region"
   vpc                               = "vpc"
   security_groups                   = ["sg-0"]
+  api_key                           = "api_key"
   delete_cloud_resources_on_destroy = false
 }
 ```
@@ -49,6 +51,7 @@ resource "harness_autostopping_aws_alb" "harness_alb" {
 ### Optional
 
 - `alb_arn` (String) Arn of AWS ALB to be imported. Required only for importing existing ALB
+- `api_key` (String, Sensitive) Harness NG API key. Used to configure the AutoStopping warmup function with authentication
 - `certificate_id` (String)
 - `security_groups` (List of String) Security Group to define the security rules that determine the inbound and outbound traffic
 

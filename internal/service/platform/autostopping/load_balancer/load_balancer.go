@@ -284,7 +284,12 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 	}
 
 	if attr, ok := d.GetOk("api_key"); ok {
-		lb.Metadata.ApiKey = attr.(string)
+		apiKey := attr.(string)
+		if kind == KindAutostoppingProxy {
+			lb.Metadata.ApiKey = apiKey
+		} else {
+			lb.AccessToken = apiKey
+		}
 	}
 
 	if attr, ok := d.GetOk("keypair"); ok {
