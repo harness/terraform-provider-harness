@@ -615,7 +615,7 @@ func formatOPADenyMessages(resp nextgen.TemplateResponse) string {
 	var messages []string
 	for _, detail := range resp.GovernanceMetadata.Details {
 		for _, policy := range detail.PolicyMetadata {
-			if policy.Status == "ERROR" || policy.Status == "error" {
+			if strings.EqualFold(policy.Status, "error") {
 				for _, msg := range policy.DenyMessages {
 					messages = append(messages, fmt.Sprintf("[%s] %s", policy.PolicyName, msg))
 				}
