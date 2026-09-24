@@ -86,6 +86,10 @@ Optional:
 - `health` (Block List) Health Check Details (see [below for nested schema](#nestedblock--http--health))
 - `routing` (Block List) Routing configuration used to access the instances (see [below for nested schema](#nestedblock--http--routing))
 
+Read-Only:
+
+- `proxy_cloud_connector_id` (String) Id of the cloud connector for the proxy. Set when the proxy lives in a different cloud account than the target resource.
+
 <a id="nestedblock--http--health"></a>
 ### Nested Schema for `http.health`
 
@@ -131,6 +135,10 @@ Optional:
 - `forward_rule` (Block List) Additional tcp forwarding rules (see [below for nested schema](#nestedblock--tcp--forward_rule))
 - `rdp` (Block List) RDP configuration (see [below for nested schema](#nestedblock--tcp--rdp))
 - `ssh` (Block List) SSH configuration (see [below for nested schema](#nestedblock--tcp--ssh))
+
+Read-Only:
+
+- `proxy_cloud_connector_id` (String) Id of the cloud connector for the proxy. Set when the proxy lives in a different cloud account than the target resource.
 
 <a id="nestedblock--tcp--forward_rule"></a>
 ### Nested Schema for `tcp.forward_rule`

@@ -10,6 +10,8 @@ description: |-
 
 Resource for creating a AutoStopping rule for VMs.
 
+~> **Cross-Account Proxy Support** — Cross-account proxy-based AutoStopping (using `proxy_cloud_connector_id`) is **only supported for VM rules**. It is not available for ECS, RDS, or Scale Group rule types. If you need to route traffic through a proxy in a different cloud account, use `harness_autostopping_rule_vm`.
+
 ## Example Usage
 
 ```terraform
@@ -62,6 +64,46 @@ resource "harness_autostopping_rule_vm" "test" {
   depends {
     rule_id      = 24576
     delay_in_sec = 5
+  }
+}
+
+# Cross-account AutoStopping rule: the target VM is in a different cloud account
+# than the proxy (access point). Use proxy_cloud_connector_id to specify the
+# cloud connector that owns the proxy.
+resource "harness_autostopping_rule_vm" "cross_account" {
+  name               = "cross-account-vm-rule"
+  cloud_connector_id = "target_account_connector_id"
+  idle_time_mins     = 10
+  dry_run            = true
+  filter {
+    vm_ids  = ["i-0123456789abcdef0"]
+    regions = ["us-east-1"]
+  }
+  http {
+    proxy_id                 = "proxy_id"
+    proxy_cloud_connector_id = "proxy_account_connector_id"
+    routing {
+      source_protocol = "https"
+      target_protocol = "https"
+      source_port     = 443
+      target_port     = 443
+      action          = "forward"
+    }
+    health {
+      protocol         = "http"
+      port             = 80
+      path             = "/"
+      timeout          = 30
+      status_code_from = 200
+      status_code_to   = 299
+    }
+  }
+  tcp {
+    proxy_id                 = "proxy_id"
+    proxy_cloud_connector_id = "proxy_account_connector_id"
+    ssh {
+      port = 22
+    }
   }
 }
 ```
@@ -133,6 +175,7 @@ Required:
 Optional:
 
 - `health` (Block List) Health Check Details (see [below for nested schema](#nestedblock--http--health))
+- `proxy_cloud_connector_id` (String) Id of the cloud connector for the proxy. Required when the proxy lives in a different cloud account than the target resource.
 - `routing` (Block List) Routing configuration used to access the instances (see [below for nested schema](#nestedblock--http--routing))
 
 <a id="nestedblock--http--health"></a>
@@ -178,6 +221,7 @@ Required:
 Optional:
 
 - `forward_rule` (Block List) Additional tcp forwarding rules (see [below for nested schema](#nestedblock--tcp--forward_rule))
+- `proxy_cloud_connector_id` (String) Id of the cloud connector for the proxy. Required when the proxy lives in a different cloud account than the target resource.
 - `rdp` (Block List) RDP configuration (see [below for nested schema](#nestedblock--tcp--rdp))
 - `ssh` (Block List) SSH configuration (see [below for nested schema](#nestedblock--tcp--ssh))
 
