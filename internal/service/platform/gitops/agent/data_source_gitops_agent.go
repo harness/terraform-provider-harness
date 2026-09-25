@@ -98,6 +98,7 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Description: "Agent token to be used for authentication of the agent with Harness.",
 				Type:        schema.TypeString,
 				Computed:    true,
+				Sensitive:   true,
 			},
 			"operator": {
 				Description: "The Operator to use for the Harness GitOps agent. Enum: \"ARGO\" \"FLAMINGO\"",

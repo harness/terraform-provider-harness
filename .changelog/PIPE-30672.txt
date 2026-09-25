@@ -1,0 +1,3 @@
+```release-note:improvement
+resource/harness_platform_gitops_agent, data-source/harness_platform_gitops_agent: Marked `agent_token` as `Sensitive` so it is redacted from plan/apply CLI output. This does not remove it from Terraform state; see PIPE-30672 for follow-up work tracking state persistence.
+```
