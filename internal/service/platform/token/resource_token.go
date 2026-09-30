@@ -118,6 +118,11 @@ func resourceTokenRead(ctx context.Context, d *schema.ResourceData, meta interfa
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	if len(resp.Data.Content) == 0 {
+		d.SetId("")
+		return nil
+	}
+
 	if resp.Data.Content != nil && len(resp.Data.Content) == 1 {
 		readToken(d, resp.Data.Content[0].Token)
 	}
