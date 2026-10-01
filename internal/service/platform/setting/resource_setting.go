@@ -3,6 +3,7 @@ package setting
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -206,14 +207,18 @@ func findSetting(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceDa
 		knownCategory = true
 	}
 
+	var skippedErr error
 	for _, category := range categories {
 		resp, httpResp, err := c.SettingApi.GetSettingsList(ctx, c.AccountId, category, opts)
 		if err != nil {
-			if knownCategory {
-				return nil, helpers.HandleReadApiError(err, d, httpResp)
+			// When searching on import, a category the server doesn't support (400 or 404) is
+			// skipped. Any other failure (auth, server or network error) is returned, so it
+			// isn't reported as "setting not found".
+			if !knownCategory && isCategoryUnavailable(httpResp) {
+				skippedErr = fmt.Errorf("category %s: %w", category, err)
+				continue
 			}
-			// Some categories may not be available for the account; keep searching.
-			continue
+			return nil, helpers.HandleReadApiError(err, d, httpResp)
 		}
 		for i := range resp.Data {
 			if resp.Data[i].Setting != nil && resp.Data[i].Setting.Identifier == identifier {
@@ -223,13 +228,23 @@ func findSetting(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceDa
 	}
 
 	if !knownCategory {
-		return nil, diag.Diagnostics{{
+		notFound := diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  fmt.Sprintf("setting %s not found at the given scope", identifier),
-		}}
+		}
+		if skippedErr != nil {
+			notFound.Detail = fmt.Sprintf("Some categories were skipped; last error: %v", skippedErr)
+		}
+		return nil, diag.Diagnostics{notFound}
 	}
 
 	return nil, nil
+}
+
+// isCategoryUnavailable reports whether a list call failed because the server doesn't support
+// the category (for example a module that isn't available on this cluster).
+func isCategoryUnavailable(httpResp *http.Response) bool {
+	return httpResp != nil && (httpResp.StatusCode == http.StatusBadRequest || httpResp.StatusCode == http.StatusNotFound)
 }
 
 // settingSource returns the source a setting has when it is set at the resource scope.

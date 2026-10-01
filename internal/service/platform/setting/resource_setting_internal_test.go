@@ -34,6 +34,8 @@ type fakeSettingsServer struct {
 	requests      []nextgen.SettingRequestDto
 	listedCats    []string
 	failUpdateMsg string
+	// failList maps a category to the HTTP status its list call fails with.
+	failList map[string]int
 }
 
 func scopeKey(r *http.Request) string {
@@ -80,6 +82,11 @@ func (f *fakeSettingsServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		category := r.URL.Query().Get("category")
 		f.listedCats = append(f.listedCats, category)
+		if status, ok := f.failList[category]; ok {
+			w.WriteHeader(status)
+			_ = json.NewEncoder(w).Encode(nextgen.Failure{Status: "ERROR", Code: "UNEXPECTED", Message: "list failed for " + category})
+			return
+		}
 		resp := nextgen.ResponseDtoListSettingResponseDto{Status: "SUCCESS"}
 		if category == testSettingCategory {
 			s := f.settingAt(r)
@@ -112,7 +119,7 @@ func (f *fakeSettingsServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func newTestSession(t *testing.T) (*fakeSettingsServer, *internal.Session) {
 	t.Helper()
-	fake := &fakeSettingsServer{values: map[string]storedSetting{}}
+	fake := &fakeSettingsServer{values: map[string]storedSetting{}, failList: map[string]int{}}
 	server := httptest.NewServer(fake)
 	t.Cleanup(server.Close)
 
@@ -229,4 +236,49 @@ func TestResourceSettingImportUnknownSetting(t *testing.T) {
 	diags := resourceSettingRead(context.Background(), imported[0], session)
 	require.True(t, diags.HasError())
 	assert.Contains(t, diags[0].Summary, "not found")
+}
+
+func importSettingData(t *testing.T, session *internal.Session, id string) *schema.ResourceData {
+	t.Helper()
+	d := schema.TestResourceDataRaw(t, ResourceSetting().Schema, map[string]interface{}{})
+	d.SetId(id)
+	imported, err := ResourceSetting().Importer.State(d, session)
+	require.NoError(t, err)
+	return imported[0]
+}
+
+func TestResourceSettingImportSkipsUnavailableCategory(t *testing.T) {
+	fake, session := newTestSession(t)
+	fake.values["org/"] = storedSetting{value: "org-repo", allowOverrides: true}
+	fake.failList["CD"] = http.StatusBadRequest
+	fake.failList["CI"] = http.StatusNotFound
+
+	d := importSettingData(t, session, "org/"+testSettingId)
+	diags := resourceSettingRead(context.Background(), d, session)
+	require.False(t, diags.HasError(), "%v", diags)
+	assert.Equal(t, "org-repo", d.Get("value"))
+}
+
+func TestResourceSettingImportReturnsApiFailure(t *testing.T) {
+	fake, session := newTestSession(t)
+	fake.values["org/"] = storedSetting{value: "org-repo", allowOverrides: true}
+	fake.failList[testSettingCategory] = http.StatusInternalServerError
+
+	d := importSettingData(t, session, "org/"+testSettingId)
+	diags := resourceSettingRead(context.Background(), d, session)
+	require.True(t, diags.HasError())
+	assert.NotContains(t, diags[0].Summary, "not found at the given scope")
+	// The search stops at the failing category instead of continuing.
+	assert.Equal(t, testSettingCategory, fake.listedCats[len(fake.listedCats)-1])
+}
+
+func TestResourceSettingImportNotFoundMentionsSkippedCategories(t *testing.T) {
+	fake, session := newTestSession(t)
+	fake.failList["CD"] = http.StatusBadRequest
+
+	d := importSettingData(t, session, "does_not_exist")
+	diags := resourceSettingRead(context.Background(), d, session)
+	require.True(t, diags.HasError())
+	assert.Contains(t, diags[0].Summary, "not found")
+	assert.Contains(t, diags[0].Detail, "category CD")
 }
