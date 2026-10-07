@@ -226,8 +226,8 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Description: "Time-to-live in seconds for cached FOUND metadata entries in UPSTREAM registry type. " +
 							"Honored only for UPSTREAM registries of package types that support the resource cache (currently Maven). " +
 							"Must be between 0 and 604800 (7 days). Rejected for unsupported package types.",
-						Type:     schema.TypeInt,
-						Optional: true,
+						Type:         schema.TypeInt,
+						Optional:     true,
 						ValidateFunc: validation.IntBetween(0, 604800),
 						ConflictsWith: []string{
 							"config.0.upstream_proxies",
@@ -237,8 +237,8 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Description: "Time-to-live in seconds for cached NOT_FOUND entries in UPSTREAM registry type. " +
 							"Honored only for UPSTREAM registries of package types that support the resource cache (currently Maven). " +
 							"Must be between 0 and 604800 (7 days). Rejected for unsupported package types.",
-						Type:     schema.TypeInt,
-						Optional: true,
+						Type:         schema.TypeInt,
+						Optional:     true,
 						ValidateFunc: validation.IntBetween(0, 604800),
 						ConflictsWith: []string{
 							"config.0.upstream_proxies",
@@ -248,7 +248,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			},
 		},
 		"package_type": {
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, CONAN, RUBY, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT)",
 			Type:        schema.TypeString,
 			Required:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -273,6 +273,10 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.CRAN_PackageType),
 				(string)(har.ALPINE_PackageType),
 				(string)(har.WOLFI_PackageType),
+				(string)(har.COMPOSER_PackageType),
+				(string)(har.HUGGINGFACE_PackageType),
+				(string)(har.DART_PackageType),
+				(string)(har.SWIFT_PackageType),
 			}, false),
 		},
 		"is_public": {
@@ -343,7 +347,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Computed:    true,
 		}
 		mainSchema["package_type"] = &schema.Schema{
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, CONAN, RUBY, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT)",
 			Type:        schema.TypeString,
 			Optional:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -368,6 +372,10 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.CRAN_PackageType),
 				(string)(har.ALPINE_PackageType),
 				(string)(har.WOLFI_PackageType),
+				(string)(har.COMPOSER_PackageType),
+				(string)(har.HUGGINGFACE_PackageType),
+				(string)(har.DART_PackageType),
+				(string)(har.SWIFT_PackageType),
 			}, false),
 		}
 	}
