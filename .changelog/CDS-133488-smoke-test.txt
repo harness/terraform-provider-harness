@@ -1,0 +1,3 @@
+```release-note:note
+provider: Added `make smoke`, which builds the provider and loads its schema with Terraform to catch mux/schema load failures before release.
+```

@@ -184,6 +184,12 @@ test: ## Run unit tests
 	@$(GO) test $(TEST) -v $(TESTARGS) -timeout=$(UNIT_TEST_TIMEOUT)
 	$(call log_success,Unit tests passed)
 
+.PHONY: smoke
+smoke: ## Build the provider and load its schema with terraform (no credentials needed)
+	$(call log_header,Running Provider Smoke Test)
+	@./scripts/smoke-test-provider.sh
+	$(call log_success,Smoke test passed)
+
 .PHONY: testacc
 testacc: ## Run acceptance tests (requires HARNESS_* env vars)
 	$(call log_header,Running Acceptance Tests)
