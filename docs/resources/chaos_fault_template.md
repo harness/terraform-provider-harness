@@ -72,7 +72,7 @@ resource "harness_chaos_fault_template" "kubernetes_fault" {
 
   links {
     name = "Documentation"
-    url  = "https://docs.harness.io/chaos"
+    url  = "https://developer.harness.io/resilience-testing/chaos-engineering"
   }
 
   spec {
@@ -134,7 +134,7 @@ resource "harness_chaos_fault_template" "fault_with_env" {
 
   links {
     name = "Documentation"
-    url  = "https://docs.harness.io/chaos"
+    url  = "https://developer.harness.io/resilience-testing/chaos-engineering"
   }
 
   spec {
@@ -215,7 +215,7 @@ resource "harness_chaos_fault_template" "advanced_fault" {
 
   links {
     name = "Documentation"
-    url  = "https://docs.harness.io/chaos"
+    url  = "https://developer.harness.io/resilience-testing/chaos-engineering"
   }
   
   links {

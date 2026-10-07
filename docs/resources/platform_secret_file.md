@@ -14,7 +14,7 @@ Resource for creating a secret of type secret file in Harness.
 > 1. Selecting a Customer managed Key (CMK) for encryption is supported in Harness Delegate version 25.11.87300 or later and is behind the feature flag `PL_ENABLE_NON_DEFAULT_ENCRYPTION_KEY`. Contact Harness Support to enable the feature.
 > 2. This option would be unavailable if the AWS Secret Manager connector has the option Use "put-secret-value" action to update secret value enabled.
 
-Refer to the [documentation](https://developer.harness.io/docs/platform/secrets/secrets-management/add-an-aws-secret-manager/#create-a-text-or-file-secret) for details.
+Refer to the [documentation](https://developer.harness.io/harness-platform/use-harness-platform/secrets/secrets-management/add-an-aws-secret-manager#create-a-text-or-file-secret) for details.
 
 ## Example Usage
 

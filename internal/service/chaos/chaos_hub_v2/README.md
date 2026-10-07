@@ -237,6 +237,6 @@ When contributing to this implementation:
 
 ## References
 
-- [Harness Chaos Hub Documentation](https://developer.harness.io/docs/chaos-engineering/chaos-hubs/)
+- [Harness Chaos Hub Documentation](https://developer.harness.io/resilience-testing/chaos-testing/chaoshub)
 - [Infrastructure V2 Implementation](../infrastructure_v2/)
 - [Harness Go SDK](https://github.com/harness/harness-go-sdk)

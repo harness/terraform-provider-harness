@@ -257,4 +257,4 @@ This resource uses the Harness Chaos REST API:
 
 For issues or questions:
 - GitHub Issues: [terraform-provider-harness](https://github.com/harness/terraform-provider-harness/issues)
-- Harness Documentation: [Chaos Engineering](https://docs.harness.io/category/chaos-engineering)
+- Harness Documentation: [Chaos Engineering](https://developer.harness.io/resilience-testing/chaos-engineering)
