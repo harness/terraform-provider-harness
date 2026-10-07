@@ -18,7 +18,8 @@ import (
 
 // frameworkProvider serves only ephemeral resources, which the SDKv2 provider cannot express.
 // It is muxed with the SDKv2 provider in main.go, so its provider schema must stay identical
-// to the SDKv2 one. Descriptions are read from the SDKv2 schema to prevent drift.
+// to the SDKv2 one. Descriptions are read from the SDKv2 schema to prevent drift, and set as
+// MarkdownDescription because init() in provider.go sets schema.DescriptionKind = StringMarkdown.
 type frameworkProvider struct {
 	version string
 }
@@ -45,8 +46,8 @@ func (p *frameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 	attrs := map[string]schema.Attribute{}
 	for _, name := range []string{"endpoint", "fme_admin_api_endpoint", "account_id", "api_key", "platform_api_key"} {
 		attrs[name] = schema.StringAttribute{
-			Optional:    true,
-			Description: sdkSchema[name].Description,
+			Optional:            true,
+			MarkdownDescription: sdkSchema[name].Description,
 		}
 	}
 	resp.Schema = schema.Schema{Attributes: attrs}
