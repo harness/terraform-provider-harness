@@ -6,7 +6,10 @@ import (
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/provider"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5/tf5server"
+	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
 )
 
 // Run "go generate" to format example terraform files and generate the docs for the registry/website
@@ -34,15 +37,27 @@ func main() {
 	flag.BoolVar(&debugMode, "debug", false, "set to true to run the provider with support for debuggers like delve")
 	flag.Parse()
 
-	opts := &plugin.ServeOpts{ProviderFunc: provider.Provider(version)}
+	ctx := context.Background()
 
-	if debugMode {
-		err := plugin.Debug(context.Background(), "harness/harness", opts)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		return
+	// The SDKv2 provider serves all resources and data sources. The framework provider serves
+	// ephemeral resources, which SDKv2 does not support. Both are served as one provider.
+	providers := []func() tfprotov5.ProviderServer{
+		provider.Provider(version)().GRPCProvider,
+		providerserver.NewProtocol5(provider.NewFrameworkProvider(version)()),
 	}
 
-	plugin.Serve(opts)
+	muxServer, err := tf5muxserver.NewMuxServer(ctx, providers...)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	var serveOpts []tf5server.ServeOpt
+	if debugMode {
+		serveOpts = append(serveOpts, tf5server.WithManagedDebug())
+	}
+
+	err = tf5server.Serve("registry.terraform.io/harness/harness", muxServer.ProviderServer, serveOpts...)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
