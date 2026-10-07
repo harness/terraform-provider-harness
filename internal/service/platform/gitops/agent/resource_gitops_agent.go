@@ -127,6 +127,12 @@ func ResourceGitopsAgent() *schema.Resource {
 						},
 					}},
 			},
+			"store_agent_token": {
+				Description: "When true (default), persist agent_token in Terraform state. Set to false to keep the token out of state. Changing false to true after the agent has connected cannot recover the token from the API.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+			},
 			"agent_token": {
 				Description: "Agent token to be used for authentication of the agent with Harness.",
 				Type:        schema.TypeString,
@@ -165,7 +171,7 @@ func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta
 		d.MarkNewResource()
 		return nil
 	}
-	readAgent(d, &resp)
+	readGitopsAgentResource(d, &resp)
 	return nil
 }
 
@@ -193,7 +199,7 @@ func resourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta i
 		d.MarkNewResource()
 		return nil
 	}
-	readAgent(d, &resp)
+	readGitopsAgentResource(d, &resp)
 	return nil
 }
 
@@ -251,7 +257,7 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 		d.MarkNewResource()
 		return nil
 	}
-	readAgent(d, &resp)
+	readGitopsAgentResource(d, &resp)
 	return nil
 }
 
@@ -359,5 +365,20 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.Set("metadata", metadata)
 	if agent.Credentials != nil && agent.Credentials.PrivateKey != "" {
 		d.Set("agent_token", agent.Credentials.PrivateKey)
+	}
+}
+
+func storeAgentTokenEnabled(d *schema.ResourceData) bool {
+	v, exists := d.GetOkExists("store_agent_token")
+	if !exists {
+		return true
+	}
+	return v.(bool)
+}
+
+func readGitopsAgentResource(d *schema.ResourceData, agent *nextgen.V1Agent) {
+	readAgent(d, agent)
+	if !storeAgentTokenEnabled(d) {
+		d.Set("agent_token", "")
 	}
 }

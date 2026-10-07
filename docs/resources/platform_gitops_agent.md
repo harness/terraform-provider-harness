@@ -45,6 +45,7 @@ Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 - `operator` (String) The Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `project_id` (String) Project identifier of the GitOps agent.
+- `store_agent_token` (Boolean) When true (default), persist agent_token in Terraform state. Set to false to keep the token out of state. Changing false to true after the agent has connected cannot recover the token from the API.
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
 
 ### Read-Only

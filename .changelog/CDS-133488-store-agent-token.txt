@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_gitops_agent: add `store_agent_token` (default true) so the agent token can be omitted from Terraform state
+```
