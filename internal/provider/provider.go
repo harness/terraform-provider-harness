@@ -671,11 +671,15 @@ func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
 }
 
 func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
+	return newPLClient(d.Get("account_id").(string), d.Get("endpoint").(string), d.Get("platform_api_key").(string), version)
+}
+
+func newPLClient(accountId, endpoint, platformApiKey, version string) *nextgen.APIClient {
 	cfg := nextgen.NewConfiguration()
 	client := nextgen.NewAPIClient(&nextgen.Configuration{
-		AccountId:    d.Get("account_id").(string),
-		BasePath:     d.Get("endpoint").(string),
-		ApiKey:       d.Get("platform_api_key").(string),
+		AccountId:    accountId,
+		BasePath:     endpoint,
+		ApiKey:       platformApiKey,
 		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
 		HTTPClient:   getHttpClient(cfg.Logger),
 		DebugLogging: logging.IsDebugOrHigher(cfg.Logger),
