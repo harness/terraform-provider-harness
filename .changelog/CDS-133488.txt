@@ -1,0 +1,7 @@
+```release-note:new-ephemeral-resource
+harness_platform_gitops_agent_token
+```
+
+```release-note:note
+provider: The provider is now served as a mux of the SDKv2 and terraform-plugin-framework providers to support ephemeral resources. Terraform 1.10 or later is required to use ephemeral resources. Existing resources and data sources are unchanged.
+```
