@@ -11,8 +11,8 @@ description: |-
 Data source for looking up an Azure key vault connector.
 
 References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
-- To understand how to use Azure Key Vault, please see [Documentation](https://developer.harness.io/docs/platform/Secrets/Secrets-Management/azure-key-vault)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/harness-ai/use-harness-platform/automation/terraform-provider/harness-terraform-provider-overview)
+- To understand how to use Azure Key Vault, please see [Documentation](https://developer.harness.io/harness-platform/use-harness-platform/secrets/secrets-management/azure-key-vault)
 - To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
 
 ## Example Usage

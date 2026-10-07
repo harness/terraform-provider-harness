@@ -22,7 +22,7 @@ The Terraform provider for Harness allows you to manage resources in Harness CD 
 Full, comprehensive documentation is available on the Terraform Registry website:
 
 - [Provider Documentation](https://registry.terraform.io/providers/harness/harness/latest/docs)
-- [Harness Terraform Provider Quickstart Guide](https://docs.harness.io/article/7cude5tvzh-harness-terraform-provider)
+- [Harness Terraform Provider Quickstart Guide](https://developer.harness.io/harness-ai/use-harness-platform/automation/terraform-provider/harness-terraform-provider-overview)
 
 ## Requirements
 
