@@ -273,59 +273,6 @@ resource "harness_platform_har_registry" "wolfi_upstream" {
   }
   parent_ref = "accountId/orgId/projectId"
 }
-
-# Example of a Virtual Composer Registry
-resource "harness_platform_har_registry" "composer_virtual" {
-  identifier   = "virtual_composer_registry"
-  description  = "Virtual Composer Registry"
-  space_ref    = "accountId/orgId/projectId"
-  package_type = "COMPOSER"
-
-  config {
-    type = "VIRTUAL"
-  }
-  parent_ref = "accountId/orgId/projectId"
-}
-
-# Example of a Virtual Dart Registry
-resource "harness_platform_har_registry" "dart_virtual" {
-  identifier   = "virtual_dart_registry"
-  description  = "Virtual Dart Registry"
-  space_ref    = "accountId/orgId/projectId"
-  package_type = "DART"
-
-  config {
-    type = "VIRTUAL"
-  }
-  parent_ref = "accountId/orgId/projectId"
-}
-
-# Example of a Virtual Swift Registry
-resource "harness_platform_har_registry" "swift_virtual" {
-  identifier   = "virtual_swift_registry"
-  description  = "Virtual Swift Registry"
-  space_ref    = "accountId/orgId/projectId"
-  package_type = "SWIFT"
-
-  config {
-    type = "VIRTUAL"
-  }
-  parent_ref = "accountId/orgId/projectId"
-}
-
-# Example of a Virtual Hugging Face Registry
-# HUGGINGFACE supports VIRTUAL registries only - upstream is not supported.
-resource "harness_platform_har_registry" "huggingface_virtual" {
-  identifier   = "virtual_huggingface_registry"
-  description  = "Virtual Hugging Face Registry"
-  space_ref    = "accountId/orgId/projectId"
-  package_type = "HUGGINGFACE"
-
-  config {
-    type = "VIRTUAL"
-  }
-  parent_ref = "accountId/orgId/projectId"
-}
 ```
 
 ## Schema
@@ -333,7 +280,7 @@ resource "harness_platform_har_registry" "huggingface_virtual" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, CRAN, ALPINE, WOLFI)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 
