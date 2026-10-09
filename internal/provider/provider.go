@@ -70,6 +70,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ip_allowlist"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/setting"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/workspace"
@@ -587,6 +588,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_iacm_ansible_inventory":                ansible_inventory.ResourceAnsibleInventory(),
 				"harness_platform_iacm_ansible_playbook":                 ansible_playbook.ResourceAnsiblePlaybook(),
 				"harness_platform_ip_allowlist":                          ip_allowlist.ResourceIPAllowlist(),
+				"harness_platform_setting":                               setting.ResourceSetting(),
 				"harness_platform_repo":                                  repo.ResourceRepo(),
 				"harness_platform_repo_rule_branch":                      repo_rule_branch.ResourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                          repo_webhook.ResourceRepoWebhook(),
