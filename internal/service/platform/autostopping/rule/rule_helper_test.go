@@ -30,14 +30,21 @@ func extractAttr(resourceName, key string, dest *string) resource.TestCheckFunc 
 
 // waitForProxyReady polls the proxy status until it reaches a terminal state.
 // Returns nil if the proxy reaches "created"; returns an error if it reaches
-// "errored" or the timeout expires.
+// "errored" or the timeout expires. A transient "Could not connect to NG"
+// response is retried until the deadline instead of failing the wait.
 func waitForProxyReady(proxyID string, timeout time.Duration) error {
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	deadline := time.Now().Add(timeout)
 
+	var lastTransient error
 	for time.Now().Before(deadline) {
 		resp, _, err := c.CloudCostAutoStoppingLoadBalancersApi.DescribeLoadBalancer(ctx, c.AccountId, proxyID, c.AccountId)
 		if err != nil {
+			if transientNGError(err) {
+				lastTransient = err
+				time.Sleep(5 * time.Second)
+				continue
+			}
 			return fmt.Errorf("reading proxy %s: %w", proxyID, err)
 		}
 		if resp.Response == nil {
@@ -51,7 +58,16 @@ func waitForProxyReady(proxyID string, timeout time.Duration) error {
 		}
 		time.Sleep(5 * time.Second)
 	}
+	if lastTransient != nil {
+		return fmt.Errorf("timeout waiting %v for proxy %s to provision: %w", timeout, proxyID, lastTransient)
+	}
 	return fmt.Errorf("timeout waiting %v for proxy %s to provision", timeout, proxyID)
+}
+
+// transientNGError reports whether err is the gateway's "NG unreachable" failure.
+// That response is HTTP 401 with a 503 in the body, and it clears up on its own.
+func transientNGError(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "Could not connect to NG")
 }
 
 // Static entity IDs used by autostopping rule tests (connectors, proxies, etc. in the test account).

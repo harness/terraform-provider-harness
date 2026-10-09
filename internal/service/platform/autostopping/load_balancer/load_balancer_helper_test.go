@@ -34,13 +34,20 @@ func extractAttr(resourceName, key string, dest *string) resource.TestCheckFunc 
 
 // waitForProxyReady polls until the autostopping proxy leaves provisioning or reaches a terminal state.
 // Returns nil on "created"; error on "errored" or timeout (matches autostopping/rule tests).
+// A transient "Could not connect to NG" response is retried until the deadline.
 func waitForProxyReady(proxyID string, timeout time.Duration) error {
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	deadline := time.Now().Add(timeout)
 
+	var lastTransient error
 	for time.Now().Before(deadline) {
 		resp, _, err := c.CloudCostAutoStoppingLoadBalancersApi.DescribeLoadBalancer(ctx, c.AccountId, proxyID, c.AccountId)
 		if err != nil {
+			if transientNGError(err) {
+				lastTransient = err
+				time.Sleep(5 * time.Second)
+				continue
+			}
 			return fmt.Errorf("reading proxy %s: %w", proxyID, err)
 		}
 		if resp.Response == nil {
@@ -54,7 +61,14 @@ func waitForProxyReady(proxyID string, timeout time.Duration) error {
 		}
 		time.Sleep(5 * time.Second)
 	}
+	if lastTransient != nil {
+		return fmt.Errorf("timeout waiting %v for proxy %s to provision: %w", timeout, proxyID, lastTransient)
+	}
 	return fmt.Errorf("timeout waiting %v for proxy %s to provision", timeout, proxyID)
+}
+
+func transientNGError(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "Could not connect to NG")
 }
 
 // cleanupStaleAWSProxies deletes any orphaned AWS autostopping proxies left by

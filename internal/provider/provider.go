@@ -1,11 +1,14 @@
 package provider
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/harness/terraform-provider-harness/internal/service/pipeline/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/pipeline/policyset"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"strings"
 
@@ -642,6 +645,7 @@ func getHttpClient(logger *logrus.Logger) *retryablehttp.Client {
 	httpClient := retryablehttp.NewClient()
 	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
 	httpClient.RetryMax = 10
+	httpClient.CheckRetry = retryHarnessNGUnavailable
 	return httpClient
 }
 
@@ -649,7 +653,39 @@ func getOpenApiHttpClient(logger *logrus.Logger) *retryablehttp.Client {
 	httpClient := retryablehttp.NewClient()
 	httpClient.HTTPClient.Transport = openapi_client_logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
 	httpClient.RetryMax = 10
+	httpClient.CheckRetry = retryHarnessNGUnavailable
 	return httpClient
+}
+
+// ngUnavailableMarker is the body Harness returns when NG is unreachable.
+// The gateway reports that outage as HTTP 401 ("Error validating API key"),
+// which the default retry policy does not retry.
+const ngUnavailableMarker = "Could not connect to NG"
+
+// retryHarnessNGUnavailable retries the default transient failures and the
+// NG-unavailable 401. A genuine unauthorized response is not retried.
+func retryHarnessNGUnavailable(ctx context.Context, resp *http.Response, err error) (bool, error) {
+	retry, retryErr := retryablehttp.DefaultRetryPolicy(ctx, resp, err)
+	if retry || retryErr != nil {
+		return retry, retryErr
+	}
+	if resp != nil && resp.StatusCode == http.StatusUnauthorized && responseBodyContains(resp, ngUnavailableMarker) {
+		return true, nil
+	}
+	return false, nil
+}
+
+func responseBodyContains(resp *http.Response, marker string) bool {
+	if resp == nil || resp.Body == nil {
+		return false
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		resp.Body = io.NopCloser(bytes.NewReader(nil))
+		return false
+	}
+	resp.Body = io.NopCloser(bytes.NewReader(body))
+	return bytes.Contains(body, []byte(marker))
 }
 
 func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
