@@ -58,7 +58,7 @@ func newIntegrationsClient(s *internal.Session) *integrationsClient {
 		apiKey = s.IDPClient.ApiKey
 	}
 	return &integrationsClient{
-		base:      strings.TrimRight(s.Endpoint, "/") + "/integration-manager/api/v1",
+		base:      strings.TrimRight(s.Endpoint, "/") + "/integration/api/v1",
 		accountID: s.AccountId,
 		apiKey:    apiKey,
 		http:      http.DefaultClient,

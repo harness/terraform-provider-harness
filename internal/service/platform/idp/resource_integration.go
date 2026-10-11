@@ -332,7 +332,7 @@ func integrationStatusSchema() map[string]*schema.Schema {
 			Elem: &schema.Resource{Schema: map[string]*schema.Schema{
 				"kind":   computed(schema.TypeString, "Kind."),
 				"method": computed(schema.TypeString, "HTTP method."),
-				"url":    computed(schema.TypeString, "Path relative to the integration manager, e.g. https://app.harness.io/gateway/integration-manager."),
+				"url":    computed(schema.TypeString, "Path relative to the integration manager, e.g. https://app.harness.io/gateway/integration."),
 			}},
 		},
 		"created": computed(schema.TypeInt, "Creation time, in milliseconds since the epoch."),

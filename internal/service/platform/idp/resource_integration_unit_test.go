@@ -55,7 +55,7 @@ func (f *fakeIntegrationsAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		apiError(w, http.StatusUnauthorized, "UNAUTHORIZED", "no key")
 		return
 	}
-	const prefix = "/integration-manager/api/v1/accounts/acc"
+	const prefix = "/integration/api/v1/accounts/acc"
 	path := strings.TrimPrefix(r.URL.Path, prefix)
 	if path == r.URL.Path {
 		apiError(w, http.StatusNotFound, "NOT_FOUND", "bad prefix "+r.URL.Path)
