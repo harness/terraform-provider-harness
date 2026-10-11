@@ -11,6 +11,11 @@ exercises the full lifecycle: create, read, update, import and destroy.
 | `HarnessK8s` integration in an org or project | with `k8s_agent_ref` | a service discovery agent and environment |
 | `ServiceNow` integration, plus its catalog data source | with `servicenow_credentials_ref` | a ServiceNow credentials secret |
 
+The credentials can be fake; syncs then fail, but the integrations are created and show in the UI. The references
+must exist, though. `webhook_secret_ref` can name any secret, but `servicenow_credentials_ref` must be a ServiceNow
+connector (`harness_platform_connector_service_now`), backed for example by a `harness_platform_secret_text` with a
+dummy password.
+
 Every identifier starts with `prefix` (default `tf_e2e`). If several people use one account, give each run its own prefix.
 
 ## 1. Build the provider

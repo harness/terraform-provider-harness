@@ -56,7 +56,7 @@ output "webhook_urls" {
 - `harness_k8s` (List of Object) Settings for HarnessK8s integrations. (see [below for nested schema](#nestedatt--harness_k8s))
 - `health` (String) Health of the integration.
 - `id` (String) The ID of this resource.
-- `kind` (List of Object) A kind to sync. (see [below for nested schema](#nestedatt--kind))
+- `kind` (List of Object) A kind to sync. Import reads kinds sorted by name, so list them that way to import without a diff. (see [below for nested schema](#nestedatt--kind))
 - `layout` (List of Object) Custom only: columns shown for the integration's entities. (see [below for nested schema](#nestedatt--layout))
 - `mode` (String) Custom only: webhook or api.
 - `mode_effective` (String) How the integration gets data: airbyte, platform, webhook or api.

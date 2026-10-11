@@ -114,7 +114,7 @@ resource "harness_platform_idp_integration" "github" {
 ### Required
 
 - `identifier` (String) Identifier of the integration, stored as sent.
-- `kind` (Block List, Min: 1) A kind to sync. (see [below for nested schema](#nestedblock--kind))
+- `kind` (Block List, Min: 1) A kind to sync. Import reads kinds sorted by name, so list them that way to import without a diff. (see [below for nested schema](#nestedblock--kind))
 - `name` (String) Name of the resource.
 - `type` (String) Integration type, e.g. ServiceNow, GitHub, HarnessCD or Custom.
 

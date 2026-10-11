@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -187,7 +188,7 @@ func integrationSpecSchema() map[string]*schema.Schema {
 			}},
 		},
 		"kind": {
-			Description: "A kind to sync.",
+			Description: "A kind to sync. Import reads kinds sorted by name, so list them that way to import without a diff.",
 			Type:        schema.TypeList,
 			Required:    true,
 			Elem: &schema.Resource{Schema: map[string]*schema.Schema{
@@ -391,6 +392,9 @@ func setIntegration(d *schema.ResourceData, in map[string]any) error {
 	for k, v := range flattenObject(integrationSpecSchema(), spec) {
 		set[k] = v
 	}
+	if prior, ok := d.Get("kind").([]any); ok {
+		set["kind"] = orderLike(prior, set["kind"])
+	}
 	status, _ := in["status"].(map[string]any)
 	set["health"] = status["health"]
 	set["mode_effective"] = status["mode"]
@@ -405,6 +409,35 @@ func setIntegration(d *schema.ResourceData, in map[string]any) error {
 		}
 	}
 	return nil
+}
+
+// orderLike sorts the server's kinds into the order of prior; the server returns them sorted by name.
+func orderLike(prior []any, got any) any {
+	kinds, ok := got.([]any)
+	if !ok || len(prior) == 0 {
+		return got
+	}
+	rank := map[string]int{}
+	for i, p := range prior {
+		if m, ok := p.(map[string]any); ok {
+			rank[str(m["kind"])] = i
+		}
+	}
+	sorted := slices.Clone(kinds)
+	slices.SortStableFunc(sorted, func(a, b any) int {
+		ra, okA := rank[str(a.(map[string]any)["kind"])]
+		rb, okB := rank[str(b.(map[string]any)["kind"])]
+		switch {
+		case okA && okB:
+			return ra - rb
+		case okA:
+			return -1
+		case okB:
+			return 1
+		}
+		return 0
+	})
+	return sorted
 }
 
 func str(v any) string {

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -142,6 +143,10 @@ func applyDefaults(in map[string]any) {
 		spec["update_frequency"] = "24h"
 	}
 	kinds, _ := spec["kinds"].([]any)
+	// The server returns kinds sorted by name.
+	sort.Slice(kinds, func(i, j int) bool {
+		return kinds[i].(map[string]any)["kind"].(string) < kinds[j].(map[string]any)["kind"].(string)
+	})
 	for _, k := range kinds {
 		kind := k.(map[string]any)
 		if _, ok := kind["action"]; !ok {
@@ -389,11 +394,12 @@ func TestUnitIntegrationLifecycle(t *testing.T) {
 				ExpectError: regexpMust(`idp_type of kind cmdb_ci_service can't change from "service" to "database"`),
 			},
 			{
-				ResourceName:            res,
-				ImportState:             true,
-				ImportStateId:           "default/Snow_Prod",
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"revision", "updated"},
+				ResourceName:      res,
+				ImportState:       true,
+				ImportStateId:     "default/Snow_Prod",
+				ImportStateVerify: true,
+				// Import has no prior order, so kinds come back sorted by name.
+				ImportStateVerifyIgnore: []string{"revision", "updated", "kind."},
 			},
 			{
 				ResourceName:            mapping,
