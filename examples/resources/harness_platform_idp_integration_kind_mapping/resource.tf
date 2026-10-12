@@ -19,9 +19,10 @@ resource "harness_platform_idp_integration_kind_mapping" "services" {
     target_field = "metadata.environment"
   }
 
-  # Links records to entities that already exist instead of registering new ones.
+  # Links records to entities that already exist instead of registering new ones. source_path is a
+  # field of the emitted entity data, not of the source record.
   correlation {
-    source_path = "name"
+    source_path = "metadata.integration_properties.ServiceNow.name"
     target_path = "metadata.identifier"
   }
 }

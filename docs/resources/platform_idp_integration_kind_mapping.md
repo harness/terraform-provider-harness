@@ -34,9 +34,10 @@ resource "harness_platform_idp_integration_kind_mapping" "services" {
     target_field = "metadata.environment"
   }
 
-  # Links records to entities that already exist instead of registering new ones.
+  # Links records to entities that already exist instead of registering new ones. source_path is a
+  # field of the emitted entity data, not of the source record.
   correlation {
-    source_path = "name"
+    source_path = "metadata.integration_properties.ServiceNow.name"
     target_path = "metadata.identifier"
   }
 }
@@ -90,7 +91,7 @@ resource "harness_platform_idp_integration_kind_mapping" "orders" {
 
 Required:
 
-- `source_path` (String) Record field to match, e.g. name.
+- `source_path` (String) Field to match. Airbyte types: a path in the emitted entity data, e.g. metadata.integration_properties.ServiceNow.name; Custom: a payload field.
 - `target_path` (String) Entity field to match, e.g. metadata.identifier.
 
 Optional:

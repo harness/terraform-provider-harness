@@ -69,7 +69,8 @@ func mappingWritableSchema() map[string]*schema.Schema {
 		"idp_kind": defaultedString("Entity kind, e.g. component."),
 		"idp_type": defaultedString("Entity type, e.g. service."),
 		"correlation": block("Links records to existing entities.", false, map[string]*schema.Schema{
-			"source_path": fieldPath(requiredString("Record field to match, e.g. name.")),
+			"source_path": fieldPath(requiredString("Field to match. Airbyte types: a path in the emitted entity " +
+				"data, e.g. metadata.integration_properties.ServiceNow.name; Custom: a payload field.")),
 			"target_path": fieldPath(requiredString("Entity field to match, e.g. metadata.identifier.")),
 			"operator": {
 				Description: "Match operator; eq when omitted.", Type: schema.TypeString, Optional: true, Computed: true,
