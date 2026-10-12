@@ -38,6 +38,7 @@ func waitForProxyReady(proxyID string, timeout time.Duration) error {
 	deadline := time.Now().Add(timeout)
 
 	var lastTransient error
+	lastStatus := "unknown"
 	for time.Now().Before(deadline) {
 		resp, _, err := c.CloudCostAutoStoppingLoadBalancersApi.DescribeLoadBalancer(ctx, c.AccountId, proxyID, c.AccountId)
 		if err != nil {
@@ -51,7 +52,8 @@ func waitForProxyReady(proxyID string, timeout time.Duration) error {
 		if resp.Response == nil {
 			return fmt.Errorf("proxy %s not found", proxyID)
 		}
-		switch resp.Response.Status {
+		lastStatus = resp.Response.Status
+		switch lastStatus {
 		case "created":
 			return nil
 		case "errored":
@@ -60,9 +62,9 @@ func waitForProxyReady(proxyID string, timeout time.Duration) error {
 		time.Sleep(5 * time.Second)
 	}
 	if lastTransient != nil {
-		return fmt.Errorf("timeout waiting %v for proxy %s to provision: %w", timeout, proxyID, lastTransient)
+		return fmt.Errorf("timeout waiting %v for proxy %s to provision (last status %q): %w", timeout, proxyID, lastStatus, lastTransient)
 	}
-	return fmt.Errorf("timeout waiting %v for proxy %s to provision", timeout, proxyID)
+	return fmt.Errorf("timeout waiting %v for proxy %s to provision (last status %q)", timeout, proxyID, lastStatus)
 }
 
 // transientNGError reports whether err is a transient NG outage. The gateway

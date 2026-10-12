@@ -130,7 +130,7 @@ func TestAccResourceVMRule_DryRunFalseOnUpdate(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					if err := waitForProxyReady(proxyID, 3*time.Minute); err != nil {
+					if err := waitForProxyReady(proxyID, 10*time.Minute); err != nil {
 						t.Fatalf("Proxy not ready: %v", err)
 					}
 				},

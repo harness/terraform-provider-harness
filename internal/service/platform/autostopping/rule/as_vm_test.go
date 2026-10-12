@@ -38,7 +38,7 @@ func TestResourceVMRule(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					if err := waitForProxyReady(proxyID, 3*time.Minute); err != nil {
+					if err := waitForProxyReady(proxyID, 10*time.Minute); err != nil {
 						t.Skipf("Skipping: %v", err)
 					}
 				},

@@ -2,6 +2,9 @@ package connector
 
 import (
 	"context"
+	"log"
+	"strings"
+	"time"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -60,18 +63,42 @@ func resourceConnectorKubernetesCloudCostRead(ctx context.Context, d *schema.Res
 }
 
 func resourceConnectorKubernetesCloudCostCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn := buildConnectorKubernetesCloudCost(d)
-
-	newConn, err := resourceConnectorCreateOrUpdateBase(ctx, d, meta, conn)
-	if err != nil {
-		return err
+	// QA intermittently returns 400 "Internal error while validating connector"
+	// while the referenced Kubernetes connector is still settling. The same
+	// create succeeds on retry, so do not fail the apply on the first hit.
+	const attempts = 3
+	var diags diag.Diagnostics
+	for attempt := 1; attempt <= attempts; attempt++ {
+		conn := buildConnectorKubernetesCloudCost(d)
+		newConn, createDiags := resourceConnectorCreateOrUpdateBase(ctx, d, meta, conn)
+		if !createDiags.HasError() {
+			if err := readConnectorKubernetesCloudCost(d, newConn); err != nil {
+				return diag.FromErr(err)
+			}
+			return nil
+		}
+		diags = createDiags
+		if !isTransientConnectorValidationError(diags) || attempt == attempts {
+			return diags
+		}
+		log.Printf("[WARN] Kubernetes cloud cost connector validation failed (attempt %d/%d); retrying", attempt, attempts)
+		select {
+		case <-ctx.Done():
+			return diags
+		case <-time.After(time.Duration(attempt) * 5 * time.Second):
+		}
 	}
+	return diags
+}
 
-	if err := readConnectorKubernetesCloudCost(d, newConn); err != nil {
-		return diag.FromErr(err)
+func isTransientConnectorValidationError(diags diag.Diagnostics) bool {
+	for _, d := range diags {
+		msg := d.Summary + " " + d.Detail
+		if strings.Contains(msg, "Internal error while validating connector") {
+			return true
+		}
 	}
-
-	return nil
+	return false
 }
 
 func buildConnectorKubernetesCloudCost(d *schema.ResourceData) *nextgen.ConnectorInfo {
