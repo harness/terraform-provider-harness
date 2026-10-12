@@ -10,19 +10,31 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type closeTracker struct {
+	io.Reader
+	closed bool
+}
+
+func (c *closeTracker) Close() error {
+	c.closed = true
+	return nil
+}
+
 func TestRetryHarnessNGUnavailable(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("retries 401 when NG is unreachable", func(t *testing.T) {
 		body := `{"errors":["Error validating API key: Could not connect to NG. HTTP call failed with status code 503"]}`
+		original := &closeTracker{Reader: strings.NewReader(body)}
 		resp := &http.Response{
 			StatusCode: http.StatusUnauthorized,
-			Body:       io.NopCloser(strings.NewReader(body)),
+			Body:       original,
 		}
 
 		retry, err := retryHarnessNGUnavailable(ctx, resp, nil)
 		require.NoError(t, err)
 		require.True(t, retry)
+		require.True(t, original.closed)
 
 		got, err := io.ReadAll(resp.Body)
 		require.NoError(t, err)

@@ -679,7 +679,12 @@ func responseBodyContains(resp *http.Response, marker string) bool {
 	if resp == nil || resp.Body == nil {
 		return false
 	}
-	body, err := io.ReadAll(resp.Body)
+	// CheckRetry replaces resp.Body with a replayable copy. go-retryablehttp
+	// only closes the body assigned when CheckRetry returns, so the original
+	// transport body has to be closed here or the connection cannot be reused.
+	original := resp.Body
+	defer original.Close()
+	body, err := io.ReadAll(original)
 	if err != nil {
 		resp.Body = io.NopCloser(bytes.NewReader(nil))
 		return false
