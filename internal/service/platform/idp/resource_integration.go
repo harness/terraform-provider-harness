@@ -537,8 +537,9 @@ func integrationCustomizeDiff(_ context.Context, d *schema.ResourceDiff, _ any) 
 		return nil
 	}
 	oldKinds, newKinds := d.GetChange("kind")
-	if !sameKinds(oldKinds.([]any), newKinds.([]any)) {
-		return fmt.Errorf("kinds can't be added or removed on an existing integration yet; recreate it instead")
+	// A new Custom kind needs its own endpoint, and a new HarnessCI kind a correlation.
+	if (typ == "Custom" || typ == "HarnessCI") && !sameKinds(oldKinds.([]any), newKinds.([]any)) {
+		return fmt.Errorf("the kind of a %s integration can't change; recreate it instead", typ)
 	}
 	return entityTypesUnchanged(oldKinds.([]any), newKinds.([]any))
 }
