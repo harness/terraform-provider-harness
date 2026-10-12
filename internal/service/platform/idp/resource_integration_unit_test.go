@@ -437,8 +437,8 @@ resource "harness_platform_idp_integration" "gh" {
 				),
 			},
 			{
-				Config: fmt.Sprintf(base, `kind { kind = "repository" }`+"\n"+`kind { kind = "team" }`),
-				Check:  resource.TestCheckResourceAttr("harness_platform_idp_integration.gh", "kind.#", "2"),
+				Config:      fmt.Sprintf(base, `kind { kind = "repository" }`+"\n"+`kind { kind = "team" }`),
+				ExpectError: regexpMust("kinds can't be added or removed"),
 			},
 			{
 				Config: fmt.Sprintf(base, `kind { kind = "repository" }`+"\n"+`sonarqube {
@@ -448,29 +448,6 @@ resource "harness_platform_idp_integration" "gh" {
     }
   }`),
 				ExpectError: regexpMust("sonarqube is only allowed when type is SonarQube"),
-			},
-		},
-	})
-}
-
-func TestUnitIntegrationCustomKindIsFixed(t *testing.T) {
-	newFakeIntegrationsAPI(t)
-	base := `
-resource "harness_platform_idp_integration" "hook" {
-  identifier = "hook"
-  name       = "Hook"
-  type       = "Custom"
-  mode       = "api"
-  kind { kind = "%s" }
-}
-`
-	resource.UnitTest(t, resource.TestCase{
-		ProviderFactories: unitProviderFactories(),
-		Steps: []resource.TestStep{
-			{Config: fmt.Sprintf(base, "build")},
-			{
-				Config:      fmt.Sprintf(base, "deployment"),
-				ExpectError: regexpMust("the kind of a Custom integration can't change"),
 			},
 		},
 	})
