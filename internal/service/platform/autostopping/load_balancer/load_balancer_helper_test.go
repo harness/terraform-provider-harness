@@ -34,7 +34,8 @@ func extractAttr(resourceName, key string, dest *string) resource.TestCheckFunc 
 
 // waitForProxyReady polls until the autostopping proxy leaves provisioning or reaches a terminal state.
 // Returns nil on "created"; error on "errored" or timeout (matches autostopping/rule tests).
-// A transient "Could not connect to NG" response is retried until the deadline.
+// A transient NG outage is retried until the deadline. That includes the
+// gateway body and the bodyless error left after CheckRetry exhausts.
 func waitForProxyReady(proxyID string, timeout time.Duration) error {
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	deadline := time.Now().Add(timeout)
@@ -68,7 +69,35 @@ func waitForProxyReady(proxyID string, timeout time.Duration) error {
 }
 
 func transientNGError(err error) bool {
-	return err != nil && strings.Contains(err.Error(), "Could not connect to NG")
+	if err == nil {
+		return false
+	}
+	msg := err.Error()
+	// The 401 body is still attached when the client returns it directly.
+	if strings.Contains(msg, "Could not connect to NG") {
+		return true
+	}
+	// CheckRetry consumes that 401. After RetryMax, go-retryablehttp closes the
+	// body and returns "METHOD URL giving up after N attempt(s)" with no marker.
+	return strings.Contains(msg, "giving up after") && strings.Contains(msg, "attempt(s)")
+}
+
+func TestTransientNGError(t *testing.T) {
+	t.Parallel()
+
+	if transientNGError(nil) {
+		t.Fatal("nil error is not transient")
+	}
+	if !transientNGError(fmt.Errorf("Error validating API key: Could not connect to NG")) {
+		t.Fatal("gateway body should be transient")
+	}
+	exhausted := fmt.Errorf("GET https://qa.harness.io/gateway/lw/api/accounts/acc/autostopping/loadbalancers/ap-1 giving up after 11 attempt(s)")
+	if !transientNGError(exhausted) {
+		t.Fatal("retry exhaustion should be transient")
+	}
+	if transientNGError(fmt.Errorf(`{"message":"Invalid credentials"}`)) {
+		t.Fatal("a real unauthorized response is not transient")
+	}
 }
 
 // cleanupStaleAWSProxies deletes any orphaned AWS autostopping proxies left by

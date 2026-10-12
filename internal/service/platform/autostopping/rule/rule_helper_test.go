@@ -30,8 +30,9 @@ func extractAttr(resourceName, key string, dest *string) resource.TestCheckFunc 
 
 // waitForProxyReady polls the proxy status until it reaches a terminal state.
 // Returns nil if the proxy reaches "created"; returns an error if it reaches
-// "errored" or the timeout expires. A transient "Could not connect to NG"
-// response is retried until the deadline instead of failing the wait.
+// "errored" or the timeout expires. A transient NG outage is retried until
+// the deadline. That includes the gateway body and the bodyless error left
+// after CheckRetry exhausts.
 func waitForProxyReady(proxyID string, timeout time.Duration) error {
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	deadline := time.Now().Add(timeout)
@@ -64,10 +65,37 @@ func waitForProxyReady(proxyID string, timeout time.Duration) error {
 	return fmt.Errorf("timeout waiting %v for proxy %s to provision", timeout, proxyID)
 }
 
-// transientNGError reports whether err is the gateway's "NG unreachable" failure.
-// That response is HTTP 401 with a 503 in the body, and it clears up on its own.
+// transientNGError reports whether err is a transient NG outage. The gateway
+// returns that as HTTP 401 with "Could not connect to NG" in the body. After
+// CheckRetry uses up RetryMax, go-retryablehttp drops the body and the only
+// remaining signal is "giving up after N attempt(s)".
 func transientNGError(err error) bool {
-	return err != nil && strings.Contains(err.Error(), "Could not connect to NG")
+	if err == nil {
+		return false
+	}
+	msg := err.Error()
+	if strings.Contains(msg, "Could not connect to NG") {
+		return true
+	}
+	return strings.Contains(msg, "giving up after") && strings.Contains(msg, "attempt(s)")
+}
+
+func TestTransientNGError(t *testing.T) {
+	t.Parallel()
+
+	if transientNGError(nil) {
+		t.Fatal("nil error is not transient")
+	}
+	if !transientNGError(fmt.Errorf("Error validating API key: Could not connect to NG")) {
+		t.Fatal("gateway body should be transient")
+	}
+	exhausted := fmt.Errorf("GET https://qa.harness.io/gateway/lw/api/accounts/acc/autostopping/v2/rules giving up after 11 attempt(s)")
+	if !transientNGError(exhausted) {
+		t.Fatal("retry exhaustion should be transient")
+	}
+	if transientNGError(fmt.Errorf(`{"message":"Invalid credentials"}`)) {
+		t.Fatal("a real unauthorized response is not transient")
+	}
 }
 
 // Static entity IDs used by autostopping rule tests (connectors, proxies, etc. in the test account).
