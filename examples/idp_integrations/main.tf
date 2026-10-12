@@ -74,9 +74,8 @@ resource "harness_platform_idp_integration" "orders" {
   }
 
   kind {
-    kind        = "custom"
-    auto_import = true
-    action      = "merge"
+    kind   = "custom"
+    action = "merge"
   }
 }
 
