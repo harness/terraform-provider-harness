@@ -144,11 +144,12 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 
 	if id == "" {
 		body := policymgmt.CreateRequestBody2{
-			Name:       d.Get("name").(string),
-			Identifier: d.Get("identifier").(string),
-			Action:     d.Get("action").(string),
-			Type_:      d.Get("type").(string),
-			Enabled:    d.Get("enabled").(bool),
+			Name:        d.Get("name").(string),
+			Identifier:  d.Get("identifier").(string),
+			Action:      d.Get("action").(string),
+			Type_:       d.Get("type").(string),
+			Enabled:     d.Get("enabled").(bool),
+			Description: d.Get("description").(string),
 		}
 		localVarOptionals := policymgmt.PolicysetsApiPolicysetsCreateOpts{
 			AccountIdentifier: optional.NewString(meta.(*internal.Session).AccountId),
@@ -168,14 +169,18 @@ func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		}
 		id = createPolicySet.Identifier
 	}
-	// NB we can only add policies to a policyset after it has been created, so we need to do this in the update
+	// NB we can only add policies to a policyset after it has been created, so we need to do this in the update.
+	// Description is a pointer so an empty value is still sent. The SDK omits a nil or a plain
+	// empty string, and the update API is a PATCH, so a missing field would leave the stored description unchanged.
 	policies := buildPolicies(d)
+	description := d.Get("description").(string)
 	body := policymgmt.UpdateRequestBody2{
-		Name:     d.Get("name").(string),
-		Type_:    d.Get("type").(string),
-		Action:   d.Get("action").(string),
-		Enabled:  d.Get("enabled").(bool),
-		Policies: policies,
+		Name:        d.Get("name").(string),
+		Type_:       d.Get("type").(string),
+		Action:      d.Get("action").(string),
+		Enabled:     d.Get("enabled").(bool),
+		Description: &description,
+		Policies:    policies,
 	}
 
 	localVarOptionals := policymgmt.PolicysetsApiPolicysetsUpdateOpts{
@@ -310,6 +315,7 @@ func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet) {
 	_ = d.Set("org_id", policy.OrgId)
 	_ = d.Set("project_id", policy.ProjectId)
 	_ = d.Set("name", policy.Name)
+	_ = d.Set("description", policy.Description)
 	_ = d.Set("action", policy.Action)
 	_ = d.Set("type", policy.Type_)
 	_ = d.Set("enabled", policy.Enabled)

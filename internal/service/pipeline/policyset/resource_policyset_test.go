@@ -40,6 +40,7 @@ func TestAccResourcePolicyset(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "action", action),
 					resource.TestCheckResourceAttr(resourceName, "type", policyType),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "description", "policyset description"),
 					resource.TestCheckResourceAttr(resourceName, "policies.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "policies.0.identifier", policyFirstIdentifier),
 					resource.TestCheckResourceAttr(resourceName, "policies.0.severity", "warning"),
@@ -169,6 +170,7 @@ func testAccResourcePolicyset(id, name, action, policyType string, policyFirstId
 			action = "%[3]s"
 			type = "%[4]s"
 			enabled = %[5]t
+			description = "policyset description"
 			policies {
 				identifier = harness_platform_policy.first.identifier
 			  severity = "warning"
@@ -201,6 +203,7 @@ func testAccResourcePolicysetUpdate(id, name, action, policyType string, policyF
 			action = "%[3]s"
 			type = "%[4]s"
 			enabled = %[5]t
+			description = "policyset description"
 			policy_references {
 				identifier = harness_platform_policy.first.identifier
 			  	severity = "warning"
