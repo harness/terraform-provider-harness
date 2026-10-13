@@ -243,7 +243,7 @@ Optional:
 
 Required:
 
-- `source_path` (String) Field to match. Airbyte types: a path in the emitted entity data, e.g. metadata.integration_properties.ServiceNow.name; Custom: a payload field.
+- `source_path` (String) Field to match. Airbyte types: a path in the emitted entity data, e.g. identifier or spec.owner; Custom: a payload field.
 - `target_path` (String) Entity field to match, e.g. metadata.identifier.
 
 Optional:

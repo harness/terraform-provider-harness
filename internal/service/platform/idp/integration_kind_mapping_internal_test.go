@@ -45,3 +45,35 @@ func TestPayloadSchemasUnchanged(t *testing.T) {
 		t.Errorf("changed schema: %v", err)
 	}
 }
+
+func TestMappingFieldsUnchanged(t *testing.T) {
+	kinds := func(uid, name string) []any {
+		return []any{map[string]any{"kind": "incident", "mapping": []any{map[string]any{
+			"unique_identifier_field": uid, "display_name_field": name}}}}
+	}
+	old := kinds("id", "title")
+	if err := mappingFieldsUnchanged(old, kinds("", ""), true); err != nil {
+		t.Errorf("omitted fields: %v", err)
+	}
+	if err := mappingFieldsUnchanged(old, kinds("id", "name"), false); err != nil {
+		t.Errorf("display_name_field on a platform type: %v", err)
+	}
+	if err := mappingFieldsUnchanged(old, kinds("id", "name"), true); err == nil ||
+		!strings.Contains(err.Error(), "display_name_field of kind incident") {
+		t.Errorf("display_name_field on Airbyte: %v", err)
+	}
+	if err := mappingFieldsUnchanged(old, kinds("key", "title"), false); err == nil ||
+		!strings.Contains(err.Error(), "unique_identifier_field of kind incident") {
+		t.Errorf("unique_identifier_field: %v", err)
+	}
+}
+
+func TestSwitchingToMerge(t *testing.T) {
+	kinds := func(a, b string) []any {
+		return []any{map[string]any{"kind": "a", "action": a}, map[string]any{"kind": "b", "action": b}}
+	}
+	got := switchingToMerge(kinds("merge", "register"), kinds("merge", "merge"))
+	if !reflect.DeepEqual(got, map[string]bool{"b": true}) {
+		t.Errorf("switchingToMerge = %v", got)
+	}
+}

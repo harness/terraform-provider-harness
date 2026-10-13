@@ -110,7 +110,8 @@ func (c *integrationsClient) doOnce(
 ) (http.Header, error) {
 	u := c.base + path
 	if len(query) > 0 {
-		u += "?" + query.Encode()
+		// The gateway doesn't decode + as a space.
+		u += "?" + strings.ReplaceAll(query.Encode(), "+", "%20")
 	}
 	var reader io.Reader
 	if body != nil {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 	"time"
 )
@@ -91,5 +92,18 @@ func TestTags(t *testing.T) {
 	got := flattenTags(m)
 	if len(got) != 3 || got[0] != "team:idp" || got[1] != "tier" || got[2] != "url:http://x" {
 		t.Fatalf("flatten %v", got)
+	}
+}
+
+func TestClientEncodesSpacesInQuery(t *testing.T) {
+	c := testClient(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.RawQuery != "search_term=my%20app" {
+			t.Errorf("query %q", r.URL.RawQuery)
+		}
+		_, _ = w.Write([]byte(`{}`))
+	})
+	if _, err := c.do(context.Background(), http.MethodGet, "/x", url.Values{"search_term": {"my app"}}, nil, nil,
+		nil); err != nil {
+		t.Fatal(err)
 	}
 }

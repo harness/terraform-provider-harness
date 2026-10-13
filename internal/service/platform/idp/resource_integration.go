@@ -532,6 +532,24 @@ func resourceIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta
 	c := newIntegrationsClient(meta.(*internal.Session))
 	org, project := scope(d)
 	body := integrationBody(d)
+	oldKinds, newKinds := d.GetChange("kind")
+	prior, desired := kindMappings(oldKinds.([]any)), kindMappings(newKinds.([]any))
+	// A kind switching to merge needs its correlation stored first; other mappings follow the integration.
+	toMerge := switchingToMerge(oldKinds.([]any), newKinds.([]any))
+	writeMappings := func(first bool) error {
+		for kind, m := range desired {
+			if p, ok := prior[kind]; (ok && reflect.DeepEqual(p, m)) || toMerge[kind] != first {
+				continue
+			}
+			if _, err := writeMapping(ctx, c, org, project, d.Id(), kind, mappingBody(m, false)); err != nil {
+				return fmt.Errorf("writing the mapping of kind %s: %w", kind, err)
+			}
+		}
+		return nil
+	}
+	if err := writeMappings(true); err != nil {
+		return diag.FromErr(err)
+	}
 	for attempt := 0; attempt < 2; attempt++ {
 		revision, err := currentRevision(ctx, c, org, project, d.Id())
 		if err != nil {
@@ -546,17 +564,10 @@ func resourceIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta
 		}
 		break
 	}
-	// A mapping block added or changed on a kind is written through the kind's mapping; a removed one resets it.
-	oldKinds, newKinds := d.GetChange("kind")
-	prior, desired := kindMappings(oldKinds.([]any)), kindMappings(newKinds.([]any))
-	for kind, m := range desired {
-		if p, ok := prior[kind]; ok && reflect.DeepEqual(p, m) {
-			continue
-		}
-		if _, err := writeMapping(ctx, c, org, project, d.Id(), kind, mappingBody(m, false)); err != nil {
-			return diag.FromErr(fmt.Errorf("writing the mapping of kind %s: %w", kind, err))
-		}
+	if err := writeMappings(false); err != nil {
+		return diag.FromErr(err)
 	}
+	// A removed mapping block resets the kind's mapping.
 	var diags diag.Diagnostics
 	for kind := range prior {
 		if _, ok := desired[kind]; ok {
@@ -576,6 +587,23 @@ func resourceIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta
 		}
 	}
 	return append(diags, refreshIntegration(ctx, c, d)...)
+}
+
+// switchingToMerge returns the kinds whose action changes to merge.
+func switchingToMerge(oldKinds, newKinds []any) map[string]bool {
+	before := map[string]string{}
+	for _, k := range oldKinds {
+		kind, _ := k.(map[string]any)
+		before[str(kind["kind"])] = str(kind["action"])
+	}
+	out := map[string]bool{}
+	for _, k := range newKinds {
+		kind, _ := k.(map[string]any)
+		if a := str(kind["action"]); a == "merge" && before[str(kind["kind"])] != "merge" {
+			out[str(kind["kind"])] = true
+		}
+	}
+	return out
 }
 
 func resourceIntegrationDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
@@ -610,6 +638,10 @@ func integrationCustomizeDiff(_ context.Context, d *schema.ResourceDiff, _ any) 
 		return fmt.Errorf("kinds can't be added or removed on an existing integration yet; recreate it instead")
 	}
 	if err := payloadSchemasUnchanged(oldKinds.([]any), newKinds.([]any)); err != nil {
+		return err
+	}
+	airbyte := d.Get("mode_effective") == "airbyte"
+	if err := mappingFieldsUnchanged(oldKinds.([]any), newKinds.([]any), airbyte); err != nil {
 		return err
 	}
 	return entityTypesUnchanged(oldKinds.([]any), newKinds.([]any))
