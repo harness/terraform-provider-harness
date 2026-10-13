@@ -43,6 +43,7 @@ output "webhook_urls" {
 - `connector` (List of Object) Connector the integration reads with. Required or not allowed depending on type. (see [below for nested schema](#nestedatt--connector))
 - `connector_version` (String) Connector image tag recorded at create.
 - `created` (Number) Creation time, in milliseconds since the epoch.
+- `custom` (List of Object) Settings for Custom integrations. (see [below for nested schema](#nestedatt--custom))
 - `datadog` (List of Object) Settings for DataDog integrations. (see [below for nested schema](#nestedatt--datadog))
 - `description` (String) Description of the resource.
 - `dynatrace` (List of Object) Settings for DynaTrace integrations. (see [below for nested schema](#nestedatt--dynatrace))
@@ -57,21 +58,17 @@ output "webhook_urls" {
 - `health` (String) Health of the integration.
 - `id` (String) The ID of this resource.
 - `kind` (List of Object) A kind to sync. Import reads kinds sorted by name, so list them that way to import without a diff. (see [below for nested schema](#nestedatt--kind))
-- `layout` (List of Object) Custom only: columns shown for the integration's entities. (see [below for nested schema](#nestedatt--layout))
-- `mode` (String) Custom only: webhook or api.
 - `mode_effective` (String) How the integration gets data: airbyte, platform, webhook or api.
 - `pagerduty` (List of Object) Settings for PagerDuty integrations. (see [below for nested schema](#nestedatt--pagerduty))
 - `revision` (Number) Revision, sent as If-Match on writes.
 - `scopes` (List of Object) Harness scopes a platform integration reads from. Set exactly one of all or selected. (see [below for nested schema](#nestedatt--scopes))
 - `secondary_kinds` (Set of String) Secondary kinds to sync, for Airbyte types.
 - `sonarqube` (List of Object) Settings for SonarQube integrations. (see [below for nested schema](#nestedatt--sonarqube))
-- `source_label` (String) Custom only: label for the sending system.
 - `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) Integration type.
 - `uid` (String) Internal key; new on every create.
 - `update_frequency` (String) How often an Airbyte integration syncs, e.g. 24h.
 - `updated` (Number) Last update time, in milliseconds since the epoch.
-- `webhook_auth` (List of Object) Custom webhook authentication. Required in webhook mode. (see [below for nested schema](#nestedatt--webhook_auth))
 
 <a id="nestedatt--bitbucket_cloud"></a>
 ### Nested Schema for `bitbucket_cloud`
@@ -135,6 +132,45 @@ Read-Only:
 Read-Only:
 
 - `credentials_ref` (String)
+
+
+
+<a id="nestedatt--custom"></a>
+### Nested Schema for `custom`
+
+Read-Only:
+
+- `layout` (List of Object) (see [below for nested schema](#nestedobjatt--custom--layout))
+- `mode` (String)
+- `source_label` (String)
+- `webhook_auth` (List of Object) (see [below for nested schema](#nestedobjatt--custom--webhook_auth))
+
+<a id="nestedobjatt--custom--layout"></a>
+### Nested Schema for `custom.layout`
+
+Read-Only:
+
+- `column` (List of Object) (see [below for nested schema](#nestedobjatt--custom--layout--column))
+
+<a id="nestedobjatt--custom--layout--column"></a>
+### Nested Schema for `custom.layout.column`
+
+Read-Only:
+
+- `path` (String)
+- `title` (String)
+
+
+
+<a id="nestedobjatt--custom--webhook_auth"></a>
+### Nested Schema for `custom.webhook_auth`
+
+Read-Only:
+
+- `auth_header` (String)
+- `auth_type` (String)
+- `hash_algo` (String)
+- `secret_ref` (String)
 
 
 
@@ -241,23 +277,6 @@ Read-Only:
 - `replication_mode` (String)
 
 
-<a id="nestedatt--layout"></a>
-### Nested Schema for `layout`
-
-Read-Only:
-
-- `column` (List of Object) (see [below for nested schema](#nestedobjatt--layout--column))
-
-<a id="nestedobjatt--layout--column"></a>
-### Nested Schema for `layout.column`
-
-Read-Only:
-
-- `path` (String)
-- `title` (String)
-
-
-
 <a id="nestedatt--pagerduty"></a>
 ### Nested Schema for `pagerduty`
 
@@ -332,15 +351,3 @@ Read-Only:
 
 - `exclude` (Set of String)
 - `include` (Set of String)
-
-
-
-<a id="nestedatt--webhook_auth"></a>
-### Nested Schema for `webhook_auth`
-
-Read-Only:
-
-- `auth_header` (String)
-- `auth_type` (String)
-- `hash_algo` (String)
-- `secret_ref` (String)

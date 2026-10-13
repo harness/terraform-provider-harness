@@ -15,26 +15,29 @@ Resource for an IDP integration, which imports entities from an external system 
 ```terraform
 # Custom webhook integration. The webhook URL is in endpoints once created.
 resource "harness_platform_idp_integration" "orders" {
-  identifier   = "orders_webhook"
-  name         = "Orders webhook"
-  description  = "Imports services pushed by the order system"
-  type         = "Custom"
-  mode         = "webhook"
-  source_label = "orders"
-  tags         = ["team:idp", "webhook"]
+  identifier  = "orders_webhook"
+  name        = "Orders webhook"
+  description = "Imports services pushed by the order system"
+  type        = "Custom"
+  tags        = ["team:idp", "webhook"]
 
-  webhook_auth {
-    auth_type   = "hmac_auth"
-    hash_algo   = "hmac_sha256"
-    auth_header = "X-Signature"
-    secret_ref  = "account.orders_webhook_secret"
-  }
+  custom {
+    mode         = "webhook"
+    source_label = "orders"
 
-  # Optional; the kind's default columns are used when omitted.
-  layout {
-    column {
-      title = "Service"
-      path  = ".spec.service"
+    webhook_auth {
+      auth_type   = "hmac_auth"
+      hash_algo   = "hmac_sha256"
+      auth_header = "X-Signature"
+      secret_ref  = "account.orders_webhook_secret"
+    }
+
+    # Optional; the kind's default columns are used when omitted.
+    layout {
+      column {
+        title = "Service"
+        path  = ".spec.service"
+      }
     }
   }
 
@@ -123,6 +126,7 @@ resource "harness_platform_idp_integration" "github" {
 - `bitbucket_cloud` (Block List, Max: 1) Settings for BitbucketCloud integrations. (see [below for nested schema](#nestedblock--bitbucket_cloud))
 - `catalog_info` (Block List, Max: 1) Settings for CatalogInfo integrations. (see [below for nested schema](#nestedblock--catalog_info))
 - `connector` (Block List, Max: 1) Connector the integration reads with. Required or not allowed depending on type. (see [below for nested schema](#nestedblock--connector))
+- `custom` (Block List, Max: 1) Settings for Custom integrations. (see [below for nested schema](#nestedblock--custom))
 - `datadog` (Block List, Max: 1) Settings for DataDog integrations. (see [below for nested schema](#nestedblock--datadog))
 - `description` (String) Description of the resource.
 - `dynatrace` (Block List, Max: 1) Settings for DynaTrace integrations. (see [below for nested schema](#nestedblock--dynatrace))
@@ -132,18 +136,14 @@ resource "harness_platform_idp_integration" "github" {
 - `harness_cd` (Block List, Max: 1) Settings for HarnessCD integrations. (see [below for nested schema](#nestedblock--harness_cd))
 - `harness_code` (Block List, Max: 1) Settings for HarnessCode integrations. (see [below for nested schema](#nestedblock--harness_code))
 - `harness_k8s` (Block List, Max: 1) Settings for HarnessK8s integrations. (see [below for nested schema](#nestedblock--harness_k8s))
-- `layout` (Block List, Max: 1) Custom only: columns shown for the integration's entities. (see [below for nested schema](#nestedblock--layout))
-- `mode` (String) Custom only: webhook or api.
 - `org_id` (String) Unique identifier of the organization.
 - `pagerduty` (Block List, Max: 1) Settings for PagerDuty integrations. (see [below for nested schema](#nestedblock--pagerduty))
 - `project_id` (String) Unique identifier of the project.
 - `scopes` (Block List, Max: 1) Harness scopes a platform integration reads from. Set exactly one of all or selected. (see [below for nested schema](#nestedblock--scopes))
 - `secondary_kinds` (Set of String) Secondary kinds to sync, for Airbyte types.
 - `sonarqube` (Block List, Max: 1) Settings for SonarQube integrations. (see [below for nested schema](#nestedblock--sonarqube))
-- `source_label` (String) Custom only: label for the sending system.
 - `tags` (Set of String) Tags to associate with the resource.
 - `update_frequency` (String) How often an Airbyte integration syncs, e.g. 24h.
-- `webhook_auth` (Block List, Max: 1) Custom webhook authentication. Required in webhook mode. (see [below for nested schema](#nestedblock--webhook_auth))
 
 ### Read-Only
 
@@ -243,6 +243,51 @@ Required:
 
 
 
+<a id="nestedblock--custom"></a>
+### Nested Schema for `custom`
+
+Required:
+
+- `mode` (String) webhook or api.
+
+Optional:
+
+- `layout` (Block List, Max: 1) Columns shown for the integration's entities. (see [below for nested schema](#nestedblock--custom--layout))
+- `source_label` (String) Label for the sending system.
+- `webhook_auth` (Block List, Max: 1) Webhook authentication. Required in webhook mode. (see [below for nested schema](#nestedblock--custom--webhook_auth))
+
+<a id="nestedblock--custom--layout"></a>
+### Nested Schema for `custom.layout`
+
+Required:
+
+- `column` (Block List, Min: 1) A column. (see [below for nested schema](#nestedblock--custom--layout--column))
+
+<a id="nestedblock--custom--layout--column"></a>
+### Nested Schema for `custom.layout.column`
+
+Required:
+
+- `path` (String) JQ path of the value.
+- `title` (String) Column title.
+
+
+
+<a id="nestedblock--custom--webhook_auth"></a>
+### Nested Schema for `custom.webhook_auth`
+
+Required:
+
+- `auth_type` (String) hmac_auth or jwt_auth.
+
+Optional:
+
+- `auth_header` (String) Header carrying the signature or token.
+- `hash_algo` (String) HMAC hash: hmac_sha224, hmac_sha256, hmac_sha384 or hmac_sha512.
+- `secret_ref` (String) Secret reference holding the shared secret.
+
+
+
 <a id="nestedblock--datadog"></a>
 ### Nested Schema for `datadog`
 
@@ -323,23 +368,6 @@ Required:
 
 - `environment_identifier` (String) Environment.
 - `service_discovery_agent_identifier` (String) Service discovery agent.
-
-
-<a id="nestedblock--layout"></a>
-### Nested Schema for `layout`
-
-Required:
-
-- `column` (Block List, Min: 1) A column. (see [below for nested schema](#nestedblock--layout--column))
-
-<a id="nestedblock--layout--column"></a>
-### Nested Schema for `layout.column`
-
-Required:
-
-- `path` (String) JQ path of the value.
-- `title` (String) Column title.
-
 
 
 <a id="nestedblock--pagerduty"></a>
@@ -425,20 +453,6 @@ Optional:
 
 
 
-<a id="nestedblock--webhook_auth"></a>
-### Nested Schema for `webhook_auth`
-
-Required:
-
-- `auth_type` (String) hmac_auth or jwt_auth.
-
-Optional:
-
-- `auth_header` (String) Header carrying the signature or token.
-- `hash_algo` (String) HMAC hash: hmac_sha224, hmac_sha256, hmac_sha384 or hmac_sha512.
-- `secret_ref` (String) Secret reference holding the shared secret.
-
-
 <a id="nestedatt--endpoints"></a>
 ### Nested Schema for `endpoints`
 
@@ -451,8 +465,6 @@ Read-Only:
 ## Import
 
 Import is supported using the following syntax:
-
-The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 # Import an account level integration

@@ -26,6 +26,7 @@ var integrationTypeBlocks = map[string]string{
 	"harness_cd":      "HarnessCD",
 	"harness_code":    "HarnessCode",
 	"harness_k8s":     "HarnessK8s",
+	"custom":          "Custom",
 }
 
 func ResourceIntegration() *schema.Resource {
@@ -137,55 +138,56 @@ func integrationSpecSchema() map[string]*schema.Schema {
 			"all":      {Description: "Read from every scope.", Type: schema.TypeBool, Optional: true},
 			"selected": stringList("Scopes to read from: \"\" for the account, \"org\" or \"org/project\"."),
 		}),
-		"mode": {
-			Description:  "Custom only: webhook or api.",
-			Type:         schema.TypeString,
-			Optional:     true,
-			Computed:     true,
-			ForceNew:     true,
-			ValidateFunc: validation.StringInSlice([]string{"webhook", "api"}, false),
-		},
-		"source_label": {
-			Description: "Custom only: label for the sending system.",
-			Type:        schema.TypeString,
-			Optional:    true,
-			Computed:    true,
-		},
-		"webhook_auth": block("Custom webhook authentication. Required in webhook mode.", false, map[string]*schema.Schema{
-			"auth_type": {
-				Description:  "hmac_auth or jwt_auth.",
+		"custom": typeBlock("Custom", map[string]*schema.Schema{
+			"mode": {
+				Description:  "webhook or api.",
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"hmac_auth", "jwt_auth"}, false),
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice([]string{"webhook", "api"}, false),
 			},
-			"hash_algo": {
-				Description: "HMAC hash: hmac_sha224, hmac_sha256, hmac_sha384 or hmac_sha512.",
+			"source_label": {
+				Description: "Label for the sending system.",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ValidateFunc: validation.StringInSlice(
-					[]string{"hmac_sha224", "hmac_sha256", "hmac_sha384", "hmac_sha512"}, false),
+				Computed:    true,
 			},
-			"auth_header": optionalString("Header carrying the signature or token."),
-			"secret_ref":  optionalString("Secret reference holding the shared secret."),
-		}),
-		"layout": {
-			Description: "Custom only: columns shown for the integration's entities.",
-			Type:        schema.TypeList,
-			MaxItems:    1,
-			Optional:    true,
-			Computed:    true,
-			Elem: &schema.Resource{Schema: map[string]*schema.Schema{
-				"column": {
-					Description: "A column.",
-					Type:        schema.TypeList,
-					Required:    true,
-					Elem: &schema.Resource{Schema: map[string]*schema.Schema{
-						"title": requiredString("Column title."),
-						"path":  requiredString("JQ path of the value."),
-					}},
+			"webhook_auth": block("Webhook authentication. Required in webhook mode.", false, map[string]*schema.Schema{
+				"auth_type": {
+					Description:  "hmac_auth or jwt_auth.",
+					Type:         schema.TypeString,
+					Required:     true,
+					ValidateFunc: validation.StringInSlice([]string{"hmac_auth", "jwt_auth"}, false),
 				},
-			}},
-		},
+				"hash_algo": {
+					Description: "HMAC hash: hmac_sha224, hmac_sha256, hmac_sha384 or hmac_sha512.",
+					Type:        schema.TypeString,
+					Optional:    true,
+					ValidateFunc: validation.StringInSlice(
+						[]string{"hmac_sha224", "hmac_sha256", "hmac_sha384", "hmac_sha512"}, false),
+				},
+				"auth_header": optionalString("Header carrying the signature or token."),
+				"secret_ref":  optionalString("Secret reference holding the shared secret."),
+			}),
+			"layout": {
+				Description: "Columns shown for the integration's entities.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{Schema: map[string]*schema.Schema{
+					"column": {
+						Description: "A column.",
+						Type:        schema.TypeList,
+						Required:    true,
+						Elem: &schema.Resource{Schema: map[string]*schema.Schema{
+							"title": requiredString("Column title."),
+							"path":  requiredString("JQ path of the value."),
+						}},
+					},
+				}},
+			},
+		}),
 		"kind": {
 			Description: "A kind to sync. Import reads kinds sorted by name, so list them that way to import without a diff.",
 			Type:        schema.TypeList,

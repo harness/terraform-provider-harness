@@ -449,6 +449,12 @@ resource "harness_platform_idp_integration" "gh" {
   }`),
 				ExpectError: regexpMust("sonarqube is only allowed when type is SonarQube"),
 			},
+			{
+				Config: fmt.Sprintf(base, `kind { kind = "repository" }`+"\n"+`custom {
+    mode = "api"
+  }`),
+				ExpectError: regexpMust("custom is only allowed when type is Custom"),
+			},
 		},
 	})
 }

@@ -1,25 +1,28 @@
 # Custom webhook integration. The webhook URL is in endpoints once created.
 resource "harness_platform_idp_integration" "orders" {
-  identifier   = "orders_webhook"
-  name         = "Orders webhook"
-  description  = "Imports services pushed by the order system"
-  type         = "Custom"
-  mode         = "webhook"
-  source_label = "orders"
-  tags         = ["team:idp", "webhook"]
+  identifier  = "orders_webhook"
+  name        = "Orders webhook"
+  description = "Imports services pushed by the order system"
+  type        = "Custom"
+  tags        = ["team:idp", "webhook"]
 
-  webhook_auth {
-    auth_type   = "hmac_auth"
-    hash_algo   = "hmac_sha256"
-    auth_header = "X-Signature"
-    secret_ref  = "account.orders_webhook_secret"
-  }
+  custom {
+    mode         = "webhook"
+    source_label = "orders"
 
-  # Optional; the kind's default columns are used when omitted.
-  layout {
-    column {
-      title = "Service"
-      path  = ".spec.service"
+    webhook_auth {
+      auth_type   = "hmac_auth"
+      hash_algo   = "hmac_sha256"
+      auth_header = "X-Signature"
+      secret_ref  = "account.orders_webhook_secret"
+    }
+
+    # Optional; the kind's default columns are used when omitted.
+    layout {
+      column {
+        title = "Service"
+        path  = ".spec.service"
+      }
     }
   }
 
