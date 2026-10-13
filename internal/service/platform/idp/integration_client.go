@@ -228,6 +228,11 @@ func (c *integrationsClient) getMapping(ctx context.Context, org, project, id, k
 	return out, err
 }
 
+func (c *integrationsClient) resetMapping(ctx context.Context, org, project, id, kind string, revision int64) error {
+	_, err := c.do(ctx, http.MethodDelete, c.scopePath(org, project)+mappingPath(id, kind), nil, &revision, nil, nil)
+	return err
+}
+
 func (c *integrationsClient) replaceMapping(
 	ctx context.Context, org, project, id, kind string, revision int64, body map[string]any,
 ) (map[string]any, error) {

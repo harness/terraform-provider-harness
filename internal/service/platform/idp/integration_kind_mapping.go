@@ -26,10 +26,9 @@ func kindMappingSchema() *schema.Schema {
 			return nil, nil
 		},
 	}
-	b := block("The kind's mapping, sent with the create so the first sync uses it. Omitted fields keep the "+
-		"type's defaults; without the block, the mapping is read but not managed.", false, s)
-	b.Computed = true
-	return b
+	return block("The kind's mapping, sent with the create so the first sync uses it. Omitted fields keep the "+
+		"type's defaults. Without the block the mapping isn't managed; removing the block resets it to the type's "+
+		"default, except for Custom and HarnessCI kinds, which have none and keep theirs.", false, s)
 }
 
 // kindMappings returns each kind's mapping block values, for kinds that have one.

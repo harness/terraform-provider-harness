@@ -476,6 +476,9 @@ func resourceIntegrationCreate(ctx context.Context, d *schema.ResourceData, meta
 		body["mappings"] = m
 	}
 	out, err := c.createIntegration(ctx, org, project, body)
+	if isIntegrationsStatus(err, http.StatusConflict) {
+		return diag.Errorf("%s; if a timed-out apply created it, import it with terraform import", err)
+	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -487,8 +490,9 @@ func resourceIntegrationRead(ctx context.Context, d *schema.ResourceData, meta a
 	return refreshIntegration(ctx, newIntegrationsClient(meta.(*internal.Session)), d)
 }
 
-// refreshIntegration reads the integration and every kind's mapping, so an import matches its configuration.
+// refreshIntegration reads the integration and the mappings of kinds that have a mapping block.
 func refreshIntegration(ctx context.Context, c *integrationsClient, d *schema.ResourceData) diag.Diagnostics {
+	managed := kindMappings(d.Get("kind").([]any))
 	org, project := scope(d)
 	out, err := c.getIntegration(ctx, org, project, d.Id())
 	if isIntegrationsStatus(err, http.StatusNotFound) {
@@ -503,6 +507,9 @@ func refreshIntegration(ctx context.Context, c *integrationsClient, d *schema.Re
 	kinds, _ := spec["kinds"].([]any)
 	for _, k := range kinds {
 		kind := str(k.(map[string]any)["kind"])
+		if _, ok := managed[kind]; !ok {
+			continue
+		}
 		m, err := c.getMapping(ctx, org, project, d.Id(), kind)
 		if err != nil {
 			return diag.FromErr(err)
@@ -539,10 +546,10 @@ func resourceIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta
 		}
 		break
 	}
-	// A mapping block added or changed on a kind is written through the kind's mapping.
+	// A mapping block added or changed on a kind is written through the kind's mapping; a removed one resets it.
 	oldKinds, newKinds := d.GetChange("kind")
-	prior := kindMappings(oldKinds.([]any))
-	for kind, m := range kindMappings(newKinds.([]any)) {
+	prior, desired := kindMappings(oldKinds.([]any)), kindMappings(newKinds.([]any))
+	for kind, m := range desired {
 		if p, ok := prior[kind]; ok && reflect.DeepEqual(p, m) {
 			continue
 		}
@@ -550,7 +557,25 @@ func resourceIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta
 			return diag.FromErr(fmt.Errorf("writing the mapping of kind %s: %w", kind, err))
 		}
 	}
-	return refreshIntegration(ctx, c, d)
+	var diags diag.Diagnostics
+	for kind := range prior {
+		if _, ok := desired[kind]; ok {
+			continue
+		}
+		err := resetMapping(ctx, c, org, project, d.Id(), kind)
+		switch {
+		case err == nil, isIntegrationsStatus(err, http.StatusNotFound):
+		case isIntegrationsStatus(err, http.StatusUnprocessableEntity):
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  fmt.Sprintf("The mapping of kind %s was left as it is", kind),
+				Detail:   err.Error(),
+			})
+		default:
+			return diag.FromErr(fmt.Errorf("resetting the mapping of kind %s: %w", kind, err))
+		}
+	}
+	return append(diags, refreshIntegration(ctx, c, d)...)
 }
 
 func resourceIntegrationDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {

@@ -106,6 +106,21 @@ func writeMapping(
 	}
 }
 
+// resetMapping resets a kind's mapping to the type's default, retrying once on a stale revision.
+func resetMapping(ctx context.Context, c *integrationsClient, org, project, id, kind string) error {
+	for attempt := 0; ; attempt++ {
+		cur, err := c.getMapping(ctx, org, project, id, kind)
+		if err != nil {
+			return err
+		}
+		err = c.resetMapping(ctx, org, project, id, kind, int64(num(cur["revision"])))
+		if attempt == 0 && isIntegrationsStatus(err, http.StatusPreconditionFailed) {
+			continue
+		}
+		return err
+	}
+}
+
 func setMapping(d *schema.ResourceData, m map[string]any) error {
 	set := flattenObject(mappingWritableSchema(), m)
 	set["is_default"] = m["is_default"]

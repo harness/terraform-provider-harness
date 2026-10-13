@@ -221,7 +221,7 @@ Optional:
 - `filter` (String) JQ that returns true for records to keep.
 - `idp_kind` (String) Airbyte types: entity kind, e.g. component; the type's default when omitted. Set at create only; required for kinds with no default, such as ServiceNow's.
 - `idp_type` (String) Airbyte types: entity type, e.g. service; the type's default when omitted. Set at create only.
-- `mapping` (Block List, Max: 1) The kind's mapping, sent with the create so the first sync uses it. Omitted fields keep the type's defaults; without the block, the mapping is read but not managed. (see [below for nested schema](#nestedblock--kind--mapping))
+- `mapping` (Block List, Max: 1) The kind's mapping, sent with the create so the first sync uses it. Omitted fields keep the type's defaults. Without the block the mapping isn't managed; removing the block resets it to the type's default, except for Custom and HarnessCI kinds, which have none and keep theirs. (see [below for nested schema](#nestedblock--kind--mapping))
 - `replication_mode` (String) Airbyte types: full_refresh or incremental; the stream's default when omitted.
 
 <a id="nestedblock--kind--mapping"></a>

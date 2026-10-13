@@ -277,6 +277,13 @@ func (f *fakeIntegrationsAPI) mapping(w http.ResponseWriter, r *http.Request, ke
 		m["revision"], m["is_default"] = cur["revision"], false
 		f.mappings[key+"/"+kind] = m
 		writeJSON(w, http.StatusOK, m)
+	case http.MethodDelete:
+		if !checkIfMatch(w, r, cur["revision"].(float64)) {
+			return
+		}
+		delete(f.mappings, key+"/"+kind)
+		cur["revision"] = cur["revision"].(float64) + 1
+		w.WriteHeader(http.StatusNoContent)
 	}
 }
 
@@ -383,8 +390,8 @@ func TestUnitIntegrationLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr(res, svc+"unique_identifier_field", "sys_id"),
 					resource.TestCheckResourceAttr(res, svc+"correlation.0.source_path", "service"),
 					resource.TestCheckResourceAttr(res, svc+"field_mapping.0.source_field", "owned_by"),
-					// Read, but not managed, without a block.
-					resource.TestCheckResourceAttr(res, "kind.1.mapping.0.unique_identifier_field", "sys_id"),
+					// Not read or managed without a block.
+					resource.TestCheckResourceAttr(res, "kind.1.mapping.#", "0"),
 					resource.TestCheckResourceAttr(res, "update_frequency", "24h"),
 					resource.TestCheckResourceAttr(res, "kind.0.action", "register"),
 					resource.TestCheckResourceAttr(res, "kind.1.replication_mode", ""),
@@ -427,6 +434,17 @@ func TestUnitIntegrationLifecycle(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(res, "revision", "4"),
 					resource.TestCheckResourceAttr(res, svc+"field_mapping.0.source_field", "managed_by"),
+				),
+			},
+			{
+				// Removing the block resets the mapping: the integration write, then the reset.
+				Config: withoutMappings(fmt.Sprintf(snowConfig, "ServiceNow", ".active == true", "service",
+					"managed_by")),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(res, "revision", "6"),
+					resource.TestCheckResourceAttr(res, "kind.0.mapping.#", "0"),
+					resource.TestCheckResourceAttr(mapping, "is_default", "true"),
+					resource.TestCheckResourceAttr(mapping, "field_mapping.0.source_field", "owner"),
 				),
 			},
 			{
@@ -489,6 +507,34 @@ resource "harness_platform_idp_integration" "gh" {
 				ExpectError: regexpMust("custom is only allowed when type is Custom"),
 			},
 		},
+	})
+}
+
+var mappingBlock = regexp.MustCompile(`(?s)\n    mapping \{.*?\n    \}`)
+
+func withoutMappings(config string) string { return mappingBlock.ReplaceAllString(config, "") }
+
+func TestUnitIntegrationCreateConflict(t *testing.T) {
+	newFakeIntegrationsAPI(t)
+	const gh = `
+resource "harness_platform_idp_integration" "%s" {
+  identifier = "gh"
+  name       = "GitHub"
+  type       = "GitHub"
+  github {
+    orgs = ["acme"]
+  }
+  kind { kind = "repository" }
+  %s
+}
+`
+	resource.UnitTest(t, resource.TestCase{
+		ProviderFactories: unitProviderFactories(),
+		Steps: []resource.TestStep{{
+			Config: fmt.Sprintf(gh, "a", "") +
+				fmt.Sprintf(gh, "b", "depends_on = [harness_platform_idp_integration.a]"),
+			ExpectError: regexpMust("import it with terraform import"),
+		}},
 	})
 }
 
