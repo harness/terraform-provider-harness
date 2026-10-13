@@ -1,12 +1,12 @@
 # Custom webhook integration. The webhook URL is in endpoints once created.
 resource "harness_platform_idp_integration" "orders" {
-  identifier  = "orders_webhook"
-  name        = "Orders webhook"
-  description = "Imports services pushed by the order system"
-  type        = "Custom"
-  mode        = "webhook"
-  source      = "orders"
-  tags        = ["team:idp", "webhook"]
+  identifier   = "orders_webhook"
+  name         = "Orders webhook"
+  description  = "Imports services pushed by the order system"
+  type         = "Custom"
+  mode         = "webhook"
+  source_label = "orders"
+  tags         = ["team:idp", "webhook"]
 
   webhook_auth {
     auth_type   = "hmac_auth"
@@ -36,7 +36,7 @@ resource "harness_platform_idp_integration" "harness_cd" {
   name       = "Harness CD"
   type       = "HarnessCD"
 
-  source_scopes {
+  scopes {
     all = true
   }
 

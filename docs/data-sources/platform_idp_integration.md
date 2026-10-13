@@ -62,10 +62,10 @@ output "webhook_urls" {
 - `mode_effective` (String) How the integration gets data: airbyte, platform, webhook or api.
 - `pagerduty` (List of Object) Settings for PagerDuty integrations. (see [below for nested schema](#nestedatt--pagerduty))
 - `revision` (Number) Revision, sent as If-Match on writes.
+- `scopes` (List of Object) Harness scopes a platform integration reads from. Set exactly one of all or selected. (see [below for nested schema](#nestedatt--scopes))
 - `secondary_kinds` (Set of String) Secondary kinds to sync, for Airbyte types.
 - `sonarqube` (List of Object) Settings for SonarQube integrations. (see [below for nested schema](#nestedatt--sonarqube))
-- `source` (String) Custom only: name of the sending system.
-- `source_scopes` (List of Object) Harness scopes a platform integration reads from. Set exactly one of all or selected. (see [below for nested schema](#nestedatt--source_scopes))
+- `source_label` (String) Custom only: label for the sending system.
 - `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) Integration type.
 - `uid` (String) Internal key; new on every create.
@@ -267,6 +267,15 @@ Read-Only:
 - `start_date` (String)
 
 
+<a id="nestedatt--scopes"></a>
+### Nested Schema for `scopes`
+
+Read-Only:
+
+- `all` (Boolean)
+- `selected` (List of String)
+
+
 <a id="nestedatt--sonarqube"></a>
 ### Nested Schema for `sonarqube`
 
@@ -324,15 +333,6 @@ Read-Only:
 - `exclude` (Set of String)
 - `include` (Set of String)
 
-
-
-<a id="nestedatt--source_scopes"></a>
-### Nested Schema for `source_scopes`
-
-Read-Only:
-
-- `all` (Boolean)
-- `selected` (List of String)
 
 
 <a id="nestedatt--webhook_auth"></a>

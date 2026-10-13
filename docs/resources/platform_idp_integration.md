@@ -15,13 +15,13 @@ Resource for an IDP integration, which imports entities from an external system 
 ```terraform
 # Custom webhook integration. The webhook URL is in endpoints once created.
 resource "harness_platform_idp_integration" "orders" {
-  identifier  = "orders_webhook"
-  name        = "Orders webhook"
-  description = "Imports services pushed by the order system"
-  type        = "Custom"
-  mode        = "webhook"
-  source      = "orders"
-  tags        = ["team:idp", "webhook"]
+  identifier   = "orders_webhook"
+  name         = "Orders webhook"
+  description  = "Imports services pushed by the order system"
+  type         = "Custom"
+  mode         = "webhook"
+  source_label = "orders"
+  tags         = ["team:idp", "webhook"]
 
   webhook_auth {
     auth_type   = "hmac_auth"
@@ -51,7 +51,7 @@ resource "harness_platform_idp_integration" "harness_cd" {
   name       = "Harness CD"
   type       = "HarnessCD"
 
-  source_scopes {
+  scopes {
     all = true
   }
 
@@ -137,10 +137,10 @@ resource "harness_platform_idp_integration" "github" {
 - `org_id` (String) Unique identifier of the organization.
 - `pagerduty` (Block List, Max: 1) Settings for PagerDuty integrations. (see [below for nested schema](#nestedblock--pagerduty))
 - `project_id` (String) Unique identifier of the project.
+- `scopes` (Block List, Max: 1) Harness scopes a platform integration reads from. Set exactly one of all or selected. (see [below for nested schema](#nestedblock--scopes))
 - `secondary_kinds` (Set of String) Secondary kinds to sync, for Airbyte types.
 - `sonarqube` (Block List, Max: 1) Settings for SonarQube integrations. (see [below for nested schema](#nestedblock--sonarqube))
-- `source` (String) Custom only: name of the sending system.
-- `source_scopes` (Block List, Max: 1) Harness scopes a platform integration reads from. Set exactly one of all or selected. (see [below for nested schema](#nestedblock--source_scopes))
+- `source_label` (String) Custom only: label for the sending system.
 - `tags` (Set of String) Tags to associate with the resource.
 - `update_frequency` (String) How often an Airbyte integration syncs, e.g. 24h.
 - `webhook_auth` (Block List, Max: 1) Custom webhook authentication. Required in webhook mode. (see [below for nested schema](#nestedblock--webhook_auth))
@@ -351,6 +351,15 @@ Optional:
 - `start_date` (String) Lower bound for the first sync, RFC3339.
 
 
+<a id="nestedblock--scopes"></a>
+### Nested Schema for `scopes`
+
+Optional:
+
+- `all` (Boolean) Read from every scope.
+- `selected` (List of String) Scopes to read from: "" for the account, "org" or "org/project".
+
+
 <a id="nestedblock--sonarqube"></a>
 ### Nested Schema for `sonarqube`
 
@@ -414,15 +423,6 @@ Optional:
 - `exclude` (Set of String) Every project except these keys.
 - `include` (Set of String) Only these project keys.
 
-
-
-<a id="nestedblock--source_scopes"></a>
-### Nested Schema for `source_scopes`
-
-Optional:
-
-- `all` (Boolean) Read from every scope.
-- `selected` (List of String) Scopes to read from: "" for the account, "org" or "org/project".
 
 
 <a id="nestedblock--webhook_auth"></a>

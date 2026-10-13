@@ -132,7 +132,7 @@ func integrationSpecSchema() map[string]*schema.Schema {
 			Computed:    true,
 			Elem:        &schema.Schema{Type: schema.TypeString},
 		},
-		"source_scopes": defaultedBlock("Harness scopes a platform integration reads from. Set exactly one of all "+
+		"scopes": defaultedBlock("Harness scopes a platform integration reads from. Set exactly one of all "+
 			"or selected.", map[string]*schema.Schema{
 			"all":      {Description: "Read from every scope.", Type: schema.TypeBool, Optional: true},
 			"selected": stringList("Scopes to read from: \"\" for the account, \"org\" or \"org/project\"."),
@@ -145,12 +145,11 @@ func integrationSpecSchema() map[string]*schema.Schema {
 			ForceNew:     true,
 			ValidateFunc: validation.StringInSlice([]string{"webhook", "api"}, false),
 		},
-		"source": {
-			Description: "Custom only: name of the sending system.",
+		"source_label": {
+			Description: "Custom only: label for the sending system.",
 			Type:        schema.TypeString,
 			Optional:    true,
 			Computed:    true,
-			ForceNew:    true,
 		},
 		"webhook_auth": block("Custom webhook authentication. Required in webhook mode.", false, map[string]*schema.Schema{
 			"auth_type": {
