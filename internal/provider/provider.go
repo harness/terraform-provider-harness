@@ -637,7 +637,6 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_idp_scorecard":                         idp_resource.ResourceScorecard(),
 				"harness_platform_idp_scorecard_check":                   idp_resource.ResourceScorecardCheck(),
 				"harness_platform_idp_integration":                       idp_resource.ResourceIntegration(),
-				"harness_platform_idp_integration_kind_mapping":          idp_resource.ResourceIntegrationKindMapping(),
 				"harness_platform_default_images":                        default_images.ResourceDefaultImages(),
 				"harness_time_sleep":                                     time_sleep.ResourceTimeSleep(),
 			},

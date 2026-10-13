@@ -1,12 +1,12 @@
 # IDP integrations end-to-end example
 
-`main.tf` creates IDP integrations, manages a kind mapping, and reads every IDP integration data source. It
+`main.tf` creates IDP integrations with their kind mappings, and reads every IDP integration data source. It
 exercises the full lifecycle: create, read, update, import and destroy.
 
 | What | Created by default | Needs |
 |------|--------------------|-------|
 | `Custom` integration (`api` mode) at account scope | yes | nothing |
-| Kind mapping for its `custom` kind | yes | nothing |
+| Mapping for its `custom` kind, sent with the create | yes | nothing |
 | `Custom` integration in `webhook` mode | with `webhook_secret_ref` | an HMAC secret |
 | `HarnessK8s` integration in an org or project | with `k8s_agent_ref` | a service discovery agent and environment |
 | `ServiceNow` integration, plus its catalog data source | with `servicenow_credentials_ref` | a ServiceNow credentials secret |
@@ -65,7 +65,7 @@ Run these from a copy of this directory, so the state file stays out of the repo
 ```sh
 cp -r examples/idp_integrations /tmp/idp_integrations && cd /tmp/idp_integrations
 
-terraform apply                         # Custom integration and its mapping
+terraform apply                         # Custom integration, created with its mapping
 terraform plan -detailed-exitcode       # exit code 0: no drift
 ```
 
@@ -92,12 +92,11 @@ In a second copy of this directory with no state, import the resources, then pla
 
 ```sh
 terraform import harness_platform_idp_integration.orders tf_e2e_orders
-terraform import harness_platform_idp_integration_kind_mapping.orders tf_e2e_orders/custom
 terraform import 'harness_platform_idp_integration.k8s[0]' default/testproject/tf_e2e_k8s   # if created
 terraform plan -detailed-exitcode
 ```
 
-Import IDs are `[<org>/[<project>/]]<integration>` for integrations, and `.../<integration>/<kind>` for mappings.
+Import IDs are `[<org>/[<project>/]]<integration>`. Import reads every kind's mapping too.
 
 Delete that second copy afterwards rather than running `destroy` from it.
 
@@ -107,15 +106,15 @@ Delete that second copy afterwards rather than running `destroy` from it.
 terraform destroy
 ```
 
-Destroying a kind mapping leaves the mapping on the server as it is, because every kind always has one. Destroying the
-integration removes it.
+Removing a kind's `mapping` block leaves the mapping on the server as it is, because every kind always has one.
+Destroying the integration removes it.
 
 ## Outputs
 
 | Output | Value |
 |--------|-------|
 | `custom_kinds` | Kinds of the `Custom` type, from `harness_platform_idp_integration_type` |
-| `orders_revision` | Revision after the mapping write; each write increments it |
+| `orders_revision` | Revision; 1 after the create, as the mapping is part of it, and each write increments it |
 | `orders_mapping_identifier` | The `ingestion.identifier` JQ read back through the mapping data source |
 | `org_integrations` | Integrations in `org_id`/`project_id`, from `harness_platform_idp_integrations` |
 | `webhook_urls` | Ingestion URLs, in webhook mode |

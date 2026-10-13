@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"reflect"
 	"slices"
 
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -31,6 +32,7 @@ var integrationTypeBlocks = map[string]string{
 
 func ResourceIntegration() *schema.Resource {
 	s := integrationSpecSchema()
+	s["kind"].Elem.(*schema.Resource).Schema["mapping"] = kindMappingSchema()
 	for k, v := range integrationStatusSchema() {
 		s[k] = v
 	}
@@ -371,7 +373,8 @@ func integrationBody(d *schema.ResourceData) map[string]any {
 	}
 }
 
-func setIntegration(d *schema.ResourceData, in map[string]any) error {
+// setIntegration sets the integration and, when mappings is non-nil, each kind's mapping.
+func setIntegration(d *schema.ResourceData, in map[string]any, mappings map[string]map[string]any) error {
 	d.SetId(str(in["identifier"]))
 	set := map[string]any{
 		"identifier":  in["identifier"],
@@ -395,6 +398,16 @@ func setIntegration(d *schema.ResourceData, in map[string]any) error {
 	}
 	if prior, ok := d.Get("kind").([]any); ok {
 		set["kind"] = orderLike(prior, set["kind"])
+	}
+	if mappings != nil {
+		kinds, _ := set["kind"].([]any)
+		for _, k := range kinds {
+			kind := k.(map[string]any)
+			kind["mapping"] = []any{}
+			if m, ok := mappings[str(kind["kind"])]; ok {
+				kind["mapping"] = []any{kindMappingState(m)}
+			}
+		}
 	}
 	status, _ := in["status"].(map[string]any)
 	set["health"] = status["health"]
@@ -458,15 +471,24 @@ func scope(d *schema.ResourceData) (string, string) {
 func resourceIntegrationCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	c := newIntegrationsClient(meta.(*internal.Session))
 	org, project := scope(d)
-	out, err := c.createIntegration(ctx, org, project, integrationBody(d))
+	body := integrationBody(d)
+	if m := createMappings(d.Get("kind").([]any)); len(m) > 0 {
+		body["mappings"] = m
+	}
+	out, err := c.createIntegration(ctx, org, project, body)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	return diag.FromErr(setIntegration(d, out))
+	d.SetId(str(out["identifier"]))
+	return refreshIntegration(ctx, c, d)
 }
 
 func resourceIntegrationRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
-	c := newIntegrationsClient(meta.(*internal.Session))
+	return refreshIntegration(ctx, newIntegrationsClient(meta.(*internal.Session)), d)
+}
+
+// refreshIntegration reads the integration and every kind's mapping, so an import matches its configuration.
+func refreshIntegration(ctx context.Context, c *integrationsClient, d *schema.ResourceData) diag.Diagnostics {
 	org, project := scope(d)
 	out, err := c.getIntegration(ctx, org, project, d.Id())
 	if isIntegrationsStatus(err, http.StatusNotFound) {
@@ -476,7 +498,18 @@ func resourceIntegrationRead(ctx context.Context, d *schema.ResourceData, meta a
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	return diag.FromErr(setIntegration(d, out))
+	mappings := map[string]map[string]any{}
+	spec, _ := out["spec"].(map[string]any)
+	kinds, _ := spec["kinds"].([]any)
+	for _, k := range kinds {
+		kind := str(k.(map[string]any)["kind"])
+		m, err := c.getMapping(ctx, org, project, d.Id(), kind)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		mappings[kind] = m
+	}
+	return diag.FromErr(setIntegration(d, out, mappings))
 }
 
 // currentRevision reads the revision just before a write; mapping writes also change it.
@@ -492,13 +525,12 @@ func resourceIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta
 	c := newIntegrationsClient(meta.(*internal.Session))
 	org, project := scope(d)
 	body := integrationBody(d)
-	var out map[string]any
 	for attempt := 0; attempt < 2; attempt++ {
 		revision, err := currentRevision(ctx, c, org, project, d.Id())
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		out, err = c.replaceIntegration(ctx, org, project, d.Id(), revision, body)
+		_, err = c.replaceIntegration(ctx, org, project, d.Id(), revision, body)
 		if attempt == 0 && isIntegrationsStatus(err, http.StatusPreconditionFailed) {
 			continue
 		}
@@ -507,7 +539,18 @@ func resourceIntegrationUpdate(ctx context.Context, d *schema.ResourceData, meta
 		}
 		break
 	}
-	return diag.FromErr(setIntegration(d, out))
+	// A mapping block added or changed on a kind is written through the kind's mapping.
+	oldKinds, newKinds := d.GetChange("kind")
+	prior := kindMappings(oldKinds.([]any))
+	for kind, m := range kindMappings(newKinds.([]any)) {
+		if p, ok := prior[kind]; ok && reflect.DeepEqual(p, m) {
+			continue
+		}
+		if _, err := writeMapping(ctx, c, org, project, d.Id(), kind, mappingBody(m, false)); err != nil {
+			return diag.FromErr(fmt.Errorf("writing the mapping of kind %s: %w", kind, err))
+		}
+	}
+	return refreshIntegration(ctx, c, d)
 }
 
 func resourceIntegrationDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
@@ -540,6 +583,9 @@ func integrationCustomizeDiff(_ context.Context, d *schema.ResourceDiff, _ any) 
 	oldKinds, newKinds := d.GetChange("kind")
 	if !sameKinds(oldKinds.([]any), newKinds.([]any)) {
 		return fmt.Errorf("kinds can't be added or removed on an existing integration yet; recreate it instead")
+	}
+	if err := payloadSchemasUnchanged(oldKinds.([]any), newKinds.([]any)); err != nil {
+		return err
 	}
 	return entityTypesUnchanged(oldKinds.([]any), newKinds.([]any))
 }

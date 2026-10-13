@@ -184,6 +184,19 @@ func (f *fakeIntegrationsAPI) create(w http.ResponseWriter, r *http.Request, sco
 		apiError(w, http.StatusConflict, "ALREADY_EXISTS", "exists")
 		return
 	}
+	// Create mappings are stored per kind, as the API does, and aren't part of the resource.
+	if mappings, ok := in["mappings"].(map[string]any); ok {
+		for kind, m := range mappings {
+			stored := defaultMapping(kind)
+			for k, v := range m.(map[string]any) {
+				stored[k] = v
+			}
+			trimCorrelation(stored)
+			stored["is_default"] = false
+			f.mappings[key+"/"+kind] = stored
+		}
+		delete(in, "mappings")
+	}
 	f.nextUID++
 	in["uid"] = fmt.Sprintf("%s-x%d", strings.ToLower(in["identifier"].(string)), f.nextUID)
 	in["revision"], in["org"], in["project"], in["created"], in["updated"] = float64(1), org, project, 1, 1
@@ -238,9 +251,7 @@ func (f *fakeIntegrationsAPI) mapping(w http.ResponseWriter, r *http.Request, ke
 	}
 	m, ok := f.mappings[key+"/"+kind]
 	if !ok {
-		m = map[string]any{"kind": kind, "unique_identifier_field": "sys_id", "display_name_field": "name",
-			"idp_kind": "component", "idp_type": "service", "is_default": true,
-			"field_mappings": []any{map[string]any{"source_field": "owner", "target_field": "spec.owner"}}}
+		m = defaultMapping(kind)
 	}
 	m["revision"], m["updated"] = cur["revision"], 1
 	switch r.Method {
@@ -258,18 +269,29 @@ func (f *fakeIntegrationsAPI) mapping(w http.ResponseWriter, r *http.Request, ke
 		for k, v := range in {
 			m[k] = v
 		}
-		if c, ok := in["correlation"].(map[string]any); ok {
-			for _, k := range []string{"source_path", "target_path"} {
-				c[k] = strings.TrimPrefix(c[k].(string), ".")
-			}
-		} else {
+		if _, ok := in["correlation"]; !ok {
 			delete(m, "correlation")
 		}
+		trimCorrelation(m)
 		cur["revision"] = cur["revision"].(float64) + 1
 		m["revision"], m["is_default"] = cur["revision"], false
 		f.mappings[key+"/"+kind] = m
 		writeJSON(w, http.StatusOK, m)
 	}
+}
+
+func trimCorrelation(m map[string]any) {
+	if c, ok := m["correlation"].(map[string]any); ok {
+		for _, k := range []string{"source_path", "target_path"} {
+			c[k] = strings.TrimPrefix(c[k].(string), ".")
+		}
+	}
+}
+
+func defaultMapping(kind string) map[string]any {
+	return map[string]any{"kind": kind, "unique_identifier_field": "sys_id", "display_name_field": "name",
+		"idp_kind": "component", "idp_type": "service", "is_default": true,
+		"field_mappings": []any{map[string]any{"source_field": "owner", "target_field": "spec.owner"}}}
 }
 
 func unitProviderFactories() map[string]func() (*schema.Provider, error) {
@@ -299,31 +321,32 @@ resource "harness_platform_idp_integration" "snow" {
     filter           = %q
     idp_kind         = "component"
     idp_type         = %q
+
+    mapping {
+      field_mapping {
+        source_field = %q
+        target_field = "spec.owner"
+      }
+      correlation {
+        source_path = ".service"
+        target_path = "metadata.identifier"
+      }
+    }
   }
   kind {
     kind = "cmdb_ci_server"
   }
 }
 
-resource "harness_platform_idp_integration_kind_mapping" "svc" {
-  integration_id = harness_platform_idp_integration.snow.identifier
-  org_id         = "default"
-  kind           = "cmdb_ci_service"
-
-  field_mapping {
-    source_field = %q
-    target_field = "spec.owner"
-  }
-  correlation {
-    source_path = ".service"
-    target_path = "metadata.identifier"
-  }
-}
-
 data "harness_platform_idp_integration" "snow" {
   identifier = harness_platform_idp_integration.snow.identifier
   org_id     = "default"
-  depends_on = [harness_platform_idp_integration_kind_mapping.svc]
+}
+
+data "harness_platform_idp_integration_kind_mapping" "svc" {
+  integration_id = harness_platform_idp_integration.snow.identifier
+  org_id         = "default"
+  kind           = "cmdb_ci_service"
 }
 
 data "harness_platform_idp_integrations" "all" {
@@ -344,7 +367,8 @@ data "harness_platform_idp_integration_catalog" "snow" {
 func TestUnitIntegrationLifecycle(t *testing.T) {
 	newFakeIntegrationsAPI(t)
 	const res = "harness_platform_idp_integration.snow"
-	const mapping = "harness_platform_idp_integration_kind_mapping.svc"
+	const mapping = "data.harness_platform_idp_integration_kind_mapping.svc"
+	const svc = "kind.0.mapping.0."
 	resource.UnitTest(t, resource.TestCase{
 		ProviderFactories: unitProviderFactories(),
 		Steps: []resource.TestStep{
@@ -354,7 +378,13 @@ func TestUnitIntegrationLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr(res, "id", "Snow_Prod"),
 					resource.TestCheckResourceAttr(res, "identifier", "Snow_Prod"),
 					resource.TestCheckResourceAttr(res, "uid", "snow_prod-x1"),
+					// The mapping went with the create, so there was no second write.
 					resource.TestCheckResourceAttr(res, "revision", "1"),
+					resource.TestCheckResourceAttr(res, svc+"unique_identifier_field", "sys_id"),
+					resource.TestCheckResourceAttr(res, svc+"correlation.0.source_path", "service"),
+					resource.TestCheckResourceAttr(res, svc+"field_mapping.0.source_field", "owned_by"),
+					// Read, but not managed, without a block.
+					resource.TestCheckResourceAttr(res, "kind.1.mapping.0.unique_identifier_field", "sys_id"),
 					resource.TestCheckResourceAttr(res, "update_frequency", "24h"),
 					resource.TestCheckResourceAttr(res, "kind.0.action", "register"),
 					resource.TestCheckResourceAttr(res, "kind.1.replication_mode", ""),
@@ -368,7 +398,7 @@ func TestUnitIntegrationLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr(mapping, "correlation.0.target_path", "metadata.identifier"),
 					resource.TestCheckResourceAttr(mapping, "correlation.0.source_path", "service"),
 					resource.TestCheckResourceAttr(mapping, "is_default", "false"),
-					resource.TestCheckResourceAttr("data.harness_platform_idp_integration.snow", "revision", "2"),
+					resource.TestCheckResourceAttr("data.harness_platform_idp_integration.snow", "revision", "1"),
 					resource.TestCheckResourceAttr("data.harness_platform_idp_integration.snow", "kind.#", "2"),
 					resource.TestCheckResourceAttr("data.harness_platform_idp_integrations.all", "integrations.#", "1"),
 					resource.TestCheckResourceAttr("data.harness_platform_idp_integrations.all",
@@ -386,7 +416,17 @@ func TestUnitIntegrationLifecycle(t *testing.T) {
 					resource.TestCheckResourceAttr(res, "name", "ServiceNow prod"),
 					resource.TestCheckResourceAttr(res, "kind.0.filter", ".active == true"),
 					resource.TestCheckResourceAttr(res, "uid", "snow_prod-x1"),
-					resource.TestCheckResourceAttr(mapping, "field_mapping.0.source_field", "managed_by"),
+					resource.TestCheckResourceAttr(res, svc+"field_mapping.0.source_field", "managed_by"),
+					// The integration write, then the changed mapping.
+					resource.TestCheckResourceAttr(res, "revision", "3"),
+				),
+			},
+			{
+				// An unchanged mapping isn't rewritten.
+				Config: fmt.Sprintf(snowConfig, "ServiceNow", ".active == true", "service", "managed_by"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(res, "revision", "4"),
+					resource.TestCheckResourceAttr(res, svc+"field_mapping.0.source_field", "managed_by"),
 				),
 			},
 			{
@@ -400,13 +440,6 @@ func TestUnitIntegrationLifecycle(t *testing.T) {
 				ImportStateVerify: true,
 				// Import has no prior order, so kinds come back sorted by name.
 				ImportStateVerifyIgnore: []string{"revision", "updated", "kind."},
-			},
-			{
-				ResourceName:            mapping,
-				ImportState:             true,
-				ImportStateId:           "default/Snow_Prod/cmdb_ci_service",
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"revision", "updated"},
 			},
 		},
 		CheckDestroy: func(s *terraform.State) error { return nil },

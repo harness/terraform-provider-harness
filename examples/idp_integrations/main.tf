@@ -59,35 +59,40 @@ resource "harness_platform_idp_integration" "orders" {
   name        = "TF e2e orders"
   description = "Created by examples/idp_integrations"
   type        = "Custom"
-  mode        = var.webhook_secret_ref == "" ? "api" : "webhook"
-  source      = "orders"
   tags        = ["team:idp", "terraform"]
 
-  dynamic "webhook_auth" {
-    for_each = var.webhook_secret_ref == "" ? [] : [var.webhook_secret_ref]
-    content {
-      auth_type   = "hmac_auth"
-      hash_algo   = "hmac_sha256"
-      auth_header = "X-Signature"
-      secret_ref  = webhook_auth.value
+  custom {
+    mode         = var.webhook_secret_ref == "" ? "api" : "webhook"
+    source_label = "orders"
+
+    dynamic "webhook_auth" {
+      for_each = var.webhook_secret_ref == "" ? [] : [var.webhook_secret_ref]
+      content {
+        auth_type   = "hmac_auth"
+        hash_algo   = "hmac_sha256"
+        auth_header = "X-Signature"
+        secret_ref  = webhook_auth.value
+      }
     }
   }
 
   kind {
     kind   = "custom"
     action = "merge"
-  }
-}
 
-resource "harness_platform_idp_integration_kind_mapping" "orders" {
-  integration_id = harness_platform_idp_integration.orders.identifier
-  kind           = "custom"
-
-  ingestion {
-    identifier = ".service.id"
-    name       = ".service.name"
-    properties = {
-      "spec.owner" = ".service.team"
+    # Sent with the create, so the first payload already uses it.
+    mapping {
+      ingestion {
+        identifier = ".service.id"
+        name       = ".service.name"
+        properties = {
+          team = ".service.team"
+        }
+      }
+      correlation {
+        source_path = "service.id"
+        target_path = "metadata.identifier"
+      }
     }
   }
 }
@@ -142,13 +147,11 @@ data "harness_platform_idp_integration_type" "custom" {
 
 data "harness_platform_idp_integration" "orders" {
   identifier = harness_platform_idp_integration.orders.identifier
-  depends_on = [harness_platform_idp_integration_kind_mapping.orders]
 }
 
 data "harness_platform_idp_integration_kind_mapping" "orders" {
   integration_id = harness_platform_idp_integration.orders.identifier
   kind           = "custom"
-  depends_on     = [harness_platform_idp_integration_kind_mapping.orders]
 }
 
 data "harness_platform_idp_integrations" "org" {

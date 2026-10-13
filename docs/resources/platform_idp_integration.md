@@ -45,6 +45,22 @@ resource "harness_platform_idp_integration" "orders" {
     kind        = "custom"
     auto_import = true
     action      = "merge"
+
+    # Sent with the create, so the first webhook already uses it. Omitted fields keep the defaults.
+    mapping {
+      ingestion {
+        identifier = ".service.id"
+        name       = ".service.name"
+        properties = {
+          team = ".service.team"
+        }
+      }
+      # Merges payloads into entities that already exist. Required for kinds with action merge.
+      correlation {
+        source_path = "service.id"
+        target_path = "metadata.identifier"
+      }
+    }
   }
 }
 
@@ -86,6 +102,39 @@ resource "harness_platform_idp_integration" "servicenow" {
     # ServiceNow kinds have no default entity kind or type, so set both. They can't change later.
     idp_kind = "component"
     idp_type = "service"
+
+    mapping {
+      display_name_field = "name"
+
+      # Source fields are top-level fields of the kind's catalog stream.
+      field_mapping {
+        source_field = "owned_by"
+        target_field = "spec.owner"
+      }
+      field_mapping {
+        source_field = "environment"
+        target_field = "metadata.environment"
+      }
+    }
+  }
+}
+
+# Harness CI integration. Every kind needs a correlation, so each kind has a mapping.
+resource "harness_platform_idp_integration" "harness_ci" {
+  identifier = "harness_ci"
+  name       = "Harness CI"
+  type       = "HarnessCI"
+
+  kind {
+    kind = "pipeline"
+
+    mapping {
+      correlation {
+        # A field of the emitted entity data, matched against existing entities.
+        source_path = "metadata.integration_properties.HarnessCI.pipelineName"
+        target_path = "metadata.name"
+      }
+    }
   }
 }
 
@@ -172,7 +221,58 @@ Optional:
 - `filter` (String) JQ that returns true for records to keep.
 - `idp_kind` (String) Airbyte types: entity kind, e.g. component; the type's default when omitted. Set at create only; required for kinds with no default, such as ServiceNow's.
 - `idp_type` (String) Airbyte types: entity type, e.g. service; the type's default when omitted. Set at create only.
+- `mapping` (Block List, Max: 1) The kind's mapping, sent with the create so the first sync uses it. Omitted fields keep the type's defaults; without the block, the mapping is read but not managed. (see [below for nested schema](#nestedblock--kind--mapping))
 - `replication_mode` (String) Airbyte types: full_refresh or incremental; the stream's default when omitted.
+
+<a id="nestedblock--kind--mapping"></a>
+### Nested Schema for `kind.mapping`
+
+Optional:
+
+- `correlation` (Block List, Max: 1) Links records to existing entities. (see [below for nested schema](#nestedblock--kind--mapping--correlation))
+- `display_name_field` (String) Source field used as the entity's name.
+- `field_mapping` (Block List) Maps a source field to an entity field. Airbyte types. (see [below for nested schema](#nestedblock--kind--mapping--field_mapping))
+- `idp_kind` (String) Entity kind, e.g. component.
+- `idp_type` (String) Entity type, e.g. service.
+- `ingestion` (Block List, Max: 1) Custom types: JQ that builds the entity from a payload. (see [below for nested schema](#nestedblock--kind--mapping--ingestion))
+- `payload_schema` (String) Custom types, custom kind: JSON Schema of the payload. Set at create only.
+- `unique_identifier_field` (String) Source field that identifies an entity. Can't change on Airbyte types.
+
+<a id="nestedblock--kind--mapping--correlation"></a>
+### Nested Schema for `kind.mapping.correlation`
+
+Required:
+
+- `source_path` (String) Field to match. Airbyte types: a path in the emitted entity data, e.g. metadata.integration_properties.ServiceNow.name; Custom: a payload field.
+- `target_path` (String) Entity field to match, e.g. metadata.identifier.
+
+Optional:
+
+- `operator` (String) Match operator; eq when omitted.
+
+
+<a id="nestedblock--kind--mapping--field_mapping"></a>
+### Nested Schema for `kind.mapping.field_mapping`
+
+Required:
+
+- `source_field` (String) Source field.
+- `target_field` (String) Entity field, e.g. spec.owner.
+
+
+<a id="nestedblock--kind--mapping--ingestion"></a>
+### Nested Schema for `kind.mapping.ingestion`
+
+Required:
+
+- `identifier` (String) JQ for the entity identifier.
+
+Optional:
+
+- `name` (String) JQ for the entity name.
+- `properties` (Map of String) JQ per entity property.
+
+
 
 
 <a id="nestedblock--bitbucket_cloud"></a>

@@ -44,7 +44,7 @@ func DataSourceIntegration() *schema.Resource {
 			if err != nil {
 				return diag.FromErr(err)
 			}
-			return diag.FromErr(setIntegration(d, out))
+			return diag.FromErr(setIntegration(d, out, nil))
 		},
 		Schema: s,
 	}

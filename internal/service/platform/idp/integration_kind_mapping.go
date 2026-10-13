@@ -1,0 +1,102 @@
+package idp
+
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+)
+
+// kindMappingSchema is the mapping block on a kind: sent with the create, then written through the kind's mapping.
+func kindMappingSchema() *schema.Schema {
+	s := mappingWritableSchema()
+	s["payload_schema"] = &schema.Schema{
+		Description: "Custom types, custom kind: JSON Schema of the payload. Set at create only.",
+		Type:        schema.TypeString,
+		Optional:    true,
+		Computed:    true,
+		DiffSuppressFunc: func(_, old, new string, _ *schema.ResourceData) bool {
+			return jsonEquivalent(old, new)
+		},
+		ValidateFunc: func(v any, k string) ([]string, []error) {
+			var m map[string]any
+			if err := json.Unmarshal([]byte(v.(string)), &m); err != nil {
+				return nil, []error{fmt.Errorf("%s must be a JSON object: %w", k, err)}
+			}
+			return nil, nil
+		},
+	}
+	b := block("The kind's mapping, sent with the create so the first sync uses it. Omitted fields keep the "+
+		"type's defaults; without the block, the mapping is read but not managed.", false, s)
+	b.Computed = true
+	return b
+}
+
+// kindMappings returns each kind's mapping block values, for kinds that have one.
+func kindMappings(kinds []any) map[string]map[string]any {
+	out := map[string]map[string]any{}
+	for _, k := range kinds {
+		kind, _ := k.(map[string]any)
+		if l, _ := kind["mapping"].([]any); len(l) > 0 {
+			m, _ := l[0].(map[string]any)
+			if m == nil {
+				m = map[string]any{}
+			}
+			out[str(kind["kind"])] = m
+		}
+	}
+	return out
+}
+
+func createMappings(kinds []any) map[string]any {
+	out := map[string]any{}
+	for kind, m := range kindMappings(kinds) {
+		out[kind] = mappingBody(m, true)
+	}
+	return out
+}
+
+// mappingBody is a mapping write; payload_schema is only sent on create, as it can't change.
+func mappingBody(values map[string]any, create bool) map[string]any {
+	body := expandObject(mappingWritableSchema(), values)
+	if raw := str(values["payload_schema"]); create && raw != "" {
+		var schema map[string]any
+		if json.Unmarshal([]byte(raw), &schema) == nil {
+			body["payload_schema"] = schema
+		}
+	}
+	return body
+}
+
+func kindMappingState(m map[string]any) map[string]any {
+	out := flattenObject(mappingWritableSchema(), m)
+	out["payload_schema"] = jsonString(m["payload_schema"])
+	return out
+}
+
+// payloadSchemasUnchanged rejects a changed payload_schema, which is fixed at create.
+func payloadSchemasUnchanged(oldKinds, newKinds []any) error {
+	prior := kindMappings(oldKinds)
+	for kind, m := range kindMappings(newKinds) {
+		p, ok := prior[kind]
+		if !ok {
+			continue
+		}
+		if old, cur := str(p["payload_schema"]), str(m["payload_schema"]); old != "" && cur != "" &&
+			!jsonEquivalent(old, cur) {
+			return fmt.Errorf("payload_schema of kind %s can't change; recreate the integration instead", kind)
+		}
+	}
+	return nil
+}
+
+func jsonEquivalent(a, b string) bool {
+	if a == b {
+		return true
+	}
+	var x, y any
+	if json.Unmarshal([]byte(a), &x) != nil || json.Unmarshal([]byte(b), &y) != nil {
+		return false
+	}
+	return jsonString(x) == jsonString(y)
+}

@@ -8,8 +8,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/harness/terraform-provider-harness/internal"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -20,36 +18,6 @@ var reservedIdentifiers = []string{
 	"or", "and", "eq", "ne", "lt", "gt", "le", "ge", "div", "mod", "not", "null", "true", "false", "new", "var",
 	"return", "step", "parallel", "stepGroup", "org", "account", "class", "shellScriptProvisioner", "organizations",
 	"organization", "orgs", "projects", "project",
-}
-
-func ResourceIntegrationKindMapping() *schema.Resource {
-	s := mappingWritableSchema()
-	for k, v := range mappingReadOnlySchema() {
-		s[k] = v
-	}
-	s["integration_id"] = &schema.Schema{
-		Description: "Identifier of the integration.", Type: schema.TypeString, Required: true, ForceNew: true,
-	}
-	s["org_id"] = &schema.Schema{
-		Description: "Organization of the integration.", Type: schema.TypeString, Optional: true, ForceNew: true,
-	}
-	s["project_id"] = &schema.Schema{
-		Description: "Project of the integration.", Type: schema.TypeString, Optional: true, ForceNew: true,
-		RequiredWith: []string{"org_id"},
-	}
-	s["kind"] = &schema.Schema{
-		Description: "Kind whose mapping this is.", Type: schema.TypeString, Required: true, ForceNew: true,
-	}
-	return &schema.Resource{
-		Description: "Resource for the mapping of one kind of an IDP integration. Every kind has a mapping, so " +
-			"creating this adopts it; destroying it leaves the mapping as it is.",
-		CreateContext: resourceMappingWrite,
-		ReadContext:   resourceMappingRead,
-		UpdateContext: resourceMappingWrite,
-		DeleteContext: func(context.Context, *schema.ResourceData, any) diag.Diagnostics { return nil },
-		Importer:      &schema.ResourceImporter{StateContext: importMapping},
-		Schema:        s,
-	}
 }
 
 func mappingWritableSchema() map[string]*schema.Schema {
@@ -121,52 +89,21 @@ func mappingReadOnlySchema() map[string]*schema.Schema {
 	}
 }
 
-func mappingKeys(d *schema.ResourceData) (org, project, id, kind string) {
-	return d.Get("org_id").(string), d.Get("project_id").(string), d.Get("integration_id").(string),
-		d.Get("kind").(string)
-}
-
-func resourceMappingWrite(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
-	c := newIntegrationsClient(meta.(*internal.Session))
-	org, project, id, kind := mappingKeys(d)
-	ws := mappingWritableSchema()
-	values := make(map[string]any, len(ws))
-	for k := range ws {
-		values[k] = d.Get(k)
-	}
-	body := expandObject(ws, values)
-
-	var out map[string]any
-	for attempt := 0; attempt < 2; attempt++ {
+// writeMapping replaces a kind's mapping at the current revision, retrying once if another write moved it.
+func writeMapping(
+	ctx context.Context, c *integrationsClient, org, project, id, kind string, body map[string]any,
+) (map[string]any, error) {
+	for attempt := 0; ; attempt++ {
 		cur, err := c.getMapping(ctx, org, project, id, kind)
 		if err != nil {
-			return diag.FromErr(err)
+			return nil, err
 		}
-		out, err = c.replaceMapping(ctx, org, project, id, kind, int64(num(cur["revision"])), body)
+		out, err := c.replaceMapping(ctx, org, project, id, kind, int64(num(cur["revision"])), body)
 		if attempt == 0 && isIntegrationsStatus(err, http.StatusPreconditionFailed) {
 			continue
 		}
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		break
+		return out, err
 	}
-	d.SetId(mappingID(org, project, id, kind))
-	return diag.FromErr(setMapping(d, out))
-}
-
-func resourceMappingRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
-	c := newIntegrationsClient(meta.(*internal.Session))
-	org, project, id, kind := mappingKeys(d)
-	out, err := c.getMapping(ctx, org, project, id, kind)
-	if isIntegrationsStatus(err, http.StatusNotFound) {
-		d.SetId("")
-		return nil
-	}
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	return diag.FromErr(setMapping(d, out))
 }
 
 func setMapping(d *schema.ResourceData, m map[string]any) error {
@@ -200,6 +137,11 @@ func jsonString(v any) string {
 	return string(raw)
 }
 
+func mappingKeys(d *schema.ResourceData) (org, project, id, kind string) {
+	return d.Get("org_id").(string), d.Get("project_id").(string), d.Get("integration_id").(string),
+		d.Get("kind").(string)
+}
+
 func mappingID(org, project, id, kind string) string {
 	parts := []string{}
 	for _, p := range []string{org, project} {
@@ -208,27 +150,4 @@ func mappingID(org, project, id, kind string) string {
 		}
 	}
 	return strings.Join(append(parts, id, kind), "/")
-}
-
-// importMapping takes <integration_id>/<kind>, <org_id>/<integration_id>/<kind> or
-// <org_id>/<project_id>/<integration_id>/<kind>.
-func importMapping(_ context.Context, d *schema.ResourceData, _ any) ([]*schema.ResourceData, error) {
-	parts := strings.Split(d.Id(), "/")
-	if len(parts) < 2 || len(parts) > 4 {
-		return nil, fmt.Errorf("invalid import ID %q", d.Id())
-	}
-	n := len(parts)
-	values := map[string]string{"integration_id": parts[n-2], "kind": parts[n-1]}
-	if n >= 3 {
-		values["org_id"] = parts[0]
-	}
-	if n == 4 {
-		values["project_id"] = parts[1]
-	}
-	for k, v := range values {
-		if err := d.Set(k, v); err != nil {
-			return nil, err
-		}
-	}
-	return []*schema.ResourceData{d}, nil
 }

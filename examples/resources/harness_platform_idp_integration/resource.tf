@@ -30,6 +30,22 @@ resource "harness_platform_idp_integration" "orders" {
     kind        = "custom"
     auto_import = true
     action      = "merge"
+
+    # Sent with the create, so the first webhook already uses it. Omitted fields keep the defaults.
+    mapping {
+      ingestion {
+        identifier = ".service.id"
+        name       = ".service.name"
+        properties = {
+          team = ".service.team"
+        }
+      }
+      # Merges payloads into entities that already exist. Required for kinds with action merge.
+      correlation {
+        source_path = "service.id"
+        target_path = "metadata.identifier"
+      }
+    }
   }
 }
 
@@ -71,6 +87,39 @@ resource "harness_platform_idp_integration" "servicenow" {
     # ServiceNow kinds have no default entity kind or type, so set both. They can't change later.
     idp_kind = "component"
     idp_type = "service"
+
+    mapping {
+      display_name_field = "name"
+
+      # Source fields are top-level fields of the kind's catalog stream.
+      field_mapping {
+        source_field = "owned_by"
+        target_field = "spec.owner"
+      }
+      field_mapping {
+        source_field = "environment"
+        target_field = "metadata.environment"
+      }
+    }
+  }
+}
+
+# Harness CI integration. Every kind needs a correlation, so each kind has a mapping.
+resource "harness_platform_idp_integration" "harness_ci" {
+  identifier = "harness_ci"
+  name       = "Harness CI"
+  type       = "HarnessCI"
+
+  kind {
+    kind = "pipeline"
+
+    mapping {
+      correlation {
+        # A field of the emitted entity data, matched against existing entities.
+        source_path = "metadata.integration_properties.HarnessCI.pipelineName"
+        target_path = "metadata.name"
+      }
+    }
   }
 }
 
