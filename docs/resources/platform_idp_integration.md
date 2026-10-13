@@ -272,7 +272,7 @@ Required:
 Optional:
 
 - `name` (String) JQ for the entity name.
-- `properties` (Map of String) JQ per entity property.
+- `properties` (Map of String) JQ per entity property; derived from the payload schema when omitted.
 
 
 

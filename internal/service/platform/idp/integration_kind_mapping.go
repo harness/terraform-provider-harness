@@ -73,7 +73,6 @@ func kindMappingState(m map[string]any) map[string]any {
 	return out
 }
 
-// payloadSchemasUnchanged rejects a changed payload_schema, which is fixed at create.
 // mappingFieldsUnchanged rejects changes to create-only mapping fields; display_name_field is create-only on Airbyte.
 func mappingFieldsUnchanged(oldKinds, newKinds []any, airbyte bool) error {
 	fields := []string{"unique_identifier_field"}
@@ -92,6 +91,7 @@ func mappingFieldsUnchanged(oldKinds, newKinds []any, airbyte bool) error {
 	return nil
 }
 
+// payloadSchemasUnchanged rejects a changed payload_schema, which is fixed at create.
 func payloadSchemasUnchanged(oldKinds, newKinds []any) error {
 	prior := kindMappings(oldKinds)
 	for kind, m := range kindMappings(newKinds) {

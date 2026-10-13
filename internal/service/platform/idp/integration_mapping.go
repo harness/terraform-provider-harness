@@ -54,8 +54,11 @@ func mappingWritableSchema() map[string]*schema.Schema {
 				"identifier": requiredString("JQ for the entity identifier."),
 				"name":       optionalString("JQ for the entity name."),
 				"properties": {
-					Description: "JQ per entity property.", Type: schema.TypeMap, Optional: true,
-					Elem: &schema.Schema{Type: schema.TypeString},
+					Description: "JQ per entity property; derived from the payload schema when omitted.",
+					Type:        schema.TypeMap,
+					Optional:    true,
+					Computed:    true,
+					Elem:        &schema.Schema{Type: schema.TypeString},
 				},
 			}},
 		},
@@ -97,6 +100,10 @@ func writeMapping(
 		cur, err := c.getMapping(ctx, org, project, id, kind)
 		if err != nil {
 			return nil, err
+		}
+		// Omitted field mappings keep their values; the API requires them on Airbyte types.
+		if fms, _ := cur["field_mappings"].([]any); body["field_mappings"] == nil && len(fms) > 0 {
+			body["field_mappings"] = fms
 		}
 		out, err := c.replaceMapping(ctx, org, project, id, kind, int64(num(cur["revision"])), body)
 		if attempt == 0 && isIntegrationsStatus(err, http.StatusPreconditionFailed) {

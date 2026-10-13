@@ -2,9 +2,11 @@ package idp
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -104,6 +106,26 @@ func TestClientEncodesSpacesInQuery(t *testing.T) {
 	})
 	if _, err := c.do(context.Background(), http.MethodGet, "/x", url.Values{"search_term": {"my app"}}, nil, nil,
 		nil); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestWriteMappingKeepsFieldMappings(t *testing.T) {
+	fms := []any{map[string]any{"source_field": "id", "target_field": "id"}}
+	c := testClient(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			_ = json.NewEncoder(w).Encode(map[string]any{"revision": 2, "field_mappings": fms})
+			return
+		}
+		var body map[string]any
+		_ = json.NewDecoder(r.Body).Decode(&body)
+		if !reflect.DeepEqual(body["field_mappings"], fms) {
+			t.Errorf("field_mappings %v", body["field_mappings"])
+		}
+		_, _ = w.Write([]byte(`{}`))
+	})
+	body := map[string]any{"correlation": map[string]any{}}
+	if _, err := writeMapping(context.Background(), c, "o", "", "a", "k", body); err != nil {
 		t.Fatal(err)
 	}
 }
