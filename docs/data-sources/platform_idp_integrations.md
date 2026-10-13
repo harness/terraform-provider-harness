@@ -34,7 +34,7 @@ output "failing" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `scope` (String) self (default), ancestors or descendants of the given scope.
-- `search_term` (String) Matches name and identifier.
+- `search_term` (String) Matches part of the name.
 - `type` (Set of String) Only these types.
 
 ### Read-Only

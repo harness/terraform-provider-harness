@@ -60,7 +60,7 @@ func DataSourceIntegrations() *schema.Resource {
 		},
 		"type":        {Description: "Only these types.", Type: schema.TypeSet, Optional: true, Elem: &schema.Schema{Type: schema.TypeString}},
 		"health":      {Description: "healthy, degraded, failing or unknown.", Type: schema.TypeString, Optional: true},
-		"search_term": {Description: "Matches name and identifier.", Type: schema.TypeString, Optional: true},
+		"search_term": {Description: "Matches part of the name.", Type: schema.TypeString, Optional: true},
 		"integrations": {
 			Description: "Matching integrations.",
 			Type:        schema.TypeList,
