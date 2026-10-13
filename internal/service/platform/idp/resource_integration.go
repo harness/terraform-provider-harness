@@ -205,11 +205,9 @@ func integrationSpecSchema() map[string]*schema.Schema {
 					ValidateFunc: validation.StringInSlice([]string{"register", "merge", "merge_register"}, false),
 				},
 				"replication_mode": {
-					Description:  "Airbyte types: full_refresh or incremental; the stream's default when omitted.",
-					Type:         schema.TypeString,
-					Optional:     true,
-					Computed:     true,
-					ValidateFunc: validation.StringInSlice([]string{"full_refresh", "incremental"}, false),
+					Description: "Airbyte types: the stream's sync mode, full_refresh or incremental.",
+					Type:        schema.TypeString,
+					Computed:    true,
 				},
 				"filter": optionalString("JQ that returns true for records to keep."),
 				"idp_kind": defaultedString("Airbyte types: entity kind, e.g. component; the type's default when " +

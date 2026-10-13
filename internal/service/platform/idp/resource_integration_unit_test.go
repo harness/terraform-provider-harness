@@ -324,7 +324,6 @@ resource "harness_platform_idp_integration" "snow" {
   kind {
     kind             = "cmdb_ci_service"
     auto_import      = true
-    replication_mode = "incremental"
     filter           = %q
     idp_kind         = "component"
     idp_type         = %q

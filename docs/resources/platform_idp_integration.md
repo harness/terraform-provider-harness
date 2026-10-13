@@ -95,10 +95,9 @@ resource "harness_platform_idp_integration" "servicenow" {
   }
 
   kind {
-    kind             = "cmdb_ci_service"
-    auto_import      = true
-    replication_mode = "incremental"
-    filter           = ".operational_status == \"1\""
+    kind        = "cmdb_ci_service"
+    auto_import = true
+    filter      = ".operational_status == \"1\""
     # ServiceNow kinds have no default entity kind or type, so set both. They can't change later.
     idp_kind = "component"
     idp_type = "service"
@@ -222,7 +221,10 @@ Optional:
 - `idp_kind` (String) Airbyte types: entity kind, e.g. component; the type's default when omitted. Set at create only; required for kinds with no default, such as ServiceNow's.
 - `idp_type` (String) Airbyte types: entity type, e.g. service; the type's default when omitted. Set at create only.
 - `mapping` (Block List, Max: 1) The kind's mapping, sent with the create so the first sync uses it. Omitted fields keep the type's defaults. Without the block the mapping isn't managed; removing the block resets it to the type's default, except for Custom and HarnessCI kinds, which have none and keep theirs. (see [below for nested schema](#nestedblock--kind--mapping))
-- `replication_mode` (String) Airbyte types: full_refresh or incremental; the stream's default when omitted.
+
+Read-Only:
+
+- `replication_mode` (String) Airbyte types: the stream's sync mode, full_refresh or incremental.
 
 <a id="nestedblock--kind--mapping"></a>
 ### Nested Schema for `kind.mapping`

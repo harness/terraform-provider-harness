@@ -80,10 +80,9 @@ resource "harness_platform_idp_integration" "servicenow" {
   }
 
   kind {
-    kind             = "cmdb_ci_service"
-    auto_import      = true
-    replication_mode = "incremental"
-    filter           = ".operational_status == \"1\""
+    kind        = "cmdb_ci_service"
+    auto_import = true
+    filter      = ".operational_status == \"1\""
     # ServiceNow kinds have no default entity kind or type, so set both. They can't change later.
     idp_kind = "component"
     idp_type = "service"

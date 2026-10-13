@@ -134,10 +134,9 @@ resource "harness_platform_idp_integration" "servicenow" {
   }
 
   kind {
-    kind             = "cmdb_ci_service"
-    replication_mode = "incremental"
-    idp_kind         = "component"
-    idp_type         = "service"
+    kind     = "cmdb_ci_service"
+    idp_kind = "component"
+    idp_type = "service"
   }
 }
 
