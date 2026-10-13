@@ -489,8 +489,11 @@ func resourceIntegrationRead(ctx context.Context, d *schema.ResourceData, meta a
 }
 
 // refreshIntegration reads the integration and the mappings of kinds that have a mapping block.
+// An import has no kinds yet, so it reads every kind and keeps the mappings that aren't the defaults.
 func refreshIntegration(ctx context.Context, c *integrationsClient, d *schema.ResourceData) diag.Diagnostics {
-	managed := kindMappings(d.Get("kind").([]any))
+	stateKinds := d.Get("kind").([]any)
+	importing := len(stateKinds) == 0
+	managed := kindMappings(stateKinds)
 	org, project := scope(d)
 	out, err := c.getIntegration(ctx, org, project, d.Id())
 	if isIntegrationsStatus(err, http.StatusNotFound) {
@@ -505,12 +508,15 @@ func refreshIntegration(ctx context.Context, c *integrationsClient, d *schema.Re
 	kinds, _ := spec["kinds"].([]any)
 	for _, k := range kinds {
 		kind := str(k.(map[string]any)["kind"])
-		if _, ok := managed[kind]; !ok {
+		if _, ok := managed[kind]; !ok && !importing {
 			continue
 		}
 		m, err := c.getMapping(ctx, org, project, d.Id(), kind)
 		if err != nil {
 			return diag.FromErr(err)
+		}
+		if importing && m["is_default"] == true {
+			continue
 		}
 		mappings[kind] = m
 	}
