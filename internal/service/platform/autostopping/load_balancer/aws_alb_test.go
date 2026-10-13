@@ -2,6 +2,7 @@ package load_balancer_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -14,6 +15,7 @@ import (
 const awsCloudConnectorID = "DoNotDelete_LightwingNonProd"
 
 func TestResourceAwsALB(t *testing.T) {
+	apiKey := os.Getenv(platformAPIKeyEnv)
 	name := fmt.Sprintf("terr-awsalb-%s", randAlnum(5))
 	resourceName := "harness_autostopping_aws_alb.test"
 
@@ -23,7 +25,7 @@ func TestResourceAwsALB(t *testing.T) {
 		//		CheckDestroy:      testAWSProxyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAwsALB(name),
+				Config: testAwsALB(name, apiKey),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
@@ -40,6 +42,7 @@ func TestResourceAwsALB(t *testing.T) {
 // Regression test for CCM-32336. The provider's helpers.HandleReadApiError clears
 // state on 404 + ENTITY_NOT_FOUND so terraform plan reports a recreate.
 func TestAccResourceAwsALB_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
+	apiKey := os.Getenv(platformAPIKeyEnv)
 	name := fmt.Sprintf("terr-c336alb-%s", randAlnum(5))
 	resourceName := "harness_autostopping_aws_alb.test"
 
@@ -50,7 +53,7 @@ func TestAccResourceAwsALB_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAwsALB(name),
+				Config: testAwsALB(name, apiKey),
 				Check: resource.ComposeTestCheckFunc(
 					extractAttr(resourceName, "identifier", &lbIDBefore),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -70,12 +73,12 @@ func TestAccResourceAwsALB_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
 						t.Fatalf("CCM-32336: out-of-band delete failed: %v", err)
 					}
 				},
-				Config:             testAwsALB(name),
+				Config:             testAwsALB(name, apiKey),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAwsALB(name),
+				Config: testAwsALB(name, apiKey),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttrWith(resourceName, "identifier", func(value string) error {
@@ -100,7 +103,7 @@ func testAwsALBDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAwsALB(name string) string {
+func testAwsALB(name, apiKey string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_alb" "test" {
 			name = "%[1]s"
@@ -108,12 +111,13 @@ func testAwsALB(name string) string {
             region = "us-east-1"
 			vpc = %q
 			security_groups =[%q]
+			api_key = %q
 			delete_cloud_resources_on_destroy = true
 		}
-`, name, awsCloudConnectorID, awsProxyVPC, awsProxySG)
+`, name, awsCloudConnectorID, awsProxyVPC, awsProxySG, apiKey)
 }
 
-func testAwsALBUpdate(name string) string {
+func testAwsALBUpdate(name, apiKey string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_aws_alb" "test" {
 			name = "%[1]s"
@@ -121,7 +125,8 @@ func testAwsALBUpdate(name string) string {
             region = "us-east-1"
             vpc = %q
             security_groups =[%q]
+			api_key = %q
 			delete_cloud_resources_on_destroy = true
 		}
-`, name, awsCloudConnectorID, awsProxyVPC, awsProxySG)
+`, name, awsCloudConnectorID, awsProxyVPC, awsProxySG, apiKey)
 }

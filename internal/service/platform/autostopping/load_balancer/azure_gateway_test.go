@@ -4,6 +4,7 @@ package load_balancer_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -13,6 +14,7 @@ import (
 )
 
 func TestResourceAzureGateway(t *testing.T) {
+	apiKey := os.Getenv(platformAPIKeyEnv)
 	name := utils.RandStringBytes(5)
 	resourceName := "harness_autostopping_azure_gateway.test"
 
@@ -22,7 +24,7 @@ func TestResourceAzureGateway(t *testing.T) {
 		//		CheckDestroy:      testAzureGatewayDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAzureGateway(name),
+				Config: testAzureGateway(name, apiKey),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
@@ -41,7 +43,7 @@ func testAzureGatewayDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAzureGateway(name string) string {
+func testAzureGateway(name, apiKey string) string {
 	return fmt.Sprintf(`
 	resource "harness_autostopping_azure_gateway" "test" {
 		name = "%[1]s"
@@ -53,7 +55,8 @@ func testAzureGateway(name string) string {
 		azure_func_region  = "westus2"
 		frontend_ip        = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/publicIPAddresses/publicip"
 		sku_size           = "sku2"
+		api_key            = %q
 		delete_cloud_resources_on_destroy = true
 	}
-`, name)
+`, name, apiKey)
 }
