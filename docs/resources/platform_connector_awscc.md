@@ -21,7 +21,10 @@ resource "harness_platform_connector_awscc" "test" {
 
   account_id  = "account_id"
   report_name = "report_name"
+  report_type = "CUR2.0"
+  region      = "us-east-1"
   s3_bucket   = "s3bucket"
+  s3_prefix   = "cur"
   features_enabled = [
     "OPTIMIZATION",
     "VISIBILITY",
@@ -50,8 +53,11 @@ resource "harness_platform_connector_awscc" "test" {
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
+- `region` (String) The AWS region where the Cost and Usage Report is delivered. Set this when using CUR 2.0. When omitted, an existing connector keeps the region stored in Harness.
 - `report_name` (String) The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.
+- `report_type` (String) The Cost and Usage Report type. Set to `CUR2.0` for AWS Data Exports. When omitted, a new connector uses legacy CUR 1.0 and an existing connector keeps the report type stored in Harness.
 - `s3_bucket` (String) The name of s3 bucket.
+- `s3_prefix` (String) The S3 path prefix where the Cost and Usage Report is delivered. Set this when using CUR 2.0. When omitted, an existing connector keeps the prefix stored in Harness.
 - `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only

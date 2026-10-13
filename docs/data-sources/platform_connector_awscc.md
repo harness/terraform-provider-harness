@@ -38,8 +38,11 @@ data "harness_platform_connector_awscc" "example" {
 - `description` (String) Description of the resource.
 - `features_enabled` (Set of String) The features enabled for the connector. Valid values are BILLING, OPTIMIZATION, VISIBILITY, GOVERNANCE.
 - `id` (String) The ID of this resource.
+- `region` (String) The AWS region where the Cost and Usage Report is delivered.
 - `report_name` (String) The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.
+- `report_type` (String) The Cost and Usage Report type. `CUR2.0` means the connector uses AWS Data Exports (CUR 2.0). Empty means legacy CUR 1.0.
 - `s3_bucket` (String) The name of s3 bucket.
+- `s3_prefix` (String) The S3 path prefix where the Cost and Usage Report is delivered.
 - `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedatt--cross_account_access"></a>

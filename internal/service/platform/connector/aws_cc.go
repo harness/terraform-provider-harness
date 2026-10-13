@@ -30,25 +30,31 @@ func ResourceConnectorAwsCC() *schema.Resource {
 			"report_name": {
 				Description: "The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.",
 				Type:        schema.TypeString,
-				Required:    false,
-				Computed:    false,
-                                Optional:    true,
+				Optional:    true,
 			},
-			// "region": {
-			// 	Description: "The AWS region.",
-			// 	Type:        schema.TypeString,
-			// 	Required:    true,
-			// },
+			"report_type": {
+				Description: "The Cost and Usage Report type. Set to `CUR2.0` for AWS Data Exports. When omitted, a new connector uses legacy CUR 1.0 and an existing connector keeps the report type stored in Harness.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"region": {
+				Description: "The AWS region where the Cost and Usage Report is delivered. Set this when using CUR 2.0. When omitted, an existing connector keeps the region stored in Harness.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
 			"s3_bucket": {
 				Description: "The name of s3 bucket.",
 				Type:        schema.TypeString,
-				Required:    false,
-				Computed:    false,
-                                Optional:    true,
+				Optional:    true,
 			},
-			// "s3_prefix": {
-
-			// }
+			"s3_prefix": {
+				Description: "The S3 path prefix where the Cost and Usage Report is delivered. Set this when using CUR 2.0. When omitted, an existing connector keeps the prefix stored in Harness.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
 			"cross_account_access": {
 				Description: "Harness uses the secure cross-account role to access your AWS account. The role includes a restricted policy to access the cost and usage reports and resources for the sole purpose of cost analysis and cost optimization.",
 				Type:        schema.TypeList,
@@ -132,17 +138,21 @@ func buildConnectorAwsCC(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.AwsCC.CurAttributes.ReportName = attr.(string)
 	}
 
+	if attr, ok := d.GetOk("report_type"); ok {
+		connector.AwsCC.CurAttributes.ReportType = attr.(string)
+	}
+
 	if attr, ok := d.GetOk("s3_bucket"); ok {
 		connector.AwsCC.CurAttributes.S3BucketName = attr.(string)
 	}
 
-	// if attr, ok := d.GetOk("s3_prefix"); ok {
-	// 	connector.AwsCC.CurAttributes.S3Prefix = attr.(string)
-	// }
+	if attr, ok := d.GetOk("s3_prefix"); ok {
+		connector.AwsCC.CurAttributes.S3Prefix = attr.(string)
+	}
 
-	// if attr, ok := d.GetOk("region"); ok {
-	// 	connector.AwsCC.CurAttributes.Region = attr.(string)
-	// }
+	if attr, ok := d.GetOk("region"); ok {
+		connector.AwsCC.CurAttributes.Region = attr.(string)
+	}
 
 	if attr, ok := d.GetOk("cross_account_access"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
@@ -166,12 +176,13 @@ func buildConnectorAwsCC(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 func readConnectorAwsCC(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
 	d.Set("account_id", connector.AwsCC.AwsAccountId)
-	if isFeatureEnabled("BILLING", connector.AwsCC.FeaturesEnabled) {
+	if connector.AwsCC.CurAttributes != nil && isFeatureEnabled("BILLING", connector.AwsCC.FeaturesEnabled) {
 		d.Set("report_name", connector.AwsCC.CurAttributes.ReportName)
+		d.Set("report_type", connector.AwsCC.CurAttributes.ReportType)
 		d.Set("s3_bucket", connector.AwsCC.CurAttributes.S3BucketName)
+		d.Set("s3_prefix", connector.AwsCC.CurAttributes.S3Prefix)
+		d.Set("region", connector.AwsCC.CurAttributes.Region)
 	}
-	// d.Set("s3_prefix", connector.AwsCC.CurAttributes.S3Prefix)
-	// d.Set("region", connector.AwsCC.CurAttributes.Region)
 	d.Set("features_enabled", connector.AwsCC.FeaturesEnabled)
 	d.Set("cross_account_access", []map[string]interface{}{
 		{

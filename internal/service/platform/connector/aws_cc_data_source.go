@@ -25,19 +25,26 @@ func DatasourceConnectorAwsCC() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			// "region": {
-			// 	Description: "The AWS region.",
-			// 	Type:        schema.TypeString,
-			// 	Computed:    true,
-			// },
+			"report_type": {
+				Description: "The Cost and Usage Report type. `CUR2.0` means the connector uses AWS Data Exports (CUR 2.0). Empty means legacy CUR 1.0.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"region": {
+				Description: "The AWS region where the Cost and Usage Report is delivered.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"s3_bucket": {
 				Description: "The name of s3 bucket.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			// "s3_prefix": {
-
-			// }
+			"s3_prefix": {
+				Description: "The S3 path prefix where the Cost and Usage Report is delivered.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"cross_account_access": {
 				Description: "Harness uses the secure cross-account role to access your AWS account. The role includes a restricted policy to access the cost and usage reports and resources for the sole purpose of cost analysis and cost optimization.",
 				Type:        schema.TypeList,
