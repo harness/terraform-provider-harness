@@ -158,8 +158,6 @@ func TestProjResourceRepo_Import(t *testing.T) {
 }
 
 func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
-	t.Skip()
-
 	identifier := identifier(t.Name())
 
 	resource.UnitTest(t, resource.TestCase{
@@ -319,6 +317,11 @@ func testFindRepo(
 
 func testRepoDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
+		// The resource may already be gone from state (e.g. deleted out-of-band and
+		// dropped on refresh), in which case there is nothing left to look up.
+		if _, ok := state.RootModule().Resources[resourceName]; !ok {
+			return nil
+		}
 		repo, _ := testFindRepo(resourceName, state)
 		if repo != nil {
 			return fmt.Errorf("Found repo: %s", repo.Identifier)

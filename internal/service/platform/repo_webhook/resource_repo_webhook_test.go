@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -79,6 +80,79 @@ func TestProjResourceRepoWebhookWithSecret(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: false,
 				ImportStateIdFunc: acctest.RepoRuleProjectLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// TestProjResourceRepoWebhook_DeleteUnderlyingResource verifies that a webhook deleted
+// outside Terraform is dropped from state on refresh instead of failing with a 404.
+func TestProjResourceRepoWebhook_DeleteUnderlyingResource(t *testing.T) {
+	identifier := identifier(t.Name())
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testWebhookDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjResourceRepoWebhook(identifier, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetCodeClientWithContext()
+					_, err := c.WebhookApi.DeleteWebhook(
+						ctx, c.AccountId, "repo_"+identifier, identifier,
+						&code.WebhookApiDeleteWebhookOpts{
+							OrgIdentifier:     optional.NewString("org_" + identifier),
+							ProjectIdentifier: optional.NewString("proj_" + identifier),
+						})
+					require.NoError(t, err)
+				},
+				Config:             testProjResourceRepoWebhook(identifier, description),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+// TestProjResourceRepoWebhook_DeleteParentRepo verifies that a webhook whose parent
+// repo was deleted outside Terraform is dropped from state on refresh instead of
+// failing with a 404. This is the destroy-retry scenario from CODE-6342.
+func TestProjResourceRepoWebhook_DeleteParentRepo(t *testing.T) {
+	identifier := identifier(t.Name())
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testWebhookDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjResourceRepoWebhook(identifier, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetCodeClientWithContext()
+					_, _, err := c.RepositoryApi.DeleteRepository(
+						ctx, c.AccountId, "repo_"+identifier,
+						&code.RepositoryApiDeleteRepositoryOpts{
+							OrgIdentifier:     optional.NewString("org_" + identifier),
+							ProjectIdentifier: optional.NewString("proj_" + identifier),
+						})
+					require.NoError(t, err)
+				},
+				Config:             testProjResourceRepoWebhook(identifier, description),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -185,6 +259,11 @@ func testFindRepoWebhook(
 
 func testWebhookDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
+		// The resource may already be gone from state (e.g. deleted out-of-band and
+		// dropped on refresh), in which case there is nothing left to look up.
+		if _, ok := state.RootModule().Resources[resourceName]; !ok {
+			return nil
+		}
 		webhook, _ := testFindRepoWebhook(resourceName, state)
 		if webhook != nil {
 			return fmt.Errorf("found webhook: %s", webhook.Identifier)

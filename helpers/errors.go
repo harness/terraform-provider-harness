@@ -310,6 +310,15 @@ func HandleCodeReadApiError(err error, d *schema.ResourceData, httpResp *http.Re
 	return handleCodeApiError(err, d, httpResp, true)
 }
 
+// HandleCodeDeleteApiError treats a 404 on delete as success: the object is already
+// gone, which is the desired end state of a destroy.
+func HandleCodeDeleteApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		return nil
+	}
+	return handleCodeApiError(err, d, httpResp, false)
+}
+
 // HandleCodeReadApiError Provide helpful error messages like
 // Error: Bad Request: Couldn't find <user>/<repo> at <git provider>: Not Found
 // instead of unhelpful errors like "Error: 400 Bad Request"
