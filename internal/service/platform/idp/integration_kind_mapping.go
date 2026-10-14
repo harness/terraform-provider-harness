@@ -67,8 +67,12 @@ func mappingBody(values map[string]any, create bool) map[string]any {
 	return body
 }
 
-func kindMappingState(m map[string]any) map[string]any {
+// kindMappingState leaves default field mappings out unless prior lists them, as omitting them means the defaults.
+func kindMappingState(m, prior map[string]any) map[string]any {
 	out := flattenObject(mappingWritableSchema(), m)
+	if fms, _ := prior["field_mapping"].([]any); m["is_default_field_mappings"] == true && len(fms) == 0 {
+		out["field_mapping"] = []any{}
+	}
 	out["payload_schema"] = jsonString(m["payload_schema"])
 	return out
 }

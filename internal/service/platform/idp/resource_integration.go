@@ -394,16 +394,18 @@ func setIntegration(d *schema.ResourceData, in map[string]any, mappings map[stri
 	for k, v := range flattenObject(integrationSpecSchema(), spec) {
 		set[k] = v
 	}
-	if prior, ok := d.Get("kind").([]any); ok {
+	prior, _ := d.Get("kind").([]any)
+	if prior != nil {
 		set["kind"] = orderLike(prior, set["kind"])
 	}
 	if mappings != nil {
 		kinds, _ := set["kind"].([]any)
+		priorMappings := kindMappings(prior)
 		for _, k := range kinds {
 			kind := k.(map[string]any)
 			kind["mapping"] = []any{}
 			if m, ok := mappings[str(kind["kind"])]; ok {
-				kind["mapping"] = []any{kindMappingState(m)}
+				kind["mapping"] = []any{kindMappingState(m, priorMappings[str(kind["kind"])])}
 			}
 		}
 	}

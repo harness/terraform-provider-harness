@@ -77,3 +77,26 @@ func TestSwitchingToMerge(t *testing.T) {
 		t.Errorf("switchingToMerge = %v", got)
 	}
 }
+
+func TestKindMappingStateDefaultFieldMappings(t *testing.T) {
+	fms := []any{map[string]any{"source_field": "id", "target_field": "id"}}
+	read := func(isDefault bool) map[string]any {
+		return map[string]any{"field_mappings": fms, "is_default_field_mappings": isDefault}
+	}
+	listed := map[string]any{"field_mapping": []any{map[string]any{"source_field": "id", "target_field": "id"}}}
+	for _, tc := range []struct {
+		name       string
+		m, prior   map[string]any
+		wantListed bool
+	}{
+		{name: "default, omitted", m: read(true), prior: map[string]any{"field_mapping": []any{}}},
+		{name: "default, no prior", m: read(true)},
+		{name: "default, listed", m: read(true), prior: listed, wantListed: true},
+		{name: "custom, omitted", m: read(false), prior: map[string]any{}, wantListed: true},
+	} {
+		got, _ := kindMappingState(tc.m, tc.prior)["field_mapping"].([]any)
+		if (len(got) > 0) != tc.wantListed {
+			t.Errorf("%s: field_mapping = %v", tc.name, got)
+		}
+	}
+}

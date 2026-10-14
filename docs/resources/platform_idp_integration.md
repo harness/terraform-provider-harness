@@ -233,7 +233,7 @@ Optional:
 
 - `correlation` (Block List, Max: 1) Links records to existing entities. (see [below for nested schema](#nestedblock--kind--mapping--correlation))
 - `display_name_field` (String) Source field used as the entity's name.
-- `field_mapping` (Block List) Maps a source field to an entity field. Airbyte types. (see [below for nested schema](#nestedblock--kind--mapping--field_mapping))
+- `field_mapping` (Block List) Maps a source field to an entity field. Airbyte types. Omitted, the type's defaults apply. (see [below for nested schema](#nestedblock--kind--mapping--field_mapping))
 - `idp_kind` (String) Entity kind, e.g. component.
 - `idp_type` (String) Entity type, e.g. service.
 - `ingestion` (Block List, Max: 1) Custom types: JQ that builds the entity from a payload. (see [below for nested schema](#nestedblock--kind--mapping--ingestion))

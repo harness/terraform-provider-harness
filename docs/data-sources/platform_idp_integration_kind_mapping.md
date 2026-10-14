@@ -38,7 +38,7 @@ data "harness_platform_idp_integration_kind_mapping" "example" {
 - `correlation` (List of Object) Links records to existing entities. (see [below for nested schema](#nestedatt--correlation))
 - `display_name_field` (String) Source field used as the entity's name.
 - `emission` (List of Object) How entities are emitted; read-only. (see [below for nested schema](#nestedatt--emission))
-- `field_mapping` (List of Object) Maps a source field to an entity field. Airbyte types. (see [below for nested schema](#nestedatt--field_mapping))
+- `field_mapping` (List of Object) Maps a source field to an entity field. Airbyte types. Omitted, the type's defaults apply. (see [below for nested schema](#nestedatt--field_mapping))
 - `id` (String) The ID of this resource.
 - `idp_kind` (String) Entity kind, e.g. component.
 - `idp_type` (String) Entity type, e.g. service.

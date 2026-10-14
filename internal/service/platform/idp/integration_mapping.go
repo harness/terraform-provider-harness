@@ -25,10 +25,9 @@ func mappingWritableSchema() map[string]*schema.Schema {
 		"unique_identifier_field": fieldPath(defaultedString("Source field that identifies an entity. Can't change on Airbyte types.")),
 		"display_name_field":      fieldPath(defaultedString("Source field used as the entity's name.")),
 		"field_mapping": {
-			Description: "Maps a source field to an entity field. Airbyte types.",
+			Description: "Maps a source field to an entity field. Airbyte types. Omitted, the type's defaults apply.",
 			Type:        schema.TypeList,
 			Optional:    true,
-			Computed:    true,
 			Elem: &schema.Resource{Schema: map[string]*schema.Schema{
 				"source_field": fieldPath(requiredString("Source field.")),
 				"target_field": fieldPath(requiredString("Entity field, e.g. spec.owner.")),
@@ -100,10 +99,6 @@ func writeMapping(
 		cur, err := c.getMapping(ctx, org, project, id, kind)
 		if err != nil {
 			return nil, err
-		}
-		// Omitted field mappings keep their values; the API requires them on Airbyte types.
-		if fms, _ := cur["field_mappings"].([]any); body["field_mappings"] == nil && len(fms) > 0 {
-			body["field_mappings"] = fms
 		}
 		out, err := c.replaceMapping(ctx, org, project, id, kind, int64(num(cur["revision"])), body)
 		if attempt == 0 && isIntegrationsStatus(err, http.StatusPreconditionFailed) {
