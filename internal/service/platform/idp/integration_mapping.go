@@ -64,7 +64,7 @@ func mappingWritableSchema() map[string]*schema.Schema {
 	}
 }
 
-// fieldPath ignores a leading dot, which the API drops.
+// fieldPath ignores a leading dot: the API returns field mapping paths dotted and other paths bare.
 func fieldPath(s *schema.Schema) *schema.Schema {
 	s.DiffSuppressFunc = func(_, old, new string, _ *schema.ResourceData) bool {
 		return strings.TrimPrefix(old, ".") == strings.TrimPrefix(new, ".")
