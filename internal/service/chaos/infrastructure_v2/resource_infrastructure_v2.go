@@ -19,6 +19,7 @@ func ResourceChaosInfrastructureV2() *schema.Resource {
 	return &schema.Resource{
 		Description: "Resource for managing Harness Chaos Infrastructure V2 (the chaos execution infrastructure installed into a Kubernetes cluster).\n\n" +
 			"After `terraform apply`, use the computed `install_command` output to deploy the infrastructure manifest into your target cluster - creating this resource registers the infrastructure with Harness but does not itself install anything into the cluster.\n\n" +
+			"This resource does not start the UI onboarding flow. In the UI, creating a Harness Kubernetes infrastructure opens onboarding, and submitting that flow creates the chaos infrastructure, discovery agent, network map, and optional safe experiment. Calling that API after this resource would try to create the chaos infrastructure a second time, so onboarding stays off unless a later opt-in resource owns that flow. Existing configurations keep registering the infrastructure only.\n\n" +
 			"## Notes\n\n" +
 			"- `infra_type`: use `KubernetesV2` (recommended); `Kubernetes` is the legacy V1 type.\n" +
 			"- `infra_scope` (`NAMESPACE` or `CLUSTER`) is immutable - changing it forces recreation.\n" +
