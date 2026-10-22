@@ -1,0 +1,5 @@
+```release-note:bug
+resource/harness_platform_connector_gcp_cloud_cost: Fixed a provider crash during read when `BILLING` is enabled and the API returns a null `billingExportSpec`.
+resource/harness_platform_connector_aws_cc: Fixed a provider crash during read when the API returns a null `crossAccountAccess`.
+resource/harness_platform_ccm_filters: Fixed a provider crash during read when the API returns null `filterProperties`.
+```

@@ -184,12 +184,14 @@ func readConnectorAwsCC(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 		d.Set("region", connector.AwsCC.CurAttributes.Region)
 	}
 	d.Set("features_enabled", connector.AwsCC.FeaturesEnabled)
-	d.Set("cross_account_access", []map[string]interface{}{
-		{
-			"role_arn":    connector.AwsCC.CrossAccountAccess.CrossAccountRoleArn,
-			"external_id": connector.AwsCC.CrossAccountAccess.ExternalId,
-		},
-	})
+	if connector.AwsCC.CrossAccountAccess != nil {
+		d.Set("cross_account_access", []map[string]interface{}{
+			{
+				"role_arn":    connector.AwsCC.CrossAccountAccess.CrossAccountRoleArn,
+				"external_id": connector.AwsCC.CrossAccountAccess.ExternalId,
+			},
+		})
+	}
 
 	return nil
 }

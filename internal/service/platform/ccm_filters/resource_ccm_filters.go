@@ -191,17 +191,24 @@ func buildCCMFilter(d *schema.ResourceData) *nextgen.Filter {
 }
 
 func readCCMFilter(d *schema.ResourceData, filter *nextgen.Filter) {
+	if filter == nil {
+		return
+	}
+
 	d.SetId(filter.Identifier)
 	d.Set("identifier", filter.Identifier)
 	d.Set("org_id", filter.OrgIdentifier)
 	d.Set("project_id", filter.ProjectIdentifier)
 	d.Set("name", filter.Name)
-	d.Set("type", filter.FilterProperties.FilterType)
 	d.Set("filter_visibility", filter.FilterVisibility)
-	d.Set("filter_properties", []interface{}{
-		map[string]interface{}{
-			"filter_type": filter.FilterProperties.FilterType,
-			"tags":        helpers.FlattenTags(filter.FilterProperties.Tags),
-		},
-	})
+
+	if filter.FilterProperties != nil {
+		d.Set("type", filter.FilterProperties.FilterType)
+		d.Set("filter_properties", []interface{}{
+			map[string]interface{}{
+				"filter_type": filter.FilterProperties.FilterType,
+				"tags":        helpers.FlattenTags(filter.FilterProperties.Tags),
+			},
+		})
+	}
 }
