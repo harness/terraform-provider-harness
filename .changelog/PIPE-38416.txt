@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_pipeline: suppress false-positive reconcile diffs when a `templateInputs` runtime input (`<+input>`) is echoed back by the backend decorated with the referenced template's own default/allowed-values expression (e.g. `<+input>.default(...)`).
+```

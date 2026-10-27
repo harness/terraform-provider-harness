@@ -3,10 +3,17 @@ package helpers
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"gopkg.in/yaml.v3"
 )
+
+// runtimeInputToken is the bare Harness runtime-input expression. The backend may echo it
+// back decorated with a suffix such as .default(...)/.allowedValues(...)/.executionInput()
+// (e.g. when the referenced template declares a default for that field), which is not a
+// real configuration change.
+const runtimeInputToken = "<+input>"
 
 // YamlDiffSuppressFunction returns true if two content of yaml strings are identical.
 // That helps to avoid unnecessary changes in plan if the yaml format was changed only, but not the data.
@@ -18,8 +25,58 @@ func YamlDiffSuppressFunction(k, old, new string, d *schema.ResourceData) bool {
 	if err := yaml.Unmarshal([]byte(new), &newYaml); err != nil {
 		return false
 	}
-	return reflect.DeepEqual(oldYaml, newYaml)
+	return yamlValuesEqual(oldYaml, newYaml)
+}
 
+// yamlValuesEqual recursively compares two values decoded from YAML, treating a bare
+// "<+input>" runtime-input expression as equal to the same expression decorated by the
+// backend with a suffix (e.g. "<+input>.default(foo)"). Everything else falls back to
+// strict equality, so this never masks real value or ordering changes.
+func yamlValuesEqual(a, b interface{}) bool {
+	switch av := a.(type) {
+	case string:
+		bv, ok := b.(string)
+		if !ok {
+			return false
+		}
+		if av == bv {
+			return true
+		}
+		return isRuntimeInputVariant(av, bv) || isRuntimeInputVariant(bv, av)
+	case map[string]interface{}:
+		bv, ok := b.(map[string]interface{})
+		if !ok || len(av) != len(bv) {
+			return false
+		}
+		for key, aval := range av {
+			bval, ok := bv[key]
+			if !ok || !yamlValuesEqual(aval, bval) {
+				return false
+			}
+		}
+		return true
+	case []interface{}:
+		bv, ok := b.([]interface{})
+		if !ok || len(av) != len(bv) {
+			return false
+		}
+		for i := range av {
+			if !yamlValuesEqual(av[i], bv[i]) {
+				return false
+			}
+		}
+		return true
+	default:
+		return reflect.DeepEqual(a, b)
+	}
+}
+
+// isRuntimeInputVariant returns true if bare is the plain "<+input>" token and decorated is
+// that same token with a non-empty suffix expression, e.g. "<+input>.default(foo)".
+func isRuntimeInputVariant(bare, decorated string) bool {
+	return bare == runtimeInputToken &&
+		strings.HasPrefix(decorated, runtimeInputToken) &&
+		decorated != runtimeInputToken
 }
 
 // YamlResourceFields contains common fields extracted from a resource's YAML definition.
