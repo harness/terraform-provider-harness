@@ -1,0 +1,19 @@
+```release-note:new-resource
+harness_chaos_pipeline_scan - scan an existing successful pipeline execution. Requires Pipeline View.
+```
+
+```release-note:new-resource
+harness_chaos_infrastructure_scan - scan the Kubernetes resources known to a discovery agent. Requires Service Discovery View.
+```
+
+```release-note:new-data-source
+harness_chaos_pipeline_scan - read an existing pipeline scan and its risks.
+```
+
+```release-note:new-data-source
+harness_chaos_infrastructure_scan - read an existing infrastructure scan and its risks.
+```
+
+```release-note:new-resource
+harness_chaos_service_onboarding - onboard discovered services for a chaos infrastructure. The onboarding API registers that infrastructure.
+```

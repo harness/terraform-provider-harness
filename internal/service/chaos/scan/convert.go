@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,76 +18,35 @@ func scopeFrom(d *schema.ResourceData, accountID string) chaos.Scope {
 	}
 }
 
-func scanCreateRequest(d *schema.ResourceData) (chaos.ScanCreateRequest, error) {
+func pipelineScanRequest(d *schema.ResourceData) (chaos.PipelineScanRequest, error) {
 	method, err := chaos.APIDetectionMethod(d.Get("detection_method").(string))
 	if err != nil {
-		return chaos.ScanCreateRequest{}, err
+		return chaos.PipelineScanRequest{}, err
 	}
-	req := chaos.ScanCreateRequest{
-		Identity:        d.Get("identity").(string),
-		Name:            d.Get("name").(string),
-		Description:     d.Get("description").(string),
-		Tags:            expandStringList(d.Get("tags")),
-		DetectionMethod: method,
-	}
-
-	_, hasPipeline := d.GetOk("pipeline_scan")
-	_, hasInfra := d.GetOk("infrastructure_scan")
-	switch {
-	case hasPipeline && hasInfra:
-		return req, fmt.Errorf("set only one of pipeline_scan or infrastructure_scan")
-	case hasPipeline:
-		block := firstBlock(d.Get("pipeline_scan"))
-		req.ScanType = chaos.ScanTypePipelineExecution
-		req.Source.Pipeline = &chaos.PipelineScan{
-			PipelineIdentity:    blockString(block, "pipeline_identity"),
-			PipelineExecutionID: blockString(block, "pipeline_execution_id"),
-			NotifyID:            blockString(block, "notify_id"),
-		}
-	case hasInfra:
-		fromInfra, ok, err := infrastructureScanFromResource(d)
-		if err != nil {
-			return req, err
-		}
-		if ok {
-			return req, fmt.Errorf("infrastructure_id %s is resolved from the chaos infrastructure when the scan is created", fromInfra.InfrastructureID)
-		}
-		block := firstBlock(d.Get("infrastructure_scan"))
-		agentID := blockString(block, "agent_identity")
-		environmentID := blockString(block, "environment_identity")
-		if agentID == "" || environmentID == "" {
-			return req, fmt.Errorf("set infrastructure_id and environment_id, or agent_identity and environment_identity")
-		}
-		req.ScanType = chaos.ScanTypeDiscoveryAgent
-		req.Source.Infrastructure = &chaos.InfrastructureScan{
-			AgentIdentity:             agentID,
-			EnvironmentIdentity:       environmentID,
-			EnvironmentParentUniqueID: blockString(block, "environment_parent_unique_id"),
-		}
-	default:
-		return req, fmt.Errorf("pipeline_scan or infrastructure_scan is required")
-	}
-	return req, nil
+	return chaos.PipelineScanRequest{
+		Identity:            d.Get("identity").(string),
+		Name:                d.Get("name").(string),
+		Description:         d.Get("description").(string),
+		Tags:                expandStringList(d.Get("tags")),
+		DetectionMethod:     method,
+		PipelineIdentity:    d.Get("pipeline_identity").(string),
+		PipelineExecutionID: d.Get("pipeline_execution_id").(string),
+		NotifyID:            d.Get("notify_id").(string),
+	}, nil
 }
 
-// infrastructureScanFromResource is set when the user points at a chaos
+// infrastructureScanRequest is set when the user points at an existing chaos
 // infrastructure. The scan client resolves the discovery agent from it.
-func infrastructureScanFromResource(d *schema.ResourceData) (*chaos.InfrastructureScanRequest, bool, error) {
-	_, hasInfra := d.GetOk("infrastructure_scan")
-	if !hasInfra {
-		return nil, false, nil
-	}
-	block := firstBlock(d.Get("infrastructure_scan"))
-	infrastructureID := blockString(block, "infrastructure_id")
+func infrastructureScanRequest(d *schema.ResourceData) (*chaos.InfrastructureScanRequest, bool, error) {
+	infrastructureID := d.Get("infrastructure_id").(string)
 	if infrastructureID == "" {
 		return nil, false, nil
 	}
-	if blockString(block, "agent_identity") != "" || blockString(block, "environment_identity") != "" {
-		return nil, false, fmt.Errorf("set infrastructure_id and environment_id, or agent_identity and environment_identity, not both")
-	}
-	environmentID := blockString(block, "environment_id")
-	if environmentID == "" {
+	if d.Get("environment_id").(string) == "" {
 		return nil, false, fmt.Errorf("environment_id is required with infrastructure_id")
+	}
+	if d.Get("agent_identity").(string) != "" || d.Get("environment_identity").(string) != "" {
+		return nil, false, fmt.Errorf("set infrastructure_id, or agent_identity and environment_identity, not both")
 	}
 	method, err := chaos.APIDetectionMethod(d.Get("detection_method").(string))
 	if err != nil {
@@ -99,8 +59,33 @@ func infrastructureScanFromResource(d *schema.ResourceData) (*chaos.Infrastructu
 		Tags:             expandStringList(d.Get("tags")),
 		DetectionMethod:  method,
 		InfrastructureID: infrastructureID,
-		EnvironmentID:    environmentID,
+		EnvironmentID:    d.Get("environment_id").(string),
 	}, true, nil
+}
+
+func discoveryAgentScanRequest(d *schema.ResourceData) (chaos.ScanCreateRequest, error) {
+	method, err := chaos.APIDetectionMethod(d.Get("detection_method").(string))
+	if err != nil {
+		return chaos.ScanCreateRequest{}, err
+	}
+	agentID := d.Get("agent_identity").(string)
+	environmentID := d.Get("environment_identity").(string)
+	if agentID == "" || environmentID == "" {
+		return chaos.ScanCreateRequest{}, fmt.Errorf("set infrastructure_id, or agent_identity and environment_identity")
+	}
+	return chaos.ScanCreateRequest{
+		Identity:        d.Get("identity").(string),
+		Name:            d.Get("name").(string),
+		Description:     d.Get("description").(string),
+		Tags:            expandStringList(d.Get("tags")),
+		DetectionMethod: method,
+		ScanType:        chaos.ScanTypeDiscoveryAgent,
+		Source: chaos.ScanSource{Infrastructure: &chaos.InfrastructureScan{
+			AgentIdentity:             agentID,
+			EnvironmentIdentity:       environmentID,
+			EnvironmentParentUniqueID: d.Get("environment_parent_unique_id").(string),
+		}},
+	}, nil
 }
 
 func scanUpdateRequest(d *schema.ResourceData) chaos.ScanUpdateRequest {
@@ -117,7 +102,7 @@ func scanUpdateRequest(d *schema.ResourceData) chaos.ScanUpdateRequest {
 	}
 }
 
-func setScanState(d *schema.ResourceData, scan *chaos.Scan, report *chaos.ScanReport, includeRisks bool) error {
+func setScanState(d *schema.ResourceData, scan *chaos.Scan, report *chaos.ScanReport, includeRisks, keepInfrastructureIDs bool) error {
 	if scan == nil {
 		return fmt.Errorf("scan response is empty")
 	}
@@ -152,9 +137,13 @@ func setScanState(d *schema.ResourceData, scan *chaos.Scan, report *chaos.ScanRe
 
 	switch scan.ScanType {
 	case chaos.ScanTypePipelineExecution:
-		values["pipeline_scan"] = pipelineScanState(scan.Source.Pipeline)
+		for key, value := range pipelineScanState(scan.Source.Pipeline) {
+			values[key] = value
+		}
 	case chaos.ScanTypeDiscoveryAgent:
-		values["infrastructure_scan"] = infrastructureScanState(d, scan.Source.Infrastructure)
+		for key, value := range infrastructureScanState(d, scan.Source.Infrastructure, keepInfrastructureIDs) {
+			values[key] = value
+		}
 	}
 
 	values["summary"] = heatmapState(scan.Summary)
@@ -176,9 +165,14 @@ func setScanState(d *schema.ResourceData, scan *chaos.Scan, report *chaos.ScanRe
 	return nil
 }
 
-func pipelineScanState(src *chaos.PipelineScan) []interface{} {
+func pipelineScanState(src *chaos.PipelineScan) map[string]interface{} {
 	if src == nil {
-		return []interface{}{}
+		return map[string]interface{}{
+			"pipeline_identity":     "",
+			"pipeline_execution_id": "",
+			"notify_id":             "",
+			"infrastructures":       []interface{}{},
+		}
 	}
 	infras := make([]interface{}, 0, len(src.Infrastructures))
 	for _, infra := range src.Infrastructures {
@@ -189,28 +183,32 @@ func pipelineScanState(src *chaos.PipelineScan) []interface{} {
 			"chaos_supported":         infra.ChaosSupported,
 		})
 	}
-	return []interface{}{map[string]interface{}{
+	return map[string]interface{}{
 		"pipeline_identity":     src.PipelineIdentity,
 		"pipeline_execution_id": src.PipelineExecutionID,
 		"notify_id":             src.NotifyID,
 		"infrastructures":       infras,
-	}}
+	}
 }
 
-func infrastructureScanState(d *schema.ResourceData, src *chaos.InfrastructureScan) []interface{} {
+func infrastructureScanState(d *schema.ResourceData, src *chaos.InfrastructureScan, keepInfrastructureIDs bool) map[string]interface{} {
 	if src == nil {
-		return []interface{}{}
+		src = &chaos.InfrastructureScan{}
 	}
 	// The API stores the discovery agent, not the chaos infrastructure id.
-	// Keep the infrastructure the user configured so the next plan does not
-	// drop it and replace the scan.
-	return []interface{}{map[string]interface{}{
-		"infrastructure_id":            nestedString(d, "infrastructure_scan.0.infrastructure_id"),
-		"environment_id":               nestedString(d, "infrastructure_scan.0.environment_id"),
+	// The resource schema keeps the infrastructure the user configured so the
+	// next plan does not drop it and replace the scan. The data source schema
+	// does not have those keys.
+	values := map[string]interface{}{
 		"agent_identity":               src.AgentIdentity,
 		"environment_identity":         src.EnvironmentIdentity,
 		"environment_parent_unique_id": src.EnvironmentParentUniqueID,
-	}}
+	}
+	if keepInfrastructureIDs {
+		values["infrastructure_id"] = d.Get("infrastructure_id").(string)
+		values["environment_id"] = d.Get("environment_id").(string)
+	}
+	return values
 }
 
 func heatmapState(summary *chaos.HeatmapSummary) []interface{} {
@@ -368,61 +366,10 @@ func stringOrEmpty(values []string) []string {
 	return values
 }
 
-func firstBlock(value interface{}) map[string]interface{} {
-	blocks, ok := value.([]interface{})
-	if !ok || len(blocks) == 0 || blocks[0] == nil {
-		return map[string]interface{}{}
-	}
-	block, ok := blocks[0].(map[string]interface{})
-	if !ok {
-		return map[string]interface{}{}
-	}
-	return block
-}
-
-func nestedString(d *schema.ResourceData, key string) string {
-	if d == nil {
-		return ""
-	}
-	value, ok := d.GetOk(key)
-	if !ok || value == nil {
-		return ""
-	}
-	text, _ := value.(string)
-	return text
-}
-
-func blockString(block map[string]interface{}, key string) string {
-	if block == nil {
-		return ""
-	}
-	value, ok := block[key]
-	if !ok || value == nil {
-		return ""
-	}
-	text, ok := value.(string)
-	if !ok {
-		return ""
-	}
-	return text
-}
-
 func parseScanImportID(id string) (orgID, projectID, identity string, err error) {
-	parts := splitImportID(id)
+	parts := strings.Split(id, "/")
 	if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" {
 		return "", "", "", fmt.Errorf("invalid import ID %q, expected org_id/project_id/scan_identity", id)
 	}
 	return parts[0], parts[1], parts[2], nil
-}
-
-func splitImportID(id string) []string {
-	parts := make([]string, 0, 3)
-	start := 0
-	for i := 0; i < len(id); i++ {
-		if id[i] == '/' {
-			parts = append(parts, id[start:i])
-			start = i + 1
-		}
-	}
-	return append(parts, id[start:])
 }

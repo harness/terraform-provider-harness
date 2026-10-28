@@ -34,6 +34,7 @@ import (
 	image_registry "github.com/harness/terraform-provider-harness/internal/service/chaos/image_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	chaos_infrastructure_v2 "github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure_v2"
+	chaos_onboarding "github.com/harness/terraform-provider-harness/internal/service/chaos/onboarding"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/probe_template"
 	chaos_scan "github.com/harness/terraform-provider-harness/internal/service/chaos/scan"
 	chaos_security_governance "github.com/harness/terraform-provider-harness/internal/service/chaos/security_governance"
@@ -391,7 +392,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_fault_template":                        fault_template.DataSourceFaultTemplate(),
 				"harness_chaos_experiment_template":                   experiment_template.DataSourceExperimentTemplate(),
 				"harness_chaos_experiment":                            experiment.DataSourceChaosExperiment(),
-				"harness_chaos_scan":                                  chaos_scan.DataSourceChaosScan(),
+				"harness_chaos_pipeline_scan":                         chaos_scan.DataSourceChaosPipelineScan(),
+				"harness_chaos_infrastructure_scan":                   chaos_scan.DataSourceChaosInfrastructureScan(),
 				"harness_chaos_security_governance_condition":         chaos_security_governance.DataSourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":              chaos_security_governance.DataSourceChaosSecurityGovernanceRule(),
 				"harness_chaos_security_governance_condition_v3":      chaos_security_governance_v3.DataSourceChaosSecurityGovernanceConditionV3(),
@@ -611,7 +613,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_fault_template":                           fault_template.ResourceFaultTemplate(),
 				"harness_chaos_experiment_template":                      experiment_template.ResourceExperimentTemplate(),
 				"harness_chaos_experiment":                               experiment.ResourceChaosExperiment(),
-				"harness_chaos_scan":                                     chaos_scan.ResourceChaosScan(),
+				"harness_chaos_pipeline_scan":                            chaos_scan.ResourceChaosPipelineScan(),
+				"harness_chaos_infrastructure_scan":                      chaos_scan.ResourceChaosInfrastructureScan(),
+				"harness_chaos_service_onboarding":                       chaos_onboarding.ResourceChaosServiceOnboarding(),
 				"harness_chaos_security_governance_condition":            chaos_security_governance.ResourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":                 chaos_security_governance.ResourceChaosSecurityGovernanceRule(),
 				"harness_chaos_security_governance_condition_v3":         chaos_security_governance_v3.ResourceChaosSecurityGovernanceConditionV3(),

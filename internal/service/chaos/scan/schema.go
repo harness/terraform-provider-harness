@@ -16,10 +16,21 @@ func stringListSchema(description string, optional, computed bool) *schema.Schem
 	}
 }
 
+func resourceChaosPipelineScanSchema() map[string]*schema.Schema {
+	return mergeScanSchema(resourceChaosScanSchema(), pipelineScanFields(true))
+}
+
+func resourceChaosInfrastructureScanSchema() map[string]*schema.Schema {
+	fields := mergeScanSchema(resourceChaosScanSchema(), infrastructureScanFields(true))
+	fields["identity"].Description = "Unique identifier of this scan. This becomes the resource id. The API rejects an identifier that already exists. Another apply keeps this identifier and does not create a second scan. Change `retry_token` to run this same scan again after this configuration creates or updates the chaos infrastructure. Change `identity` only to replace this scan with a different one; Terraform then deletes the current scan."
+	fields["retry_token"].Description = "Change this to a new value to run this scan again, using the same API as the UI retry action. The scan identifier stays the same, so this does not add another scan on the UI. Set it to `harness_chaos_infrastructure_v2.<name>.updated_at` to run again when that Terraform infrastructure is created or updated. `updated_at` is read back from the API on every refresh. If the server changes it on its own, the next apply runs the scan again. An apply that leaves this value unchanged does not scan again. A scan created before `install_command` has been applied can finish ERRORED or NO_RESOURCES_FOUND, which fails the apply. Run the scan after the infrastructure is installed and the discovery agent has seen resources. Terraform waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply."
+	return fields
+}
+
 func resourceChaosScanSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"org_id": {
-			Description:  "Organization identifier. Scans are project scoped, matching the UI. The agent that runs the scan is called with the account, organization, and project.",
+			Description:  "Organization identifier. Scans are project scoped, matching the UI.",
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
@@ -33,7 +44,7 @@ func resourceChaosScanSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.StringIsNotEmpty,
 		},
 		"identity": {
-			Description:  "Unique identifier of this scan. This becomes the resource id. The API rejects an identifier that already exists. Another apply keeps this identifier and does not create a second scan. Change `retry_token` to run this same scan again after the infrastructure changes. Change `identity` only to replace this scan with a different one; Terraform then deletes the current scan.",
+			Description:  "Unique identifier of this scan. This becomes the resource id. The API rejects an identifier that already exists. Another apply keeps this identifier and does not create a second scan. Change `identity` only to replace this scan with a different one; Terraform then deletes the current scan.",
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
@@ -52,7 +63,7 @@ func resourceChaosScanSchema() map[string]*schema.Schema {
 		},
 		"tags": stringListSchema("Tags associated with the scan.", true, false),
 		"retry_token": {
-			Description: "Change this to a new value to run this scan again, using the same API as the UI retry action. The scan identifier stays the same, so this does not add another scan on the UI. Set it to `harness_chaos_infrastructure_v2.<name>.updated_at` to run again only when that Terraform infrastructure is created or updated. An apply that leaves this value unchanged does not scan again. Terraform waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply.",
+			Description: "Change this to a new value to run this scan again, using the same API as the UI retry action. The scan identifier stays the same, so this does not add another scan on the UI. An apply that leaves this value unchanged does not scan again. Terraform waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply.",
 			Type:        schema.TypeString,
 			Optional:    true,
 		},
@@ -80,9 +91,6 @@ func resourceChaosScanSchema() map[string]*schema.Schema {
 				return
 			},
 		},
-		"pipeline_scan":       pipelineScanSchema(true),
-		"infrastructure_scan": infrastructureScanSchema(true),
-
 		"scan_type": {
 			Description: "Scan type recorded by the API. `PipelineExecution` for a pipeline scan, `DiscoveryAgent` for an infrastructure scan.",
 			Type:        schema.TypeString,
@@ -142,7 +150,7 @@ func resourceChaosScanSchema() map[string]*schema.Schema {
 		"risk_summary":   riskSummarySchema(),
 		"collected_data": collectedDataSchema(),
 		"risks": {
-			Description: "Computed view of the risks embedded in this scan's report, sorted by identity. Empty until analysis finishes, including a COMPLETED scan that found nothing. This is not the durable scanned risk. A future risk resource should use the scanned-risk API, which is a different object keyed by the same identity.",
+			Description: "Computed view of the risks embedded in this scan's report, sorted by identity. Empty until analysis finishes, including a COMPLETED scan that found nothing.",
 			Type:        schema.TypeList,
 			Computed:    true,
 			Elem: &schema.Resource{
@@ -150,6 +158,14 @@ func resourceChaosScanSchema() map[string]*schema.Schema {
 			},
 		},
 	}
+}
+
+func dataSourceChaosPipelineScanSchema() map[string]*schema.Schema {
+	return mergeScanSchema(dataSourceChaosScanSchema(), pipelineScanFields(false))
+}
+
+func dataSourceChaosInfrastructureScanSchema() map[string]*schema.Schema {
+	return mergeScanSchema(dataSourceChaosScanSchema(), infrastructureScanFields(false))
 }
 
 func dataSourceChaosScanSchema() map[string]*schema.Schema {
@@ -182,24 +198,22 @@ func dataSourceChaosScanSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
-		"tags":                stringListSchema("Tags associated with the scan.", false, true),
-		"detection_method":    {Description: "Detection method used by the scan.", Type: schema.TypeString, Computed: true},
-		"pipeline_scan":       pipelineScanSchema(false),
-		"infrastructure_scan": infrastructureScanSchema(false),
-		"scan_type":           {Description: "Scan type recorded by the API.", Type: schema.TypeString, Computed: true},
-		"status":              {Description: "Scan lifecycle status.", Type: schema.TypeString, Computed: true},
-		"result":              {Description: "Outcome of a completed scan.", Type: schema.TypeString, Computed: true},
-		"error_message":       {Description: "Error recorded when the scan fails.", Type: schema.TypeString, Computed: true},
-		"retry_count":         {Description: "Number of times the scan has been retried.", Type: schema.TypeInt, Computed: true},
-		"account_id":          {Description: "Account identifier.", Type: schema.TypeString, Computed: true},
-		"created_at":          {Description: "Creation time as a Unix timestamp.", Type: schema.TypeInt, Computed: true},
-		"updated_at":          {Description: "Last update time as a Unix timestamp.", Type: schema.TypeInt, Computed: true},
-		"completed_at":        {Description: "Completion time as a Unix timestamp.", Type: schema.TypeInt, Computed: true},
-		"created_by":          {Description: "User who created the scan.", Type: schema.TypeString, Computed: true},
-		"updated_by":          {Description: "User who last updated the scan.", Type: schema.TypeString, Computed: true},
-		"summary":             heatmapSummarySchema(),
-		"risk_summary":        riskSummarySchema(),
-		"collected_data":      collectedDataSchema(),
+		"tags":             stringListSchema("Tags associated with the scan.", false, true),
+		"detection_method": {Description: "Detection method used by the scan.", Type: schema.TypeString, Computed: true},
+		"scan_type":        {Description: "Scan type recorded by the API.", Type: schema.TypeString, Computed: true},
+		"status":           {Description: "Scan lifecycle status.", Type: schema.TypeString, Computed: true},
+		"result":           {Description: "Outcome of a completed scan.", Type: schema.TypeString, Computed: true},
+		"error_message":    {Description: "Error recorded when the scan fails.", Type: schema.TypeString, Computed: true},
+		"retry_count":      {Description: "Number of times the scan has been retried.", Type: schema.TypeInt, Computed: true},
+		"account_id":       {Description: "Account identifier.", Type: schema.TypeString, Computed: true},
+		"created_at":       {Description: "Creation time as a Unix timestamp.", Type: schema.TypeInt, Computed: true},
+		"updated_at":       {Description: "Last update time as a Unix timestamp.", Type: schema.TypeInt, Computed: true},
+		"completed_at":     {Description: "Completion time as a Unix timestamp.", Type: schema.TypeInt, Computed: true},
+		"created_by":       {Description: "User who created the scan.", Type: schema.TypeString, Computed: true},
+		"updated_by":       {Description: "User who last updated the scan.", Type: schema.TypeString, Computed: true},
+		"summary":          heatmapSummarySchema(),
+		"risk_summary":     riskSummarySchema(),
+		"collected_data":   collectedDataSchema(),
 		"risks": {
 			Description: "Risks produced by this scan.",
 			Type:        schema.TypeList,
@@ -209,13 +223,24 @@ func dataSourceChaosScanSchema() map[string]*schema.Schema {
 	}
 }
 
-func pipelineScanSchema(forResource bool) *schema.Schema {
+func mergeScanSchema(base, extra map[string]*schema.Schema) map[string]*schema.Schema {
+	out := make(map[string]*schema.Schema, len(base)+len(extra))
+	for key, value := range base {
+		out[key] = value
+	}
+	for key, value := range extra {
+		out[key] = value
+	}
+	return out
+}
+
+func pipelineScanFields(forResource bool) map[string]*schema.Schema {
 	pipelineIdentity := &schema.Schema{
-		Description: "Identifier of the pipeline to scan.",
+		Description: "Identifier of the existing pipeline to scan.",
 		Type:        schema.TypeString,
 	}
 	executionID := &schema.Schema{
-		Description: "Execution id (`planExecutionId`) of a pipeline run whose status is Success. The UI only offers those executions. Collection fails when the execution has no Kubernetes CD stage.",
+		Description: "Execution id (`planExecutionId`) of an existing pipeline run whose status is Success. The UI only offers those executions. Collection fails when the execution has no Kubernetes CD stage.",
 		Type:        schema.TypeString,
 	}
 	notifyID := &schema.Schema{
@@ -236,52 +261,33 @@ func pipelineScanSchema(forResource bool) *schema.Schema {
 		executionID.Computed = true
 		notifyID.Computed = true
 	}
-
-	description := "Pipeline execution recorded on the scan. Set when the scan type is PipelineExecution."
-	if forResource {
-		description = "Pipeline scan. Scans one pipeline execution and records scan type PipelineExecution. Exactly one of `pipeline_scan` or `infrastructure_scan` must be set."
-	}
-	s := &schema.Schema{
-		Description: description,
-		Type:        schema.TypeList,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"pipeline_identity":     pipelineIdentity,
-				"pipeline_execution_id": executionID,
-				"notify_id":             notifyID,
-				"infrastructures": {
-					Description: "CD environment and infrastructure pairs observed while collecting manifests. Populated by the scan.",
-					Type:        schema.TypeList,
-					Computed:    true,
-					Elem: &schema.Resource{
-						Schema: map[string]*schema.Schema{
-							"environment_ref":         {Description: "Environment reference.", Type: schema.TypeString, Computed: true},
-							"infrastructure_identity": {Description: "Infrastructure identifier.", Type: schema.TypeString, Computed: true},
-							"chaos_onboarded":         {Description: "Whether chaos is already onboarded for this infrastructure.", Type: schema.TypeBool, Computed: true},
-							"chaos_supported":         {Description: "Whether this infrastructure can be onboarded to chaos.", Type: schema.TypeBool, Computed: true},
-						},
-					},
+	return map[string]*schema.Schema{
+		"pipeline_identity":     pipelineIdentity,
+		"pipeline_execution_id": executionID,
+		"notify_id":             notifyID,
+		"infrastructures": {
+			Description: "CD environment and infrastructure pairs observed while collecting manifests. Populated by the scan.",
+			Type:        schema.TypeList,
+			Computed:    true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"environment_ref":         {Description: "Environment reference.", Type: schema.TypeString, Computed: true},
+					"infrastructure_identity": {Description: "Infrastructure identifier.", Type: schema.TypeString, Computed: true},
+					"chaos_onboarded":         {Description: "Whether chaos is already onboarded for this infrastructure.", Type: schema.TypeBool, Computed: true},
+					"chaos_supported":         {Description: "Whether this infrastructure can be onboarded to chaos.", Type: schema.TypeBool, Computed: true},
 				},
 			},
 		},
 	}
-	if forResource {
-		s.Optional = true
-		s.MaxItems = 1
-		s.ExactlyOneOf = []string{"pipeline_scan", "infrastructure_scan"}
-	} else {
-		s.Computed = true
-	}
-	return s
 }
 
-func infrastructureScanSchema(forResource bool) *schema.Schema {
+func infrastructureScanFields(forResource bool) map[string]*schema.Schema {
 	infrastructureID := &schema.Schema{
-		Description: "Identifier of the chaos infrastructure to scan. Same value as `harness_chaos_infrastructure_v2.infra_id`. Terraform reads the discovery agent linked to this infrastructure, which is what the UI selects for Scan infrastructure.",
+		Description: "Identifier of the existing chaos infrastructure to scan. Same value as `harness_chaos_infrastructure_v2.infra_id`. Required with `environment_id`. Terraform reads that infrastructure and sends its discovery agent. When the infrastructure has no discoveryAgentID, Terraform uses the discovery agent with this same identity, which is the agent onboarding creates.",
 		Type:        schema.TypeString,
 	}
 	chaosEnvironmentID := &schema.Schema{
-		Description: "Environment of the chaos infrastructure. Same value as `harness_chaos_infrastructure_v2.environment_id`. Required with `infrastructure_id`.",
+		Description: "Environment of the chaos infrastructure. Same value as `harness_chaos_infrastructure_v2.environment_id`. Required with `infrastructure_id`. Terraform uses it to read that infrastructure and its discovery agent.",
 		Type:        schema.TypeString,
 	}
 	agent := &schema.Schema{
@@ -289,7 +295,7 @@ func infrastructureScanSchema(forResource bool) *schema.Schema {
 		Type:        schema.TypeString,
 	}
 	environment := &schema.Schema{
-		Description: "Environment identifier of the discovery agent. Required with `agent_identity`. When `infrastructure_id` is set, Terraform fills this from the agent record, matching the UI.",
+		Description: "Environment identifier of the discovery agent. Required with `agent_identity`. When `infrastructure_id` is set, Terraform fills this from the agent record.",
 		Type:        schema.TypeString,
 	}
 	parent := &schema.Schema{
@@ -300,78 +306,44 @@ func infrastructureScanSchema(forResource bool) *schema.Schema {
 		infrastructureID.Optional = true
 		infrastructureID.ForceNew = true
 		infrastructureID.ValidateFunc = validation.StringIsNotEmpty
-		infrastructureID.RequiredWith = []string{"infrastructure_scan.0.environment_id"}
-		infrastructureID.ConflictsWith = []string{
-			"infrastructure_scan.0.agent_identity",
-			"infrastructure_scan.0.environment_identity",
-		}
-		infrastructureID.AtLeastOneOf = []string{
-			"infrastructure_scan.0.infrastructure_id",
-			"infrastructure_scan.0.agent_identity",
-		}
+		infrastructureID.ConflictsWith = []string{"agent_identity", "environment_identity"}
+		infrastructureID.AtLeastOneOf = []string{"infrastructure_id", "agent_identity"}
+		infrastructureID.RequiredWith = []string{"environment_id"}
 		chaosEnvironmentID.Optional = true
 		chaosEnvironmentID.ForceNew = true
 		chaosEnvironmentID.ValidateFunc = validation.StringIsNotEmpty
-		chaosEnvironmentID.RequiredWith = []string{"infrastructure_scan.0.infrastructure_id"}
-		chaosEnvironmentID.ConflictsWith = []string{
-			"infrastructure_scan.0.agent_identity",
-			"infrastructure_scan.0.environment_identity",
-		}
+		chaosEnvironmentID.ConflictsWith = []string{"agent_identity", "environment_identity"}
+		chaosEnvironmentID.RequiredWith = []string{"infrastructure_id"}
 		agent.Optional = true
 		agent.Computed = true
 		agent.ValidateFunc = validation.StringIsNotEmpty
-		agent.RequiredWith = []string{"infrastructure_scan.0.environment_identity"}
-		agent.ConflictsWith = []string{
-			"infrastructure_scan.0.infrastructure_id",
-			"infrastructure_scan.0.environment_id",
-		}
-		agent.AtLeastOneOf = []string{
-			"infrastructure_scan.0.infrastructure_id",
-			"infrastructure_scan.0.agent_identity",
-		}
+		agent.RequiredWith = []string{"environment_identity"}
+		agent.ConflictsWith = []string{"infrastructure_id", "environment_id"}
+		agent.AtLeastOneOf = []string{"infrastructure_id", "agent_identity"}
 		environment.Optional = true
 		environment.Computed = true
 		environment.ValidateFunc = validation.StringIsNotEmpty
-		environment.RequiredWith = []string{"infrastructure_scan.0.agent_identity"}
-		environment.ConflictsWith = []string{
-			"infrastructure_scan.0.infrastructure_id",
-			"infrastructure_scan.0.environment_id",
-		}
+		environment.RequiredWith = []string{"agent_identity"}
+		environment.ConflictsWith = []string{"infrastructure_id", "environment_id"}
 		parent.Optional = true
 		parent.Computed = true
 	} else {
-		infrastructureID.Computed = true
-		chaosEnvironmentID.Computed = true
 		agent.Computed = true
 		environment.Computed = true
 		parent.Computed = true
+		return map[string]*schema.Schema{
+			"agent_identity":               agent,
+			"environment_identity":         environment,
+			"environment_parent_unique_id": parent,
+		}
 	}
-
-	description := "Discovery agent recorded on the scan. Set when the scan type is DiscoveryAgent."
-	if forResource {
-		description = "Infrastructure scan. Scans the Kubernetes infrastructure known to a discovery agent and records scan type DiscoveryAgent. Set `infrastructure_id` and `environment_id` from the chaos infrastructure, or set `agent_identity` and `environment_identity` when the discovery agent is already known. Exactly one of `pipeline_scan` or `infrastructure_scan` must be set."
+	return map[string]*schema.Schema{
+		"infrastructure_id":            infrastructureID,
+		"environment_id":               chaosEnvironmentID,
+		"agent_identity":               agent,
+		"environment_identity":         environment,
+		"environment_parent_unique_id": parent,
 	}
-	s := &schema.Schema{
-		Description: description,
-		Type:        schema.TypeList,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"infrastructure_id":            infrastructureID,
-				"environment_id":               chaosEnvironmentID,
-				"agent_identity":               agent,
-				"environment_identity":         environment,
-				"environment_parent_unique_id": parent,
-			},
-		},
-	}
-	if forResource {
-		s.Optional = true
-		s.MaxItems = 1
-		s.ExactlyOneOf = []string{"pipeline_scan", "infrastructure_scan"}
-	} else {
-		s.Computed = true
-	}
-	return s
 }
 
 func heatmapSummarySchema() *schema.Schema {
@@ -454,9 +426,6 @@ func collectedDataSchema() *schema.Schema {
 }
 
 // scanReportRiskSchema is the flattened risk embedded in a scan report.
-// It is not the schema for a future harness_chaos_scanned_risk resource.
-// That resource should follow ScannedRisk on the scanned-risk API, whose
-// spec holds the rule, fingerprint, severity, status, and target service.
 func scanReportRiskSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"identity": {
