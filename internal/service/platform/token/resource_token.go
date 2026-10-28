@@ -253,7 +253,7 @@ func buildToken(d *schema.ResourceData) *nextgen.Token {
 		token.Username = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("encodedPassword"); ok {
+	if attr, ok := d.GetOk("encoded_password"); ok {
 		token.EncodedPassword = attr.(string)
 	}
 	return token
@@ -276,7 +276,7 @@ func readToken(d *schema.ResourceData, token *nextgen.Token) {
 	d.Set("org_id", token.OrgIdentifier)
 	d.Set("email", token.Email)
 	d.Set("username", token.Username)
-	d.Set("encodedPassword", token.EncodedPassword)
+	d.Set("encoded_password", token.EncodedPassword)
 }
 
 var MultiLevelResourceImporter = &schema.ResourceImporter{
