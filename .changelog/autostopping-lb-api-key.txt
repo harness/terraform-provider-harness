@@ -1,0 +1,4 @@
+```release-note:breaking-change
+resource/harness_autostopping_aws_alb: `api_key` is now required. Existing configurations must set a Harness NG API key used to authenticate the AutoStopping warmup function.
+resource/harness_autostopping_azure_gateway: Added required `api_key` for AutoStopping warmup function authentication.
+```

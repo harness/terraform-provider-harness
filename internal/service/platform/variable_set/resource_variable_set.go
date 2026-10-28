@@ -201,7 +201,7 @@ func resourceVarsetRead(ctx context.Context, d *schema.ResourceData, meta interf
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleIacmReadApiError(err, d, httpResp)
 	}
 
 	readVariableSet(d, &resp)

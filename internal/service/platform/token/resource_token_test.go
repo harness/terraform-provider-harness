@@ -3,6 +3,7 @@ package token_test
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -305,4 +306,544 @@ func ProjectResourceImportTokenIdFunc(resourceName string) resource.ImportStateI
 		apikey_type := primary.Attributes["apikey_type"]
 		return fmt.Sprintf("%s/%s/%s/%s/%s/%s", orgId, projId, parent_id, apikey_id, apikey_type, id), nil
 	}
+}
+
+/*
+---------------------------------------------------------------------------
+# HSF-99 Project-Scope Lifecycle Acceptance Tests
+---------------------------------------------------------------------------
+    export HARNESS_ACCOUNT_ID='<account-id>'
+    export HARNESS_PLATFORM_API_KEY='<pat-or-sa-key>'
+
+    export TOKEN_PROJECT_SCOPE_ORG_ID='<org-id>'
+    export TOKEN_PROJECT_SCOPE_PROJECT_ID='<project-id>'
+    export TOKEN_APIKEY_TYPE='USER'   # USER or SERVICE_ACCOUNT (defaults to USER)
+    export HARNESS_PAT_KEY_PARENT_IDENTIFIER='<user-or-sa-id>'
+
+    go test -v -run "TestProjectResourceTokenLifecycle" -count=1 -timeout 120m \
+      ./internal/service/platform/token/...
+*/
+
+func TestProjectResourceTokenLifecycle_IgnoreChanges(t *testing.T) {
+	orgID := os.Getenv("TOKEN_PROJECT_SCOPE_ORG_ID")
+	if orgID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_ORG_ID not set, skipping")
+	}
+	projectID := os.Getenv("TOKEN_PROJECT_SCOPE_PROJECT_ID")
+	if projectID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_PROJECT_ID not set, skipping")
+	}
+	accountID := os.Getenv("HARNESS_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("HARNESS_ACCOUNT_ID not set, skipping")
+	}
+	parentID := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
+	if parentID == "" {
+		t.Skip("HARNESS_PAT_KEY_PARENT_IDENTIFIER not set, skipping")
+	}
+	apikeyType := os.Getenv("TOKEN_APIKEY_TYPE")
+	if apikeyType == "" {
+		apikeyType = "USER"
+	}
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_platform_token.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTokenDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectTokenLifecycle_IgnoreChanges(id, "initial name", orgID, projectID, parentID, accountID, apikeyType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", "initial name"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+					resource.TestCheckResourceAttr(resourceName, "apikey_type", apikeyType),
+				),
+			},
+			{
+				// name changed in config but ignore_changes = [name] must suppress the diff
+				Config:             testAccProjectTokenLifecycle_IgnoreChanges(id, "changed name", orgID, projectID, parentID, accountID, apikeyType),
+				ExpectNonEmptyPlan: false,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+				),
+			},
+		},
+	})
+}
+
+func TestProjectResourceTokenLifecycle_CreateBeforeDestroy(t *testing.T) {
+	orgID := os.Getenv("TOKEN_PROJECT_SCOPE_ORG_ID")
+	if orgID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_ORG_ID not set, skipping")
+	}
+	projectID := os.Getenv("TOKEN_PROJECT_SCOPE_PROJECT_ID")
+	if projectID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_PROJECT_ID not set, skipping")
+	}
+	accountID := os.Getenv("HARNESS_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("HARNESS_ACCOUNT_ID not set, skipping")
+	}
+	parentID := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
+	if parentID == "" {
+		t.Skip("HARNESS_PAT_KEY_PARENT_IDENTIFIER not set, skipping")
+	}
+	apikeyType := os.Getenv("TOKEN_APIKEY_TYPE")
+	if apikeyType == "" {
+		apikeyType = "USER"
+	}
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_platform_token.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTokenDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectTokenLifecycle_CreateBeforeDestroy(id, "token name", orgID, projectID, parentID, accountID, apikeyType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+					resource.TestCheckResourceAttr(resourceName, "apikey_type", apikeyType),
+				),
+			},
+			{
+				// identifier change forces replace; create_before_destroy ensures new resource
+				// is provisioned before the old one is removed
+				Config: testAccProjectTokenLifecycle_CreateBeforeDestroy(id+"_new", "token name", orgID, projectID, parentID, accountID, apikeyType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id+"_new"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+				),
+			},
+		},
+	})
+}
+
+func TestProjectResourceTokenLifecycle_PreventDestroy(t *testing.T) {
+	orgID := os.Getenv("TOKEN_PROJECT_SCOPE_ORG_ID")
+	if orgID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_ORG_ID not set, skipping")
+	}
+	projectID := os.Getenv("TOKEN_PROJECT_SCOPE_PROJECT_ID")
+	if projectID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_PROJECT_ID not set, skipping")
+	}
+	accountID := os.Getenv("HARNESS_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("HARNESS_ACCOUNT_ID not set, skipping")
+	}
+	parentID := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
+	if parentID == "" {
+		t.Skip("HARNESS_PAT_KEY_PARENT_IDENTIFIER not set, skipping")
+	}
+	apikeyType := os.Getenv("TOKEN_APIKEY_TYPE")
+	if apikeyType == "" {
+		apikeyType = "USER"
+	}
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_platform_token.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectTokenLifecycle_PreventDestroy(id, "token name", orgID, projectID, parentID, accountID, apikeyType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+					resource.TestCheckResourceAttr(resourceName, "apikey_type", apikeyType),
+				),
+			},
+			{
+				// destroy while prevent_destroy = true must be rejected by Terraform
+				Config:      testAccProjectTokenLifecycle_PreventDestroy(id, "token name", orgID, projectID, parentID, accountID, apikeyType),
+				Destroy:     true,
+				ExpectError: regexp.MustCompile(`prevent_destroy`),
+			},
+			{
+				// drop prevent_destroy so the test framework can clean up the resource
+				Config:  testAccProjectTokenLifecycle_Base(id, "token name", orgID, projectID, parentID, accountID, apikeyType),
+				Destroy: true,
+			},
+		},
+	})
+}
+
+func TestProjectResourceTokenLifecycle_ReplaceTriggeredBy(t *testing.T) {
+	orgID := os.Getenv("TOKEN_PROJECT_SCOPE_ORG_ID")
+	if orgID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_ORG_ID not set, skipping")
+	}
+	projectID := os.Getenv("TOKEN_PROJECT_SCOPE_PROJECT_ID")
+	if projectID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_PROJECT_ID not set, skipping")
+	}
+	accountID := os.Getenv("HARNESS_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("HARNESS_ACCOUNT_ID not set, skipping")
+	}
+	parentID := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
+	if parentID == "" {
+		t.Skip("HARNESS_PAT_KEY_PARENT_IDENTIFIER not set, skipping")
+	}
+	apikeyType := os.Getenv("TOKEN_APIKEY_TYPE")
+	if apikeyType == "" {
+		apikeyType = "USER"
+	}
+
+	apikeyID := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	tokenID := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_platform_token.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTokenDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectTokenLifecycle_ReplaceTriggeredBy(apikeyID, tokenID, "apikey name", orgID, projectID, parentID, accountID, apikeyType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", tokenID),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+					resource.TestCheckResourceAttr(resourceName, "apikey_type", apikeyType),
+				),
+			},
+			{
+				// changing the apikey name triggers token replacement via replace_triggered_by
+				Config: testAccProjectTokenLifecycle_ReplaceTriggeredBy(apikeyID, tokenID, "apikey name updated", orgID, projectID, parentID, accountID, apikeyType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", tokenID),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+				),
+			},
+		},
+	})
+}
+
+func TestProjectResourceTokenLifecycle_Precondition(t *testing.T) {
+	orgID := os.Getenv("TOKEN_PROJECT_SCOPE_ORG_ID")
+	if orgID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_ORG_ID not set, skipping")
+	}
+	projectID := os.Getenv("TOKEN_PROJECT_SCOPE_PROJECT_ID")
+	if projectID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_PROJECT_ID not set, skipping")
+	}
+	accountID := os.Getenv("HARNESS_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("HARNESS_ACCOUNT_ID not set, skipping")
+	}
+	parentID := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
+	if parentID == "" {
+		t.Skip("HARNESS_PAT_KEY_PARENT_IDENTIFIER not set, skipping")
+	}
+	apikeyType := os.Getenv("TOKEN_APIKEY_TYPE")
+	if apikeyType == "" {
+		apikeyType = "USER"
+	}
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_platform_token.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTokenDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectTokenLifecycle_Precondition(id, apikeyType, apikeyType, orgID, projectID, parentID, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+					resource.TestCheckResourceAttr(resourceName, "apikey_type", apikeyType),
+				),
+			},
+			{
+				// apikey stays valid; only the token variable is set to an invalid type so the
+				// precondition fires before the token apply rather than apikey schema validation
+				Config:      testAccProjectTokenLifecycle_Precondition(id, "INVALID_TYPE", apikeyType, orgID, projectID, parentID, accountID),
+				ExpectError: regexp.MustCompile(`apikey_type must be USER or SERVICE_ACCOUNT`),
+			},
+		},
+	})
+}
+
+func TestProjectResourceTokenLifecycle_Postcondition(t *testing.T) {
+	orgID := os.Getenv("TOKEN_PROJECT_SCOPE_ORG_ID")
+	if orgID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_ORG_ID not set, skipping")
+	}
+	projectID := os.Getenv("TOKEN_PROJECT_SCOPE_PROJECT_ID")
+	if projectID == "" {
+		t.Skip("TOKEN_PROJECT_SCOPE_PROJECT_ID not set, skipping")
+	}
+	accountID := os.Getenv("HARNESS_ACCOUNT_ID")
+	if accountID == "" {
+		t.Skip("HARNESS_ACCOUNT_ID not set, skipping")
+	}
+	parentID := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
+	if parentID == "" {
+		t.Skip("HARNESS_PAT_KEY_PARENT_IDENTIFIER not set, skipping")
+	}
+	apikeyType := os.Getenv("TOKEN_APIKEY_TYPE")
+	if apikeyType == "" {
+		apikeyType = "USER"
+	}
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName := "harness_platform_token.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTokenDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProjectTokenLifecycle_Postcondition(id, orgID, projectID, parentID, accountID, apikeyType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+					resource.TestCheckResourceAttr(resourceName, "apikey_type", apikeyType),
+					resource.TestCheckResourceAttrSet(resourceName, "value"),
+				),
+			},
+		},
+	})
+}
+
+func testAccProjectTokenLifecycle_Base(id, name, orgID, projectID, parentID, accountID, apikeyType string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_apikey" "test" {
+  identifier                   = "%[1]s"
+  name                         = "%[1]s"
+  parent_id                    = "%[5]s"
+  account_id                   = "%[6]s"
+  org_id                       = "%[3]s"
+  project_id                   = "%[4]s"
+  apikey_type                  = "%[7]s"
+  default_time_to_expire_token = 1000000
+}
+
+resource "harness_platform_token" "test" {
+  identifier  = "%[1]s"
+  name        = "%[2]s"
+  parent_id   = "%[5]s"
+  account_id  = "%[6]s"
+  org_id      = "%[3]s"
+  project_id  = "%[4]s"
+  apikey_type = "%[7]s"
+  apikey_id   = harness_platform_apikey.test.id
+}
+`, id, name, orgID, projectID, parentID, accountID, apikeyType)
+}
+
+func testAccProjectTokenLifecycle_IgnoreChanges(id, name, orgID, projectID, parentID, accountID, apikeyType string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_apikey" "test" {
+  identifier                   = "%[1]s"
+  name                         = "%[1]s"
+  parent_id                    = "%[5]s"
+  account_id                   = "%[6]s"
+  org_id                       = "%[3]s"
+  project_id                   = "%[4]s"
+  apikey_type                  = "%[7]s"
+  default_time_to_expire_token = 1000000
+}
+
+resource "harness_platform_token" "test" {
+  identifier  = "%[1]s"
+  name        = "%[2]s"
+  parent_id   = "%[5]s"
+  account_id  = "%[6]s"
+  org_id      = "%[3]s"
+  project_id  = "%[4]s"
+  apikey_type = "%[7]s"
+  apikey_id   = harness_platform_apikey.test.id
+
+  lifecycle {
+    ignore_changes = [name]
+  }
+}
+`, id, name, orgID, projectID, parentID, accountID, apikeyType)
+}
+
+func testAccProjectTokenLifecycle_CreateBeforeDestroy(id, name, orgID, projectID, parentID, accountID, apikeyType string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_apikey" "test" {
+  identifier                   = "%[1]s"
+  name                         = "%[1]s"
+  parent_id                    = "%[5]s"
+  account_id                   = "%[6]s"
+  org_id                       = "%[3]s"
+  project_id                   = "%[4]s"
+  apikey_type                  = "%[7]s"
+  default_time_to_expire_token = 1000000
+}
+
+resource "harness_platform_token" "test" {
+  identifier  = "%[1]s"
+  name        = "%[2]s"
+  parent_id   = "%[5]s"
+  account_id  = "%[6]s"
+  org_id      = "%[3]s"
+  project_id  = "%[4]s"
+  apikey_type = "%[7]s"
+  apikey_id   = harness_platform_apikey.test.id
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+`, id, name, orgID, projectID, parentID, accountID, apikeyType)
+}
+
+func testAccProjectTokenLifecycle_PreventDestroy(id, name, orgID, projectID, parentID, accountID, apikeyType string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_apikey" "test" {
+  identifier                   = "%[1]s"
+  name                         = "%[1]s"
+  parent_id                    = "%[5]s"
+  account_id                   = "%[6]s"
+  org_id                       = "%[3]s"
+  project_id                   = "%[4]s"
+  apikey_type                  = "%[7]s"
+  default_time_to_expire_token = 1000000
+}
+
+resource "harness_platform_token" "test" {
+  identifier  = "%[1]s"
+  name        = "%[2]s"
+  parent_id   = "%[5]s"
+  account_id  = "%[6]s"
+  org_id      = "%[3]s"
+  project_id  = "%[4]s"
+  apikey_type = "%[7]s"
+  apikey_id   = harness_platform_apikey.test.id
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+`, id, name, orgID, projectID, parentID, accountID, apikeyType)
+}
+
+func testAccProjectTokenLifecycle_ReplaceTriggeredBy(apikeyID, tokenID, apikeyName, orgID, projectID, parentID, accountID, apikeyType string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_apikey" "test" {
+  identifier                   = "%[1]s"
+  name                         = "%[3]s"
+  parent_id                    = "%[6]s"
+  account_id                   = "%[7]s"
+  org_id                       = "%[4]s"
+  project_id                   = "%[5]s"
+  apikey_type                  = "%[8]s"
+  default_time_to_expire_token = 1000000
+}
+
+resource "harness_platform_token" "test" {
+  identifier  = "%[2]s"
+  name        = "%[2]s"
+  parent_id   = "%[6]s"
+  account_id  = "%[7]s"
+  org_id      = "%[4]s"
+  project_id  = "%[5]s"
+  apikey_type = "%[8]s"
+  apikey_id   = harness_platform_apikey.test.id
+
+  lifecycle {
+    replace_triggered_by = [harness_platform_apikey.test.name]
+  }
+}
+`, apikeyID, tokenID, apikeyName, orgID, projectID, parentID, accountID, apikeyType)
+}
+
+// tokenApikeyType is injected into the variable block (token resource); apikeyType is used
+// directly on harness_platform_apikey so its ValidateFunc is always satisfied.
+func testAccProjectTokenLifecycle_Precondition(id, tokenApikeyType, apikeyType, orgID, projectID, parentID, accountID string) string {
+	return fmt.Sprintf(`
+variable "token_apikey_type" {
+  default = "%[2]s"
+}
+
+resource "harness_platform_apikey" "test" {
+  identifier                   = "%[1]s"
+  name                         = "%[1]s"
+  parent_id                    = "%[6]s"
+  account_id                   = "%[7]s"
+  org_id                       = "%[4]s"
+  project_id                   = "%[5]s"
+  apikey_type                  = "%[3]s"
+  default_time_to_expire_token = 1000000
+}
+
+resource "harness_platform_token" "test" {
+  identifier  = "%[1]s"
+  name        = "%[1]s"
+  parent_id   = "%[6]s"
+  account_id  = "%[7]s"
+  org_id      = "%[4]s"
+  project_id  = "%[5]s"
+  apikey_type = var.token_apikey_type
+  apikey_id   = harness_platform_apikey.test.id
+
+  lifecycle {
+    precondition {
+      condition     = contains(["USER", "SERVICE_ACCOUNT"], var.token_apikey_type)
+      error_message = "apikey_type must be USER or SERVICE_ACCOUNT"
+    }
+  }
+}
+`, id, tokenApikeyType, apikeyType, orgID, projectID, parentID, accountID)
+}
+
+func testAccProjectTokenLifecycle_Postcondition(id, orgID, projectID, parentID, accountID, apikeyType string) string {
+	return fmt.Sprintf(`
+resource "harness_platform_apikey" "test" {
+  identifier                   = "%[1]s"
+  name                         = "%[1]s"
+  parent_id                    = "%[4]s"
+  account_id                   = "%[5]s"
+  org_id                       = "%[2]s"
+  project_id                   = "%[3]s"
+  apikey_type                  = "%[6]s"
+  default_time_to_expire_token = 1000000
+}
+
+resource "harness_platform_token" "test" {
+  identifier  = "%[1]s"
+  name        = "%[1]s"
+  parent_id   = "%[4]s"
+  account_id  = "%[5]s"
+  org_id      = "%[2]s"
+  project_id  = "%[3]s"
+  apikey_type = "%[6]s"
+  apikey_id   = harness_platform_apikey.test.id
+
+  lifecycle {
+    postcondition {
+      condition     = self.value != ""
+      error_message = "token value must be non-empty after creation"
+    }
+  }
+}
+`, id, orgID, projectID, parentID, accountID, apikeyType)
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func ResourceAzureGateway() *schema.Resource {
@@ -78,6 +79,13 @@ func ResourceAzureGateway() *schema.Resource {
 				Description: "ID of existing SSL certificate from AppGateway being imported. Required only for importing existing AppGateway. Required only for SSL based rules",
 				Type:        schema.TypeString,
 				Optional:    true,
+			},
+			"api_key": {
+				Description:  "Harness NG API key. Used to configure the AutoStopping warmup function with authentication",
+				Sensitive:    true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 			"delete_cloud_resources_on_destroy": {
 				Description: "Governs how the loadabalancer entity will be deleted on Terraform destroy. When set to true, the associated Application Gateway will be deleted permanently from Azure account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, leaving the cloud resources intact.",

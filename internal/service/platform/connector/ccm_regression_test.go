@@ -32,6 +32,7 @@ import (
 func TestAccResourceConnectorAwsCC_CCM32336_OutOfBandDeleteRecreates(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
+	accountID := uniqueTestAwsAccountID()
 	resourceName := "harness_platform_connector_awscc.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -40,7 +41,7 @@ func TestAccResourceConnectorAwsCC_CCM32336_OutOfBandDeleteRecreates(t *testing.
 		CheckDestroy:      testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorAwsCC(id, name),
+				Config: testAccResourceConnectorAwsCC(id, name, accountID, "test"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -48,12 +49,12 @@ func TestAccResourceConnectorAwsCC_CCM32336_OutOfBandDeleteRecreates(t *testing.
 			},
 			{
 				PreConfig:          func() { deleteConnectorOOB(t, id) },
-				Config:             testAccResourceConnectorAwsCC(id, name),
+				Config:             testAccResourceConnectorAwsCC(id, name, accountID, "test"),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: testAccResourceConnectorAwsCC(id, name),
+				Config: testAccResourceConnectorAwsCC(id, name, accountID, "test"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),

@@ -47,7 +47,7 @@ func resourceRepoWebhookRead(ctx context.Context, d *schema.ResourceData, meta i
 		},
 	)
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, resp)
+		return helpers.HandleCodeReadApiError(err, d, resp)
 	}
 
 	readRepoWebhook(d, &webhook, orgID.Value(), projectID.Value(), repoIdentifier)
@@ -126,7 +126,7 @@ func resourceRepoWebhookDelete(
 		},
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, resp)
+		return helpers.HandleCodeDeleteApiError(err, d, resp)
 	}
 
 	return nil

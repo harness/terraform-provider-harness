@@ -42,6 +42,7 @@ resource "harness_autostopping_aws_alb" "harness_alb" {
 
 ### Required
 
+- `api_key` (String, Sensitive) Harness NG API key. Used to configure the AutoStopping warmup function with authentication
 - `cloud_connector_id` (String) Id of the cloud connector
 - `delete_cloud_resources_on_destroy` (Boolean) Governs how the loadabalancer entity will be deleted on Terraform destroy. When set to true, the associated ALB will be deleted permanently from AWS account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, leaving the cloud resources intact.
 - `name` (String) Name of the proxy
@@ -51,7 +52,6 @@ resource "harness_autostopping_aws_alb" "harness_alb" {
 ### Optional
 
 - `alb_arn` (String) Arn of AWS ALB to be imported. Required only for importing existing ALB
-- `api_key` (String, Sensitive) Harness NG API key. Used to configure the AutoStopping warmup function with authentication
 - `certificate_id` (String)
 - `security_groups` (List of String) Security Group to define the security rules that determine the inbound and outbound traffic
 

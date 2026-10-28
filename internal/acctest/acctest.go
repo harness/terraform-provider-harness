@@ -3,6 +3,7 @@ package acctest
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"sync"
 	"testing"
@@ -49,6 +50,11 @@ func TestAccConfigureProvider() {
 }
 
 func TestAccPreCheck(t *testing.T) {
+	// Many acceptance tests incorrectly use resource.UnitTest (runs without TF_ACC).
+	// Gate live-API setup so `make test` / coverage CI skip them; `make testacc` sets TF_ACC=1.
+	if os.Getenv(resource.TestEnvVar) == "" {
+		t.Skipf("Acceptance tests skipped unless %s=1", resource.TestEnvVar)
+	}
 	TestAccConfigureProvider()
 }
 
@@ -61,7 +67,14 @@ func TestAccGetResource(resourceName string, state *terraform.State) *terraform.
 }
 
 func TestAccGetApiClientFromProvider() *internal.Session {
-	return TestAccProvider.Meta().(*internal.Session)
+	if TestAccProvider == nil {
+		return nil
+	}
+	meta := TestAccProvider.Meta()
+	if meta == nil {
+		return nil
+	}
+	return meta.(*internal.Session)
 }
 
 func TestAccGetPlatformClientWithContext() (*nextgen.APIClient, context.Context) {

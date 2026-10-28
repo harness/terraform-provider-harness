@@ -35,7 +35,7 @@ data "harness_platform_har_registry" "test" {
 - `config` (Block List, Max: 1) Configuration for the registry (see [below for nested schema](#nestedblock--config))
 - `description` (String) Description of the registry
 - `metadata` (Map of String) Custom metadata key-value pairs attached to the registry. Keys and values must match the pattern [letters, numbers, _ . / = + - @] (no spaces or other special characters). Keys are case-sensitive. Maximum 49 entries allowed.
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, CRAN, ALPINE, WOLFI)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, TERRAFORM_BACKEND, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT)
 
 ### Read-Only
 
@@ -57,7 +57,7 @@ Optional:
 - `auth_type` (String) Type of authentication for UPSTREAM registry type (UserPassword, Anonymous, AccessKeySecretKey)
 - `firewall_mode` (String) Dependency firewall mode for UPSTREAM registry type. Valid values: `ALLOW` (default - no policy evaluation), `ENABLED` (firewall active, artifacts scanned against policies), `QUARANTINE` (artifacts that fail policy evaluation are blocked). Not supported for DOCKER or HELM package types.
 - `remote_url_suffix` (String) Optional path suffix for Python UPSTREAM registries with Custom source. Overrides the default `simple` path used for PyPI-compatible indexes. Requires `config.url` when source is Custom. Not supported for non-PYTHON package types. Leading and trailing slashes are normalized.
-- `source` (String) Upstream source
+- `source` (String) Upstream source. Every package type accepts `Custom` (which requires `config.url`). Package types with a built-in default source, which resolves the remote URL for you: `ALPINE` → `Alpine`, `CARGO` → `Crates`, `COMPOSER` → `Packagist`, `CONAN` → `ConanCenter`, `CONDA` → `Anaconda`, `CRAN` → `CRAN`, `DART` → `Pubdev`, `DOCKER` → `Dockerhub` or `AwsEcr`, `GO` → `GoProxy`, `HELM_HTTP` → `HelmChartRepo`, `MAVEN` → `MavenCentral`, `NPM` → `NpmJs`, `NUGET` → `NugetOrg`, `PUPPET` → `PuppetForge`, `PYTHON` → `PyPi`, `RUBY` → `RubyGems`, `TERRAFORM` → `TerraformRegistry`, `WOLFI` → `Wolfi`. `DEBIAN`, `GENERIC`, `HELM`, `HUGGINGFACE`, `RAW`, `RPM` and `SWIFT` support `Custom` only, and `TERRAFORM_BACKEND` does not support UPSTREAM registries.
 - `upstream_proxies` (List of String) List of upstream proxies for VIRTUAL registry type
 - `url` (String) URL of the upstream (required if type=UPSTREAM & package_type=HELM)
 

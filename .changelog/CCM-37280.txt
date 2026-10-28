@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_connector_awscc: Preserve CUR 2.0 settings by adding `report_type`, `region`, and `s3_prefix`. When these arguments are omitted, an existing connector keeps the values stored in Harness.
+```

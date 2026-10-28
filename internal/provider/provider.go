@@ -72,6 +72,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ip_allowlist"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/setting"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/workspace"
@@ -138,6 +139,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/pipeline/pipeline_filters"
 	pipeline_template "github.com/harness/terraform-provider-harness/internal/service/pipeline/template"
 	pipeline_template_filters "github.com/harness/terraform-provider-harness/internal/service/pipeline/template_filters"
+	"github.com/harness/terraform-provider-harness/internal/service/pipeline/trigger_pipeline"
 	pipeline_triggers "github.com/harness/terraform-provider-harness/internal/service/pipeline/triggers"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/default_images"
 	idp_resource "github.com/harness/terraform-provider-harness/internal/service/platform/idp"
@@ -225,6 +227,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_artifactory":              cdng_connector_artifactRepositories.DatasourceConnectorArtifactory(),
 				"harness_platform_connector_aws_secret_manager":       pl_secretManagers.DatasourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                      cdng_connector_cloudProviders.DatasourceConnectorAws(),
+				"harness_platform_connector_anthropic_model":           connector.DatasourceConnectorAnthropicModel(),
 				"harness_platform_connector_awscc":                    connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                   pl_secretManagers.DatasourceConnectorAwsKms(),
 				"harness_platform_connector_azure_repo":               cdng_connector_codeRepositories.DatasourceConnectorAzureRepo(),
@@ -247,6 +250,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_jenkins":                  cdng_connector_artifactRepositories.DataSourceConnectorJenkins(),
 				"harness_platform_connector_kubernetes":               cdng_connector_cloudProviders.DatasourceConnectorKubernetes(),
 				"harness_platform_connector_nexus":                    cdng_connector_artifactRepositories.DatasourceConnectorNexus(),
+				"harness_platform_connector_openai_model":             connector.DatasourceConnectorOpenAIModel(),
 				"harness_platform_connector_pagerduty":                connector.DatasourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":               connector.DatasourceConnectorPrometheus(),
 				"harness_platform_connector_rancher":                  cdng_connector_cloudProviders.DatasourceConnectorRancher(),
@@ -441,6 +445,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_azure_artifacts":             cdng_connector_artifactRepositories.ResourceConnectorAzureArtifacts(),
 				"harness_platform_connector_aws_secret_manager":          pl_secretManagers.ResourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                         cdng_connector_cloudProviders.ResourceConnectorAws(),
+				"harness_platform_connector_anthropic_model":              connector.ResourceConnectorAnthropicModel(),
 				"harness_platform_connector_awscc":                       connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                      pl_secretManagers.ResourceConnectorAwsKms(),
 				"harness_platform_connector_azure_repo":                  cdng_connector_codeRepositories.ResourceConnectorAzureRepo(),
@@ -463,6 +468,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_kubernetes":                  cdng_connector_cloudProviders.ResourceConnectorK8s(),
 				"harness_platform_connector_newrelic":                    connector.ResourceConnectorNewRelic(),
 				"harness_platform_connector_nexus":                       cdng_connector_artifactRepositories.ResourceConnectorNexus(),
+				"harness_platform_connector_openai_model":                connector.ResourceConnectorOpenAIModel(),
 				"harness_platform_connector_pagerduty":                   connector.ResourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":                  connector.ResourceConnectorPrometheus(),
 				"harness_platform_connector_rancher":                     cdng_connector_cloudProviders.ResourceConnectorK8sRancher(),
@@ -503,6 +509,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_monitored_service":                     monitored_service.ResourceMonitoredService(),
 				"harness_platform_organization":                          organization.ResourceOrganization(),
 				"harness_platform_pipeline":                              pipeline.ResourcePipeline(),
+				"harness_platform_trigger_pipeline":                      trigger_pipeline.ResourceTriggerPipeline(),
 				"harness_platform_project":                               project.ResourceProject(),
 				"harness_platform_service":                               cdng_service.ResourceService(),
 				"harness_platform_user":                                  pl_user.ResourceUser(),
@@ -585,6 +592,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_iacm_ansible_inventory":                ansible_inventory.ResourceAnsibleInventory(),
 				"harness_platform_iacm_ansible_playbook":                 ansible_playbook.ResourceAnsiblePlaybook(),
 				"harness_platform_ip_allowlist":                          ip_allowlist.ResourceIPAllowlist(),
+				"harness_platform_setting":                               setting.ResourceSetting(),
 				"harness_platform_repo":                                  repo.ResourceRepo(),
 				"harness_platform_repo_rule_branch":                      repo_rule_branch.ResourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                          repo_webhook.ResourceRepoWebhook(),

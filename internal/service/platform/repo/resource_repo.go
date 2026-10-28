@@ -151,7 +151,7 @@ func resourceRepoDelete(
 		},
 	)
 	if err != nil {
-		return helpers.HandleCodeApiError(err, d, resp)
+		return helpers.HandleCodeDeleteApiError(err, d, resp)
 	}
 
 	return nil

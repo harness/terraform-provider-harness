@@ -5,7 +5,27 @@ import (
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+func TestReadPolicysetSetsDescription(t *testing.T) {
+	d := schema.TestResourceDataRaw(t, ResourcePolicyset().Schema, map[string]interface{}{
+		"name":       "name",
+		"identifier": "id",
+		"type":       "pipeline",
+		"action":     "onrun",
+	})
+	readPolicyset(d, policymgmt.PolicySet{
+		Identifier:  "id",
+		Name:        "name",
+		Action:      "onrun",
+		Type_:       "pipeline",
+		Description: "This description should be visible in Harness",
+	})
+	if got, want := d.Get("description").(string), "This description should be visible in Harness"; got != want {
+		t.Fatalf("description = %q, want %q", got, want)
+	}
+}
 
 func TestScopedPolicyIdentifier(t *testing.T) {
 	cases := []struct {

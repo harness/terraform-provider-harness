@@ -48,7 +48,7 @@ data "harness_platform_gitops_agent" "example" {
 
 ### Read-Only
 
-- `agent_token` (String) Agent token to be used for authentication of the agent with Harness.
+- `agent_token` (String, Sensitive) Agent token to be used for authentication of the agent with Harness.
 - `description` (String) Description of the GitOps agent.
 - `id` (String) The ID of this resource.
 - `is_authenticated` (Boolean) This computed field specifies if the referenced agent ever successfully connected and was authenticated to harness. Note that this is different from whether the agent is currently connected. <b>Set with_credentials to true to allow computing of this field.</b> For retrieval of this information, the user associated to the token being used must have Gitops Agent Edit permissions

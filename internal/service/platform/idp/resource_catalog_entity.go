@@ -39,12 +39,9 @@ func ResourceCatalogEntity() *schema.Resource {
 			"identifier": helpers.GetIdentifierSchema(helpers.SchemaFlagTypes.Required),
 			"kind": {
 				Type:        schema.TypeString,
-				Description: "Kind of the catalog entity",
+				Description: "Kind of the catalog entity. Supports built-in kinds (component, group, user, workflow, resource, system) as well as custom kinds registered in IDP.",
 				Optional:    true,
 				Computed:    true,
-				ValidateFunc: validation.StringInSlice([]string{
-					"component", "group", "user", "workflow", "resource", "system",
-				}, false),
 			},
 			"org_id":     helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Optional),
 			"project_id": helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Optional),

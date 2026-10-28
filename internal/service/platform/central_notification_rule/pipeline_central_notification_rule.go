@@ -418,7 +418,9 @@ func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.Res
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
 			eventDataList := []interface{}{}
-			// Handle notification event data - it can be null when scope_identifiers is empty
+			// Only populate notification_event_data when the API actually returns it.
+			// Fabricating a default block when the API returns null causes perpetual
+			// plan drift for configs that omit the block (PL-75312).
 			if cfg.PipelineEventNotificationParamsDto != nil && cfg.PipelineEventNotificationParamsDto.Type_ != nil {
 				eventData := make(map[string]interface{})
 
@@ -428,12 +430,6 @@ func readPipelineCentralNotificationRule(accountIdentifier string, d *schema.Res
 					scopeIdentifiers = []string{}
 				}
 				eventData["scope_identifiers"] = scopeIdentifiers
-				eventDataList = []interface{}{eventData}
-			} else {
-				// When notification_event_data is null, create default structure with PIPELINE type
-				eventData := make(map[string]interface{})
-				eventData["type"] = "PIPELINE"
-				eventData["scope_identifiers"] = []string{}
 				eventDataList = []interface{}{eventData}
 			}
 

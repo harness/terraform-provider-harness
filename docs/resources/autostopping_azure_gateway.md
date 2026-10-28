@@ -24,6 +24,7 @@ resource "harness_autostopping_azure_gateway" "test" {
   azure_func_region                 = "westus2"
   frontend_ip                       = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/publicIPAddresses/publicip"
   sku_size                          = "sku2"
+  api_key                           = "api_key"
   delete_cloud_resources_on_destroy = true
 }
 
@@ -37,6 +38,7 @@ resource "harness_autostopping_azure_gateway" "import_test" {
   certificate_id                    = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/applicationGateways/TestAppGateway/sslCertificates/certificate_name"
   azure_func_region                 = "westus2"
   vpc                               = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/virtualNetworks/test_resource_group_vnet"
+  api_key                           = "api_key"
   delete_cloud_resources_on_destroy = false
 }
 ```
@@ -46,6 +48,7 @@ resource "harness_autostopping_azure_gateway" "import_test" {
 
 ### Required
 
+- `api_key` (String, Sensitive) Harness NG API key. Used to configure the AutoStopping warmup function with authentication
 - `azure_func_region` (String) Region in which azure cloud function will be provisioned
 - `cloud_connector_id` (String) Id of the cloud connector
 - `delete_cloud_resources_on_destroy` (Boolean) Governs how the loadabalancer entity will be deleted on Terraform destroy. When set to true, the associated Application Gateway will be deleted permanently from Azure account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, leaving the cloud resources intact.

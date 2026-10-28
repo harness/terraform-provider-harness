@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -49,6 +50,79 @@ func TestProjResourceRepoRule(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: false,
 				ImportStateIdFunc: acctest.RepoRuleProjectLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// TestProjResourceRepoRule_DeleteUnderlyingResource verifies that a branch rule deleted
+// outside Terraform is dropped from state on refresh instead of failing with a 404.
+func TestProjResourceRepoRule_DeleteUnderlyingResource(t *testing.T) {
+	identifier := identifier(t.Name())
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testRepoRuleDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjResourceRepoRule(identifier, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetCodeClientWithContext()
+					_, err := c.RepositoryApi.RuleDelete(
+						ctx, c.AccountId, identifier, "rule_"+identifier,
+						&code.RepositoryApiRuleDeleteOpts{
+							OrgIdentifier:     optional.NewString("org_" + identifier),
+							ProjectIdentifier: optional.NewString("proj_" + identifier),
+						})
+					require.NoError(t, err)
+				},
+				Config:             testProjResourceRepoRule(identifier, description),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+// TestProjResourceRepoRule_DeleteParentRepo verifies that a branch rule whose parent
+// repo was deleted outside Terraform is dropped from state on refresh instead of
+// failing with a 404. This is the destroy-retry scenario from CODE-6342.
+func TestProjResourceRepoRule_DeleteParentRepo(t *testing.T) {
+	identifier := identifier(t.Name())
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testRepoRuleDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjResourceRepoRule(identifier, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetCodeClientWithContext()
+					_, _, err := c.RepositoryApi.DeleteRepository(
+						ctx, c.AccountId, identifier,
+						&code.RepositoryApiDeleteRepositoryOpts{
+							OrgIdentifier:     optional.NewString("org_" + identifier),
+							ProjectIdentifier: optional.NewString("proj_" + identifier),
+						})
+					require.NoError(t, err)
+				},
+				Config:             testProjResourceRepoRule(identifier, description),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -127,6 +201,11 @@ func testFindRepoRule(
 
 func testRepoRuleDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
+		// The resource may already be gone from state (e.g. deleted out-of-band and
+		// dropped on refresh), in which case there is nothing left to look up.
+		if _, ok := state.RootModule().Resources[resourceName]; !ok {
+			return nil
+		}
 		rule, _ := testFindRepoRule(resourceName, state)
 		if rule != nil {
 			return fmt.Errorf("found rule: %s", rule.Identifier)

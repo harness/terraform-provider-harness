@@ -49,7 +49,7 @@ Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 
 ### Read-Only
 
-- `agent_token` (String) Agent token to be used for authentication of the agent with Harness.
+- `agent_token` (String, Sensitive) Agent token to be used for authentication of the agent with Harness.
 - `id` (String) The ID of this resource.
 - `prefixed_identifier` (String) Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent
 

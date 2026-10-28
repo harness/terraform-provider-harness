@@ -9,6 +9,43 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
+// upstreamSources mirrors the UpstreamConfig.source enum in the Harness
+// Artifact Registry API. The service validates the source against the package
+// type, so this list is intentionally flat.
+var upstreamSources = []string{
+	"Custom",
+	"Alpine",
+	"Anaconda",
+	"AwsEcr",
+	"ConanCenter",
+	"CRAN",
+	"Crates",
+	"Dockerhub",
+	"GoProxy",
+	"HelmChartRepo",
+	"HuggingFace",
+	"MavenCentral",
+	"NpmJs",
+	"NugetOrg",
+	"Packagist",
+	"Pubdev",
+	"PuppetForge",
+	"PyPi",
+	"RubyGems",
+	"TerraformRegistry",
+	"Wolfi",
+}
+
+const upstreamSourceDescription = "Upstream source. Every package type accepts `Custom` (which requires `config.url`). " +
+	"Package types with a built-in default source, which resolves the remote URL for you: " +
+	"`ALPINE` → `Alpine`, `CARGO` → `Crates`, `COMPOSER` → `Packagist`, `CONAN` → `ConanCenter`, " +
+	"`CONDA` → `Anaconda`, `CRAN` → `CRAN`, `DART` → `Pubdev`, `DOCKER` → `Dockerhub` or `AwsEcr`, " +
+	"`GO` → `GoProxy`, `HELM_HTTP` → `HelmChartRepo`, `MAVEN` → `MavenCentral`, `NPM` → `NpmJs`, " +
+	"`NUGET` → `NugetOrg`, `PUPPET` → `PuppetForge`, `PYTHON` → `PyPi`, `RUBY` → `RubyGems`, " +
+	"`TERRAFORM` → `TerraformRegistry`, `WOLFI` → `Wolfi`. " +
+	"`DEBIAN`, `GENERIC`, `HELM`, `HUGGINGFACE`, `RAW`, `RPM` and `SWIFT` support `Custom` only, " +
+	"and `TERRAFORM_BACKEND` does not support UPSTREAM registries."
+
 func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 	mainSchema := map[string]*schema.Schema{
 		"identifier": {
@@ -97,12 +134,10 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 
 					// Upstream Config
 					"source": {
-						Type:        schema.TypeString,
-						Optional:    true,
-						Description: "Upstream source",
-						ValidateFunc: validation.StringInSlice([]string{
-							"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter", "RubyGems", "CRAN", "Alpine", "Wolfi",
-						}, false),
+						Type:         schema.TypeString,
+						Optional:     true,
+						Description:  upstreamSourceDescription,
+						ValidateFunc: validation.StringInSlice(upstreamSources, false),
 					},
 					"url": {
 						Description: "URL of the upstream (required if type=UPSTREAM & package_type=HELM)",
@@ -226,8 +261,8 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Description: "Time-to-live in seconds for cached FOUND metadata entries in UPSTREAM registry type. " +
 							"Honored only for UPSTREAM registries of package types that support the resource cache (currently Maven). " +
 							"Must be between 0 and 604800 (7 days). Rejected for unsupported package types.",
-						Type:     schema.TypeInt,
-						Optional: true,
+						Type:         schema.TypeInt,
+						Optional:     true,
 						ValidateFunc: validation.IntBetween(0, 604800),
 						ConflictsWith: []string{
 							"config.0.upstream_proxies",
@@ -237,8 +272,8 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Description: "Time-to-live in seconds for cached NOT_FOUND entries in UPSTREAM registry type. " +
 							"Honored only for UPSTREAM registries of package types that support the resource cache (currently Maven). " +
 							"Must be between 0 and 604800 (7 days). Rejected for unsupported package types.",
-						Type:     schema.TypeInt,
-						Optional: true,
+						Type:         schema.TypeInt,
+						Optional:     true,
 						ValidateFunc: validation.IntBetween(0, 604800),
 						ConflictsWith: []string{
 							"config.0.upstream_proxies",
@@ -248,7 +283,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			},
 		},
 		"package_type": {
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, CONAN, RUBY, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, TERRAFORM_BACKEND, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT)",
 			Type:        schema.TypeString,
 			Required:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -273,6 +308,11 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.CRAN_PackageType),
 				(string)(har.ALPINE_PackageType),
 				(string)(har.WOLFI_PackageType),
+				(string)(har.COMPOSER_PackageType),
+				(string)(har.HUGGINGFACE_PackageType),
+				(string)(har.DART_PackageType),
+				(string)(har.SWIFT_PackageType),
+				(string)(har.TERRAFORM_BACKEND_PackageType),
 			}, false),
 		},
 		"is_public": {
@@ -343,7 +383,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Computed:    true,
 		}
 		mainSchema["package_type"] = &schema.Schema{
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, GO, CONDA, DEBIAN, CONAN, RUBY, etc.)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, TERRAFORM_BACKEND, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT)",
 			Type:        schema.TypeString,
 			Optional:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -368,6 +408,11 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.CRAN_PackageType),
 				(string)(har.ALPINE_PackageType),
 				(string)(har.WOLFI_PackageType),
+				(string)(har.COMPOSER_PackageType),
+				(string)(har.HUGGINGFACE_PackageType),
+				(string)(har.DART_PackageType),
+				(string)(har.SWIFT_PackageType),
+				(string)(har.TERRAFORM_BACKEND_PackageType),
 			}, false),
 		}
 	}
@@ -381,12 +426,10 @@ func getUpstreamRegistrySchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"source": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Upstream source",
-				ValidateFunc: validation.StringInSlice([]string{
-					"Dockerhub", "Custom", "AwsEcr", "MavenCentral", "PyPi", "NpmJs", "NugetOrg", "Crates", "GoProxy", "Anaconda", "HelmChartRepo", "ConanCenter", "RubyGems", "CRAN", "Alpine", "Wolfi",
-				}, false),
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  upstreamSourceDescription,
+				ValidateFunc: validation.StringInSlice(upstreamSources, false),
 			},
 			"url": {
 				Type:         schema.TypeString,

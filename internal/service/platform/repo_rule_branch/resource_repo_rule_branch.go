@@ -49,7 +49,7 @@ func resourceRepoBranchRuleRead(ctx context.Context, d *schema.ResourceData, met
 		},
 	)
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, resp)
+		return helpers.HandleCodeReadApiError(err, d, resp)
 	}
 
 	readRepoBranchRule(d, &rule, orgID.Value(), projectID.Value(), repoIdentifier)
@@ -127,7 +127,7 @@ func resourceRepoBranchRuleDelete(
 		},
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, resp)
+		return helpers.HandleCodeDeleteApiError(err, d, resp)
 	}
 
 	return nil
