@@ -13,77 +13,68 @@ import (
 )
 
 func TestChaosScan_ResourceSchemaValid(t *testing.T) {
-	resource := ResourceChaosScan()
-	if err := resource.InternalValidate(resource.Schema, true); err != nil {
-		t.Fatalf("resource schema failed InternalValidate: %v", err)
-	}
-	if resource.Importer == nil {
-		t.Fatal("expected resource to support import")
+	for _, resource := range []*schema.Resource{ResourceChaosPipelineScan(), ResourceChaosInfrastructureScan()} {
+		if err := resource.InternalValidate(resource.Schema, true); err != nil {
+			t.Fatalf("resource schema failed InternalValidate: %v", err)
+		}
+		if resource.Importer == nil {
+			t.Fatal("expected resource to support import")
+		}
 	}
 }
 
 func TestChaosScan_DataSourceSchemaValid(t *testing.T) {
-	dataSource := DataSourceChaosScan()
-	if err := dataSource.InternalValidate(dataSource.Schema, false); err != nil {
-		t.Fatalf("data source schema failed InternalValidate: %v", err)
+	for _, dataSource := range []*schema.Resource{DataSourceChaosPipelineScan(), DataSourceChaosInfrastructureScan()} {
+		if err := dataSource.InternalValidate(dataSource.Schema, false); err != nil {
+			t.Fatalf("data source schema failed InternalValidate: %v", err)
+		}
 	}
 }
 
 func TestScanCreateRequestPipeline(t *testing.T) {
-	d := schema.TestResourceDataRaw(t, resourceChaosScanSchema(), map[string]interface{}{
-		"identity":         "cart_scan",
-		"name":             "Cart scan",
-		"org_id":           "default",
-		"project_id":       "demo",
-		"description":      "pipeline execution",
-		"detection_method": "ruleBased",
-		"tags":             []interface{}{"checkout"},
-		"pipeline_scan": []interface{}{
-			map[string]interface{}{
-				"pipeline_identity":     "cart_deploy",
-				"pipeline_execution_id": "exec-1",
-			},
-		},
+	d := schema.TestResourceDataRaw(t, resourceChaosPipelineScanSchema(), map[string]interface{}{
+		"identity":              "cart_scan",
+		"name":                  "Cart scan",
+		"org_id":                "default",
+		"project_id":            "demo",
+		"description":           "pipeline execution",
+		"detection_method":      "ruleBased",
+		"tags":                  []interface{}{"checkout"},
+		"pipeline_identity":     "cart_deploy",
+		"pipeline_execution_id": "exec-1",
 	})
 
-	req, err := scanCreateRequest(d)
+	req, err := pipelineScanRequest(d)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if req.ScanType != chaos.ScanTypePipelineExecution || req.DetectionMethod != chaos.DetectionMethodRiskAnalyzer {
-		t.Fatalf("request type = %s method = %s", req.ScanType, req.DetectionMethod)
+	if req.DetectionMethod != chaos.DetectionMethodRiskAnalyzer {
+		t.Fatalf("method = %s", req.DetectionMethod)
 	}
-	if req.Source.Pipeline == nil || req.Source.Pipeline.PipelineIdentity != "cart_deploy" || req.Source.Pipeline.PipelineExecutionID != "exec-1" {
-		t.Fatalf("pipeline = %+v", req.Source.Pipeline)
-	}
-	if req.Source.Infrastructure != nil {
-		t.Fatal("pipeline request included an infrastructure scan")
+	if req.PipelineIdentity != "cart_deploy" || req.PipelineExecutionID != "exec-1" {
+		t.Fatalf("pipeline = %+v", req)
 	}
 }
 
 func TestInfrastructureScanFromChaosInfrastructure(t *testing.T) {
-	d := schema.TestResourceDataRaw(t, resourceChaosScanSchema(), map[string]interface{}{
-		"identity":         "infra_scan",
-		"name":             "Infra scan",
-		"description":      "from chaos infrastructure",
-		"detection_method": "ruleBased",
-		"tags":             []interface{}{"payments"},
-		"infrastructure_scan": []interface{}{
-			map[string]interface{}{
-				"infrastructure_id": "hpbk8s4",
-				"environment_id":    "prod",
-			},
-		},
+	d := schema.TestResourceDataRaw(t, resourceChaosInfrastructureScanSchema(), map[string]interface{}{
+		"identity":          "infra_scan",
+		"name":              "Infra scan",
+		"description":       "from chaos infrastructure",
+		"detection_method":  "ruleBased",
+		"tags":              []interface{}{"payments"},
+		"infrastructure_id": "payments-infra",
+		"environment_id":    "prod",
 	})
 
-	req, ok, err := infrastructureScanFromResource(d)
+	req, ok, err := infrastructureScanRequest(d)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !ok || req == nil {
 		t.Fatal("expected the chaos infrastructure form")
 	}
-	if req.InfrastructureID != "hpbk8s4" || req.EnvironmentID != "prod" || req.DetectionMethod != "RiskAnalyzer" || req.Name != "Infra scan" {
+	if req.InfrastructureID != "payments-infra" || req.EnvironmentID != "prod" || req.DetectionMethod != "RiskAnalyzer" || req.Name != "Infra scan" {
 		t.Fatalf("request = %+v", req)
 	}
 	if len(req.Tags) != 1 || req.Tags[0] != "payments" {
@@ -92,20 +83,16 @@ func TestInfrastructureScanFromChaosInfrastructure(t *testing.T) {
 }
 
 func TestScanCreateRequestInfrastructure(t *testing.T) {
-	d := schema.TestResourceDataRaw(t, resourceChaosScanSchema(), map[string]interface{}{
-		"identity":         "infra_scan",
-		"name":             "Infra scan",
-		"detection_method": "ai",
-		"infrastructure_scan": []interface{}{
-			map[string]interface{}{
-				"agent_identity":               "agent-1",
-				"environment_identity":         "env-1",
-				"environment_parent_unique_id": "parent-1",
-			},
-		},
+	d := schema.TestResourceDataRaw(t, resourceChaosInfrastructureScanSchema(), map[string]interface{}{
+		"identity":                     "infra_scan",
+		"name":                         "Infra scan",
+		"detection_method":             "ai",
+		"agent_identity":               "agent-1",
+		"environment_identity":         "env-1",
+		"environment_parent_unique_id": "parent-1",
 	})
 
-	req, err := scanCreateRequest(d)
+	req, err := discoveryAgentScanRequest(d)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -122,15 +109,11 @@ func TestScanCreateRequestInfrastructure(t *testing.T) {
 }
 
 func TestScanUpdateRequestKeepsSourceOffTheBody(t *testing.T) {
-	d := schema.TestResourceDataRaw(t, resourceChaosScanSchema(), map[string]interface{}{
-		"identity": "scan_1",
-		"name":     "Renamed",
-		"pipeline_scan": []interface{}{
-			map[string]interface{}{
-				"pipeline_identity":     "pipe",
-				"pipeline_execution_id": "exec",
-			},
-		},
+	d := schema.TestResourceDataRaw(t, resourceChaosPipelineScanSchema(), map[string]interface{}{
+		"identity":              "scan_1",
+		"name":                  "Renamed",
+		"pipeline_identity":     "pipe",
+		"pipeline_execution_id": "exec",
 	})
 
 	req := scanUpdateRequest(d)
@@ -143,15 +126,11 @@ func TestScanUpdateRequestKeepsSourceOffTheBody(t *testing.T) {
 }
 
 func TestSetScanStateFlattensRisks(t *testing.T) {
-	d := schema.TestResourceDataRaw(t, resourceChaosScanSchema(), map[string]interface{}{
-		"identity": "scan_1",
-		"name":     "Scan",
-		"pipeline_scan": []interface{}{
-			map[string]interface{}{
-				"pipeline_identity":     "pipe",
-				"pipeline_execution_id": "exec",
-			},
-		},
+	d := schema.TestResourceDataRaw(t, resourceChaosPipelineScanSchema(), map[string]interface{}{
+		"identity":              "scan_1",
+		"name":                  "Scan",
+		"pipeline_identity":     "pipe",
+		"pipeline_execution_id": "exec",
 	})
 
 	err := setScanState(d, &chaos.Scan{
@@ -205,7 +184,7 @@ func TestSetScanStateFlattensRisks(t *testing.T) {
 				Context:      chaos.OccurrenceContext{Evidence: []string{"replicas=1"}},
 			}},
 		}},
-	}, true)
+	}, true, true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -218,8 +197,7 @@ func TestSetScanStateFlattensRisks(t *testing.T) {
 	if risk["identity"] != "risk-a" || risk["severity"] != "High" || risk["metadata_json"] != `{"rule":"replicas"}` {
 		t.Fatalf("risk = %#v", risk)
 	}
-	pipeline := d.Get("pipeline_scan").([]interface{})[0].(map[string]interface{})
-	infras := pipeline["infrastructures"].([]interface{})
+	infras := d.Get("infrastructures").([]interface{})
 	if len(infras) != 1 || infras[0].(map[string]interface{})["environment_ref"] != "prod" {
 		t.Fatalf("infrastructures = %#v", infras)
 	}
@@ -241,15 +219,11 @@ func TestSetScanStateFlattensRisks(t *testing.T) {
 		t.Fatalf("status = %s", d.Get("status"))
 	}
 
-	infraData := schema.TestResourceDataRaw(t, resourceChaosScanSchema(), map[string]interface{}{
-		"identity": "infra_scan",
-		"name":     "Infra",
-		"infrastructure_scan": []interface{}{
-			map[string]interface{}{
-				"infrastructure_id": "hpbk8s4",
-				"environment_id":    "prod",
-			},
-		},
+	infraData := schema.TestResourceDataRaw(t, resourceChaosInfrastructureScanSchema(), map[string]interface{}{
+		"identity":          "infra_scan",
+		"name":              "Infra",
+		"infrastructure_id": "payments-infra",
+		"environment_id":    "prod",
 	})
 	if err := setScanState(infraData, &chaos.Scan{
 		Identity: "infra_scan",
@@ -261,15 +235,14 @@ func TestSetScanStateFlattensRisks(t *testing.T) {
 			EnvironmentIdentity:       "env-agent",
 			EnvironmentParentUniqueID: "parent-1",
 		}},
-	}, nil, true); err != nil {
+	}, nil, true, true); err != nil {
 		t.Fatal(err)
 	}
-	saved := infraData.Get("infrastructure_scan").([]interface{})[0].(map[string]interface{})
-	if saved["infrastructure_id"] != "hpbk8s4" || saved["environment_id"] != "prod" {
-		t.Fatalf("chaos infrastructure was dropped: %#v", saved)
+	if infraData.Get("infrastructure_id") != "payments-infra" || infraData.Get("environment_id") != "prod" {
+		t.Fatalf("chaos infrastructure was dropped: %#v", infraData.State())
 	}
-	if saved["agent_identity"] != "agent-1" || saved["environment_identity"] != "env-agent" || saved["environment_parent_unique_id"] != "parent-1" {
-		t.Fatalf("resolved agent = %#v", saved)
+	if infraData.Get("agent_identity") != "agent-1" || infraData.Get("environment_identity") != "env-agent" || infraData.Get("environment_parent_unique_id") != "parent-1" {
+		t.Fatalf("resolved agent = %s %s %s", infraData.Get("agent_identity"), infraData.Get("environment_identity"), infraData.Get("environment_parent_unique_id"))
 	}
 	collected := d.Get("collected_data").([]interface{})
 	if len(collected) != 1 {
@@ -285,23 +258,34 @@ func TestSetScanStateFlattensRisks(t *testing.T) {
 }
 
 func TestChaosScanForceNewIsOnInputsOnly(t *testing.T) {
-	resourceSchema := resourceChaosScanSchema()
-	if !resourceSchema["org_id"].Required || !resourceSchema["project_id"].Required {
+	pipeline := resourceChaosPipelineScanSchema()
+	infra := resourceChaosInfrastructureScanSchema()
+	if !pipeline["org_id"].Required || !pipeline["project_id"].Required || !infra["org_id"].Required {
 		t.Fatal("org_id and project_id must be required")
 	}
-	if resourceSchema["pipeline_scan"].ForceNew || resourceSchema["infrastructure_scan"].ForceNew {
-		t.Fatal("scan blocks must not be ForceNew")
+	if _, ok := pipeline["infrastructure_id"]; ok {
+		t.Fatal("a pipeline scan must not carry infrastructure scan fields")
 	}
-	pipeline := resourceSchema["pipeline_scan"].Elem.(*schema.Resource).Schema
+	if _, ok := infra["pipeline_identity"]; ok {
+		t.Fatal("an infrastructure scan must not carry pipeline scan fields")
+	}
 	if !pipeline["pipeline_identity"].ForceNew || !pipeline["pipeline_execution_id"].ForceNew {
 		t.Fatal("pipeline inputs must be ForceNew")
 	}
 	if pipeline["notify_id"].ForceNew || pipeline["infrastructures"].ForceNew {
 		t.Fatal("API-filled pipeline fields must not be ForceNew")
 	}
-	infra := resourceSchema["infrastructure_scan"].Elem.(*schema.Resource).Schema
 	if !infra["infrastructure_id"].ForceNew || !infra["environment_id"].ForceNew {
 		t.Fatal("chaos infrastructure inputs must be ForceNew")
+	}
+	if len(infra["infrastructure_id"].RequiredWith) != 1 || infra["infrastructure_id"].RequiredWith[0] != "environment_id" {
+		t.Fatal("infrastructure_id requires environment_id")
+	}
+	if len(infra["environment_id"].RequiredWith) != 1 || infra["environment_id"].RequiredWith[0] != "infrastructure_id" {
+		t.Fatal("environment_id is required with infrastructure_id")
+	}
+	if strings.Contains(pipeline["identity"].Description, "infrastructure") || strings.Contains(pipeline["retry_token"].Description, "infrastructure") {
+		t.Fatal("pipeline scan docs must not describe the infrastructure scan retry")
 	}
 	if infra["agent_identity"].ForceNew || infra["environment_identity"].ForceNew || infra["environment_parent_unique_id"].ForceNew {
 		t.Fatal("agent fields are filled by the API; CustomizeDiff replaces the scan only when a configured value changes")
@@ -312,10 +296,10 @@ func TestChaosScanForceNewIsOnInputsOnly(t *testing.T) {
 	if !infra["infrastructure_id"].Optional || len(infra["infrastructure_id"].ConflictsWith) == 0 || len(infra["infrastructure_id"].AtLeastOneOf) != 2 {
 		t.Fatal("infrastructure_id must be an alternative to agent_identity")
 	}
-	if resourceSchema["timeouts"] != nil {
+	if pipeline["timeouts"] != nil {
 		t.Fatal("timeouts are declared on the resource, not the schema map")
 	}
-	if ResourceChaosScan().Timeouts == nil || ResourceChaosScan().Timeouts.Create == nil {
+	if ResourceChaosPipelineScan().Timeouts == nil || ResourceChaosInfrastructureScan().Timeouts.Create == nil {
 		t.Fatal("create timeout is required so apply waits for a terminal scan")
 	}
 }
