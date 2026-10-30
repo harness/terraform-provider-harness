@@ -45,8 +45,8 @@ func (p *frameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 	attrs := map[string]schema.Attribute{}
 	for _, name := range []string{"endpoint", "fme_admin_api_endpoint", "account_id", "api_key", "platform_api_key"} {
 		attrs[name] = schema.StringAttribute{
-			Optional:    true,
-			Description: sdkSchema[name].Description,
+			Optional:            true,
+			MarkdownDescription: sdkSchema[name].Description,
 		}
 	}
 	resp.Schema = schema.Schema{Attributes: attrs}

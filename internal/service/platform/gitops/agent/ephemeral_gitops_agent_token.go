@@ -32,6 +32,7 @@ type ephemeralGitopsAgentTokenModel struct {
 	Identifier types.String `tfsdk:"identifier"`
 	OrgId      types.String `tfsdk:"org_id"`
 	ProjectId  types.String `tfsdk:"project_id"`
+	Generation types.Int64  `tfsdk:"generation"`
 	AgentToken types.String `tfsdk:"agent_token"`
 }
 
@@ -53,6 +54,10 @@ func (e *ephemeralGitopsAgentToken) Schema(_ context.Context, _ ephemeral.Schema
 			},
 			"project_id": schema.StringAttribute{
 				Description: "Project identifier of the GitOps agent.",
+				Optional:    true,
+			},
+			"generation": schema.Int64Attribute{
+				Description: "Optional ordering input. Set it to the `token_generation` attribute of `harness_platform_gitops_agent` so that Terraform defers reading the token until after the agent has been created or its token rotated in the same apply. The value is not used by the read itself.",
 				Optional:    true,
 			},
 			"agent_token": schema.StringAttribute{
