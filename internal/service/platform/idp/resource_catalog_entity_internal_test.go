@@ -398,6 +398,35 @@ func TestHandleIDPApiErrorReferencedCheck(t *testing.T) {
 	require.Contains(t, diags[0].Summary, "Remove the check from those scorecards first")
 }
 
+func TestGetCatalogEntityInfoFromResourceDataRecoversKindFromYAML(t *testing.T) {
+	resource := ResourceCatalogEntity()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"identifier": "my_custom_entity",
+		"kind":       "",
+		"yaml":       "apiVersion: harness.io/v1\nkind: custom_product\nidentifier: my_custom_entity\ntype: default\n",
+	})
+
+	info, err := getCatalogEntityInfoFromResourceData(data)
+
+	require.NoError(t, err)
+	require.Equal(t, "custom_product", info.Kind)
+	require.Equal(t, "my_custom_entity", info.Identifier)
+}
+
+func TestGetCatalogEntityInfoFromResourceDataMalformedYAMLReturnsParseError(t *testing.T) {
+	resource := ResourceCatalogEntity()
+	data := schema.TestResourceDataRaw(t, resource.Schema, map[string]interface{}{
+		"identifier": "my_custom_entity",
+		"kind":       "",
+		"yaml":       "{{not: valid yaml",
+	})
+
+	_, err := getCatalogEntityInfoFromResourceData(data)
+
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to parse yaml to recover kind")
+}
+
 func TestCatalogEntityImportInfoFromID(t *testing.T) {
 	tests := []struct {
 		name           string

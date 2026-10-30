@@ -610,6 +610,17 @@ func getCatalogEntityInfoFromResourceData(d *schema.ResourceData) (catalogEntity
 		return catalogEntityInfo{}, fmt.Errorf("identifier is required")
 	}
 	if kind == "" {
+		if yamlString, ok := d.GetOk("yaml"); ok {
+			var yamlData map[string]any
+			if err := yaml.Unmarshal([]byte(yamlString.(string)), &yamlData); err != nil {
+				return catalogEntityInfo{}, fmt.Errorf("failed to parse yaml to recover kind: %s", err)
+			}
+			if yamlKind, ok := yamlData["kind"].(string); ok && yamlKind != "" {
+				kind = yamlKind
+			}
+		}
+	}
+	if kind == "" {
 		return catalogEntityInfo{}, fmt.Errorf("kind is required")
 	}
 
