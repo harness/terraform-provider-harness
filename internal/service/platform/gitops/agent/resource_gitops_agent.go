@@ -48,6 +48,11 @@ func ResourceGitopsAgent() *schema.Resource {
 					e = fmt.Errorf("field 'metadata.existing_installation' cannot be changed after the agent is created")
 				}
 			}
+			if diff.Id() != "" && diff.HasChange("token_rotation") {
+				if err := diff.SetNewComputed("token_generation"); err != nil {
+					return err
+				}
+			}
 			return e
 		},
 
@@ -128,10 +133,25 @@ func ResourceGitopsAgent() *schema.Resource {
 					}},
 			},
 			"agent_token": {
-				Description: "Agent token to be used for authentication of the agent with Harness.",
+				Description: "Agent token to be used for authentication of the agent with Harness. Not populated when `skip_agent_token_in_state` is `true`; use the `harness_platform_gitops_agent_token` ephemeral resource to read it instead.",
 				Type:        schema.TypeString,
 				Computed:    true,
 				Sensitive:   true,
+			},
+			"skip_agent_token_in_state": {
+				Description: "When `true`, the agent token is never saved to the Terraform state (and is removed from the state if it was saved earlier). Read the token with the `harness_platform_gitops_agent_token` ephemeral resource instead. Defaults to `false`, which keeps the existing behavior.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"token_rotation": {
+				Description: "Rotation counter. Increasing this value regenerates the agent's credentials during apply. The previous credentials stop working immediately, so the running agent loses its connection until it is redeployed with the new token. The new token is not stored in state when `skip_agent_token_in_state` is `true`; read it with the `harness_platform_gitops_agent_token` ephemeral resource.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+			},
+			"token_generation": {
+				Description: "Counts how many times the agent's credentials were regenerated through `token_rotation`. It is unknown during a plan that creates the agent or rotates its token, which lets the `generation` input of the `harness_platform_gitops_agent_token` ephemeral resource defer the read until after the apply.",
+				Type:        schema.TypeInt,
+				Computed:    true,
 			},
 			"operator": {
 				Description: "The Operator to use for the Harness GitOps agent. Enum: \"ARGO\" \"FLAMINGO\"",
@@ -243,6 +263,20 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
+	}
+	if d.HasChange("token_rotation") {
+		newKey, err := regenerateAgentCredentials(ctx, meta.(*internal.Session), agentIdentifier, d.Get("org_id").(string), d.Get("project_id").(string))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		// The new key is only kept when the user has not opted out of storing it.
+		if !d.Get("skip_agent_token_in_state").(bool) && newKey != "" {
+			resp.Credentials = &nextgen.V1AgentCredentials{PrivateKey: newKey}
+		}
+		oldGeneration, _ := d.GetChange("token_generation")
+		if err := d.Set("token_generation", oldGeneration.(int)+1); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
@@ -357,7 +391,10 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	metaDataMap["existing_installation"] = agent.Metadata.ExistingInstallation
 	metadata = append(metadata, metaDataMap)
 	d.Set("metadata", metadata)
-	if agent.Credentials != nil && agent.Credentials.PrivateKey != "" {
+	if d.Get("skip_agent_token_in_state").(bool) {
+		d.Set("agent_token", "")
+	} else if agent.Credentials != nil && agent.Credentials.PrivateKey != "" {
 		d.Set("agent_token", agent.Credentials.PrivateKey)
 	}
+	d.Set("token_generation", d.Get("token_generation"))
 }
