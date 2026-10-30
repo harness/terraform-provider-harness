@@ -86,6 +86,22 @@ func captureServerKey(dst *string) resource.TestCheckFunc {
 	}
 }
 
+func captureResourceID(name string, dst *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		*dst = s.RootModule().Resources[name].Primary.ID
+		return nil
+	}
+}
+
+func assertResourceID(name string, want *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if got := s.RootModule().Resources[name].Primary.ID; got != *want {
+			return fmt.Errorf("agent was replaced: %s -> %s", *want, got)
+		}
+		return nil
+	}
+}
+
 func TestAccResourceGitopsAgent_SkipTokenInState(t *testing.T) {
 	id := strings.ReplaceAll(fmt.Sprintf("%s%s", "tfskip", utils.RandStringBytes(6)), "_", "")
 	resource.UnitTest(t, resource.TestCase{
