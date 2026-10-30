@@ -45,13 +45,16 @@ Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 - `operator` (String) The Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `project_id` (String) Project identifier of the GitOps agent.
+- `skip_agent_token_in_state` (Boolean) When `true`, the agent token is never saved to the Terraform state (and is removed from the state if it was saved earlier). Read the token with the `harness_platform_gitops_agent_token` ephemeral resource instead. Defaults to `false`, which keeps the existing behavior.
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
+- `token_rotation` (Number) Rotation counter. Increasing this value regenerates the agent's credentials during apply. The previous credentials stop working immediately, so the running agent loses its connection until it is redeployed with the new token. The new token is not stored in state when `skip_agent_token_in_state` is `true`; read it with the `harness_platform_gitops_agent_token` ephemeral resource.
 
 ### Read-Only
 
-- `agent_token` (String, Sensitive) Agent token to be used for authentication of the agent with Harness.
+- `agent_token` (String, Sensitive) Agent token to be used for authentication of the agent with Harness. Not populated when `skip_agent_token_in_state` is `true`; use the `harness_platform_gitops_agent_token` ephemeral resource to read it instead.
 - `id` (String) The ID of this resource.
 - `prefixed_identifier` (String) Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent
+- `token_generation` (Number) Counts how many times the agent's credentials were regenerated through `token_rotation`. It is unknown during a plan that creates the agent or rotates its token, which lets the `generation` input of the `harness_platform_gitops_agent_token` ephemeral resource defer the read until after the apply.
 
 <a id="nestedblock--metadata"></a>
 ### Nested Schema for `metadata`
