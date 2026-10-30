@@ -47,7 +47,7 @@ Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 - `project_id` (String) Project identifier of the GitOps agent.
 - `skip_agent_token_in_state` (Boolean) When `true`, the agent token is never saved to the Terraform state (and is removed from the state if it was saved earlier). Read the token with the `harness_platform_gitops_agent_token` ephemeral resource instead. Defaults to `false`, which keeps the existing behavior.
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
-- `token_rotation` (Number) Rotation counter. Increasing this value regenerates the agent's credentials during apply. The previous credentials stop working immediately, so the running agent loses its connection until it is redeployed with the new token. The new token is not stored in state when `skip_agent_token_in_state` is `true`; read it with the `harness_platform_gitops_agent_token` ephemeral resource.
+- `token_rotation` (Number) Rotation counter. Changing this value (increment it by convention) regenerates the agent's credentials during apply. The previous credentials stop working immediately, so the running agent loses its connection until it is redeployed with the new token. The new token is not stored in state when `skip_agent_token_in_state` is `true`; read it with the `harness_platform_gitops_agent_token` ephemeral resource.
 
 ### Read-Only
 
