@@ -391,10 +391,14 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	metaDataMap["existing_installation"] = agent.Metadata.ExistingInstallation
 	metadata = append(metadata, metaDataMap)
 	d.Set("metadata", metadata)
-	if d.Get("skip_agent_token_in_state").(bool) {
+	// The data source shares this function and has no skip_agent_token_in_state attribute.
+	if skip, _ := d.Get("skip_agent_token_in_state").(bool); skip {
 		d.Set("agent_token", "")
 	} else if agent.Credentials != nil && agent.Credentials.PrivateKey != "" {
 		d.Set("agent_token", agent.Credentials.PrivateKey)
 	}
-	d.Set("token_generation", d.Get("token_generation"))
+	// Ensures token_generation is 0 (not null) after create. The data source has no such attribute.
+	if gen, ok := d.Get("token_generation").(int); ok {
+		d.Set("token_generation", gen)
+	}
 }

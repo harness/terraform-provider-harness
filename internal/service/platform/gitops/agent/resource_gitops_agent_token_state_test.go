@@ -60,3 +60,11 @@ func TestAgentTokenIsSensitive(t *testing.T) {
 	require.True(t, ResourceGitopsAgent().Schema["agent_token"].Sensitive)
 	require.True(t, DataSourceGitopsAgent().Schema["agent_token"].Sensitive)
 }
+
+// The data source shares readAgent but has no skip_agent_token_in_state attribute; it must not panic
+// and must keep populating agent_token.
+func TestReadAgent_DataSourceSchemaDoesNotPanic(t *testing.T) {
+	d := schema.TestResourceDataRaw(t, DataSourceGitopsAgent().Schema, map[string]interface{}{"identifier": "a1"})
+	require.NotPanics(t, func() { readAgent(d, agentWithKey("KEY")) })
+	require.Equal(t, "KEY", d.Get("agent_token"))
+}
