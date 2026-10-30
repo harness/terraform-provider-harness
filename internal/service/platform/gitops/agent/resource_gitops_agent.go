@@ -144,7 +144,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				Optional:    true,
 			},
 			"token_rotation": {
-				Description: "Rotation counter. Increasing this value regenerates the agent's credentials during apply. The previous credentials stop working immediately, so the running agent loses its connection until it is redeployed with the new token. The new token is not stored in state when `skip_agent_token_in_state` is `true`; read it with the `harness_platform_gitops_agent_token` ephemeral resource.",
+				Description: "Rotation counter. Changing this value (increment it by convention) regenerates the agent's credentials during apply. The previous credentials stop working immediately, so the running agent loses its connection until it is redeployed with the new token. The new token is not stored in state when `skip_agent_token_in_state` is `true`; read it with the `harness_platform_gitops_agent_token` ephemeral resource.",
 				Type:        schema.TypeInt,
 				Optional:    true,
 			},
