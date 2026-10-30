@@ -139,7 +139,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				Sensitive:   true,
 			},
 			"skip_agent_token_in_state": {
-				Description: "When `true`, the agent token is never saved to the Terraform state (and is removed from the state if it was saved earlier). Read the token with the `harness_platform_gitops_agent_token` ephemeral resource instead. Defaults to `false`, which keeps the existing behavior.",
+				Description: "When `true`, the agent token is never saved to the Terraform state (and is removed from the state if it was saved earlier). Read the token with the `harness_platform_gitops_agent_token` ephemeral resource instead. Defaults to `false`, which keeps the existing behavior. Note: enabling this on an existing agent does not erase a token already present in earlier state snapshots (for example `terraform.tfstate.backup` or remote state history); purge those or rotate the token with `token_rotation`.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
