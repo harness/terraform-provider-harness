@@ -35,6 +35,7 @@ ephemeral "harness_platform_gitops_agent_token" "example" {
 
 ### Optional
 
+- `generation` (Number) Optional ordering input. Set it to the `token_generation` attribute of `harness_platform_gitops_agent` so that Terraform defers reading the token until after the agent has been created or its token rotated in the same apply. The value is not used by the read itself.
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `project_id` (String) Project identifier of the GitOps agent.
 
