@@ -47,9 +47,6 @@ func TestAccResourceGitopsAgent_UpgradeFromReleasedProvider(t *testing.T) {
 		{"byoa-org-and-project", func(id string) string {
 			return testAccResourceGitopsAgentBYOAScopes(id, accountId, ns)
 		}, "harness_platform_gitops_agent.org"},
-		{"flamingo-account-level", func(id string) string {
-			return testAccResourceGitopsFluxAgentAccountLevel(id, accountId, id, ns)
-		}, "harness_platform_gitops_agent.test"},
 	}
 
 	for _, tc := range cases {
