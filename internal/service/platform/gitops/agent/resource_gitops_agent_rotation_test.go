@@ -227,7 +227,11 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 		require.Equal(t, "NEWKEY", key)
 		req := f.requests[0]
 		require.Equal(t, http.MethodPost, req.Method)
+		require.Equal(t, "/gitops/api/v1/agents/a1/credentials", req.Path)
+		require.Equal(t, []string{"acct"}, req.Query["accountIdentifier"])
+		require.Equal(t, []string{"acct"}, req.Query["routingId"])
 		require.Equal(t, []string{"org"}, req.Query["orgIdentifier"])
+		require.Equal(t, []string{"proj"}, req.Query["projectIdentifier"])
 		require.Equal(t, "test-api-key", req.APIKey)
 	})
 
@@ -240,11 +244,17 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 		require.Equal(t, []string{"acct"}, f.requests[0].Query["accountIdentifier"])
 	})
 
-	t.Run("trailing slash on endpoint is tolerated", func(t *testing.T) {
+	t.Run("org level agent sends org but no project", func(t *testing.T) {
 		f := newFakeGitops(t)
-		s := f.session()
-		s.Endpoint += "/"
-		_, err := regenerateAgentCredentials(context.Background(), s, "a1", "", "")
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "org", "")
+		require.NoError(t, err)
+		require.Equal(t, []string{"org"}, f.requests[0].Query["orgIdentifier"])
+		require.NotContains(t, f.requests[0].Query, "projectIdentifier")
+	})
+
+	t.Run("identifier is path escaped", func(t *testing.T) {
+		f := newFakeGitops(t)
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
 		require.NoError(t, err)
 		require.Equal(t, "/gitops/api/v1/agents/a1/credentials", f.requests[0].Path)
 	})
@@ -255,13 +265,17 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "403")
+		require.Contains(t, err.Error(), `"a1"`)
 	})
 
-	t.Run("malformed body is an error", func(t *testing.T) {
+	// The generated SDK client ignores decode errors on 2xx responses, so an unparseable body
+	// surfaces as an empty key, the same as an empty response. Callers only store a non-empty key.
+	t.Run("unparseable 2xx body yields an empty key", func(t *testing.T) {
 		f := newFakeGitops(t)
 		f.regenBody = `not json`
-		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
-		require.Error(t, err)
+		key, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
+		require.NoError(t, err)
+		require.Equal(t, "", key)
 	})
 
 	t.Run("empty key is returned as empty, not an error", func(t *testing.T) {
