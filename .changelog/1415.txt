@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_apikey: Fixed a perpetual diff on `default_time_to_expire_token` when the attribute is omitted; the server-assigned default is now adopted (the attribute is Optional+Computed) instead of planning a change back to null.
+```
