@@ -2,57 +2,41 @@ package agent
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
-	"net/http"
-	"net/url"
-	"strings"
 
+	"github.com/antihax/optional"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/internal"
 )
 
-// regenerateAgentCredentials calls POST /gitops/api/v1/agents/{identifier}/credentials and returns the
-// newly generated private key (the agent token). The generated SDK method does not accept the
-// account/org/project scope query parameters, so the request is made directly.
+// regenerateAgentCredentials regenerates the agent's private key (the agent token) via
+// POST /gitops/api/v1/agents/{identifier}/credentials and returns the new key.
 func regenerateAgentCredentials(ctx context.Context, session *internal.Session, identifier, orgID, projectID string) (string, error) {
-	q := url.Values{}
-	q.Set("accountIdentifier", session.AccountId)
+	c, ctx := session.GetPlatformClientWithContext(ctx)
+
+	opts := &nextgen.AgentsApiAgentServiceForServerRegenerateCredentialsWithScopeOpts{}
 	if orgID != "" {
-		q.Set("orgIdentifier", orgID)
+		opts.OrgIdentifier = optional.NewString(orgID)
 	}
 	if projectID != "" {
-		q.Set("projectIdentifier", projectID)
+		opts.ProjectIdentifier = optional.NewString(projectID)
 	}
-	endpoint := strings.TrimSuffix(session.Endpoint, "/")
-	u := fmt.Sprintf("%s/gitops/api/v1/agents/%s/credentials?%s", endpoint, url.PathEscape(identifier), q.Encode())
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, u, nil)
+	agent, httpResp, err := c.AgentApi.AgentServiceForServerRegenerateCredentialsWithScope(ctx, identifier, c.AccountId, opts)
 	if err != nil {
-		return "", fmt.Errorf("building regenerate credentials request: %w", err)
+		status, detail := "", err.Error()
+		if httpResp != nil {
+			status = httpResp.Status
+		}
+		var swaggerErr nextgen.GenericSwaggerError
+		if errors.As(err, &swaggerErr) && len(swaggerErr.Body()) > 0 {
+			detail = string(swaggerErr.Body())
+		}
+		return "", fmt.Errorf("regenerating agent credentials for %q failed with status %s: %s", identifier, status, detail)
 	}
-	req.Header.Set("Accept", "application/json")
-	if session.PLClient != nil && session.PLClient.ApiKey != "" {
-		req.Header.Set("x-api-key", session.PLClient.ApiKey)
+	if agent.Credentials == nil {
+		return "", nil
 	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return "", fmt.Errorf("regenerating agent credentials: %w", err)
-	}
-	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode >= 300 {
-		return "", fmt.Errorf("regenerating agent credentials for %q failed with status %s: %s", identifier, resp.Status, string(body))
-	}
-
-	var out struct {
-		Credentials struct {
-			PrivateKey string `json:"privateKey"`
-		} `json:"credentials"`
-	}
-	if err := json.Unmarshal(body, &out); err != nil {
-		return "", fmt.Errorf("decoding regenerate credentials response: %w", err)
-	}
-	return out.Credentials.PrivateKey, nil
+	return agent.Credentials.PrivateKey, nil
 }
