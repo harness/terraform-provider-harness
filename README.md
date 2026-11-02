@@ -271,7 +271,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 If you have any questions or need assistance:
 
 - Open a [new issue](https://github.com/harness/terraform-provider-harness/issues/new)
-- Join our [Slack community](https://harnesscommunity.slack.com/archives/C02G9CUNF1S)
+- Post on the [Harness Community forum](https://community.harness.io/)
 - Visit our [documentation](https://docs.harness.io)
 
 ## License
