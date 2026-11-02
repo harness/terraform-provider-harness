@@ -1,0 +1,19 @@
+```release-note:new-resource
+harness_platform_authentication_settings: Added the terraform support for managing account level authentication settings (two-factor authentication, whitelisted domains, session timeout and public access)
+```
+
+```release-note:new-resource
+harness_platform_sso_ldap: Added the terraform support for managing the account level LDAP SSO configuration (connection settings, user/group queries and sync cron)
+```
+
+```release-note:new-resource
+harness_platform_sso_saml: Added the terraform support for managing account level SAML SSO configurations (multiple per account, JIT provisioning, Azure client credentials via secret references)
+```
+
+```release-note:new-resource
+harness_platform_sso_oauth: Added the terraform support for managing the account level OAuth SSO configuration (allowed OAuth providers)
+```
+
+```release-note:new-resource
+harness_platform_login_settings: Added the terraform support for managing the account level login settings (password strength, user lockout and password expiration policies)
+```

@@ -60,6 +60,7 @@ import (
 	cdng_manual_freeze "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ansible_inventory"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ansible_playbook"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/authentication_settings"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
 	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
@@ -225,7 +226,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_artifactory":              cdng_connector_artifactRepositories.DatasourceConnectorArtifactory(),
 				"harness_platform_connector_aws_secret_manager":       pl_secretManagers.DatasourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                      cdng_connector_cloudProviders.DatasourceConnectorAws(),
-				"harness_platform_connector_anthropic_model":           connector.DatasourceConnectorAnthropicModel(),
+				"harness_platform_connector_anthropic_model":          connector.DatasourceConnectorAnthropicModel(),
 				"harness_platform_connector_awscc":                    connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                   pl_secretManagers.DatasourceConnectorAwsKms(),
 				"harness_platform_connector_azure_repo":               cdng_connector_codeRepositories.DatasourceConnectorAzureRepo(),
@@ -303,6 +304,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_secret_winrm":                       secret.DataSourceSecretWinRM(),
 				"harness_platform_roles":                              roles.DataSourceRoles(),
 				"harness_platform_resource_group":                     resource_group.DataSourceResourceGroup(),
+				"harness_platform_authentication_settings":            authentication_settings.DataSourceAuthenticationSettings(),
+				"harness_platform_sso_ldap":                           authentication_settings.DataSourceSSOLDAP(),
+				"harness_platform_sso_saml":                           authentication_settings.DataSourceSSOSAML(),
+				"harness_platform_sso_oauth":                          authentication_settings.DataSourceSSOOAuth(),
+				"harness_platform_login_settings":                     authentication_settings.DataSourceLoginSettings(),
 				"harness_platform_service_account":                    service_account.DataSourceServiceAccount(),
 				"harness_platform_triggers":                           pipeline_triggers.DataSourceTriggers(),
 				"harness_platform_role_assignments":                   role_assignments.DataSourceRoleAssignments(),
@@ -441,7 +447,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_azure_artifacts":             cdng_connector_artifactRepositories.ResourceConnectorAzureArtifacts(),
 				"harness_platform_connector_aws_secret_manager":          pl_secretManagers.ResourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                         cdng_connector_cloudProviders.ResourceConnectorAws(),
-				"harness_platform_connector_anthropic_model":              connector.ResourceConnectorAnthropicModel(),
+				"harness_platform_connector_anthropic_model":             connector.ResourceConnectorAnthropicModel(),
 				"harness_platform_connector_awscc":                       connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                      pl_secretManagers.ResourceConnectorAwsKms(),
 				"harness_platform_connector_azure_repo":                  cdng_connector_codeRepositories.ResourceConnectorAzureRepo(),
@@ -516,6 +522,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_secret_winrm":                          secret.ResourceSecretWinRM(),
 				"harness_platform_roles":                                 roles.ResourceRoles(),
 				"harness_platform_resource_group":                        resource_group.ResourceResourceGroup(),
+				"harness_platform_authentication_settings":               authentication_settings.ResourceAuthenticationSettings(),
+				"harness_platform_sso_ldap":                              authentication_settings.ResourceSSOLDAP(),
+				"harness_platform_sso_saml":                              authentication_settings.ResourceSSOSAML(),
+				"harness_platform_sso_oauth":                             authentication_settings.ResourceSSOOAuth(),
+				"harness_platform_login_settings":                        authentication_settings.ResourceLoginSettings(),
 				"harness_platform_service_account":                       service_account.ResourceServiceAccount(),
 				"harness_platform_triggers":                              pipeline_triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":                      role_assignments.ResourceRoleAssignments(),
