@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
-	"sort"
 	"strings"
 	"time"
 
@@ -19,21 +17,21 @@ import (
 // ResourceChaosServiceOnboarding returns the service onboarding resource.
 func ResourceChaosServiceOnboarding() *schema.Resource {
 	return &schema.Resource{
-		Description: "Onboards discovered services onto a chaos infrastructure.\n\n" +
+		Description: "Onboards one discovered service onto a chaos infrastructure and associates probes that already exist in the project.\n\n" +
 			"Creates a manual onboarding session with method Service. `infrastructure_id` is the CD infrastructure id. " +
 			"That CD infrastructure must already exist. The onboarding API then registers a chaos infrastructure with the same id, so that chaos infrastructure must not already exist. " +
 			"Create requires Chaos Experiment Edit, Chaos Experiment Execute, Network Map Create, and Network Map Edit. " +
-			"Reading `install_command` also requires Chaos Infrastructure View. " +
-			"Onboard and confirm require the ChaosRTServicesEnabled feature flag.\n\n" +
+			"Reading `install_command` also requires Chaos Infrastructure View.\n\n" +
 			"The first apply registers the session and returns `install_command`, the same manifest `harness_chaos_infrastructure_v2` installs with. " +
-			"It does not onboard services yet, because discovery cannot finish until that manifest is installed in the cluster. " +
-			"Install it, then apply again. The next apply confirms discovery, onboards the discovered services, and confirms that step. " +
-			"Adding services later confirms that step again. The risk-scan step is left queued, so the session status stays PENDING.\n\n" +
-			"Omit `service_ids` to onboard every service discovery finds. Set it to onboard a subset. Those values are the discovered service ids. " +
-			"`service_ids` is add-only. Removing an id does not delete the chaos service, and clearing it is rejected.\n\n" +
-			"A retry reuses the session already created for this infrastructure. Destroy marks the session removed. " +
-			"The chaos infrastructure and the discovery agent remain, so the same `infrastructure_id` cannot be onboarded again. " +
-			"The next apply tries to register that chaos infrastructure and fails.",
+			"It does not create the chaos service yet, because discovery cannot finish until that manifest is installed in the cluster. " +
+			"Install it, then apply again. The next apply confirms discovery and creates one chaos service for `service_name` or `discovered_service_id`. " +
+			"`probes` lists existing project probe ids to associate with that service. Several probes are valid, and the same probe cannot be added twice. " +
+			"An empty list associates no probes. Later applies update that probe list in place. Changing `service_name` or `discovered_service_id` creates a new resource. " +
+			"The risk-scan step is left queued, so the session status stays PENDING.\n\n" +
+			"This resource owns the onboarding session for the infrastructure. Create returns an error when that session already exists; import `org_id/project_id/onboarding_id` to manage it. " +
+			"Another discovered service on the same infrastructure uses `harness_chaos_onboarding_service` with this `onboarding_id`, which creates the chaos service and leaves the session in place. " +
+			"Destroy deletes the chaos service created here, then marks the session removed. " +
+			"The chaos infrastructure and the discovery agent remain, so the same `infrastructure_id` cannot be onboarded again.",
 
 		CreateContext: resourceServiceOnboardingCreate,
 		ReadContext:   resourceServiceOnboardingRead,
@@ -74,22 +72,32 @@ func ResourceChaosServiceOnboarding() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 			},
-			"service_ids": {
-				Description: "Discovered service ids to onboard. Omit this to onboard every service discovery finds. Add-only: removing an id does not delete the chaos service, and clearing this argument is rejected.",
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+			"service_name": {
+				Description:   "Name of the discovered service, as shown in the service list, such as `bank-of-anthos-config`. Set this or `discovered_service_id`. When several services share the name, set `discovered_service_id` instead.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"discovered_service_id"},
+				AtLeastOneOf:  []string{"service_name", "discovered_service_id"},
 			},
+			"discovered_service_id": {
+				Description:   "Id shown under the discovered service name, such as `bankofanthosconfig`. The discovery record id is also accepted. Set this or `service_name`. Changing it creates a new resource.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"service_name"},
+				AtLeastOneOf:  []string{"service_name", "discovered_service_id"},
+			},
+			"probes": probeSchema(),
 			"install_command": {
-				Description: "Manifest for the chaos infrastructure this session registers. The first apply returns this value. Install it in the cluster, then apply again to confirm discovery and onboard services.",
+				Description: "Manifest for the chaos infrastructure this session registers. The first apply returns this value. Install it in the cluster, then apply again to confirm discovery and create the chaos service.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"onboarded_service_ids": {
-				Description: "Discovered service ids onboarded by this session.",
-				Type:        schema.TypeList,
+			"chaos_service_id": {
+				Description: "Identity of the chaos service created for this discovered service.",
+				Type:        schema.TypeString,
 				Computed:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"onboarding_id": {
 				Description: "Onboarding session id.",
@@ -102,18 +110,13 @@ func ResourceChaosServiceOnboarding() *schema.Resource {
 				Computed:    true,
 			},
 			"discovery_status": {
-				Description: "Status of the discovery step. Services can be onboarded when this is COMPLETED.",
+				Description: "Status of the discovery step. The chaos service can be created when this is COMPLETED.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"service_status": {
-				Description: "Status of the chaos service onboarding step.",
+				Description: "Status of the chaos service onboarding step. Creating the service through the chaos service API leaves this step queued.",
 				Type:        schema.TypeString,
-				Computed:    true,
-			},
-			"onboarded_count": {
-				Description: "Number of services onboarded by this session.",
-				Type:        schema.TypeInt,
 				Computed:    true,
 			},
 		},
@@ -124,39 +127,40 @@ func resourceServiceOnboardingCreate(ctx context.Context, d *schema.ResourceData
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 	client := chaos.NewOnboardingClient(c)
 	scope := onboardingScope(d, c.AccountId)
-	req := chaos.ServiceOnboardingRequest{
-		EnvironmentID:    d.Get("environment_id").(string),
-		InfrastructureID: d.Get("infrastructure_id").(string),
-		ServiceIDs:       serviceIDs(d),
-	}
+	req := onboardingRequest(d)
 	log.Printf("[DEBUG] Creating chaos service onboarding for infrastructure %s", req.InfrastructureID)
+	existing, httpResp, err := client.FindServiceOnboarding(ctx, scope, req.InfrastructureID)
+	if err != nil {
+		return helpers.HandleChaosApiError(err, d, httpResp)
+	}
+	if existing != nil && existing.OnboardingID != "" {
+		return diag.Errorf(
+			"infrastructure %s already has onboarding session %s. Import %s/%s/%s to manage that session. Another discovered service uses harness_chaos_onboarding_service with onboarding_id %s.",
+			req.InfrastructureID, existing.OnboardingID, d.Get("org_id"), d.Get("project_id"), existing.OnboardingID, existing.OnboardingID,
+		)
+	}
 	opened, httpResp, err := client.OpenServiceOnboarding(ctx, scope, req)
 	if opened != nil && opened.OnboardingID != "" {
 		d.SetId(opened.OnboardingID)
 	}
 	if err != nil {
-		return onboardingCreateError(d, opened, httpResp, err)
+		diags := helpers.HandleChaosApiError(err, d, httpResp)
+		if opened != nil && opened.OnboardingID != "" {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary: fmt.Sprintf(
+					"onboarding session %s exists for this infrastructure. Import %s/%s/%s to manage that session.",
+					opened.OnboardingID, d.Get("org_id"), d.Get("project_id"), opened.OnboardingID,
+				),
+			})
+		}
+		return diags
 	}
 	// Discovery cannot finish until the user installs the manifest outside this
 	// apply. Returning here saves the session and install_command. The next
-	// apply onboards the services. Waiting inside create would time out and
+	// apply creates the chaos service. Waiting inside create would time out and
 	// Terraform would discard the session, including the manifest.
-	return setServiceOnboarding(d, opened, req.ServiceIDs)
-}
-
-func onboardingCreateError(d *schema.ResourceData, session *chaos.ServiceOnboarding, httpResp *http.Response, err error) diag.Diagnostics {
-	diags := helpers.HandleChaosApiError(err, d, httpResp)
-	if session == nil || session.OnboardingID == "" {
-		return diags
-	}
-	diags = append(diags, diag.Diagnostic{
-		Severity: diag.Error,
-		Summary: fmt.Sprintf(
-			"onboarding session %s exists for this infrastructure. Retry reuses it. Import %s/%s/%s if this resource is not in state.",
-			session.OnboardingID, d.Get("org_id"), d.Get("project_id"), session.OnboardingID,
-		),
-	})
-	return diags
+	return setServiceOnboarding(d, opened)
 }
 
 func resourceServiceOnboardingRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -175,43 +179,37 @@ func resourceServiceOnboardingRead(ctx context.Context, d *schema.ResourceData, 
 	if session.ManualMethod != "" && session.ManualMethod != "Service" {
 		return diag.Errorf("onboarding %s uses method %s, not Service", d.Id(), session.ManualMethod)
 	}
-	if ids, listErr := client.OnboardedServiceIDs(ctx, scope, d.Id()); listErr == nil {
-		session.OnboardedServiceIDs = ids
-	}
+	session.ChaosServiceID = d.Get("chaos_service_id").(string)
 	if session.InstallCommand == "" {
 		if manifest, manifestErr := client.InfrastructureManifest(ctx, scope, session.InfrastructureRef, session.EnvironmentRef); manifestErr == nil {
 			session.InstallCommand = manifest
 		}
 	}
-	return setServiceOnboarding(d, session, nil)
+	return setServiceOnboarding(d, session)
 }
 
 func resourceServiceOnboardingUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
 	client := chaos.NewOnboardingClient(c)
 	scope := onboardingScope(d, c.AccountId)
-	session, httpResp, err := client.Get(ctx, scope, d.Id())
-	if err != nil {
-		return helpers.HandleChaosApiError(err, d, httpResp)
-	}
-	ids := serviceIDs(d)
-	if session.ServiceStatus != "COMPLETED" {
-		finished, httpResp, err := client.FinishServiceOnboarding(ctx, scope, session, ids)
+	if d.Get("chaos_service_id").(string) == "" {
+		session, httpResp, err := client.Get(ctx, scope, d.Id())
 		if err != nil {
 			return helpers.HandleChaosApiError(err, d, httpResp)
 		}
-		return setServiceOnboarding(d, finished, nil)
+		finished, httpResp, err := client.FinishServiceOnboarding(ctx, scope, session, onboardingRequest(d))
+		if err != nil {
+			return helpers.HandleChaosApiError(err, d, httpResp)
+		}
+		return setServiceOnboarding(d, finished)
 	}
-	if d.HasChange("service_ids") {
-		added := addedServiceIDs(d)
-		if len(added) > 0 {
-			if _, httpResp, err = client.OnboardServices(ctx, scope, d.Id(), added); err != nil {
-				return helpers.HandleChaosApiError(err, d, httpResp)
-			}
-			// Onboard sets the service step back to RUNNING. Confirm it in this apply.
-			if httpResp, err = client.ConfirmServiceOnboarding(ctx, scope, d.Id()); err != nil {
-				return helpers.HandleChaosApiError(err, d, httpResp)
-			}
+	if d.HasChange("probes") {
+		updated, httpResp, err := client.UpdateChaosService(ctx, scope, chaosServiceRequest(d))
+		if err != nil {
+			return helpers.HandleChaosApiError(err, d, httpResp)
+		}
+		if err := d.Set("chaos_service_id", updated.Identity); err != nil {
+			return diag.FromErr(err)
 		}
 	}
 	return resourceServiceOnboardingRead(ctx, d, meta)
@@ -219,7 +217,15 @@ func resourceServiceOnboardingUpdate(ctx context.Context, d *schema.ResourceData
 
 func resourceServiceOnboardingDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
-	httpResp, err := chaos.NewOnboardingClient(c).Delete(ctx, onboardingScope(d, c.AccountId), d.Id())
+	client := chaos.NewOnboardingClient(c)
+	scope := onboardingScope(d, c.AccountId)
+	if identity := d.Get("chaos_service_id").(string); identity != "" {
+		httpResp, err := client.DeleteChaosService(ctx, scope, identity)
+		if err != nil && !chaos.OnboardingGone(err) {
+			return helpers.HandleChaosApiError(err, d, httpResp)
+		}
+	}
+	httpResp, err := client.Delete(ctx, scope, d.Id())
 	if err != nil && !chaos.OnboardingGone(err) {
 		return helpers.HandleChaosApiError(err, d, httpResp)
 	}
@@ -229,24 +235,11 @@ func resourceServiceOnboardingDelete(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceServiceOnboardingCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
-	if d.Id() != "" && d.Get("service_status").(string) != "COMPLETED" {
-		if err := d.SetNewComputed("service_status"); err != nil {
-			return err
-		}
+	if err := duplicateProbeIDs(d.Get("probes")); err != nil {
+		return err
 	}
-	previous, next := d.GetChange("service_ids")
-	oldIDs := setIDs(previous)
-	newIDs := setIDs(next)
-	if len(oldIDs) == 0 {
-		return nil
-	}
-	if len(newIDs) == 0 {
-		return fmt.Errorf("clearing service_ids would onboard every service discovery currently finds")
-	}
-	for id := range oldIDs {
-		if !newIDs[id] {
-			return fmt.Errorf("service_ids is add-only; removing %s does not delete the chaos service", id)
-		}
+	if d.Id() != "" && d.Get("chaos_service_id").(string) == "" {
+		return d.SetNewComputed("chaos_service_id")
 	}
 	return nil
 }
@@ -266,7 +259,7 @@ func resourceServiceOnboardingImport(ctx context.Context, d *schema.ResourceData
 	return []*schema.ResourceData{d}, nil
 }
 
-func setServiceOnboarding(d *schema.ResourceData, session *chaos.ServiceOnboarding, configured []string) diag.Diagnostics {
+func setServiceOnboarding(d *schema.ResourceData, session *chaos.ServiceOnboarding) diag.Diagnostics {
 	if session == nil {
 		return diag.Errorf("service onboarding response was empty")
 	}
@@ -276,7 +269,6 @@ func setServiceOnboarding(d *schema.ResourceData, session *chaos.ServiceOnboardi
 		"status":           session.Status,
 		"discovery_status": session.DiscoveryStatus,
 		"service_status":   session.ServiceStatus,
-		"onboarded_count":  session.OnboardedCount,
 	}
 	if session.InstallCommand != "" {
 		fields["install_command"] = session.InstallCommand
@@ -287,11 +279,8 @@ func setServiceOnboarding(d *schema.ResourceData, session *chaos.ServiceOnboardi
 	if session.InfrastructureRef != "" {
 		fields["infrastructure_id"] = session.InfrastructureRef
 	}
-	if configured != nil {
-		fields["service_ids"] = configured
-	}
-	if session.OnboardedServiceIDs != nil {
-		fields["onboarded_service_ids"] = session.OnboardedServiceIDs
+	if session.ChaosServiceID != "" {
+		fields["chaos_service_id"] = session.ChaosServiceID
 	}
 	for key, value := range fields {
 		if err := d.Set(key, value); err != nil {
@@ -309,48 +298,90 @@ func onboardingScope(d *schema.ResourceData, accountID string) chaos.Scope {
 	}
 }
 
-func serviceIDs(d *schema.ResourceData) []string {
-	return sortedIDs(setIDs(d.Get("service_ids")))
+func probeSchema() *schema.Schema {
+	return &schema.Schema{
+		Description: "Project probes to associate with the chaos service. The same probe cannot be added twice. Leave this empty to associate no probes.",
+		Type:        schema.TypeList,
+		Optional:    true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"probe_id": {
+					Description: "Identifier of a probe that already exists in the project.",
+					Type:        schema.TypeString,
+					Required:    true,
+				},
+				"inputs": {
+					Description: "Runtime input values for the probe, keyed by input name.",
+					Type:        schema.TypeMap,
+					Optional:    true,
+					Elem:        &schema.Schema{Type: schema.TypeString},
+				},
+			},
+		},
+	}
 }
 
-func addedServiceIDs(d *schema.ResourceData) []string {
-	previous, _ := d.GetChange("service_ids")
-	oldIDs := setIDs(previous)
-	var added []string
-	for id := range setIDs(d.Get("service_ids")) {
-		if !oldIDs[id] {
-			added = append(added, id)
+func onboardingRequest(d *schema.ResourceData) chaos.ServiceOnboardingRequest {
+	return chaos.ServiceOnboardingRequest{
+		EnvironmentID:    d.Get("environment_id").(string),
+		InfrastructureID: d.Get("infrastructure_id").(string),
+		ServiceID:        d.Get("discovered_service_id").(string),
+		ServiceName:      d.Get("service_name").(string),
+		Probes:           probesFrom(d.Get("probes")),
+	}
+}
+
+func chaosServiceRequest(d *schema.ResourceData) chaos.ChaosServiceRequest {
+	return chaos.ChaosServiceRequest{
+		Identity:          d.Get("chaos_service_id").(string),
+		EnvironmentID:     d.Get("environment_id").(string),
+		InfrastructureID:  d.Get("infrastructure_id").(string),
+		ExternalServiceID: d.Get("discovered_service_id").(string),
+		Probes:            probesFrom(d.Get("probes")),
+	}
+}
+
+func probesFrom(raw interface{}) []chaos.ServiceProbe {
+	items, ok := raw.([]interface{})
+	if !ok {
+		return nil
+	}
+	out := make([]chaos.ServiceProbe, 0, len(items))
+	for _, item := range items {
+		block, ok := item.(map[string]interface{})
+		if !ok {
+			continue
 		}
+		probe := chaos.ServiceProbe{ProbeID: block["probe_id"].(string)}
+		if inputs, ok := block["inputs"].(map[string]interface{}); ok && len(inputs) > 0 {
+			probe.Inputs = map[string]string{}
+			for name, value := range inputs {
+				probe.Inputs[name] = value.(string)
+			}
+		}
+		out = append(out, probe)
 	}
-	sort.Strings(added)
-	return added
-}
-
-func setIDs(raw interface{}) map[string]bool {
-	ids := map[string]bool{}
-	set, ok := raw.(*schema.Set)
-	if !ok || set == nil {
-		return ids
-	}
-	for _, value := range set.List() {
-		ids[value.(string)] = true
-	}
-	return ids
-}
-
-func sortedIDs(ids map[string]bool) []string {
-	out := make([]string, 0, len(ids))
-	for id := range ids {
-		out = append(out, id)
-	}
-	sort.Strings(out)
 	return out
+}
+
+func duplicateProbeIDs(raw interface{}) error {
+	seen := map[string]struct{}{}
+	for _, probe := range probesFrom(raw) {
+		if probe.ProbeID == "" {
+			continue
+		}
+		if _, ok := seen[probe.ProbeID]; ok {
+			return fmt.Errorf("probe %s is already associated", probe.ProbeID)
+		}
+		seen[probe.ProbeID] = struct{}{}
+	}
+	return nil
 }
 
 func parseOnboardingImportID(id string) (string, string, string, error) {
 	parts := strings.Split(id, "/")
 	if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" {
-		return "", "", "", fmt.Errorf("import id must be org_id/project_id/onboarding_id")
+		return "", "", "", fmt.Errorf("import id must be org_id/project_id/id")
 	}
 	return parts[0], parts[1], parts[2], nil
 }

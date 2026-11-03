@@ -624,6 +624,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_pipeline_scan":                            chaos_scan.ResourceChaosPipelineScan(),
 				"harness_chaos_infrastructure_scan":                      chaos_scan.ResourceChaosInfrastructureScan(),
 				"harness_chaos_service_onboarding":                       chaos_onboarding.ResourceChaosServiceOnboarding(),
+				"harness_chaos_onboarding_service":                       chaos_onboarding.ResourceChaosOnboardingService(),
 				"harness_chaos_security_governance_condition":            chaos_security_governance.ResourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":                 chaos_security_governance.ResourceChaosSecurityGovernanceRule(),
 				"harness_chaos_security_governance_condition_v3":         chaos_security_governance_v3.ResourceChaosSecurityGovernanceConditionV3(),

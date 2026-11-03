@@ -102,7 +102,7 @@ func TestScanCreateRequestInfrastructure(t *testing.T) {
 	if req.DetectionMethod != "AI" {
 		t.Fatalf("detection method = %s", req.DetectionMethod)
 	}
-	infra := req.Source.Infrastructure
+	infra := req.Source.DiscoveryAgent
 	if infra == nil || infra.AgentIdentity != "agent-1" || infra.EnvironmentIdentity != "env-1" || infra.EnvironmentParentUniqueID != "parent-1" {
 		t.Fatalf("infrastructure = %+v", infra)
 	}
@@ -230,7 +230,7 @@ func TestSetScanStateFlattensRisks(t *testing.T) {
 		Name:     "Infra",
 		ScanType: chaos.ScanTypeDiscoveryAgent,
 		Status:   chaos.ScanStatusCompleted,
-		Source: chaos.ScanSource{Infrastructure: &chaos.InfrastructureScan{
+		Source: chaos.ScanSource{DiscoveryAgent: &chaos.DiscoveryAgentScan{
 			AgentIdentity:             "agent-1",
 			EnvironmentIdentity:       "env-agent",
 			EnvironmentParentUniqueID: "parent-1",

@@ -24,11 +24,15 @@ func ResourceChaosPipelineScan() *schema.Resource {
 			"This is a pipeline scan. It is separate from `harness_chaos_infrastructure_scan`. " +
 			"Set `pipeline_identity` and `pipeline_execution_id` from a successful execution that has a Kubernetes CD stage. " +
 			"The scan records scan type PipelineExecution. Creating it requires Pipeline View permission.\n\n" +
-			scanLifecycleDescription(false),
+			scanLifecycleDescription + scanApplyOnce + scanIdentityChange + scanMetadataUpdate,
 
 		CreateContext: resourcePipelineScanCreate,
-		ReadContext:   resourcePipelineScanRead,
-		UpdateContext: resourcePipelineScanUpdate,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+			return readScan(ctx, d, meta, d.Id(), chaos.ScanTypePipelineExecution, true)
+		},
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+			return resourceChaosScanUpdate(ctx, d, meta, chaos.ScanTypePipelineExecution)
+		},
 		DeleteContext: resourceChaosScanDelete,
 		CustomizeDiff: resourcePipelineScanCustomizeDiff,
 		Timeouts: &schema.ResourceTimeout{
@@ -38,7 +42,9 @@ func ResourceChaosPipelineScan() *schema.Resource {
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: resourcePipelineScanImport,
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				return importChaosScan(ctx, d, meta, chaos.ScanTypePipelineExecution)
+			},
 		},
 
 		Schema: resourceChaosPipelineScanSchema(),
@@ -53,11 +59,15 @@ func ResourceChaosInfrastructureScan() *schema.Resource {
 			"Set `infrastructure_id` and `environment_id` from `harness_chaos_infrastructure_v2`. Terraform reads that chaos infrastructure and sends its discovery agent. " +
 			"Set `agent_identity` and `environment_identity` instead when the discovery agent is already known, including imports. That pair is what the UI sends. " +
 			"The scan records scan type DiscoveryAgent. It analyses the Kubernetes resources known to that agent, not the chaos infrastructure object. Creating it requires Service Discovery View permission.\n\n" +
-			scanLifecycleDescription(true),
+			scanLifecycleDescription + scanApplyOnce + infrastructureScanRetry + scanIdentityChange + scanMetadataUpdate,
 
 		CreateContext: resourceInfrastructureScanCreate,
-		ReadContext:   resourceInfrastructureScanRead,
-		UpdateContext: resourceInfrastructureScanUpdate,
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+			return readScan(ctx, d, meta, d.Id(), chaos.ScanTypeDiscoveryAgent, true)
+		},
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+			return resourceChaosScanUpdate(ctx, d, meta, chaos.ScanTypeDiscoveryAgent)
+		},
 		DeleteContext: resourceChaosScanDelete,
 		CustomizeDiff: resourceInfrastructureScanCustomizeDiff,
 		Timeouts: &schema.ResourceTimeout{
@@ -67,49 +77,27 @@ func ResourceChaosInfrastructureScan() *schema.Resource {
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		Importer: &schema.ResourceImporter{
-			StateContext: resourceInfrastructureScanImport,
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				return importChaosScan(ctx, d, meta, chaos.ScanTypeDiscoveryAgent)
+			},
 		},
 
 		Schema: resourceChaosInfrastructureScanSchema(),
 	}
 }
 
-func scanLifecycleDescription(infrastructure bool) string {
-	retry := "The first apply creates one scan. Later applies of the same resource do not create another scan on the UI. Change `identity` only when you want a different scan. That deletes the current scan and creates the new one.\n\n"
-	if infrastructure {
-		retry = "The first apply creates one scan. Later applies of the same resource do not create another scan on the UI. Terraform does not watch the cluster. To run that same scan again after this configuration creates or updates the chaos infrastructure, set `retry_token` to `harness_chaos_infrastructure_v2.<name>.updated_at`. The identifier stays the same, so the UI still shows one scan and the results are refreshed. `updated_at` is read back from the API on every refresh. If the server changes it on its own, the next apply runs the scan again. A scan created before `install_command` has been applied can finish ERRORED or NO_RESOURCES_FOUND, which fails the apply. Run the scan after the infrastructure is installed and the discovery agent has seen resources. Change `identity` only when you want a different scan. That deletes the current scan and creates the new one.\n\n"
-	}
-	return "Create waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply and include `error_message` when the API recorded one. " +
-		"COMPLETED can still have an empty `risks` list when analysis found nothing. The default create timeout is 2 hours.\n\n" +
-		"Set `detection_method` to `ai` for the UI AI Scan, or `ruleBased` for the UI Rule-based Scan. `AI` and `RiskAnalyzer` are accepted as the same choices. Leave it unset and the API uses AI Scan.\n\n" +
-		retry +
-		"Only `name`, `description`, and `tags` can be updated in place. " +
-		"`risks` is a computed view of this scan's report, sorted by identity. A report read failure keeps the previous `risks` value. Change `abort_token` on an existing scan to abort it; `ABORTED` then succeeds."
-}
+const scanLifecycleDescription = "Create waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply and include `error_message` when the API recorded one. " +
+	"COMPLETED can still have an empty `risks` list when analysis found nothing. The default create timeout is 2 hours.\n\n" +
+	"Set `detection_method` to `ai` for the UI AI Scan, or `ruleBased` for the UI Rule-based Scan. `AI` and `RiskAnalyzer` are accepted as the same choices. Leave it unset and the API uses AI Scan.\n\n"
 
-func resourcePipelineScanRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return readScan(ctx, d, meta, d.Id(), chaos.ScanTypePipelineExecution, true)
-}
+const scanApplyOnce = "The first apply creates one scan. Later applies of the same resource do not create another scan on the UI. "
 
-func resourceInfrastructureScanRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return readScan(ctx, d, meta, d.Id(), chaos.ScanTypeDiscoveryAgent, true)
-}
+const scanIdentityChange = "Change `identity` only when you want a different scan. That deletes the current scan and creates the new one.\n\n"
 
-func resourcePipelineScanUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return resourceChaosScanUpdate(ctx, d, meta, chaos.ScanTypePipelineExecution)
-}
+const infrastructureScanRetry = "Terraform does not watch the cluster. To run that same scan again after this configuration creates or updates the chaos infrastructure, set `retry_token` to `harness_chaos_infrastructure_v2.<name>.updated_at`. The identifier stays the same, so the UI still shows one scan and the results are refreshed. `updated_at` is read back from the API on every refresh. If the server changes it on its own, the next apply runs the scan again. A scan created before `install_command` has been applied can finish ERRORED or NO_RESOURCES_FOUND, which fails the apply. Run the scan after the infrastructure is installed and the discovery agent has seen resources. "
 
-func resourceInfrastructureScanUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return resourceChaosScanUpdate(ctx, d, meta, chaos.ScanTypeDiscoveryAgent)
-}
-
-func resourcePipelineScanImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	return importChaosScan(ctx, d, meta, chaos.ScanTypePipelineExecution)
-}
-
-func resourceInfrastructureScanImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	return importChaosScan(ctx, d, meta, chaos.ScanTypeDiscoveryAgent)
-}
+const scanMetadataUpdate = "Only `name`, `description`, and `tags` can be updated in place. " +
+	"`risks` is a computed view of this scan's report, sorted by identity. A report read failure keeps the previous `risks` value. Change `abort_token` on an existing scan to abort it; `ABORTED` then succeeds."
 
 func resourcePipelineScanCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetChaosClientWithContext(ctx)
@@ -145,7 +133,7 @@ func resourceInfrastructureScanCreate(ctx context.Context, d *schema.ResourceDat
 		if reqErr != nil {
 			return diag.FromErr(reqErr)
 		}
-		log.Printf("[DEBUG] Creating chaos infrastructure scan %s for agent %s", req.Identity, req.Source.Infrastructure.AgentIdentity)
+		log.Printf("[DEBUG] Creating chaos infrastructure scan %s for agent %s", req.Identity, req.Source.DiscoveryAgent.AgentIdentity)
 		created, httpResp, err = client.Create(ctx, scope, req)
 	}
 	if err != nil {

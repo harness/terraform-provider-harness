@@ -80,7 +80,7 @@ func discoveryAgentScanRequest(d *schema.ResourceData) (chaos.ScanCreateRequest,
 		Tags:            expandStringList(d.Get("tags")),
 		DetectionMethod: method,
 		ScanType:        chaos.ScanTypeDiscoveryAgent,
-		Source: chaos.ScanSource{Infrastructure: &chaos.InfrastructureScan{
+		Source: chaos.ScanSource{DiscoveryAgent: &chaos.DiscoveryAgentScan{
 			AgentIdentity:             agentID,
 			EnvironmentIdentity:       environmentID,
 			EnvironmentParentUniqueID: d.Get("environment_parent_unique_id").(string),
@@ -141,7 +141,7 @@ func setScanState(d *schema.ResourceData, scan *chaos.Scan, report *chaos.ScanRe
 			values[key] = value
 		}
 	case chaos.ScanTypeDiscoveryAgent:
-		for key, value := range infrastructureScanState(d, scan.Source.Infrastructure, keepInfrastructureIDs) {
+		for key, value := range infrastructureScanState(d, scan.Source.DiscoveryAgent, keepInfrastructureIDs) {
 			values[key] = value
 		}
 	}
@@ -191,9 +191,9 @@ func pipelineScanState(src *chaos.PipelineScan) map[string]interface{} {
 	}
 }
 
-func infrastructureScanState(d *schema.ResourceData, src *chaos.InfrastructureScan, keepInfrastructureIDs bool) map[string]interface{} {
+func infrastructureScanState(d *schema.ResourceData, src *chaos.DiscoveryAgentScan, keepInfrastructureIDs bool) map[string]interface{} {
 	if src == nil {
-		src = &chaos.InfrastructureScan{}
+		src = &chaos.DiscoveryAgentScan{}
 	}
 	// The API stores the discovery agent, not the chaos infrastructure id.
 	// The resource schema keeps the infrastructure the user configured so the
@@ -232,6 +232,14 @@ func riskSummaryState(summary *chaos.RiskSummary) []interface{} {
 	if summary == nil {
 		return []interface{}{}
 	}
+	severityCounts := make(map[string]interface{}, len(summary.SeverityCounts))
+	for key, value := range summary.SeverityCounts {
+		severityCounts[key] = value
+	}
+	categoryCounts := make(map[string]interface{}, len(summary.CategoryCounts))
+	for key, value := range summary.CategoryCounts {
+		categoryCounts[key] = value
+	}
 	return []interface{}{map[string]interface{}{
 		"risk_count":        summary.RiskCount,
 		"analysed_at":       summary.AnalysedAt,
@@ -239,8 +247,8 @@ func riskSummaryState(summary *chaos.RiskSummary) []interface{} {
 		"services_at_risk":  summary.ServicesAtRisk,
 		"score":             summary.Score,
 		"score_max":         summary.ScoreMax,
-		"severity_counts":   intMap(summary.SeverityCounts),
-		"category_counts":   intMap(summary.CategoryCounts),
+		"severity_counts":   severityCounts,
+		"category_counts":   categoryCounts,
 	}}
 }
 
@@ -306,15 +314,27 @@ func scanRisksState(risks []chaos.ScanRisk) []interface{} {
 func occurrencesState(occurrences []chaos.ScanRiskOccurrence) []interface{} {
 	out := make([]interface{}, 0, len(occurrences))
 	for _, occurrence := range occurrences {
+		evidence := occurrence.Context.Evidence
+		if evidence == nil {
+			evidence = []string{}
+		}
+		remediation := occurrence.Context.Remediation
+		if remediation == nil {
+			remediation = []string{}
+		}
+		recommendations := occurrence.Context.ResilienceTestingReco
+		if recommendations == nil {
+			recommendations = []string{}
+		}
 		out = append(out, map[string]interface{}{
 			"occurrence_id":          occurrence.OccurrenceID,
 			"detected_at":            occurrence.DetectedAt,
 			"source_type":            occurrence.SourceType,
 			"source_id":              occurrence.SourceID,
 			"service_name":           occurrence.ServiceName,
-			"evidence":               stringOrEmpty(occurrence.Context.Evidence),
-			"remediation":            stringOrEmpty(occurrence.Context.Remediation),
-			"resilience_testing_rec": stringOrEmpty(occurrence.Context.ResilienceTestingReco),
+			"evidence":               evidence,
+			"remediation":            remediation,
+			"resilience_testing_rec": recommendations,
 		})
 	}
 	return out
@@ -329,14 +349,6 @@ func metadataJSON(metadata map[string]interface{}) string {
 		return ""
 	}
 	return string(encoded)
-}
-
-func intMap(in map[string]int) map[string]interface{} {
-	out := make(map[string]interface{}, len(in))
-	for key, value := range in {
-		out[key] = value
-	}
-	return out
 }
 
 func expandStringList(value interface{}) []string {
@@ -357,13 +369,6 @@ func expandStringList(value interface{}) []string {
 		return nil
 	}
 	return out
-}
-
-func stringOrEmpty(values []string) []string {
-	if values == nil {
-		return []string{}
-	}
-	return values
 }
 
 func parseScanImportID(id string) (orgID, projectID, identity string, err error) {

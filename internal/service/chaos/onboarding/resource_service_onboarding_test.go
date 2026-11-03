@@ -41,7 +41,10 @@ func TestServiceOnboardingCreateSelectedServices(t *testing.T) {
 	defer server.Close()
 
 	d := onboardingData(t, map[string]interface{}{
-		"service_ids": []interface{}{"svc-b", "svc-a"},
+		"discovered_service_id": "svc-a",
+		"probes": []interface{}{
+			map[string]interface{}{"probe_id": "http-check"},
+		},
 	})
 	diags := resourceServiceOnboardingCreate(t.Context(), d, onboardingSession(server, server.URL))
 	if diags.HasError() {
@@ -59,9 +62,9 @@ func TestServiceOnboardingCreateSelectedServices(t *testing.T) {
 	}
 }
 
-func TestServiceOnboardingUpdateOnboardsAllDiscoveredServices(t *testing.T) {
-	var onboarded []string
-	confirmed := false
+func TestServiceOnboardingUpdateCreatesOneService(t *testing.T) {
+	var externalID string
+	var probeIDs []string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		if onboardingPrelude(w, r) {
@@ -74,35 +77,52 @@ func TestServiceOnboardingUpdateOnboardsAllDiscoveredServices(t *testing.T) {
 			if r.URL.Query().Get("all") != "true" || r.URL.Query().Get("environmentIdentifier") != "prod" {
 				t.Fatalf("query = %s", r.URL.RawQuery)
 			}
-			_, _ = w.Write([]byte(`{"items":[{"id":"svc-a"},{"id":"gone","removed":true},{"id":""}]}`))
-		case r.Method == http.MethodPost && r.URL.Path == "/chaos/manager/api/rest/v2/onboarding-onboard-services/ob-1":
+			_, _ = w.Write([]byte(`{"items":[{"id":"svc-a","name":"auth-service","type":"Kubernetes","spec":{"kubernetes":{"namespace":"banking"}}},{"id":"gone","removed":true}]}`))
+		case r.Method == http.MethodPost && r.URL.Path == "/chaos/manager/api/v3/chaos-services":
 			var body struct {
-				ExternalServiceIDs []string `json:"externalServiceIds"`
+				Identity          string `json:"identity"`
+				AgentID           string `json:"agentId"`
+				InfrastructureID  string `json:"infrastructureId"`
+				OnboardingID      string `json:"onboardingId"`
+				ExternalServiceID string `json:"externalServiceId"`
+				Probes            []struct {
+					ProbeID string `json:"probeId"`
+				} `json:"probes"`
 			}
 			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 				t.Fatal(err)
 			}
-			onboarded = body.ExternalServiceIDs
-			_, _ = w.Write([]byte(`{"onboardedCount":1,"onboardedServiceIds":["svc-a"]}`))
-		case r.Method == http.MethodPost && r.URL.Path == "/chaos/manager/api/rest/v2/onboarding-confirm-service-onboarding/ob-1":
-			confirmed = true
-			w.WriteHeader(http.StatusOK)
-		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/services"):
-			_, _ = w.Write([]byte(`{"services":[{"externalServiceId":"svc-a"}],"pagination":{"totalPages":1}}`))
+			if body.Identity != "auth-service-banking-payments" || body.AgentID != "payments" || body.InfrastructureID != "payments" || body.OnboardingID != "ob-1" {
+				t.Fatalf("service = %+v", body)
+			}
+			externalID = body.ExternalServiceID
+			for _, probe := range body.Probes {
+				probeIDs = append(probeIDs, probe.ProbeID)
+			}
+			_, _ = w.Write([]byte(`{"identity":"auth-service-banking-payments","externalServiceId":"svc-a"}`))
 		default:
 			t.Fatalf("unexpected %s %s", r.Method, r.URL.Path)
 		}
 	}))
 	defer server.Close()
 
-	d := onboardingData(t, nil)
+	d := onboardingData(t, map[string]interface{}{
+		"discovered_service_id": "svc-a",
+		"probes": []interface{}{
+			map[string]interface{}{"probe_id": "http-check"},
+			map[string]interface{}{"probe_id": "pod-status"},
+		},
+	})
 	d.SetId("ob-1")
 	diags := resourceServiceOnboardingUpdate(t.Context(), d, onboardingSession(server, server.URL+"/chaos/manager/api"))
 	if diags.HasError() {
 		t.Fatal(diags)
 	}
-	if !confirmed || len(onboarded) != 1 || onboarded[0] != "svc-a" || d.Get("onboarded_count") != 1 {
-		t.Fatalf("confirmed=%v onboarded=%v count=%v", confirmed, onboarded, d.Get("onboarded_count"))
+	if externalID != "svc-a" || len(probeIDs) != 2 || probeIDs[0] != "http-check" || probeIDs[1] != "pod-status" {
+		t.Fatalf("external=%s probes=%v", externalID, probeIDs)
+	}
+	if d.Get("chaos_service_id") != "auth-service-banking-payments" {
+		t.Fatalf("id=%v", d.Get("chaos_service_id"))
 	}
 }
 
@@ -119,7 +139,7 @@ func TestServiceOnboardingCreateDiscoveryErroredKeepsID(t *testing.T) {
 	}))
 	defer server.Close()
 
-	d := onboardingData(t, map[string]interface{}{"service_ids": []interface{}{"svc-a"}})
+	d := onboardingData(t, map[string]interface{}{"discovered_service_id": "svc-a"})
 	d.SetId("ob-1")
 	diags := resourceServiceOnboardingUpdate(t.Context(), d, onboardingSession(server, server.URL))
 	if !diags.HasError() || !strings.Contains(diagText(diags), "discovery for onboarding ob-1 is ERRORED") {
@@ -130,15 +150,13 @@ func TestServiceOnboardingCreateDiscoveryErroredKeepsID(t *testing.T) {
 	}
 }
 
-func TestServiceOnboardingCreateNoDiscoveredServices(t *testing.T) {
+func TestServiceOnboardingUpdateServiceNotFound(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		if onboardingPrelude(w, r) {
 			return
 		}
 		switch {
-		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/rest/v2/onboarding"):
-			writeOnboarding(w, "ob-1", "COMPLETED", "", "agent-1")
 		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/onboarding/ob-1"):
 			writeOnboarding(w, "ob-1", "COMPLETED", "", "agent-1")
 		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/discoveredservices"):
@@ -149,10 +167,10 @@ func TestServiceOnboardingCreateNoDiscoveredServices(t *testing.T) {
 	}))
 	defer server.Close()
 
-	d := onboardingData(t, nil)
+	d := onboardingData(t, map[string]interface{}{"discovered_service_id": "svc-missing"})
 	d.SetId("ob-1")
 	diags := resourceServiceOnboardingUpdate(t.Context(), d, onboardingSession(server, server.URL+"/chaos/manager/api"))
-	if !diags.HasError() || !strings.Contains(diagText(diags), "no services") {
+	if !diags.HasError() || !strings.Contains(diagText(diags), "discovered service svc-missing was not found") {
 		t.Fatalf("diags = %#v", diags)
 	}
 	if d.Id() != "ob-1" {
@@ -226,28 +244,49 @@ func TestServiceOnboardingReadServerErrorKeepsState(t *testing.T) {
 	}
 }
 
-func TestServiceOnboardingUpdateOnboardsNewSelection(t *testing.T) {
-	var onboarded []string
-	confirmed := false
+func TestServiceOnboardingUpdateReplacesProbes(t *testing.T) {
+	var probeIDs []string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		switch {
-		case r.Method == http.MethodGet && r.URL.Path == "/rest/v2/onboarding/ob-1":
-			writeOnboarding(w, "ob-1", "COMPLETED", "COMPLETED", "agent-1")
-		case r.Method == http.MethodPost && r.URL.Path == "/rest/v2/onboarding-onboard-services/ob-1":
+		case r.Method == http.MethodGet && r.URL.Path == "/v3/chaos-services/auth-service-banking-payments":
+			_, _ = w.Write([]byte(`{"identity":"auth-service-banking-payments","name":"auth-service","agentId":"payments","externalServiceId":"svc-a"}`))
+		case r.Method == http.MethodPut && r.URL.Path == "/v3/chaos-services/auth-service-banking-payments":
 			var body struct {
-				ExternalServiceIDs []string `json:"externalServiceIds"`
+				Identity          string `json:"identity"`
+				Name              string `json:"name"`
+				AgentID           string `json:"agentId"`
+				EnvironmentID     string `json:"environmentId"`
+				InfrastructureID  string `json:"infrastructureId"`
+				ExternalServiceID string `json:"externalServiceId"`
+				Probes            []struct {
+					ProbeID string `json:"probeId"`
+					Inputs  []struct {
+						Name  string `json:"name"`
+						Value string `json:"value"`
+					} `json:"inputs"`
+				} `json:"probes"`
 			}
 			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 				t.Fatal(err)
 			}
-			onboarded = body.ExternalServiceIDs
-			_, _ = w.Write([]byte(`{"onboardedCount":1,"onboardedServiceIds":["svc-c"]}`))
-		case r.Method == http.MethodPost && r.URL.Path == "/rest/v2/onboarding-confirm-service-onboarding/ob-1":
-			confirmed = true
-			w.WriteHeader(http.StatusOK)
+			if body.Name != "auth-service" || body.AgentID != "payments" || body.ExternalServiceID != "svc-a" {
+				t.Fatalf("service = %+v", body)
+			}
+			if body.EnvironmentID != "prod" || body.InfrastructureID != "payments" {
+				t.Fatalf("infra = %s %s", body.EnvironmentID, body.InfrastructureID)
+			}
+			for _, probe := range body.Probes {
+				probeIDs = append(probeIDs, probe.ProbeID)
+				if probe.ProbeID == "http-check" && (len(probe.Inputs) != 1 || probe.Inputs[0].Value != "http://svc") {
+					t.Fatalf("inputs = %+v", probe.Inputs)
+				}
+			}
+			_, _ = w.Write([]byte(`{"identity":"auth-service-banking-payments"}`))
+		case r.Method == http.MethodGet && r.URL.Path == "/rest/v2/onboarding/ob-1":
+			writeOnboarding(w, "ob-1", "COMPLETED", "", "payments")
 		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/services"):
-			_, _ = w.Write([]byte(`{"services":[{"externalServiceId":"svc-c"}],"pagination":{"totalPages":1}}`))
+			t.Fatalf("onboarding read listed session services: %s", r.URL.Path)
 		case r.Method == http.MethodGet && strings.Contains(r.URL.Path, "/rest/v2/infrastructure/"):
 			_, _ = w.Write([]byte(`{"identity":"payments","infraNamespace":"chaos","serviceAccount":"litmus","environmentID":"prod"}`))
 		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/infrastructure/yaml"):
@@ -258,39 +297,69 @@ func TestServiceOnboardingUpdateOnboardsNewSelection(t *testing.T) {
 	}))
 	defer server.Close()
 
-	d := onboardingData(t, map[string]interface{}{"service_ids": []interface{}{"svc-a"}})
+	d := onboardingData(t, map[string]interface{}{
+		"discovered_service_id": "svc-a",
+		"probes": []interface{}{
+			map[string]interface{}{"probe_id": "http-check"},
+		},
+	})
 	d.SetId("ob-1")
-	if err := d.Set("service_ids", []interface{}{"svc-c"}); err != nil {
+	if err := d.Set("chaos_service_id", "auth-service-banking-payments"); err != nil {
 		t.Fatal(err)
 	}
-	if !d.HasChange("service_ids") {
-		t.Fatal("expected service_ids change")
+	if err := d.Set("probes", []interface{}{
+		map[string]interface{}{
+			"probe_id": "http-check",
+			"inputs":   map[string]interface{}{"url": "http://svc"},
+		},
+		map[string]interface{}{"probe_id": "pod-status"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if !d.HasChange("probes") {
+		t.Fatal("expected probes change")
 	}
 	diags := resourceServiceOnboardingUpdate(t.Context(), d, onboardingSession(server, server.URL))
 	if diags.HasError() {
 		t.Fatal(diags)
 	}
-	if !confirmed || len(onboarded) != 1 || onboarded[0] != "svc-c" {
-		t.Fatalf("confirmed=%v onboarded=%v", confirmed, onboarded)
+	if len(probeIDs) != 2 || probeIDs[0] != "http-check" || probeIDs[1] != "pod-status" {
+		t.Fatalf("probes = %v", probeIDs)
 	}
 }
 
 func TestServiceOnboardingDeleteMarksSessionRemoved(t *testing.T) {
-	deleted := false
+	var calls []string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodDelete || r.URL.Path != "/rest/v2/onboarding/ob-1" {
+		if r.Method != http.MethodDelete {
 			t.Fatalf("destroy called %s %s", r.Method, r.URL.Path)
 		}
-		deleted = true
+		calls = append(calls, r.URL.Path)
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer server.Close()
 
-	d := onboardingData(t, nil)
+	d := onboardingData(t, map[string]interface{}{"discovered_service_id": "svc-a"})
 	d.SetId("ob-1")
+	if err := d.Set("chaos_service_id", "auth-service-banking-payments"); err != nil {
+		t.Fatal(err)
+	}
 	diags := resourceServiceOnboardingDelete(t.Context(), d, onboardingSession(server, server.URL))
-	if !deleted || diags.HasError() || d.Id() != "" {
-		t.Fatalf("deleted=%v id=%q diags=%#v", deleted, d.Id(), diags)
+	if diags.HasError() || d.Id() != "" {
+		t.Fatalf("id=%q diags=%#v", d.Id(), diags)
+	}
+	if len(calls) != 2 || calls[0] != "/v3/chaos-services/auth-service-banking-payments" || calls[1] != "/rest/v2/onboarding/ob-1" {
+		t.Fatalf("calls = %v", calls)
+	}
+}
+
+func TestServiceOnboardingDuplicateProbeRejected(t *testing.T) {
+	err := duplicateProbeIDs([]interface{}{
+		map[string]interface{}{"probe_id": "http-check"},
+		map[string]interface{}{"probe_id": "http-check"},
+	})
+	if err == nil || !strings.Contains(err.Error(), "probe http-check is already associated") {
+		t.Fatal(err)
 	}
 }
 
@@ -308,6 +377,70 @@ func TestServiceOnboardingImport(t *testing.T) {
 	d.SetId("org/ob-1")
 	if _, err := resourceServiceOnboardingImport(t.Context(), d, nil); err == nil {
 		t.Fatal("expected invalid import id")
+	}
+}
+
+func TestServiceOnboardingCreateExistingSession(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/rest/v2/onboarding") {
+			_, _ = w.Write([]byte(`{"data":[{"onboardingID":"ob-9","infrastructureRef":"payments","manualMethod":"Service","environmentRef":"prod"}]}`))
+			return
+		}
+		t.Fatalf("unexpected %s %s", r.Method, r.URL.Path)
+	}))
+	defer server.Close()
+
+	d := onboardingData(t, map[string]interface{}{"discovered_service_id": "svc-a"})
+	diags := resourceServiceOnboardingCreate(t.Context(), d, onboardingSession(server, server.URL))
+	if !diags.HasError() || !strings.Contains(diagText(diags), "ob-9") || d.Id() != "" {
+		t.Fatalf("id=%q diags=%s", d.Id(), diagText(diags))
+	}
+}
+
+func TestChaosServiceCreateUsesExistingSession(t *testing.T) {
+	var posted bool
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		switch {
+		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/onboarding/ob-1"):
+			writeOnboarding(w, "ob-1", "COMPLETED", "", "agent-1")
+		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/agents/agent-1/discoveredservices"):
+			_, _ = w.Write([]byte(`{"items":[{"id":"svc-b","name":"Cart Service","type":"Kubernetes","spec":{"kubernetes":{"namespace":"shop"}}}]}`))
+		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/v3/chaos-services"):
+			var body struct {
+				Identity         string `json:"identity"`
+				AgentID          string `json:"agentId"`
+				InfrastructureID string `json:"infrastructureId"`
+				OnboardingID     string `json:"onboardingId"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				t.Fatal(err)
+			}
+			if body.Identity != "cartservice-shop-agent-1" || body.AgentID != "payments" || body.InfrastructureID != "payments" || body.OnboardingID != "ob-1" {
+				t.Fatalf("%+v", body)
+			}
+			posted = true
+			_, _ = w.Write([]byte(`{"identity":"cartservice-shop-agent-1"}`))
+		case r.Method == http.MethodPost && strings.Contains(r.URL.Path, "/onboarding"):
+			t.Fatalf("session create %s", r.URL.Path)
+		default:
+			t.Fatalf("unexpected %s %s", r.Method, r.URL.Path)
+		}
+	}))
+	defer server.Close()
+
+	d := schema.TestResourceDataRaw(t, ResourceChaosOnboardingService().Schema, map[string]interface{}{
+		"org_id":            "org",
+		"project_id":        "proj",
+		"environment_id":    "prod",
+		"infrastructure_id": "payments",
+		"onboarding_id":     "ob-1",
+		"discovered_service_id":        "svc-b",
+	})
+	diags := resourceOnboardingServiceCreate(t.Context(), d, onboardingSession(server, server.URL+"/chaos/manager/api"))
+	if diags.HasError() || !posted || d.Id() != "cartservice-shop-agent-1" {
+		t.Fatalf("id=%q diags=%s", d.Id(), diagText(diags))
 	}
 }
 

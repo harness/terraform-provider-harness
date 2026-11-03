@@ -17,3 +17,7 @@ harness_chaos_infrastructure_scan - read an existing infrastructure scan and its
 ```release-note:new-resource
 harness_chaos_service_onboarding - onboard discovered services for a chaos infrastructure. The onboarding API registers that infrastructure.
 ```
+
+```release-note:new-resource
+harness_chaos_onboarding_service - create one chaos service on an existing service onboarding session.
+```

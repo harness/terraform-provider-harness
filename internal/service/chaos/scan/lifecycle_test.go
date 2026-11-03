@@ -369,7 +369,7 @@ func TestInfrastructureScanCreateResolvesDiscoveryAgent(t *testing.T) {
 	if diags.HasError() {
 		t.Fatal(diags)
 	}
-	agent := got.Source.Infrastructure
+	agent := got.Source.DiscoveryAgent
 	if got.ScanType != chaos.ScanTypeDiscoveryAgent || got.DetectionMethod != chaos.DetectionMethodAI || agent == nil {
 		t.Fatalf("create = %+v", got)
 	}
