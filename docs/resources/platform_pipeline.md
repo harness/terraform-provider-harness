@@ -163,6 +163,7 @@ resource "harness_platform_pipeline" "test" {
 - `template_applied` (Boolean) If true, returns Pipeline YAML with Templates applied on it.
 - `template_applied_pipeline_yaml` (String) Pipeline YAML after resolving Templates (returned as a String).
 - `yaml` (String) YAML of the pipeline. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
+- `yaml_version` (String) Pipeline YAML version sent as `version` on create and update. Use `1` for a Harness 3.0 (unified) pipeline and `0` for a legacy pipeline. Defaults to `0`.
 
 ### Read-Only
 
