@@ -48,6 +48,40 @@ func TestAccResourceApiKey(t *testing.T) {
 
 }
 
+// TestAccResourceApiKey_NoDefaultTimeToExpireToken is a regression test for #1379:
+// omitting default_time_to_expire_token must not produce a perpetual diff. The
+// server assigns a default (e.g. 2592000000ms) that the provider now adopts
+// (the attribute is Optional+Computed) instead of planning it back to null.
+func TestAccResourceApiKey_NoDefaultTimeToExpireToken(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+	parent_id := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
+	name := id
+
+	resourceName := "harness_platform_apikey.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccApiKeyDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceApiKeyNoExpiry(id, name, parent_id, account_id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					// The server default was adopted into state rather than left null.
+					resource.TestCheckResourceAttrSet(resourceName, "default_time_to_expire_token"),
+				),
+			},
+			{
+				// Re-planning the same config must yield no changes (no permadiff).
+				Config:   testAccResourceApiKeyNoExpiry(id, name, parent_id, account_id),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func testAccGetResourceApiKey(resourceName string, state *terraform.State) (*nextgen.ApiKey, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
@@ -79,6 +113,19 @@ func testAccResourceApiKey(id string, name string, parentId string, accountId st
 			account_id = "%[4]s"
 			apikey_type = "USER"
 			default_time_to_expire_token = 1000
+		}
+	`, id, name, parentId, accountId)
+}
+
+func testAccResourceApiKeyNoExpiry(id string, name string, parentId string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_apikey" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description="Test Description"
+			parent_id = "%[3]s"
+			account_id = "%[4]s"
+			apikey_type = "USER"
 		}
 	`, id, name, parentId, accountId)
 }
