@@ -31,7 +31,15 @@ func ResourcePipeline() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Computed:         true,
-				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
+				DiffSuppressFunc: pipelineYamlDiffSuppressFunction,
+			},
+			// TF-only flag (not sent to the Harness API). Opt-in so existing pipelines keep
+			// strict YAML drift detection unless the customer explicitly enables this.
+			"ignore_runtime_input_defaults": {
+				Description: "If true, Terraform ignores plan differences when a bare `<+input>` in `yaml` is returned by the API decorated with the template's default/allowed-values expression (for example `<+input>.default(python)` or `<+input>.allowedValues(...)`). Useful for template-based pipelines that leave `templateInputs` as runtime inputs. Defaults to false.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
 			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",

@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_pipeline: add optional `ignore_runtime_input_defaults` (default `false`). When enabled, suppresses false-positive reconcile diffs where a bare `<+input>` in config is echoed back by the API decorated with the template's default/allowed-values expression (e.g. `<+input>.default(...)`).
+```
