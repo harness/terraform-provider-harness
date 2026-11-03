@@ -519,12 +519,19 @@ func readGitDetails(pipeline nextgen.PipelineGetResponseBody, store_type optiona
 	if commit_message.IsSet() {
 		git_details["commit_message"] = commit_message.Value()
 	}
-	if connector_ref.IsSet() {
-		git_details["connector_ref"] = connector_ref.Value()
-	}
 
-	if connector_ref.Value() == "" {
-		git_details["is_harness_code_repo"] = true
+	connectorRef := connector_ref.Value()
+	if connectorRef == "" {
+		connectorRef = pipeline.GitDetails.ConnectorRef
 	}
+	if connectorRef != "" {
+		git_details["connector_ref"] = connectorRef
+	}
+	// An empty connector is Harness Code. The API omits is_harness_code_repo, which reads as false.
+	isHarnessCodeRepo := pipeline.GitDetails.IsHarnessCodeRepo
+	if connectorRef == "" && !isHarnessCodeRepo {
+		isHarnessCodeRepo = true
+	}
+	git_details["is_harness_code_repo"] = isHarnessCodeRepo
 	return git_details
 }
