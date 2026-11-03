@@ -504,14 +504,19 @@ func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBo
 
 func readGitDetails(pipeline nextgen.PipelineGetResponseBody, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
 	git_details := map[string]interface{}{
-		"branch_name":    pipeline.GitDetails.BranchName,
-		"file_path":      pipeline.GitDetails.FilePath,
-		"repo_name":      pipeline.GitDetails.RepoName,
-		"last_commit_id": pipeline.GitDetails.CommitId,
-		"last_object_id": pipeline.GitDetails.ObjectId,
+		"branch_name":          pipeline.GitDetails.BranchName,
+		"file_path":            pipeline.GitDetails.FilePath,
+		"repo_name":            pipeline.GitDetails.RepoName,
+		"last_commit_id":       pipeline.GitDetails.CommitId,
+		"last_object_id":       pipeline.GitDetails.ObjectId,
+		"is_harness_code_repo": pipeline.GitDetails.IsHarnessCodeRepo,
 	}
+	// The get-pipeline payload does not return store_type inside git_details. A git_details
+	// object is only present for a pipeline stored in Git, so the store type is REMOTE.
 	if store_type.IsSet() {
 		git_details["store_type"] = store_type.Value()
+	} else {
+		git_details["store_type"] = "REMOTE"
 	}
 	if base_branch.IsSet() {
 		git_details["base_branch"] = base_branch.Value()
@@ -519,12 +524,14 @@ func readGitDetails(pipeline nextgen.PipelineGetResponseBody, store_type optiona
 	if commit_message.IsSet() {
 		git_details["commit_message"] = commit_message.Value()
 	}
+	resolvedConnector := ""
 	if connector_ref.IsSet() {
-		git_details["connector_ref"] = connector_ref.Value()
+		resolvedConnector = connector_ref.Value()
+	} else if pipeline.GitDetails.ConnectorRef != "" {
+		resolvedConnector = pipeline.GitDetails.ConnectorRef
 	}
-
-	if connector_ref.Value() == "" {
-		git_details["is_harness_code_repo"] = true
+	if resolvedConnector != "" {
+		git_details["connector_ref"] = resolvedConnector
 	}
 	return git_details
 }

@@ -17,6 +17,10 @@ data "harness_platform_pipeline" "example" {
   identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"
+
+  # Read a remote pipeline from the branch where it is stored when that branch
+  # is not the repository default branch. Defaults to true.
+  load_from_fallback_branch = true
 }
 ```
 
@@ -32,6 +36,7 @@ data "harness_platform_pipeline" "example" {
 
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `identifier` (String) Unique identifier of the resource.
+- `load_from_fallback_branch` (Boolean) When true, a remote pipeline is read from the branch where it is stored if it is not on the repository default branch. Defaults to true.
 - `name` (String) Name of the resource.
 
 ### Read-Only
@@ -49,14 +54,15 @@ data "harness_platform_pipeline" "example" {
 Optional:
 
 - `base_branch` (String) Name of the default branch (this checks out a new branch titled by branch_name).
+- `branch_name` (String) Name of the branch. Set this to read a remote pipeline from a branch other than the repository default branch.
+- `connector_ref` (String) Identifier of the Harness Connector used for CRUD operations on the Entity. Set this when reading a remote pipeline.
 - `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.
 - `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Pipeline.
+- `repo_name` (String) Name of the repository. Set this when reading a remote pipeline.
 
 Read-Only:
 
-- `branch_name` (String) Name of the branch.
 - `commit_message` (String) Commit message used for the merge commit.
-- `connector_ref` (String) Identifier of the Harness Connector used for CRUD operations on the Entity.
 - `file_path` (String) File path of the Entity in the repository.
-- `repo_name` (String) Name of the repository.
+- `is_harness_code_repo` (Boolean) If the repo is harness code.
 - `store_type` (String) Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.

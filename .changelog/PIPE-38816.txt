@@ -1,0 +1,3 @@
+```release-note:bug
+data-source/harness_platform_pipeline: Read remote pipelines that are not on the repository default branch, and return git branch, file path, repo, store type, connector ref, and whether the repo is Harness Code.
+```
