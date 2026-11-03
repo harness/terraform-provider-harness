@@ -3,29 +3,28 @@
 page_title: "harness_chaos_onboarding_service Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Creates one chaos service for a discovered service on an onboarding session that already exists.
-  onboarding_id is the session from harness_chaos_service_onboarding. This resource does not register a session. discovered_service_id is one discovered service id. probes lists existing project probe ids. Several probes are valid, and the same probe cannot be added twice. A later change to probes updates that service. Destroy deletes the chaos service and leaves the onboarding session in place.
+  Creates one chaos service on an onboarding session that already exists.
+  onboarding_id comes from harness_chaos_service_onboarding. Set service_name or discovered_service_id. Destroy deletes the chaos service and leaves the session in place.
 ---
 
 # harness_chaos_onboarding_service (Resource)
 
-Creates one chaos service for a discovered service on an onboarding session that already exists.
+Creates one chaos service on an onboarding session that already exists.
 
-`onboarding_id` is the session from `harness_chaos_service_onboarding`. This resource does not register a session. `discovered_service_id` is one discovered service id (`externalServiceId`). `probes` lists existing project probe ids. Several probes are valid, and the same probe cannot be added twice. A later change to `probes` updates that service. Destroy deletes the chaos service and leaves the onboarding session in place.
+`onboarding_id` comes from `harness_chaos_service_onboarding`. Set `service_name` or `discovered_service_id`. Destroy deletes the chaos service and leaves the session in place.
 
 ## Example Usage
 
 ```terraform
-# Creates one more discovered service on the session from harness_chaos_service_onboarding.
-# This resource does not register an onboarding session.
+# One more service on an existing onboarding session.
 resource "harness_chaos_onboarding_service" "example" {
   org_id     = "default"
   project_id = "demo"
 
-  environment_id        = "prod"
-  infrastructure_id     = "payments"
-  onboarding_id         = harness_chaos_service_onboarding.example.onboarding_id
-  service_name = "bank-of-anthos-accounts-db"
+  environment_id    = "prod"
+  infrastructure_id = "payments"
+  onboarding_id     = harness_chaos_service_onboarding.example.onboarding_id
+  service_name      = "bank-of-anthos-accounts-db"
 
   probes {
     probe_id = "pod-status"
@@ -40,15 +39,15 @@ resource "harness_chaos_onboarding_service" "example" {
 
 - `environment_id` (String) Environment the infrastructure belongs to.
 - `infrastructure_id` (String) Infrastructure identifier of the onboarding session.
-- `onboarding_id` (String) Onboarding session that owns this infrastructure. Another service on that session uses this id.
+- `onboarding_id` (String) Onboarding session id.
 - `org_id` (String) Organization identifier.
 - `project_id` (String) Project identifier.
 
 ### Optional
 
-- `discovered_service_id` (String) Id shown under the discovered service name, such as `bankofanthosconfig`. The discovery record id is also accepted. Set this or `service_name`. Changing it creates a new resource.
-- `probes` (Block List) Project probes to associate with the chaos service. The same probe cannot be added twice. Leave this empty to associate no probes. (see [below for nested schema](#nestedblock--probes))
-- `service_name` (String) Name of the discovered service, as shown in the service list, such as `bank-of-anthos-config`. Set this or `discovered_service_id`. When several services share the name, set `discovered_service_id` instead.
+- `discovered_service_id` (String) Id of the discovered service. Set this or `service_name`.
+- `probes` (Block List) Project probes to associate with the chaos service. (see [below for nested schema](#nestedblock--probes))
+- `service_name` (String) Name of the discovered service. Set this or `discovered_service_id`.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only

@@ -14,24 +14,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// ResourceChaosServiceOnboarding returns the service onboarding resource.
 func ResourceChaosServiceOnboarding() *schema.Resource {
 	return &schema.Resource{
-		Description: "Onboards one discovered service onto a chaos infrastructure and associates probes that already exist in the project.\n\n" +
-			"Creates a manual onboarding session with method Service. `infrastructure_id` is the CD infrastructure id. " +
-			"That CD infrastructure must already exist. The onboarding API then registers a chaos infrastructure with the same id, so that chaos infrastructure must not already exist. " +
-			"Create requires Chaos Experiment Edit, Chaos Experiment Execute, Network Map Create, and Network Map Edit. " +
-			"Reading `install_command` also requires Chaos Infrastructure View.\n\n" +
-			"The first apply registers the session and returns `install_command`, the same manifest `harness_chaos_infrastructure_v2` installs with. " +
-			"It does not create the chaos service yet, because discovery cannot finish until that manifest is installed in the cluster. " +
-			"Install it, then apply again. The next apply confirms discovery and creates one chaos service for `service_name` or `discovered_service_id`. " +
-			"`probes` lists existing project probe ids to associate with that service. Several probes are valid, and the same probe cannot be added twice. " +
-			"An empty list associates no probes. Later applies update that probe list in place. Changing `service_name` or `discovered_service_id` creates a new resource. " +
-			"The risk-scan step is left queued, so the session status stays PENDING.\n\n" +
-			"This resource owns the onboarding session for the infrastructure. Create returns an error when that session already exists; import `org_id/project_id/onboarding_id` to manage it. " +
-			"Another discovered service on the same infrastructure uses `harness_chaos_onboarding_service` with this `onboarding_id`, which creates the chaos service and leaves the session in place. " +
-			"Destroy deletes the chaos service created here, then marks the session removed. " +
-			"The chaos infrastructure and the discovery agent remain, so the same `infrastructure_id` cannot be onboarded again.",
+		Description: "Onboards one discovered service onto a chaos infrastructure.\n\n" +
+			"The first apply registers the session and returns `install_command`. Install that manifest, then apply again to create the chaos service. " +
+			"Set `service_name` or `discovered_service_id`. `probes` lists existing project probes. " +
+			"Another service on the same session uses `harness_chaos_onboarding_service`.",
 
 		CreateContext: resourceServiceOnboardingCreate,
 		ReadContext:   resourceServiceOnboardingRead,
@@ -67,13 +55,13 @@ func ResourceChaosServiceOnboarding() *schema.Resource {
 				ForceNew:    true,
 			},
 			"infrastructure_id": {
-				Description: "CD infrastructure identifier. It must already exist. The onboarding API registers a chaos infrastructure with this same id, so that chaos infrastructure must not already exist.",
+				Description: "CD infrastructure identifier. The onboarding API registers a chaos infrastructure with this id.",
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 			},
 			"service_name": {
-				Description:   "Name of the discovered service, as shown in the service list, such as `bank-of-anthos-config`. Set this or `discovered_service_id`. When several services share the name, set `discovered_service_id` instead.",
+				Description:   "Name of the discovered service. Set this or `discovered_service_id`.",
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
@@ -81,7 +69,7 @@ func ResourceChaosServiceOnboarding() *schema.Resource {
 				AtLeastOneOf:  []string{"service_name", "discovered_service_id"},
 			},
 			"discovered_service_id": {
-				Description:   "Id shown under the discovered service name, such as `bankofanthosconfig`. The discovery record id is also accepted. Set this or `service_name`. Changing it creates a new resource.",
+				Description:   "Id of the discovered service. Set this or `service_name`.",
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
@@ -90,7 +78,7 @@ func ResourceChaosServiceOnboarding() *schema.Resource {
 			},
 			"probes": probeSchema(),
 			"install_command": {
-				Description: "Manifest for the chaos infrastructure this session registers. The first apply returns this value. Install it in the cluster, then apply again to confirm discovery and create the chaos service.",
+				Description: "Install manifest returned by the first apply.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -110,12 +98,12 @@ func ResourceChaosServiceOnboarding() *schema.Resource {
 				Computed:    true,
 			},
 			"discovery_status": {
-				Description: "Status of the discovery step. The chaos service can be created when this is COMPLETED.",
+				Description: "Status of the discovery step.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"service_status": {
-				Description: "Status of the chaos service onboarding step. Creating the service through the chaos service API leaves this step queued.",
+				Description: "Status of the chaos service step.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -156,10 +144,7 @@ func resourceServiceOnboardingCreate(ctx context.Context, d *schema.ResourceData
 		}
 		return diags
 	}
-	// Discovery cannot finish until the user installs the manifest outside this
-	// apply. Returning here saves the session and install_command. The next
-	// apply creates the chaos service. Waiting inside create would time out and
-	// Terraform would discard the session, including the manifest.
+	// The next apply creates the chaos service after the manifest is installed.
 	return setServiceOnboarding(d, opened)
 }
 
@@ -300,7 +285,7 @@ func onboardingScope(d *schema.ResourceData, accountID string) chaos.Scope {
 
 func probeSchema() *schema.Schema {
 	return &schema.Schema{
-		Description: "Project probes to associate with the chaos service. The same probe cannot be added twice. Leave this empty to associate no probes.",
+		Description: "Project probes to associate with the chaos service.",
 		Type:        schema.TypeList,
 		Optional:    true,
 		Elem: &schema.Resource{

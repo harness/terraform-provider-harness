@@ -21,30 +21,27 @@ func resourceChaosPipelineScanSchema() map[string]*schema.Schema {
 }
 
 func resourceChaosInfrastructureScanSchema() map[string]*schema.Schema {
-	fields := mergeScanSchema(resourceChaosScanSchema(), infrastructureScanFields(true))
-	fields["identity"].Description = "Unique identifier of this scan. This becomes the resource id. The API rejects an identifier that already exists. Another apply keeps this identifier and does not create a second scan. Change `retry_token` to run this same scan again after this configuration creates or updates the chaos infrastructure. Change `identity` only to replace this scan with a different one; Terraform then deletes the current scan."
-	fields["retry_token"].Description = "Change this to a new value to run this scan again, using the same API as the UI retry action. The scan identifier stays the same, so this does not add another scan on the UI. Set it to `harness_chaos_infrastructure_v2.<name>.updated_at` to run again when that Terraform infrastructure is created or updated. `updated_at` is read back from the API on every refresh. If the server changes it on its own, the next apply runs the scan again. An apply that leaves this value unchanged does not scan again. A scan created before `install_command` has been applied can finish ERRORED or NO_RESOURCES_FOUND, which fails the apply. Run the scan after the infrastructure is installed and the discovery agent has seen resources. Terraform waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply."
-	return fields
+	return mergeScanSchema(resourceChaosScanSchema(), infrastructureScanFields(true))
 }
 
 func resourceChaosScanSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"org_id": {
-			Description:  "Organization identifier. Scans are project scoped, matching the UI.",
+			Description:  "Organization identifier of the scan.",
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
 			ValidateFunc: validation.StringIsNotEmpty,
 		},
 		"project_id": {
-			Description:  "Project identifier. Scans are project scoped, matching the UI. A scan created outside a project does not appear on the project Risks pages.",
+			Description:  "Project identifier of the scan.",
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
 			ValidateFunc: validation.StringIsNotEmpty,
 		},
 		"identity": {
-			Description:  "Unique identifier of this scan. This becomes the resource id. The API rejects an identifier that already exists. Another apply keeps this identifier and does not create a second scan. Change `identity` only to replace this scan with a different one; Terraform then deletes the current scan.",
+			Description:  "Identifier of the scan.",
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
@@ -63,17 +60,17 @@ func resourceChaosScanSchema() map[string]*schema.Schema {
 		},
 		"tags": stringListSchema("Tags associated with the scan.", true, false),
 		"retry_token": {
-			Description: "Change this to a new value to run this scan again, using the same API as the UI retry action. The scan identifier stays the same, so this does not add another scan on the UI. An apply that leaves this value unchanged does not scan again. Terraform waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply.",
+			Description: "Change this to run the same scan again.",
 			Type:        schema.TypeString,
 			Optional:    true,
 		},
 		"abort_token": {
-			Description: "Change this on an existing scan to abort it, using the same API as the UI. `ABORTED` is a successful apply. Create holds the state lock, so this cannot abort a create that is still running. Do not change this and `retry_token` in the same apply.",
+			Description: "Change this to abort the scan.",
 			Type:        schema.TypeString,
 			Optional:    true,
 		},
 		"detection_method": {
-			Description: "Scan method, matching the UI dropdown. `ai` is AI Scan. `ruleBased` is Rule-based Scan. `AI` and `RiskAnalyzer` are the same choices and remain accepted. Leave this unset to let the API choose AI Scan. Changing between AI Scan and Rule-based Scan creates a new scan. Another apply that keeps the same method does not.",
+			Description: "Scan method. `ai` or `ruleBased`.",
 			Type:        schema.TypeString,
 			Optional:    true,
 			Computed:    true,
@@ -92,17 +89,17 @@ func resourceChaosScanSchema() map[string]*schema.Schema {
 			},
 		},
 		"scan_type": {
-			Description: "Scan type recorded by the API. `PipelineExecution` for a pipeline scan, `DiscoveryAgent` for an infrastructure scan.",
+			Description: "Scan type recorded by the API.",
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
 		"status": {
-			Description: "Scan lifecycle status: QUEUED, COLLECTING, COLLECTED, ANALYSING, COMPLETED, ERRORED, or ABORTED. Risks are populated once the scan completes.",
+			Description: "Scan lifecycle status.",
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
 		"result": {
-			Description: "Outcome of a completed scan, such as SUCCESS or NO_RESOURCES_FOUND.",
+			Description: "Outcome of a completed scan.",
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
@@ -132,7 +129,7 @@ func resourceChaosScanSchema() map[string]*schema.Schema {
 			Computed:    true,
 		},
 		"completed_at": {
-			Description: "Completion time as a Unix timestamp. Empty until the scan finishes.",
+			Description: "Completion time as a Unix timestamp.",
 			Type:        schema.TypeInt,
 			Computed:    true,
 		},
@@ -150,7 +147,7 @@ func resourceChaosScanSchema() map[string]*schema.Schema {
 		"risk_summary":   riskSummarySchema(),
 		"collected_data": collectedDataSchema(),
 		"risks": {
-			Description: "Computed view of the risks embedded in this scan's report, sorted by identity. Empty until analysis finishes, including a COMPLETED scan that found nothing.",
+			Description: "Risks produced by this scan.",
 			Type:        schema.TypeList,
 			Computed:    true,
 			Elem: &schema.Resource{
@@ -240,11 +237,11 @@ func pipelineScanFields(forResource bool) map[string]*schema.Schema {
 		Type:        schema.TypeString,
 	}
 	executionID := &schema.Schema{
-		Description: "Execution id (`planExecutionId`) of an existing pipeline run whose status is Success. The UI only offers those executions. Collection fails when the execution has no Kubernetes CD stage.",
+		Description: "Execution id of a successful pipeline run.",
 		Type:        schema.TypeString,
 	}
 	notifyID := &schema.Schema{
-		Description: "Notification id used when a pipeline step triggers the scan. Omit this for scans created the same way as the UI.",
+		Description: "Notification id when a pipeline step triggers the scan.",
 		Type:        schema.TypeString,
 	}
 	if forResource {
@@ -266,7 +263,7 @@ func pipelineScanFields(forResource bool) map[string]*schema.Schema {
 		"pipeline_execution_id": executionID,
 		"notify_id":             notifyID,
 		"infrastructures": {
-			Description: "CD environment and infrastructure pairs observed while collecting manifests. Populated by the scan.",
+			Description: "CD environment and infrastructure pairs observed by the scan.",
 			Type:        schema.TypeList,
 			Computed:    true,
 			Elem: &schema.Resource{
@@ -283,23 +280,23 @@ func pipelineScanFields(forResource bool) map[string]*schema.Schema {
 
 func infrastructureScanFields(forResource bool) map[string]*schema.Schema {
 	infrastructureID := &schema.Schema{
-		Description: "Identifier of the existing chaos infrastructure to scan. Same value as `harness_chaos_infrastructure_v2.infra_id`. Required with `environment_id`. Terraform reads that infrastructure and sends its discovery agent. When the infrastructure has no discoveryAgentID, Terraform uses the discovery agent with this same identity, which is the agent onboarding creates.",
+		Description: "Identifier of the chaos infrastructure to scan. Required with `environment_id`.",
 		Type:        schema.TypeString,
 	}
 	chaosEnvironmentID := &schema.Schema{
-		Description: "Environment of the chaos infrastructure. Same value as `harness_chaos_infrastructure_v2.environment_id`. Required with `infrastructure_id`. Terraform uses it to read that infrastructure and its discovery agent.",
+		Description: "Environment of the chaos infrastructure. Required with `infrastructure_id`.",
 		Type:        schema.TypeString,
 	}
 	agent := &schema.Schema{
-		Description: "Identity of the service discovery agent that observed the Kubernetes infrastructure. Set this when the agent is already known, including imports. Leave it unset when `infrastructure_id` is set; Terraform fills it from the linked agent.",
+		Description: "Identity of the service discovery agent. Required with `environment_identity`.",
 		Type:        schema.TypeString,
 	}
 	environment := &schema.Schema{
-		Description: "Environment identifier of the discovery agent. Required with `agent_identity`. When `infrastructure_id` is set, Terraform fills this from the agent record.",
+		Description: "Environment identifier of the discovery agent. Required with `agent_identity`.",
 		Type:        schema.TypeString,
 	}
 	parent := &schema.Schema{
-		Description: "Parent unique id of the discovery agent's environment. The UI sends this from the agent record. Terraform fills it when `infrastructure_id` is set.",
+		Description: "Parent unique id of the discovery agent's environment.",
 		Type:        schema.TypeString,
 	}
 	if forResource {
@@ -410,7 +407,7 @@ func collectedDataSchema() *schema.Schema {
 				"service_groups":      num("Service groups collected."),
 				"namespaces":          stringListSchema("Namespaces collected.", false, true),
 				"errors": {
-					Description: "Collection failures returned by the API. A pipeline execution with no Kubernetes CD stage is reported here or as a scan error.",
+					Description: "Collection failures returned by the API.",
 					Type:        schema.TypeList,
 					Computed:    true,
 					Elem: &schema.Resource{
@@ -425,11 +422,10 @@ func collectedDataSchema() *schema.Schema {
 	}
 }
 
-// scanReportRiskSchema is the flattened risk embedded in a scan report.
 func scanReportRiskSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"identity": {
-			Description: "Identity of the scanned risk. Stable across scans that find the same risk.",
+			Description: "Identity of the risk.",
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
@@ -444,7 +440,7 @@ func scanReportRiskSchema() map[string]*schema.Schema {
 			Computed:    true,
 		},
 		"tags":             stringListSchema("Tags on the risk.", false, true),
-		"fingerprint":      {Description: "Fingerprint that groups occurrences of the same risk.", Type: schema.TypeString, Computed: true},
+		"fingerprint":      {Description: "Fingerprint of the risk.", Type: schema.TypeString, Computed: true},
 		"severity":         {Description: "Severity: Critical, High, Medium, or Low.", Type: schema.TypeString, Computed: true},
 		"status":           {Description: "Status: Open, InProgress, Resolved, or Ignored.", Type: schema.TypeString, Computed: true},
 		"service_identity": {Description: "Identity of the service the risk applies to.", Type: schema.TypeString, Computed: true},
@@ -464,7 +460,7 @@ func scanReportRiskSchema() map[string]*schema.Schema {
 					"occurrence_id":          {Description: "Identity of this occurrence.", Type: schema.TypeString, Computed: true},
 					"detected_at":            {Description: "Detection time as a Unix timestamp.", Type: schema.TypeInt, Computed: true},
 					"source_type":            {Description: "Source type of the occurrence.", Type: schema.TypeString, Computed: true},
-					"source_id":              {Description: "Source id of the occurrence. For a scan this is the scan identity.", Type: schema.TypeString, Computed: true},
+					"source_id":              {Description: "Source id of the occurrence.", Type: schema.TypeString, Computed: true},
 					"service_name":           {Description: "Service name recorded on the occurrence.", Type: schema.TypeString, Computed: true},
 					"evidence":               stringListSchema("Evidence for the occurrence.", false, true),
 					"remediation":            stringListSchema("Remediation guidance.", false, true),

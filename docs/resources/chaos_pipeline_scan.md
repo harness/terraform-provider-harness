@@ -4,39 +4,25 @@ page_title: "harness_chaos_pipeline_scan Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
   Resource for scanning an existing Harness pipeline execution.
-  This is a pipeline scan. It is separate from harness_chaos_infrastructure_scan. Set pipeline_identity and pipeline_execution_id from a successful execution that has a Kubernetes CD stage. The scan records scan type PipelineExecution. Creating it requires Pipeline View permission.
-  Create waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply and include error_message when the API recorded one. COMPLETED can still have an empty risks list when analysis found nothing. The default create timeout is 2 hours.
-  Set detection_method to ai for the UI AI Scan, or ruleBased for the UI Rule-based Scan. AI and RiskAnalyzer are accepted as the same choices. Leave it unset and the API uses AI Scan.
-  The first apply creates one scan. Later applies of the same resource do not create another scan on the UI. Change identity only when you want a different scan. That deletes the current scan and creates the new one.
-  Only name, description, and tags can be updated in place. risks is a computed view of this scan's report, sorted by identity. A report read failure keeps the previous risks value. Change abort_token on an existing scan to abort it; ABORTED then succeeds.
+  Set pipeline_identity and pipeline_execution_id. Create waits until the scan finishes. ERRORED and ABORTED fail the apply. detection_method is ai or ruleBased. Later applies update name, description, and tags. Change retry_token to run the same scan again, or abort_token to abort it.
 ---
 
 # harness_chaos_pipeline_scan (Resource)
 
 Resource for scanning an existing Harness pipeline execution.
 
-This is a pipeline scan. It is separate from `harness_chaos_infrastructure_scan`. Set `pipeline_identity` and `pipeline_execution_id` from a successful execution that has a Kubernetes CD stage. The scan records scan type PipelineExecution. Creating it requires Pipeline View permission.
-
-Create waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply and include `error_message` when the API recorded one. COMPLETED can still have an empty `risks` list when analysis found nothing. The default create timeout is 2 hours.
-
-Set `detection_method` to `ai` for the UI AI Scan, or `ruleBased` for the UI Rule-based Scan. `AI` and `RiskAnalyzer` are accepted as the same choices. Leave it unset and the API uses AI Scan.
-
-The first apply creates one scan. Later applies of the same resource do not create another scan on the UI. Change `identity` only when you want a different scan. That deletes the current scan and creates the new one.
-
-Only `name`, `description`, and `tags` can be updated in place. `risks` is a computed view of this scan's report, sorted by identity. A report read failure keeps the previous `risks` value. Change `abort_token` on an existing scan to abort it; `ABORTED` then succeeds.
+Set `pipeline_identity` and `pipeline_execution_id`. Create waits until the scan finishes. ERRORED and ABORTED fail the apply. `detection_method` is `ai` or `ruleBased`. Later applies update name, description, and tags. Change `retry_token` to run the same scan again, or `abort_token` to abort it.
 
 ## Example Usage
 
 ```terraform
-# Scan an existing pipeline execution whose status is Success and that deployed
-# with a Kubernetes CD stage. Apply waits until the scan finishes.
+# Scan an existing pipeline execution.
 resource "harness_chaos_pipeline_scan" "example" {
   org_id     = "default"
   project_id = "demo"
   identity   = "cart_deploy_scan"
   name       = "Cart deploy scan"
 
-  # "ai" is AI Scan. "ruleBased" is Rule-based Scan.
   detection_method = "ruleBased"
 
   pipeline_identity     = "cart_deploy"
@@ -53,20 +39,20 @@ output "pipeline_scan_risks" {
 
 ### Required
 
-- `identity` (String) Unique identifier of this scan. This becomes the resource id. The API rejects an identifier that already exists. Another apply keeps this identifier and does not create a second scan. Change `retry_token` to run this same scan again after the infrastructure changes. Change `identity` only to replace this scan with a different one; Terraform then deletes the current scan.
+- `identity` (String) Identifier of the scan.
 - `name` (String) Name of the scan.
-- `org_id` (String) Organization identifier. Scans are project scoped, matching the UI. The agent that runs the scan is called with the account, organization, and project.
-- `pipeline_execution_id` (String) Execution id (`planExecutionId`) of an existing pipeline run whose status is Success. The UI only offers those executions. Collection fails when the execution has no Kubernetes CD stage.
+- `org_id` (String) Organization identifier of the scan.
+- `pipeline_execution_id` (String) Execution id of a successful pipeline run.
 - `pipeline_identity` (String) Identifier of the existing pipeline to scan.
-- `project_id` (String) Project identifier. Scans are project scoped, matching the UI. A scan created outside a project does not appear on the project Risks pages.
+- `project_id` (String) Project identifier of the scan.
 
 ### Optional
 
-- `abort_token` (String) Change this on an existing scan to abort it, using the same API as the UI. `ABORTED` is a successful apply. Create holds the state lock, so this cannot abort a create that is still running. Do not change this and `retry_token` in the same apply.
+- `abort_token` (String) Change this to abort the scan.
 - `description` (String) Description of the scan.
-- `detection_method` (String) Scan method, matching the UI dropdown. `ai` is AI Scan. `ruleBased` is Rule-based Scan. `AI` and `RiskAnalyzer` are the same choices and remain accepted. Leave this unset to let the API choose AI Scan. Changing between AI Scan and Rule-based Scan creates a new scan. Another apply that keeps the same method does not.
-- `notify_id` (String) Notification id used when a pipeline step triggers the scan. Omit this for scans created the same way as the UI.
-- `retry_token` (String) Change this to a new value to run this scan again, using the same API as the UI retry action. The scan identifier stays the same, so this does not add another scan on the UI. Set it to `harness_chaos_infrastructure_v2.<name>.updated_at` to run again only when that Terraform infrastructure is created or updated. An apply that leaves this value unchanged does not scan again. Terraform waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply.
+- `detection_method` (String) Scan method. `ai` or `ruleBased`.
+- `notify_id` (String) Notification id when a pipeline step triggers the scan.
+- `retry_token` (String) Change this to run the same scan again.
 - `tags` (List of String) Tags associated with the scan.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
@@ -74,18 +60,18 @@ output "pipeline_scan_risks" {
 
 - `account_id` (String) Account identifier.
 - `collected_data` (List of Object) Resources collected before analysis. (see [below for nested schema](#nestedatt--collected_data))
-- `completed_at` (Number) Completion time as a Unix timestamp. Empty until the scan finishes.
+- `completed_at` (Number) Completion time as a Unix timestamp.
 - `created_at` (Number) Creation time as a Unix timestamp.
 - `created_by` (String) User who created the scan.
 - `error_message` (String) Error recorded when the scan fails.
 - `id` (String) The ID of this resource.
-- `infrastructures` (List of Object) CD environment and infrastructure pairs observed while collecting manifests. Populated by the scan. (see [below for nested schema](#nestedatt--infrastructures))
-- `result` (String) Outcome of a completed scan, such as SUCCESS or NO_RESOURCES_FOUND.
+- `infrastructures` (List of Object) CD environment and infrastructure pairs observed by the scan. (see [below for nested schema](#nestedatt--infrastructures))
+- `result` (String) Outcome of a completed scan.
 - `retry_count` (Number) Number of times the scan has been retried.
 - `risk_summary` (List of Object) Analysis summary written when the scan finishes. (see [below for nested schema](#nestedatt--risk_summary))
-- `risks` (List of Object) Computed view of the risks embedded in this scan's report, sorted by identity. Empty until analysis finishes, including a COMPLETED scan that found nothing. This is not the durable scanned risk. A future risk resource should use the scanned-risk API, which is a different object keyed by the same identity. (see [below for nested schema](#nestedatt--risks))
-- `scan_type` (String) Scan type recorded by the API. `PipelineExecution` for a pipeline scan, `DiscoveryAgent` for an infrastructure scan.
-- `status` (String) Scan lifecycle status: QUEUED, COLLECTING, COLLECTED, ANALYSING, COMPLETED, ERRORED, or ABORTED. Risks are populated once the scan completes.
+- `risks` (List of Object) Risks produced by this scan. (see [below for nested schema](#nestedatt--risks))
+- `scan_type` (String) Scan type recorded by the API.
+- `status` (String) Scan lifecycle status.
 - `summary` (List of Object) Severity rollup for the scan. (see [below for nested schema](#nestedatt--summary))
 - `updated_at` (Number) Last update time as a Unix timestamp.
 - `updated_by` (String) User who last updated the scan.

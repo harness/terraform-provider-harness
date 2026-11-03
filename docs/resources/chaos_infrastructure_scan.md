@@ -4,35 +4,19 @@ page_title: "harness_chaos_infrastructure_scan Resource - terraform-provider-har
 subcategory: "Next Gen"
 description: |-
   Resource for scanning an existing Kubernetes chaos infrastructure.
-  This is an infrastructure scan. It is separate from harness_chaos_pipeline_scan. Set infrastructure_id and environment_id from harness_chaos_infrastructure_v2. Terraform reads that chaos infrastructure and sends its discovery agent. Set agent_identity and environment_identity instead when the discovery agent is already known, including imports. That pair is what the UI sends. The scan records scan type DiscoveryAgent. It analyses the Kubernetes resources known to that agent, not the chaos infrastructure object. Creating it requires Service Discovery View permission.
-  Create waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply and include error_message when the API recorded one. COMPLETED can still have an empty risks list when analysis found nothing. The default create timeout is 2 hours.
-  Set detection_method to ai for the UI AI Scan, or ruleBased for the UI Rule-based Scan. AI and RiskAnalyzer are accepted as the same choices. Leave it unset and the API uses AI Scan.
-  The first apply creates one scan. Later applies of the same resource do not create another scan on the UI. Terraform does not watch the cluster. To run that same scan again after this configuration creates or updates the chaos infrastructure, set retry_token to harness_chaos_infrastructure_v2.<name>.updated_at. The identifier stays the same, so the UI still shows one scan and the results are refreshed. updated_at is read back from the API on every refresh. If the server changes it on its own, the next apply runs the scan again. A scan created before install_command has been applied can finish ERRORED or NO_RESOURCES_FOUND, which fails the apply. Run the scan after the infrastructure is installed and the discovery agent has seen resources. Change identity only when you want a different scan. That deletes the current scan and creates the new one.
-  Only name, description, and tags can be updated in place. risks is a computed view of this scan's report, sorted by identity. A report read failure keeps the previous risks value. Change abort_token on an existing scan to abort it; ABORTED then succeeds.
+  Set infrastructure_id and environment_id, or agent_identity and environment_identity. Create waits until the scan finishes. ERRORED and ABORTED fail the apply. detection_method is ai or ruleBased. Change retry_token to run the same scan again.
 ---
 
 # harness_chaos_infrastructure_scan (Resource)
 
 Resource for scanning an existing Kubernetes chaos infrastructure.
 
-This is an infrastructure scan. It is separate from `harness_chaos_pipeline_scan`. Set `infrastructure_id` and `environment_id` from `harness_chaos_infrastructure_v2`. Terraform reads that chaos infrastructure and sends its discovery agent. Set `agent_identity` and `environment_identity` instead when the discovery agent is already known, including imports. That pair is what the UI sends. The scan records scan type DiscoveryAgent. It analyses the Kubernetes resources known to that agent, not the chaos infrastructure object. Creating it requires Service Discovery View permission.
-
-Create waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply and include `error_message` when the API recorded one. COMPLETED can still have an empty `risks` list when analysis found nothing. The default create timeout is 2 hours.
-
-Set `detection_method` to `ai` for the UI AI Scan, or `ruleBased` for the UI Rule-based Scan. `AI` and `RiskAnalyzer` are accepted as the same choices. Leave it unset and the API uses AI Scan.
-
-The first apply creates one scan. Later applies of the same resource do not create another scan on the UI. Terraform does not watch the cluster. To run that same scan again after this configuration creates or updates the chaos infrastructure, set `retry_token` to `harness_chaos_infrastructure_v2.<name>.updated_at`. The identifier stays the same, so the UI still shows one scan and the results are refreshed. `updated_at` is read back from the API on every refresh. If the server changes it on its own, the next apply runs the scan again. A scan created before `install_command` has been applied can finish ERRORED or NO_RESOURCES_FOUND, which fails the apply. Run the scan after the infrastructure is installed and the discovery agent has seen resources. Change `identity` only when you want a different scan. That deletes the current scan and creates the new one.
-
-Only `name`, `description`, and `tags` can be updated in place. `risks` is a computed view of this scan's report, sorted by identity. A report read failure keeps the previous `risks` value. Change `abort_token` on an existing scan to abort it; `ABORTED` then succeeds.
+Set `infrastructure_id` and `environment_id`, or `agent_identity` and `environment_identity`. Create waits until the scan finishes. ERRORED and ABORTED fail the apply. `detection_method` is `ai` or `ruleBased`. Change `retry_token` to run the same scan again.
 
 ## Example Usage
 
 ```terraform
-# Scan an existing chaos infrastructure. infrastructure_id and environment_id
-# are the same values as harness_chaos_infrastructure_v2. Terraform reads that
-# infrastructure and sends its discovery agent.
-# Apply this after install_command has been applied and the agent has discovered
-# resources. A scan before that can finish ERRORED or NO_RESOURCES_FOUND.
+# Scan an existing chaos infrastructure.
 resource "harness_chaos_infrastructure_scan" "example" {
   org_id     = "default"
   project_id = "demo"
@@ -44,13 +28,11 @@ resource "harness_chaos_infrastructure_scan" "example" {
   infrastructure_id = harness_chaos_infrastructure_v2.payments.infra_id
   environment_id    = harness_chaos_infrastructure_v2.payments.environment_id
 
-  # Refreshes this same scan when that infrastructure is created or updated.
-  # updated_at is read from the API on every refresh. If the server changes it
-  # on its own, the next apply runs the scan again.
+  # Run this scan again when the infrastructure changes.
   retry_token = harness_chaos_infrastructure_v2.payments.updated_at
 }
 
-# Imports and callers that already know the discovery agent use this form.
+# Scan by discovery agent.
 resource "harness_chaos_infrastructure_scan" "by_agent" {
   org_id     = "default"
   project_id = "demo"
@@ -67,22 +49,22 @@ resource "harness_chaos_infrastructure_scan" "by_agent" {
 
 ### Required
 
-- `identity` (String) Unique identifier of this scan. This becomes the resource id. The API rejects an identifier that already exists. Another apply keeps this identifier and does not create a second scan. Change `retry_token` to run this same scan again after this configuration creates or updates the chaos infrastructure. Change `identity` only to replace this scan with a different one; Terraform then deletes the current scan.
+- `identity` (String) Identifier of the scan.
 - `name` (String) Name of the scan.
-- `org_id` (String) Organization identifier. Scans are project scoped, matching the UI.
-- `project_id` (String) Project identifier. Scans are project scoped, matching the UI. A scan created outside a project does not appear on the project Risks pages.
+- `org_id` (String) Organization identifier of the scan.
+- `project_id` (String) Project identifier of the scan.
 
 ### Optional
 
-- `abort_token` (String) Change this on an existing scan to abort it, using the same API as the UI. `ABORTED` is a successful apply. Create holds the state lock, so this cannot abort a create that is still running. Do not change this and `retry_token` in the same apply.
-- `agent_identity` (String) Identity of the service discovery agent that observed the Kubernetes infrastructure. Set this when the agent is already known, including imports. Leave it unset when `infrastructure_id` is set; Terraform fills it from the linked agent.
+- `abort_token` (String) Change this to abort the scan.
+- `agent_identity` (String) Identity of the service discovery agent. Required with `environment_identity`.
 - `description` (String) Description of the scan.
-- `detection_method` (String) Scan method, matching the UI dropdown. `ai` is AI Scan. `ruleBased` is Rule-based Scan. `AI` and `RiskAnalyzer` are the same choices and remain accepted. Leave this unset to let the API choose AI Scan. Changing between AI Scan and Rule-based Scan creates a new scan. Another apply that keeps the same method does not.
-- `environment_id` (String) Environment of the chaos infrastructure. Same value as `harness_chaos_infrastructure_v2.environment_id`. Required with `infrastructure_id`. Terraform uses it to read that infrastructure and its discovery agent.
-- `environment_identity` (String) Environment identifier of the discovery agent. Required with `agent_identity`. When `infrastructure_id` is set, Terraform fills this from the agent record.
-- `environment_parent_unique_id` (String) Parent unique id of the discovery agent's environment. The UI sends this from the agent record. Terraform fills it when `infrastructure_id` is set.
-- `infrastructure_id` (String) Identifier of the existing chaos infrastructure to scan. Same value as `harness_chaos_infrastructure_v2.infra_id`. Required with `environment_id`. Terraform reads that infrastructure and sends its discovery agent. When the infrastructure has no discoveryAgentID, Terraform uses the discovery agent with this same identity, which is the agent onboarding creates.
-- `retry_token` (String) Change this to a new value to run this scan again, using the same API as the UI retry action. The scan identifier stays the same, so this does not add another scan on the UI. Set it to `harness_chaos_infrastructure_v2.<name>.updated_at` to run again when that Terraform infrastructure is created or updated. `updated_at` is read back from the API on every refresh. If the server changes it on its own, the next apply runs the scan again. An apply that leaves this value unchanged does not scan again. A scan created before `install_command` has been applied can finish ERRORED or NO_RESOURCES_FOUND, which fails the apply. Run the scan after the infrastructure is installed and the discovery agent has seen resources. Terraform waits until the scan is COMPLETED, ERRORED, or ABORTED. ERRORED and ABORTED fail the apply.
+- `detection_method` (String) Scan method. `ai` or `ruleBased`.
+- `environment_id` (String) Environment of the chaos infrastructure. Required with `infrastructure_id`.
+- `environment_identity` (String) Environment identifier of the discovery agent. Required with `agent_identity`.
+- `environment_parent_unique_id` (String) Parent unique id of the discovery agent's environment.
+- `infrastructure_id` (String) Identifier of the chaos infrastructure to scan. Required with `environment_id`.
+- `retry_token` (String) Change this to run the same scan again.
 - `tags` (List of String) Tags associated with the scan.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
@@ -90,17 +72,17 @@ resource "harness_chaos_infrastructure_scan" "by_agent" {
 
 - `account_id` (String) Account identifier.
 - `collected_data` (List of Object) Resources collected before analysis. (see [below for nested schema](#nestedatt--collected_data))
-- `completed_at` (Number) Completion time as a Unix timestamp. Empty until the scan finishes.
+- `completed_at` (Number) Completion time as a Unix timestamp.
 - `created_at` (Number) Creation time as a Unix timestamp.
 - `created_by` (String) User who created the scan.
 - `error_message` (String) Error recorded when the scan fails.
 - `id` (String) The ID of this resource.
-- `result` (String) Outcome of a completed scan, such as SUCCESS or NO_RESOURCES_FOUND.
+- `result` (String) Outcome of a completed scan.
 - `retry_count` (Number) Number of times the scan has been retried.
 - `risk_summary` (List of Object) Analysis summary written when the scan finishes. (see [below for nested schema](#nestedatt--risk_summary))
-- `risks` (List of Object) Computed view of the risks embedded in this scan's report, sorted by identity. Empty until analysis finishes, including a COMPLETED scan that found nothing. (see [below for nested schema](#nestedatt--risks))
-- `scan_type` (String) Scan type recorded by the API. `PipelineExecution` for a pipeline scan, `DiscoveryAgent` for an infrastructure scan.
-- `status` (String) Scan lifecycle status: QUEUED, COLLECTING, COLLECTED, ANALYSING, COMPLETED, ERRORED, or ABORTED. Risks are populated once the scan completes.
+- `risks` (List of Object) Risks produced by this scan. (see [below for nested schema](#nestedatt--risks))
+- `scan_type` (String) Scan type recorded by the API.
+- `status` (String) Scan lifecycle status.
 - `summary` (List of Object) Severity rollup for the scan. (see [below for nested schema](#nestedatt--summary))
 - `updated_at` (Number) Last update time as a Unix timestamp.
 - `updated_by` (String) User who last updated the scan.

@@ -11,13 +11,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// ResourceChaosOnboardingService creates one discovered service on an existing onboarding session.
 func ResourceChaosOnboardingService() *schema.Resource {
 	return &schema.Resource{
-		Description: "Creates one chaos service for a discovered service on an onboarding session that already exists.\n\n" +
-			"`onboarding_id` is the session from `harness_chaos_service_onboarding`. This resource does not register a session. " +
-			"Set `service_name` or `discovered_service_id` for one discovered service. `probes` lists existing project probe ids. Several probes are valid, and the same probe cannot be added twice. " +
-			"A later change to `probes` updates that service. Destroy deletes the chaos service and leaves the onboarding session in place.",
+		Description: "Creates one chaos service on an onboarding session that already exists.\n\n" +
+			"`onboarding_id` comes from `harness_chaos_service_onboarding`. Set `service_name` or `discovered_service_id`. " +
+			"Destroy deletes the chaos service and leaves the session in place.",
 
 		CreateContext: resourceOnboardingServiceCreate,
 		ReadContext:   resourceOnboardingServiceRead,
@@ -59,13 +57,13 @@ func ResourceChaosOnboardingService() *schema.Resource {
 				ForceNew:    true,
 			},
 			"onboarding_id": {
-				Description: "Onboarding session that owns this infrastructure. Another service on that session uses this id.",
+				Description: "Onboarding session id.",
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 			},
 			"service_name": {
-				Description:   "Name of the discovered service, as shown in the service list, such as `bank-of-anthos-config`. Set this or `discovered_service_id`. When several services share the name, set `discovered_service_id` instead.",
+				Description:   "Name of the discovered service. Set this or `discovered_service_id`.",
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
@@ -73,7 +71,7 @@ func ResourceChaosOnboardingService() *schema.Resource {
 				AtLeastOneOf:  []string{"service_name", "discovered_service_id"},
 			},
 			"discovered_service_id": {
-				Description:   "Id shown under the discovered service name, such as `bankofanthosconfig`. The discovery record id is also accepted. Set this or `service_name`. Changing it creates a new resource.",
+				Description:   "Id of the discovered service. Set this or `service_name`.",
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,

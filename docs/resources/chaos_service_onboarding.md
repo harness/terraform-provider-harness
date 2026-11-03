@@ -3,38 +3,27 @@
 page_title: "harness_chaos_service_onboarding Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Onboards one discovered service onto a chaos infrastructure and associates probes that already exist in the project.
-  Creates a manual onboarding session with method Service. infrastructure_id is the CD infrastructure id. That CD infrastructure must already exist. The onboarding API then registers a chaos infrastructure with the same id, so that chaos infrastructure must not already exist. Create requires Chaos Experiment Edit, Chaos Experiment Execute, Network Map Create, and Network Map Edit. Reading install_command also requires Chaos Infrastructure View.
-  The first apply registers the session and returns install_command, the same manifest harness_chaos_infrastructure_v2 installs with. It does not create the chaos service yet, because discovery cannot finish until that manifest is installed in the cluster. Install it, then apply again. The next apply confirms discovery and creates one chaos service for discovered_service_id. probes lists existing project probe ids to associate with that service. Several probes are valid, and the same probe cannot be added twice. An empty list associates no probes. Later applies update that probe list in place. Changing discovered_service_id creates a new resource. The risk-scan step is left queued, so the session status stays PENDING.
-  This resource owns the onboarding session for the infrastructure. Create returns an error when that session already exists; import org_id/project_id/onboarding_id to manage it. Another discovered service on the same infrastructure uses harness_chaos_onboarding_service with this onboarding_id, which creates the chaos service and leaves the session in place. Destroy deletes the chaos service created here, then marks the session removed. The chaos infrastructure and the discovery agent remain, so the same infrastructure_id cannot be onboarded again.
+  Onboards one discovered service onto a chaos infrastructure.
+  The first apply registers the session and returns install_command. Install that manifest, then apply again to create the chaos service. Set service_name or discovered_service_id. probes lists existing project probes. Another service on the same session uses harness_chaos_onboarding_service.
 ---
 
 # harness_chaos_service_onboarding (Resource)
 
-Onboards one discovered service onto a chaos infrastructure and associates probes that already exist in the project.
+Onboards one discovered service onto a chaos infrastructure.
 
-Creates a manual onboarding session with method Service. `infrastructure_id` is the CD infrastructure id. That CD infrastructure must already exist. The onboarding API then registers a chaos infrastructure with the same id, so that chaos infrastructure must not already exist. Create requires Chaos Experiment Edit, Chaos Experiment Execute, Network Map Create, and Network Map Edit. Reading `install_command` also requires Chaos Infrastructure View.
-
-The first apply registers the session and returns `install_command`, the same manifest `harness_chaos_infrastructure_v2` installs with. It does not create the chaos service yet, because discovery cannot finish until that manifest is installed in the cluster. Install it, then apply again. The next apply confirms discovery and creates one chaos service for `discovered_service_id`. `probes` lists existing project probe ids to associate with that service. Several probes are valid, and the same probe cannot be added twice. An empty list associates no probes. Later applies update that probe list in place. Changing `discovered_service_id` creates a new resource. The risk-scan step is left queued, so the session status stays PENDING.
-
-This resource owns the onboarding session for the infrastructure. Create returns an error when that session already exists; import `org_id/project_id/onboarding_id` to manage it. Another discovered service on the same infrastructure uses `harness_chaos_onboarding_service` with this `onboarding_id`, which creates the chaos service and leaves the session in place. Destroy deletes the chaos service created here, then marks the session removed. The chaos infrastructure and the discovery agent remain, so the same `infrastructure_id` cannot be onboarded again.
+The first apply registers the session and returns `install_command`. Install that manifest, then apply again to create the chaos service. Set `service_name` or `discovered_service_id`. `probes` lists existing project probes. Another service on the same session uses `harness_chaos_onboarding_service`.
 
 ## Example Usage
 
 ```terraform
-# Apply once. The first apply registers the session and returns install_command.
-# Install that manifest in the cluster, then apply again. The second apply
-# confirms discovery and creates one chaos service with these probes.
-# Another discovered service on this infrastructure is a harness_chaos_onboarding_service
-# that uses this resource's onboarding_id.
+# First apply returns install_command. Apply again after installing it.
 resource "harness_chaos_service_onboarding" "example" {
   org_id     = "default"
   project_id = "demo"
 
-  environment_id        = "prod"
-  infrastructure_id     = "payments"
-  # Name shown on the service card. Use discovered_service_id when two services share this name.
-  service_name = "bank-of-anthos-config"
+  environment_id    = "prod"
+  infrastructure_id = "payments"
+  service_name      = "bank-of-anthos-config"
 
   probes {
     probe_id = "http-check"
@@ -59,25 +48,25 @@ output "install_command" {
 ### Required
 
 - `environment_id` (String) Environment the infrastructure belongs to.
-- `infrastructure_id` (String) CD infrastructure identifier. It must already exist. The onboarding API registers a chaos infrastructure with this same id, so that chaos infrastructure must not already exist.
+- `infrastructure_id` (String) CD infrastructure identifier. The onboarding API registers a chaos infrastructure with this id.
 - `org_id` (String) Organization identifier.
 - `project_id` (String) Project identifier.
 
 ### Optional
 
-- `discovered_service_id` (String) Id shown under the discovered service name, such as `bankofanthosconfig`. The discovery record id is also accepted. Set this or `service_name`. Changing it creates a new resource.
-- `probes` (Block List) Project probes to associate with the chaos service. The same probe cannot be added twice. Leave this empty to associate no probes. (see [below for nested schema](#nestedblock--probes))
-- `service_name` (String) Name of the discovered service, as shown in the service list, such as `bank-of-anthos-config`. Set this or `discovered_service_id`. When several services share the name, set `discovered_service_id` instead.
+- `discovered_service_id` (String) Id of the discovered service. Set this or `service_name`.
+- `probes` (Block List) Project probes to associate with the chaos service. (see [below for nested schema](#nestedblock--probes))
+- `service_name` (String) Name of the discovered service. Set this or `discovered_service_id`.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
 - `chaos_service_id` (String) Identity of the chaos service created for this discovered service.
-- `discovery_status` (String) Status of the discovery step. The chaos service can be created when this is COMPLETED.
+- `discovery_status` (String) Status of the discovery step.
 - `id` (String) The ID of this resource.
-- `install_command` (String) Manifest for the chaos infrastructure this session registers. The first apply returns this value. Install it in the cluster, then apply again to confirm discovery and create the chaos service.
+- `install_command` (String) Install manifest returned by the first apply.
 - `onboarding_id` (String) Onboarding session id.
-- `service_status` (String) Status of the chaos service onboarding step. Creating the service through the chaos service API leaves this step queued.
+- `service_status` (String) Status of the chaos service step.
 - `status` (String) Onboarding session status.
 
 <a id="nestedblock--probes"></a>

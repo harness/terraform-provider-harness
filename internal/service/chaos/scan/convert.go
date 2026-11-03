@@ -35,8 +35,6 @@ func pipelineScanRequest(d *schema.ResourceData) (chaos.PipelineScanRequest, err
 	}, nil
 }
 
-// infrastructureScanRequest is set when the user points at an existing chaos
-// infrastructure. The scan client resolves the discovery agent from it.
 func infrastructureScanRequest(d *schema.ResourceData) (*chaos.InfrastructureScanRequest, bool, error) {
 	infrastructureID := d.Get("infrastructure_id").(string)
 	if infrastructureID == "" {
@@ -195,10 +193,7 @@ func infrastructureScanState(d *schema.ResourceData, src *chaos.DiscoveryAgentSc
 	if src == nil {
 		src = &chaos.DiscoveryAgentScan{}
 	}
-	// The API stores the discovery agent, not the chaos infrastructure id.
-	// The resource schema keeps the infrastructure the user configured so the
-	// next plan does not drop it and replace the scan. The data source schema
-	// does not have those keys.
+	// Keep the configured infrastructure id. The API stores the discovery agent.
 	values := map[string]interface{}{
 		"agent_identity":               src.AgentIdentity,
 		"environment_identity":         src.EnvironmentIdentity,

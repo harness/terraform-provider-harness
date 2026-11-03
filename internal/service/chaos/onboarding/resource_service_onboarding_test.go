@@ -431,12 +431,12 @@ func TestChaosServiceCreateUsesExistingSession(t *testing.T) {
 	defer server.Close()
 
 	d := schema.TestResourceDataRaw(t, ResourceChaosOnboardingService().Schema, map[string]interface{}{
-		"org_id":            "org",
-		"project_id":        "proj",
-		"environment_id":    "prod",
-		"infrastructure_id": "payments",
-		"onboarding_id":     "ob-1",
-		"discovered_service_id":        "svc-b",
+		"org_id":                "org",
+		"project_id":            "proj",
+		"environment_id":        "prod",
+		"infrastructure_id":     "payments",
+		"onboarding_id":         "ob-1",
+		"discovered_service_id": "svc-b",
 	})
 	diags := resourceOnboardingServiceCreate(t.Context(), d, onboardingSession(server, server.URL+"/chaos/manager/api"))
 	if diags.HasError() || !posted || d.Id() != "cartservice-shop-agent-1" {
