@@ -50,6 +50,26 @@ func ResourceTriggers() *schema.Resource {
 				Computed:    true,
 				Optional:    true,
 			},
+			"executor_type": {
+				Description: "Type of principal that executes the pipeline when this trigger fires. Valid values: USER, SERVICE_ACCOUNT. When set, the v2 trigger API is used and executor_identifier must also be provided. Required when the account setting enforce_executor_identity_for_triggers is enabled.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"executor_identifier": {
+				Description: "Identifier of the executor principal. For USER type, this is the user's UUID (obtain from the Harness user list API). For SERVICE_ACCOUNT type, this is the service account identifier string (e.g. \"sa005\").",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"executor_org_id": {
+				Description: "Org identifier of the SERVICE_ACCOUNT executor. Set for org-scoped or project-scoped service accounts. Omit for account-level service accounts.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"executor_project_id": {
+				Description: "Project identifier of the SERVICE_ACCOUNT executor. Set for project-scoped service accounts. Omit for account-level or org-level service accounts.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
@@ -89,6 +109,10 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var httpResp *http.Response
 	id := d.Id()
 
+	if isAddTriggerExecutorInfo(d) {
+		return resourceTriggersCreateOrUpdateWithExecutorInfo(ctx, d, c, id)
+	}
+
 	if id == "" {
 		resp, httpResp, err = c.TriggersApi.CreateTrigger(ctx, d.Get("yaml").(string), c.AccountId,
 			d.Get("org_id").(string),
@@ -115,6 +139,75 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
+// isAddTriggerExecutorInfo returns true when executor_type is set in config,
+// indicating the v2 API should be used with an executor identity.
+func isAddTriggerExecutorInfo(d *schema.ResourceData) bool {
+	return d.Get("executor_type").(string) != ""
+}
+
+// resourceTriggersCreateOrUpdateWithExecutorInfo handles create/update using the v2
+// trigger API, which carries executor identity alongside the trigger YAML.
+func resourceTriggersCreateOrUpdateWithExecutorInfo(ctx context.Context, d *schema.ResourceData, c *nextgen.APIClient, id string) diag.Diagnostics {
+	var err error
+	var resp nextgen.ResponseDtongTriggerResponse
+	var httpResp *http.Response
+
+	reqBody := nextgen.TriggerYamlRequest{
+		Yaml:         d.Get("yaml").(string),
+		ExecutorInfo: buildExecutorInfo(d, c.AccountId),
+	}
+
+	if id == "" {
+		resp, httpResp, err = c.TriggersApi.CreateTriggerV2(ctx, reqBody, c.AccountId,
+			d.Get("org_id").(string),
+			d.Get("project_id").(string),
+			d.Get("target_id").(string), &nextgen.TriggersApiCreateTriggerV2Opts{
+				WithServiceV2: optional.NewBool(true),
+			})
+		// A FORCED PAUSE TO PREVENT DUPLICATE WEBHOOK CREATION.
+		time.Sleep(5 * time.Second)
+	} else {
+		resp, httpResp, err = c.TriggersApi.UpdateTriggerV2(ctx, reqBody, c.AccountId,
+			d.Get("org_id").(string),
+			d.Get("project_id").(string),
+			d.Get("target_id").(string), id, &nextgen.TriggersApiUpdateTriggerV2Opts{
+				IfMatch: helpers.BuildField(d, "if_match"),
+			})
+	}
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	readTriggers(d, resp.Data)
+
+	return nil
+}
+
+// buildExecutorInfo constructs a TriggerExecutorInfo from the resource data.
+// For SERVICE_ACCOUNT type, scope is inferred from which fields are set:
+//   - neither executor_org_id nor executor_project_id set → account-level SA
+//   - only executor_org_id set                            → org-level SA
+//   - both executor_org_id and executor_project_id set    → project-level SA
+func buildExecutorInfo(d *schema.ResourceData, accountId string) *nextgen.TriggerExecutorInfo {
+	info := &nextgen.TriggerExecutorInfo{
+		Type_: d.Get("executor_type").(string),
+		Uuid:  d.Get("executor_identifier").(string),
+	}
+
+	if info.Type_ == "SERVICE_ACCOUNT" {
+		info.AccountIdentifier = accountId
+		if v, ok := d.GetOk("executor_org_id"); ok {
+			info.OrgIdentifier = v.(string)
+		}
+		if v, ok := d.GetOk("executor_project_id"); ok {
+			info.ProjectIdentifier = v.(string)
+		}
+	}
+
+	return info
+}
+
 func resourceTriggersDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
@@ -138,4 +231,10 @@ func readTriggers(d *schema.ResourceData, trigger *nextgen.NgTriggerResponse) {
 	d.Set("target_id", trigger.TargetIdentifier)
 	d.Set("yaml", trigger.Yaml)
 	d.Set("webhook_url", trigger.WebhookUrl)
+	if trigger.ExecutorInfo != nil {
+		d.Set("executor_type", trigger.ExecutorInfo.Type_)
+		d.Set("executor_identifier", trigger.ExecutorInfo.Uuid)
+		d.Set("executor_org_id", trigger.ExecutorInfo.OrgIdentifier)
+		d.Set("executor_project_id", trigger.ExecutorInfo.ProjectIdentifier)
+	}
 }
