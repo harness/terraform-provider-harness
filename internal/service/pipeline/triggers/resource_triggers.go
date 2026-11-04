@@ -50,25 +50,35 @@ func ResourceTriggers() *schema.Resource {
 				Computed:    true,
 				Optional:    true,
 			},
-			"executor_type": {
-				Description: "Type of principal that executes the pipeline when this trigger fires. Valid values: USER, SERVICE_ACCOUNT. When set, the v2 trigger API is used and executor_identifier must also be provided. Required when the account setting enforce_executor_identity_for_triggers is enabled.",
-				Type:        schema.TypeString,
+			"executor_info": {
+				Description: "Executor identity for this trigger. When set, the v2 trigger API is used. Required when the account setting enforce_executor_identity_for_triggers is enabled.",
+				Type:        schema.TypeList,
 				Optional:    true,
-			},
-			"executor_identifier": {
-				Description: "Identifier of the executor principal. For USER type, this is the user's UUID (obtain from the Harness user list API). For SERVICE_ACCOUNT type, this is the service account identifier string (e.g. \"sa005\").",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"executor_org_id": {
-				Description: "Org identifier of the SERVICE_ACCOUNT executor. Set for org-scoped or project-scoped service accounts. Omit for account-level service accounts.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"executor_project_id": {
-				Description: "Project identifier of the SERVICE_ACCOUNT executor. Set for project-scoped service accounts. Omit for account-level or org-level service accounts.",
-				Type:        schema.TypeString,
-				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Description: "Type of principal that executes the pipeline when this trigger fires. Valid values: USER, SERVICE_ACCOUNT.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"identifier": {
+							Description: "Identifier of the executor principal. For USER type, this is the user's UUID (obtain from the Harness user list API). For SERVICE_ACCOUNT type, this is the service account identifier string (e.g. \"sa005\").",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"org_id": {
+							Description: "Org identifier of the SERVICE_ACCOUNT executor. Set for org-scoped or project-scoped service accounts. Omit for account-level service accounts.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"project_id": {
+							Description: "Project identifier of the SERVICE_ACCOUNT executor. Set for project-scoped service accounts. Omit for account-level or org-level service accounts.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -139,10 +149,14 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-// isAddTriggerExecutorInfo returns true when executor_type is set in config,
+// isAddTriggerExecutorInfo returns true when an executor block is present in config,
 // indicating the v2 API should be used with an executor identity.
 func isAddTriggerExecutorInfo(d *schema.ResourceData) bool {
-	return d.Get("executor_type").(string) != ""
+	v, ok := d.GetOk("executor_info")
+	if !ok {
+		return false
+	}
+	return len(v.([]interface{})) > 0
 }
 
 // resourceTriggersCreateOrUpdateWithExecutorInfo handles create/update using the v2
@@ -184,24 +198,30 @@ func resourceTriggersCreateOrUpdateWithExecutorInfo(ctx context.Context, d *sche
 	return nil
 }
 
-// buildExecutorInfo constructs a TriggerExecutorInfo from the resource data.
+// buildExecutorInfo constructs a TriggerExecutorInfo from the executor block.
 // For SERVICE_ACCOUNT type, scope is inferred from which fields are set:
-//   - neither executor_org_id nor executor_project_id set → account-level SA
-//   - only executor_org_id set                            → org-level SA
-//   - both executor_org_id and executor_project_id set    → project-level SA
+//   - neither org_id nor project_id set → account-level SA
+//   - only org_id set                   → org-level SA
+//   - both org_id and project_id set    → project-level SA
 func buildExecutorInfo(d *schema.ResourceData, accountId string) *nextgen.TriggerExecutorInfo {
+	v := d.Get("executor_info").([]interface{})
+	if len(v) == 0 {
+		return nil
+	}
+	m := v[0].(map[string]interface{})
+
 	info := &nextgen.TriggerExecutorInfo{
-		Type_: d.Get("executor_type").(string),
-		Uuid:  d.Get("executor_identifier").(string),
+		Type_: m["type"].(string),
+		Uuid:  m["identifier"].(string),
 	}
 
 	if info.Type_ == "SERVICE_ACCOUNT" {
 		info.AccountIdentifier = accountId
-		if v, ok := d.GetOk("executor_org_id"); ok {
-			info.OrgIdentifier = v.(string)
+		if org, ok := m["org_id"].(string); ok && org != "" {
+			info.OrgIdentifier = org
 		}
-		if v, ok := d.GetOk("executor_project_id"); ok {
-			info.ProjectIdentifier = v.(string)
+		if proj, ok := m["project_id"].(string); ok && proj != "" {
+			info.ProjectIdentifier = proj
 		}
 	}
 
@@ -232,9 +252,13 @@ func readTriggers(d *schema.ResourceData, trigger *nextgen.NgTriggerResponse) {
 	d.Set("yaml", trigger.Yaml)
 	d.Set("webhook_url", trigger.WebhookUrl)
 	if trigger.ExecutorInfo != nil {
-		d.Set("executor_type", trigger.ExecutorInfo.Type_)
-		d.Set("executor_identifier", trigger.ExecutorInfo.Uuid)
-		d.Set("executor_org_id", trigger.ExecutorInfo.OrgIdentifier)
-		d.Set("executor_project_id", trigger.ExecutorInfo.ProjectIdentifier)
+		d.Set("executor_info", []interface{}{
+			map[string]interface{}{
+				"type":       trigger.ExecutorInfo.Type_,
+				"identifier": trigger.ExecutorInfo.Uuid,
+				"org_id":     trigger.ExecutorInfo.OrgIdentifier,
+				"project_id": trigger.ExecutorInfo.ProjectIdentifier,
+			},
+		})
 	}
 }
