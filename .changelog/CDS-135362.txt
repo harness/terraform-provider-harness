@@ -1,0 +1,3 @@
+```release-note:bug
+provider: Bump `harness-go-sdk` to v0.8.38 so NextGen API error responses that return `code` as a number (e.g. `400`) are decoded correctly. Resources such as `harness_platform_infrastructure` now surface the actual API error instead of `cannot unmarshal number into Go struct field Failure.code of type string`.
+```
