@@ -328,6 +328,71 @@ func TestServiceOnboardingUpdateReplacesProbes(t *testing.T) {
 	}
 }
 
+func TestServiceOnboardingUpdateCreatesServiceWhenMissing(t *testing.T) {
+	var probeIDs []string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if onboardingPrelude(w, r) {
+			return
+		}
+		switch {
+		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/v3/chaos-services/account-service-banking-3-hpbk8s3"):
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte(`{"message":"[generic error] requested resource not found"}`))
+		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/onboarding/ob-1"):
+			writeOnboarding(w, "ob-1", "COMPLETED", "QUEUED", "hpbk8s3")
+		case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/discoveredservices"):
+			_, _ = w.Write([]byte(`{"items":[{"id":"svc-a","identity":"accountservice","name":"account-service","type":"Kubernetes","spec":{"kubernetes":{"namespace":"banking-3"}}}]}`))
+		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/v3/chaos-services"):
+			var body struct {
+				Probes []struct {
+					ProbeID string `json:"probeId"`
+				} `json:"probes"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				t.Fatal(err)
+			}
+			for _, probe := range body.Probes {
+				probeIDs = append(probeIDs, probe.ProbeID)
+			}
+			_, _ = w.Write([]byte(`{"identity":"account-service-banking-3-hpbk8s3"}`))
+		default:
+			t.Fatalf("unexpected %s %s", r.Method, r.URL.Path)
+		}
+	}))
+	defer server.Close()
+
+	d := onboardingData(t, map[string]interface{}{
+		"service_name": "account-service",
+		"probes": []interface{}{
+			map[string]interface{}{"probe_id": "pod-status-check"},
+		},
+	})
+	d.SetId("ob-1")
+	if err := d.Set("chaos_service_id", "account-service-banking-3-hpbk8s3"); err != nil {
+		t.Fatal(err)
+	}
+	if err := d.Set("probes", []interface{}{
+		map[string]interface{}{"probe_id": "pod-status-check"},
+		map[string]interface{}{"probe_id": "container-restart-check"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if !d.HasChange("probes") {
+		t.Fatal("expected probes change")
+	}
+	diags := resourceServiceOnboardingUpdate(t.Context(), d, onboardingSession(server, server.URL+"/chaos/manager/api"))
+	if diags.HasError() {
+		t.Fatal(diags)
+	}
+	if d.Get("chaos_service_id") != "account-service-banking-3-hpbk8s3" {
+		t.Fatalf("chaos_service_id = %v", d.Get("chaos_service_id"))
+	}
+	if len(probeIDs) != 2 || probeIDs[0] != "pod-status-check" || probeIDs[1] != "container-restart-check" {
+		t.Fatalf("probes = %v", probeIDs)
+	}
+}
+
 func TestServiceOnboardingDeleteMarksSessionRemoved(t *testing.T) {
 	var calls []string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -164,7 +164,14 @@ func resourceServiceOnboardingRead(ctx context.Context, d *schema.ResourceData, 
 	if session.ManualMethod != "" && session.ManualMethod != "Service" {
 		return diag.Errorf("onboarding %s uses method %s, not Service", d.Id(), session.ManualMethod)
 	}
-	session.ChaosServiceID = d.Get("chaos_service_id").(string)
+	if id := d.Get("chaos_service_id").(string); id != "" {
+		_, _, getErr := client.GetChaosService(ctx, scope, id)
+		if getErr != nil && strings.Contains(getErr.Error(), "requested resource not found") {
+			session.ChaosServiceID = ""
+		} else {
+			session.ChaosServiceID = id
+		}
+	}
 	if session.InstallCommand == "" {
 		if manifest, manifestErr := client.InfrastructureManifest(ctx, scope, session.InfrastructureRef, session.EnvironmentRef); manifestErr == nil {
 			session.InstallCommand = manifest
@@ -190,6 +197,19 @@ func resourceServiceOnboardingUpdate(ctx context.Context, d *schema.ResourceData
 	}
 	if d.HasChange("probes") {
 		updated, httpResp, err := client.UpdateChaosService(ctx, scope, chaosServiceRequest(d))
+		// The chaos service is created by onboarding. A saved id that the API no
+		// longer has is created again, with this probe list, instead of updated.
+		if err != nil && strings.Contains(err.Error(), "requested resource not found") {
+			session, httpResp, getErr := client.Get(ctx, scope, d.Id())
+			if getErr != nil {
+				return helpers.HandleChaosApiError(getErr, d, httpResp)
+			}
+			finished, httpResp, createErr := client.FinishServiceOnboarding(ctx, scope, session, onboardingRequest(d))
+			if createErr != nil {
+				return helpers.HandleChaosApiError(createErr, d, httpResp)
+			}
+			return setServiceOnboarding(d, finished)
+		}
 		if err != nil {
 			return helpers.HandleChaosApiError(err, d, httpResp)
 		}
@@ -264,9 +284,7 @@ func setServiceOnboarding(d *schema.ResourceData, session *chaos.ServiceOnboardi
 	if session.InfrastructureRef != "" {
 		fields["infrastructure_id"] = session.InfrastructureRef
 	}
-	if session.ChaosServiceID != "" {
-		fields["chaos_service_id"] = session.ChaosServiceID
-	}
+	fields["chaos_service_id"] = session.ChaosServiceID
 	for key, value := range fields {
 		if err := d.Set(key, value); err != nil {
 			return diag.FromErr(err)
