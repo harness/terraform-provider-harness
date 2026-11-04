@@ -400,7 +400,9 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 			connector_ref = optional.NewString(template.GitDetails.ConnectorRef)
 		}
 
-		if template_yaml != "" {
+		template_id = id
+
+		if (d.HasChange("template_yaml") || d.HasChange("comments") || d.HasChange("git_details")) && template_yaml != "" {
 			if project_id != "" {
 				resp, httpResp, err = c.ProjectTemplateApi.UpdateTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateProjectOpts{
 					Body:           optional.NewInterface(template),
@@ -454,7 +456,6 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 					Body:           optional.NewInterface(template),
 				})
 			}
-			template_id = id
 		}
 	}
 

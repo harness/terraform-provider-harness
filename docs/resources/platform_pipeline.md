@@ -156,12 +156,14 @@ resource "harness_platform_pipeline" "test" {
 - `description` (String) Description of the resource.
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `git_import_info` (Block List, Max: 1) Contains Git Information for importing entities from Git (see [below for nested schema](#nestedblock--git_import_info))
+- `ignore_runtime_input_defaults` (Boolean) If true, Terraform ignores plan differences when a bare `<+input>` in `yaml` is returned by the API decorated with the template's default/allowed-values expression (for example `<+input>.default(python)` or `<+input>.allowedValues(...)`). Useful for template-based pipelines that leave `templateInputs` as runtime inputs. Defaults to false.
 - `import_from_git` (Boolean) Flag to set if importing from Git
 - `pipeline_import_request` (Block List, Max: 1) Contains parameters for importing a pipeline (see [below for nested schema](#nestedblock--pipeline_import_request))
 - `tags` (Set of String) Tags to associate with the resource. These should match the tag value passed in the YAML; if this parameter is null or not passed, the tags specified in YAML should also be null.
 - `template_applied` (Boolean) If true, returns Pipeline YAML with Templates applied on it.
 - `template_applied_pipeline_yaml` (String) Pipeline YAML after resolving Templates (returned as a String).
 - `yaml` (String) YAML of the pipeline. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
+- `yaml_version` (String) Pipeline YAML version sent as `version` on create and update. Use `1` for a Harness 3.0 (unified) pipeline and `0` for a legacy pipeline. Defaults to `0`.
 
 ### Read-Only
 

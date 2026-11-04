@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_template: skip the full YAML update when only `is_stable` changes (so Git-imported/REMOTE templates no longer fail looking up the file on the repo default branch), and always keep the resource id for the post-update refresh GET when that YAML PUT is skipped.
+```

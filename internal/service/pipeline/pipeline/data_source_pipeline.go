@@ -36,8 +36,9 @@ func DataSourcePipeline() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_name": {
-							Description: "Name of the branch.",
+							Description: "Name of the branch. Set this to read a remote pipeline from a branch other than the repository default branch.",
 							Type:        schema.TypeString,
+							Optional:    true,
 							Computed:    true,
 						},
 						"file_path": {
@@ -57,8 +58,9 @@ func DataSourcePipeline() *schema.Resource {
 							Computed:    true,
 						},
 						"connector_ref": {
-							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity.",
+							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity. Set this when reading a remote pipeline.",
 							Type:        schema.TypeString,
+							Optional:    true,
 							Computed:    true,
 						},
 						"store_type": {
@@ -67,8 +69,9 @@ func DataSourcePipeline() *schema.Resource {
 							Computed:    true,
 						},
 						"repo_name": {
-							Description: "Name of the repository.",
+							Description: "Name of the repository. Set this when reading a remote pipeline.",
 							Type:        schema.TypeString,
+							Optional:    true,
 							Computed:    true,
 						},
 						"last_object_id": {
@@ -81,6 +84,11 @@ func DataSourcePipeline() *schema.Resource {
 							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
+						},
+						"is_harness_code_repo": {
+							Description: "If the repo is harness code.",
+							Type:        schema.TypeBool,
 							Computed:    true,
 						},
 					},
@@ -120,7 +128,12 @@ func dataSourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta in
 		org_id,
 		project_id,
 		pipeline_id,
-		&nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId)},
+		&nextgen.PipelinesApiGetPipelineOpts{
+			HarnessAccount: optional.NewString(c.AccountId),
+			BranchName:     helpers.BuildField(d, "git_details.0.branch_name"),
+			ConnectorRef:   connector_ref,
+			RepoName:       helpers.BuildField(d, "git_details.0.repo_name"),
+		},
 	)
 
 	if err != nil {

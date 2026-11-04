@@ -31,7 +31,22 @@ func ResourcePipeline() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Computed:         true,
-				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
+				DiffSuppressFunc: pipelineYamlDiffSuppressFunction,
+			},
+			"yaml_version": {
+				Description:  "Pipeline YAML version sent as `version` on create and update. Use `1` for a Harness 3.0 (unified) pipeline and `0` for a legacy pipeline. Defaults to `0`.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      "0",
+				ValidateFunc: validation.StringInSlice([]string{"0", "1"}, false),
+			},
+			// TF-only flag (not sent to the Harness API). Opt-in so existing pipelines keep
+			// strict YAML drift detection unless the customer explicitly enables this.
+			"ignore_runtime_input_defaults": {
+				Description: "If true, Terraform ignores plan differences when a bare `<+input>` in `yaml` is returned by the API decorated with the template's default/allowed-values expression (for example `<+input>.default(python)` or `<+input>.allowedValues(...)`). Useful for template-based pipelines that leave `templateInputs` as runtime inputs. Defaults to false.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
 			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
@@ -400,6 +415,7 @@ func buildCreatePipeline(d *schema.ResourceData) (nextgen.PipelineCreateRequestB
 		Description:  d.Get("description").(string),
 		Tags:         helpers.ExpandPipelineTags(d.Get("tags").(*schema.Set).List()),
 		PipelineYaml: d.Get("yaml").(string),
+		Version:      pipelineYamlVersion(d),
 	}
 
 	if attr, ok := d.GetOk("git_details"); ok {
@@ -453,6 +469,7 @@ func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBo
 		Description:  d.Get("description").(string),
 		Tags:         helpers.ExpandPipelineTags(d.Get("tags").(*schema.Set).List()),
 		PipelineYaml: d.Get("yaml").(string),
+		Version:      pipelineYamlVersion(d),
 	}
 
 	if attr, ok := d.GetOk("git_details"); ok {
@@ -485,6 +502,16 @@ func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBo
 	return pipeline
 }
 
+// pipelineYamlVersion is the request version. Schema default is "0"; an empty
+// value is treated the same so create and update always send version.
+func pipelineYamlVersion(d *schema.ResourceData) string {
+	version := d.Get("yaml_version").(string)
+	if version == "" {
+		return "0"
+	}
+	return version
+}
+
 // Read response from API out to the stored identifiers
 func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBody, org_id string, project_id string, template_applied bool, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) {
 	d.SetId(pipeline.Identifier)
@@ -494,6 +521,7 @@ func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBo
 	d.Set("project_id", project_id)
 	d.Set("tags", helpers.FlattenTags(pipeline.Tags))
 	d.Set("yaml", pipeline.PipelineYaml)
+	d.Set("yaml_version", pipelineYamlVersion(d))
 	d.Set("description", pipeline.Description)
 	d.Set("template_applied_pipeline_yaml", pipeline.TemplateAppliedPipelineYaml)
 	d.Set("template_applied", template_applied)
@@ -519,12 +547,19 @@ func readGitDetails(pipeline nextgen.PipelineGetResponseBody, store_type optiona
 	if commit_message.IsSet() {
 		git_details["commit_message"] = commit_message.Value()
 	}
-	if connector_ref.IsSet() {
-		git_details["connector_ref"] = connector_ref.Value()
-	}
 
-	if connector_ref.Value() == "" {
-		git_details["is_harness_code_repo"] = true
+	connectorRef := connector_ref.Value()
+	if connectorRef == "" {
+		connectorRef = pipeline.GitDetails.ConnectorRef
 	}
+	if connectorRef != "" {
+		git_details["connector_ref"] = connectorRef
+	}
+	// An empty connector is Harness Code. The API omits is_harness_code_repo, which reads as false.
+	isHarnessCodeRepo := pipeline.GitDetails.IsHarnessCodeRepo
+	if connectorRef == "" && !isHarnessCodeRepo {
+		isHarnessCodeRepo = true
+	}
+	git_details["is_harness_code_repo"] = isHarnessCodeRepo
 	return git_details
 }
