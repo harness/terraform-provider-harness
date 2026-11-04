@@ -1,3 +1,292 @@
+# v0.47.6 (November 03, 2026)
+
+
+ENHANCEMENTS:
+
+* resource/harness_platform_pipeline: add optional `yaml_version` (default `0`). Set it to `1` to create or update a Harness 3.0 (unified) pipeline. The value is sent as `version` on the pipeline create and update request. ([#PIPE-38329](https://github.com/harness/terraform-provider-harness/issues/PIPE-38329))
+
+BUG FIXES:
+
+* data-source/harness_platform_pipeline: Return git branch, file path, repo, connector ref, and whether the repo is Harness Code. ([#PIPE-38816](https://github.com/harness/terraform-provider-harness/issues/PIPE-38816))
+* resource/harness_platform_apikey: Fixed a perpetual diff on `default_time_to_expire_token` when the attribute is omitted; the server-assigned default is now adopted (the attribute is Optional+Computed) instead of planning a change back to null. ([#1415](https://github.com/harness/terraform-provider-harness/issues/1415))
+* resource/harness_platform_pipeline: add optional `ignore_runtime_input_defaults` (default `false`). When enabled, suppresses false-positive reconcile diffs where a bare `<+input>` in config is echoed back by the API decorated with the template's default/allowed-values expression (e.g. `<+input>.default(...)`). ([#PIPE-38416](https://github.com/harness/terraform-provider-harness/issues/PIPE-38416))
+* resource/harness_platform_template: skip the full YAML update when only `is_stable` changes (so Git-imported/REMOTE templates no longer fail looking up the file on the repo default branch), and always keep the resource id for the post-update refresh GET when that YAML PUT is skipped. ([#PIPE-38696](https://github.com/harness/terraform-provider-harness/issues/PIPE-38696))
+
+# v0.47.5 (October 30, 2026)
+
+
+BUG FIXES:
+
+* resource/harness_platform_idp_catalog_entity: When the API returns a null `kind`, recover it from the entity YAML so plan, apply, and destroy no longer fail with `kind is required`. ([#1554](https://github.com/harness/terraform-provider-harness/issues/1554))
+* docs: Added the missing documentation for `resource/harness_platform_trigger_pipeline`. ([#1555](https://github.com/harness/terraform-provider-harness/issues/1555))
+
+# v0.47.4 (October 27, 2026)
+
+
+ENHANCEMENTS:
+
+* resource/harness_platform_har_registry: Added the missing built-in upstream sources (`HuggingFace`, `Packagist`, `Pubdev`, `PuppetForge`, `TerraformRegistry`) and documented which default source each package type uses. ([#1552](https://github.com/harness/terraform-provider-harness/issues/1552))
+
+# v0.47.3 (October 23, 2026)
+
+
+BUG FIXES:
+
+* resource/harness_platform_connector_gcp_cloud_cost: Fixed a provider crash during read when `BILLING` is enabled and the API returns a null `billingExportSpec`.
+resource/harness_platform_connector_aws_cc: Fixed a provider crash during read when the API returns a null `crossAccountAccess`.
+resource/harness_platform_ccm_filters: Fixed a provider crash during read when the API returns null `filterProperties`. ([#CCM-33032](https://github.com/harness/terraform-provider-harness/issues/CCM-33032))
+* resource/harness_platform_idp_catalog_entity: Allow custom catalog kinds registered in IDP, in addition to the built-in component, group, user, workflow, resource, and system kinds. ([#1548](https://github.com/harness/terraform-provider-harness/issues/1548))
+* resource/harness_platform_token: When a token is deleted outside Terraform, clear the id and mark the resource new so the create lifecycle hook runs again. ([#1545](https://github.com/harness/terraform-provider-harness/issues/1545))
+
+# v0.47.2 (October 14, 2026)
+
+
+BREAKING CHANGES:
+
+* resource/harness_autostopping_aws_alb: `api_key` is now required. Existing configurations must set a Harness NG API key used to authenticate the AutoStopping warmup function.
+resource/harness_autostopping_azure_gateway: Added required `api_key` for AutoStopping warmup function authentication. ([#autostopping-lb-api-key](https://github.com/harness/terraform-provider-harness/issues/autostopping-lb-api-key))
+
+BUG FIXES:
+
+* resource/harness_platform_connector_awscc: Preserve CUR 2.0 settings by adding `report_type`, `region`, and `s3_prefix`. When these arguments are omitted, an existing connector keeps the values stored in Harness. ([#CCM-37280](https://github.com/harness/terraform-provider-harness/issues/CCM-37280))
+* resource/harness_platform_repo, resource/harness_platform_repo_rule_branch, resource/harness_platform_repo_webhook: remove the resource from state when it was deleted outside Terraform (404 on read) instead of failing refresh, and treat 404 on delete as already deleted. ([#CODE-6342](https://github.com/harness/terraform-provider-harness/issues/CODE-6342))
+
+# v0.47.1 (October 09, 2026)
+
+
+FEATURES:
+
+* **New Resource:** `harness_platform_setting - Added resource to manage account, organization and project default settings (NG settings API).` ([#PL-66499](https://github.com/harness/terraform-provider-harness/issues/PL-66499))
+
+# v0.47.0 (October 08, 2026)
+
+No changes.
+
+# v0.45.9 (October 01, 2026)
+
+
+FEATURES:
+
+* **New Resource:** `harness_platform_trigger_pipeline: Trigger a Harness pipeline execution with optional input set YAML. Changing `org_id`, `project_id`, `pipeline_id`, `module_type`, `input_set_yaml`, or `branch` re-runs the pipeline. Set `wait_for_completion` to block until the run finishes and expose `status` and `outputs` (JSON-encoded execution node outcomes).` ([#trigger-pipeline](https://github.com/harness/terraform-provider-harness/issues/trigger-pipeline))
+
+BUG FIXES:
+
+* resource/harness_platform_gitops_agent mark the `agent_token` as Sensitive
+data-source/harness_platform_gitops_agent mark the `agent_token` as Sensitive ([#1527](https://github.com/harness/terraform-provider-harness/issues/1527))
+
+# v0.45.8 (September 22, 2026)
+
+
+ENHANCEMENTS:
+
+* resource/harness_platform_gitops_app_project_mapping: Added `block_if_referenced` (Boolean, Optional, Default: `true`) to opt in to a safety check on delete — if any Applications, Clusters, Repositories, or ApplicationSets still reference the mapping's Argo project, the delete fails instead of cascading. Set to `false` to keep the previous cascade-delete-everything behavior. Also applies when the resource is replaced due to a change in `agent_id` or `argo_project_name`. ([#CDS-130661](https://github.com/harness/terraform-provider-harness/issues/CDS-130661))
+
+BUG FIXES:
+
+* resource/harness_platform_gitops_applicationset: Handle nil TypeList elements in spec expand so empty sync_policy.automated no longer panics ([#1520](https://github.com/harness/terraform-provider-harness/issues/1520))
+
+# v0.45.7 (September 17, 2026)
+
+
+BUG FIXES:
+
+* resource/harness_platform_policyset: Fixed a perpetual plan diff on `policies`/`policy_references` when a linked policy lives at a broader scope than the policyset (e.g. an account-scoped policy linked into an org- or project-scoped policyset via a scope-qualified identifier like `account.my_policy`). The provider now reconstructs the scope prefix on read to match what was applied, instead of always returning the bare identifier. ([#PIPE-37472](https://github.com/harness/terraform-provider-harness/issues/PIPE-37472))
+* resource/harness_platform_policyset: Fixed a spurious "reordering" plan diff on the deprecated `policies` list when the underlying API returns linked policies in a different order across reads. The provider now pins unchanged entries to their previous position instead of mirroring the API's unstable order. ([#PIPE-37472](https://github.com/harness/terraform-provider-harness/issues/PIPE-37472))
+
+# v0.45.6 (September 16, 2026)
+
+
+ENHANCEMENTS:
+
+* resource/harness_platform_gitops_agent: Clarified `type` field docs — use `MANAGED_ARGO_PROVIDER` for customer cluster agents; `HOSTED_ARGO_PROVIDER` is Harness-hosted and not customer-provisioned.
+data-source/harness_platform_gitops_agent: Same `type` field documentation update. ([#CDS-132213](https://github.com/harness/terraform-provider-harness/issues/CDS-132213))
+
+# v0.45.5 (September 10, 2026)
+
+
+BUG FIXES:
+
+* `harness_platform_idp_catalog_entity`: Read now requests entity YAML from `git_details.branch_name`, and update no longer sends the create-only `base_branch`, so plan/apply succeed for entities on non-default branches. ([#IDP-10991](https://github.com/harness/terraform-provider-harness/issues/IDP-10991))
+
+# v0.45.4 (September 02, 2026)
+
+
+FEATURES:
+
+* resource/harness_platform_gitops_agent: Added `existing_installation` to the `metadata` block to support BYOA (Bring Your Own Argo CD) agents. The field cannot be changed after create. Updated the `type` enum description to replace deprecated `CONNECTED_ARGO_PROVIDER` with `HOSTED_ARGO_PROVIDER`.
+data-source/harness_platform_gitops_agent: Added computed `existing_installation` to the `metadata` block. ([#1509](https://github.com/harness/terraform-provider-harness/issues/1509))
+
+# v0.45.3 (August 26, 2026)
+
+
+FEATURES:
+
+* **New Resource:** `harness_platform_idp_scorecard and harness_platform_idp_scorecard_check: Added Terraform resources and data sources for IDP scorecards and checks` ([#IDP-10853](https://github.com/harness/terraform-provider-harness/issues/IDP-10853))
+
+BUG FIXES:
+
+* resource/harness_platform_gitops_applicationset: Fixed template `spec.ignore_difference` not being persisted in state because the shared Application spec expand/flatten helpers omitted the field. ([#1503](https://github.com/harness/terraform-provider-harness/issues/1503))
+
+# v0.45.2 (August 23, 2026)
+
+No changes.
+
+# v0.45.1 (August 21, 2026)
+
+
+BUG FIXES:
+
+* `harness_platform_ansible_inventory`, `harness_platform_ansible_playbook`: `tags` are now sent to the API as a list of strings rather than a JSON-encoded map, so tagged inventories and playbooks can be created and updated. Removing every tag now takes effect, and tags changed outside Terraform are reconciled back to the configuration on the next apply instead of being orphaned in state. ([#1497](https://github.com/harness/terraform-provider-harness/issues/1497))
+* `harness_platform_ansible_inventory`: updates no longer fail with `400 invalid inventory data`. The inventory's current data document is carried through the update request, and `description` changes are now applied. ([#1497](https://github.com/harness/terraform-provider-harness/issues/1497))
+* data-source/harness_platform_dashboard_folders: Fixed a crash ("unexpected list folders response shape") when the underlying API returns `resource` as a single root folder object (e.g. the account's implicit "Shared Folder") instead of an array of folders. ([#UDP-4851](https://github.com/harness/terraform-provider-harness/issues/UDP-4851))
+
+# v0.45.0 (August 18, 2026)
+
+No changes.
+
+# v0.44.9 (August 13, 2026)
+
+No changes.
+
+# v0.44.8 (August 12, 2026)
+
+
+BUG FIXES:
+
+* docs: Remove invalid identifier from harness_governance_rule and harness_governance_rule_enforcement examples (CCM-32943) ([#CCM-32943](https://github.com/harness/terraform-provider-harness/issues/CCM-32943))
+* resource/harness_platform_gitops_applicationset: Fixed `generator.selector` being silently dropped on create/update and never read back into state, which disabled label-based generator filtering and caused a perpetual `terraform plan` diff. Selectors on nested matrix generators are now persisted as well. ([#1486](https://github.com/harness/terraform-provider-harness/issues/1486))
+
+# v0.44.7 (August 11, 2026)
+
+No changes.
+
+# v0.44.6 (August 10, 2026)
+
+
+FEATURES:
+
+* harness_platform_har_registry: Added support for the `RUBY` package type, including its upstream source (`RubyGems`). ([#AH-4902](https://github.com/harness/terraform-provider-harness/issues/AH-4902))
+* **New Data Source:** `data-source/harness_platform_dashboard_folder: New data source to retrieve a single dashboard folder by id or name.` ([#1253](https://github.com/harness/terraform-provider-harness/issues/1253))
+* **New Data Source:** `data-source/harness_platform_dashboard_folders: New data source (list) to retrieve all (or filtered by name) Custom Dashboard Folders. This addresses the original design where the plural name only supported single lookup.` ([#1253](https://github.com/harness/terraform-provider-harness/issues/1253))
+* **New Resource:** `resource/harness_platform_dashboard_folder: Renamed (from the previous misleading plural harness_platform_dashboard_folders) to manage a single Custom Dashboard Folder. The old plural resource name is registered for backward compatibility.` ([#1253](https://github.com/harness/terraform-provider-harness/issues/1253))
+
+ENHANCEMENTS:
+
+* provider: FME (Split) resources now derive their API endpoint by replacing a trailing `/gateway` in the Harness endpoint with `/fme`, with the `fme_admin_api_endpoint` provider attribute or `FME_ADMIN_API_ENDPOINT` available as an override ([#fme-gateway-endpoint](https://github.com/harness/terraform-provider-harness/issues/fme-gateway-endpoint))
+
+# v0.44.5 (August 03, 2026)
+
+No changes.
+
+# v0.44.4 (July 31, 2026)
+
+No changes.
+
+# v0.44.3 (July 29, 2026)
+
+No changes.
+
+# v0.44.2 (July 16, 2026)
+
+
+FEATURES:
+
+* harness_platform_har_registry: Added support for the `CONAN` package type, including its upstream source (`ConanCenter`). ([#AH-4521](https://github.com/harness/terraform-provider-harness/issues/AH-4521))
+
+ENHANCEMENTS:
+
+* data-source/harness_platform_gitops_agent_deploy_yaml: Added `application_namespaces` to `argocd_settings` block to configure namespaces where Application CRs are permitted to reside. ([#CDS-121683](https://github.com/harness/terraform-provider-harness/issues/CDS-121683))
+
+BUG FIXES:
+
+* harness_platform_gitops_applicationset: Make the singular `source` block optional in the Application template spec so ApplicationSets can be defined with multiple `sources` (ArgoCD multi-source) alone. Previously a `sources`-only template failed with "At least 1 source blocks are required". The provider now validates at plan time that a template sets exactly one of `source` or `sources`. ([#1388](https://github.com/harness/terraform-provider-harness/issues/1388))
+
+# v0.44.1 (July 13, 2026)
+
+
+FEATURES:
+
+* harness_platform_har_registry: Added support for `DEBIAN` package types, including its upstream source (`Custom`). ([#4348](https://github.com/harness/terraform-provider-harness/issues/4348))
+
+# v0.44.0 (July 10, 2026)
+
+
+NOTES:
+
+* harness_chaos_infrastructure_v2: documented that `resources` and `autopilot_enabled` apply on create and update, and that `discovery_agent_id` is applied at registration (create) time only. The data source now also exposes `resources`, `autopilot_enabled`, and `discovery_agent_id`. ([#CHAOS-12366](https://github.com/harness/terraform-provider-harness/issues/CHAOS-12366))
+* harness_chaos_probe_template, harness_chaos_action_template, harness_chaos_fault_template, harness_chaos_experiment_template, harness_chaos_experiment, harness_chaos_hub_v2, harness_chaos_image_registry, harness_chaos_security_governance_condition_v3: documented supported vs. not-supported features (probe/action types, HTTP probe headers/auth/tls, fault auth/tls, experiment in-place updates, hub immutable fields, fault_type normalization) in the resource docs. ([#CHAOS-12319](https://github.com/harness/terraform-provider-harness/issues/CHAOS-12319))
+
+FEATURES:
+
+* resource/harness_platform_gitops_cluster: Added `secret_expressions` field to map credential field names to Harness secret identifiers, enabling agent-side secret resolution at connect time. ([#1453](https://github.com/harness/terraform-provider-harness/issues/1453))
+
+ENHANCEMENTS:
+
+* harness_chaos_infrastructure_v2: added a `resources` block (CPU/memory `requests` and `limits`, as standard Kubernetes quantity strings) to configure the compute resource requirements applied to the chaos infrastructure pods. Supported on both create and update.
+harness_chaos_infrastructure_v2: added `autopilot_enabled` (bool, defaults to `false`) to enable autopilot mode for the infrastructure. Supported on both create and update. ([#CHAOS-12366](https://github.com/harness/terraform-provider-harness/issues/CHAOS-12366))
+
+# v0.43.9 (July 08, 2026)
+
+No changes.
+
+# v0.43.8 (July 06, 2026)
+
+
+ENHANCEMENTS:
+
+* resource/harness_platform_gitops_applications: Added `force_delete` field to support force deletion of GitOps applications. ([#CDS-121707](https://github.com/harness/terraform-provider-harness/issues/CDS-121707))
+
+# v0.43.7 (June 26, 2026)
+
+
+FEATURES:
+
+* harness_platform_har_registry: Added support for `GO`, `CONDA`, and `HELM_HTTP` package types, including their upstream sources (`GoProxy`, `Anaconda`, `HelmChartRepo`). ([#AH-4307](https://github.com/harness/terraform-provider-harness/issues/AH-4307))
+
+# v0.43.6 (June 25, 2026)
+
+
+ENHANCEMENTS:
+
+* resource/harness_platform_db_instance: Added support for `commit_sha` and `git_tag` fields to pin changelog to a specific revision or tagged revision. ([#1442](https://github.com/harness/terraform-provider-harness/issues/1442))
+
+BUG FIXES:
+
+* harness_platform_ansible_inventory, harness_platform_ansible_playbook: Fixed out-of-band deletion handling so a manually deleted inventory or playbook is detected on read and recreated, instead of failing the plan. ([#IAC-7265](https://github.com/harness/terraform-provider-harness/issues/IAC-7265))
+
+# v0.43.5 (June 16, 2026)
+
+
+ENHANCEMENTS:
+
+* data-source/harness_platform_har_registry: Added `is_public` attribute to read whether a registry is public or private ([#AH-4182](https://github.com/harness/terraform-provider-harness/issues/AH-4182))
+* resource/harness_platform_har_registry: Added `is_public` attribute to configure public vs private registry type when creating or updating registries ([#AH-4182](https://github.com/harness/terraform-provider-harness/issues/AH-4182))
+
+# v0.43.4 (June 10, 2026)
+
+No changes.
+
+# v0.43.3 (June 10, 2026)
+
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_applications: Added support for the `namespace` field inside `kustomize` source configuration blocks. This also enables the field in `harness_platform_gitops_applicationset` template specs (e.g. `spec.generators[].template.spec.source.kustomize.namespace` and top-level `spec.template`). ([#1375](https://github.com/harness/terraform-provider-harness/issues/1375))
+
+BUG FIXES:
+
+* resource/harness_platform_gitops_cluster: Fixed write-only credential handling so bearer_token remains masked when bearer_token_wo is active, and _wo_version values are preserved without invalid nested state writes.
+resource/harness_platform_gitops_repository: Fixed _wo_version state preservation to avoid invalid nested state writes during create/read/update flows.
+resource/harness_platform_gitops_repo_cred: Fixed _wo_version state preservation to avoid invalid nested state writes during create/read/update flows. ([#CDS-125468](https://github.com/harness/terraform-provider-harness/issues/CDS-125468))
+
+# v0.43.2 (June 04, 2026)
+
+No changes.
+
+# v0.43.1 (June 04, 2026)
+
+No changes.
+
 # v0.43.0 (June 03, 2026)
 
 
