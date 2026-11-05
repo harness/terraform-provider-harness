@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_user: show the Harness API error message when an error response sends `code` as a number. The shared NextGen error decoder accepts numeric and string codes, so the same failure no longer hides the message for other resources such as harness_platform_infrastructure.
+```

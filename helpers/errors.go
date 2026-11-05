@@ -153,7 +153,7 @@ func HandlePolicyApiError(err error, d *schema.ResourceData, httpResp *http.Resp
 func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, read bool) diag.Diagnostics {
 	erro, ok := err.(nextgen.GenericSwaggerError)
 	if ok {
-		errMessage := erro.Error()
+		errMessage := nextgenSwaggerErrorMessage(erro)
 		gitopsErr, gitopsErrOk := erro.Model().(nextgen.GatewayruntimeError)
 		if gitopsErrOk {
 			errMessage = gitopsErr.Message
@@ -194,7 +194,9 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 					return nil
 				}
 			}
-			if read && !gitopsErrOk && (erro.Code() == nextgen.ErrorCodes.EntityNotFound) {
+			// GenericSwaggerError.Code panics unless the decoded model is a Failure.
+			// A numeric Failure.code never decodes, so model is nil on that path.
+			if read && !gitopsErrOk && nextgenFailureCode(erro) == nextgen.ErrorCodes.EntityNotFound {
 				d.SetId("")
 				d.MarkNewResource()
 				return nil
@@ -211,7 +213,7 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 				}
 			}
 		}
-		return diag.Errorf(errMessage)
+		return diag.Errorf("%s", errMessage)
 	}
 
 	err_openapi_client, ok := err.(openapi_client_nextgen.GenericSwaggerError)
@@ -244,11 +246,136 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 }
 
 func ParseErrorBody(err nextgen.GenericSwaggerError) (*nextgen.ModelError, error) {
-	var parsed nextgen.ModelError
-	if err := json.Unmarshal(err.Body(), &parsed); err != nil {
+	parsed, perr := decodeAPIErrorBody(err.Body())
+	if perr != nil {
+		return nil, perr
+	}
+
+	model := &nextgen.ModelError{
+		Status:          parsed.Status,
+		Code:            string(parsed.Code),
+		Message:         parsed.Message,
+		CorrelationId:   parsed.CorrelationId,
+		DetailedMessage: parsed.DetailedMessage,
+	}
+	for _, msg := range parsed.ResponseMessages {
+		model.ResponseMessages = append(model.ResponseMessages, nextgen.ResponseMessage{
+			Code:    string(msg.Code),
+			Level:   msg.Level,
+			Message: msg.Message,
+		})
+	}
+	return model, nil
+}
+
+// flexibleCode decodes a Harness error code that is either a JSON string
+// ("ENTITY_NOT_FOUND") or a JSON number (400). harness-go-sdk types
+// nextgen.Failure.Code, ModelError.Code, and AuthzFailure.Code as string, and
+// the generated clients replace the API error with the encoding/json failure
+// when the number cannot be stored. Latest SDK release (v0.8.37) and main
+// still use string, so the provider recovers the code and message from the
+// raw body.
+type flexibleCode string
+
+func (c *flexibleCode) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		*c = ""
+		return nil
+	}
+
+	var asString string
+	if err := json.Unmarshal(data, &asString); err == nil {
+		*c = flexibleCode(asString)
+		return nil
+	}
+
+	var asNumber json.Number
+	if err := json.Unmarshal(data, &asNumber); err != nil {
+		return fmt.Errorf("code must be a string or number, got %s", string(data))
+	}
+	*c = flexibleCode(asNumber.String())
+	return nil
+}
+
+// apiErrorBody mirrors the Harness Failure / ModelError / AuthzFailure payload
+// with a code field that accepts both JSON strings and numbers.
+type apiErrorBody struct {
+	Status           string               `json:"status,omitempty"`
+	Code             flexibleCode         `json:"code,omitempty"`
+	Message          string               `json:"message,omitempty"`
+	CorrelationId    string               `json:"correlationId,omitempty"`
+	DetailedMessage  string               `json:"detailedMessage,omitempty"`
+	Errors           []apiValidationError `json:"errors,omitempty"`
+	ResponseMessages []apiResponseMessage `json:"responseMessages,omitempty"`
+}
+
+type apiValidationError struct {
+	FieldId string `json:"fieldId,omitempty"`
+	Error   string `json:"error,omitempty"`
+}
+
+type apiResponseMessage struct {
+	Code    flexibleCode `json:"code,omitempty"`
+	Level   string       `json:"level,omitempty"`
+	Message string       `json:"message,omitempty"`
+}
+
+func decodeAPIErrorBody(body []byte) (*apiErrorBody, error) {
+	var parsed apiErrorBody
+	if err := json.Unmarshal(body, &parsed); err != nil {
 		return nil, err
 	}
 	return &parsed, nil
+}
+
+// apiErrorMessage returns the message harness-go-sdk would surface after a
+// successful Failure decode: top-level message, detailedMessage, responseMessages,
+// field errors, then the code.
+func apiErrorMessage(body []byte) string {
+	parsed, err := decodeAPIErrorBody(body)
+	if err != nil || parsed == nil {
+		return ""
+	}
+	if parsed.Message != "" {
+		return parsed.Message
+	}
+	if parsed.DetailedMessage != "" {
+		return parsed.DetailedMessage
+	}
+	if len(parsed.ResponseMessages) > 0 && parsed.ResponseMessages[0].Message != "" {
+		return parsed.ResponseMessages[0].Message
+	}
+	if len(parsed.Errors) > 0 {
+		return strings.TrimSpace(parsed.Errors[0].FieldId + " " + parsed.Errors[0].Error)
+	}
+	return string(parsed.Code)
+}
+
+// nextgenSwaggerErrorMessage returns the Harness API message. When the SDK
+// decoded a model, its Error() already prefers that message. When decoding
+// failed (numeric Failure.code leaves model nil), read the raw body instead
+// of returning the encoding/json error.
+func nextgenSwaggerErrorMessage(erro nextgen.GenericSwaggerError) string {
+	if erro.Model() != nil {
+		if msg := erro.Error(); msg != "" {
+			return msg
+		}
+	}
+	if msg := apiErrorMessage(erro.Body()); msg != "" {
+		return msg
+	}
+	return erro.Error()
+}
+
+// nextgenFailureCode reads Failure.code without panicking. GenericSwaggerError.Code
+// type-asserts the model to Failure and panics when the 400 decoder failed or
+// the model is a ModelError.
+func nextgenFailureCode(erro nextgen.GenericSwaggerError) nextgen.ErrorCode {
+	failure, ok := erro.Model().(nextgen.Failure)
+	if !ok {
+		return ""
+	}
+	return nextgen.ErrorCode(failure.Code)
 }
 
 func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
