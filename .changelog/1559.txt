@@ -1,0 +1,15 @@
+```release-note:new-resource
+harness_platform_idp_integration: Manage IDP integrations of every type. A kind's `mapping` block is sent only at create; import brings in the integration alone.
+```
+
+```release-note:new-resource
+harness_platform_idp_integration_kind_mapping: Manage the mapping of one kind of an IDP integration. Destroying it removes it from state and, on Airbyte types, restores the default field mappings.
+```
+
+```release-note:new-data-source
+harness_platform_idp_integration: Look up an IDP integration by identifier
+```
+
+```release-note:new-data-source
+harness_platform_idp_integration_kind_mapping: Read the mapping of one kind of an IDP integration
+```
