@@ -3145,6 +3145,51 @@ func TestAccResourceUpstreamWolfiRegistry(t *testing.T) {
 	})
 }
 
+// ---------------------------------------------------------------------------
+// APM package type
+// ---------------------------------------------------------------------------
+
+// Tests create/read/update/import for a VIRTUAL APM registry
+func TestAccResourceVirtualAPMRegistry(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_apm_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "APM", "initial description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "APM"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "description", "initial description"),
+					resource.TestCheckResourceAttrSet(resourceName, "created_at"),
+				),
+			},
+			{
+				Config: testAccResourceVirtualRegistryByType(id, accountId, "APM", "updated description"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "description", "updated description"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 // Generates Terraform config for a VIRTUAL registry of the given package type
 func testAccResourceVirtualRegistryByType(id, accId, packageType, description string) string {
 	return fmt.Sprintf(`
@@ -3193,6 +3238,7 @@ func TestOrgResourceVirtualConanRegistry(t *testing.T)    { testVirtualRegistryO
 func TestOrgResourceVirtualRubyRegistry(t *testing.T)     { testVirtualRegistryOrg(t, "RUBY") }
 func TestOrgResourceVirtualAlpineRegistry(t *testing.T)   { testVirtualRegistryOrg(t, "ALPINE") }
 func TestOrgResourceVirtualWolfiRegistry(t *testing.T)    { testVirtualRegistryOrg(t, "WOLFI") }
+func TestOrgResourceVirtualAPMRegistry(t *testing.T)      { testVirtualRegistryOrg(t, "APM") }
 
 // Tests creating a VIRTUAL registry of the given package type at project level
 func TestProjectResourceVirtualGoRegistry(t *testing.T)    { testVirtualRegistryProject(t, "GO") }
@@ -3206,6 +3252,7 @@ func TestProjectResourceVirtualAlpineRegistry(t *testing.T) {
 	testVirtualRegistryProject(t, "ALPINE")
 }
 func TestProjectResourceVirtualWolfiRegistry(t *testing.T) { testVirtualRegistryProject(t, "WOLFI") }
+func TestProjectResourceVirtualAPMRegistry(t *testing.T)   { testVirtualRegistryProject(t, "APM") }
 
 // Tests creating an UPSTREAM registry with Custom source + UserPassword auth
 func TestAccResourceUpstreamGoCustomAuthRegistry(t *testing.T) {
@@ -3225,6 +3272,9 @@ func TestAccResourceUpstreamAlpineCustomAuthRegistry(t *testing.T) {
 }
 func TestAccResourceUpstreamWolfiCustomAuthRegistry(t *testing.T) {
 	testUpstreamCustomAuthRegistry(t, "WOLFI")
+}
+func TestAccResourceUpstreamAPMCustomAuthRegistry(t *testing.T) {
+	testUpstreamCustomAuthRegistry(t, "APM")
 }
 func TestAccResourceUpstreamHelmHTTPCustomAuthRegistry(t *testing.T) {
 	testUpstreamCustomAuthRegistry(t, "HELM_HTTP")
