@@ -43,7 +43,7 @@ const upstreamSourceDescription = "Upstream source. Every package type accepts `
 	"`GO` → `GoProxy`, `HELM_HTTP` → `HelmChartRepo`, `MAVEN` → `MavenCentral`, `NPM` → `NpmJs`, " +
 	"`NUGET` → `NugetOrg`, `PUPPET` → `PuppetForge`, `PYTHON` → `PyPi`, `RUBY` → `RubyGems`, " +
 	"`TERRAFORM` → `TerraformRegistry`, `WOLFI` → `Wolfi`. " +
-	"`DEBIAN`, `GENERIC`, `HELM`, `HUGGINGFACE`, `RAW`, `RPM` and `SWIFT` support `Custom` only, " +
+	"`APM`, `DEBIAN`, `GENERIC`, `HELM`, `HUGGINGFACE`, `RAW`, `RPM` and `SWIFT` support `Custom` only, " +
 	"and `TERRAFORM_BACKEND` does not support UPSTREAM registries."
 
 func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
@@ -283,7 +283,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			},
 		},
 		"package_type": {
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, TERRAFORM_BACKEND, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, TERRAFORM_BACKEND, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT, APM)",
 			Type:        schema.TypeString,
 			Required:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -313,6 +313,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.DART_PackageType),
 				(string)(har.SWIFT_PackageType),
 				(string)(har.TERRAFORM_BACKEND_PackageType),
+				(string)(har.APM_PackageType),
 			}, false),
 		},
 		"is_public": {
@@ -383,7 +384,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Computed:    true,
 		}
 		mainSchema["package_type"] = &schema.Schema{
-			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, TERRAFORM_BACKEND, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT)",
+			Description: "Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, TERRAFORM_BACKEND, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT, APM)",
 			Type:        schema.TypeString,
 			Optional:    true,
 			ValidateFunc: validation.StringInSlice([]string{
@@ -413,6 +414,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 				(string)(har.DART_PackageType),
 				(string)(har.SWIFT_PackageType),
 				(string)(har.TERRAFORM_BACKEND_PackageType),
+				(string)(har.APM_PackageType),
 			}, false),
 		}
 	}

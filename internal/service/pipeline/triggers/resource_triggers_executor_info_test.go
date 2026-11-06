@@ -237,6 +237,50 @@ func TestAccResourceTriggers_ExecutorInfo_User(t *testing.T) {
 	})
 }
 
+// TestAccResourceTriggers_ExecutorInfo_RemoveExecutorInfo creates a trigger with a
+// project-scoped SA executor_info, then removes the block in a second step.
+// Verifies that removing executor_info clears the server-side executor via the v2
+// API (not the v1 path which would silently leave it set and cause a perpetual diff).
+func TestAccResourceTriggers_ExecutorInfo_RemoveExecutorInfo(t *testing.T) {
+	saIdentifier := os.Getenv("TRIGGER_TEST_SA_PROJECT_IDENTIFIER")
+	if saIdentifier == "" {
+		t.Skip("TRIGGER_TEST_SA_PROJECT_IDENTIFIER must be set for this acceptance test")
+	}
+
+	env := getTriggerExecutorTestEnv(t)
+	id := fmt.Sprintf("trgexecremove_%s", utils.RandStringBytes(5))
+	resourceName := "harness_platform_triggers.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: create with executor_info set
+				Config: testAccTriggerWithExecutorInfo_SA_ProjectScoped(env, id, saIdentifier),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "executor_info.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "executor_info.0.type", "SERVICE_ACCOUNT"),
+				),
+			},
+			{
+				// Step 2: remove executor_info — server-side executor must be cleared,
+				// state must show executor_info.# = 0, and subsequent plan must be empty.
+				Config: testAccTriggerWithoutExecutorInfo(env, id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "executor_info.#", "0"),
+				),
+			},
+			{
+				// Step 3: confirm no perpetual diff — plan after removal must be empty.
+				Config:   testAccTriggerWithoutExecutorInfo(env, id),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 // TestAccResourceTriggers_ExecutorInfo_NoExecutorInfo creates a trigger without
 // an executor_info block, verifying the v1 API path is still used and the resource
 // works correctly when executor_info is omitted.

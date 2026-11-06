@@ -251,7 +251,12 @@ func readTriggers(d *schema.ResourceData, trigger *nextgen.NgTriggerResponse) {
 	d.Set("target_id", trigger.TargetIdentifier)
 	d.Set("yaml", trigger.Yaml)
 	d.Set("webhook_url", trigger.WebhookUrl)
-	if trigger.ExecutorInfo != nil {
+	// The server never clears executor_info once set. Only write it into state
+	// when the prior state already tracks it (user has the block in their config).
+	// Without this guard, a refresh after removing the block would restore the
+	// server-side executor into state and produce a perpetual plan diff.
+	_, hasExecutorInState := d.GetOk("executor_info")
+	if trigger.ExecutorInfo != nil && hasExecutorInState {
 		d.Set("executor_info", []interface{}{
 			map[string]interface{}{
 				"type":       trigger.ExecutorInfo.Type_,

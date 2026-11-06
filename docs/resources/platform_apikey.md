@@ -57,7 +57,7 @@ resource "harness_platform_apikey" "test" {
 
 ### Optional
 
-- `default_time_to_expire_token` (Number) Default expiration time of the Token within API Key
+- `default_time_to_expire_token` (Number) Default expiration time of the Token within API Key. When omitted, the server-assigned default is adopted instead of forcing a perpetual diff.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.

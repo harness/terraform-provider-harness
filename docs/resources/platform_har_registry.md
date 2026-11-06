@@ -313,6 +313,36 @@ resource "harness_platform_har_registry" "swift_virtual" {
   parent_ref = "accountId/orgId/projectId"
 }
 
+# Example of a Virtual APM Registry
+resource "harness_platform_har_registry" "apm_virtual" {
+  identifier   = "virtual_apm_registry"
+  description  = "Virtual APM Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "APM"
+
+  config {
+    type = "VIRTUAL"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
+# Example of an Upstream APM Registry
+# APM has no built-in default source - use Custom with the upstream APM registry url.
+resource "harness_platform_har_registry" "apm_upstream" {
+  identifier   = "upstream_apm_registry"
+  description  = "Upstream APM Registry"
+  space_ref    = "accountId/orgId/projectId"
+  package_type = "APM"
+
+  config {
+    type      = "UPSTREAM"
+    source    = "Custom"
+    url       = "https://apm.example.com"
+    auth_type = "Anonymous"
+  }
+  parent_ref = "accountId/orgId/projectId"
+}
+
 # Example of a Virtual Hugging Face Registry
 # HUGGINGFACE supports VIRTUAL registries only - upstream is not supported.
 resource "harness_platform_har_registry" "huggingface_virtual" {
@@ -347,7 +377,7 @@ resource "harness_platform_har_registry" "terraform_backend_virtual" {
 ### Required
 
 - `identifier` (String) Unique identifier of the registry
-- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, TERRAFORM_BACKEND, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT)
+- `package_type` (String) Type of package (DOCKER, HELM, HELM_HTTP, MAVEN, PYTHON, GENERIC, NUGET, NPM, RPM, CARGO, RAW, PUPPET, GO, CONDA, DEBIAN, CONAN, RUBY, TERRAFORM, TERRAFORM_BACKEND, CRAN, ALPINE, WOLFI, COMPOSER, HUGGINGFACE, DART, SWIFT, APM)
 - `parent_ref` (String) Parent reference for the registry (required for creation)
 - `space_ref` (String) Space reference for the registry (required for creation)
 
@@ -380,7 +410,7 @@ Optional:
 - `debian_config` (Block List, Max: 1) Debian-specific configuration, applicable only when package_type is DEBIAN and config.type is VIRTUAL (see [below for nested schema](#nestedblock--config--debian_config))
 - `firewall_mode` (String) Dependency firewall mode for UPSTREAM registry type. Valid values: `ALLOW` (default - no policy evaluation), `ENABLED` (firewall active, artifacts scanned against policies), `QUARANTINE` (artifacts that fail policy evaluation are blocked). Not supported for DOCKER or HELM package types.
 - `remote_url_suffix` (String) Optional path suffix for Python UPSTREAM registries with Custom source. Overrides the default `simple` path used for PyPI-compatible indexes. Requires `config.url` when source is Custom. Not supported for non-PYTHON package types. Leading and trailing slashes are normalized.
-- `source` (String) Upstream source. Every package type accepts `Custom` (which requires `config.url`). Package types with a built-in default source, which resolves the remote URL for you: `ALPINE` → `Alpine`, `CARGO` → `Crates`, `COMPOSER` → `Packagist`, `CONAN` → `ConanCenter`, `CONDA` → `Anaconda`, `CRAN` → `CRAN`, `DART` → `Pubdev`, `DOCKER` → `Dockerhub` or `AwsEcr`, `GO` → `GoProxy`, `HELM_HTTP` → `HelmChartRepo`, `MAVEN` → `MavenCentral`, `NPM` → `NpmJs`, `NUGET` → `NugetOrg`, `PUPPET` → `PuppetForge`, `PYTHON` → `PyPi`, `RUBY` → `RubyGems`, `TERRAFORM` → `TerraformRegistry`, `WOLFI` → `Wolfi`. `DEBIAN`, `GENERIC`, `HELM`, `HUGGINGFACE`, `RAW`, `RPM` and `SWIFT` support `Custom` only, and `TERRAFORM_BACKEND` does not support UPSTREAM registries.
+- `source` (String) Upstream source. Every package type accepts `Custom` (which requires `config.url`). Package types with a built-in default source, which resolves the remote URL for you: `ALPINE` → `Alpine`, `CARGO` → `Crates`, `COMPOSER` → `Packagist`, `CONAN` → `ConanCenter`, `CONDA` → `Anaconda`, `CRAN` → `CRAN`, `DART` → `Pubdev`, `DOCKER` → `Dockerhub` or `AwsEcr`, `GO` → `GoProxy`, `HELM_HTTP` → `HelmChartRepo`, `MAVEN` → `MavenCentral`, `NPM` → `NpmJs`, `NUGET` → `NugetOrg`, `PUPPET` → `PuppetForge`, `PYTHON` → `PyPi`, `RUBY` → `RubyGems`, `TERRAFORM` → `TerraformRegistry`, `WOLFI` → `Wolfi`. `APM`, `DEBIAN`, `GENERIC`, `HELM`, `HUGGINGFACE`, `RAW`, `RPM` and `SWIFT` support `Custom` only, and `TERRAFORM_BACKEND` does not support UPSTREAM registries.
 - `upstream_proxies` (List of String) List of upstream proxies for VIRTUAL registry type
 - `url` (String) URL of the upstream (required if type=UPSTREAM & package_type=HELM)
 

@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_pipeline: add optional `yaml_version` (default `0`). Set it to `1` to create or update a Harness 3.0 (unified) pipeline. The value is sent as `version` on the pipeline create and update request.
+```

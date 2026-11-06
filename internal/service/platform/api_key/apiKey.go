@@ -38,9 +38,10 @@ func ResourceApiKey() *schema.Resource {
 				Required:    true,
 			},
 			"default_time_to_expire_token": {
-				Description: "Default expiration time of the Token within API Key",
+				Description: "Default expiration time of the Token within API Key. When omitted, the server-assigned default is adopted instead of forcing a perpetual diff.",
 				Type:        schema.TypeInt,
 				Optional:    true,
+				Computed:    true,
 			},
 			"account_id": {
 				Description: "Account Identifier for the Entity",
