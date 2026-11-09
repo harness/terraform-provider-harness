@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_platform_sso_ldap: Added terraform support for managing the account level LDAP SSO settings via the NextGen LDAP APIs (one configuration per account; requires the PL_ENABLE_NG_LDAP_SETTINGS feature flag)
+```
