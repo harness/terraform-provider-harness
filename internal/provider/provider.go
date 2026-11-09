@@ -19,6 +19,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/har"
 	"github.com/harness/harness-go-sdk/harness/idp"
+	"github.com/harness/harness-go-sdk/harness/ldap"
 	"github.com/harness/harness-go-sdk/harness/po"
 	"github.com/harness/harness-go-sdk/harness/split"
 	"github.com/harness/harness-go-sdk/harness/svcdiscovery"
@@ -42,6 +43,7 @@ import (
 	har_lifecycle "github.com/harness/terraform-provider-harness/internal/service/har/lifecycle"
 	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/authentication_settings"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/dashboards"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/folders"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
@@ -227,7 +229,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_artifactory":              cdng_connector_artifactRepositories.DatasourceConnectorArtifactory(),
 				"harness_platform_connector_aws_secret_manager":       pl_secretManagers.DatasourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                      cdng_connector_cloudProviders.DatasourceConnectorAws(),
-				"harness_platform_connector_anthropic_model":           connector.DatasourceConnectorAnthropicModel(),
+				"harness_platform_connector_anthropic_model":          connector.DatasourceConnectorAnthropicModel(),
 				"harness_platform_connector_awscc":                    connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                   pl_secretManagers.DatasourceConnectorAwsKms(),
 				"harness_platform_connector_azure_repo":               cdng_connector_codeRepositories.DatasourceConnectorAzureRepo(),
@@ -306,6 +308,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_roles":                              roles.DataSourceRoles(),
 				"harness_platform_resource_group":                     resource_group.DataSourceResourceGroup(),
 				"harness_platform_service_account":                    service_account.DataSourceServiceAccount(),
+				"harness_platform_sso_ldap":                           authentication_settings.DataSourceSSOLDAP(),
 				"harness_platform_triggers":                           pipeline_triggers.DataSourceTriggers(),
 				"harness_platform_role_assignments":                   role_assignments.DataSourceRoleAssignments(),
 				"harness_platform_variables":                          cdng_variables.DataSourceVariables(),
@@ -447,7 +450,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_azure_artifacts":             cdng_connector_artifactRepositories.ResourceConnectorAzureArtifacts(),
 				"harness_platform_connector_aws_secret_manager":          pl_secretManagers.ResourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                         cdng_connector_cloudProviders.ResourceConnectorAws(),
-				"harness_platform_connector_anthropic_model":              connector.ResourceConnectorAnthropicModel(),
+				"harness_platform_connector_anthropic_model":             connector.ResourceConnectorAnthropicModel(),
 				"harness_platform_connector_awscc":                       connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                      pl_secretManagers.ResourceConnectorAwsKms(),
 				"harness_platform_connector_azure_repo":                  cdng_connector_codeRepositories.ResourceConnectorAzureRepo(),
@@ -523,6 +526,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_roles":                                 roles.ResourceRoles(),
 				"harness_platform_resource_group":                        resource_group.ResourceResourceGroup(),
 				"harness_platform_service_account":                       service_account.ResourceServiceAccount(),
+				"harness_platform_sso_ldap":                              authentication_settings.ResourceSSOLDAP(),
 				"harness_platform_triggers":                              pipeline_triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":                      role_assignments.ResourceRoleAssignments(),
 				"harness_platform_variables":                             cdng_variables.ResourceVariables(),
@@ -806,6 +810,19 @@ func getPOClient(d *schema.ResourceData, version string) *po.APIClient {
 	return client
 }
 
+func getLDAPClient(d *schema.ResourceData, version string) *ldap.APIClient {
+	cfg := ldap.NewConfiguration()
+	client := ldap.NewAPIClient(&ldap.Configuration{
+		AccountId:    d.Get("account_id").(string),
+		BasePath:     d.Get("endpoint").(string),
+		ApiKey:       d.Get("platform_api_key").(string),
+		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		HTTPClient:   getOpenApiHttpClient(cfg.Logger),
+		DebugLogging: openapi_client_logging.IsDebugOrHigher(cfg.Logger),
+	})
+	return client
+}
+
 func resolveFMEAdminAPIEndpoint(endpoint, override string) (string, error) {
 	if override != "" {
 		return override, nil
@@ -896,6 +913,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			HARClient:                getHarClient(d, version),
 			IDPClient:                getIDPClient(d, version),
 			POClient:                 getPOClient(d, version),
+			LDAPClient:               getLDAPClient(d, version),
 		}
 		if fmeAdminAPIEndpointErr == nil {
 			session.SplitClient = getSplitClient(d, version, fmeAdminAPIEndpoint)

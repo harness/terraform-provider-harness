@@ -10,6 +10,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/harness-go-sdk/harness/har"
 	"github.com/harness/harness-go-sdk/harness/idp"
+	"github.com/harness/harness-go-sdk/harness/ldap"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/po"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
@@ -37,6 +38,14 @@ type Session struct {
 	HARClient      *har.APIClient
 	IDPClient      *idp.APIClient
 	POClient       *po.APIClient
+	LDAPClient     *ldap.APIClient
+}
+
+func (s *Session) GetLDAPClientWithContext(ctx context.Context) (*ldap.APIClient, context.Context) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return s.LDAPClient, ctx
 }
 
 func (s *Session) GetPlatformClient() (*nextgen.APIClient, context.Context) {
