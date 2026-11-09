@@ -39,6 +39,11 @@ func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"disaster_recovery_identifier": {
+				Description: "Disaster Recovery identifier of the GitOps agent, when fetching the deploy YAML for a DR node.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"namespace": {
 				Description: "The kubernetes namespace where the agent is installed.",
 				Type:        schema.TypeString,
@@ -143,6 +148,9 @@ func dataSourceGitopsAgentDeployYamlRead(ctx context.Context, d *schema.Resource
 		}
 		if attr, ok := d.GetOk("private_key"); ok {
 			yamlQuery.PrivateKey = attr.(string)
+		}
+		if attr, ok := d.GetOk("disaster_recovery_identifier"); ok {
+			yamlQuery.DisasterRecoveryIdentifier = attr.(string)
 		}
 
 		if attr, ok := d.GetOk("proxy"); ok {
