@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_platform_login_settings: Added terraform support for managing account level login settings (password strength policy, user lockout policy and password expiration policy)
+```
