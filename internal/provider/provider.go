@@ -503,6 +503,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_overrides":                             cdng_overrides.ResourceOverrides(),
 				"harness_platform_ff_api_key":                            ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                          gitops_agent.ResourceGitopsAgent(),
+				"harness_platform_gitops_agent_dr_promotion":             gitops_agent.ResourceGitopsAgentDrPromotion(),
 				"harness_platform_gitops_applications":                   gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_applicationset":                 gitops_applicationsets.ResourceGitopsApplicationSet(),
 				"harness_platform_gitops_cluster":                        gitops_cluster.ResourceGitopsCluster(),
