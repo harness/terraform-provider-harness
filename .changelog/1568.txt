@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_platform_sso_oauth: Added terraform support for managing account level OAuth SSO configuration (allowed OAuth providers for sign-in)
+```
