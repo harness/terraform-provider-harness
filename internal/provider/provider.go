@@ -40,6 +40,7 @@ import (
 	har_lifecycle "github.com/harness/terraform-provider-harness/internal/service/har/lifecycle"
 	har_registry "github.com/harness/terraform-provider-harness/internal/service/har/registry"
 	pipeline_gitx "github.com/harness/terraform-provider-harness/internal/service/pipeline/gitx/webhook"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/authentication_settings"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/dashboards"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cdb/folders"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/cluster_orchestrator"
@@ -304,6 +305,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_roles":                              roles.DataSourceRoles(),
 				"harness_platform_resource_group":                     resource_group.DataSourceResourceGroup(),
 				"harness_platform_service_account":                    service_account.DataSourceServiceAccount(),
+				"harness_platform_sso_oauth":                          authentication_settings.DataSourceSSOOAuth(),
 				"harness_platform_triggers":                           pipeline_triggers.DataSourceTriggers(),
 				"harness_platform_role_assignments":                   role_assignments.DataSourceRoleAssignments(),
 				"harness_platform_variables":                          cdng_variables.DataSourceVariables(),
@@ -519,6 +521,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_roles":                                 roles.ResourceRoles(),
 				"harness_platform_resource_group":                        resource_group.ResourceResourceGroup(),
 				"harness_platform_service_account":                       service_account.ResourceServiceAccount(),
+				"harness_platform_sso_oauth":                             authentication_settings.ResourceSSOOAuth(),
 				"harness_platform_triggers":                              pipeline_triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":                      role_assignments.ResourceRoleAssignments(),
 				"harness_platform_variables":                             cdng_variables.ResourceVariables(),
