@@ -2,7 +2,10 @@ package authentication_settings
 
 import (
 	"context"
+	"net/http"
+	"strings"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -23,7 +26,10 @@ func ResourceSSOOAuth() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Resource for managing the OAuth SSO configuration of a Harness account, " +
 			"i.e. the set of OAuth providers users are allowed to sign in with. " +
-			"Destroying this resource removes the OAuth mechanism from the account.",
+			"Destroying this resource removes the OAuth mechanism from the account. " +
+			"Note: this resource only configures the allowed OAuth providers. Enabling OAuth " +
+			"as the account's login mechanism (equivalent to the OAuth toggle in the UI) is " +
+			"managed separately via the account authentication settings.",
 
 		ReadContext:   resourceSSOOAuthRead,
 		CreateContext: resourceSSOOAuthCreateOrUpdate,
@@ -37,6 +43,10 @@ func ResourceSSOOAuth() *schema.Resource {
 					"Valid values: `AZURE`, `BITBUCKET`, `GITHUB`, `GITLAB`, `GOOGLE`, `LINKEDIN`.",
 				Type:     schema.TypeSet,
 				Required: true,
+				// The API rejects an empty provider list ("At least one OAuth provider
+				// must be selected.") and the UI blocks disabling the last provider;
+				// fail at plan time instead.
+				MinItems: 1,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringInSlice(validOAuthProviders, false),
@@ -112,8 +122,38 @@ func resourceSSOOAuthCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 func resourceSSOOAuthDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
+	// UI parity: the backend rejects removing the OAuth mechanism while the
+	// account's authentication mechanism is still OAUTH, so the UI first
+	// switches the mechanism to USER_PASSWORD and only then deletes. Mirror
+	// that two-step flow here.
+	settings, httpResp, err := c.AuthenticationSettingsApi.GetAuthenticationSettingsV2(ctx, c.AccountId)
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	if settings.Resource != nil && settings.Resource.AuthenticationMechanism == "OAUTH" {
+		mechResp, httpResp, err := c.AuthenticationSettingsApi.UpdateAuthMechanism(ctx, c.AccountId,
+			&nextgen.AuthenticationSettingsApiUpdateAuthMechanismOpts{
+				AuthenticationMechanism: optional.NewString("USER_PASSWORD"),
+			})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+		if !mechResp.Resource {
+			return diag.Errorf("failed to switch the account authentication mechanism to USER_PASSWORD before removing OAuth")
+		}
+	}
+
 	resp, httpResp, err := c.AuthenticationSettingsApi.RemoveOauthMechanism(ctx, c.AccountId)
 	if err != nil {
+		// The backend returns 400 ("No Oauth settings found for this account.")
+		// when no OAuth configuration exists; treat that as already deleted so
+		// destroy stays idempotent.
+		if httpResp != nil && httpResp.StatusCode == http.StatusBadRequest &&
+			strings.Contains(err.Error(), "No Oauth settings found") {
+			d.SetId("")
+			return nil
+		}
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 

@@ -3,18 +3,20 @@
 page_title: "harness_platform_sso_oauth Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for managing the OAuth SSO configuration of a Harness account, i.e. the set of OAuth providers users are allowed to sign in with. Destroying this resource removes the OAuth mechanism from the account.
+  Resource for managing the OAuth SSO configuration of a Harness account, i.e. the set of OAuth providers users are allowed to sign in with. Destroying this resource removes the OAuth mechanism from the account. Note: this resource only configures the allowed OAuth providers. Enabling OAuth as the account's login mechanism (equivalent to the OAuth toggle in the UI) is managed separately via the account authentication settings.
 ---
 
 # harness_platform_sso_oauth (Resource)
 
-Resource for managing the OAuth SSO configuration of a Harness account, i.e. the set of OAuth providers users are allowed to sign in with. Destroying this resource removes the OAuth mechanism from the account.
+Resource for managing the OAuth SSO configuration of a Harness account, i.e. the set of OAuth providers users are allowed to sign in with. Destroying this resource removes the OAuth mechanism from the account. Note: this resource only configures the allowed OAuth providers. Enabling OAuth as the account's login mechanism (equivalent to the OAuth toggle in the UI) is managed separately via the account authentication settings.
 
 ## Example Usage
 
 ```terraform
 # Manage the OAuth SSO configuration of a Harness account.
 # This is a singleton resource: one instance per Harness account.
+# Note: this only configures the allowed OAuth providers; enabling OAuth as the
+# account's login mechanism is managed separately via account authentication settings.
 resource "harness_platform_sso_oauth" "example" {
   allowed_providers = ["GOOGLE", "GITHUB", "AZURE"]
 }
