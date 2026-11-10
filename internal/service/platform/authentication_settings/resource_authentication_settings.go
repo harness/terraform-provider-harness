@@ -139,7 +139,23 @@ func resourceAuthenticationSettingsCreateOrUpdate(ctx context.Context, d *schema
 	// Whitelisted domains and public access are written only when they change, so
 	// configurations that do not declare them leave the current account values
 	// untouched (the read API values are carried in state via Computed).
-	if d.HasChange("whitelisted_domains") {
+	applyWhitelistedDomains := d.HasChange("whitelisted_domains")
+	applyPublicAccess := d.HasChange("public_access_enabled")
+	if d.IsNewResource() {
+		// On create, HasChange is false for explicit zero values: an empty set or a
+		// false bool decodes equal to the empty prior state. Detect explicitly
+		// configured values from the raw config so the first apply honors
+		// `whitelisted_domains = []` (clear) and `public_access_enabled = false`.
+		if raw := d.GetRawConfig(); !raw.IsNull() {
+			if v := raw.GetAttr("whitelisted_domains"); !v.IsNull() {
+				applyWhitelistedDomains = true
+			}
+			if v := raw.GetAttr("public_access_enabled"); !v.IsNull() {
+				applyPublicAccess = true
+			}
+		}
+	}
+	if applyWhitelistedDomains {
 		if diags := updateWhitelistedDomains(ctx, c, expandStringSet(d.Get("whitelisted_domains").(*schema.Set))); diags != nil {
 			return diags
 		}
@@ -157,7 +173,7 @@ func resourceAuthenticationSettingsCreateOrUpdate(ctx context.Context, d *schema
 		}
 	}
 
-	if d.HasChange("public_access_enabled") {
+	if applyPublicAccess {
 		if diags := setPublicAccess(ctx, c, d.Get("public_access_enabled").(bool)); diags != nil {
 			return diags
 		}
