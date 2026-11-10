@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_platform_sso_saml: Added terraform support for managing account level SAML SSO configurations (multiple configurations per account, keyed by samlSSOId)
+```
