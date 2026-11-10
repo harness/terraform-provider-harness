@@ -162,13 +162,7 @@ func resourceSSOSAMLRead(ctx context.Context, d *schema.ResourceData, meta inter
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	// For the data source the ID is not set yet; look up by the identifier argument.
-	identifier := d.Id()
-	if identifier == "" {
-		identifier = d.Get("identifier").(string)
-	}
-
-	settings := findSAMLSettings(resp.Resource, identifier)
+	settings := findSAMLSettings(resp.Resource, d.Id())
 	if settings == nil {
 		d.SetId("")
 		return nil
@@ -215,7 +209,7 @@ func resourceSSOSAMLCreate(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.Errorf("SAML SSO configuration not found after create")
 	}
 	if d.Get("authentication_enabled").(bool) != desiredAuthenticationEnabled {
-		if diags := setSAMLAuthenticationEnabled(ctx, c, d.Id(), desiredAuthenticationEnabled); diags != nil {
+		if diags := setSAMLAuthenticationEnabled(ctx, c, d, d.Id(), desiredAuthenticationEnabled); diags != nil {
 			return diags
 		}
 	}
@@ -240,7 +234,7 @@ func resourceSSOSAMLUpdate(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	if d.HasChange("authentication_enabled") {
-		if diags := setSAMLAuthenticationEnabled(ctx, c, d.Id(), d.Get("authentication_enabled").(bool)); diags != nil {
+		if diags := setSAMLAuthenticationEnabled(ctx, c, d, d.Id(), d.Get("authentication_enabled").(bool)); diags != nil {
 			return diags
 		}
 	}
@@ -270,15 +264,38 @@ func resourceSSOSAMLDelete(ctx context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func setSAMLAuthenticationEnabled(ctx context.Context, c *nextgen.APIClient, samlSSOId string, enabled bool) diag.Diagnostics {
+func setSAMLAuthenticationEnabled(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData, samlSSOId string, enabled bool) diag.Diagnostics {
 	resp, httpResp, err := c.AuthenticationSettingsApi.SetSamlAuthenticationEnabled(ctx, c.AccountId, samlSSOId, enabled)
 	if err != nil {
-		return helpers.HandleApiError(err, nil, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if !resp.Resource {
 		return diag.Errorf("failed to set SAML authentication enabled to %t", enabled)
 	}
+
+	return nil
+}
+
+// dataSourceSSOSAMLRead is the data source variant of the read: an unknown
+// identifier is a hard error (mirroring the API/UI, where a SAML configuration
+// that does not exist simply cannot be viewed), rather than the resource's
+// remove-from-state behavior.
+func dataSourceSSOSAMLRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	resp, httpResp, err := c.AuthenticationSettingsApi.GetAuthenticationSettingsV2(ctx, c.AccountId)
+	if err != nil {
+		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
+	identifier := d.Get("identifier").(string)
+	settings := findSAMLSettings(resp.Resource, identifier)
+	if settings == nil {
+		return diag.Errorf("no SAML SSO configuration found with identifier %q on account %s", identifier, c.AccountId)
+	}
+
+	readSSOSAML(d, settings)
 
 	return nil
 }

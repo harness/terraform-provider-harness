@@ -9,7 +9,7 @@ func DataSourceSSOSAML() *schema.Resource {
 		Description: "Data source for retrieving a SAML SSO configuration of a Harness account. " +
 			"The SAML metadata XML and the Azure client secret are not returned by the API.",
 
-		ReadContext: resourceSSOSAMLRead,
+		ReadContext: dataSourceSSOSAMLRead,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
