@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_platform_authentication_settings: Added terraform support for managing account level authentication settings (two-factor authentication, whitelisted domains, session timeout and public access)
+```
