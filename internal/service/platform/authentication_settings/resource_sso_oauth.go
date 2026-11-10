@@ -2,6 +2,7 @@ package authentication_settings
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -35,7 +36,9 @@ func ResourceSSOOAuth() *schema.Resource {
 		CreateContext: resourceSSOOAuthCreateOrUpdate,
 		UpdateContext: resourceSSOOAuthCreateOrUpdate,
 		DeleteContext: resourceSSOOAuthDelete,
-		Importer:      helpers.AccountLevelResourceImporter,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceSSOOAuthImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"allowed_providers": {
@@ -164,6 +167,17 @@ func resourceSSOOAuthDelete(ctx context.Context, d *schema.ResourceData, meta in
 	d.SetId("")
 
 	return nil
+}
+
+// resourceSSOOAuthImport validates that the import ID is the session account ID:
+// exactly one OAuth configuration exists per account, so the resource ID is the
+// account ID and every API call resolves the account from the session.
+func resourceSSOOAuthImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	accountId := meta.(*internal.Session).AccountId
+	if d.Id() != accountId {
+		return nil, fmt.Errorf("OAuth SSO settings are account-level; import using the account ID (%s), got %q", accountId, d.Id())
+	}
+	return []*schema.ResourceData{d}, nil
 }
 
 // expandOAuthProviders converts the allowed_providers set into a string slice.
