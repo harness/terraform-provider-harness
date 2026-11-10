@@ -29,7 +29,12 @@ func ResourceSSOLDAP() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Resource for managing account-level LDAP SSO settings via the NextGen LDAP APIs. " +
 			"Requires the `PL_ENABLE_NG_LDAP_SETTINGS` feature flag to be enabled on the account. " +
-			"Exactly one LDAP configuration exists per account.",
+			"Exactly one LDAP configuration exists per account.\n\n" +
+			"The Terraform resource ID is the account ID. The API requires a non-null identifier in the request body " +
+			"and never generates one server-side; when `identifier` is not configured it is derived from `name` " +
+			"(trimmed, spaces replaced with underscores), and it is immutable afterwards. If `name` contains special " +
+			"characters, set `identifier` explicitly. Destroying this resource deletes the LDAP configuration in " +
+			"Harness; as in the UI, deletion is rejected while user groups are linked to the configuration.",
 		ReadContext:   resourceSSOLDAPRead,
 		CreateContext: resourceSSOLDAPCreate,
 		UpdateContext: resourceSSOLDAPUpdate,
@@ -40,7 +45,7 @@ func ResourceSSOLDAP() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "Identifier of the LDAP SSO configuration. Immutable once created. When not set, it is derived from `name` (trimmed, spaces replaced with underscores).",
+				Description: "Identifier of the LDAP SSO configuration. Immutable once created. When not set, it is derived from `name` (leading/trailing whitespace trimmed, spaces replaced with underscores) — the same convention the Harness backend uses when migrating legacy LDAP configurations to the NextGen store. If `name` contains special characters (anything other than letters, digits, spaces and underscores), set `identifier` explicitly to control the stored value.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,

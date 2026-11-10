@@ -3,14 +3,15 @@
 page_title: "harness_platform_sso_ldap Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for managing account-level LDAP SSO settings via the NextGen LDAP APIs. Requires the `PL_ENABLE_NG_LDAP_SETTINGS` feature flag to be enabled on the account. Exactly one LDAP configuration exists per account.
+  Resource for managing account-level LDAP SSO settings via the NextGen LDAP APIs. Requires the PL_ENABLE_NG_LDAP_SETTINGS feature flag to be enabled on the account. Exactly one LDAP configuration exists per account.
+  The Terraform resource ID is the account ID. The API requires a non-null identifier in the request body and never generates one server-side; when identifier is not configured it is derived from name (trimmed, spaces replaced with underscores), and it is immutable afterwards. If name contains special characters, set identifier explicitly. Destroying this resource deletes the LDAP configuration in Harness; as in the UI, deletion is rejected while user groups are linked to the configuration.
 ---
 
 # harness_platform_sso_ldap (Resource)
 
 Resource for managing account-level LDAP SSO settings via the NextGen LDAP APIs. Requires the `PL_ENABLE_NG_LDAP_SETTINGS` feature flag to be enabled on the account. Exactly one LDAP configuration exists per account.
 
-The Terraform resource ID is the account ID. The API requires a non-null identifier in the request body and never generates one server-side; when `identifier` is not configured it is derived from `name` (trimmed, spaces replaced with underscores), and it is immutable afterwards. Destroying this resource deletes the LDAP configuration in Harness; as in the UI, deletion is rejected while user groups are linked to the configuration.
+The Terraform resource ID is the account ID. The API requires a non-null identifier in the request body and never generates one server-side; when `identifier` is not configured it is derived from `name` (trimmed, spaces replaced with underscores), and it is immutable afterwards. If `name` contains special characters, set `identifier` explicitly. Destroying this resource deletes the LDAP configuration in Harness; as in the UI, deletion is rejected while user groups are linked to the configuration.
 
 ## Example Usage
 
@@ -68,7 +69,7 @@ resource "harness_platform_sso_ldap" "example" {
 ### Required
 
 - `connection_settings` (Block List, Min: 1, Max: 1) LDAP connection settings. (see [below for nested schema](#nestedblock--connection_settings))
-- `name` (String) Name of the LDAP SSO configuration. The server derives the immutable identifier from the name used at create time.
+- `name` (String) Name of the LDAP SSO configuration. When `identifier` is not set, the identifier is derived from the name used at create time.
 - `user_settings` (Block List, Min: 1) LDAP user query settings. At least one block is required. (see [below for nested schema](#nestedblock--user_settings))
 
 ### Optional
@@ -76,7 +77,7 @@ resource "harness_platform_sso_ldap" "example" {
 - `cron_expression` (String) Cron expression for periodic synchronization of user groups from the LDAP directory.
 - `disabled` (Boolean) Whether the LDAP SSO configuration is disabled. LDAP sync and LDAP login do not run while disabled.
 - `group_settings` (Block List, Max: 1) LDAP group query settings. (see [below for nested schema](#nestedblock--group_settings))
-- `identifier` (String) Identifier of the LDAP SSO configuration. Immutable once created. When not set, it is derived from `name` (trimmed, spaces replaced with underscores).
+- `identifier` (String) Identifier of the LDAP SSO configuration. Immutable once created. When not set, it is derived from `name` (leading/trailing whitespace trimmed, spaces replaced with underscores) — the same convention the Harness backend uses when migrating legacy LDAP configurations to the NextGen store. If `name` contains special characters (anything other than letters, digits, spaces and underscores), set `identifier` explicitly to control the stored value.
 - `url` (String) URL of the LDAP server (e.g. `ldaps://ldap.example.com:636`). Stored as-is; the server does not derive it.
 
 ### Read-Only
@@ -103,6 +104,7 @@ Optional:
 - `ssl_enabled` (Boolean) Whether SSL is used when connecting to the LDAP server.
 - `use_recursive_group_membership_search` (Boolean) Whether recursive group membership search is used.
 
+
 <a id="nestedblock--user_settings"></a>
 ### Nested Schema for `user_settings`
 
@@ -118,6 +120,7 @@ Optional:
 - `sam_account_name_attr` (String) Attribute containing the user's sAMAccountName (Active Directory).
 - `search_filter` (String) LDAP search filter used to match users.
 - `uid_attr` (String) Attribute containing the user's unique identifier.
+
 
 <a id="nestedblock--group_settings"></a>
 ### Nested Schema for `group_settings`

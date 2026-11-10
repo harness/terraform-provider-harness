@@ -3,14 +3,12 @@
 page_title: "harness_platform_sso_ldap Data Source - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Data source for retrieving the account-level LDAP SSO settings via the NextGen LDAP APIs. Requires the `PL_ENABLE_NG_LDAP_SETTINGS` feature flag to be enabled on the account.
+  Data source for retrieving the account-level LDAP SSO settings via the NextGen LDAP APIs. Requires the PL_ENABLE_NG_LDAP_SETTINGS feature flag to be enabled on the account.
 ---
 
 # harness_platform_sso_ldap (Data Source)
 
 Data source for retrieving the account-level LDAP SSO settings via the NextGen LDAP APIs. Requires the `PL_ENABLE_NG_LDAP_SETTINGS` feature flag to be enabled on the account.
-
-Exactly one LDAP configuration exists per account, so the data source takes no arguments. The read fails when the account has no LDAP configuration.
 
 ## Example Usage
 
@@ -40,39 +38,41 @@ data "harness_platform_sso_ldap" "example" {}
 
 Read-Only:
 
-- `bind_dn` (String) Distinguished name used to bind to the LDAP directory.
-- `connection_timeout` (Number) Connection timeout in milliseconds.
-- `delegate_selectors` (Set of String) Delegate selectors used to route LDAP connectivity.
-- `host` (String) Hostname of the LDAP server.
-- `max_referral_hops` (Number) Maximum number of referral hops to follow.
-- `port` (Number) Port of the LDAP server.
-- `referrals_enabled` (Boolean) Whether LDAP referrals are followed.
-- `response_timeout` (Number) Response timeout in milliseconds.
-- `secret_ref_path` (String) Reference path to the account-level Harness secret containing the LDAP bind password.
-- `ssl_enabled` (Boolean) Whether SSL is used when connecting to the LDAP server.
-- `use_recursive_group_membership_search` (Boolean) Whether recursive group membership search is used.
+- `bind_dn` (String)
+- `connection_timeout` (Number)
+- `delegate_selectors` (Set of String)
+- `host` (String)
+- `max_referral_hops` (Number)
+- `port` (Number)
+- `referrals_enabled` (Boolean)
+- `response_timeout` (Number)
+- `secret_ref_path` (String)
+- `ssl_enabled` (Boolean)
+- `use_recursive_group_membership_search` (Boolean)
 
-<a id="nestedatt--user_settings"></a>
-### Nested Schema for `user_settings`
-
-Read-Only:
-
-- `base_dn` (String) Base distinguished name under which users are searched.
-- `display_name_attr` (String) Attribute containing the user's display name.
-- `email_attr` (String) Attribute containing the user's email address.
-- `group_membership_attr` (String) Attribute containing the user's group memberships.
-- `sam_account_name_attr` (String) Attribute containing the user's sAMAccountName.
-- `search_filter` (String) LDAP search filter used to match users.
-- `uid_attr` (String) Attribute containing the user's unique identifier.
 
 <a id="nestedatt--group_settings"></a>
 ### Nested Schema for `group_settings`
 
 Read-Only:
 
-- `base_dn` (String) Base distinguished name under which groups are searched.
-- `description_attr` (String) Attribute containing the group's description.
-- `name_attr` (String) Attribute containing the group's name.
-- `referenced_user_attr` (String) Attribute on a member entry referencing the user.
-- `search_filter` (String) LDAP search filter used to match groups.
-- `user_membership_attr` (String) Attribute on the group entry listing its members.
+- `base_dn` (String)
+- `description_attr` (String)
+- `name_attr` (String)
+- `referenced_user_attr` (String)
+- `search_filter` (String)
+- `user_membership_attr` (String)
+
+
+<a id="nestedatt--user_settings"></a>
+### Nested Schema for `user_settings`
+
+Read-Only:
+
+- `base_dn` (String)
+- `display_name_attr` (String)
+- `email_attr` (String)
+- `group_membership_attr` (String)
+- `sam_account_name_attr` (String)
+- `search_filter` (String)
+- `uid_attr` (String)
