@@ -270,7 +270,7 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 			return diag.FromErr(err)
 		}
 		// The new key is only kept when the user has not opted out of storing it.
-		if !d.Get("skip_agent_token_in_state").(bool) && newKey != "" {
+		if !d.Get("skip_agent_token_in_state").(bool) {
 			resp.Credentials = &nextgen.V1AgentCredentials{PrivateKey: newKey}
 		}
 		oldGeneration, _ := d.GetChange("token_generation")

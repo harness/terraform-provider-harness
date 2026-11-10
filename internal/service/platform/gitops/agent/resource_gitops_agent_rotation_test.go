@@ -19,6 +19,7 @@ type recordedRequest struct {
 	Path   string
 	Query  map[string][]string
 	APIKey string
+	Auth   string
 }
 
 type fakeGitops struct {
@@ -37,7 +38,7 @@ func newFakeGitops(t *testing.T) *fakeGitops {
 	f := &fakeGitops{regenStatus: http.StatusOK, regenBody: `{"credentials":{"privateKey":"NEWKEY"}}`, updateStatus: http.StatusOK, getStatus: http.StatusOK, getBody: `{"identifier":"a1","credentials":{"privateKey":"GETKEY"}}`}
 	f.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		f.mu.Lock()
-		f.requests = append(f.requests, recordedRequest{r.Method, r.URL.Path, r.URL.Query(), r.Header.Get("x-api-key")})
+		f.requests = append(f.requests, recordedRequest{r.Method, r.URL.Path, r.URL.Query(), r.Header.Get("x-api-key"), r.Header.Get("Authorization")})
 		f.mu.Unlock()
 		w.Header().Set("Content-Type", "application/json")
 		switch {
@@ -269,22 +270,44 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 	})
 
 	// The generated SDK client ignores decode errors on 2xx responses, so an unparseable body
-	// surfaces as an empty key, the same as an empty response. Callers only store a non-empty key.
-	t.Run("unparseable 2xx body yields an empty key", func(t *testing.T) {
-		f := newFakeGitops(t)
-		f.regenBody = `not json`
-		key, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
-		require.NoError(t, err)
-		require.Equal(t, "", key)
-	})
+	// surfaces as a missing key. That must be an error, never a silent success.
+	for name, body := range map[string]string{"unparseable 2xx body": `not json`, "empty object": `{}`, "empty private key": `{"credentials":{"privateKey":""}}`} {
+		t.Run(name+" is an error", func(t *testing.T) {
+			f := newFakeGitops(t)
+			f.regenBody = body
+			key, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
+			require.Error(t, err)
+			require.Contains(t, err.Error(), "returned no private key")
+			require.Equal(t, "", key)
+		})
+	}
 
-	t.Run("empty key is returned as empty, not an error", func(t *testing.T) {
+	t.Run("bearer token from the environment is sent as Authorization", func(t *testing.T) {
+		t.Setenv("HARNESS_BEARER_TOKEN", "bearer-123")
+		f := newFakeGitops(t)
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
+		require.NoError(t, err)
+		require.Equal(t, "Bearer bearer-123", f.requests[0].Auth)
+	})
+}
+
+// A rotation that returns no key must fail the apply and must not report the rotation as done.
+func TestUpdate_RotationWithEmptyKeyFailsAndDoesNotBumpGeneration(t *testing.T) {
+	for _, skip := range []bool{false, true} {
 		f := newFakeGitops(t)
 		f.regenBody = `{}`
-		key, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
+		r := ResourceGitopsAgent()
+		state := baseState("0", "0", skip)
+		diff, err := r.Diff(context.Background(), state, rotationConfig(1, skip), f.session())
 		require.NoError(t, err)
-		require.Equal(t, "", key)
-	})
+
+		out, diags := r.Apply(context.Background(), state, diff, f.session())
+		require.True(t, diags.HasError(), "skip=%v", skip)
+		require.Contains(t, diags[0].Summary, "returned no private key")
+		if out != nil {
+			require.NotEqual(t, "1", out.Attributes["token_generation"], "skip=%v: generation must not be bumped", skip)
+		}
+	}
 }
 
 func TestNewAttributesAreOptInAndAdditive(t *testing.T) {
