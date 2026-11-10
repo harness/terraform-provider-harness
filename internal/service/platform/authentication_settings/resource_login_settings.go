@@ -204,6 +204,13 @@ func resourceLoginSettingsDelete(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
+	// userGroupsToNotify is not managed by this resource; preserve it on reset,
+	// the same way the UI carries it over on every save of the lockout policy.
+	var userGroupsToNotify []map[string]interface{}
+	if current.Resource.UserLockoutPolicy != nil {
+		userGroupsToNotify = current.Resource.UserLockoutPolicy.UserGroupsToNotify
+	}
+
 	defaults := nextgen.LoginSettings{
 		Uuid:      current.Resource.Uuid,
 		AccountId: c.AccountId,
@@ -215,6 +222,7 @@ func resourceLoginSettingsDelete(ctx context.Context, d *schema.ResourceData, me
 			NumberOfFailedAttemptsBeforeLockout: 5,
 			LockOutPeriod:                       24,
 			NotifyUser:                          true,
+			UserGroupsToNotify:                  userGroupsToNotify,
 		},
 		PasswordExpirationPolicy: &nextgen.PasswordExpirationPolicy{
 			Enabled:                   false,
