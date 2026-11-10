@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://idp-tf-acc-test.example.com/entity">
+  <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>MIIDLTCCAhWgAwIBAgIUIvbL9r8wLPfzPi0llUm7GrFq3lcwDQYJKoZIhvcNAQELBQAwJjEkMCIGA1UEAwwbaWRwLXRmLWFjYy10ZXN0LmV4YW1wbGUuY29tMB4XDTI2MTEwOTE5NTQwNloXDTM2MTEwNjE5NTQwNlowJjEkMCIGA1UEAwwbaWRwLXRmLWFjYy10ZXN0LmV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmchlbwsNDVaoZYQFwLDkYOXZaHUPzWH+c4knFlIL4B0d5RvRg4lRbtQpTl9GCqNxRBCGLUhA2AvGdtzQLQRMV670a7wOXC9OhtJUIU5VA603xC4OOhCCJ0XNdfX0oYqresCGTmdrlNjEnvRDR+iVCal+mPHtEH3sJ6Ez4FlTv46f0ahwP016R0SPQtSx498qNGgVK0CRyDIEst7R3GJRbqmmxk9lOmNynwI5auE7b1+GIcZkT8MBi82MHKnMQupFGhRWHEGEfUCs/murW9znsQwsKeP75KDu0lABa7PFCcZ/n5d53BIy1t/tdpc6dRz3g7v/ShP+nlx7GBQ3tpGlFQIDAQABo1MwUTAdBgNVHQ4EFgQULMSS9T3n1KBkVYt4QsoUw3hX3xowHwYDVR0jBBgwFoAULMSS9T3n1KBkVYt4QsoUw3hX3xowDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAa/ASuSzeZ1ljoFnU1oDNuUORMm6+JqJYvGSmlmFQd9nYpPzj/Y4ua2UlYcxplKKVykjBrom5hd/vDGPrGQcYo3Pg7ntO5iabuQBfmGjyxJXzUNQ24xyN5XhZWSVHSWJsZU97r94GnJ/PHLhg7Fv29reoiD0mrq3bCrWU27tqD6wUJWrbpyVihFAj+Gav/fvPc3+6I7pU7v6xo0qXQ+Y+sehG8GpKe3B+KzI0QqJ42oK5XYluxhZsqMT0K8Td9gqfM/XuMCZoyTh1jUmpgwoocrCRqUdfmAPCe8mcVQoJf0PNpHRcgBU3tEjGIuDJHYEA0f8kavQd8ErUVguHH10RYQ==</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idp-tf-acc-test.example.com/sso"/>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp-tf-acc-test.example.com/sso"/>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp-tf-acc-test.example.com/logout"/>
+  </md:IDPSSODescriptor>
+</md:EntityDescriptor>
