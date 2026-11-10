@@ -46,6 +46,26 @@ func TestAccResourceSSOLDAP(t *testing.T) {
 				),
 			},
 			{
+				// Update connection_settings only (incl. rotating secret_ref_path to a second
+				// secret). The update API is a full-body PUT that replaces the whole
+				// connection-settings object, so every field is asserted after read-back.
+				Config: testAccSSOLDAPConnSettingsUpdate("TF LDAP Test Updated", true, "0 0 */2 ? * * *"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", "TF_LDAP_Test"),
+					resource.TestCheckResourceAttr(resourceName, "connection_settings.0.host", "ldap-updated.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "connection_settings.0.port", "389"),
+					resource.TestCheckResourceAttr(resourceName, "connection_settings.0.ssl_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "connection_settings.0.referrals_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "connection_settings.0.max_referral_hops", "2"),
+					resource.TestCheckResourceAttr(resourceName, "connection_settings.0.connection_timeout", "3000"),
+					resource.TestCheckResourceAttr(resourceName, "connection_settings.0.response_timeout", "4000"),
+					resource.TestCheckResourceAttr(resourceName, "connection_settings.0.secret_ref_path", "account.tf_acc_ldap_bind_rotated"),
+					resource.TestCheckResourceAttr(resourceName, "connection_settings.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_settings.0.base_dn", "ou=users,dc=example,dc=com"),
+					resource.TestCheckResourceAttr(resourceName, "group_settings.0.base_dn", "ou=groups,dc=example,dc=com"),
+				),
+			},
+			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
@@ -115,6 +135,50 @@ func testAccSSOLDAPSecret() string {
 			value                     = "dummy-bind-password"
 		}
 	`
+}
+
+func testAccSSOLDAPConnSettingsUpdate(name string, disabled bool, cronExpression string) string {
+	return fmt.Sprintf(`
+		%[4]s
+
+		resource "harness_platform_secret_text" "rotated" {
+			identifier  = "tf_acc_ldap_bind_rotated"
+			name        = "tf_acc_ldap_bind_rotated"
+			description = "Rotated bind password for the LDAP acceptance test"
+			tags        = []
+
+			secret_manager_identifier = "harnessSecretManager"
+			value_type                = "Inline"
+			value                     = "dummy-bind-password-rotated"
+		}
+
+		resource "harness_platform_sso_ldap" "test" {
+			name            = %[1]q
+			disabled        = %[2]t
+			cron_expression = %[3]q
+
+			connection_settings {
+				host                 = "ldap-updated.example.com"
+				port                 = 389
+				ssl_enabled          = false
+				referrals_enabled    = true
+				max_referral_hops    = 2
+				connection_timeout   = 3000
+				response_timeout     = 4000
+				bind_dn              = "cn=admin,dc=example,dc=com"
+				secret_ref_path      = "account.${harness_platform_secret_text.rotated.identifier}"
+				delegate_selectors   = ["tf-acc-delegate"]
+			}
+
+			user_settings {
+				base_dn = "ou=users,dc=example,dc=com"
+			}
+
+			group_settings {
+				base_dn = "ou=groups,dc=example,dc=com"
+			}
+		}
+	`, name, disabled, cronExpression, testAccSSOLDAPSecret())
 }
 
 func testAccSSOLDAP(name string, disabled bool, cronExpression string) string {
