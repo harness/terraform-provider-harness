@@ -60,6 +60,7 @@ import (
 	cdng_manual_freeze "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ansible_inventory"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ansible_playbook"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/authentication_settings"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
 	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
@@ -303,6 +304,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_secret_winrm":                       secret.DataSourceSecretWinRM(),
 				"harness_platform_roles":                              roles.DataSourceRoles(),
 				"harness_platform_resource_group":                     resource_group.DataSourceResourceGroup(),
+				"harness_platform_authentication_settings":            authentication_settings.DataSourceAuthenticationSettings(),
 				"harness_platform_service_account":                    service_account.DataSourceServiceAccount(),
 				"harness_platform_triggers":                           pipeline_triggers.DataSourceTriggers(),
 				"harness_platform_role_assignments":                   role_assignments.DataSourceRoleAssignments(),
@@ -518,6 +520,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_secret_winrm":                          secret.ResourceSecretWinRM(),
 				"harness_platform_roles":                                 roles.ResourceRoles(),
 				"harness_platform_resource_group":                        resource_group.ResourceResourceGroup(),
+				"harness_platform_authentication_settings":               authentication_settings.ResourceAuthenticationSettings(),
 				"harness_platform_service_account":                       service_account.ResourceServiceAccount(),
 				"harness_platform_triggers":                              pipeline_triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":                      role_assignments.ResourceRoleAssignments(),
