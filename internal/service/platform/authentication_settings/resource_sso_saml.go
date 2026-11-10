@@ -30,7 +30,11 @@ func ResourceSSOSAML() *schema.Resource {
 			"Destroying this resource deletes the SAML configuration in Harness; as in the UI, " +
 			"deletion is rejected while user groups are linked to the configuration, and when no " +
 			"remaining SAML configuration has login enabled, Harness switches the account's " +
-			"authentication mechanism back to username/password.",
+			"authentication mechanism back to username/password. Note that `authentication_enabled` " +
+			"only allows login via this configuration; it does not select SAML as the account's " +
+			"authentication mechanism. Switching the account's authentication mechanism is a " +
+			"separate setting (in the Harness UI, the \"Login via SAML\" option) and is not managed " +
+			"by this resource.",
 
 		ReadContext:   resourceSSOSAMLRead,
 		CreateContext: resourceSSOSAMLCreate,
