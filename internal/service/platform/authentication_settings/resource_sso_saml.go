@@ -25,7 +25,8 @@ func ResourceSSOSAML() *schema.Resource {
 		Description: "Resource for managing a SAML SSO configuration of a Harness account. " +
 			"Multiple SAML configurations are supported per account (requires the " +
 			"`PL_ENABLE_MULTIPLE_IDP_SUPPORT` feature flag on the account). The Azure client " +
-			"secret, when used, is a reference to a Harness secret (e.g. `harness_platform_secret`). " +
+			"secret, when used, is the raw client secret value of the Azure AD app registration; " +
+			"Harness stores it encrypted in the account's default secret manager. " +
 			"Destroying this resource deletes the SAML configuration in Harness; as in the UI, " +
 			"deletion is rejected while user groups are linked to the configuration, and when no " +
 			"remaining SAML configuration has login enabled, Harness switches the account's " +
@@ -115,10 +116,12 @@ func ResourceSSOSAML() *schema.Resource {
 				RequiredWith: []string{"client_secret"},
 			},
 			"client_secret": {
-				Description: "Optional Harness secret reference for the Azure SSO client secret. " +
-					"Must be set together with `client_id`. Not returned by the read API; the " +
-					"configured value is kept in state. After import, leave this unset to keep the " +
-					"secret stored in Harness.",
+				Description: "Optional client secret value of the Azure AD app registration used for " +
+					"Azure SSO group resolution. This is the raw secret value, not a reference to a " +
+					"Harness secret; Harness stores it encrypted in the account's default secret " +
+					"manager. Must be set together with `client_id`. Not returned by the read API; " +
+					"the configured value is kept in state. After import, leave this unset to keep " +
+					"the secret stored in Harness.",
 				Type:         schema.TypeString,
 				Optional:     true,
 				Sensitive:    true,

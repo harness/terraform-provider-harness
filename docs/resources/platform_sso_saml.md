@@ -3,12 +3,12 @@
 page_title: "harness_platform_sso_saml Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for managing a SAML SSO configuration of a Harness account. Multiple SAML configurations are supported per account (requires the `PL_ENABLE_MULTIPLE_IDP_SUPPORT` feature flag on the account). The Azure client secret, when used, is a reference to a Harness secret (e.g. harness_platform_secret). Destroying this resource deletes the SAML configuration in Harness; as in the UI, deletion is rejected while user groups are linked to the configuration, and when no remaining SAML configuration has login enabled, Harness switches the account's authentication mechanism back to username/password.
+  Resource for managing a SAML SSO configuration of a Harness account. Multiple SAML configurations are supported per account (requires the PL_ENABLE_MULTIPLE_IDP_SUPPORT feature flag on the account). The Azure client secret, when used, is the raw client secret value of the Azure AD app registration; Harness stores it encrypted in the account's default secret manager. Destroying this resource deletes the SAML configuration in Harness; as in the UI, deletion is rejected while user groups are linked to the configuration, and when no remaining SAML configuration has login enabled, Harness switches the account's authentication mechanism back to username/password.
 ---
 
 # harness_platform_sso_saml (Resource)
 
-Resource for managing a SAML SSO configuration of a Harness account. Multiple SAML configurations are supported per account (requires the `PL_ENABLE_MULTIPLE_IDP_SUPPORT` feature flag on the account). The Azure client secret, when used, is a reference to a Harness secret (e.g. `harness_platform_secret`). Destroying this resource deletes the SAML configuration in Harness; as in the UI, deletion is rejected while user groups are linked to the configuration, and when no remaining SAML configuration has login enabled, Harness switches the account's authentication mechanism back to username/password.
+Resource for managing a SAML SSO configuration of a Harness account. Multiple SAML configurations are supported per account (requires the `PL_ENABLE_MULTIPLE_IDP_SUPPORT` feature flag on the account). The Azure client secret, when used, is the raw client secret value of the Azure AD app registration; Harness stores it encrypted in the account's default secret manager. Destroying this resource deletes the SAML configuration in Harness; as in the UI, deletion is rejected while user groups are linked to the configuration, and when no remaining SAML configuration has login enabled, Harness switches the account's authentication mechanism back to username/password.
 
 ## Example Usage
 
@@ -23,13 +23,22 @@ resource "harness_platform_sso_saml" "example" {
 }
 
 # SAML configuration with group-based authorization and Azure client credentials.
+# client_id/client_secret are only used with Azure AD: Harness calls Microsoft Graph
+# to resolve the user's groups at login time. client_secret is the raw secret value
+# of the Azure AD app registration (not a reference to a Harness secret); Harness
+# stores it encrypted in the account's default secret manager.
+variable "azure_saml_client_secret" {
+  type      = string
+  sensitive = true
+}
+
 resource "harness_platform_sso_saml" "example_with_groups" {
   display_name          = "Example SAML with Groups"
   metadata_xml          = file("${path.module}/idp-metadata.xml")
   group_membership_attr = "memberOf"
   saml_provider_type    = "AZURE"
   client_id             = "00000000-0000-0000-0000-000000000000"
-  client_secret         = harness_platform_secret_text.saml_client_secret.id
+  client_secret         = var.azure_saml_client_secret
   friendly_saml_name    = "Harness"
   jit_enabled           = true
   jit_validation_key    = "email"
@@ -48,7 +57,7 @@ resource "harness_platform_sso_saml" "example_with_groups" {
 
 - `authentication_enabled` (Boolean) Whether login via this SAML configuration is enabled.
 - `client_id` (String) Optional clientId for Azure SSO. Must be set together with `client_secret`. On update, when only the clientId is known (e.g. after import), the stored client secret is preserved, mirroring the Harness UI behavior.
-- `client_secret` (String, Sensitive) Optional Harness secret reference for the Azure SSO client secret. Must be set together with `client_id`. Not returned by the read API; the configured value is kept in state. After import, leave this unset to keep the secret stored in Harness.
+- `client_secret` (String, Sensitive) Optional client secret value of the Azure AD app registration used for Azure SSO group resolution. This is the raw secret value, not a reference to a Harness secret; Harness stores it encrypted in the account's default secret manager. Must be set together with `client_id`. Not returned by the read API; the configured value is kept in state. After import, leave this unset to keep the secret stored in Harness.
 - `entity_identifier` (String) Entity identifier of the SAML service provider.
 - `friendly_saml_name` (String) Friendly name of the app on the SAML SSO provider end in Harness.
 - `group_membership_attr` (String) Attribute in the SAML assertion containing the user's group memberships. Setting this enables group-based authorization.
