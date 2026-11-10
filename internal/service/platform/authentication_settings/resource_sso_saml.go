@@ -65,10 +65,11 @@ func ResourceSSOSAML() *schema.Resource {
 				Sensitive: true,
 			},
 			"entity_identifier": {
-				Description: "Entity identifier of the SAML service provider.",
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
+				Description: "Entity identifier of the SAML service provider. When not set, Harness " +
+					"uses its default service provider entity identifier. As with the API and the UI, " +
+					"removing it from the configuration clears it, reverting to the Harness default.",
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"origin": {
 				Description: "Origin URL derived from the uploaded SAML metadata.",

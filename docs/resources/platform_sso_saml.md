@@ -58,7 +58,7 @@ resource "harness_platform_sso_saml" "example_with_groups" {
 - `authentication_enabled` (Boolean) Whether login via this SAML configuration is enabled.
 - `client_id` (String) Optional clientId for Azure SSO. Must be set together with `client_secret`. On update, when only the clientId is known (e.g. after import), the stored client secret is preserved, mirroring the Harness UI behavior.
 - `client_secret` (String, Sensitive) Optional client secret value of the Azure AD app registration used for Azure SSO group resolution. This is the raw secret value, not a reference to a Harness secret; Harness stores it encrypted in the account's default secret manager. Must be set together with `client_id`. Not returned by the read API; the configured value is kept in state. After import, leave this unset to keep the secret stored in Harness.
-- `entity_identifier` (String) Entity identifier of the SAML service provider.
+- `entity_identifier` (String) Entity identifier of the SAML service provider. When not set, Harness uses its default service provider entity identifier. As with the API and the UI, removing it from the configuration clears it, reverting to the Harness default.
 - `friendly_saml_name` (String) Friendly name of the app on the SAML SSO provider end in Harness.
 - `group_membership_attr` (String) Attribute in the SAML assertion containing the user's group memberships. Setting this enables group-based authorization.
 - `jit_enabled` (Boolean) Whether Just in time user provisioning is enabled.
