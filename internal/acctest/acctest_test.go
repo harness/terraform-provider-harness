@@ -3,6 +3,8 @@ package acctest
 import (
 	"context"
 	"os"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/helpers"
@@ -11,6 +13,38 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/stretchr/testify/require"
 )
+
+func TestProbeTemplateIdentity(t *testing.T) {
+	valid := regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`)
+	suffixPattern := regexp.MustCompile(`^[a-z0-9]{5}$`)
+	cases := []struct {
+		testName string
+		prefix   string
+	}{
+		{"TestAccResourceProbeTemplate_httpProbe_basic", "testaccresourceprobetemplate-httpprobe-basic-"},
+		{"TestAccResourceProbeTemplate_httpProbe_update", "testaccresourceprobetemplate-httpprobe-update-"},
+		{"TestAccResourceProbeTemplate_cmdProbe_basic", "testaccresourceprobetemplate-cmdprobe-basic-"},
+		{"TestAccResourceProbeTemplate_k8sProbe_basic", "testaccresourceprobetemplate-k8sprobe-basic-"},
+		{"TestAccResourceProbeTemplate_apmProbe_prometheus", "testaccresourceprobetemplate-apmprobe-prometheus-"},
+		{"TestAccResourceProbeTemplate_apmProbe_datadog", "testaccresourceprobetemplate-apmprobe-datadog-"},
+		{"TestAccDataSourceProbeTemplate_byIdentity", "testaccdatasourceprobetemplate-byidentity-"},
+		{"TestAccDataSourceProbeTemplate_byName", "testaccdatasourceprobetemplate-byname-"},
+		{"TestAccDataSourceProbeTemplate_cmdProbe", "testaccdatasourceprobetemplate-cmdprobe-"},
+		{"TestAccDataSourceProbeTemplate_k8sProbe", "testaccdatasourceprobetemplate-k8sprobe-"},
+		{"TestAccResourceExperimentTemplate_nestedNoDrift", "testaccresourceexperimenttemplate-nestednodrift-"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.testName, func(t *testing.T) {
+			id := ProbeTemplateIdentity(tc.testName)
+			require.Regexp(t, valid, id)
+			require.LessOrEqual(t, len(id), 63)
+			require.True(t, strings.HasPrefix(id, tc.prefix), "identity %q", id)
+			require.Regexp(t, suffixPattern, strings.TrimPrefix(id, tc.prefix))
+			require.NotContains(t, id, "_")
+			require.Equal(t, strings.ToLower(id), id)
+		})
+	}
+}
 
 func TestDefaultProvider_default_configuration(t *testing.T) {
 	// Setup

@@ -2,6 +2,7 @@ package acctest
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"os"
 	"strings"
@@ -47,6 +48,25 @@ func TestAccConfigureProvider() {
 
 		TestAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(config))
 	})
+}
+
+// ProbeTemplateIdentity builds a probe template identity from a Go test name.
+// The API accepts lowercase letters, digits, and hyphens, and the value must
+// start and end with a letter or digit. The test name is lowercased, its
+// underscores become hyphens, and a lowercase random suffix is appended so
+// repeated runs do not collide.
+func ProbeTemplateIdentity(testName string) string {
+	const letters = "abcdefghijklmnopqrstuvwxyz0123456789"
+	raw := make([]byte, 5)
+	if _, err := rand.Read(raw); err != nil {
+		panic(err)
+	}
+	suffix := make([]byte, len(raw))
+	for i := range suffix {
+		suffix[i] = letters[int(raw[i])%len(letters)]
+	}
+	base := strings.Trim(strings.ToLower(strings.ReplaceAll(testName, "_", "-")), "-")
+	return base + "-" + string(suffix)
 }
 
 func TestAccPreCheck(t *testing.T) {
