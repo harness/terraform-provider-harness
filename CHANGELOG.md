@@ -1,3 +1,10 @@
+# v0.47.8 (November 11, 2026)
+
+
+BUG FIXES:
+
+* data-source/harness_platform_pipeline: Fixed a provider panic on read (`interface conversion: interface {} is nil`) that crashed `terraform plan` in v0.47.6 and v0.47.7. Data source reads no longer touch `yaml_version`, which exists only on the resource. ([#PIPE-39101](https://github.com/harness/terraform-provider-harness/issues/PIPE-39101))
+
 # v0.47.6 (November 03, 2026)
 
 
