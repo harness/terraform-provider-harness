@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -17,6 +18,21 @@ func TestAccResourceAuthenticationSettings(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccAuthenticationSettingsDestroy(resourceName),
 		Steps: []resource.TestStep{
+			{
+				// Create with only session_timeout_minutes declared must not wipe an
+				// absolute session timeout set out-of-band (seeded by PreConfig): the
+				// provider reads the live value and carries it into the full-replace
+				// session-timeout API, the same read-then-write behavior as the UI.
+				PreConfig: func() {
+					testAccSetAccountSessionTimeout(t, 60, 600)
+				},
+				Config: testAccAuthenticationSettingsSessionOnly(true, 45),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "two_factor_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "session_timeout_minutes", "45"),
+					resource.TestCheckResourceAttr(resourceName, "absolute_session_timeout_minutes", "600"),
+				),
+			},
 			{
 				Config: testAccAuthenticationSettings(true, `["harness.io"]`, 60, 480, false),
 				Check: resource.ComposeTestCheckFunc(
@@ -88,6 +104,29 @@ func testAccAuthenticationSettingsDestroy(resourceName string) resource.TestChec
 		}
 		return nil
 	}
+}
+
+// testAccSetAccountSessionTimeout seeds the account session timeout out-of-band,
+// simulating a value an admin set through the Harness UI.
+func testAccSetAccountSessionTimeout(t *testing.T, sessionTimeout, absoluteSessionTimeout int32) {
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
+
+	_, _, err := c.AuthenticationSettingsApi.SetSessionTimeoutAtAccountLevel(ctx, nextgen.SessionTimeoutSettings{
+		SessionTimeOutInMinutes:         sessionTimeout,
+		AbsoluteSessionTimeOutInMinutes: absoluteSessionTimeout,
+	}, c.AccountId)
+	if err != nil {
+		t.Fatalf("failed to seed account session timeout: %v", err)
+	}
+}
+
+func testAccAuthenticationSettingsSessionOnly(twoFactorEnabled bool, sessionTimeout int) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_authentication_settings" "test" {
+			two_factor_enabled      = %[1]t
+			session_timeout_minutes = %[2]d
+		}
+	`, twoFactorEnabled, sessionTimeout)
 }
 
 func testAccAuthenticationSettings2FAOnly(twoFactorEnabled bool) string {
