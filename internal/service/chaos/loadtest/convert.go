@@ -37,6 +37,9 @@ func loadTestCreateRequest(d *schema.ResourceData) (sdkloadtest.LoadTestCreateRe
 	if err := rejectAuthoredVariables(toolConfig); err != nil {
 		return sdkloadtest.LoadTestCreateRequest{}, err
 	}
+	if err := validateToolMode(d.Get("tool_type").(string), toolConfig); err != nil {
+		return sdkloadtest.LoadTestCreateRequest{}, err
+	}
 	req := sdkloadtest.LoadTestCreateRequest{
 		Identity:          d.Get("identifier").(string),
 		Name:              d.Get("name").(string),
@@ -79,6 +82,9 @@ func loadTestUpdateRequest(d *schema.ResourceData) (sdkloadtest.LoadTestUpdateRe
 	if err := rejectAuthoredVariables(toolConfig); err != nil {
 		return sdkloadtest.LoadTestUpdateRequest{}, err
 	}
+	if err := validateToolMode(d.Get("tool_type").(string), toolConfig); err != nil {
+		return sdkloadtest.LoadTestUpdateRequest{}, err
+	}
 	req := sdkloadtest.LoadTestUpdateRequest{
 		Name:              d.Get("name").(string),
 		Description:       d.Get("description").(string),
@@ -118,7 +124,19 @@ func validateLoadTestPlan(d *schema.ResourceDiff) error {
 	environmentID, envKnown := rawString(d, "environment_id")
 	infrastructureID, infraKnown := rawString(d, "infrastructure_id")
 	if managedKnown && envKnown && infraKnown {
-		return validateInfra(managed, environmentID, infrastructureID)
+		if err := validateInfra(managed, environmentID, infrastructureID); err != nil {
+			return err
+		}
+	}
+	toolConfig, configKnown := rawString(d, "tool_config")
+	if toolKnown && configKnown && strings.TrimSpace(toolConfig) != "" {
+		cfg, err := parseToolConfig(toolConfig)
+		if err != nil {
+			return err
+		}
+		if err := validateToolMode(toolType, cfg); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -248,6 +266,55 @@ func normalizeToolConfig(raw string) (string, error) {
 	}
 	stripServerOwnedToolConfig(obj)
 	return normalizeToolConfigValue(obj)
+}
+
+// validateToolMode checks the mode Load Test Manager accepts for Locust and K6.
+// Script mode needs the base64 script. Image mode needs the container image.
+// k6 UI mode is not supported.
+func validateToolMode(toolType string, cfg map[string]interface{}) error {
+	section := cfg
+	label := "tool_config"
+	switch toolType {
+	case sdkloadtest.LoadTestToolLocust:
+		nested, ok := cfg["locust"].(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("tool_config.locust is required for a Locust load test")
+		}
+		section = nested
+		label = "tool_config.locust"
+	case sdkloadtest.LoadTestToolK6:
+		// Load Test Manager accepts the k6 spec at the top of toolConfig or under k6.
+		if _, exists := cfg["k6"]; exists {
+			nested, ok := cfg["k6"].(map[string]interface{})
+			if !ok {
+				return fmt.Errorf("tool_config.k6 must be an object")
+			}
+			section = nested
+			label = "tool_config.k6"
+		}
+	}
+	mode, _ := section["mode"].(string)
+	script, _ := section["script"].(map[string]interface{})
+	switch mode {
+	case "script":
+		content, _ := script["content"].(string)
+		if strings.TrimSpace(content) == "" {
+			return fmt.Errorf("%s mode script requires script.content", label)
+		}
+	case "image":
+		image, _ := script["image"].(string)
+		if strings.TrimSpace(image) == "" {
+			return fmt.Errorf("%s mode image requires script.image", label)
+		}
+	case "ui":
+		if toolType == sdkloadtest.LoadTestToolK6 {
+			return fmt.Errorf("k6 ui mode is not supported; use script or image")
+		}
+		return fmt.Errorf("%s mode %q is not supported; use script or image", label, mode)
+	default:
+		return fmt.Errorf("%s mode must be script or image", label)
+	}
+	return nil
 }
 
 // rejectAuthoredVariables fails when tool_config carries variables. The variable block is the only copy Terraform sends.
@@ -487,6 +554,48 @@ func sameStrings(left, right []string) bool {
 		}
 	}
 	return true
+}
+
+// scriptFindingSummary lists every script problem when Load Test Manager returns more than the first one in message.
+func scriptFindingSummary(err error) string {
+	bodyErr, ok := err.(interface{ Body() []byte })
+	if !ok || err == nil {
+		return ""
+	}
+	var parsed struct {
+		Validation struct {
+			Findings []struct {
+				Severity string `json:"severity"`
+				Message  string `json:"message"`
+				File     string `json:"file"`
+				Line     int    `json:"line"`
+				Column   int    `json:"column"`
+			} `json:"findings"`
+		} `json:"validation"`
+	}
+	if json.Unmarshal(bodyErr.Body(), &parsed) != nil || len(parsed.Validation.Findings) < 2 {
+		return ""
+	}
+	lines := make([]string, 0, len(parsed.Validation.Findings))
+	for _, finding := range parsed.Validation.Findings {
+		if finding.Severity != "" && finding.Severity != "error" {
+			continue
+		}
+		line := finding.Message
+		if finding.File != "" {
+			line = finding.File + ": " + line
+		}
+		if finding.Line > 0 {
+			line = fmt.Sprintf("%s (%d:%d)", line, finding.Line, finding.Column)
+		}
+		if line != "" {
+			lines = append(lines, line)
+		}
+	}
+	if len(lines) < 2 {
+		return ""
+	}
+	return "Script validation found " + strings.Join(lines, "; ")
 }
 
 func parseLoadTestImportID(id string) (orgID, projectID, identifier string, err error) {

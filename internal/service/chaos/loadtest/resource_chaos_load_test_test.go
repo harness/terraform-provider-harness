@@ -214,8 +214,8 @@ func TestParseLoadTestImportID(t *testing.T) {
 
 func TestCreateTimeoutSaysToDeleteBeforeRetry(t *testing.T) {
 	client := sdkloadtest.NewAPIClient(&sdkloadtest.Configuration{
-		BasePath:  "http://loadtest.invalid/loadTest/manager/api",
-		AccountId: "acc",
+		BasePath:   "http://loadtest.invalid/loadTest/manager/api",
+		AccountId:  "acc",
 		HTTPClient: &http.Client{Transport: roundTripError{}},
 	})
 	d := loadTestData(t, map[string]interface{}{
@@ -244,6 +244,41 @@ type roundTripError struct{}
 
 func (roundTripError) RoundTrip(*http.Request) (*http.Response, error) {
 	return nil, fmt.Errorf("connection timed out")
+}
+
+func TestNestedK6ModeIsAccepted(t *testing.T) {
+	err := validateToolMode(sdkloadtest.LoadTestToolK6, map[string]interface{}{
+		"k6": map[string]interface{}{
+			"mode":   "image",
+			"script": map[string]interface{}{"image": "ghcr.io/example/k6:1"},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestScriptValidationListsEveryFinding(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte(`{"error":"Script validation failed","message":"first problem","errorCode":"E2022","validation":{"findings":[{"severity":"error","message":"first problem","line":3,"column":1},{"severity":"error","message":"second problem","line":9,"column":2}]}}`))
+	}))
+	defer server.Close()
+	d := loadTestData(t, map[string]interface{}{
+		"identifier": "checkout", "name": "Checkout", "org_id": "default", "project_id": "demo",
+		"tool_type": "K6", "target_type": "kubernetes", "cleanup_policy": "delete", "managed_infra": false,
+		"environment_id": "prod", "infrastructure_id": "payments",
+		"tool_config": `{"mode":"script","script":{"content":"a2s="}}`,
+	})
+	diags := resourceChaosLoadTestCreate(t.Context(), d, loadTestSession(server))
+	summary := diagnosticSummary(diags)
+	if !strings.Contains(summary, "first problem") || !strings.Contains(summary, "second problem") {
+		t.Fatalf("diags = %v", diags)
+	}
+	if d.Id() != "" {
+		t.Fatalf("id = %q", d.Id())
+	}
 }
 
 func TestLoadTestIdentifierRejectsReservedURLCharacters(t *testing.T) {

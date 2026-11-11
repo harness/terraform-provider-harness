@@ -106,7 +106,7 @@ func resourceChaosLoadTestSchema() map[string]*schema.Schema {
 			Optional:    true,
 		},
 		"tool_config": {
-			Description:      "JSON object stored as the load test toolConfig. K6 is a flat object (`mode`, `script`, `tunables`). Locust is nested under `locust`. A `variables` key is rejected; set custom variables on `variable`. K6 and Locust script content is base64 and is stored in Terraform state.",
+			Description:      "JSON object stored as the load test toolConfig. K6 fields sit at the top of the object or under `k6`. Locust is nested under `locust`. `mode` `script` requires `script.content` (base64). `mode` `image` requires `script.image`. k6 `ui` mode is not supported. Tunables (`hostUrl`, `iterations`, `targetUsers`, `durationSeconds`), `envVars`, `thresholds`, `options`, and k6 `metricTags` belong in this object. A `variables` key is rejected; set custom variables on `variable`. The script is stored in Terraform state.",
 			Type:             schema.TypeString,
 			Required:         true,
 			ValidateFunc:     validateToolConfig,
@@ -213,8 +213,8 @@ func dataSourceChaosLoadTestSchema() map[string]*schema.Schema {
 	src["service_references"].Description = "Chaos service identities linked to this load test."
 	src["tags"].Description = "Tags stored on the load test."
 	src["cleanup_policy"].Description = "Whether run pods, config maps, and secrets are deleted or retained after a run."
-	src["max_duration_sec"].Description = "Hard cap, in seconds, stored for any run of this load test. Empty when no cap is stored."
-	src["tool_config"].Description = "JSON object stored as toolConfig. K6 is a flat object. Locust is nested under `locust`. JMeter may be nested under `jmeter`. The script is included."
+	src["max_duration_sec"].Description = "Hard cap, in seconds, stored for any run of this load test. 0 when no cap is stored."
+	src["tool_config"].Description = "JSON object stored as toolConfig. K6 fields are at the top or under `k6`. Locust is nested under `locust`. JMeter may be nested under `jmeter`. `mode` is `script` or `image`. The script or image is included."
 	src["variable"].Description = "Custom variables stored on the load test."
 	src["resources"].Description = "Per-pod CPU and memory stored for Kubernetes load test workloads."
 	return src

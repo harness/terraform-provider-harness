@@ -394,6 +394,11 @@ func TestPlanRejectsIncompleteConfig(t *testing.T) {
 			{Config: locustNoInfraConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("environment_id and infrastructure_id are required")},
 			{Config: jmeterConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("JMeter")},
 			{Config: k6VariablesInToolConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("variables")},
+			{Config: k6ImageMissingConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("mode image requires script.image")},
+			{Config: k6UIConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("k6 ui mode is not supported")},
+			{Config: locustImageMissingConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("mode image requires script.image")},
+			{Config: k6ImageConfig(), PlanOnly: true, ExpectNonEmptyPlan: true},
+			{Config: locustImageConfig(), PlanOnly: true, ExpectNonEmptyPlan: true},
 		},
 	})
 }
@@ -514,6 +519,93 @@ resource "harness_chaos_load_test" "k6" {
     script = { content = "a2s=" }
     variables = [{ name = "HOST", type = "String", value = "https://example.com" }]
   })
+}
+`
+}
+
+func k6ImageConfig() string {
+	return `
+provider "harness" {}
+resource "harness_chaos_load_test" "k6" {
+  org_id     = "default"
+  project_id = "demo"
+  identifier = "checkout-image"
+  name       = "Checkout image"
+  tool_type   = "K6"
+  target_type = "kubernetes"
+  environment_id    = "prod"
+  infrastructure_id = "payments"
+  tool_config = jsonencode({
+    mode   = "image"
+    script = { image = "ghcr.io/example/k6:1" }
+    tunables = { hostUrl = "https://example.com", iterations = 100 }
+  })
+}
+`
+}
+
+func k6ImageMissingConfig() string {
+	return `
+provider "harness" {}
+resource "harness_chaos_load_test" "k6" {
+  org_id     = "default"
+  project_id = "demo"
+  identifier = "checkout-image"
+  name       = "Checkout image"
+  tool_type   = "K6"
+  target_type = "kubernetes"
+  environment_id    = "prod"
+  infrastructure_id = "payments"
+  tool_config = jsonencode({ mode = "image", script = {} })
+}
+`
+}
+
+func k6UIConfig() string {
+	return `
+provider "harness" {}
+resource "harness_chaos_load_test" "k6" {
+  org_id     = "default"
+  project_id = "demo"
+  identifier = "checkout-ui"
+  name       = "Checkout ui"
+  tool_type   = "K6"
+  target_type = "kubernetes"
+  environment_id    = "prod"
+  infrastructure_id = "payments"
+  tool_config = jsonencode({ mode = "ui", uiDefinition = { requests = [] } })
+}
+`
+}
+
+func locustImageConfig() string {
+	return `
+provider "harness" {}
+resource "harness_chaos_load_test" "locust" {
+  org_id     = "default"
+  project_id = "demo"
+  identifier = "browse-image"
+  name       = "Browse image"
+  tool_type         = "Locust"
+  environment_id    = "prod"
+  infrastructure_id = "vm-1"
+  tool_config = jsonencode({ locust = { mode = "image", script = { image = "ghcr.io/example/locust:1" } } })
+}
+`
+}
+
+func locustImageMissingConfig() string {
+	return `
+provider "harness" {}
+resource "harness_chaos_load_test" "locust" {
+  org_id     = "default"
+  project_id = "demo"
+  identifier = "browse-image"
+  name       = "Browse image"
+  tool_type         = "Locust"
+  environment_id    = "prod"
+  infrastructure_id = "vm-1"
+  tool_config = jsonencode({ locust = { mode = "image", script = {} } })
 }
 `
 }

@@ -19,7 +19,8 @@ func ResourceChaosLoadTest() *schema.Resource {
 		Description: "Resource for a Harness load test.\n\n" +
 			"Creates and updates the load test definition in Load Test Manager. " +
 			"It does not start a run. `tool_config` is the toolConfig JSON the API stores. " +
-			"K6 is a flat object. Locust is nested under `locust`. JMeter is not supported. " +
+			"K6 fields sit at the top of `tool_config` or under `k6`. Locust is nested under `locust`. Both tools support script mode and image mode. k6 ui mode is not supported. " +
+			"JMeter is not supported. " +
 			"K6 and managed infrastructure require target_type kubernetes. Locust may omit target_type; the API stores linux. " +
 			"REFERENCE template imports cannot be managed here. " +
 			"`tool_config` is saved in Terraform state and includes the script. " +
@@ -28,7 +29,7 @@ func ResourceChaosLoadTest() *schema.Resource {
 			"Changing identifier, org_id, project_id, or tool_type removes the load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test. " +
 			"Destroy deletes the load test definition. It does not stop a run that is already in progress, and recorded runs stay stored. " +
 			"Only Locust and K6 can be imported. The data source can still read a JMeter test or a REFERENCE import. " +
-			"The first apply after import sends the configuration as the full desired state. Copy variable, resources, max_duration_sec, tags, tool_config, cleanup_policy, and managed_infra from state first. An omitted variable list, resources block, or tags set clears the stored value. cleanup_policy defaults to delete and managed_infra defaults to false.",
+			"The first apply after import sends the configuration as the full desired state. Copy variable, resources, max_duration_sec, tags, tool_config, cleanup_policy, and managed_infra from state first. An omitted variable list, resources block, tags set, or max_duration_sec clears the stored value. cleanup_policy defaults to delete and managed_infra defaults to false.",
 
 		CreateContext: resourceChaosLoadTestCreate,
 		ReadContext:   resourceChaosLoadTestRead,
@@ -64,7 +65,7 @@ func resourceChaosLoadTestCreate(ctx context.Context, d *schema.ResourceData, me
 				),
 			})
 		}
-		return diags
+		return appendScriptFindings(diags, err)
 	}
 	if created == nil || created.Identity == "" {
 		if loadTestCreateCommitted(httpResp) {
@@ -95,6 +96,14 @@ func rollbackCreatedLoadTest(ctx context.Context, c *sdkloadtest.APIClient, d *s
 	}
 	d.SetId("")
 	return diag.Errorf("%s. The load test created by this apply was deleted, so nothing was saved in state. The next apply creates it again.", reason)
+}
+
+func appendScriptFindings(diags diag.Diagnostics, err error) diag.Diagnostics {
+	summary := scriptFindingSummary(err)
+	if summary == "" {
+		return diags
+	}
+	return append(diags, diag.Diagnostic{Severity: diag.Error, Summary: summary})
 }
 
 func loadTestCreateCommitted(resp *http.Response) bool {
@@ -158,7 +167,7 @@ func resourceChaosLoadTestUpdate(ctx context.Context, d *schema.ResourceData, me
 	log.Printf("[DEBUG] Updating chaos load test %s", d.Id())
 	_, httpResp, err := sdkloadtest.NewLoadTestClient(c).Update(ctx, scopeFrom(d, c.AccountId), d.Id(), req)
 	if err != nil {
-		return helpers.HandleChaosApiError(err, d, httpResp)
+		return appendScriptFindings(helpers.HandleChaosApiError(err, d, httpResp), err)
 	}
 	return readChaosLoadTest(ctx, d, meta, true, false)
 }

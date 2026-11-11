@@ -4,14 +4,14 @@ page_title: "harness_chaos_load_test Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
   Resource for a Harness load test.
-  Creates and updates the load test definition in Load Test Manager. It does not start a run. tool_config is the toolConfig JSON the API stores. K6 is a flat object. Locust is nested under locust. JMeter is not supported. K6 and managed infrastructure require target_type kubernetes. Locust may omit target_type; the API stores linux. REFERENCE template imports cannot be managed here. tool_config is saved in Terraform state and includes the script. Custom variables belong in variable. A variables key inside tool_config is rejected. The identifier allows letters, digits, underscores, and hyphens. Changing identifier, org_id, project_id, or tool_type removes the load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test. Destroy deletes the load test definition. It does not stop a run that is already in progress, and recorded runs stay stored. Only Locust and K6 can be imported. The data source can still read a JMeter test or a REFERENCE import. The first apply after import sends the configuration as the full desired state. Copy variable, resources, max_duration_sec, tags, tool_config, cleanup_policy, and managed_infra from state first. An omitted variable list, resources block, or tags set clears the stored value. cleanup_policy defaults to delete and managed_infra defaults to false.
+  Creates and updates the load test definition in Load Test Manager. It does not start a run. tool_config is the toolConfig JSON the API stores. K6 fields sit at the top of tool_config or under k6. Locust is nested under locust. Both tools support script mode and image mode. k6 ui mode is not supported. JMeter is not supported. K6 and managed infrastructure require target_type kubernetes. Locust may omit target_type; the API stores linux. REFERENCE template imports cannot be managed here. tool_config is saved in Terraform state and includes the script. Custom variables belong in variable. A variables key inside tool_config is rejected. The identifier allows letters, digits, underscores, and hyphens. Changing identifier, org_id, project_id, or tool_type removes the load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test. Destroy deletes the load test definition. It does not stop a run that is already in progress, and recorded runs stay stored. Only Locust and K6 can be imported. The data source can still read a JMeter test or a REFERENCE import. The first apply after import sends the configuration as the full desired state. Copy variable, resources, max_duration_sec, tags, tool_config, cleanup_policy, and managed_infra from state first. An omitted variable list, resources block, tags set, or max_duration_sec clears the stored value. cleanup_policy defaults to delete and managed_infra defaults to false.
 ---
 
 # harness_chaos_load_test (Resource)
 
 Resource for a Harness load test.
 
-Creates and updates the load test definition in Load Test Manager. It does not start a run. `tool_config` is the toolConfig JSON the API stores. K6 is a flat object. Locust is nested under `locust`. JMeter is not supported. K6 and managed infrastructure require target_type kubernetes. Locust may omit target_type; the API stores linux. REFERENCE template imports cannot be managed here. `tool_config` is saved in Terraform state and includes the script. Custom variables belong in `variable`. A variables key inside tool_config is rejected. The identifier allows letters, digits, underscores, and hyphens. Changing identifier, org_id, project_id, or tool_type removes the load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test. Destroy deletes the load test definition. It does not stop a run that is already in progress, and recorded runs stay stored. Only Locust and K6 can be imported. The data source can still read a JMeter test or a REFERENCE import. The first apply after import sends the configuration as the full desired state. Copy variable, resources, max_duration_sec, tags, tool_config, cleanup_policy, and managed_infra from state first. An omitted variable list, resources block, or tags set clears the stored value. cleanup_policy defaults to delete and managed_infra defaults to false.
+Creates and updates the load test definition in Load Test Manager. It does not start a run. `tool_config` is the toolConfig JSON the API stores. K6 fields sit at the top of `tool_config` or under `k6`. Locust is nested under `locust`. Both tools support script mode and image mode. k6 ui mode is not supported. JMeter is not supported. K6 and managed infrastructure require target_type kubernetes. Locust may omit target_type; the API stores linux. REFERENCE template imports cannot be managed here. `tool_config` is saved in Terraform state and includes the script. Custom variables belong in `variable`. A variables key inside tool_config is rejected. The identifier allows letters, digits, underscores, and hyphens. Changing identifier, org_id, project_id, or tool_type removes the load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test. Destroy deletes the load test definition. It does not stop a run that is already in progress, and recorded runs stay stored. Only Locust and K6 can be imported. The data source can still read a JMeter test or a REFERENCE import. The first apply after import sends the configuration as the full desired state. Copy variable, resources, max_duration_sec, tags, tool_config, cleanup_policy, and managed_infra from state first. An omitted variable list, resources block, tags set, or max_duration_sec clears the stored value. cleanup_policy defaults to delete and managed_infra defaults to false.
 
 ## Example Usage
 
@@ -67,6 +67,57 @@ resource "harness_chaos_load_test" "locust" {
   })
 }
 
+# K6 image mode. The container image bundles the script. hostUrl and iterations are tunables.
+resource "harness_chaos_load_test" "k6_image" {
+  org_id     = "default"
+  project_id = "demo"
+  identifier = "checkout_k6_image"
+  name       = "Checkout k6 image"
+
+  tool_type   = "K6"
+  target_type = "kubernetes"
+
+  environment_id    = "prod"
+  infrastructure_id = harness_chaos_infrastructure_v2.payments.infra_id
+
+  tool_config = jsonencode({
+    mode = "image"
+    script = {
+      image = "ghcr.io/example/k6:1"
+    }
+    tunables = {
+      hostUrl    = "https://example.com"
+      iterations = 100
+    }
+  })
+}
+
+# Locust image mode. envVars and thresholds are optional and live in the same object.
+resource "harness_chaos_load_test" "locust_image" {
+  org_id     = "default"
+  project_id = "demo"
+  identifier = "browse_locust_image"
+  name       = "Browse locust image"
+
+  tool_type   = "Locust"
+  target_type = "linux"
+
+  environment_id    = "prod"
+  infrastructure_id = "linux-vm-1"
+
+  tool_config = jsonencode({
+    locust = {
+      mode = "image"
+      script = {
+        image = "ghcr.io/example/locust:1"
+      }
+      tunables = {
+        targetUrl = "https://example.com"
+      }
+    }
+  })
+}
+
 # Harness-managed Kubernetes infrastructure. Do not set environment or infrastructure ids.
 resource "harness_chaos_load_test" "managed" {
   org_id     = "default"
@@ -96,7 +147,7 @@ resource "harness_chaos_load_test" "managed" {
 - `name` (String) Name of the load test.
 - `org_id` (String) Organization identifier of the load test. Changing it removes this load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test.
 - `project_id` (String) Project identifier of the load test. Changing it removes this load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test.
-- `tool_config` (String) JSON object stored as the load test toolConfig. K6 is a flat object (`mode`, `script`, `tunables`). Locust is nested under `locust`. A `variables` key is rejected; set custom variables on `variable`. K6 and Locust script content is base64 and is stored in Terraform state.
+- `tool_config` (String) JSON object stored as the load test toolConfig. K6 fields sit at the top of the object or under `k6`. Locust is nested under `locust`. `mode` `script` requires `script.content` (base64). `mode` `image` requires `script.image`. k6 `ui` mode is not supported. Tunables (`hostUrl`, `iterations`, `targetUsers`, `durationSeconds`), `envVars`, `thresholds`, `options`, and k6 `metricTags` belong in this object. A `variables` key is rejected; set custom variables on `variable`. The script is stored in Terraform state.
 - `tool_type` (String) Load generator. `Locust` or `K6`. JMeter is not supported: Load Test Manager rewrites the plan, its variables, and the script on save. K6 requires `target_type` `kubernetes`. Locust may omit it and keeps the server default, `linux`. Changing this removes this load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test.
 
 ### Optional
@@ -155,7 +206,7 @@ terraform import harness_chaos_load_test.example <org_id>/<project_id>/<identifi
 # The first apply sends the configuration as the full desired state.
 # Copy variable, resources, max_duration_sec, tags, tool_config, cleanup_policy,
 # and managed_infra from state before applying. An omitted variable list,
-# resources block, duration, or tags set clears the stored value. tool_config
+# resources block, max_duration_sec, or tags set clears the stored value. tool_config
 # replaces the script. cleanup_policy defaults to delete and managed_infra to false.
 # Destroy deletes the load test definition. Recorded runs stay stored, and a
 # run that is already in progress is not stopped.

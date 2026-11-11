@@ -1,5 +1,5 @@
 ```release-note:new-resource
-harness_chaos_load_test: Create, update, import, and delete a Locust or K6 load test definition in Load Test Manager. The resource does not start a run.
+harness_chaos_load_test: Create, update, import, and delete a Locust or K6 load test definition in Load Test Manager, in script or image mode. The resource does not start a run.
 ```
 
 ```release-note:new-data-source

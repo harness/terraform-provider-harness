@@ -38,13 +38,13 @@ data "harness_chaos_load_test" "example" {
 - `infrastructure_id` (String) Chaos infrastructure identifier stored on the load test.
 - `latest_revision_id` (String) Latest script revision identifier.
 - `managed_infra` (Boolean) Whether Harness provides Kubernetes infrastructure for every run.
-- `max_duration_sec` (Number) Hard cap, in seconds, stored for any run of this load test. Empty when no cap is stored.
+- `max_duration_sec` (Number) Hard cap, in seconds, stored for any run of this load test. 0 when no cap is stored.
 - `name` (String) Name of the load test.
 - `resources` (List of Object) Per-pod CPU and memory stored for Kubernetes load test workloads. (see [below for nested schema](#nestedatt--resources))
 - `service_references` (Set of String) Chaos service identities linked to this load test.
 - `tags` (Set of String) Tags stored on the load test.
 - `target_type` (String) Infrastructure target stored on the load test. `linux` or `kubernetes`.
-- `tool_config` (String) JSON object stored as toolConfig. K6 is a flat object. Locust is nested under `locust`. JMeter may be nested under `jmeter`. The script is included.
+- `tool_config` (String) JSON object stored as toolConfig. K6 fields are at the top or under `k6`. Locust is nested under `locust`. JMeter may be nested under `jmeter`. `mode` is `script` or `image`. The script or image is included.
 - `tool_type` (String) Load generator stored on the test. The API may return `Locust`, `JMeter`, or `K6`. This data source can read a JMeter test. The resource does not manage JMeter.
 - `unique_id` (String) Server-generated unique id of the load test.
 - `variable` (List of Object) Custom variables stored on the load test. (see [below for nested schema](#nestedatt--variable))
