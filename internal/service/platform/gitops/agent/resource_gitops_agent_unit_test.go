@@ -3,6 +3,7 @@ package agent
 import (
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -77,6 +78,20 @@ func TestDisasterRecoveryTypeDiffSuppress(t *testing.T) {
 		"must suppress once a role is already recorded in state, regardless of new value")
 	assert.True(t, suppressFn("disaster_recovery_type", "SECONDARY", "", nil),
 		"must suppress when old is non-empty even if new is empty")
+}
+
+func TestBuildCreateUpdateAgentRequestDisasterRecoveryNodeName(t *testing.T) {
+	d := schema.TestResourceDataRaw(t, ResourceGitopsAgent().Schema, map[string]interface{}{
+		"identifier":                   "dragent1",
+		"disaster_recovery_identifier": "dragent1",
+		"disaster_recovery_type":       "PRIMARY",
+	})
+
+	node := buildCreateUpdateAgentRequest(d).DisasterRecoveryNode
+	assert.NotNil(t, node)
+	assert.Equal(t, "dragent1", node.Identifier)
+	assert.Equal(t, "dragent1", node.Name, "DR node name must default to the identifier")
+	assert.Equal(t, "PRIMARY", string(*node.Type_))
 }
 
 func TestValidateDisasterRecoveryDiff(t *testing.T) {
