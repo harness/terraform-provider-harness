@@ -478,6 +478,7 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 		drTypeVal := nextgen.V1DisasterRecoveryType(drType.(string))
 		v1Agent.DisasterRecoveryNode = &nextgen.V1DisasterRecoveryNode{
 			Identifier: drIdentifier.(string),
+			Name:       drIdentifier.(string),
 			Type_:      &drTypeVal,
 		}
 	}
