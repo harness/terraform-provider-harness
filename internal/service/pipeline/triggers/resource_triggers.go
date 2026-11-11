@@ -2,6 +2,7 @@ package triggers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func ResourceTriggers() *schema.Resource {
@@ -21,6 +23,7 @@ func ResourceTriggers() *schema.Resource {
 		CreateContext: resourceTriggersCreateOrUpdate,
 		DeleteContext: resourceTriggersDelete,
 		Importer:      helpers.TriggerResourceImporter,
+		CustomizeDiff: validateExecutorInfoDiff,
 
 		Schema: map[string]*schema.Schema{
 			"target_id": {
@@ -51,16 +54,18 @@ func ResourceTriggers() *schema.Resource {
 				Optional:    true,
 			},
 			"executor_info": {
-				Description: "Executor identity for this trigger. When set, the v2 trigger API is used. Required when the account setting enforce_executor_identity_for_triggers is enabled.",
+				Description: "Executor identity for this trigger. When set, the v2 trigger API is used. Required when the account setting enforce_executor_identity_for_triggers is enabled. Optional+Computed: omitting this block does not remove a previously assigned executor from Harness (the server preserves it); use destroy+recreate to obtain a trigger with no executor.",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Description: "Type of principal that executes the pipeline when this trigger fires. Valid values: USER, SERVICE_ACCOUNT.",
-							Type:        schema.TypeString,
-							Required:    true,
+							Description:  "Type of principal that executes the pipeline when this trigger fires. Valid values: USER, SERVICE_ACCOUNT.",
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"USER", "SERVICE_ACCOUNT"}, false),
 						},
 						"identifier": {
 							Description: "Identifier of the executor principal. For USER type, this is the user's UUID (obtain from the Harness user list API). For SERVICE_ACCOUNT type, this is the service account identifier string (e.g. \"sa005\").",
@@ -96,7 +101,7 @@ func resourceTriggersRead(ctx context.Context, d *schema.ResourceData, meta inte
 		d.Get("org_id").(string),
 		d.Get("project_id").(string), d.Get("target_id").(string), id)
 
-	if httpResp.StatusCode == 404 {
+	if httpResp != nil && httpResp.StatusCode == 404 {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
@@ -106,7 +111,13 @@ func resourceTriggersRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readTriggers(d, resp.Data)
+	// Always reflect the server's executor_info in state. The schema is
+	// Optional+Computed: omitting the block in config does not remove the
+	// server-side executor (Harness preserves it on update), so ReadContext
+	// must always write what the server reports.
+	if err := readTriggers(d, resp.Data); err != nil {
+		return diag.FromErr(err)
+	}
 
 	return nil
 }
@@ -144,13 +155,61 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readTriggers(d, resp.Data)
+	if err := readTriggers(d, resp.Data); err != nil {
+		return diag.FromErr(err)
+	}
 
 	return nil
 }
 
-// isAddTriggerExecutorInfo returns true when an executor block is present in config,
-// indicating the v2 API should be used with an executor identity.
+// validateExecutorInfoDiff enforces scope constraints on the executor_info block:
+//   - SERVICE_ACCOUNT: project_id requires org_id to also be set
+//   - USER: org_id and project_id must not be set (not meaningful for user executors)
+func validateExecutorInfoDiff(_ context.Context, d *schema.ResourceDiff, _ interface{}) error {
+	v, ok := d.GetOk("executor_info")
+	if !ok {
+		return nil
+	}
+	list, ok := v.([]interface{})
+	if !ok || len(list) == 0 {
+		return nil
+	}
+	m, ok := list[0].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	execType, _ := m["type"].(string)
+	orgID, _ := m["org_id"].(string)
+	projectID, _ := m["project_id"].(string)
+
+	switch execType {
+	case "SERVICE_ACCOUNT":
+		if projectID != "" && orgID == "" {
+			return fmt.Errorf("executor_info: project_id requires org_id to be set for a SERVICE_ACCOUNT executor")
+		}
+	case "USER":
+		if orgID != "" {
+			return fmt.Errorf("executor_info: org_id must not be set for a USER executor")
+		}
+		if projectID != "" {
+			return fmt.Errorf("executor_info: project_id must not be set for a USER executor")
+		}
+	}
+
+	return nil
+}
+
+// isAddTriggerExecutorInfo returns true when executor_info is present in config or
+// state, indicating the v2 API should be used. Because the schema is Optional+Computed,
+// d.GetOk returns true when the value is in state even if omitted from config — this
+// ensures a YAML-only update on a trigger with an existing executor routes through v2
+// and preserves the executor, matching the Harness server's preserve-on-omission behavior.
+//
+// Limitation: there is no API path to clear an existing executor. The Harness server
+// explicitly preserves an existing executor when executorInfo is omitted or null in
+// UpdateTriggerV2 (see TriggerExecutorResolver.handleExecutorOnUpdate). To obtain a
+// trigger with no executor, destroy and recreate it.
 func isAddTriggerExecutorInfo(d *schema.ResourceData) bool {
 	v, ok := d.GetOk("executor_info")
 	if !ok {
@@ -193,7 +252,9 @@ func resourceTriggersCreateOrUpdateWithExecutorInfo(ctx context.Context, d *sche
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readTriggers(d, resp.Data)
+	if err := readTriggers(d, resp.Data); err != nil {
+		return diag.FromErr(err)
+	}
 
 	return nil
 }
@@ -242,28 +303,51 @@ func resourceTriggersDelete(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-func readTriggers(d *schema.ResourceData, trigger *nextgen.NgTriggerResponse) {
+// readTriggers populates d from the API response. executor_info is always written
+// from the server response — the schema is Optional+Computed. Harness preserves an
+// existing executor when an update omits executorInfo, so ReadContext must always
+// reflect what the server reports rather than suppressing it.
+func readTriggers(d *schema.ResourceData, trigger *nextgen.NgTriggerResponse) error {
 	d.SetId(trigger.Identifier)
-	d.Set("identifier", trigger.Identifier)
-	d.Set("name", trigger.Name)
-	d.Set("org_id", trigger.OrgIdentifier)
-	d.Set("project_id", trigger.ProjectIdentifier)
-	d.Set("target_id", trigger.TargetIdentifier)
-	d.Set("yaml", trigger.Yaml)
-	d.Set("webhook_url", trigger.WebhookUrl)
-	// The server never clears executor_info once set. Only write it into state
-	// when the prior state already tracks it (user has the block in their config).
-	// Without this guard, a refresh after removing the block would restore the
-	// server-side executor into state and produce a perpetual plan diff.
-	_, hasExecutorInState := d.GetOk("executor_info")
-	if trigger.ExecutorInfo != nil && hasExecutorInState {
-		d.Set("executor_info", []interface{}{
+
+	if err := d.Set("identifier", trigger.Identifier); err != nil {
+		return fmt.Errorf("error setting identifier: %w", err)
+	}
+	if err := d.Set("name", trigger.Name); err != nil {
+		return fmt.Errorf("error setting name: %w", err)
+	}
+	if err := d.Set("org_id", trigger.OrgIdentifier); err != nil {
+		return fmt.Errorf("error setting org_id: %w", err)
+	}
+	if err := d.Set("project_id", trigger.ProjectIdentifier); err != nil {
+		return fmt.Errorf("error setting project_id: %w", err)
+	}
+	if err := d.Set("target_id", trigger.TargetIdentifier); err != nil {
+		return fmt.Errorf("error setting target_id: %w", err)
+	}
+	if err := d.Set("yaml", trigger.Yaml); err != nil {
+		return fmt.Errorf("error setting yaml: %w", err)
+	}
+	if err := d.Set("webhook_url", trigger.WebhookUrl); err != nil {
+		return fmt.Errorf("error setting webhook_url: %w", err)
+	}
+
+	if trigger.ExecutorInfo != nil {
+		if err := d.Set("executor_info", []interface{}{
 			map[string]interface{}{
 				"type":       trigger.ExecutorInfo.Type_,
 				"identifier": trigger.ExecutorInfo.Uuid,
 				"org_id":     trigger.ExecutorInfo.OrgIdentifier,
 				"project_id": trigger.ExecutorInfo.ProjectIdentifier,
 			},
-		})
+		}); err != nil {
+			return fmt.Errorf("error setting executor_info: %w", err)
+		}
+	} else {
+		if err := d.Set("executor_info", []interface{}{}); err != nil {
+			return fmt.Errorf("error clearing executor_info: %w", err)
+		}
 	}
+
+	return nil
 }
