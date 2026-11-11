@@ -1,0 +1,3 @@
+```release-note:bug
+data-source/harness_platform_pipeline: fix a provider panic on read. `yaml_version` is only on the pipeline resource, and the shared read path no longer type-asserts it when the data source schema does not have the attribute.
+```
