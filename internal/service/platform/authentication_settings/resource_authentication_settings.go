@@ -161,12 +161,58 @@ func resourceAuthenticationSettingsCreateOrUpdate(ctx context.Context, d *schema
 		}
 	}
 
-	if v, ok := d.GetOk("session_timeout_minutes"); ok {
-		settings := nextgen.SessionTimeoutSettings{
-			SessionTimeOutInMinutes: int32(v.(int)),
+	// Session timeout is written only when one of the two fields is managed, so
+	// configurations that declare neither leave the account values untouched. The
+	// API replaces both account fields unconditionally on every call
+	// (AccountServiceImpl.setSessionTimeoutInMinutes), so the request must carry
+	// the current value for any field the configuration does not declare — the
+	// Harness UI does the same by pre-filling its form from the GET.
+	applySessionTimeout := d.HasChange("session_timeout_minutes") || d.HasChange("absolute_session_timeout_minutes")
+	sessionExplicit := true
+	absoluteExplicit := true
+	if d.IsNewResource() {
+		// On create there is no prior state, so HasChange/Get cannot distinguish an
+		// undeclared field from a configured one. Detect explicitly configured
+		// values from the raw config; this also honors an explicit
+		// `absolute_session_timeout_minutes = 0` (disable).
+		sessionExplicit = false
+		absoluteExplicit = false
+		if raw := d.GetRawConfig(); !raw.IsNull() {
+			if v := raw.GetAttr("session_timeout_minutes"); !v.IsNull() {
+				sessionExplicit = true
+			}
+			if v := raw.GetAttr("absolute_session_timeout_minutes"); !v.IsNull() {
+				absoluteExplicit = true
+			}
 		}
-		if abs, ok := d.GetOk("absolute_session_timeout_minutes"); ok {
-			settings.AbsoluteSessionTimeOutInMinutes = int32(abs.(int))
+		applySessionTimeout = applySessionTimeout || sessionExplicit || absoluteExplicit
+	}
+
+	if applySessionTimeout {
+		// On update both fields are Optional+Computed, so d.Get returns the
+		// configured value where declared and the refreshed account value where
+		// undeclared — already the merged full state.
+		settings := nextgen.SessionTimeoutSettings{
+			SessionTimeOutInMinutes:         int32(d.Get("session_timeout_minutes").(int)),
+			AbsoluteSessionTimeOutInMinutes: int32(d.Get("absolute_session_timeout_minutes").(int)),
+		}
+		if d.IsNewResource() && (!sessionExplicit || !absoluteExplicit) {
+			// On create there is no state to carry undeclared fields from; read
+			// the live account values so the full-replace API does not reset
+			// them (e.g. declaring only session_timeout_minutes must not wipe an
+			// existing absolute timeout).
+			current, httpResp, err := c.AuthenticationSettingsApi.GetAuthenticationSettingsV2(ctx, c.AccountId)
+			if err != nil {
+				return helpers.HandleApiError(err, d, httpResp)
+			}
+			if current.Resource != nil {
+				if !sessionExplicit {
+					settings.SessionTimeOutInMinutes = current.Resource.SessionTimeoutInMinutes
+				}
+				if !absoluteExplicit {
+					settings.AbsoluteSessionTimeOutInMinutes = current.Resource.AbsoluteSessionTimeoutInMinutes
+				}
+			}
 		}
 		if diags := setSessionTimeout(ctx, c, settings); diags != nil {
 			return diags
