@@ -5,6 +5,7 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-openapi-go-client/nextgen"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func TestReadGitDetailsUsesApiValues(t *testing.T) {
@@ -84,5 +85,55 @@ func TestReadGitDetailsConfiguredConnectorUsesApiFlag(t *testing.T) {
 	}
 	if got["is_harness_code_repo"] != false {
 		t.Fatalf("is_harness_code_repo = %v", got["is_harness_code_repo"])
+	}
+}
+
+func TestReadGitDetailsLeavesApiStoreTypeOutOfGitDetails(t *testing.T) {
+	got := readGitDetails(nextgen.PipelineGetResponseBody{
+		StoreType:  "REMOTE",
+		GitDetails: &nextgen.GitDetails{BranchName: "main"},
+	}, optional.EmptyString(), optional.EmptyString(), optional.EmptyString(), optional.EmptyString())
+
+	if _, ok := got["store_type"]; ok {
+		t.Fatalf("store_type = %v", got["store_type"])
+	}
+}
+
+func TestReadPipelineSetsStoreTypeBesideGitDetails(t *testing.T) {
+	d := schema.TestResourceDataRaw(t, ResourcePipeline().Schema, map[string]interface{}{
+		"yaml_version": "0",
+	})
+
+	readPipeline(d, nextgen.PipelineGetResponseBody{
+		Identifier: "pipe",
+		StoreType:  "INLINE",
+	}, "org", "proj", false, optional.EmptyString(), optional.EmptyString(), optional.EmptyString(), optional.EmptyString())
+
+	if d.Get("store_type") != "INLINE" {
+		t.Fatalf("store_type = %v", d.Get("store_type"))
+	}
+	if _, ok := d.GetOk("git_details"); ok {
+		t.Fatal("inline pipeline set git_details")
+	}
+
+	readPipeline(d, nextgen.PipelineGetResponseBody{
+		Identifier: "pipe",
+		StoreType:  "REMOTE",
+		GitDetails: &nextgen.GitDetails{BranchName: "main", ConnectorRef: "account.conn"},
+	}, "org", "proj", false, optional.EmptyString(), optional.EmptyString(), optional.EmptyString(), optional.EmptyString())
+
+	if d.Get("store_type") != "REMOTE" {
+		t.Fatalf("store_type = %v", d.Get("store_type"))
+	}
+	gitDetails := d.Get("git_details").([]interface{})
+	if len(gitDetails) != 1 {
+		t.Fatalf("git_details = %#v", gitDetails)
+	}
+	git := gitDetails[0].(map[string]interface{})
+	if git["store_type"] != "" {
+		t.Fatalf("git_details.store_type = %v", git["store_type"])
+	}
+	if git["connector_ref"] != "account.conn" {
+		t.Fatalf("connector_ref = %v", git["connector_ref"])
 	}
 }

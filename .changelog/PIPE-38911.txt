@@ -1,0 +1,4 @@
+```release-note:enhancement
+data-source/harness_platform_pipeline: Return store_type beside git details.
+resource/harness_platform_pipeline: Return store_type from the get pipeline API.
+```

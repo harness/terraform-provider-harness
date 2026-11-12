@@ -48,6 +48,11 @@ func ResourcePipeline() *schema.Resource {
 				Optional:    true,
 				Default:     false,
 			},
+			"store_type": {
+				Description: "Whether the pipeline is stored in Git. INLINE pipelines have no git details. Possible values: INLINE, REMOTE.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
 				Type:        schema.TypeList,
@@ -525,6 +530,9 @@ func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBo
 	d.Set("description", pipeline.Description)
 	d.Set("template_applied_pipeline_yaml", pipeline.TemplateAppliedPipelineYaml)
 	d.Set("template_applied", template_applied)
+	if pipeline.StoreType != "" {
+		d.Set("store_type", pipeline.StoreType)
+	}
 	if pipeline.GitDetails != nil {
 		d.Set("git_details", []interface{}{readGitDetails(pipeline, store_type, base_branch, commit_message, connector_ref)})
 	}

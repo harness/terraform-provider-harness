@@ -38,6 +38,7 @@ data "harness_platform_pipeline" "example" {
 
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
+- `store_type` (String) Whether the pipeline is stored in Git. INLINE pipelines have no git details. Possible values: INLINE, REMOTE.
 - `tags` (Set of String) Tags to associate with the resource.
 - `template_applied` (Boolean) If true, returns Pipeline YAML with Templates applied on it.
 - `template_applied_pipeline_yaml` (String) Pipeline YAML after resolving Templates (returned as a String).
@@ -60,4 +61,3 @@ Read-Only:
 - `commit_message` (String) Commit message used for the merge commit.
 - `file_path` (String) File path of the Entity in the repository.
 - `is_harness_code_repo` (Boolean) If the repo is harness code.
-- `store_type` (String) Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.

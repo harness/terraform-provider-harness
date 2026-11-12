@@ -168,6 +168,7 @@ resource "harness_platform_pipeline" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `store_type` (String) Whether the pipeline is stored in Git. INLINE pipelines have no git details. Possible values: INLINE, REMOTE.
 
 <a id="nestedblock--git_details"></a>
 ### Nested Schema for `git_details`
