@@ -27,6 +27,7 @@ require (
 	github.com/ProtonMail/go-crypto v1.4.1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
+	github.com/ashishsanodia-harness/harness-swagger-go-client-poc v0.0.0-20221019132155-c7d33589f30f // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudflare/circl v1.6.3 // indirect
@@ -101,6 +102,3 @@ require (
 //replace github.com/harness/harness-go-sdk => ../harness-go-sdk
 
 //replace github.com/harness/harness-openapi-go-client => ../harness-openapi-go-client
-
-// Drop this after github.com/harness/harness-openapi-go-client v0.0.28 is tagged from PIPE-38911.
-replace github.com/harness/harness-openapi-go-client => github.com/ritek01/harness-openapi-go-client v0.0.28-0.20261112042035-46ad84a69fe6
