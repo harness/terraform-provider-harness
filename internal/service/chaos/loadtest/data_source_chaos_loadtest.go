@@ -9,7 +9,7 @@ import (
 
 func DataSourceChaosLoadTest() *schema.Resource {
 	return &schema.Resource{
-		Description: "Data source for reading an existing Harness load test definition. It can read a REFERENCE import and a JMeter test. The resource cannot manage either of those.",
+		Description: "Data source for reading an existing Harness load test definition, including a JMeter test and a REFERENCE import.",
 		ReadContext: dataSourceChaosLoadTestRead,
 		Schema:      dataSourceChaosLoadTestSchema(),
 	}

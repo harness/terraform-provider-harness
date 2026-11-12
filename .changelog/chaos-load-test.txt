@@ -1,7 +1,31 @@
 ```release-note:new-resource
-harness_chaos_load_test: Create, update, import, and delete a Locust or K6 load test definition in Load Test Manager, in script or image mode. The resource does not start a run.
+harness_chaos_load_test: Create, update, import, and delete a Locust, K6, or JMeter load test definition in Load Test Manager, in script or image mode, including a load test created from a hub template. The resource does not start a run.
 ```
 
 ```release-note:new-data-source
 harness_chaos_load_test: Read a load test definition, including a JMeter test or a REFERENCE import.
+```
+
+```release-note:new-resource
+harness_chaos_load_test_template: Create, update the revision stored at create, import, and delete a load test hub template, including an account or organization hub. A newer published revision does not replace this resource, and reads keep returning the revision stored at create. An update is refused once that revision is no longer latest. Delete fails when a load test still references the template.
+```
+
+```release-note:new-data-source
+harness_chaos_load_test_template: Read the latest revision of a load test hub template.
+```
+
+```release-note:new-resource
+harness_chaos_load_test_template_revision: Create, import, and delete one revision of a load test hub template. Delete is refused when a REFERENCE load test still pins that revision. Fields left unset are inherited and do not replace the revision.
+```
+
+```release-note:new-data-source
+harness_chaos_load_test_template_revision: Read one revision of a load test hub template.
+```
+
+```release-note:new-resource
+harness_chaos_composite_load_test: Create, update, import, and delete a composite load test. The resource stores the pipeline that runs one load test and one chaos probe in parallel. It does not start a run. Destroy deletes that pipeline and leaves the load test and probe in place.
+```
+
+```release-note:new-data-source
+harness_chaos_composite_load_test: Read a composite load test by its stage identifier.
 ```

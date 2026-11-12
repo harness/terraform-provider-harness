@@ -212,6 +212,117 @@ func TestParseLoadTestImportID(t *testing.T) {
 	}
 }
 
+func TestCreateFromTemplateStoresFieldsTheCreateOmits(t *testing.T) {
+	var put map[string]interface{}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == http.MethodPut {
+			_ = json.NewDecoder(r.Body).Decode(&put)
+		}
+		if strings.HasSuffix(r.URL.Path, "/variables") {
+			_, _ = w.Write([]byte(`{"variables":[]}`))
+			return
+		}
+		_, _ = w.Write([]byte(`{"identity":"from-tpl","name":"From template","toolType":"K6","importType":"LOCAL","targetType":"kubernetes","cleanupPolicy":"retain","tags":["team:payments"],"maxDurationSec":30,"toolConfig":{"mode":"script","script":{"content":"a2s="}}}`))
+	}))
+	defer server.Close()
+	d := loadTestData(t, map[string]interface{}{
+		"identifier": "from-tpl", "name": "From template", "org_id": "default", "project_id": "demo",
+		"tool_type": "K6", "target_type": "kubernetes", "import_type": "LOCAL",
+		"environment_id": "prod", "infrastructure_id": "payments", "cleanup_policy": "retain",
+		"max_duration_sec": 30,
+		"tags":             []interface{}{"team:payments"},
+		"template_reference": []interface{}{map[string]interface{}{
+			"hub_identity": "hub", "identity": "checkout-template", "revision": "1",
+		}},
+	})
+	diags := resourceChaosLoadTestCreate(t.Context(), d, loadTestSession(server))
+	if diags.HasError() {
+		t.Fatal(diags)
+	}
+	if put["cleanupPolicy"] != "retain" || put["maxDurationSec"] != float64(30) {
+		t.Fatalf("follow-up update = %#v", put)
+	}
+	if _, ok := put["toolConfig"]; ok || put["variables"] != nil {
+		t.Fatalf("follow-up update replaced the copy: %#v", put)
+	}
+	tags, _ := put["tags"].([]interface{})
+	if len(tags) != 1 || tags[0] != "team:payments" {
+		t.Fatalf("tags = %#v", put["tags"])
+	}
+}
+
+func TestCreateFromTemplateUsesTemplateEndpoint(t *testing.T) {
+	var gotPath string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == http.MethodPost {
+			gotPath = r.URL.Path
+		}
+		if strings.HasSuffix(r.URL.Path, "/variables") {
+			_, _ = w.Write([]byte(`{"variables":[]}`))
+			return
+		}
+		w.WriteHeader(http.StatusCreated)
+		_, _ = w.Write([]byte(`{"identity":"from-tpl","name":"From template","toolType":"K6","importType":"LOCAL","targetType":"kubernetes","toolConfig":{"mode":"script","script":{"content":"a2s="}}}`))
+	}))
+	defer server.Close()
+	d := loadTestData(t, map[string]interface{}{
+		"identifier": "from-tpl", "name": "From template", "org_id": "default", "project_id": "demo",
+		"tool_type": "K6", "target_type": "kubernetes", "import_type": "LOCAL",
+		"environment_id": "prod", "infrastructure_id": "payments", "cleanup_policy": "delete",
+		"template_reference": []interface{}{map[string]interface{}{
+			"hub_identity": "hub", "identity": "checkout-template", "revision": "1",
+		}},
+	})
+	diags := resourceChaosLoadTestCreate(t.Context(), d, loadTestSession(server))
+	if diags.HasError() {
+		t.Fatal(diags)
+	}
+	if gotPath != "/loadTest/manager/api/v1/load-tests/from-template" {
+		t.Fatalf("path = %s", gotPath)
+	}
+}
+
+func TestFailedUpdateDoesNotRecordBookkeeping(t *testing.T) {
+	var synced bool
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if strings.HasSuffix(r.URL.Path, "/sync-template") {
+			synced = true
+			_, _ = w.Write([]byte(`{"identity":"checkout","revision":"2"}`))
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte(`{"message":"rejected"}`))
+	}))
+	defer server.Close()
+	d := loadTestData(t, map[string]interface{}{
+		"identifier": "checkout", "name": "Checkout", "org_id": "default", "project_id": "demo",
+		"tool_type": "JMeter", "target_type": "kubernetes", "import_type": "REFERENCE",
+		"environment_id": "prod", "infrastructure_id": "payments", "cleanup_policy": "delete",
+		"tool_config": `{"jmeter":{"mode":"script","script":{"content":"bmV3"}}}`,
+		"template_reference": []interface{}{map[string]interface{}{
+			"hub_identity": "hub", "identity": "checkout-template", "revision": "latest",
+			"organization_id": "", "project_id": "",
+		}},
+	})
+	d.SetId("checkout")
+	diags := resourceChaosLoadTestUpdate(t.Context(), d, loadTestSession(server))
+	if !diags.HasError() {
+		t.Fatal("expected the update to fail")
+	}
+	if !synced {
+		t.Fatal("expected sync to run before the failed update")
+	}
+	if d.Get("authored_tool_config").(string) != "" {
+		t.Fatalf("authored_tool_config = %q", d.Get("authored_tool_config"))
+	}
+	if d.Get("template_sync_latest").(bool) {
+		t.Fatal("template_sync_latest was set after a failed update")
+	}
+}
+
 func TestCreateTimeoutSaysToDeleteBeforeRetry(t *testing.T) {
 	client := sdkloadtest.NewAPIClient(&sdkloadtest.Configuration{
 		BasePath:   "http://loadtest.invalid/loadTest/manager/api",
@@ -290,6 +401,9 @@ func TestLoadTestIdentifierRejectsReservedURLCharacters(t *testing.T) {
 		}
 	}
 	if _, errs := resource.Schema["identifier"].ValidateFunc("sample-products-api", "identifier"); len(errs) != 0 {
+		t.Fatal(errs)
+	}
+	if _, errs := resource.Schema["identifier"].ValidateFunc("checkout$id", "identifier"); len(errs) != 0 {
 		t.Fatal(errs)
 	}
 }

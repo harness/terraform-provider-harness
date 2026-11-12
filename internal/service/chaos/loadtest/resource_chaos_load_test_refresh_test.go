@@ -235,7 +235,7 @@ func TestCreateReadNotFoundDeletesLoadTest(t *testing.T) {
 	}
 }
 
-func TestImportRejectsOtherToolTypes(t *testing.T) {
+func TestImportReadsJMeter(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		if strings.HasSuffix(r.URL.Path, "/variables") {
@@ -253,10 +253,10 @@ func TestImportRejectsOtherToolTypes(t *testing.T) {
 		"tool_config": `{"mode":"script","script":{"content":"a2s="}}`,
 	})
 	d.SetId("default/demo/checkout")
-	if _, err := importChaosLoadTest(t.Context(), d, loadTestSession(server)); err == nil || !strings.Contains(err.Error(), "JMeter") {
+	if _, err := importChaosLoadTest(t.Context(), d, loadTestSession(server)); err != nil {
 		t.Fatal(err)
 	}
-	if d.Id() != "" {
+	if d.Id() == "" || d.Get("tool_type") != "JMeter" {
 		t.Fatalf("id = %q", d.Id())
 	}
 }
@@ -392,13 +392,15 @@ func TestPlanRejectsIncompleteConfig(t *testing.T) {
 		Steps: []resource.TestStep{
 			{Config: k6NoTargetConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("target_type must be kubernetes")},
 			{Config: locustNoInfraConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("environment_id and infrastructure_id are required")},
-			{Config: jmeterConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("JMeter")},
+			{Config: jmeterConfig(), PlanOnly: true, ExpectNonEmptyPlan: true},
 			{Config: k6VariablesInToolConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("variables")},
 			{Config: k6ImageMissingConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("mode image requires script.image")},
 			{Config: k6UIConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("k6 ui mode is not supported")},
 			{Config: locustImageMissingConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("mode image requires script.image")},
 			{Config: k6ImageConfig(), PlanOnly: true, ExpectNonEmptyPlan: true},
 			{Config: locustImageConfig(), PlanOnly: true, ExpectNonEmptyPlan: true},
+			{Config: referenceMissingTemplateConfig(), PlanOnly: true, ExpectError: regexp.MustCompile("template_reference is required when import_type is set")},
+			{Config: referenceLatestOnCreateConfig(), PlanOnly: true, ExpectError: regexp.MustCompile(`revision cannot be "latest" on create`)},
 		},
 	})
 }
@@ -468,6 +470,46 @@ resource "harness_chaos_load_test" "jmeter" {
   environment_id    = "prod"
   infrastructure_id = "payments"
   tool_config = jsonencode({ jmeter = { mode = "script", script = { content = "abc" } } })
+}
+`
+}
+
+func referenceMissingTemplateConfig() string {
+	return `
+provider "harness" {}
+resource "harness_chaos_load_test" "from_template" {
+  org_id     = "default"
+  project_id = "demo"
+  identifier = "from-tpl"
+  name       = "From template"
+  tool_type   = "K6"
+  target_type = "kubernetes"
+  import_type = "LOCAL"
+  environment_id    = "prod"
+  infrastructure_id = "payments"
+  tool_config = jsonencode({ mode = "script", script = { content = "a2s=" } })
+}
+`
+}
+
+func referenceLatestOnCreateConfig() string {
+	return `
+provider "harness" {}
+resource "harness_chaos_load_test" "from_template" {
+  org_id     = "default"
+  project_id = "demo"
+  identifier = "from-tpl"
+  name       = "From template"
+  tool_type   = "K6"
+  target_type = "kubernetes"
+  import_type = "REFERENCE"
+  environment_id    = "prod"
+  infrastructure_id = "payments"
+  template_reference {
+    hub_identity = "hub"
+    identity     = "checkout-template"
+    revision     = "latest"
+  }
 }
 `
 }

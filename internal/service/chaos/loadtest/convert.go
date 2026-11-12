@@ -65,8 +65,70 @@ func loadTestCreateRequest(d *schema.ResourceData) (sdkloadtest.LoadTestCreateRe
 	return req, nil
 }
 
+func loadTestFromTemplateRequest(d *schema.ResourceData) (sdkloadtest.LoadTestFromTemplateRequest, error) {
+	ref := templateReferenceFrom(d)
+	if ref == nil {
+		return sdkloadtest.LoadTestFromTemplateRequest{}, fmt.Errorf("template_reference is required when import_type is set")
+	}
+	if strings.EqualFold(ref.Revision, "latest") {
+		return sdkloadtest.LoadTestFromTemplateRequest{}, fmt.Errorf("template_reference.revision cannot be \"latest\" on create: use a real revision, then set revision to latest to sync")
+	}
+	if err := validateTemplateInfra(d.Get("import_type").(string), d.Get("managed_infra").(bool)); err != nil {
+		return sdkloadtest.LoadTestFromTemplateRequest{}, err
+	}
+	importType := d.Get("import_type").(string)
+	req := sdkloadtest.LoadTestFromTemplateRequest{
+		Identity:              d.Get("identifier").(string),
+		Name:                  d.Get("name").(string),
+		Description:           d.Get("description").(string),
+		ImportType:            importType,
+		EnvironmentIdentifier: d.Get("environment_id").(string),
+		InfraIdentifier:       d.Get("infrastructure_id").(string),
+		TargetType:            d.Get("target_type").(string),
+		ServiceReferences:     expandStringSet(d.Get("service_references")),
+		TemplateReference:     ref,
+	}
+	if strings.EqualFold(importType, "REFERENCE") {
+		return req, nil
+	}
+	if raw := strings.TrimSpace(d.Get("tool_config").(string)); raw != "" {
+		toolConfig, err := parseToolConfig(raw)
+		if err != nil {
+			return req, err
+		}
+		if err := rejectAuthoredVariables(toolConfig); err != nil {
+			return req, err
+		}
+		req.ToolConfig = toolConfig
+	}
+	req.Variables = expandVariables(d.Get("variable"))
+	return req, nil
+}
+
+func templateReferenceFrom(d *schema.ResourceData) *sdkloadtest.LoadTestTemplateRef {
+	raw, ok := d.GetOk("template_reference")
+	if !ok {
+		return nil
+	}
+	list, _ := raw.([]interface{})
+	if len(list) == 0 || list[0] == nil {
+		return nil
+	}
+	block, _ := list[0].(map[string]interface{})
+	if block == nil {
+		return nil
+	}
+	return &sdkloadtest.LoadTestTemplateRef{
+		HubIdentity:            block["hub_identity"].(string),
+		Identity:               block["identity"].(string),
+		Revision:               block["revision"].(string),
+		OrganizationIdentifier: block["organization_id"].(string),
+		ProjectIdentifier:      block["project_id"].(string),
+	}
+}
+
 func loadTestUpdateRequest(d *schema.ResourceData) (sdkloadtest.LoadTestUpdateRequest, error) {
-	toolConfig, err := parseToolConfig(d.Get("tool_config").(string))
+	toolConfig, err := toolConfigFromResource(d)
 	if err != nil {
 		return sdkloadtest.LoadTestUpdateRequest{}, err
 	}
@@ -76,13 +138,10 @@ func loadTestUpdateRequest(d *schema.ResourceData) (sdkloadtest.LoadTestUpdateRe
 	if err := validateInfra(managed, environmentID, infrastructureID); err != nil {
 		return sdkloadtest.LoadTestUpdateRequest{}, err
 	}
+	if err := validateTemplateInfra(d.Get("import_type").(string), managed); err != nil {
+		return sdkloadtest.LoadTestUpdateRequest{}, err
+	}
 	if err := validateTargetType(d.Get("tool_type").(string), d.Get("target_type").(string), managed); err != nil {
-		return sdkloadtest.LoadTestUpdateRequest{}, err
-	}
-	if err := rejectAuthoredVariables(toolConfig); err != nil {
-		return sdkloadtest.LoadTestUpdateRequest{}, err
-	}
-	if err := validateToolMode(d.Get("tool_type").(string), toolConfig); err != nil {
 		return sdkloadtest.LoadTestUpdateRequest{}, err
 	}
 	req := sdkloadtest.LoadTestUpdateRequest{
@@ -102,6 +161,11 @@ func loadTestUpdateRequest(d *schema.ResourceData) (sdkloadtest.LoadTestUpdateRe
 	}
 	seconds := d.Get("max_duration_sec").(int)
 	req.MaxDurationSec = &seconds
+	if strings.EqualFold(d.Get("import_type").(string), "REFERENCE") {
+		req.ToolConfig = nil
+		req.Variables = nil
+		req.MaxDurationSec = nil
+	}
 	if _, ok := d.GetOk("resources"); ok {
 		req.Resources = expandResources(d.Get("resources"))
 	} else {
@@ -121,6 +185,11 @@ func validateLoadTestPlan(d *schema.ResourceDiff) error {
 			return err
 		}
 	}
+	if importType, ok := rawString(d, "import_type"); ok && managedKnown {
+		if err := validateTemplateInfra(importType, managed); err != nil {
+			return err
+		}
+	}
 	environmentID, envKnown := rawString(d, "environment_id")
 	infrastructureID, infraKnown := rawString(d, "infrastructure_id")
 	if managedKnown && envKnown && infraKnown {
@@ -128,7 +197,23 @@ func validateLoadTestPlan(d *schema.ResourceDiff) error {
 			return err
 		}
 	}
+	importType, importKnown := rawString(d, "import_type")
+	if importKnown && strings.TrimSpace(importType) != "" {
+		ref, ok := rawAttr(d, "template_reference")
+		if !ok || ref.IsNull() || !ref.IsKnown() || ref.LengthInt() == 0 {
+			return fmt.Errorf("template_reference is required when import_type is set")
+		}
+		if d.Id() == "" {
+			if rev, ok := rawNestedString(ref, "revision"); ok && strings.EqualFold(strings.TrimSpace(rev), "latest") {
+				return fmt.Errorf("template_reference.revision cannot be \"latest\" on create: use a real revision, then set revision to latest to sync")
+			}
+		}
+	}
+	reference := importKnown && strings.EqualFold(importType, "REFERENCE")
 	toolConfig, configKnown := rawString(d, "tool_config")
+	if reference && configKnown && strings.TrimSpace(toolConfig) != "" {
+		return fmt.Errorf("tool_config is owned by the template when import_type is REFERENCE")
+	}
 	if toolKnown && configKnown && strings.TrimSpace(toolConfig) != "" {
 		cfg, err := parseToolConfig(toolConfig)
 		if err != nil {
@@ -136,6 +221,17 @@ func validateLoadTestPlan(d *schema.ResourceDiff) error {
 		}
 		if err := validateToolMode(toolType, cfg); err != nil {
 			return err
+		}
+	}
+	if toolKnown && configKnown && !reference && importType != "LOCAL" && strings.TrimSpace(toolConfig) == "" {
+		return fmt.Errorf("tool_config is required unless import_type is LOCAL or REFERENCE")
+	}
+	if reference {
+		if vars, ok := rawAttr(d, "variable"); ok && vars.IsKnown() && !vars.IsNull() && vars.LengthInt() > 0 {
+			return fmt.Errorf("variable is owned by the template when import_type is REFERENCE")
+		}
+		if duration, ok := rawAttr(d, "max_duration_sec"); ok && duration.IsKnown() && !duration.IsNull() {
+			return fmt.Errorf("max_duration_sec is owned by the template when import_type is REFERENCE")
 		}
 	}
 	return nil
@@ -151,6 +247,24 @@ func rawAttr(d *schema.ResourceDiff, name string) (cty.Value, bool) {
 		return cty.NilVal, false
 	}
 	return attr, true
+}
+
+func rawNestedString(list cty.Value, name string) (string, bool) {
+	if !list.IsKnown() || list.IsNull() || list.LengthInt() == 0 {
+		return "", false
+	}
+	if !list.Type().IsListType() && !list.Type().IsTupleType() {
+		return "", false
+	}
+	first := list.Index(cty.NumberIntVal(0))
+	if first.IsNull() || !first.IsKnown() || !first.Type().IsObjectType() || !first.Type().HasAttribute(name) {
+		return "", false
+	}
+	value := first.GetAttr(name)
+	if !value.IsKnown() || value.IsNull() || value.Type() != cty.String {
+		return "", false
+	}
+	return value.AsString(), true
 }
 
 func rawString(d *schema.ResourceDiff, name string) (string, bool) {
@@ -182,9 +296,72 @@ func rawBool(d *schema.ResourceDiff, name string) (bool, bool) {
 }
 
 func validateTargetType(toolType, targetType string, managed bool) error {
-	needsKubernetes := managed || toolType == sdkloadtest.LoadTestToolK6
-	if needsKubernetes && targetType != sdkloadtest.LoadTestTargetKubernetes {
+	if managed && targetType != sdkloadtest.LoadTestTargetKubernetes {
+		return fmt.Errorf("target_type must be kubernetes when managed_infra is true")
+	}
+	if toolType == sdkloadtest.LoadTestToolK6 && targetType != sdkloadtest.LoadTestTargetKubernetes {
 		return fmt.Errorf("target_type must be kubernetes for %s load tests", toolType)
+	}
+	return nil
+}
+
+func toolConfigFromResource(d *schema.ResourceData) (map[string]interface{}, error) {
+	raw := strings.TrimSpace(d.Get("tool_config").(string))
+	if raw == "" {
+		return nil, nil
+	}
+	toolConfig, err := parseToolConfig(raw)
+	if err != nil {
+		return nil, err
+	}
+	if err := rejectAuthoredVariables(toolConfig); err != nil {
+		return nil, err
+	}
+	if err := validateToolMode(d.Get("tool_type").(string), toolConfig); err != nil {
+		return nil, err
+	}
+	return toolConfig, nil
+}
+
+// fromTemplateFollowUp carries the fields POST /v1/load-tests/from-template does not accept.
+// Variables and tool config stay nil so this update does not wipe the copy or the template pointer.
+func fromTemplateFollowUp(d *schema.ResourceData) (sdkloadtest.LoadTestUpdateRequest, bool) {
+	req := sdkloadtest.LoadTestUpdateRequest{Name: d.Get("name").(string)}
+	needed := false
+	if tags := expandStringSet(d.Get("tags")); len(tags) > 0 {
+		req.Tags = tags
+		needed = true
+	}
+	if d.Get("cleanup_policy").(string) == "retain" {
+		req.CleanupPolicy = "retain"
+		needed = true
+	}
+	if raw, ok := d.GetOk("resources"); ok {
+		if list, _ := raw.([]interface{}); len(list) > 0 {
+			req.Resources = expandResources(raw)
+			needed = true
+		}
+	}
+	if !strings.EqualFold(d.Get("import_type").(string), "REFERENCE") {
+		if value, ok := d.GetOk("max_duration_sec"); ok {
+			seconds := value.(int)
+			req.MaxDurationSec = &seconds
+			needed = true
+		}
+	}
+	return req, needed
+}
+
+func storedCleanupPolicy(policy string) string {
+	if policy == "" {
+		return "delete"
+	}
+	return policy
+}
+
+func validateTemplateInfra(importType string, managed bool) error {
+	if importType != "" && managed {
+		return fmt.Errorf("import_type cannot be used with managed_infra: creating from a template requires environment_id and infrastructure_id")
 	}
 	return nil
 }
@@ -218,7 +395,8 @@ func setLoadTestState(d *schema.ResourceData, test *sdkloadtest.LoadTest, variab
 		{"infrastructure_id", test.InfraIdentifier},
 		{"service_references", nonNilStrings(test.ServiceReferences)},
 		{"tags", nonNilStrings(test.Tags)},
-		{"cleanup_policy", test.CleanupPolicy},
+		{"cleanup_policy", storedCleanupPolicy(test.CleanupPolicy)},
+		{"import_type", test.ImportType},
 		{"unique_id", test.UniqueID},
 		{"latest_revision_id", test.LatestRevisionIdentifier},
 	}
@@ -245,7 +423,36 @@ func setLoadTestState(d *schema.ResourceData, test *sdkloadtest.LoadTest, variab
 	if err := d.Set("variable", flattenVariables(variables)); err != nil {
 		return err
 	}
+	storedRevision := ""
+	if test.TemplateReference != nil {
+		storedRevision = test.TemplateReference.Revision
+	}
+	if err := d.Set("template_revision", storedRevision); err != nil {
+		return err
+	}
+	if err := d.Set("template_reference", flattenTemplateReference(d, test.TemplateReference)); err != nil {
+		return err
+	}
 	return d.Set("resources", flattenResources(test.Resources))
+}
+
+func flattenTemplateReference(d *schema.ResourceData, ref *sdkloadtest.LoadTestTemplateRef) []interface{} {
+	if ref == nil || ref.Identity == "" {
+		return []interface{}{}
+	}
+	revision := ref.Revision
+	if d.Get("template_sync_latest").(bool) {
+		if current := templateReferenceFrom(d); current != nil && current.Revision == "latest" {
+			revision = "latest"
+		}
+	}
+	return []interface{}{map[string]interface{}{
+		"hub_identity":    ref.HubIdentity,
+		"identity":        ref.Identity,
+		"revision":        revision,
+		"organization_id": ref.OrganizationIdentifier,
+		"project_id":      ref.ProjectIdentifier,
+	}}
 }
 
 func parseToolConfig(raw string) (map[string]interface{}, error) {
@@ -292,6 +499,13 @@ func validateToolMode(toolType string, cfg map[string]interface{}) error {
 			section = nested
 			label = "tool_config.k6"
 		}
+	case sdkloadtest.LoadTestToolJMeter:
+		nested, ok := cfg["jmeter"].(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("tool_config.jmeter is required for a JMeter load test")
+		}
+		section = nested
+		label = "tool_config.jmeter"
 	}
 	mode, _ := section["mode"].(string)
 	script, _ := section["script"].(map[string]interface{})

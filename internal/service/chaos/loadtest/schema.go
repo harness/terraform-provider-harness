@@ -6,11 +6,12 @@ import (
 	"regexp"
 	"strings"
 
+	sdkloadtest "github.com/harness/harness-go-sdk/harness/loadtest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-var loadTestIdentifierPattern = regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
+var loadTestIdentifierPattern = regexp.MustCompile(`^[A-Za-z0-9_$-]+$`)
 
 func resourceChaosLoadTestSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
@@ -29,7 +30,7 @@ func resourceChaosLoadTestSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.StringIsNotEmpty,
 		},
 		"identifier": {
-			Description:  "Identifier of the load test. Letters, digits, underscores, and hyphens only. `?`, `#`, spaces, and `/` are rejected so the provider cannot read or delete a different test. Changing it removes this load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test.",
+			Description:  "Identifier of the load test. Letters, digits, `_`, `-`, and `$` only. `?`, `#`, spaces, and `/` are rejected so the provider cannot read or delete a different test. Changing it removes this load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test.",
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
@@ -48,11 +49,11 @@ func resourceChaosLoadTestSchema() map[string]*schema.Schema {
 			DiffSuppressFunc: suppressEmptyDescription,
 		},
 		"tool_type": {
-			Description:  "Load generator. `Locust` or `K6`. JMeter is not supported: Load Test Manager rewrites the plan, its variables, and the script on save. K6 requires `target_type` `kubernetes`. Locust may omit it and keeps the server default, `linux`. Changing this removes this load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test.",
+			Description:  "Load generator. `Locust`, `K6`, or `JMeter`. JMeter is nested under `jmeter`. Load Test Manager rewrites the saved JMeter plan; Terraform plans a tool_config change only when it differs from the configuration already accepted. K6 and managed infrastructure require `target_type` `kubernetes`. Locust and JMeter may omit it. Changing this removes this load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test.",
 			Type:         schema.TypeString,
 			Required:     true,
 			ForceNew:     true,
-			ValidateFunc: validation.StringInSlice([]string{"Locust", "K6"}, false),
+			ValidateFunc: validation.StringInSlice([]string{"Locust", "K6", "JMeter"}, false),
 		},
 		"target_type": {
 			Description:  "Infrastructure target. `linux` or `kubernetes`. Required to be `kubernetes` for K6 and managed infrastructure. Locust may omit it; the API stores `linux` and that value stays in state.",
@@ -104,11 +105,77 @@ func resourceChaosLoadTestSchema() map[string]*schema.Schema {
 			Description: "Hard cap, in seconds, for any run of this load test. Set to 0 to clear it.",
 			Type:        schema.TypeInt,
 			Optional:    true,
+			Computed:    true,
+		},
+		"import_type": {
+			Description:  "How this load test was created from a hub template. `LOCAL` copies the template and stays editable. `REFERENCE` keeps the template as the source of the script, variables, and tool config. Omit for a load test that is not created from a template. Changing it removes this load test.",
+			Type:         schema.TypeString,
+			Optional:     true,
+			ForceNew:     true,
+			ValidateFunc: validation.StringInSlice([]string{"LOCAL", "REFERENCE"}, false),
+		},
+		"template_reference": {
+			Description: "Hub template this load test was created from. Required with `import_type`.",
+			Type:        schema.TypeList,
+			Optional:    true,
+			MaxItems:    1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"hub_identity": {
+						Description:  "Chaos hub that holds the template.",
+						Type:         schema.TypeString,
+						Required:     true,
+						ForceNew:     true,
+						ValidateFunc: validation.StringIsNotEmpty,
+					},
+					"identity": {
+						Description:  "Template identifier.",
+						Type:         schema.TypeString,
+						Required:     true,
+						ForceNew:     true,
+						ValidateFunc: validation.StringIsNotEmpty,
+					},
+					"revision": {
+						Description:  "Pinned template revision. On create this must be a real revision id. `latest` is rejected on create. After the load test exists, set this to `latest` to sync to the newest revision. Terraform keeps `latest` here and stores the synced id in `template_revision`. To sync a revision published later, set this to `template_revision` and apply, then set it back to `latest`. That does not remove the load test. Any other revision id does.",
+						Type:         schema.TypeString,
+						Required:     true,
+						ValidateFunc: validation.StringIsNotEmpty,
+					},
+					"organization_id": {
+						Description: "Organization of the template, when it is not in this project.",
+						Type:        schema.TypeString,
+						Optional:    true,
+						ForceNew:    true,
+					},
+					"project_id": {
+						Description: "Project of the template, when it is not in this project.",
+						Type:        schema.TypeString,
+						Optional:    true,
+						ForceNew:    true,
+					},
+				},
+			},
+		},
+		"authored_tool_config": {
+			Description: "Internal. The tool_config last accepted by Load Test Manager. Do not set this. Terraform uses it so a rewritten JMeter plan does not hide a later edit.",
+			Type:        schema.TypeString,
+			Computed:    true,
+		},
+		"template_sync_latest": {
+			Description: "Internal. True after revision `latest` has been synced. Do not set this. Set revision to `template_revision` and apply to clear it, then set revision back to `latest` to sync again.",
+			Type:        schema.TypeBool,
+			Computed:    true,
+		},
+		"template_revision": {
+			Description: "Revision id stored by Load Test Manager. When revision is `latest`, set revision to this value and apply to clear the sync, then set it back to `latest` to sync again.",
+			Type:        schema.TypeString,
+			Computed:    true,
 		},
 		"tool_config": {
-			Description:      "JSON object stored as the load test toolConfig. K6 fields sit at the top of the object or under `k6`. Locust is nested under `locust`. `mode` `script` requires `script.content` (base64). `mode` `image` requires `script.image`. k6 `ui` mode is not supported. Tunables (`hostUrl`, `iterations`, `targetUsers`, `durationSeconds`), `envVars`, `thresholds`, `options`, and k6 `metricTags` belong in this object. A `variables` key is rejected; set custom variables on `variable`. The script is stored in Terraform state.",
+			Description:      "JSON object stored as the load test toolConfig. K6 fields sit at the top of the object or under `k6`. Locust is nested under `locust`. JMeter is nested under `jmeter`; the stored plan is what Load Test Manager saved. `mode` `script` requires `script.content` (base64). `mode` `image` requires `script.image`. k6 `ui` mode is not supported. Omit this for a REFERENCE template import. Tunables (`hostUrl`, `iterations`, `targetUsers`, `durationSeconds`), `envVars`, `thresholds`, `options`, and k6 `metricTags` belong in this object. A `variables` key is rejected; set custom variables on `variable`. The script is stored in Terraform state.",
 			Type:             schema.TypeString,
-			Required:         true,
+			Optional:         true,
+			Computed:         true,
 			ValidateFunc:     validateToolConfig,
 			DiffSuppressFunc: suppressToolConfigDiff,
 		},
@@ -116,6 +183,7 @@ func resourceChaosLoadTestSchema() map[string]*schema.Schema {
 			Description: "Custom variables stored on the load test. An empty list clears them.",
 			Type:        schema.TypeList,
 			Optional:    true,
+			Computed:    true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"name": {
@@ -185,6 +253,8 @@ func resourceChaosLoadTestSchema() map[string]*schema.Schema {
 
 func dataSourceChaosLoadTestSchema() map[string]*schema.Schema {
 	src := resourceChaosLoadTestSchema()
+	delete(src, "authored_tool_config")
+	delete(src, "template_sync_latest")
 	for name, field := range src {
 		if name == "org_id" || name == "project_id" || name == "identifier" {
 			continue
@@ -200,12 +270,12 @@ func dataSourceChaosLoadTestSchema() map[string]*schema.Schema {
 		field.DiffSuppressFunc = nil
 		field.MaxItems = 0
 	}
-	src["identifier"].Description = "Identifier of the load test. Letters, digits, underscores, and hyphens only."
+	src["identifier"].Description = "Identifier of the load test. Letters, digits, `_`, `-`, and `$` only."
 	src["org_id"].Description = "Organization identifier of the load test."
 	src["project_id"].Description = "Project identifier of the load test."
 	src["name"].Description = "Name of the load test."
 	src["description"].Description = "Description stored on the load test."
-	src["tool_type"].Description = "Load generator stored on the test. The API may return `Locust`, `JMeter`, or `K6`. This data source can read a JMeter test. The resource does not manage JMeter."
+	src["tool_type"].Description = "Load generator stored on the test. The API may return `Locust`, `JMeter`, or `K6`."
 	src["target_type"].Description = "Infrastructure target stored on the load test. `linux` or `kubernetes`."
 	src["managed_infra"].Description = "Whether Harness provides Kubernetes infrastructure for every run."
 	src["environment_id"].Description = "Chaos environment identifier stored on the load test."
@@ -223,7 +293,7 @@ func dataSourceChaosLoadTestSchema() map[string]*schema.Schema {
 func validateLoadTestIdentifier(v interface{}, k string) (ws []string, errs []error) {
 	value, _ := v.(string)
 	if !loadTestIdentifierPattern.MatchString(value) {
-		errs = append(errs, fmt.Errorf("%s must contain only letters, digits, underscores, and hyphens", k))
+		errs = append(errs, fmt.Errorf("%s must contain only letters, digits, underscores, hyphens, and $", k))
 	}
 	return
 }
@@ -239,6 +309,22 @@ func validateTargetTypeValue(v interface{}, k string) (ws []string, errs []error
 
 func suppressEmptyDescription(_, oldValue, newValue string, _ *schema.ResourceData) bool {
 	return newValue == "" && oldValue != ""
+}
+
+func validateOptionalScriptSource(v interface{}, k string) (ws []string, errs []error) {
+	switch v.(string) {
+	case "", "inline", "image":
+	default:
+		errs = append(errs, fmt.Errorf("%s must be inline or image", k))
+	}
+	return
+}
+
+func validateTemplateScope(orgID, projectID string) error {
+	if projectID != "" && orgID == "" {
+		return fmt.Errorf("org_id is required when project_id is set")
+	}
+	return nil
 }
 
 func validateToolConfig(v interface{}, k string) (ws []string, errs []error) {
@@ -258,7 +344,24 @@ func validateToolConfig(v interface{}, k string) (ws []string, errs []error) {
 	return
 }
 
-func suppressToolConfigDiff(_, oldValue, newValue string, _ *schema.ResourceData) bool {
+func suppressToolConfigDiff(_, oldValue, newValue string, d *schema.ResourceData) bool {
+	importType := ""
+	toolType := ""
+	if d != nil {
+		importType, _ = d.Get("import_type").(string)
+		toolType, _ = d.Get("tool_type").(string)
+	}
+	if strings.EqualFold(importType, "REFERENCE") && strings.TrimSpace(newValue) == "" && oldValue != "" {
+		return true
+	}
+	// Suppress the rewritten JMeter plan only while the configuration is the one already sent.
+	// A changed script or image must still be planned.
+	if toolType == sdkloadtest.LoadTestToolJMeter && oldValue != "" {
+		authored, _ := d.Get("authored_tool_config").(string)
+		if authored != "" && newValue == authored {
+			return true
+		}
+	}
 	oldNorm, oldErr := normalizeToolConfig(oldValue)
 	newNorm, newErr := normalizeToolConfig(newValue)
 	return oldErr == nil && newErr == nil && oldNorm == newNorm

@@ -3,12 +3,12 @@
 page_title: "harness_chaos_load_test Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for reading an existing Harness load test definition. It can read a REFERENCE import and a JMeter test. The resource cannot manage either of those.
+  Data source for reading an existing Harness load test definition, including a JMeter test and a REFERENCE import.
 ---
 
 # harness_chaos_load_test (Data Source)
 
-Data source for reading an existing Harness load test definition. It can read a REFERENCE import and a JMeter test. The resource cannot manage either of those.
+Data source for reading an existing Harness load test definition, including a JMeter test and a REFERENCE import.
 
 ## Example Usage
 
@@ -25,7 +25,7 @@ data "harness_chaos_load_test" "example" {
 
 ### Required
 
-- `identifier` (String) Identifier of the load test. Letters, digits, underscores, and hyphens only.
+- `identifier` (String) Identifier of the load test. Letters, digits, `_`, `-`, and `$` only.
 - `org_id` (String) Organization identifier of the load test.
 - `project_id` (String) Project identifier of the load test.
 
@@ -35,6 +35,9 @@ data "harness_chaos_load_test" "example" {
 - `description` (String) Description stored on the load test.
 - `environment_id` (String) Chaos environment identifier stored on the load test.
 - `id` (String) The ID of this resource.
+- `import_type` (String) How this load test was created from a hub template.
+- `template_reference` (List of Object) Hub template this load test was created from. (see [below for nested schema](#nestedatt--template_reference))
+- `template_revision` (String) Revision id stored by Load Test Manager.
 - `infrastructure_id` (String) Chaos infrastructure identifier stored on the load test.
 - `latest_revision_id` (String) Latest script revision identifier.
 - `managed_infra` (Boolean) Whether Harness provides Kubernetes infrastructure for every run.
@@ -45,9 +48,21 @@ data "harness_chaos_load_test" "example" {
 - `tags` (Set of String) Tags stored on the load test.
 - `target_type` (String) Infrastructure target stored on the load test. `linux` or `kubernetes`.
 - `tool_config` (String) JSON object stored as toolConfig. K6 fields are at the top or under `k6`. Locust is nested under `locust`. JMeter may be nested under `jmeter`. `mode` is `script` or `image`. The script or image is included.
-- `tool_type` (String) Load generator stored on the test. The API may return `Locust`, `JMeter`, or `K6`. This data source can read a JMeter test. The resource does not manage JMeter.
+- `tool_type` (String) Load generator stored on the test. The API may return `Locust`, `JMeter`, or `K6`.
 - `unique_id` (String) Server-generated unique id of the load test.
 - `variable` (List of Object) Custom variables stored on the load test. (see [below for nested schema](#nestedatt--variable))
+
+<a id="nestedatt--template_reference"></a>
+### Nested Schema for `template_reference`
+
+Read-Only:
+
+- `hub_identity` (String)
+- `identity` (String)
+- `organization_id` (String)
+- `project_id` (String)
+- `revision` (String)
+
 
 <a id="nestedatt--resources"></a>
 ### Nested Schema for `resources`

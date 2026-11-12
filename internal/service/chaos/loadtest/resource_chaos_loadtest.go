@@ -20,16 +20,16 @@ func ResourceChaosLoadTest() *schema.Resource {
 			"Creates and updates the load test definition in Load Test Manager. " +
 			"It does not start a run. `tool_config` is the toolConfig JSON the API stores. " +
 			"K6 fields sit at the top of `tool_config` or under `k6`. Locust is nested under `locust`. Both tools support script mode and image mode. k6 ui mode is not supported. " +
-			"JMeter is not supported. " +
-			"K6 and managed infrastructure require target_type kubernetes. Locust may omit target_type; the API stores linux. " +
-			"REFERENCE template imports cannot be managed here. " +
+			"JMeter is nested under `jmeter`. Load Test Manager rewrites the saved JMeter plan. Terraform plans a tool_config change when it differs from the configuration already accepted. " +
+			"K6 and managed infrastructure require target_type kubernetes. Locust and JMeter may omit target_type; the API stores linux. " +
 			"`tool_config` is saved in Terraform state and includes the script. " +
 			"Custom variables belong in `variable`. A variables key inside tool_config is rejected. " +
-			"The identifier allows letters, digits, underscores, and hyphens. " +
+			"The identifier allows letters, digits, underscores, hyphens, and `$`. " +
 			"Changing identifier, org_id, project_id, or tool_type removes the load test. Recorded runs stay stored under the old unique id and are not listed on a recreated test. " +
 			"Destroy deletes the load test definition. It does not stop a run that is already in progress, and recorded runs stay stored. " +
-			"Only Locust and K6 can be imported. The data source can still read a JMeter test or a REFERENCE import. " +
-			"The first apply after import sends the configuration as the full desired state. Copy variable, resources, max_duration_sec, tags, tool_config, cleanup_policy, and managed_infra from state first. An omitted variable list, resources block, tags set, or max_duration_sec clears the stored value. cleanup_policy defaults to delete and managed_infra defaults to false.",
+			"Locust, K6, and JMeter can be imported. A REFERENCE import is managed when import_type is REFERENCE. " +
+			"Create from a template with a real revision id. `latest` is rejected on create. After the load test exists, set revision to `latest` to sync to the newest template revision. To sync a revision published later, set revision to the value in `template_revision` and apply, then set it back to `latest`. That does not remove the load test. A different concrete revision does. " +
+			"The first apply after import sends the configuration as the full desired state. Copy variable, resources, max_duration_sec, tags, tool_config, cleanup_policy, managed_infra, import_type, and template_reference from state first. An omitted variable list, resources block, tags set, or max_duration_sec clears the stored value. cleanup_policy defaults to delete and managed_infra defaults to false.",
 
 		CreateContext: resourceChaosLoadTestCreate,
 		ReadContext:   resourceChaosLoadTestRead,
@@ -45,15 +45,27 @@ func ResourceChaosLoadTest() *schema.Resource {
 
 func resourceChaosLoadTestCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetLoadTestClientWithContext(ctx)
-	req, err := loadTestCreateRequest(d)
-	if err != nil {
-		return diag.FromErr(err)
+	identity := d.Get("identifier").(string)
+	log.Printf("[DEBUG] Creating chaos load test %s", identity)
+	var created *sdkloadtest.LoadTest
+	var httpResp *http.Response
+	var err error
+	if importType := d.Get("import_type").(string); importType != "" {
+		from, fromErr := loadTestFromTemplateRequest(d)
+		if fromErr != nil {
+			return diag.FromErr(fromErr)
+		}
+		created, httpResp, err = sdkloadtest.NewLoadTestClient(c).CreateFromTemplate(ctx, scopeFrom(d, c.AccountId), from)
+	} else {
+		req, reqErr := loadTestCreateRequest(d)
+		if reqErr != nil {
+			return diag.FromErr(reqErr)
+		}
+		created, httpResp, err = sdkloadtest.NewLoadTestClient(c).Create(ctx, scopeFrom(d, c.AccountId), req)
 	}
-	log.Printf("[DEBUG] Creating chaos load test %s", req.Identity)
-	created, httpResp, err := sdkloadtest.NewLoadTestClient(c).Create(ctx, scopeFrom(d, c.AccountId), req)
 	if err != nil {
 		if loadTestCreateCommitted(httpResp) {
-			return rollbackCreatedLoadTest(ctx, c, d, req.Identity, diag.FromErr(err))
+			return rollbackCreatedLoadTest(ctx, c, d, identity, diag.FromErr(err))
 		}
 		diags := helpers.HandleChaosApiError(err, d, httpResp)
 		if httpResp == nil {
@@ -61,7 +73,7 @@ func resourceChaosLoadTestCreate(ctx context.Context, d *schema.ResourceData, me
 				Severity: diag.Error,
 				Summary: fmt.Sprintf(
 					"Create of load test %s returned no response, so it was not deleted. If Harness saved it, delete that load test before the next apply, or the apply fails with a duplicate identity.",
-					req.Identity,
+					identity,
 				),
 			})
 		}
@@ -69,13 +81,24 @@ func resourceChaosLoadTestCreate(ctx context.Context, d *schema.ResourceData, me
 	}
 	if created == nil || created.Identity == "" {
 		if loadTestCreateCommitted(httpResp) {
-			return rollbackCreatedLoadTest(ctx, c, d, req.Identity, diag.Errorf("create load test returned an empty identity"))
+			return rollbackCreatedLoadTest(ctx, c, d, identity, diag.Errorf("create load test returned an empty identity"))
 		}
 		return diag.Errorf("create load test returned an empty identity")
 	}
 	d.SetId(created.Identity)
+	if d.Get("import_type").(string) != "" {
+		if followUp, ok := fromTemplateFollowUp(d); ok {
+			if _, updateResp, updateErr := sdkloadtest.NewLoadTestClient(c).Update(ctx, scopeFrom(d, c.AccountId), created.Identity, followUp); updateErr != nil {
+				return rollbackCreatedLoadTest(ctx, c, d, created.Identity, appendScriptFindings(helpers.HandleChaosApiError(updateErr, d, updateResp), updateErr))
+			}
+		}
+	}
+	authored, _ := d.Get("tool_config").(string)
 	diags := readChaosLoadTest(ctx, d, meta, true, false)
 	if !diags.HasError() && d.Id() != "" {
+		if err := d.Set("authored_tool_config", authored); err != nil {
+			return rollbackCreatedLoadTest(ctx, c, d, created.Identity, diag.FromErr(err))
+		}
 		return nil
 	}
 	if !diags.HasError() {
@@ -96,6 +119,14 @@ func rollbackCreatedLoadTest(ctx context.Context, c *sdkloadtest.APIClient, d *s
 	}
 	d.SetId("")
 	return diag.Errorf("%s. The load test created by this apply was deleted, so nothing was saved in state. The next apply creates it again.", reason)
+}
+
+func shouldSyncLatest(d *schema.ResourceData) bool {
+	if !strings.EqualFold(d.Get("import_type").(string), "REFERENCE") || d.Get("template_sync_latest").(bool) {
+		return false
+	}
+	ref := templateReferenceFrom(d)
+	return ref != nil && ref.Revision == "latest"
 }
 
 func appendScriptFindings(diags diag.Diagnostics, err error) diag.Diagnostics {
@@ -134,12 +165,12 @@ func readChaosLoadTest(ctx context.Context, d *schema.ResourceData, meta interfa
 	if err != nil {
 		return helpers.HandleChaosReadApiError(err, d, httpResp)
 	}
-	if managedToolsOnly && test.ToolType != sdkloadtest.LoadTestToolLocust && test.ToolType != sdkloadtest.LoadTestToolK6 {
+	if managedToolsOnly && test.ToolType != sdkloadtest.LoadTestToolLocust && test.ToolType != sdkloadtest.LoadTestToolK6 && test.ToolType != sdkloadtest.LoadTestToolJMeter {
 		d.SetId("")
-		return diag.Errorf("load test %s has tool type %q; only Locust and K6 can be imported", identity, test.ToolType)
+		return diag.Errorf("load test %s has tool type %q; only Locust, K6, and JMeter can be imported", identity, test.ToolType)
 	}
-	if rejectReference && strings.EqualFold(test.ImportType, "REFERENCE") {
-		return diag.Errorf("load test %s is a REFERENCE import owned by its template and cannot be managed by this resource", identity)
+	if rejectReference && strings.EqualFold(test.ImportType, "REFERENCE") && !strings.EqualFold(d.Get("import_type").(string), "REFERENCE") {
+		return diag.Errorf("load test %s is a REFERENCE import owned by its template; set import_type = REFERENCE and template_reference to manage it", identity)
 	}
 	if err := serviceReferencesDrift(d, test.ServiceReferences); err != nil {
 		return diag.FromErr(err)
@@ -165,11 +196,68 @@ func resourceChaosLoadTestUpdate(ctx context.Context, d *schema.ResourceData, me
 		return diag.FromErr(err)
 	}
 	log.Printf("[DEBUG] Updating chaos load test %s", d.Id())
+	authored, _ := d.Get("tool_config").(string)
+	configRevision := ""
+	if ref := templateReferenceFrom(d); ref != nil {
+		configRevision = ref.Revision
+	}
+	synced := false
+	if shouldSyncLatest(d) {
+		if _, httpResp, err := sdkloadtest.NewLoadTestClient(c).SyncTemplate(ctx, scopeFrom(d, c.AccountId), d.Id()); err != nil {
+			return appendScriptFindings(helpers.HandleChaosApiError(err, d, httpResp), err)
+		}
+		synced = true
+	}
 	_, httpResp, err := sdkloadtest.NewLoadTestClient(c).Update(ctx, scopeFrom(d, c.AccountId), d.Id(), req)
 	if err != nil {
 		return appendScriptFindings(helpers.HandleChaosApiError(err, d, httpResp), err)
 	}
-	return readChaosLoadTest(ctx, d, meta, true, false)
+	diags := readChaosLoadTest(ctx, d, meta, true, false)
+	if diags.HasError() || d.Id() == "" {
+		return diags
+	}
+	return finishLoadTestWrite(d, authored, synced, configRevision)
+}
+
+// finishLoadTestWrite records bookkeeping only after the update and the follow-up read both succeed.
+// A failed call leaves authored_tool_config and template_sync_latest unchanged, so the next plan still shows the change.
+func finishLoadTestWrite(d *schema.ResourceData, authored string, synced bool, configRevision string) diag.Diagnostics {
+	reference := strings.EqualFold(d.Get("import_type").(string), "REFERENCE")
+	if reference && configRevision == "latest" {
+		if err := recordLatestRevision(d); err != nil {
+			return diag.FromErr(err)
+		}
+		if synced {
+			if err := d.Set("template_sync_latest", true); err != nil {
+				return diag.FromErr(err)
+			}
+		}
+	} else if d.Get("template_sync_latest").(bool) {
+		if err := d.Set("template_sync_latest", false); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+	if err := d.Set("authored_tool_config", authored); err != nil {
+		return diag.FromErr(err)
+	}
+	return nil
+}
+
+func recordLatestRevision(d *schema.ResourceData) error {
+	raw, _ := d.Get("template_reference").([]interface{})
+	if len(raw) == 0 || raw[0] == nil {
+		return fmt.Errorf("template_reference is empty after reading the synced load test")
+	}
+	block, ok := raw[0].(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("template_reference is empty after reading the synced load test")
+	}
+	copied := make(map[string]interface{}, len(block))
+	for key, value := range block {
+		copied[key] = value
+	}
+	copied["revision"] = "latest"
+	return d.Set("template_reference", []interface{}{copied})
 }
 
 func resourceChaosLoadTestDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -190,6 +278,41 @@ func resourceChaosLoadTestCustomizeDiff(_ context.Context, d *schema.ResourceDif
 		newSet, _ := newRefs.(*schema.Set)
 		if newSet != nil && newSet.Len() == 0 && oldSet != nil && oldSet.Len() > 0 {
 			if err := d.SetNew("service_references", oldSet); err != nil {
+				return err
+			}
+		}
+	}
+	if strings.EqualFold(fmt.Sprint(d.Get("import_type")), "REFERENCE") {
+		oldTool, newTool := d.GetChange("tool_config")
+		if strings.TrimSpace(fmt.Sprint(newTool)) == "" && strings.TrimSpace(fmt.Sprint(oldTool)) != "" {
+			if err := d.SetNew("tool_config", oldTool); err != nil {
+				return err
+			}
+		}
+		oldVar, newVar := d.GetChange("variable")
+		if newList, _ := newVar.([]interface{}); len(newList) == 0 {
+			if oldList, _ := oldVar.([]interface{}); len(oldList) > 0 {
+				if err := d.SetNew("variable", oldVar); err != nil {
+					return err
+				}
+			}
+		}
+		oldDuration, newDuration := d.GetChange("max_duration_sec")
+		if duration, _ := newDuration.(int); duration == 0 {
+			if previous, _ := oldDuration.(int); previous != 0 {
+				if err := d.SetNew("max_duration_sec", oldDuration); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	if d.HasChange("template_reference.0.revision") {
+		_, newRev := d.GetChange("template_reference.0.revision")
+		next := fmt.Sprint(newRev)
+		stored := fmt.Sprint(d.Get("template_revision"))
+		// latest syncs in place. Setting the stored revision clears that sync. Any other id creates a new load test.
+		if next != "latest" && stored != "" && next != stored {
+			if err := d.ForceNew("template_reference.0.revision"); err != nil {
 				return err
 			}
 		}
