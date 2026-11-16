@@ -41,6 +41,8 @@ Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 
 - `account_id` (String, Deprecated) Account identifier of the GitOps agent.
 - `description` (String) Description of the GitOps agent.
+- `disaster_recovery_identifier` (String) Disaster Recovery identifier shared by all nodes (primary and secondary) in the same DR group. Required together with disaster_recovery_type.
+- `disaster_recovery_type` (String) Disaster Recovery role of this agent node. Required together with disaster_recovery_identifier. Enum: "PRIMARY" "SECONDARY"
 - `metadata` (Block List, Max: 1) Metadata of the agent. (see [below for nested schema](#nestedblock--metadata))
 - `operator` (String) The Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `org_id` (String) Organization identifier of the GitOps agent.
@@ -50,8 +52,10 @@ Enum: "AGENT_TYPE_UNSET" "MANAGED_ARGO_PROVIDER" "HOSTED_ARGO_PROVIDER"
 ### Read-Only
 
 - `agent_token` (String, Sensitive) Agent token to be used for authentication of the agent with Harness.
+- `disaster_recovery_live_type` (String) The live Disaster Recovery role of this agent node as reported by the server. Populated by Read/Import only.
 - `id` (String) The ID of this resource.
 - `prefixed_identifier` (String) Prefixed identifier of the GitOps agent. Agent identifier prefixed with scope of the agent
+- `uuid` (String) UUID of the GitOps agent. Shared by every Disaster Recovery sibling under the same disaster_recovery_identifier.
 
 <a id="nestedblock--metadata"></a>
 ### Nested Schema for `metadata`
