@@ -35,6 +35,7 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 - `account_id` (String, Deprecated) Account identifier of the GitOps agent.
 - `argocd_settings` (Block List, Max: 1) Argocd settings for the GitOps agent. Values set here will be overridden by the values set in the argocd settings in case of complete installation of agent + argocd. Each param contains as a description about what it will enable. (see [below for nested schema](#nestedblock--argocd_settings))
 - `ca_data` (String) CA data of the GitOps agent, base64 encoded content of ca chain.
+- `disaster_recovery_identifier` (String) Disaster Recovery identifier of the GitOps agent, when fetching the deploy YAML for a DR node.
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `private_key` (String) Private key for the GitOps agent. If provided authentication token will not be regenerated. Must be base64 encoded.
 - `project_id` (String) Project identifier of the GitOps agent.
