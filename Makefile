@@ -178,16 +178,10 @@ clean-plugins: ## Remove all local Terraform plugin installations for this provi
 ##@ Testing
 
 .PHONY: test
-test: ## Run unit tests (credential-free; used by coverage CI)
+test: ## Run unit tests
 	$(call log_header,Running Unit Tests)
 	$(call log_info,Running tests with timeout $(UNIT_TEST_TIMEOUT)...)
-	@# -vet=off: Go 1.24+ printf vet fails many diag.Errorf(err.Error()) call sites.
-	@# -skip: Acc-style UnitTests Fatal/panic without HARNESS_* / TF_ACC; keep make testacc for those.
-	@# Exclude cd/delegate: helper_test does not compile against current docker SDK types.
-	@pkgs=$$($(GO) list $(TEST) | grep -v '/internal/service/cd/delegate$$'); \
-	$(GO) test $$pkgs -count=1 $(TESTARGS) -timeout=$(UNIT_TEST_TIMEOUT) \
-		-cover -coverprofile=coverage.out -covermode=atomic -vet=off \
-		-skip '^(TestAcc|TestOrg|TestProj|TestProject)'
+	@$(GO) test $(TEST) -v $(TESTARGS) -timeout=$(UNIT_TEST_TIMEOUT)
 	$(call log_success,Unit tests passed)
 
 .PHONY: testacc
