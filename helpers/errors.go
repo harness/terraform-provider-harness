@@ -393,7 +393,7 @@ func HandleChaosReadApiError(err error, d *schema.ResourceData, httpResp *http.R
 // gracefulErrorPatterns: list of error message patterns that should be treated as "not found"
 // Example: []string{"no matching infra", "at least one hub is required"}
 func HandleChaosReadApiErrorWithGracefulDestroy(err error, d *schema.ResourceData, httpResp *http.Response, gracefulErrorPatterns []string) diag.Diagnostics {
-	chaosErr, ok := err.(chaos.GenericSwaggerError)
+	chaosErr, ok := err.(swaggerError)
 	if !ok {
 		return diag.Errorf(err.Error())
 	}
@@ -439,10 +439,17 @@ func HandleChaosReadApiErrorWithGracefulDestroy(err error, d *schema.ResourceDat
 	return handleChaosApiError(err, d, httpResp, true)
 }
 
+// swaggerError is the response error returned by generated Harness API clients.
+type swaggerError interface {
+	error
+	Body() []byte
+	Model() interface{}
+}
+
 // handleChaosApiError is the internal implementation for chaos error handling
 // It extracts detailed error messages from the error body or model
 func handleChaosApiError(err error, d *schema.ResourceData, httpResp *http.Response, read bool) diag.Diagnostics {
-	chaosErr, ok := err.(chaos.GenericSwaggerError)
+	chaosErr, ok := err.(swaggerError)
 	if !ok {
 		if isUndefinedResponseTypeError(err) {
 			return handleUndefinedResponseTypeError(httpResp)

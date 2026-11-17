@@ -24,6 +24,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/svcdiscovery"
 
 	"github.com/harness/harness-go-sdk/harness/chaos"
+	sdkloadtest "github.com/harness/harness-go-sdk/harness/loadtest"
 	cdng_service "github.com/harness/terraform-provider-harness/internal/service/cd_nextgen/service"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/action_template"
 	chaos_hub "github.com/harness/terraform-provider-harness/internal/service/chaos/chaos_hub"
@@ -34,6 +35,7 @@ import (
 	image_registry "github.com/harness/terraform-provider-harness/internal/service/chaos/image_registry"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure"
 	chaos_infrastructure_v2 "github.com/harness/terraform-provider-harness/internal/service/chaos/infrastructure_v2"
+	chaos_loadtest "github.com/harness/terraform-provider-harness/internal/service/chaos/loadtest"
 	chaos_onboarding "github.com/harness/terraform-provider-harness/internal/service/chaos/onboarding"
 	"github.com/harness/terraform-provider-harness/internal/service/chaos/probe_template"
 	chaos_scan "github.com/harness/terraform-provider-harness/internal/service/chaos/scan"
@@ -227,7 +229,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_artifactory":              cdng_connector_artifactRepositories.DatasourceConnectorArtifactory(),
 				"harness_platform_connector_aws_secret_manager":       pl_secretManagers.DatasourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                      cdng_connector_cloudProviders.DatasourceConnectorAws(),
-				"harness_platform_connector_anthropic_model":           connector.DatasourceConnectorAnthropicModel(),
+				"harness_platform_connector_anthropic_model":          connector.DatasourceConnectorAnthropicModel(),
 				"harness_platform_connector_awscc":                    connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                   pl_secretManagers.DatasourceConnectorAwsKms(),
 				"harness_platform_connector_azure_repo":               cdng_connector_codeRepositories.DatasourceConnectorAzureRepo(),
@@ -398,6 +400,10 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_experiment":                            experiment.DataSourceChaosExperiment(),
 				"harness_chaos_pipeline_scan":                         chaos_scan.DataSourceChaosPipelineScan(),
 				"harness_chaos_infrastructure_scan":                   chaos_scan.DataSourceChaosInfrastructureScan(),
+				"harness_chaos_load_test":                             chaos_loadtest.DataSourceChaosLoadTest(),
+				"harness_chaos_composite_load_test":                   chaos_loadtest.DataSourceChaosCompositeLoadTest(),
+				"harness_chaos_load_test_template":                    chaos_loadtest.DataSourceChaosLoadTestTemplate(),
+				"harness_chaos_load_test_template_revision":           chaos_loadtest.DataSourceChaosLoadTestTemplateRevision(),
 				"harness_chaos_security_governance_condition":         chaos_security_governance.DataSourceChaosSecurityGovernanceCondition(),
 				"harness_chaos_security_governance_rule":              chaos_security_governance.DataSourceChaosSecurityGovernanceRule(),
 				"harness_chaos_security_governance_condition_v3":      chaos_security_governance_v3.DataSourceChaosSecurityGovernanceConditionV3(),
@@ -447,7 +453,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_azure_artifacts":             cdng_connector_artifactRepositories.ResourceConnectorAzureArtifacts(),
 				"harness_platform_connector_aws_secret_manager":          pl_secretManagers.ResourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                         cdng_connector_cloudProviders.ResourceConnectorAws(),
-				"harness_platform_connector_anthropic_model":              connector.ResourceConnectorAnthropicModel(),
+				"harness_platform_connector_anthropic_model":             connector.ResourceConnectorAnthropicModel(),
 				"harness_platform_connector_awscc":                       connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                      pl_secretManagers.ResourceConnectorAwsKms(),
 				"harness_platform_connector_azure_repo":                  cdng_connector_codeRepositories.ResourceConnectorAzureRepo(),
@@ -625,6 +631,10 @@ func Provider(version string) func() *schema.Provider {
 				"harness_chaos_experiment":                               experiment.ResourceChaosExperiment(),
 				"harness_chaos_pipeline_scan":                            chaos_scan.ResourceChaosPipelineScan(),
 				"harness_chaos_infrastructure_scan":                      chaos_scan.ResourceChaosInfrastructureScan(),
+				"harness_chaos_load_test":                                chaos_loadtest.ResourceChaosLoadTest(),
+				"harness_chaos_composite_load_test":                      chaos_loadtest.ResourceChaosCompositeLoadTest(),
+				"harness_chaos_load_test_template":                       chaos_loadtest.ResourceChaosLoadTestTemplate(),
+				"harness_chaos_load_test_template_revision":              chaos_loadtest.ResourceChaosLoadTestTemplateRevision(),
 				"harness_chaos_service_onboarding":                       chaos_onboarding.ResourceChaosServiceOnboarding(),
 				"harness_chaos_onboarding_service":                       chaos_onboarding.ResourceChaosOnboardingService(),
 				"harness_chaos_security_governance_condition":            chaos_security_governance.ResourceChaosSecurityGovernanceCondition(),
@@ -745,6 +755,17 @@ func getChaosClient(d *schema.ResourceData, version string) *chaos.APIClient {
 	client := chaos.NewAPIClient(&chaos.Configuration{
 		AccountId:     d.Get("account_id").(string),
 		BasePath:      d.Get("endpoint").(string) + "/chaos/manager/api", // check if this can be taken from sdk
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)},
+	})
+	return client
+}
+
+func getLoadTestClient(d *schema.ResourceData, version string) *sdkloadtest.APIClient {
+	client := sdkloadtest.NewAPIClient(&sdkloadtest.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/loadTest/manager/api",
 		ApiKey:        d.Get("platform_api_key").(string),
 		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
 		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)},
@@ -891,6 +912,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			CodeClient:               getCodeClient(d, version),
 			DBOpsClient:              getDBOpsClient(d, version),
 			ChaosClient:              getChaosClient(d, version),
+			LoadTestClient:           getLoadTestClient(d, version),
 			SDClient:                 getServiceDiscoveryClient(d, version),
 			FMEAdminAPIEndpointError: fmeAdminAPIEndpointErr,
 			HARClient:                getHarClient(d, version),
