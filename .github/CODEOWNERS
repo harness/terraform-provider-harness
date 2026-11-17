@@ -10,6 +10,12 @@ go.mod ritek.rounak@harness.io shivakumar.ningappa@harness.io saksham.golcha@har
 go.sum ritek.rounak@harness.io shivakumar.ningappa@harness.io saksham.golcha@harness.io jatin.agrawal@harness.io sharique.arshi@harness.io tudor.macari@harness.io arvind.choudhary@harness.io praveenkumar.gt@harness.io akash.kumar@harness.io shubham.agrawal@harness.io
 tools/** ritek.rounak@harness.io
 helpers/** ritek.rounak@harness.io
+Makefile ritek.rounak@harness.io
+main.go ritek.rounak@harness.io
+internal/acctest/** ritek.rounak@harness.io
+internal/sweep/** ritek.rounak@harness.io
+internal/provider/** ritek.rounak@harness.io
+internal/session.go ritek.rounak@harness.io
 internal/service/platform/db_instance/** abhishek.abhishek@harness.io archit.singla@harness.io hemanth.sridhar@harness.io ritek.rounak@harness.io
 internal/service/platform/db_schema/** abhishek.abhishek@harness.io archit.singla@harness.io hemanth.sridhar@harness.io ritek.rounak@harness.io
 internal/service/platform/gitops/** ashin.sabu@harness.io manish.singh@harness.io mirko.teodorovic@harness.io alexandru.casian@harness.io ritek.rounak@harness.io
