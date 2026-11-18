@@ -4,6 +4,7 @@ import (
 	"os"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -51,6 +52,10 @@ func (c ResourceAccTestContractV1) executeContractDefinition(t *testing.T, d Con
 				}
 			})
 		}
+		if d.PreTestDelay > 0 {
+			t.Logf("[contractv1] %s: waiting %s (PreTestDelay) before test", d.TestName, d.PreTestDelay)
+			time.Sleep(d.PreTestDelay)
+		}
 		tc := c.newTestCase(t)
 		t.Logf("[contractv1] %s: building test steps", d.TestName)
 		switch d.TestName {
@@ -87,6 +92,10 @@ func (c ResourceAccTestContractV1) executeContractDefinition(t *testing.T, d Con
 		}
 		t.Logf("[contractv1] %s: running resource.Test with %d steps", d.TestName, len(tc.Steps))
 		resource.Test(t, tc)
+		if d.PostTestDelay > 0 {
+			t.Logf("[contractv1] %s: waiting %s (PostTestDelay) after test", d.TestName, d.PostTestDelay)
+			time.Sleep(d.PostTestDelay)
+		}
 		t.Logf("[contractv1] END %s", d.TestName)
 	})
 }
@@ -102,6 +111,20 @@ func (c ResourceAccTestContractV1) run(t *testing.T) {
 	mu := v.(*sync.Mutex)
 	mu.Lock()
 	defer mu.Unlock()
+	if c.PreRun != nil {
+		t.Logf("[contractv1] running PreRun")
+		if err := c.PreRun(t); err != nil {
+			t.Fatalf("PreRun: %v", err)
+		}
+	}
+	if c.PostRun != nil {
+		t.Cleanup(func() {
+			t.Logf("[contractv1] running PostRun")
+			if err := c.PostRun(t); err != nil {
+				t.Errorf("PostRun: %v", err)
+			}
+		})
+	}
 	only := map[TestName]bool{}
 	for _, n := range c.DebugSettings.RunOnlyTests {
 		only[n] = true

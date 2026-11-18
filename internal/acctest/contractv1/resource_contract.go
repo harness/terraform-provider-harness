@@ -3,6 +3,7 @@ package contractv1
 import (
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -247,6 +248,13 @@ type ContractDefinition struct {
 	GetImportID             func() string
 	ImportStateVerifyIgnore []string
 	ExpectError             *regexp.Regexp
+	// PreTestDelay is an optional pause before the test starts, to let the backend
+	// settle after the previous test's cleanup. Use when the backend exhibits
+	// read-after-write inconsistency across sequential tests.
+	PreTestDelay time.Duration
+	// PostTestDelay is an optional pause after the test completes (before the next
+	// test starts). Mirrors PreTestDelay but applied after cleanup.
+	PostTestDelay time.Duration
 }
 
 // DebugSettings controls test execution during local development and debugging only.
@@ -266,6 +274,12 @@ type ResourceAccTestContractV1 struct {
 	GetRequiredEnv   func() []string
 	TestCase         func(*testing.T) resource.TestCase
 	DebugSettings    DebugSettings
+	// PreRun is called once before all test definitions run. Use it to ensure
+	// a clean remote state before the suite starts (e.g. delete any leftover resource).
+	PreRun func(t *testing.T) error
+	// PostRun is called once after all test definitions run. Use it to clean up
+	// any remote state left by the suite (e.g. external writes from ExternalUpdateTest).
+	PostRun func(t *testing.T) error
 }
 
 // Definition looks up a scenario by name.

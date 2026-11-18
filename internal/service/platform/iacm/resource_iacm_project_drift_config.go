@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	iacmProjectDriftConfigTimeout      = 30 * time.Second
-	iacmProjectDriftConfigPollInterval = 9 * time.Second
+	iacmProjectDriftConfigTimeout      = 5 * time.Minute
+	iacmProjectDriftConfigPollInterval = 10 * time.Second
 )
 
 func ResourceIacmProjectDriftConfig() *schema.Resource {
