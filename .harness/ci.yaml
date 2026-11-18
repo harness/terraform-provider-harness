@@ -135,12 +135,6 @@ pipeline:
                                           command: golangci-lint run -v --timeout=10m
                                       name: Lint
                                       identifier: lint
-                                      failureStrategies:
-                                          - onFailure:
-                                                errors:
-                                                    - AllErrors
-                                                action:
-                                                    type: Ignore
                                 - step:
                                       type: Run
                                       timeout: <+build.variables.TEST_TIMEOUT>
@@ -164,12 +158,6 @@ pipeline:
                                                   cpu: "2"
                                       name: Test Terraform v1-0-0
                                       identifier: Test_Terraform_v100
-                                      failureStrategies:
-                                          - onFailure:
-                                                errors:
-                                                    - AllErrors
-                                                action:
-                                                    type: Ignore
                   cloneCodebase: true
               name: Build
               identifier: build
