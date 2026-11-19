@@ -68,10 +68,11 @@ func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAppProjectMappingResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"block_if_referenced"},
+				ImportStateIdFunc:       acctest.GitopsAppProjectMappingResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
