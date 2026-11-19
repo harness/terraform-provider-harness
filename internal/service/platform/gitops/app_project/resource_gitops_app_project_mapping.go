@@ -67,12 +67,17 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 			Description: "If true, fails the delete with an error instead of removing Applications, Clusters, Repositories, or ApplicationSets that still reference this mapping. Defaults to true. Set to false only if you intend for the delete to remove those resources as well. Also applies when this resource is replaced due to a change in agent_id or argo_project_name.",
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Default:     true,
+			Default:     blockIfReferencedDefault,
 		},
 	},
 }
 	return resource
 }
+
+// blockIfReferencedDefault is the schema default for block_if_referenced and
+// the import-time fallback in readAppProjectMapping, since the API never
+// returns the field.
+const blockIfReferencedDefault = true
 
 func resourceGitopsAppProjectMappingCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
@@ -230,4 +235,12 @@ func readAppProjectMapping(d *schema.ResourceData, mapping *nextgen.V1AppProject
 	d.Set("agent_id", mapping.AgentIdentifier)
 	d.Set("argo_project_name", mapping.ArgoProjectName)
 	d.Set("auto_create_service_env", mapping.AutoCreateServiceEnv)
+	// block_if_referenced is provider-local and delete-time only; the API never
+	// returns it. Preserve the prior state value on refresh; on import (no prior
+	// state) fall back to the schema default so the attribute is not lost.
+	if v, ok := d.GetOkExists("block_if_referenced"); ok {
+		d.Set("block_if_referenced", v.(bool))
+	} else {
+		d.Set("block_if_referenced", blockIfReferencedDefault)
+	}
 }
