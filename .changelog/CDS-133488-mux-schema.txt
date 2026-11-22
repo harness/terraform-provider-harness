@@ -1,0 +1,3 @@
+```release-note:bug
+provider: Fixed "Invalid Provider Server Combination" error in v0.46.0 that prevented the provider from loading. The plugin-framework provider schema now declares markdown descriptions to match the SDKv2 provider schema.
+```

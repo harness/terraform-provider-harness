@@ -18,7 +18,8 @@ import (
 
 // frameworkProvider serves only ephemeral resources, which the SDKv2 provider cannot express.
 // It is muxed with the SDKv2 provider in main.go, so its provider schema must stay identical
-// to the SDKv2 one. Descriptions are read from the SDKv2 schema to prevent drift.
+// to the SDKv2 one. Descriptions are read from the SDKv2 schema to prevent drift, and set as
+// MarkdownDescription because init() in provider.go sets schema.DescriptionKind = StringMarkdown.
 type frameworkProvider struct {
 	version string
 }
