@@ -29,6 +29,9 @@ func TestAccResourceLoginSettings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_lockout_policy.0.notify_user", "true"),
 					resource.TestCheckResourceAttr(resourceName, "password_expiration_policy.0.enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "password_expiration_policy.0.days_before_password_expires", "90"),
+					// Stamped by the server on the update performed by the create flow.
+					resource.TestCheckResourceAttrSet(resourceName, "last_updated_at"),
+					resource.TestCheckResourceAttrSet(resourceName, "last_updated_by.0.email"),
 				),
 			},
 			{

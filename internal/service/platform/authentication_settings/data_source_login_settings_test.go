@@ -19,6 +19,7 @@ func TestAccDataSourceLoginSettings(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "user_lockout_policy.0.enable_lockout_policy"),
 					resource.TestCheckResourceAttrSet(resourceName, "user_lockout_policy.0.number_of_failed_attempts_before_lockout"),
+					resource.TestCheckResourceAttrSet(resourceName, "last_updated_at"),
 				),
 			},
 		},
