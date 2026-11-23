@@ -23,9 +23,22 @@ data "harness_platform_login_settings" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `last_updated_at` (Number) Epoch timestamp (milliseconds) of the last update to the login settings (server-managed).
+- `last_updated_by` (List of Object) User who last updated the login settings, as returned by the API. Empty until the settings have been updated at least once. (see [below for nested schema](#nestedatt--last_updated_by))
 - `password_expiration_policy` (List of Object) Password expiration policy of the account. (see [below for nested schema](#nestedatt--password_expiration_policy))
 - `password_strength_policy` (List of Object) Password strength policy of the account. (see [below for nested schema](#nestedatt--password_strength_policy))
 - `user_lockout_policy` (List of Object) User lockout policy of the account. (see [below for nested schema](#nestedatt--user_lockout_policy))
+
+<a id="nestedatt--last_updated_by"></a>
+### Nested Schema for `last_updated_by`
+
+Read-Only:
+
+- `email` (String)
+- `external_user_id` (String)
+- `name` (String)
+- `uuid` (String)
+
 
 <a id="nestedatt--password_expiration_policy"></a>
 ### Nested Schema for `password_expiration_policy`

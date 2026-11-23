@@ -103,6 +103,8 @@ func DataSourceLoginSettings() *schema.Resource {
 					},
 				},
 			},
+			"last_updated_by": lastUpdatedBySchema(),
+			"last_updated_at": lastUpdatedAtSchema(),
 		},
 	}
 

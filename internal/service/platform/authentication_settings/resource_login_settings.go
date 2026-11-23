@@ -136,10 +136,54 @@ func ResourceLoginSettings() *schema.Resource {
 					},
 				},
 			},
+			"last_updated_by": lastUpdatedBySchema(),
+			"last_updated_at": lastUpdatedAtSchema(),
 		},
 	}
 
 	return resource
+}
+
+// lastUpdatedBySchema exposes the server-managed lastUpdatedBy object returned by
+// the API on every read. It mirrors the API response shape exactly (EmbeddedUser).
+func lastUpdatedBySchema() *schema.Schema {
+	return &schema.Schema{
+		Description: "User who last updated the login settings, as returned by the API. Empty until the settings have been updated at least once.",
+		Type:        schema.TypeList,
+		Computed:    true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"uuid": {
+					Description: "Unique identifier of the user.",
+					Type:        schema.TypeString,
+					Computed:    true,
+				},
+				"name": {
+					Description: "Name of the user.",
+					Type:        schema.TypeString,
+					Computed:    true,
+				},
+				"email": {
+					Description: "Email of the user.",
+					Type:        schema.TypeString,
+					Computed:    true,
+				},
+				"external_user_id": {
+					Description: "Identifier of the user in the external identity provider, when applicable.",
+					Type:        schema.TypeString,
+					Computed:    true,
+				},
+			},
+		},
+	}
+}
+
+func lastUpdatedAtSchema() *schema.Schema {
+	return &schema.Schema{
+		Description: "Epoch timestamp (milliseconds) of the last update to the login settings (server-managed).",
+		Type:        schema.TypeInt,
+		Computed:    true,
+	}
 }
 
 func resourceLoginSettingsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -282,6 +326,8 @@ func readLoginSettings(d *schema.ResourceData, accountId string, settings *nextg
 	d.Set("password_strength_policy", flattenPasswordStrengthPolicy(settings.PasswordStrengthPolicy))
 	d.Set("user_lockout_policy", flattenUserLockoutPolicy(settings.UserLockoutPolicy))
 	d.Set("password_expiration_policy", flattenPasswordExpirationPolicy(settings.PasswordExpirationPolicy))
+	d.Set("last_updated_by", flattenLastUpdatedBy(settings.LastUpdatedBy))
+	d.Set("last_updated_at", settings.LastUpdatedAt)
 }
 
 func expandPasswordStrengthPolicy(input []interface{}) nextgen.PasswordStrengthPolicy {
@@ -367,5 +413,18 @@ func flattenPasswordExpirationPolicy(policy *nextgen.PasswordExpirationPolicy) [
 		"enabled":                      policy.Enabled,
 		"days_before_password_expires": policy.DaysBeforePasswordExpires,
 		"days_before_user_notified_of_password_expiration": policy.DaysBeforeUserNotifiedOfPasswordExpiration,
+	}}
+}
+
+func flattenLastUpdatedBy(user *nextgen.EmbeddedUser) []interface{} {
+	if user == nil {
+		return nil
+	}
+
+	return []interface{}{map[string]interface{}{
+		"uuid":             user.Uuid,
+		"name":             user.Name,
+		"email":            user.Email,
+		"external_user_id": user.ExternalUserId,
 	}}
 }
