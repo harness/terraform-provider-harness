@@ -72,6 +72,13 @@ func TestAccPreCheck(t *testing.T) {
 	TestAccConfigureProvider()
 }
 
+func GetNewResourceTestCase(t *testing.T) resource.TestCase {
+	return resource.TestCase{
+		PreCheck:          func() { TestAccPreCheck(t) },
+		ProviderFactories: ProviderFactories,
+	}
+}
+
 var TestAccProvider *schema.Provider
 var TestAccProviderConfigure sync.Once
 
