@@ -269,7 +269,7 @@ func readModule(d *schema.ResourceData, module *nextgen.ModuleResource) {
 	d.Set("system", module.System)
 	d.Set("tags", module.Tags)
 	d.Set("testing_enabled", module.TestingEnabled)
-	
+
 	// Set testing_metadata as a list with one item
 	if module.TestingMetadata != nil {
 		testingMetadataList := []interface{}{
@@ -286,7 +286,7 @@ func readModule(d *schema.ResourceData, module *nextgen.ModuleResource) {
 		}
 		d.Set("testing_metadata", testingMetadataList)
 	}
-	
+
 	d.Set("updated", module.Updated)
 	d.Set("versions", module.Versions)
 }

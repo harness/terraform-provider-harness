@@ -51,26 +51,26 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-		"argo_project_name": {
-			Description: "ArgoCD Project name which is to be mapped to the Harness project.",
-			Type:        schema.TypeString,
-			Required:    true,
-			ForceNew:    true,
+			"argo_project_name": {
+				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+			},
+			"auto_create_service_env": {
+				Description: "Enable automated creation of service, environment and cluster-env link. Defaults to false.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+			},
+			"block_if_referenced": {
+				Description: "If true, fails the delete with an error instead of removing Applications, Clusters, Repositories, or ApplicationSets that still reference this mapping. Defaults to true. Set to false only if you intend for the delete to remove those resources as well. Also applies when this resource is replaced due to a change in agent_id or argo_project_name.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     blockIfReferencedDefault,
+			},
 		},
-		"auto_create_service_env": {
-			Description: "Enable automated creation of service, environment and cluster-env link. Defaults to false.",
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     false,
-		},
-		"block_if_referenced": {
-			Description: "If true, fails the delete with an error instead of removing Applications, Clusters, Repositories, or ApplicationSets that still reference this mapping. Defaults to true. Set to false only if you intend for the delete to remove those resources as well. Also applies when this resource is replaced due to a change in agent_id or argo_project_name.",
-			Type:        schema.TypeBool,
-			Optional:    true,
-			Default:     blockIfReferencedDefault,
-		},
-	},
-}
+	}
 	return resource
 }
 
