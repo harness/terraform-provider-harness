@@ -150,11 +150,24 @@ collect_target_docs() {
 
                 if [ -n "$stem" ] && [ -n "$doc_type" ]; then
                     stem_lower="$(printf '%s' "$stem" | tr '[:upper:]' '[:lower:]')"
-                    for candidate in docs/"$doc_type"/*"${stem_lower}".md; do
-                        if [ -f "$candidate" ]; then
-                            echo "${candidate#docs/}" >> "$TARGET_DOCS_FILE"
-                        fi
-                    done
+                    # Doc files are named after the full TF resource type (minus the
+                    # "harness_" prefix), e.g. "platform_central_notification_rule.md".
+                    # Match that exact name only - a suffix glob here previously matched
+                    # unrelated resources sharing a suffix (e.g. "notification_rule.go"
+                    # matching both "platform_notification_rule.md" and
+                    # "platform_central_notification_rule.md").
+                    service_dir=""
+                    case "$file" in
+                        internal/service/*)
+                            rest="${file#internal/service/}"
+                            service_dir="${rest%%/*}"
+                            ;;
+                    esac
+                    if [ -n "$service_dir" ] && [ -f "docs/$doc_type/${service_dir}_${stem_lower}.md" ]; then
+                        echo "$doc_type/${service_dir}_${stem_lower}.md" >> "$TARGET_DOCS_FILE"
+                    elif [ -f "docs/$doc_type/${stem_lower}.md" ]; then
+                        echo "$doc_type/${stem_lower}.md" >> "$TARGET_DOCS_FILE"
+                    fi
                 fi
                 continue
                 ;;
@@ -266,7 +279,7 @@ info "Saved $subcategory_count subcategories"
 
 # Generate docs into a temp directory first, then sync only changed files back.
 info "Generating Terraform provider docs into temporary output..."
-"$TFPLUGINDOCS_PATH" generate --rendered-website-dir "$GENERATED_DOCS_DIR"
+"$TFPLUGINDOCS_PATH" generate --rendered-website-dir "$GENERATED_DOCS_DIR" --rendered-provider-name terraform-provider-harness
 
 # Restore subcategories in generated docs
 if [ -f "$SUBCATEGORIES_FILE" ]; then
