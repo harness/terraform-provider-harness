@@ -306,6 +306,141 @@ func TestAccResourceGitopsAgentHostedType(t *testing.T) {
 	})
 }
 
+// Deleting a live PRIMARY while a SECONDARY sibling still exists must be rejected by the
+// provider's Delete guard instead of silently orphaning the DR group.
+func TestAccResourceGitopsAgentDrDeleteGuard(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	primaryResourceName := "harness_platform_gitops_agent.primary"
+	secondaryResourceName := "harness_platform_gitops_agent.secondary"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy: func(s *terraform.State) error {
+			if err := testAccResourceGitopsAgentDestroy(primaryResourceName)(s); err != nil {
+				return err
+			}
+			return testAccResourceGitopsAgentDestroy(secondaryResourceName)(s)
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsAgentDrPrimarySecondary(id, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(primaryResourceName, "disaster_recovery_live_type", "PRIMARY"),
+					resource.TestCheckResourceAttr(secondaryResourceName, "disaster_recovery_live_type", "SECONDARY"),
+				),
+			},
+			{
+				// Removing the PRIMARY resource from config while its SECONDARY sibling is still
+				// live must fail at Delete, not succeed and orphan the DR group.
+				Config:      testAccResourceGitopsAgentDrSecondaryOnly(id, accountId),
+				ExpectError: regexp.MustCompile(`cannot delete live PRIMARY node`),
+			},
+			{
+				// Restore the dependency edge between primary and secondary so the framework's
+				// final teardown destroys the SECONDARY before the PRIMARY, which the guard requires.
+				Config: testAccResourceGitopsAgentDrPrimarySecondary(id, accountId),
+			},
+		},
+	})
+}
+
+// Changing token_rotation on a DR-enrolled agent must be rejected at plan time: credential
+// rotation via RegenerateCredentials is not DR-aware.
+func TestAccResourceGitopsAgentDrTokenRotationGuard(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	resourceName := "harness_platform_gitops_agent.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsAgentDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsAgentDrTokenRotation(id, accountId, 0),
+			},
+			{
+				Config:      testAccResourceGitopsAgentDrTokenRotation(id, accountId, 1),
+				ExpectError: regexp.MustCompile(`field 'token_rotation' cannot be changed while 'disaster_recovery_identifier' is set`),
+			},
+		},
+	})
+}
+
+func testAccResourceGitopsAgentDrPrimarySecondary(id string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_agent" "primary" {
+			identifier = "%[1]sprimary"
+			account_id = "%[2]s"
+			name = "%[1]sprimary"
+			type = "MANAGED_ARGO_PROVIDER"
+			metadata {
+				namespace = "terraform-test"
+				high_availability = false
+			}
+			operator = "ARGO"
+			disaster_recovery_identifier = "%[1]s"
+			disaster_recovery_type = "PRIMARY"
+		}
+
+		resource "harness_platform_gitops_agent" "secondary" {
+			identifier = "%[1]ssecondary"
+			account_id = "%[2]s"
+			name = "%[1]ssecondary"
+			type = "MANAGED_ARGO_PROVIDER"
+			metadata {
+				namespace = "terraform-test"
+				high_availability = false
+			}
+			operator = "ARGO"
+			disaster_recovery_identifier = "%[1]s"
+			disaster_recovery_type = "SECONDARY"
+			depends_on = [harness_platform_gitops_agent.primary]
+		}
+		`, id, accountId)
+}
+
+func testAccResourceGitopsAgentDrSecondaryOnly(id string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_agent" "secondary" {
+			identifier = "%[1]ssecondary"
+			account_id = "%[2]s"
+			name = "%[1]ssecondary"
+			type = "MANAGED_ARGO_PROVIDER"
+			metadata {
+				namespace = "terraform-test"
+				high_availability = false
+			}
+			operator = "ARGO"
+			disaster_recovery_identifier = "%[1]s"
+			disaster_recovery_type = "SECONDARY"
+		}
+		`, id, accountId)
+}
+
+func testAccResourceGitopsAgentDrTokenRotation(id string, accountId string, tokenRotation int) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_agent" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			name = "%[1]s"
+			type = "MANAGED_ARGO_PROVIDER"
+			metadata {
+				namespace = "terraform-test"
+				high_availability = false
+			}
+			operator = "ARGO"
+			disaster_recovery_identifier = "%[1]s"
+			disaster_recovery_type = "PRIMARY"
+			token_rotation = %[3]d
+		}
+		`, id, accountId, tokenRotation)
+}
+
 func testAccGetAgent(resourceName string, state *terraform.State) (*nextgen.V1Agent, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()

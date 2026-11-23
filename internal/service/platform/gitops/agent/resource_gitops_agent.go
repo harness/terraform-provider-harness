@@ -412,11 +412,8 @@ func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta
 			if err != nil {
 				return helpers.HandleApiError(err, d, listHttpResp)
 			}
-			for _, sibling := range listResp.Content {
-				if sibling.DisasterRecoveryNode != nil && sibling.DisasterRecoveryNode.Type_ != nil &&
-					*sibling.DisasterRecoveryNode.Type_ == nextgen.SECONDARY_V1DisasterRecoveryType {
-					return diag.Errorf("cannot delete live PRIMARY node '%s' while SECONDARY sibling(s) still exist for disaster_recovery_identifier '%s' — promote a SECONDARY to PRIMARY first, or destroy the SECONDARY resource(s) first", agentIdentifier, drIdentifier)
-				}
+			if hasLiveSecondarySibling(listResp.Content) {
+				return diag.Errorf("cannot delete live PRIMARY node '%s' while SECONDARY sibling(s) still exist for disaster_recovery_identifier '%s' — promote a SECONDARY to PRIMARY first, or destroy the SECONDARY resource(s) first", agentIdentifier, drIdentifier)
 			}
 		}
 	}
@@ -435,6 +432,18 @@ func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 	return nil
+}
+
+// hasLiveSecondarySibling reports whether any agent in siblings is a live SECONDARY DR node.
+// Used to block deleting a live PRIMARY while a SECONDARY sibling still exists.
+func hasLiveSecondarySibling(siblings []nextgen.V1Agent) bool {
+	for _, sibling := range siblings {
+		if sibling.DisasterRecoveryNode != nil && sibling.DisasterRecoveryNode.Type_ != nil &&
+			*sibling.DisasterRecoveryNode.Type_ == nextgen.SECONDARY_V1DisasterRecoveryType {
+			return true
+		}
+	}
+	return false
 }
 
 // validateDisasterRecoveryDiff implements the CustomizeDiff rules for the disaster_recovery_identifier

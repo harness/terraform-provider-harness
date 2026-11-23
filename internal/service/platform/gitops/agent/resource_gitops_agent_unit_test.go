@@ -3,6 +3,7 @@ package agent
 import (
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/stretchr/testify/assert"
 )
@@ -92,6 +93,45 @@ func TestBuildCreateUpdateAgentRequestDisasterRecoveryNodeName(t *testing.T) {
 	assert.Equal(t, "dragent1", node.Identifier)
 	assert.Equal(t, "dragent1", node.Name, "DR node name must default to the identifier")
 	assert.Equal(t, "PRIMARY", string(*node.Type_))
+}
+
+func TestHasLiveSecondarySibling(t *testing.T) {
+	primaryType := nextgen.PRIMARY_V1DisasterRecoveryType
+	secondaryType := nextgen.SECONDARY_V1DisasterRecoveryType
+
+	tests := []struct {
+		name     string
+		siblings []nextgen.V1Agent
+		want     bool
+	}{
+		{name: "no siblings", siblings: nil, want: false},
+		{
+			name: "only primary siblings",
+			siblings: []nextgen.V1Agent{
+				{DisasterRecoveryNode: &nextgen.V1DisasterRecoveryNode{Type_: &primaryType}},
+			},
+			want: false,
+		},
+		{
+			name: "secondary sibling present",
+			siblings: []nextgen.V1Agent{
+				{DisasterRecoveryNode: &nextgen.V1DisasterRecoveryNode{Type_: &primaryType}},
+				{DisasterRecoveryNode: &nextgen.V1DisasterRecoveryNode{Type_: &secondaryType}},
+			},
+			want: true,
+		},
+		{
+			name:     "nil disaster recovery node is skipped",
+			siblings: []nextgen.V1Agent{{}},
+			want:     false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, hasLiveSecondarySibling(tt.siblings))
+		})
+	}
 }
 
 func TestValidateDisasterRecoveryDiff(t *testing.T) {
