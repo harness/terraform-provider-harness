@@ -99,7 +99,11 @@ collect_target_docs() {
         [ -z "$file" ] && continue
 
         case "$file" in
-            templates/*|main.go|go.mod|go.sum)
+            templates/*)
+                # Only templates/* changes affect every rendered page's
+                # structure. main.go/go.mod/go.sum carry no doc-visible
+                # schema content, so they shouldn't force a full-repo doc
+                # parity check against the existing docs/ backlog.
                 FULL_REGEN_REQUIRED="true"
                 DOCS_SCOPE="full"
                 continue
