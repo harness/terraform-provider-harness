@@ -1,0 +1,4 @@
+```release-note:enhancement
+data-source/harness_platform_pipeline: Return top-level store_type beside git details; keep nested git_details.store_type for upgrade compatibility.
+resource/harness_platform_pipeline: Return top-level store_type from the get pipeline API.
+```

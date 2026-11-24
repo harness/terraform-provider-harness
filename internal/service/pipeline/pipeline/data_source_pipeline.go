@@ -28,6 +28,11 @@ func DataSourcePipeline() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"store_type": {
+				Description: "Whether the pipeline is stored in Git. INLINE pipelines have no git details. Possible values: INLINE, REMOTE.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
 				Type:        schema.TypeList,
@@ -64,7 +69,7 @@ func DataSourcePipeline() *schema.Resource {
 							Computed:    true,
 						},
 						"store_type": {
-							Description: "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
+							Description: "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE. Prefer the top-level store_type attribute; kept here for backward compatibility.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -119,7 +124,6 @@ func dataSourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta in
 	project_id := d.Get("project_id").(string)
 	pipeline_id := d.Get("identifier").(string)
 	template_applied := d.Get("template_applied").(bool)
-	store_type := helpers.BuildField(d, "git_details.0.store_type")
 	base_branch := helpers.BuildField(d, "git_details.0.base_branch")
 	commit_message := helpers.BuildField(d, "git_details.0.commit_message")
 	connector_ref := helpers.BuildField(d, "git_details.0.connector_ref")
@@ -140,7 +144,7 @@ func dataSourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta in
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readPipeline(d, resp, org_id, project_id, template_applied, store_type, base_branch, commit_message, connector_ref)
+	readPipeline(d, resp, org_id, project_id, template_applied, optional.EmptyString(), base_branch, commit_message, connector_ref)
 
 	return nil
 }
