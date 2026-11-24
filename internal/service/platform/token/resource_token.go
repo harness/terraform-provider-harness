@@ -30,22 +30,26 @@ func ResourceToken() *schema.Resource {
 				Description: "Identifier of the API Key",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"apikey_type": {
 				Description:  "Type of the API Key",
 				Type:         schema.TypeString,
 				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validation.StringInSlice([]string{"USER", "SERVICE_ACCOUNT"}, false),
 			},
 			"parent_id": {
 				Description: "Parent Entity Identifier of the API Key",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"account_id": {
 				Description: "Account Identifier for the Entity",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"valid_from": {
 				Description: "This is the time from which the Token is valid. The time is in milliseconds",
@@ -64,13 +68,18 @@ func ResourceToken() *schema.Resource {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Computed:    true,
+				ForceNew:    true,
 			},
 			"valid": {
 				Description: "Boolean value to indicate if Token is valid or not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
+				ForceNew:    true,
 			},
+			// NOTE: email/username/encoded_password are create-only and the server
+			// never returns them on read. Making them ForceNew would cause a
+			// perpetual replacement loop, so they intentionally stay as-is.
 			"email": {
 				Description: "Email Id of the user who created the Token",
 				Type:        schema.TypeString,
@@ -95,6 +104,14 @@ func ResourceToken() *schema.Resource {
 		},
 	}
 	helpers.SetMultiLevelResourceSchema(resource.Schema)
+
+	// A token's identity is the composite of account, scope, apiKeyType,
+	// parentIdentifier, apiKeyIdentifier and identifier. The update API cannot
+	// move a token across any of these dimensions, so changing them must
+	// replace the resource instead of calling UpdateToken (which the server
+	// rejects). Same applies to create-only fields the server ignores on update.
+	resource.Schema["org_id"].ForceNew = true
+	resource.Schema["project_id"].ForceNew = true
 
 	return resource
 }
@@ -180,6 +197,11 @@ func resourceTokenDelete(ctx context.Context, d *schema.ResourceData, meta inter
 	})
 
 	if err != nil {
+		// A 404 on delete means the token is already gone (e.g. deleted out of
+		// band), which is the desired end state. Treat it as success.
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			return nil
+		}
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
