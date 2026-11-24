@@ -83,6 +83,12 @@ should_generate_docs() {
 collect_target_docs() {
     : > "$TARGET_DOCS_FILE"
 
+    if [ "$FORCE_DOCS" = "true" ]; then
+        FULL_REGEN_REQUIRED="true"
+        DOCS_SCOPE="full"
+        return 0
+    fi
+
     changed_files="$(get_changed_files)"
 
     if [ -z "$changed_files" ]; then
