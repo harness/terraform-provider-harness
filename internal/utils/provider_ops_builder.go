@@ -18,7 +18,7 @@ type ApiOpModel string
 
 const (
 	// AsyncApiOp means the API returns 2xx but observed state may lag;
-	// the framework polls until PollDefinition.ResourceComparator returns true.
+	// the framework polls until PollDefinition.ResourceComparatorFn returns true.
 	AsyncApiOp ApiOpModel = "async"
 	// SyncApiOp means the API response already reflects final state;
 	// no polling is performed after the mutation.
@@ -54,14 +54,13 @@ type ApplyStateMappingsFn func(observed ResourceState, d *schema.ResourceData) e
 
 type (
 	// ApiCallerFn performs a mutating operation (create, update, or delete).
-	ApiCallerFn func(context.Context, *schema.ResourceData, interface{}) error
+	// implData is the shared provider impl data injected by the framework.
+	ApiCallerFn func(context.Context, *schema.ResourceData, interface{}, ResourceProviderImplData) error
 	// ReadApiCallerFn fetches the current observed state from the remote API.
-	ReadApiCallerFn func(context.Context, *schema.ResourceData, interface{}) (ResourceState, error)
+	// implData is the shared provider impl data injected by the framework.
+	ReadApiCallerFn func(context.Context, *schema.ResourceData, interface{}, ResourceProviderImplData) (ResourceState, error)
 
-	// GetResourceProviderImplDataFn is the single shared fn evaluated for every callback.
-	GetResourceProviderImplDataFn func(context.Context, *schema.ResourceData, interface{}) (ResourceProviderImplData, error)
-
-	// GetResourceStateFn captures the desired state from Terraform config (d.Get only, no remote calls).
+// GetResourceStateFn captures the desired state from Terraform config (d.Get only, no remote calls).
 	GetResourceStateFn func(*schema.ResourceData) (ResourceState, error)
 
 	// ResourceStateComparatorFn compares desired and observed state; returns true when they have converged.
@@ -84,9 +83,9 @@ type PollDefinition struct {
 	MaxTimeout time.Duration
 	// PollFn is the remote API caller invoked on each poll attempt to fetch current observed state.
 	PollFn ReadApiCallerFn
-	// ResourceComparator compares desired state against the latest observed state;
+	// ResourceComparatorFn compares desired state against the latest observed state;
 	// returns true when the resource has converged.
-	ResourceComparator ResourceStateComparatorFn
+	ResourceComparatorFn ResourceStateComparatorFn
 }
 
 // ResourceOpDefinition holds fields common to all mutating operations (Create, Update, Delete).
@@ -105,6 +104,9 @@ type ResourceOpDefinition struct {
 	// ApplyStateMappings writes the observed post-op state into Terraform schema state.
 	// Called after convergence for AsyncApiOp; optional for SyncApiOp (no observed state produced).
 	ApplyStateMappings ApplyStateMappingsFn
+	// ProviderImplData is injected by the framework from ResourceProviderDefinition.ProviderImplData.
+	// Implementations type-assert this to access shared state such as a mutex.
+	ProviderImplData ResourceProviderImplData
 }
 
 // CreateOpApiDefinition describes the Create operation.
@@ -117,11 +119,13 @@ type CreateOpApiDefinition struct {
 // ReadOpApiDefinition describes the Read operation.
 type ReadOpApiDefinition struct {
 	ReadApiCallerFn ReadApiCallerFn
-	// HandleNotFound is called when the remote read returns a not-found signal.
+	// HandleNotFoundFn is called when the remote read returns a not-found signal.
 	// Return true to clear the resource ID (resource gone); false to leave state.
-	HandleNotFound func(ResourceState) bool
+	HandleNotFoundFn func(ResourceState) bool
 	// ApplyStateMappings writes the observed state into Terraform schema state.
 	ApplyStateMappings ApplyStateMappingsFn
+	// ProviderImplData is injected by the framework from ResourceProviderDefinition.ProviderImplData.
+	ProviderImplData ResourceProviderImplData
 }
 
 // UpdateOpApiDefinition describes the Update operation.
@@ -167,37 +171,42 @@ func NewResourceProvider(def ResourceProviderDefinition) (*schema.Resource, erro
 	if err := checkResourceProviderDefinition(def); err != nil {
 		return nil, err
 	}
-	implData := def.ProviderImplData
-	get := func(_ context.Context, _ *schema.ResourceData, _ interface{}) (ResourceProviderImplData, error) {
-		return implData, nil
-	}
 	r := &schema.Resource{
 		Description: def.Description,
 		Schema:      def.Schema,
 		Importer:    def.Import.toResourceImporter(),
 	}
-	setResourceProviderHandlers(r, def, get)
+	setResourceProviderHandlers(r, def)
 	return r, nil
 }
 
-func setResourceProviderHandlers(r *schema.Resource, def ResourceProviderDefinition, get GetResourceProviderImplDataFn) {
-	if def.Create.ApiCallerFn != nil {
-		r.CreateContext = setCreateOpHandler(def.Create, get)
+func setResourceProviderHandlers(r *schema.Resource, def ResourceProviderDefinition) {
+	create := def.Create
+	create.ProviderImplData = def.ProviderImplData
+	read := def.Read
+	read.ProviderImplData = def.ProviderImplData
+	update := def.Update
+	update.ProviderImplData = def.ProviderImplData
+	delete := def.Delete
+	delete.ProviderImplData = def.ProviderImplData
+
+	if create.ApiCallerFn != nil {
+		r.CreateContext = setCreateOpHandler(create)
 	} else {
 		r.CreateContext = notImplementedHandler("create")
 	}
-	if def.Read.ReadApiCallerFn != nil {
-		r.ReadContext = setReadOpHandler(def.Read, get)
+	if read.ReadApiCallerFn != nil {
+		r.ReadContext = setReadOpHandler(read)
 	} else {
 		r.ReadContext = notImplementedHandler("read")
 	}
-	if def.Update.ApiCallerFn != nil {
-		r.UpdateContext = setUpdateOpHandler(def.Update, get)
+	if update.ApiCallerFn != nil {
+		r.UpdateContext = setUpdateOpHandler(update)
 	} else {
 		r.UpdateContext = notImplementedHandler("update")
 	}
-	if def.Delete.ApiCallerFn != nil {
-		r.DeleteContext = setDeleteOpHandler(def.Delete, get)
+	if delete.ApiCallerFn != nil {
+		r.DeleteContext = setDeleteOpHandler(delete)
 	} else {
 		r.DeleteContext = notImplementedHandler("delete")
 	}
@@ -209,123 +218,128 @@ func notImplementedHandler(op string) func(context.Context, *schema.ResourceData
 	}
 }
 
-func setCreateOpHandler(op CreateOpApiDefinition, get GetResourceProviderImplDataFn) schema.CreateContextFunc {
+func setCreateOpHandler(op CreateOpApiDefinition) schema.CreateContextFunc {
 	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-		var desired ResourceState
-		if op.ApiOpModel == AsyncApiOp {
-			var err error
-			desired, err = op.DesiredState.ToStateFromSourceFn(d)
-			if err != nil {
-				return diag.FromErr(fmt.Errorf("capture desired state: %w", err))
-			}
-		}
-		_, err := withSettings(ctx, d, meta, get, func(c context.Context) (struct{}, error) {
-			return struct{}{}, op.ApiCallerFn(c, d, meta)
-		})
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("create remote resource: %w", err))
-		}
-		id, err := op.GetResourceID(d)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		d.SetId(id)
-		if op.ApiOpModel == AsyncApiOp {
-			observed, err := pollUntilConverged(ctx, d, meta, desired, *op.PollDefinition, get)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			if op.ApplyStateMappings != nil {
-				if err := op.ApplyStateMappings(observed, d); err != nil {
-					return diag.FromErr(err)
-				}
-			}
-		}
-		return nil
+		return handleCreateOp(op, ctx, d, meta)
 	}
 }
 
-func setReadOpHandler(op ReadOpApiDefinition, get GetResourceProviderImplDataFn) schema.ReadContextFunc {
+func setReadOpHandler(op ReadOpApiDefinition) schema.ReadContextFunc {
 	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-		observed, err := withSettings(ctx, d, meta, get, func(c context.Context) (ResourceState, error) {
-			return op.ReadApiCallerFn(c, d, meta)
-		})
+		return handleReadOp(op, ctx, d, meta)
+	}
+}
+
+func setUpdateOpHandler(op UpdateOpApiDefinition) schema.UpdateContextFunc {
+	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+		return handleUpdateOp(op, ctx, d, meta)
+	}
+}
+
+func setDeleteOpHandler(op DeleteOpApiDefinition) schema.DeleteContextFunc {
+	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+		return handleDeleteOp(op, ctx, d, meta)
+	}
+}
+
+func handleCreateOp(op CreateOpApiDefinition, ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	var desired ResourceState
+	if op.ApiOpModel == AsyncApiOp {
+		var err error
+		desired, err = op.DesiredState.ToStateFromSourceFn(d)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("read remote resource: %w", err))
+			return diag.FromErr(fmt.Errorf("capture desired state: %w", err))
 		}
-		if op.HandleNotFound != nil && op.HandleNotFound(observed) {
-			d.SetId("")
-			return nil
+	}
+	if err := op.ApiCallerFn(ctx, d, meta, op.ProviderImplData); err != nil {
+		return diag.FromErr(fmt.Errorf("create remote resource: %w", err))
+	}
+	id, err := op.GetResourceID(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.SetId(id)
+	if op.ApiOpModel == AsyncApiOp {
+		observed, err := pollUntilConverged(ctx, d, meta, desired, *op.PollDefinition, op.ProviderImplData)
+		if err != nil {
+			return diag.FromErr(err)
 		}
 		if op.ApplyStateMappings != nil {
 			if err := op.ApplyStateMappings(observed, d); err != nil {
 				return diag.FromErr(err)
 			}
 		}
-		return nil
 	}
+	return nil
 }
 
-func setUpdateOpHandler(op UpdateOpApiDefinition, get GetResourceProviderImplDataFn) schema.UpdateContextFunc {
-	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-		var desired ResourceState
-		if op.ApiOpModel == AsyncApiOp {
-			var err error
-			desired, err = op.DesiredState.ToStateFromSourceFn(d)
-			if err != nil {
-				return diag.FromErr(fmt.Errorf("capture desired state: %w", err))
-			}
-		}
-		_, err := withSettings(ctx, d, meta, get, func(c context.Context) (struct{}, error) {
-			return struct{}{}, op.ApiCallerFn(c, d, meta)
-		})
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("update remote resource: %w", err))
-		}
-		if op.ApiOpModel == AsyncApiOp {
-			observed, err := pollUntilConverged(ctx, d, meta, desired, *op.PollDefinition, get)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			if op.ApplyStateMappings != nil {
-				if err := op.ApplyStateMappings(observed, d); err != nil {
-					return diag.FromErr(err)
-				}
-			}
-		}
+func handleReadOp(op ReadOpApiDefinition, ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	observed, err := op.ReadApiCallerFn(ctx, d, meta, op.ProviderImplData)
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("read remote resource: %w", err))
+	}
+	if op.HandleNotFoundFn != nil && op.HandleNotFoundFn(observed) {
+		d.SetId("")
 		return nil
 	}
+	if op.ApplyStateMappings != nil {
+		if err := op.ApplyStateMappings(observed, d); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+	return nil
 }
 
-func setDeleteOpHandler(op DeleteOpApiDefinition, get GetResourceProviderImplDataFn) schema.DeleteContextFunc {
-	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-		var desired ResourceState
-		if op.ApiOpModel == AsyncApiOp {
-			var err error
-			desired, err = op.DesiredState.ToStateFromSourceFn(d)
-			if err != nil {
-				return diag.FromErr(fmt.Errorf("capture desired state: %w", err))
-			}
-		}
-		_, err := withSettings(ctx, d, meta, get, func(c context.Context) (struct{}, error) {
-			return struct{}{}, op.ApiCallerFn(c, d, meta)
-		})
+func handleUpdateOp(op UpdateOpApiDefinition, ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	var desired ResourceState
+	if op.ApiOpModel == AsyncApiOp {
+		var err error
+		desired, err = op.DesiredState.ToStateFromSourceFn(d)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("delete remote resource: %w", err))
+			return diag.FromErr(fmt.Errorf("capture desired state: %w", err))
 		}
-		if op.ApiOpModel == AsyncApiOp {
-			observed, err := pollUntilConverged(ctx, d, meta, desired, *op.PollDefinition, get)
-			if err != nil {
+	}
+	if err := op.ApiCallerFn(ctx, d, meta, op.ProviderImplData); err != nil {
+		return diag.FromErr(fmt.Errorf("update remote resource: %w", err))
+	}
+	if op.ApiOpModel == AsyncApiOp {
+		observed, err := pollUntilConverged(ctx, d, meta, desired, *op.PollDefinition, op.ProviderImplData)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		if op.ApplyStateMappings != nil {
+			if err := op.ApplyStateMappings(observed, d); err != nil {
 				return diag.FromErr(err)
 			}
-			if op.ApplyStateMappings != nil {
-				if err := op.ApplyStateMappings(observed, d); err != nil {
-					return diag.FromErr(err)
-				}
+		}
+	}
+	return nil
+}
+
+func handleDeleteOp(op DeleteOpApiDefinition, ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	var desired ResourceState
+	if op.ApiOpModel == AsyncApiOp {
+		var err error
+		desired, err = op.DesiredState.ToStateFromSourceFn(d)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("capture desired state: %w", err))
+		}
+	}
+	if err := op.ApiCallerFn(ctx, d, meta, op.ProviderImplData); err != nil {
+		return diag.FromErr(fmt.Errorf("delete remote resource: %w", err))
+	}
+	if op.ApiOpModel == AsyncApiOp {
+		observed, err := pollUntilConverged(ctx, d, meta, desired, *op.PollDefinition, op.ProviderImplData)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		if op.ApplyStateMappings != nil {
+			if err := op.ApplyStateMappings(observed, d); err != nil {
+				return diag.FromErr(err)
 			}
 		}
-		return nil
 	}
+	return nil
 }
 
 func checkResourceProviderDefinition(def ResourceProviderDefinition) error {
@@ -402,8 +416,8 @@ func isPollDefinitionMissing(p *PollDefinition) error {
 	if p == nil {
 		return errors.New("PollDefinition is required for AsyncApiOp")
 	}
-	if p.PollFn == nil || p.ResourceComparator == nil {
-		return errors.New("PollFn and ResourceComparator are required")
+	if p.PollFn == nil || p.ResourceComparatorFn == nil {
+		return errors.New("PollFn and ResourceComparatorFn are required")
 	}
 	if p.MaxAttempts == 0 && p.MaxTimeout == 0 {
 		return errors.New("specify MaxAttempts or MaxTimeout")
@@ -411,16 +425,7 @@ func isPollDefinitionMissing(p *PollDefinition) error {
 	return nil
 }
 
-// withSettings invokes fn after fetching the shared impl data for the callback.
-func withSettings[T any](ctx context.Context, d *schema.ResourceData, meta interface{}, get GetResourceProviderImplDataFn, fn func(context.Context) (T, error)) (T, error) {
-	if _, err := get(ctx, d, meta); err != nil {
-		var zero T
-		return zero, err
-	}
-	return fn(ctx)
-}
-
-func pollUntilConverged(ctx context.Context, d *schema.ResourceData, meta interface{}, desired ResourceState, p PollDefinition, get GetResourceProviderImplDataFn) (ResourceState, error) {
+func pollUntilConverged(ctx context.Context, d *schema.ResourceData, meta interface{}, desired ResourceState, p PollDefinition, implData ResourceProviderImplData) (ResourceState, error) {
 	if p.MaxTimeout > 0 {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, p.MaxTimeout)
@@ -435,14 +440,12 @@ func pollUntilConverged(ctx context.Context, d *schema.ResourceData, meta interf
 		if p.EachPollTimeout > 0 {
 			attemptCtx, cancelAttempt = context.WithTimeout(ctx, p.EachPollTimeout)
 		}
-		observed, err := withSettings(attemptCtx, d, meta, get, func(c context.Context) (ResourceState, error) {
-			return p.PollFn(c, d, meta)
-		})
+		observed, err := p.PollFn(attemptCtx, d, meta, implData)
 		cancelAttempt()
 		if err != nil {
 			return nil, fmt.Errorf("poll attempt %d: %w", attempt, err)
 		}
-		done, err := p.ResourceComparator(desired, observed)
+		done, err := p.ResourceComparatorFn(desired, observed)
 		if err != nil {
 			return nil, fmt.Errorf("compare attempt %d: %w", attempt, err)
 		}

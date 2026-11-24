@@ -20,9 +20,10 @@ import (
 const workspaceDriftConfigResourceAddress = "harness_platform_iacm_workspace_drift_config.test"
 
 var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contractv1.ContractDefinition {
-	// Each test gets a unique prime run_every so stale GET values can be fingerprinted
+	// Each test gets a unique run_every so stale GET values can be fingerprinted
 	// to the exact prior test that wrote them, isolating backend consistency issues.
-	// minutes unit: valid 1-59  → primes 2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59
+	// Backend constraint: for */N cron, min(N, 60 mod N) >= 5 (wrap-around gap must be >= 5 min).
+	// Invalid examples: 2,3,7,8,14,19,28,29,56,57,58,59 — all fail the cron gap check.
 	mins := func(runEvery, updatedRunEvery int32) workspaceDriftConfigTests {
 		q := p
 		q.runEvery = runEvery
@@ -39,8 +40,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			PreTestDelay:  5 * time.Second,
 			PostTestDelay: 5 * time.Second,
 
-			GetTerraformConfig: mins(2, 3).GetCreateResourceTfConfig,
-			Verifiers:          contractv1.VerifierDefinition{VerifyCreated: mins(2, 3).verifyCreated},
+			GetTerraformConfig: mins(5, 6).GetCreateResourceTfConfig,
+			Verifiers:          contractv1.VerifierDefinition{VerifyCreated: mins(5, 6).verifyCreated},
 		},
 		{
 			TestName:      contractv1.TestReadResource,
@@ -84,12 +85,12 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			PreTestDelay:  5 * time.Second,
 			PostTestDelay: 5 * time.Second,
 
-			GetTerraformConfig:        mins(23, 29).GetCreateResourceTfConfig,
-			GetUpdatedTerraformConfig: mins(23, 29).GetUpdatedTerraformConfig,
+			GetTerraformConfig:        mins(25, 30).GetCreateResourceTfConfig,
+			GetUpdatedTerraformConfig: mins(25, 30).GetUpdatedTerraformConfig,
 			Verifiers: contractv1.VerifierDefinition{
-				VerifyCreated: mins(23, 29).verifyCreated,
-				VerifyUpdated: mins(23, 29).verifyUpdated,
-				VerifyDeleted: mins(23, 29).verifyDeleted,
+				VerifyCreated: mins(25, 30).verifyCreated,
+				VerifyUpdated: mins(25, 30).verifyUpdated,
+				VerifyDeleted: mins(25, 30).verifyDeleted,
 			},
 		},
 		{
@@ -134,8 +135,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			PreTestDelay:  5 * time.Second,
 			PostTestDelay: 5 * time.Second,
 
-			GetTerraformConfig: mins(59, 22).GetCreateResourceTfConfig,
-			ExternalAction:     mins(59, 22).externalUpdateAction,
+			GetTerraformConfig: mins(55, 20).GetCreateResourceTfConfig,
+			ExternalAction:     mins(55, 20).externalUpdateAction,
 		},
 		{
 			TestName:      contractv1.TestInvalidConfigurationResource,
@@ -156,10 +157,10 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			PreTestDelay:  5 * time.Second,
 			PostTestDelay: 5 * time.Second,
 
-			GetTerraformConfig: mins(28, 30).GetCreateResourceTfConfig,
+			GetTerraformConfig: mins(27, 33).GetCreateResourceTfConfig,
 			ResourceName:       workspaceDriftConfigResourceAddress,
 			GetImportID:        p.getNonExistentImportID,
-			ExpectError:        regexp.MustCompile(`(?i)(no resource|not found|provider produced|empty|cannot import)`),
+			ExpectError:        regexp.MustCompile(`(?i)(no resource|not found|does not exist|provider produced|empty|cannot import)`),
 		},
 
 		// Unsupported tests — skipped with explicit reasons.

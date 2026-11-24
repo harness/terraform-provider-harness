@@ -2,9 +2,10 @@ package iacm
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -13,10 +14,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var workspaceDriftMutex sync.Mutex
-
 type workspaceDriftImplData struct {
-	mu *sync.Mutex
+	DebugLevel string
 }
 
 type workspaceDriftState struct {
@@ -32,15 +31,16 @@ const (
 )
 
 func ResourceIacmWorkspaceDriftConfig() *schema.Resource {
+
 	resource, err := resourcebuilder.NewResourceProvider(resourcebuilder.ResourceProviderDefinition{
 		Description:      ResourceIacmWorkspaceDriftConfigDescription,
 		Schema:           workspaceDriftSchema(),
-		ProviderImplData: workspaceDriftImplData{mu: &workspaceDriftMutex},
-		Import:                      newWorkspaceDriftImportOp(),
-		Create:                      newWorkspaceDriftCreateOp(),
-		Read:                        newWorkspaceDriftReadOp(),
-		Update:                      newWorkspaceDriftUpdateOp(),
-		Delete:                      newWorkspaceDriftDeleteOp(),
+		ProviderImplData: workspaceDriftImplData{DebugLevel: "info"},
+		Import:           newWorkspaceDriftImportOp(),
+		Create:           newWorkspaceDriftCreateOp(),
+		Read:             newWorkspaceDriftReadOp(),
+		Update:           newWorkspaceDriftUpdateOp(),
+		Delete:           newWorkspaceDriftDeleteOp(),
 	})
 	if err != nil {
 		panic(fmt.Sprintf("invalid IaCM workspace drift resource: %v", err))
@@ -67,7 +67,7 @@ func newWorkspaceDriftCreateOp() resourcebuilder.CreateOpApiDefinition {
 func newWorkspaceDriftReadOp() resourcebuilder.ReadOpApiDefinition {
 	return resourcebuilder.ReadOpApiDefinition{
 		ReadApiCallerFn:    readWorkspaceDriftImpl,
-		HandleNotFound:     workspaceDriftHandleNotFoundImpl,
+		HandleNotFoundFn:   workspaceDriftHandleNotFoundImpl,
 		ApplyStateMappings: applyWorkspaceDriftReadMappingsImpl,
 	}
 }
@@ -110,13 +110,13 @@ func newWorkspaceDriftImportOp() resourcebuilder.ImportOpDefinition {
 
 func workspaceDriftPollDef(comparator resourcebuilder.ResourceStateComparatorFn) *resourcebuilder.PollDefinition {
 	return &resourcebuilder.PollDefinition{
-		InitialWait:        30 * time.Millisecond,
-		PollInterval:       500 * time.Millisecond,
-		MaxAttempts:        36,
-		EachPollTimeout:    1500 * time.Millisecond,
-		MaxTimeout:         3 * time.Minute,
-		PollFn:             readWorkspaceDriftImpl,
-		ResourceComparator: comparator,
+		InitialWait:          30 * time.Millisecond,
+		PollInterval:         500 * time.Millisecond,
+		MaxAttempts:          36,
+		EachPollTimeout:      1500 * time.Millisecond,
+		MaxTimeout:           3 * time.Minute,
+		PollFn:               readWorkspaceDriftImpl,
+		ResourceComparatorFn: comparator,
 	}
 }
 
@@ -241,7 +241,25 @@ func getWorkspaceDriftDeleteDesiredStateImpl(_ *schema.ResourceData) (resourcebu
 	return workspaceDriftState{Enabled: false}, nil
 }
 
-func createWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+// swaggerErrMessage extracts the human-readable message from a nextgen.GenericSwaggerError
+// whose Error() returns "" because the response body uses the Goa error envelope format
+// rather than the Failure/AuthzFailure/ModelError formats the SDK knows about.
+func swaggerErrMessage(err error) error {
+	type goaEnvelope struct {
+		Message string `json:"message"`
+	}
+	type bodyAccessor interface{ Body() []byte }
+	if ba, ok := err.(bodyAccessor); ok {
+		var envelope goaEnvelope
+		if jsonErr := json.Unmarshal(ba.Body(), &envelope); jsonErr == nil && envelope.Message != "" {
+			return fmt.Errorf("%s", envelope.Message)
+		}
+	}
+	return err
+}
+
+func createWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta interface{}, implData resourcebuilder.ResourceProviderImplData) error {
+	impl := implData.(workspaceDriftImplData)
 	client, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	response, err := client.IacmWorkspaceDriftConfigApi.UpsertIacmWorkspaceDriftConfig(
 		ctx, client.AccountId,
@@ -256,10 +274,15 @@ func createWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta 
 	if response != nil && response.Body != nil {
 		defer response.Body.Close()
 	}
+	if err != nil {
+		err = swaggerErrMessage(err)
+		log.Printf("[%s] createWorkspaceDriftImpl: error: %v", impl.DebugLevel, err)
+	}
 	return err
 }
 
-func deleteWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+func deleteWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta interface{}, implData resourcebuilder.ResourceProviderImplData) error {
+	impl := implData.(workspaceDriftImplData)
 	client, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	response, err := client.IacmWorkspaceDriftConfigApi.DisableIacmWorkspaceDriftConfig(
 		ctx, client.AccountId,
@@ -269,10 +292,15 @@ func deleteWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta 
 	if response != nil && response.Body != nil {
 		defer response.Body.Close()
 	}
+	if err != nil {
+		err = swaggerErrMessage(err)
+		log.Printf("[%s] deleteWorkspaceDriftImpl: error: %v", impl.DebugLevel, err)
+	}
 	return err
 }
 
-func readWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta interface{}) (resourcebuilder.ResourceState, error) {
+func readWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta interface{}, implData resourcebuilder.ResourceProviderImplData) (resourcebuilder.ResourceState, error) {
+	impl := implData.(workspaceDriftImplData)
 	client, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	result, response, err := client.IacmWorkspaceDriftConfigApi.GetIacmWorkspaceDriftConfig(
 		ctx, client.AccountId,
@@ -283,6 +311,8 @@ func readWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta in
 		defer response.Body.Close()
 	}
 	if err != nil {
+		err = swaggerErrMessage(err)
+		log.Printf("[%s] readWorkspaceDriftImpl: error: %v", impl.DebugLevel, err)
 		return nil, err
 	}
 	return workspaceDriftState{
