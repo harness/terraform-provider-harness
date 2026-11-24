@@ -27,17 +27,15 @@ type workspaceDriftState struct {
 	TriggerID    string
 }
 
-func ResourceIacmWorkspaceDriftConfig() *schema.Resource {
-	implData := workspaceDriftImplData{mu: &workspaceDriftMutex}
-	getSettings := func(_ context.Context, _ *schema.ResourceData, _ interface{}) (resourcebuilder.ResourceProviderImplData, error) {
-		return implData, nil
-	}
+const (
+	ResourceIacmWorkspaceDriftConfigDescription = "Resource for IaCM workspace-level drift detection configuration"
+)
 
+func ResourceIacmWorkspaceDriftConfig() *schema.Resource {
 	resource, err := resourcebuilder.NewResourceProvider(resourcebuilder.ResourceProviderDefinition{
-		Description:                 "Resource for managing IaCM workspace-level drift detection configuration. Enables scheduled drift detection for an individual workspace for a given provisioner.",
-		Schema:                      workspaceDriftSchema(),
-		GetResourceProviderImplData: getSettings,
-		ApplyStateMappings:          applyWorkspaceDriftStateMappings,
+		Description:      ResourceIacmWorkspaceDriftConfigDescription,
+		Schema:           workspaceDriftSchema(),
+		ProviderImplData: workspaceDriftImplData{mu: &workspaceDriftMutex},
 		Import:                      newWorkspaceDriftImportOp(),
 		Create:                      newWorkspaceDriftCreateOp(),
 		Read:                        newWorkspaceDriftReadOp(),
@@ -52,45 +50,61 @@ func ResourceIacmWorkspaceDriftConfig() *schema.Resource {
 
 func newWorkspaceDriftCreateOp() resourcebuilder.CreateOpApiDefinition {
 	return resourcebuilder.CreateOpApiDefinition{
-		ConsistencyModel:   resourcebuilder.EventuallyConsistent,
-		CreateApiCallerFn:  createWorkspaceDriftImpl,
-		DesiredStateSource: resourcebuilder.SourceTerraformConfig,
-		GetResourceStateFn: getWorkspaceDriftStateFromTerraformConfig,
-		PollDefinition:     workspaceDriftPollDef(compareWorkspaceDriftCreateState),
-		GetResourceID:      getWorkspaceDriftResourceID,
+		ResourceOpDefinition: resourcebuilder.ResourceOpDefinition{
+			ApiOpModel:  resourcebuilder.AsyncApiOp,
+			ApiCallerFn: createWorkspaceDriftImpl,
+			DesiredState: resourcebuilder.DesiredResourceState{
+				Source:              resourcebuilder.SourceTerraformConfig,
+				ToStateFromSourceFn: getWorkspaceDriftStateFromTerraformConfigImpl,
+			},
+			PollDefinition:     workspaceDriftPollDef(compareWorkspaceDriftCreateStateImpl),
+			ApplyStateMappings: applyWorkspaceDriftCreateMappingsImpl,
+		},
+		GetResourceID: getWorkspaceDriftResourceIDImpl,
 	}
 }
 
 func newWorkspaceDriftReadOp() resourcebuilder.ReadOpApiDefinition {
 	return resourcebuilder.ReadOpApiDefinition{
-		ReadApiCallerFn: readWorkspaceDriftImpl,
-		HandleNotFound:  workspaceDriftHandleNotFound,
+		ReadApiCallerFn:    readWorkspaceDriftImpl,
+		HandleNotFound:     workspaceDriftHandleNotFoundImpl,
+		ApplyStateMappings: applyWorkspaceDriftReadMappingsImpl,
 	}
 }
 
 func newWorkspaceDriftUpdateOp() resourcebuilder.UpdateOpApiDefinition {
 	return resourcebuilder.UpdateOpApiDefinition{
-		ConsistencyModel:   resourcebuilder.EventuallyConsistent,
-		UpdateApiCallerFn:  createWorkspaceDriftImpl,
-		DesiredStateSource: resourcebuilder.SourceTerraformConfig,
-		GetResourceStateFn: getWorkspaceDriftStateFromTerraformConfig,
-		PollDefinition:     workspaceDriftPollDef(compareWorkspaceDriftUpdateState),
+		ResourceOpDefinition: resourcebuilder.ResourceOpDefinition{
+			ApiOpModel:  resourcebuilder.AsyncApiOp,
+			ApiCallerFn: createWorkspaceDriftImpl,
+			DesiredState: resourcebuilder.DesiredResourceState{
+				Source:              resourcebuilder.SourceTerraformConfig,
+				ToStateFromSourceFn: getWorkspaceDriftStateFromTerraformConfigImpl,
+			},
+			PollDefinition:     workspaceDriftPollDef(compareWorkspaceDriftUpdateStateImpl),
+			ApplyStateMappings: applyWorkspaceDriftUpdateMappingsImpl,
+		},
 	}
 }
 
 func newWorkspaceDriftDeleteOp() resourcebuilder.DeleteOpApiDefinition {
 	return resourcebuilder.DeleteOpApiDefinition{
-		ConsistencyModel:   resourcebuilder.EventuallyConsistent,
-		DeleteApiCallerFn:  deleteWorkspaceDriftImpl,
-		DesiredStateSource: resourcebuilder.SourceTerraformConfig,
-		GetResourceStateFn: getWorkspaceDriftDeleteDesiredState,
-		PollDefinition:     workspaceDriftPollDef(compareWorkspaceDriftDeleteState),
+		ResourceOpDefinition: resourcebuilder.ResourceOpDefinition{
+			ApiOpModel:  resourcebuilder.AsyncApiOp,
+			ApiCallerFn: deleteWorkspaceDriftImpl,
+			DesiredState: resourcebuilder.DesiredResourceState{
+				Source:              resourcebuilder.SourceTerraformConfig,
+				ToStateFromSourceFn: getWorkspaceDriftDeleteDesiredStateImpl,
+			},
+			PollDefinition:     workspaceDriftPollDef(compareWorkspaceDriftDeleteStateImpl),
+			ApplyStateMappings: applyWorkspaceDriftDeleteMappingsImpl,
+		},
 	}
 }
 
 func newWorkspaceDriftImportOp() resourcebuilder.ImportOpDefinition {
 	return resourcebuilder.ImportOpDefinition{
-		ImporterFn: workspaceDriftImporter,
+		ImporterFn: workspaceDriftImporterImpl,
 	}
 }
 
@@ -160,10 +174,10 @@ func workspaceDriftSchema() map[string]*schema.Schema {
 	}
 }
 
-func applyWorkspaceDriftStateMappings(opType resourcebuilder.ResourceProviderOpType, observedSource resourcebuilder.ObservedStateSource, observed resourcebuilder.ResourceState, d *schema.ResourceData) error {
+func applyWorkspaceDriftCreateMappingsImpl(observed resourcebuilder.ResourceState, d *schema.ResourceData) error {
 	s, ok := observed.(workspaceDriftState)
 	if !ok {
-		return fmt.Errorf("applyWorkspaceDriftStateMappings: unexpected state type %T", observed)
+		return fmt.Errorf("applyWorkspaceDriftCreateMappingsImpl: unexpected state type %T", observed)
 	}
 	for attr, val := range map[string]interface{}{
 		"enabled":        s.Enabled,
@@ -179,7 +193,23 @@ func applyWorkspaceDriftStateMappings(opType resourcebuilder.ResourceProviderOpT
 	return nil
 }
 
-func workspaceDriftImporter(_ context.Context, d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
+func applyWorkspaceDriftReadMappingsImpl(observed resourcebuilder.ResourceState, d *schema.ResourceData) error {
+	return applyWorkspaceDriftCreateMappingsImpl(observed, d)
+}
+
+func applyWorkspaceDriftUpdateMappingsImpl(observed resourcebuilder.ResourceState, d *schema.ResourceData) error {
+	return applyWorkspaceDriftCreateMappingsImpl(observed, d)
+}
+
+func applyWorkspaceDriftDeleteMappingsImpl(observed resourcebuilder.ResourceState, d *schema.ResourceData) error {
+	s, ok := observed.(workspaceDriftState)
+	if !ok {
+		return fmt.Errorf("applyWorkspaceDriftDeleteMappingsImpl: unexpected state type %T", observed)
+	}
+	return d.Set("enabled", s.Enabled)
+}
+
+func workspaceDriftImporterImpl(_ context.Context, d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
 	parts := strings.SplitN(d.Id(), "/", 4)
 	if len(parts) != 4 || parts[0] == "" || parts[1] == "" || parts[2] == "" || parts[3] == "" {
 		return nil, fmt.Errorf("invalid import ID %q: expected org_id/project_id/workspace_id/provisioner_type", d.Id())
@@ -199,7 +229,7 @@ func workspaceDriftImporter(_ context.Context, d *schema.ResourceData, _ interfa
 	return []*schema.ResourceData{d}, nil
 }
 
-func getWorkspaceDriftStateFromTerraformConfig(d *schema.ResourceData) (resourcebuilder.ResourceState, error) {
+func getWorkspaceDriftStateFromTerraformConfigImpl(d *schema.ResourceData) (resourcebuilder.ResourceState, error) {
 	return workspaceDriftState{
 		PipelineID:   d.Get("pipeline_id").(string),
 		RunEvery:     int32(d.Get("run_every").(int)),
@@ -207,7 +237,7 @@ func getWorkspaceDriftStateFromTerraformConfig(d *schema.ResourceData) (resource
 	}, nil
 }
 
-func getWorkspaceDriftDeleteDesiredState(_ *schema.ResourceData) (resourcebuilder.ResourceState, error) {
+func getWorkspaceDriftDeleteDesiredStateImpl(_ *schema.ResourceData) (resourcebuilder.ResourceState, error) {
 	return workspaceDriftState{Enabled: false}, nil
 }
 
@@ -242,8 +272,6 @@ func deleteWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta 
 	return err
 }
 
-// readWorkspaceDriftImpl fetches current state from the remote API.
-// Also used as PollFn — no duplicate remote-read adapter needed.
 func readWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta interface{}) (resourcebuilder.ResourceState, error) {
 	client, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	result, response, err := client.IacmWorkspaceDriftConfigApi.GetIacmWorkspaceDriftConfig(
@@ -266,12 +294,12 @@ func readWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta in
 	}, nil
 }
 
-func workspaceDriftHandleNotFound(observed resourcebuilder.ResourceState) bool {
+func workspaceDriftHandleNotFoundImpl(observed resourcebuilder.ResourceState) bool {
 	s, ok := observed.(workspaceDriftState)
 	return ok && !s.Enabled
 }
 
-func compareWorkspaceDriftCreateState(expected, actual resourcebuilder.ResourceState) (bool, error) {
+func compareWorkspaceDriftCreateStateImpl(expected, actual resourcebuilder.ResourceState) (bool, error) {
 	want, ok := expected.(workspaceDriftState)
 	if !ok {
 		return false, fmt.Errorf("unexpected desired state %T", expected)
@@ -286,12 +314,12 @@ func compareWorkspaceDriftCreateState(expected, actual resourcebuilder.ResourceS
 		got.RunEveryUnit == want.RunEveryUnit, nil
 }
 
-func compareWorkspaceDriftUpdateState(expected, actual resourcebuilder.ResourceState) (bool, error) {
-	return compareWorkspaceDriftCreateState(expected, actual)
+func compareWorkspaceDriftUpdateStateImpl(expected, actual resourcebuilder.ResourceState) (bool, error) {
+	return compareWorkspaceDriftCreateStateImpl(expected, actual)
 }
 
-func compareWorkspaceDriftDeleteState(expected, actual resourcebuilder.ResourceState) (bool, error) {
-	_, ok := expected.(workspaceDriftState)
+func compareWorkspaceDriftDeleteStateImpl(expected, actual resourcebuilder.ResourceState) (bool, error) {
+	want, ok := expected.(workspaceDriftState)
 	if !ok {
 		return false, fmt.Errorf("unexpected desired state %T", expected)
 	}
@@ -299,10 +327,10 @@ func compareWorkspaceDriftDeleteState(expected, actual resourcebuilder.ResourceS
 	if !ok {
 		return false, fmt.Errorf("unexpected observed state %T", actual)
 	}
-	return !got.Enabled, nil
+	return got.Enabled == want.Enabled, nil
 }
 
-func getWorkspaceDriftResourceID(d *schema.ResourceData) (string, error) {
+func getWorkspaceDriftResourceIDImpl(d *schema.ResourceData) (string, error) {
 	return strings.Join([]string{
 		d.Get("org_id").(string), d.Get("project_id").(string),
 		d.Get("workspace_id").(string), d.Get("provisioner_type").(string),
