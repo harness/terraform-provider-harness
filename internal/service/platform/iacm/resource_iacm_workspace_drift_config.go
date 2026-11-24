@@ -241,19 +241,14 @@ func getWorkspaceDriftDeleteDesiredStateImpl(_ *schema.ResourceData) (resourcebu
 	return workspaceDriftState{Enabled: false}, nil
 }
 
-// swaggerErrMessage extracts the human-readable message from a nextgen.GenericSwaggerError
-// whose Error() returns "" because the response body uses the Goa error envelope format
-// rather than the Failure/AuthzFailure/ModelError formats the SDK knows about.
-func swaggerErrMessage(err error) error {
-	type goaEnvelope struct {
-		Message string `json:"message"`
+func unmarshalIacmErrMsg(err error) error {
+	se, ok := err.(nextgen.GenericSwaggerError)
+	if !ok {
+		return err
 	}
-	type bodyAccessor interface{ Body() []byte }
-	if ba, ok := err.(bodyAccessor); ok {
-		var envelope goaEnvelope
-		if jsonErr := json.Unmarshal(ba.Body(), &envelope); jsonErr == nil && envelope.Message != "" {
-			return fmt.Errorf("%s", envelope.Message)
-		}
+	iacmErr := nextgen.IacmError{}
+	if jsonErr := json.Unmarshal(se.Body(), &iacmErr); jsonErr == nil && iacmErr.Message != "" {
+		return fmt.Errorf("%s", iacmErr.Message)
 	}
 	return err
 }
@@ -275,7 +270,7 @@ func createWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta 
 		defer response.Body.Close()
 	}
 	if err != nil {
-		err = swaggerErrMessage(err)
+		err = unmarshalIacmErrMsg(err)
 		log.Printf("[%s] createWorkspaceDriftImpl: error: %v", impl.DebugLevel, err)
 	}
 	return err
@@ -293,7 +288,7 @@ func deleteWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta 
 		defer response.Body.Close()
 	}
 	if err != nil {
-		err = swaggerErrMessage(err)
+		err = unmarshalIacmErrMsg(err)
 		log.Printf("[%s] deleteWorkspaceDriftImpl: error: %v", impl.DebugLevel, err)
 	}
 	return err
@@ -311,7 +306,7 @@ func readWorkspaceDriftImpl(ctx context.Context, d *schema.ResourceData, meta in
 		defer response.Body.Close()
 	}
 	if err != nil {
-		err = swaggerErrMessage(err)
+		err = unmarshalIacmErrMsg(err)
 		log.Printf("[%s] readWorkspaceDriftImpl: error: %v", impl.DebugLevel, err)
 		return nil, err
 	}
