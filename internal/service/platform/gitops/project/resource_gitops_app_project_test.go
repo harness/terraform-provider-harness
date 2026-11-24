@@ -229,3 +229,85 @@ func testAccResourceGitopsProjectAccountLevelUpdate(agentId string, agentNamespa
 		}
 	`, accountId, agentId, name, namespace, agentNamespace)
 }
+
+// TestAccResourceGitopsProjectDestinationServiceAccounts checks that
+// destination_service_accounts is stored on create, changed on update, and
+// returned on import. It talks to a live GitOps agent and is skipped unless
+// TF_ACC=1.
+//
+//	export HARNESS_ENDPOINT=https://qa.harness.io/gateway
+//	export HARNESS_ACCOUNT_ID=...
+//	export HARNESS_PLATFORM_API_KEY=...
+//	export HARNESS_TEST_GITOPS_AGENT_ID=account.<agent-id>
+//	export HARNESS_TEST_GITOPS_AGENT_NAMESPACE=<namespace where the agent is installed>
+//	TF_ACC=1 go test ./internal/service/platform/gitops/project/ -count=1 -timeout 20m -run TestAccResourceGitopsProjectDestinationServiceAccounts
+func TestAccResourceGitopsProjectDestinationServiceAccounts(t *testing.T) {
+	name := strings.ToLower(strings.ReplaceAll("dsa"+utils.RandStringBytes(6), "_", ""))
+	agentID := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	agentNamespace := os.Getenv("HARNESS_TEST_GITOPS_AGENT_NAMESPACE")
+	accountID := os.Getenv("HARNESS_ACCOUNT_ID")
+	resourceName := "harness_platform_gitops_app_project.test"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			if agentID == "" || agentNamespace == "" {
+				t.Fatal("HARNESS_TEST_GITOPS_AGENT_ID and HARNESS_TEST_GITOPS_AGENT_NAMESPACE must be set")
+			}
+		},
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccGitopsProjectDestinationServiceAccounts(agentID, agentNamespace, accountID, name, "argocd-deployer"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "project.0.spec.0.destination_service_accounts.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "project.0.spec.0.destination_service_accounts.0.server", "https://kubernetes.default.svc"),
+					resource.TestCheckResourceAttr(resourceName, "project.0.spec.0.destination_service_accounts.0.namespace", "myapp-*"),
+					resource.TestCheckResourceAttr(resourceName, "project.0.spec.0.destination_service_accounts.0.default_service_account", "argocd-deployer"),
+				),
+			},
+			{
+				Config: testAccGitopsProjectDestinationServiceAccounts(agentID, agentNamespace, accountID, name, "argocd-deployer-v2"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "project.0.spec.0.destination_service_accounts.0.default_service_account", "argocd-deployer-v2"),
+					resource.TestCheckResourceAttr(resourceName, "project.0.spec.0.destination_service_accounts.0.namespace", "myapp-*"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"upsert", "update_mask"},
+				ImportStateIdFunc:       acctest.GitopsProjectImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func testAccGitopsProjectDestinationServiceAccounts(agentID, agentNamespace, accountID, name, serviceAccount string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_app_project" "test" {
+			account_id = "%[1]s"
+			agent_id   = "%[2]s"
+			upsert     = true
+			project {
+				metadata {
+					name      = "%[3]s"
+					namespace = "%[4]s"
+				}
+				spec {
+					source_repos = ["*"]
+					destinations {
+						namespace = "myapp-*"
+						server    = "https://kubernetes.default.svc"
+					}
+					destination_service_accounts {
+						server                  = "https://kubernetes.default.svc"
+						namespace               = "myapp-*"
+						default_service_account = "%[5]s"
+					}
+				}
+			}
+		}
+	`, accountID, agentID, name, agentNamespace, serviceAccount)
+}
