@@ -37,8 +37,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Provisions a new workspace drift config and verifies Terraform state and remote API match.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig: mins(5, 6).GetCreateResourceTfConfig,
 			Verifiers:          contractv1.VerifierDefinition{VerifyCreated: mins(5, 6).verifyCreated},
@@ -48,8 +48,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Refreshes state after creation and verifies the provider's Read reconstructs all attributes.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig: mins(5, 7).GetCreateResourceTfConfig,
 			Verifiers:          contractv1.VerifierDefinition{VerifyRead: mins(5, 7).verifyCreated},
@@ -59,8 +59,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Changes run_every and verifies the in-place update is reflected in state and remote API.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig:        mins(11, 13).GetCreateResourceTfConfig,
 			GetUpdatedTerraformConfig: mins(11, 13).GetUpdatedTerraformConfig,
@@ -71,8 +71,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Destroys the resource and confirms the remote drift config is disabled or absent.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig: mins(17, 19).GetCreateResourceTfConfig,
 			Verifiers:          contractv1.VerifierDefinition{VerifyDeleted: mins(17, 19).verifyDeleted},
@@ -82,8 +82,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Runs the full create → update → delete lifecycle in one scenario.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig:        mins(25, 30).GetCreateResourceTfConfig,
 			GetUpdatedTerraformConfig: mins(25, 30).GetUpdatedTerraformConfig,
@@ -98,8 +98,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Imports the resource by org/project/workspace/provisioner and verifies imported state matches created state.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig:      mins(31, 37).GetCreateResourceTfConfig,
 			ResourceName:            workspaceDriftConfigResourceAddress,
@@ -111,8 +111,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Applies the same config twice and verifies the second plan has no changes.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig: mins(41, 43).GetCreateResourceTfConfig,
 		},
@@ -121,8 +121,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Disables drift config via API outside Terraform and verifies a subsequent refresh detects the missing resource.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig: mins(47, 53).GetCreateResourceTfConfig,
 			ExternalAction:     mins(47, 53).externalDeleteAction,
@@ -132,8 +132,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Changes run_every via API outside Terraform and verifies a subsequent refresh detects the drift.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig: mins(55, 20).GetCreateResourceTfConfig,
 			ExternalAction:     mins(55, 20).externalUpdateAction,
@@ -143,8 +143,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Omits required pipeline_id and verifies Terraform returns a validation error without creating a remote resource.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig: mins(24, 26).getInvalidConfig,
 			ExpectError:        regexp.MustCompile(`The argument "pipeline_id" is required`),
@@ -154,8 +154,8 @@ var workspaceDriftConfigDefinitions = func(p workspaceDriftConfigTests) []contra
 			Supported:     true,
 			Description:   "Imports a syntactically valid but nonexistent org/project/workspace/provisioner ID and verifies an error is returned.",
 			IsRunParallel: false,
-			PreTestDelay:  5 * time.Second,
-			PostTestDelay: 5 * time.Second,
+			PreTestDelay:  500 * time.Millisecond,
+			PostTestDelay: 500 * time.Millisecond,
 
 			GetTerraformConfig: mins(27, 33).GetCreateResourceTfConfig,
 			ResourceName:       workspaceDriftConfigResourceAddress,
@@ -352,7 +352,7 @@ func (p workspaceDriftConfigTests) externalDeleteAction() error {
 			log.Printf("[TEST] externalDeleteAction: confirmed disabled")
 			return nil
 		}
-		time.Sleep(9 * time.Second)
+		time.Sleep(2 * time.Second)
 	}
 	return fmt.Errorf("external delete: disabled state not confirmed within timeout")
 }
@@ -386,7 +386,7 @@ func (p workspaceDriftConfigTests) externalUpdateAction() error {
 			log.Printf("[TEST] externalUpdateAction: confirmed run_every=%d", p.updatedRunEvery)
 			return nil
 		}
-		time.Sleep(9 * time.Second)
+		time.Sleep(2 * time.Second)
 	}
 	return fmt.Errorf("external update: run_every=%d not reflected within timeout", p.updatedRunEvery)
 }
@@ -416,7 +416,7 @@ func (p workspaceDriftConfigTests) preRun(t *testing.T) error {
 	}
 	httpResp.Body.Close()
 	t.Logf("[contractv1] preRun: disabled (status=%d), waiting 10s for backend to settle", httpResp.StatusCode)
-	time.Sleep(10 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 	return nil
 }
 
@@ -431,7 +431,7 @@ func (p workspaceDriftConfigTests) postRun(t *testing.T) error {
 	}
 	httpResp.Body.Close()
 	t.Logf("[contractv1] postRun: disabled (status=%d), waiting 10s for backend to settle", httpResp.StatusCode)
-	time.Sleep(10 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 	return nil
 }
 
