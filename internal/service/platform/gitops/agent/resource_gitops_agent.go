@@ -75,7 +75,9 @@ func ResourceGitopsAgent() *schema.Resource {
 					return fnErr
 				}
 			}
-			if forceNewType {
+			// ResourceDiff.ForceNew errors on a key with no change, which is the case when
+			// disaster_recovery_type's diff is suppressed; forcing the identifier alone already replaces.
+			if forceNewType && diff.HasChange("disaster_recovery_type") {
 				if fnErr := diff.ForceNew("disaster_recovery_type"); fnErr != nil {
 					return fnErr
 				}
@@ -201,7 +203,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				Computed:    true,
 			},
 			"disaster_recovery_identifier": {
-				Description:  "Disaster Recovery identifier shared by all nodes (primary and secondary) in the same DR group. Required together with disaster_recovery_type.",
+				Description:  "Disaster Recovery identifier of this agent node, unique within its DR group. All nodes (primary and secondary) of a DR group share the same `identifier` and are distinguished by this field. Required together with disaster_recovery_type.",
 				Type:         schema.TypeString,
 				Optional:     true,
 				RequiredWith: []string{"disaster_recovery_type"},
@@ -229,7 +231,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				Computed:    true,
 			},
 			"uuid": {
-				Description: "UUID of the GitOps agent. Shared by every Disaster Recovery sibling under the same disaster_recovery_identifier.",
+				Description: "UUID of the GitOps agent. Shared by every Disaster Recovery sibling under the same identifier.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -402,18 +404,19 @@ func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta
 		}
 		if getResp.DisasterRecoveryNode != nil && getResp.DisasterRecoveryNode.Type_ != nil &&
 			*getResp.DisasterRecoveryNode.Type_ == nextgen.PRIMARY_V1DisasterRecoveryType {
-			listResp, listHttpResp, err := c.AgentApi.AgentServiceForServerList(ctx, c.AccountId, string(*getResp.Type_), &nextgen.AgentsApiAgentServiceForServerListOpts{
+			// DR siblings share the agent identifier; disaster_recovery_identifier is per-node, so it
+			// must not be passed here or the List returns only this node.
+			listResp, listHttpResp, err := c.AgentApi.AgentServiceForServerList(ctx, c.AccountId, d.Get("type").(string), &nextgen.AgentsApiAgentServiceForServerListOpts{
 				OrgIdentifier:     optional.NewString(orgId),
 				ProjectIdentifier: optional.NewString(projectId),
 				Identifier:        optional.NewString(agentIdentifier),
-				DrIdentifier:      optional.NewString(drIdentifier),
 				IncludeSecondary:  optional.NewBool(true),
 			})
 			if err != nil {
 				return helpers.HandleApiError(err, d, listHttpResp)
 			}
 			if hasLiveSecondarySibling(listResp.Content) {
-				return diag.Errorf("cannot delete live PRIMARY node '%s' while SECONDARY sibling(s) still exist for disaster_recovery_identifier '%s' — promote a SECONDARY to PRIMARY first, or destroy the SECONDARY resource(s) first", agentIdentifier, drIdentifier)
+				return diag.Errorf("cannot delete live PRIMARY node '%s' of agent '%s' while SECONDARY sibling(s) still exist — promote a SECONDARY to PRIMARY first, or destroy the SECONDARY resource(s) first", drIdentifier, agentIdentifier)
 			}
 		}
 	}
@@ -454,7 +457,9 @@ func validateDisasterRecoveryDiff(oldIdentifier, newIdentifier, oldType, newType
 		forceNewIdentifier = true
 	}
 
-	if oldIdentifier != "" && oldType != "" && newIdentifier == "" && newType == "" {
+	// Keyed on the identifier alone: disaster_recovery_type's DiffSuppressFunc suppresses any change
+	// once it has a value, so on removal newType still reads back as the state value.
+	if oldIdentifier != "" && newIdentifier == "" {
 		forceNewIdentifier = true
 		forceNewType = true
 	}
@@ -556,8 +561,8 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.Set("operator", agent.Operator)
 	d.Set("prefixed_identifier", agent.PrefixedIdentifier)
 	d.Set("uuid", agent.Uuid)
-	if agent.DisasterRecoveryNode != nil {
-		d.Set("disaster_recovery_live_type", agent.DisasterRecoveryNode.Type_)
+	if agent.DisasterRecoveryNode != nil && agent.DisasterRecoveryNode.Type_ != nil {
+		d.Set("disaster_recovery_live_type", string(*agent.DisasterRecoveryNode.Type_))
 	} else {
 		d.Set("disaster_recovery_live_type", "")
 	}
@@ -593,6 +598,9 @@ var resourceGitopsAgentImporter = &schema.ResourceImporter{
 		if idx := strings.LastIndex(id, ":"); idx != -1 {
 			drIdentifier = id[idx+1:]
 			rest = id[:idx]
+			if drIdentifier == "" {
+				return nil, fmt.Errorf("invalid identifier: %s, disaster_recovery_identifier after ':' must not be empty, expected format: [org_id/[project_id/]]identifier[:disaster_recovery_identifier]", id)
+			}
 		}
 
 		parts := strings.Split(rest, "/")

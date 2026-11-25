@@ -107,44 +107,20 @@ func resourceGitopsAgentDrPromotionRead(ctx context.Context, d *schema.ResourceD
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
-	orgId := d.Get("org_id").(string)
-	projectId := d.Get("project_id").(string)
-	agentId := d.Get("agent_id").(string)
-	drIdentifier := d.Get("dr_identifier").(string)
-
-	resp, httpResp, err := c.AgentApi.AgentServiceForServerGet(ctx, agentId, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{
-		OrgIdentifier:     optional.NewString(orgId),
-		ProjectIdentifier: optional.NewString(projectId),
-		DrIdentifier:      optional.NewString(drIdentifier),
+	resp, httpResp, err := c.AgentApi.AgentServiceForServerGet(ctx, d.Get("agent_id").(string), c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{
+		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
+		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		DrType:            optional.NewString(string(nextgen.PRIMARY_V1DisasterRecoveryType)),
 	})
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	if resp.DisasterRecoveryNode != nil && resp.DisasterRecoveryNode.Type_ != nil &&
-		*resp.DisasterRecoveryNode.Type_ == nextgen.PRIMARY_V1DisasterRecoveryType {
-		d.Set("current_primary", drIdentifier)
-		return nil
+	currentPrimary := ""
+	if resp.DisasterRecoveryNode != nil {
+		currentPrimary = resp.DisasterRecoveryNode.Identifier
 	}
-
-	listResp, listHttpResp, err := c.AgentApi.AgentServiceForServerList(ctx, c.AccountId, string(*resp.Type_), &nextgen.AgentsApiAgentServiceForServerListOpts{
-		OrgIdentifier:     optional.NewString(orgId),
-		ProjectIdentifier: optional.NewString(projectId),
-		Identifier:        optional.NewString(agentId),
-		DrIdentifier:      optional.NewString(drIdentifier),
-		IncludeSecondary:  optional.NewBool(true),
-	})
-	if err != nil {
-		return helpers.HandleApiError(err, d, listHttpResp)
-	}
-	for _, sibling := range listResp.Content {
-		if sibling.DisasterRecoveryNode != nil && sibling.DisasterRecoveryNode.Type_ != nil &&
-			*sibling.DisasterRecoveryNode.Type_ == nextgen.PRIMARY_V1DisasterRecoveryType {
-			d.Set("current_primary", sibling.DisasterRecoveryNode.Identifier)
-			return nil
-		}
-	}
-	d.Set("current_primary", "")
+	d.Set("current_primary", currentPrimary)
 	return nil
 }
 

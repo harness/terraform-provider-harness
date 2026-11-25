@@ -371,33 +371,34 @@ func TestAccResourceGitopsAgentDrTokenRotationGuard(t *testing.T) {
 	})
 }
 
+// DR siblings share one agent identifier and are distinguished by a per-node disaster_recovery_identifier.
 func testAccResourceGitopsAgentDrPrimarySecondary(id string, accountId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_gitops_agent" "primary" {
-			identifier = "%[1]sprimary"
+			identifier = "%[1]s"
 			account_id = "%[2]s"
-			name = "%[1]sprimary"
+			name = "%[1]s"
 			type = "MANAGED_ARGO_PROVIDER"
 			metadata {
 				namespace = "terraform-test"
 				high_availability = false
 			}
 			operator = "ARGO"
-			disaster_recovery_identifier = "%[1]s"
+			disaster_recovery_identifier = "%[1]sa"
 			disaster_recovery_type = "PRIMARY"
 		}
 
 		resource "harness_platform_gitops_agent" "secondary" {
-			identifier = "%[1]ssecondary"
+			identifier = harness_platform_gitops_agent.primary.identifier
 			account_id = "%[2]s"
-			name = "%[1]ssecondary"
-			type = "MANAGED_ARGO_PROVIDER"
+			name = harness_platform_gitops_agent.primary.name
+			type = harness_platform_gitops_agent.primary.type
 			metadata {
-				namespace = "terraform-test"
+				namespace = harness_platform_gitops_agent.primary.metadata[0].namespace
 				high_availability = false
 			}
 			operator = "ARGO"
-			disaster_recovery_identifier = "%[1]s"
+			disaster_recovery_identifier = "%[1]sb"
 			disaster_recovery_type = "SECONDARY"
 			depends_on = [harness_platform_gitops_agent.primary]
 		}
@@ -407,16 +408,16 @@ func testAccResourceGitopsAgentDrPrimarySecondary(id string, accountId string) s
 func testAccResourceGitopsAgentDrSecondaryOnly(id string, accountId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_gitops_agent" "secondary" {
-			identifier = "%[1]ssecondary"
+			identifier = "%[1]s"
 			account_id = "%[2]s"
-			name = "%[1]ssecondary"
+			name = "%[1]s"
 			type = "MANAGED_ARGO_PROVIDER"
 			metadata {
 				namespace = "terraform-test"
 				high_availability = false
 			}
 			operator = "ARGO"
-			disaster_recovery_identifier = "%[1]s"
+			disaster_recovery_identifier = "%[1]sb"
 			disaster_recovery_type = "SECONDARY"
 		}
 		`, id, accountId)
@@ -434,7 +435,7 @@ func testAccResourceGitopsAgentDrTokenRotation(id string, accountId string, toke
 				high_availability = false
 			}
 			operator = "ARGO"
-			disaster_recovery_identifier = "%[1]s"
+			disaster_recovery_identifier = "%[1]sa"
 			disaster_recovery_type = "PRIMARY"
 			token_rotation = %[3]d
 		}
@@ -447,10 +448,15 @@ func testAccGetAgent(resourceName string, state *terraform.State) (*nextgen.V1Ag
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := r.Primary.Attributes["identifier"]
 
-	resp, _, err := c.AgentApi.AgentServiceForServerGet(ctx, agentIdentifier, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{
+	opts := &nextgen.AgentsApiAgentServiceForServerGetOpts{
 		OrgIdentifier:     optional.NewString(r.Primary.Attributes["org_identifier"]),
 		ProjectIdentifier: optional.NewString(r.Primary.Attributes["project_identifier"]),
-	})
+	}
+	// Without a DR identifier the server only matches non-DR records, so DR nodes would never be found.
+	if drIdentifier := r.Primary.Attributes["disaster_recovery_identifier"]; drIdentifier != "" {
+		opts.DrIdentifier = optional.NewString(drIdentifier)
+	}
+	resp, _, err := c.AgentApi.AgentServiceForServerGet(ctx, agentIdentifier, c.AccountId, opts)
 
 	if err != nil {
 		return nil, err

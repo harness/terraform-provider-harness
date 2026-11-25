@@ -40,25 +40,35 @@ func TestAccResourceGitopsAgentDrPromotion(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceGitopsAgentDrPromotionConfig(id, accountId),
+				Config: testAccResourceGitopsAgentDrPromotionConfig(id, accountId, "secondary"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(promotionResourceName, "current_primary", id),
+					resource.TestCheckResourceAttr(promotionResourceName, "current_primary", id+"b"),
+				),
+			},
+			{
+				// Promote the original PRIMARY back so teardown destroys the SECONDARY first and
+				// the Delete guard (no live PRIMARY deleted while a SECONDARY sibling exists) holds.
+				Config: testAccResourceGitopsAgentDrPromotionConfig(id, accountId, "primary"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(promotionResourceName, "current_primary", id+"a"),
 				),
 			},
 		},
 	})
 }
 
-func testAccResourceGitopsAgentDrPromotionConfig(id string, accountId string) string {
+// testAccResourceGitopsAgentDrPromotionConfig promotes the DR node held by the given
+// harness_platform_gitops_agent resource ("primary" or "secondary") to PRIMARY.
+func testAccResourceGitopsAgentDrPromotionConfig(id string, accountId string, node string) string {
 	return testAccResourceGitopsAgentDrPrimarySecondary(id, accountId) + fmt.Sprintf(`
 		resource "harness_platform_gitops_agent_dr_promotion" "test" {
-			agent_id      = harness_platform_gitops_agent.secondary.identifier
-			dr_identifier = "%[1]s"
+			agent_id      = harness_platform_gitops_agent.%[1]s.identifier
+			dr_identifier = harness_platform_gitops_agent.%[1]s.disaster_recovery_identifier
 
 			depends_on = [
 				harness_platform_gitops_agent.primary,
 				harness_platform_gitops_agent.secondary,
 			]
 		}
-		`, id)
+		`, node)
 }
