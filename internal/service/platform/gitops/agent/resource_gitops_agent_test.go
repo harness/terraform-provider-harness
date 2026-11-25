@@ -347,9 +347,9 @@ func TestAccResourceGitopsAgentDrDeleteGuard(t *testing.T) {
 	})
 }
 
-// Changing token_rotation on a DR-enrolled agent must be rejected at plan time: credential
-// rotation via RegenerateCredentials is not DR-aware.
-func TestAccResourceGitopsAgentDrTokenRotationGuard(t *testing.T) {
+// Changing token_rotation on a DR-enrolled agent now succeeds: RegenerateCredentials is scoped by
+// disaster_recovery_identifier, so rotating one DR sibling's token is no longer ambiguous.
+func TestAccResourceGitopsAgentDrTokenRotation(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	id = strings.ReplaceAll(id, "_", "")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
@@ -362,10 +362,11 @@ func TestAccResourceGitopsAgentDrTokenRotationGuard(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceGitopsAgentDrTokenRotation(id, accountId, 0),
+				Check:  resource.TestCheckResourceAttr(resourceName, "token_generation", "0"),
 			},
 			{
-				Config:      testAccResourceGitopsAgentDrTokenRotation(id, accountId, 1),
-				ExpectError: regexp.MustCompile(`field 'token_rotation' cannot be changed while 'disaster_recovery_identifier' is set`),
+				Config: testAccResourceGitopsAgentDrTokenRotation(id, accountId, 1),
+				Check:  resource.TestCheckResourceAttr(resourceName, "token_generation", "1"),
 			},
 		},
 	})

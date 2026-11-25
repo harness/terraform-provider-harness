@@ -14,8 +14,9 @@ import (
 // regenerateAgentCredentials regenerates the agent's private key (the agent token) via
 // POST /gitops/api/v1/agents/{identifier}/credentials and returns the new key. A response that
 // carries no key is an error: the server has already rotated, so reporting success would leave
-// the caller with a key that no longer works.
-func regenerateAgentCredentials(ctx context.Context, session *internal.Session, identifier, orgID, projectID string) (string, error) {
+// the caller with a key that no longer works. drIdentifier scopes the rotation to a single DR
+// sibling; without it, rotation on a DR pair is ambiguous between PRIMARY and SECONDARY.
+func regenerateAgentCredentials(ctx context.Context, session *internal.Session, identifier, orgID, projectID, drIdentifier string) (string, error) {
 	c, ctx := session.GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
@@ -25,6 +26,9 @@ func regenerateAgentCredentials(ctx context.Context, session *internal.Session, 
 	}
 	if projectID != "" {
 		opts.ProjectIdentifier = optional.NewString(projectID)
+	}
+	if drIdentifier != "" {
+		opts.DrIdentifier = optional.NewString(drIdentifier)
 	}
 
 	agent, httpResp, err := c.AgentApi.AgentServiceForServerRegenerateCredentialsWithScope(ctx, identifier, c.AccountId, opts)

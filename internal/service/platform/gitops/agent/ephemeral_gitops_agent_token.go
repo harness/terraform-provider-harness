@@ -29,11 +29,12 @@ type ephemeralGitopsAgentToken struct {
 }
 
 type ephemeralGitopsAgentTokenModel struct {
-	Identifier types.String `tfsdk:"identifier"`
-	OrgId      types.String `tfsdk:"org_id"`
-	ProjectId  types.String `tfsdk:"project_id"`
-	Generation types.Int64  `tfsdk:"generation"`
-	AgentToken types.String `tfsdk:"agent_token"`
+	Identifier                 types.String `tfsdk:"identifier"`
+	OrgId                      types.String `tfsdk:"org_id"`
+	ProjectId                  types.String `tfsdk:"project_id"`
+	DisasterRecoveryIdentifier types.String `tfsdk:"disaster_recovery_identifier"`
+	Generation                 types.Int64  `tfsdk:"generation"`
+	AgentToken                 types.String `tfsdk:"agent_token"`
 }
 
 func (e *ephemeralGitopsAgentToken) Metadata(_ context.Context, req ephemeral.MetadataRequest, resp *ephemeral.MetadataResponse) {
@@ -54,6 +55,10 @@ func (e *ephemeralGitopsAgentToken) Schema(_ context.Context, _ ephemeral.Schema
 			},
 			"project_id": schema.StringAttribute{
 				Description: "Project identifier of the GitOps agent.",
+				Optional:    true,
+			},
+			"disaster_recovery_identifier": schema.StringAttribute{
+				Description: "Disaster Recovery identifier of the specific agent node to read the token from. Required when the agent is part of a Disaster Recovery pair, since PRIMARY and SECONDARY nodes share the same `identifier`.",
 				Optional:    true,
 			},
 			"generation": schema.Int64Attribute{
@@ -95,11 +100,17 @@ func (e *ephemeralGitopsAgentToken) Open(ctx context.Context, req ephemeral.Open
 	c, ctx := e.session.GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
-	agent, httpResp, err := c.AgentApi.AgentServiceForServerGet(ctx, data.Identifier.ValueString(), c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{
+	getOpts := &nextgen.AgentsApiAgentServiceForServerGetOpts{
 		OrgIdentifier:     optional.NewString(data.OrgId.ValueString()),
 		ProjectIdentifier: optional.NewString(data.ProjectId.ValueString()),
 		WithCredentials:   optional.NewBool(true),
-	})
+	}
+	// Without a DR identifier the server only matches non-DR records, so DR nodes would never be
+	// found and reading a DR sibling's token would be ambiguous between PRIMARY and SECONDARY.
+	if drIdentifier := data.DisasterRecoveryIdentifier.ValueString(); drIdentifier != "" {
+		getOpts.DrIdentifier = optional.NewString(drIdentifier)
+	}
+	agent, httpResp, err := c.AgentApi.AgentServiceForServerGet(ctx, data.Identifier.ValueString(), c.AccountId, getOpts)
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == 404 {
 			resp.Diagnostics.AddError("GitOps agent not found", fmt.Sprintf("No GitOps agent with identifier %q was found.", data.Identifier.ValueString()))

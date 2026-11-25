@@ -223,7 +223,7 @@ func TestUpdate_RegenerateFailureSurfacesError(t *testing.T) {
 func TestRegenerateAgentCredentials(t *testing.T) {
 	t.Run("returns the private key and sends scope and api key", func(t *testing.T) {
 		f := newFakeGitops(t)
-		key, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "org", "proj")
+		key, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "org", "proj", "")
 		require.NoError(t, err)
 		require.Equal(t, "NEWKEY", key)
 		req := f.requests[0]
@@ -238,7 +238,7 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 
 	t.Run("account level agent sends no org or project", func(t *testing.T) {
 		f := newFakeGitops(t)
-		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "", "")
 		require.NoError(t, err)
 		require.NotContains(t, f.requests[0].Query, "orgIdentifier")
 		require.NotContains(t, f.requests[0].Query, "projectIdentifier")
@@ -247,7 +247,7 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 
 	t.Run("org level agent sends org but no project", func(t *testing.T) {
 		f := newFakeGitops(t)
-		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "org", "")
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "org", "", "")
 		require.NoError(t, err)
 		require.Equal(t, []string{"org"}, f.requests[0].Query["orgIdentifier"])
 		require.NotContains(t, f.requests[0].Query, "projectIdentifier")
@@ -255,7 +255,7 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 
 	t.Run("identifier is path escaped", func(t *testing.T) {
 		f := newFakeGitops(t)
-		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "", "")
 		require.NoError(t, err)
 		require.Equal(t, "/gitops/api/v1/agents/a1/credentials", f.requests[0].Path)
 	})
@@ -263,7 +263,7 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 	t.Run("non-2xx is an error and includes the status", func(t *testing.T) {
 		f := newFakeGitops(t)
 		f.regenStatus = http.StatusForbidden
-		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "", "")
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "403")
 		require.Contains(t, err.Error(), `"a1"`)
@@ -275,7 +275,7 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 		t.Run(name+" is an error", func(t *testing.T) {
 			f := newFakeGitops(t)
 			f.regenBody = body
-			key, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
+			key, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "", "")
 			require.Error(t, err)
 			require.Contains(t, err.Error(), "returned no private key")
 			require.Equal(t, "", key)
@@ -285,10 +285,75 @@ func TestRegenerateAgentCredentials(t *testing.T) {
 	t.Run("bearer token from the environment is sent as Authorization", func(t *testing.T) {
 		t.Setenv("HARNESS_BEARER_TOKEN", "bearer-123")
 		f := newFakeGitops(t)
-		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "")
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "", "", "")
 		require.NoError(t, err)
 		require.Equal(t, "Bearer bearer-123", f.requests[0].Auth)
 	})
+
+	t.Run("DR identifier is sent as drIdentifier when set", func(t *testing.T) {
+		f := newFakeGitops(t)
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "org", "proj", "a1-secondary")
+		require.NoError(t, err)
+		require.Equal(t, []string{"a1-secondary"}, f.requests[0].Query["drIdentifier"])
+	})
+
+	t.Run("non-DR agent sends no drIdentifier", func(t *testing.T) {
+		f := newFakeGitops(t)
+		_, err := regenerateAgentCredentials(context.Background(), f.session(), "a1", "org", "proj", "")
+		require.NoError(t, err)
+		require.NotContains(t, f.requests[0].Query, "drIdentifier")
+	})
+}
+
+// drState/drConfig build a DR-enrolled agent, exercising the rotation path alongside
+// disaster_recovery_identifier/disaster_recovery_type.
+func drState(rotation, generation, drIdentifier, drType string) *terraform.InstanceState {
+	state := baseState(rotation, generation, true)
+	state.Attributes["disaster_recovery_identifier"] = drIdentifier
+	state.Attributes["disaster_recovery_type"] = drType
+	return state
+}
+
+func drConfig(rotation int, drIdentifier, drType string) *terraform.ResourceConfig {
+	return terraform.NewResourceConfigRaw(map[string]interface{}{
+		"identifier":                   "a1",
+		"name":                         "a1",
+		"type":                         "MANAGED_ARGO_PROVIDER",
+		"org_id":                       "default",
+		"project_id":                   "proj",
+		"skip_agent_token_in_state":    true,
+		"token_rotation":               rotation,
+		"disaster_recovery_identifier": drIdentifier,
+		"disaster_recovery_type":       drType,
+		"metadata": []interface{}{
+			map[string]interface{}{"namespace": "argocd"},
+		},
+	})
+}
+
+// Rotating a DR node's token now succeeds (the guard is gone) and scopes the regenerate call to
+// that node's disaster_recovery_identifier, so the server can tell the DR siblings apart.
+func TestUpdate_RotationOnDrNodeSendsDrIdentifier(t *testing.T) {
+	f := newFakeGitops(t)
+	// A DR node's Update re-fetches via Get (resourceGitopsAgentUpdate discards the Update
+	// response for DR nodes), so the fake Get body needs the fields readAgent expects.
+	f.getBody = `{"identifier":"a1","type":"MANAGED_ARGO_PROVIDER","metadata":{"namespace":"argocd"},"credentials":{"privateKey":"GETKEY"}}`
+	r := ResourceGitopsAgent()
+	state := drState("0", "0", "a1-secondary", "SECONDARY")
+	cfg := drConfig(1, "a1-secondary", "SECONDARY")
+	diff, err := r.Diff(context.Background(), state, cfg, f.session())
+	require.NoError(t, err)
+
+	out, diags := r.Apply(context.Background(), state, diff, f.session())
+	require.False(t, diags.HasError(), "%v", diags)
+	require.Equal(t, "1", out.Attributes["token_generation"])
+
+	require.Equal(t, 1, f.count(http.MethodPost, "/gitops/api/v1/agents/a1/credentials"))
+	for _, req := range f.requests {
+		if req.Path == "/gitops/api/v1/agents/a1/credentials" {
+			require.Equal(t, []string{"a1-secondary"}, req.Query["drIdentifier"])
+		}
+	}
 }
 
 // A rotation that returns no key must fail the apply and must not report the rotation as done.

@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func openEphemeral(t *testing.T, f *fakeGitops, id string, generation interface{}) (ephemeral.OpenResponse, string) {
+func openEphemeral(t *testing.T, f *fakeGitops, id string, generation interface{}, drIdentifier string) (ephemeral.OpenResponse, string) {
 	t.Helper()
 	ctx := context.Background()
 	e := &ephemeralGitopsAgentToken{session: f.session()}
@@ -22,14 +22,21 @@ func openEphemeral(t *testing.T, f *fakeGitops, id string, generation interface{
 	require.False(t, sr.Diagnostics.HasError())
 
 	typ := sr.Schema.Type().TerraformType(ctx)
+	var drValue tftypes.Value
+	if drIdentifier == "" {
+		drValue = tftypes.NewValue(tftypes.String, nil)
+	} else {
+		drValue = tftypes.NewValue(tftypes.String, drIdentifier)
+	}
 	cfg := tfsdk.Config{
 		Schema: sr.Schema,
 		Raw: tftypes.NewValue(typ, map[string]tftypes.Value{
-			"identifier":  tftypes.NewValue(tftypes.String, id),
-			"org_id":      tftypes.NewValue(tftypes.String, "default"),
-			"project_id":  tftypes.NewValue(tftypes.String, "proj"),
-			"generation":  tftypes.NewValue(tftypes.Number, generation),
-			"agent_token": tftypes.NewValue(tftypes.String, nil),
+			"identifier":                   tftypes.NewValue(tftypes.String, id),
+			"org_id":                       tftypes.NewValue(tftypes.String, "default"),
+			"project_id":                   tftypes.NewValue(tftypes.String, "proj"),
+			"disaster_recovery_identifier": drValue,
+			"generation":                   tftypes.NewValue(tftypes.Number, generation),
+			"agent_token":                  tftypes.NewValue(tftypes.String, nil),
 		}),
 	}
 	resp := ephemeral.OpenResponse{Result: tfsdk.EphemeralResultData{Schema: sr.Schema, Raw: tftypes.NewValue(typ, nil)}}
@@ -44,7 +51,7 @@ func openEphemeral(t *testing.T, f *fakeGitops, id string, generation interface{
 
 func TestEphemeralOpen_ReturnsTokenFromAgent(t *testing.T) {
 	f := newFakeGitops(t)
-	resp, token := openEphemeral(t, f, "a1", nil)
+	resp, token := openEphemeral(t, f, "a1", nil, "")
 	require.False(t, resp.Diagnostics.HasError(), "%v", resp.Diagnostics)
 	require.Equal(t, "GETKEY", token)
 	require.Equal(t, []string{"true"}, f.requests[0].Query["withCredentials"])
@@ -53,7 +60,7 @@ func TestEphemeralOpen_ReturnsTokenFromAgent(t *testing.T) {
 
 func TestEphemeralOpen_GenerationIsOrderingOnly(t *testing.T) {
 	f := newFakeGitops(t)
-	resp, token := openEphemeral(t, f, "a1", 3)
+	resp, token := openEphemeral(t, f, "a1", 3, "")
 	require.False(t, resp.Diagnostics.HasError(), "%v", resp.Diagnostics)
 	require.Equal(t, "GETKEY", token)
 	require.Equal(t, 1, f.count(http.MethodGet, "/gitops/api/v1/agents/a1"))
@@ -62,16 +69,31 @@ func TestEphemeralOpen_GenerationIsOrderingOnly(t *testing.T) {
 func TestEphemeralOpen_ErrorsWhenAgentAlreadyConnected(t *testing.T) {
 	f := newFakeGitops(t)
 	f.getBody = `{"identifier":"a1"}`
-	resp, _ := openEphemeral(t, f, "a1", nil)
+	resp, _ := openEphemeral(t, f, "a1", nil, "")
 	require.True(t, resp.Diagnostics.HasError())
 	require.Equal(t, "Agent token not available", resp.Diagnostics[0].Summary())
 }
 
 func TestEphemeralOpen_ErrorsWhenAgentMissing(t *testing.T) {
 	f := newFakeGitops(t)
-	resp, _ := openEphemeral(t, f, "does-not-exist", nil)
+	resp, _ := openEphemeral(t, f, "does-not-exist", nil, "")
 	require.True(t, resp.Diagnostics.HasError())
 	require.Equal(t, "GitOps agent not found", resp.Diagnostics[0].Summary())
+}
+
+func TestEphemeralOpen_SendsDrIdentifierWhenSet(t *testing.T) {
+	f := newFakeGitops(t)
+	resp, token := openEphemeral(t, f, "a1", nil, "a1-secondary")
+	require.False(t, resp.Diagnostics.HasError(), "%v", resp.Diagnostics)
+	require.Equal(t, "GETKEY", token)
+	require.Equal(t, []string{"a1-secondary"}, f.requests[0].Query["drIdentifier"])
+}
+
+func TestEphemeralOpen_NoDrIdentifierSendsNoDrIdentifierQueryParam(t *testing.T) {
+	f := newFakeGitops(t)
+	resp, _ := openEphemeral(t, f, "a1", nil, "")
+	require.False(t, resp.Diagnostics.HasError(), "%v", resp.Diagnostics)
+	require.NotContains(t, f.requests[0].Query, "drIdentifier")
 }
 
 func TestEphemeralSchema_GenerationIsOptionalAndTokenIsSensitive(t *testing.T) {

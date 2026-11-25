@@ -83,15 +83,6 @@ func ResourceGitopsAgent() *schema.Resource {
 				}
 			}
 
-			if diff.Id() != "" && diff.HasChange("token_rotation") && newDrIdentifier.(string) != "" {
-				rotationErr := fmt.Errorf("field 'token_rotation' cannot be changed while 'disaster_recovery_identifier' is set: credential rotation is not DR-aware")
-				if e != nil {
-					e = fmt.Errorf("%v: %w", e, rotationErr)
-				} else {
-					e = rotationErr
-				}
-			}
-
 			return e
 		},
 
@@ -341,7 +332,7 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 	if d.HasChange("token_rotation") {
-		newKey, err := regenerateAgentCredentials(ctx, meta.(*internal.Session), agentIdentifier, d.Get("org_id").(string), d.Get("project_id").(string))
+		newKey, err := regenerateAgentCredentials(ctx, meta.(*internal.Session), agentIdentifier, d.Get("org_id").(string), d.Get("project_id").(string), d.Get("disaster_recovery_identifier").(string))
 		if err != nil {
 			return diag.FromErr(err)
 		}

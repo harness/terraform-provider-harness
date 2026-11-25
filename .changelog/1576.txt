@@ -9,3 +9,11 @@ resource/harness_platform_gitops_agent_dr_promotion: Added new resource to promo
 ```release-note:enhancement
 data-source/harness_platform_gitops_agent_deploy_yaml: Added `disaster_recovery_identifier` to fetch the deploy YAML for a specific Disaster Recovery node.
 ```
+
+```release-note:enhancement
+resource/harness_platform_gitops_agent: `token_rotation` can now be changed on a Disaster Recovery node; credential regeneration is scoped to that node via `disaster_recovery_identifier` so it no longer affects its DR siblings.
+```
+
+```release-note:enhancement
+ephemeral-resource/harness_platform_gitops_agent_token: Added `disaster_recovery_identifier` to read the token of a specific Disaster Recovery node.
+```
