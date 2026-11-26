@@ -40,6 +40,11 @@ resource "harness_platform_gitops_app_project" "test" {
         server    = "https://kubernetes.default.svc"
         name      = "in-cluster"
       }
+      destination_service_accounts {
+        server                  = "https://kubernetes.default.svc"
+        namespace               = "guestbook"
+        default_service_account = "argocd-deployer"
+      }
       roles {
         name        = "read-only"
         description = "Read-only privileges to my-project"
@@ -129,6 +134,11 @@ resource "harness_platform_gitops_app_project" "test" {
         namespace = "guestbook"
         server    = "https://kubernetes.default.svc"
         name      = "in-cluster"
+      }
+      destination_service_accounts {
+        server                  = "https://kubernetes.default.svc"
+        namespace               = "guestbook"
+        default_service_account = "argocd-deployer"
       }
       roles {
         name        = "read-only"
@@ -258,6 +268,7 @@ Optional:
 - `cluster_resource_blacklist` (Block List) Cluster resource blacklist for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--cluster_resource_blacklist))
 - `cluster_resource_whitelist` (Block List) Cluster resource whitelist for the Argo project. (see [below for nested schema](#nestedblock--project--spec--cluster_resource_whitelist))
 - `description` (String) Description of the Argo project.
+- `destination_service_accounts` (Block List) Service accounts impersonated for application syncs to each destination. Maps to Argo CD spec.destinationServiceAccounts. (see [below for nested schema](#nestedblock--project--spec--destination_service_accounts))
 - `destinations` (Block List) Allowed destinations for applications in this Argo project. (see [below for nested schema](#nestedblock--project--spec--destinations))
 - `namespace_resource_blacklist` (Block List) Namespace resource blacklist for the Argo project. (see [below for nested schema](#nestedblock--project--spec--namespace_resource_blacklist))
 - `namespace_resource_whitelist` (Block List) Namespace resource whitelist for the GitOps project. (see [below for nested schema](#nestedblock--project--spec--namespace_resource_whitelist))
@@ -285,6 +296,16 @@ Optional:
 
 - `group` (String) Group of the cluster resource whitelist.
 - `kind` (String) Kind of the cluster resource whitelist.
+
+
+<a id="nestedblock--project--spec--destination_service_accounts"></a>
+### Nested Schema for `project.spec.destination_service_accounts`
+
+Optional:
+
+- `default_service_account` (String) Service account impersonated during the sync operation.
+- `namespace` (String) Target namespace for the application's resources. Glob patterns are supported.
+- `server` (String) URL of the destination cluster API server. Glob patterns are supported.
 
 
 <a id="nestedblock--project--spec--destinations"></a>

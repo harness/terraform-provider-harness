@@ -3,8 +3,8 @@ resource "harness_platform_pipeline_central_notification_rule" "projExample" {
   name                      = "name"
   status                    = "ENABLED"
   notification_channel_refs = ["account.channel"]
-  org = "default"
-  project = "proj0"
+  org                       = "default"
+  project                   = "proj0"
 
   notification_conditions {
     condition_name = "pipelineRuleProjectConditionName"
@@ -27,7 +27,7 @@ resource "harness_platform_pipeline_central_notification_rule" "orgExample" {
   name                      = "name"
   status                    = "ENABLED"
   notification_channel_refs = ["channel"]
-  org = "default"
+  org                       = "default"
 
   notification_conditions {
     condition_name = "pipelineRuleOrgConditionName"

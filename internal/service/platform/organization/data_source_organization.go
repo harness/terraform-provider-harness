@@ -16,7 +16,7 @@ func DataSourceOrganization() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Harness organization",
 		ReadContext: dataSourceOrganizationRead,
-		Schema: map[string]*schema.Schema{},
+		Schema:      map[string]*schema.Schema{},
 	}
 
 	helpers.SetCommonDataSourceSchema(resource.Schema)

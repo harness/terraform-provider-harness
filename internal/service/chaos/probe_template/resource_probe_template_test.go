@@ -11,6 +11,7 @@ import (
 
 func TestAccResourceProbeTemplate_httpProbe_basic(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -18,10 +19,10 @@ func TestAccResourceProbeTemplate_httpProbe_basic(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceProbeTemplate_httpProbe_basic(name),
+				Config: testAccResourceProbeTemplate_httpProbe_basic(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "identity", identity),
 					resource.TestCheckResourceAttr(resourceName, "type", "httpProbe"),
 					resource.TestCheckResourceAttrSet(resourceName, "hub_identity"),
 					resource.TestCheckResourceAttrSet(resourceName, "account_id"),
@@ -30,7 +31,7 @@ func TestAccResourceProbeTemplate_httpProbe_basic(t *testing.T) {
 			},
 			{
 				// Drift check: re-planning the identical config must be a no-op.
-				Config:   testAccResourceProbeTemplate_httpProbe_basic(name),
+				Config:   testAccResourceProbeTemplate_httpProbe_basic(name, identity),
 				PlanOnly: true,
 			},
 			{
@@ -45,6 +46,7 @@ func TestAccResourceProbeTemplate_httpProbe_basic(t *testing.T) {
 
 func TestAccResourceProbeTemplate_httpProbe_update(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -52,7 +54,7 @@ func TestAccResourceProbeTemplate_httpProbe_update(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceProbeTemplate_httpProbe_basic(name),
+				Config: testAccResourceProbeTemplate_httpProbe_basic(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "Test HTTP probe template"),
@@ -61,7 +63,7 @@ func TestAccResourceProbeTemplate_httpProbe_update(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceProbeTemplate_httpProbe_updated(name),
+				Config: testAccResourceProbeTemplate_httpProbe_updated(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "Updated HTTP probe template"),
@@ -75,6 +77,7 @@ func TestAccResourceProbeTemplate_httpProbe_update(t *testing.T) {
 
 func TestAccResourceProbeTemplate_cmdProbe_basic(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -82,10 +85,10 @@ func TestAccResourceProbeTemplate_cmdProbe_basic(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceProbeTemplate_cmdProbe_basic(name),
+				Config: testAccResourceProbeTemplate_cmdProbe_basic(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "identity", identity),
 					resource.TestCheckResourceAttr(resourceName, "type", "cmdProbe"),
 					resource.TestCheckResourceAttrSet(resourceName, "hub_identity"),
 					resource.TestCheckResourceAttrSet(resourceName, "account_id"),
@@ -103,6 +106,7 @@ func TestAccResourceProbeTemplate_cmdProbe_basic(t *testing.T) {
 
 func TestAccResourceProbeTemplate_k8sProbe_basic(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -110,10 +114,10 @@ func TestAccResourceProbeTemplate_k8sProbe_basic(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceProbeTemplate_k8sProbe_basic(name),
+				Config: testAccResourceProbeTemplate_k8sProbe_basic(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "identity", identity),
 					resource.TestCheckResourceAttr(resourceName, "type", "k8sProbe"),
 					resource.TestCheckResourceAttrSet(resourceName, "hub_identity"),
 					resource.TestCheckResourceAttrSet(resourceName, "account_id"),
@@ -131,6 +135,7 @@ func TestAccResourceProbeTemplate_k8sProbe_basic(t *testing.T) {
 
 func TestAccResourceProbeTemplate_apmProbe_prometheus(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -138,10 +143,10 @@ func TestAccResourceProbeTemplate_apmProbe_prometheus(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceProbeTemplate_apmProbe_prometheus(name),
+				Config: testAccResourceProbeTemplate_apmProbe_prometheus(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "identity", identity),
 					resource.TestCheckResourceAttr(resourceName, "type", "apmProbe"),
 					resource.TestCheckResourceAttr(resourceName, "apm_probe.0.apm_type", "Prometheus"),
 					resource.TestCheckResourceAttrSet(resourceName, "hub_identity"),
@@ -160,6 +165,7 @@ func TestAccResourceProbeTemplate_apmProbe_prometheus(t *testing.T) {
 
 func TestAccResourceProbeTemplate_apmProbe_datadog(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -167,10 +173,10 @@ func TestAccResourceProbeTemplate_apmProbe_datadog(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceProbeTemplate_apmProbe_datadog(name),
+				Config: testAccResourceProbeTemplate_apmProbe_datadog(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "identity", identity),
 					resource.TestCheckResourceAttr(resourceName, "type", "apmProbe"),
 					resource.TestCheckResourceAttr(resourceName, "apm_probe.0.apm_type", "Datadog"),
 					resource.TestCheckResourceAttrSet(resourceName, "hub_identity"),
@@ -187,7 +193,7 @@ func TestAccResourceProbeTemplate_apmProbe_datadog(t *testing.T) {
 	})
 }
 
-func testAccResourceProbeTemplate_httpProbe_basic(name string) string {
+func testAccResourceProbeTemplate_httpProbe_basic(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -212,7 +218,7 @@ func testAccResourceProbeTemplate_httpProbe_basic(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Test HTTP probe template"
 			type         = "httpProbe"
@@ -235,10 +241,10 @@ func testAccResourceProbeTemplate_httpProbe_basic(name string) string {
 				stop_on_failure  = false
 			}
 		}
-	`, name)
+	`, name, identity)
 }
 
-func testAccResourceProbeTemplate_httpProbe_updated(name string) string {
+func testAccResourceProbeTemplate_httpProbe_updated(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -263,7 +269,7 @@ func testAccResourceProbeTemplate_httpProbe_updated(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Updated HTTP probe template"
 			type         = "httpProbe"
@@ -286,10 +292,10 @@ func testAccResourceProbeTemplate_httpProbe_updated(name string) string {
 				stop_on_failure  = true
 			}
 		}
-	`, name)
+	`, name, identity)
 }
 
-func testAccResourceProbeTemplate_cmdProbe_basic(name string) string {
+func testAccResourceProbeTemplate_cmdProbe_basic(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -314,7 +320,7 @@ func testAccResourceProbeTemplate_cmdProbe_basic(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Test CMD probe template"
 			type         = "cmdProbe"
@@ -329,10 +335,10 @@ func testAccResourceProbeTemplate_cmdProbe_basic(name string) string {
 				interval = "5s"
 			}
 		}
-	`, name)
+	`, name, identity)
 }
 
-func testAccResourceProbeTemplate_k8sProbe_basic(name string) string {
+func testAccResourceProbeTemplate_k8sProbe_basic(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -357,7 +363,7 @@ func testAccResourceProbeTemplate_k8sProbe_basic(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Test K8s probe template"
 			type         = "k8sProbe"
@@ -375,10 +381,10 @@ func testAccResourceProbeTemplate_k8sProbe_basic(name string) string {
 				interval = "5s"
 			}
 		}
-	`, name)
+	`, name, identity)
 }
 
-func testAccResourceProbeTemplate_apmProbe_prometheus(name string) string {
+func testAccResourceProbeTemplate_apmProbe_prometheus(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -403,7 +409,7 @@ func testAccResourceProbeTemplate_apmProbe_prometheus(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Test APM Prometheus probe template"
 			type         = "apmProbe"
@@ -431,10 +437,10 @@ func testAccResourceProbeTemplate_apmProbe_prometheus(name string) string {
 				stop_on_failure  = false
 			}
 		}
-	`, name)
+	`, name, identity)
 }
 
-func testAccResourceProbeTemplate_apmProbe_datadog(name string) string {
+func testAccResourceProbeTemplate_apmProbe_datadog(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -459,7 +465,7 @@ func testAccResourceProbeTemplate_apmProbe_datadog(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Test APM Datadog probe template"
 			type         = "apmProbe"
@@ -487,5 +493,5 @@ func testAccResourceProbeTemplate_apmProbe_datadog(name string) string {
 				stop_on_failure  = true
 			}
 		}
-	`, name)
+	`, name, identity)
 }

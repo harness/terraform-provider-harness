@@ -65,7 +65,7 @@ func TestAccDataSourceConnectorServiceNow_RefreshToken(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "service_now_url", "https://test.service-now.com"),
 					resource.TestCheckResourceAttr(resourceName, "auth.0.refresh_token.0.token_url", "https://test.service-now.com/oauth_token.do"),
-					resource.TestCheckResourceAttr(resourceName, "auth.0.refresh_token.0.scope", "email openid profile"),					
+					resource.TestCheckResourceAttr(resourceName, "auth.0.refresh_token.0.scope", "email openid profile"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},

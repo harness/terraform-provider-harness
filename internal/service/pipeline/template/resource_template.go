@@ -158,34 +158,34 @@ func ResourceTemplate() *schema.Resource {
 				Optional: true,
 			},
 			"import_from_git": {
-				Description: "Flag to set if importing from Git",
+				Description: "Flag to set if importing from Git. When true, git details must be provided in git_import_details (not git_details).",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"git_import_details": {
-				Description: "Contains Git Information for importing entities from Git",
+				Description: "Contains Git Information for importing entities from Git. Required when import_from_git is true. Values in git_details are ignored for import.",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_name": {
-							Description: "Name of the branch.",
+							Description: "Name of the branch. Required when import_from_git is true.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"file_path": {
-							Description: "File path of the Entity in the repository.",
+							Description: "File path of the Entity in the repository. Required when import_from_git is true.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"connector_ref": {
-							Description: "Identifier of the Harness Connector used for importing entity from Git" + helpers.Descriptions.ConnectorRefText.String(),
+							Description: "Identifier of the Harness Connector used for importing entity from Git. Required when import_from_git is true." + helpers.Descriptions.ConnectorRefText.String(),
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"repo_name": {
-							Description: "Name of the repository.",
+							Description: "Name of the repository. Required when import_from_git is true.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -328,6 +328,9 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	if id == "" {
 
 		if d.Get("import_from_git").(bool) {
+			if diags := validateGitImportDetailsForTemplates(d); diags.HasError() {
+				return diags
+			}
 
 			template_id = d.Get("identifier").(string)
 			template_import_request_body := createImportFromGitRequestForTemplates(d)
@@ -517,6 +520,27 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	readTemplate(d, respGet, comments, store_type, base_branch, commit_message, connector_ref)
 
+	return nil
+}
+
+func validateGitImportDetailsForTemplates(d *schema.ResourceData) diag.Diagnostics {
+	attr, ok := d.GetOk("git_import_details")
+	if !ok || len(attr.([]interface{})) == 0 || attr.([]interface{})[0] == nil {
+		return diag.Errorf("import_from_git requires git_import_details with connector_ref, repo_name, branch_name, and file_path; git_details is ignored for import")
+	}
+
+	config := attr.([]interface{})[0].(map[string]interface{})
+	requiredFields := []string{"connector_ref", "repo_name", "branch_name", "file_path"}
+	var missing []string
+	for _, field := range requiredFields {
+		value, exists := config[field]
+		if !exists || strings.TrimSpace(value.(string)) == "" {
+			missing = append(missing, field)
+		}
+	}
+	if len(missing) > 0 {
+		return diag.Errorf("import_from_git requires git_import_details.%s; git_details is ignored for import", strings.Join(missing, ", git_import_details."))
+	}
 	return nil
 }
 

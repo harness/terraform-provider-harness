@@ -419,4 +419,3 @@ func testAccDataSourceCentralNotificationChannelDatadog(id string, name string) 
 		}
 	`, id, name)
 }
-

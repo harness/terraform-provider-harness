@@ -504,13 +504,7 @@ func getEnvironmentData(d *schema.ResourceData) []Environment {
 	}
 
 	for _, tfEnv := range tfEnvironments {
-		environments = append(environments, Environment{
-			Identifier:          tfEnv.Identifier,
-			DefaultOnVariation:  tfEnv.DefaultOnVariation,
-			DefaultOffVariation: tfEnv.DefaultOffVariation,
-			State:               tfEnv.State,
-			TargetRules:         tfEnv.TargetRules,
-		})
+		environments = append(environments, Environment(tfEnv))
 	}
 
 	return environments
@@ -681,7 +675,7 @@ func HandleCFApiError(err error, d *schema.ResourceData, httpResp *http.Response
 	if ok {
 		cfError, ok := erro.Model().(nextgen.CfError)
 		if ok {
-			return diag.Errorf(cfError.Message)
+			return diag.Errorf("%s", cfError.Message)
 		}
 	}
 	return helpers.HandleApiError(err, d, httpResp)

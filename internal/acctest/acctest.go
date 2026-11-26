@@ -2,8 +2,8 @@ package acctest
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
-	"os"
 	"strings"
 	"sync"
 	"testing"
@@ -49,12 +49,26 @@ func TestAccConfigureProvider() {
 	})
 }
 
-func TestAccPreCheck(t *testing.T) {
-	// Many acceptance tests incorrectly use resource.UnitTest (runs without TF_ACC).
-	// Gate live-API setup so `make test` / coverage CI skip them; `make testacc` sets TF_ACC=1.
-	if os.Getenv(resource.TestEnvVar) == "" {
-		t.Skipf("Acceptance tests skipped unless %s=1", resource.TestEnvVar)
+// ProbeTemplateIdentity builds a probe template identity from a Go test name.
+// The API accepts lowercase letters, digits, and hyphens, and the value must
+// start and end with a letter or digit. The test name is lowercased, its
+// underscores become hyphens, and a lowercase random suffix is appended so
+// repeated runs do not collide.
+func ProbeTemplateIdentity(testName string) string {
+	const letters = "abcdefghijklmnopqrstuvwxyz0123456789"
+	raw := make([]byte, 5)
+	if _, err := rand.Read(raw); err != nil {
+		panic(err)
 	}
+	suffix := make([]byte, len(raw))
+	for i := range suffix {
+		suffix[i] = letters[int(raw[i])%len(letters)]
+	}
+	base := strings.Trim(strings.ToLower(strings.ReplaceAll(testName, "_", "-")), "-")
+	return base + "-" + string(suffix)
+}
+
+func TestAccPreCheck(t *testing.T) {
 	TestAccConfigureProvider()
 }
 
@@ -67,14 +81,7 @@ func TestAccGetResource(resourceName string, state *terraform.State) *terraform.
 }
 
 func TestAccGetApiClientFromProvider() *internal.Session {
-	if TestAccProvider == nil {
-		return nil
-	}
-	meta := TestAccProvider.Meta()
-	if meta == nil {
-		return nil
-	}
-	return meta.(*internal.Session)
+	return TestAccProvider.Meta().(*internal.Session)
 }
 
 func TestAccGetPlatformClientWithContext() (*nextgen.APIClient, context.Context) {

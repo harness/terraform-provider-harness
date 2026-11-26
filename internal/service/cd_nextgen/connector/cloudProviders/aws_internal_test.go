@@ -98,7 +98,7 @@ func TestReadConnectorAws_OidcWithoutSessionTagKeys(t *testing.T) {
 	connector := &nextgen.ConnectorInfo{
 		Aws: &nextgen.AwsConnector{
 			Credential: &nextgen.AwsCredential{
-				Type_: nextgen.AwsAuthTypes.OidcAuthentication,
+				Type_:  nextgen.AwsAuthTypes.OidcAuthentication,
 				Region: "me-central-1",
 				OidcConfig: &nextgen.AwsOidcConfigSpec{
 					IamRoleArn: "arn:aws:iam::123456789012:role/example",

@@ -74,8 +74,9 @@ func DataSourcePipelineCentralNotificationRuleService() *schema.Resource {
 										ValidateFunc: validation.StringInSlice(notificationEntityEnum(), false),
 									},
 									"notification_event": {
-										Type:     schema.TypeString,
-										Required: true,
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: "The pipeline event that triggers the notification. Supported values: `PIPELINE_START`, `PIPELINE_SUCCESS`, `PIPELINE_FAILED`, `STAGE_START`, `STAGE_SUCCESS`, `STAGE_FAILED`.",
 									},
 									"notification_event_data": {
 										Type:     schema.TypeList,

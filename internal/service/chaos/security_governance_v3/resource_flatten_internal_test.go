@@ -83,7 +83,7 @@ func TestK8sSpecV3_RoundTrip(t *testing.T) {
 				"kind":               "Deployment",
 				"label":              "app=web",
 				"services":           []interface{}{"svc-1"},
-				"application_map_id":  "map-1",
+				"application_map_id": "map-1",
 				"namespace_labels":   map[string]interface{}{"team": "core"},
 			}},
 		}},
@@ -180,15 +180,15 @@ func TestSetRuleV3Data_TimeWindowsFlatten(t *testing.T) {
 	}
 
 	checks := map[string]interface{}{
-		"name":                                    "rule-1",
-		"is_enabled":                              true,
-		"time_windows.0.time_zone":                "UTC",
-		"time_windows.0.start_time":               100,
-		"time_windows.0.end_time":                 200,
-		"time_windows.0.duration":                 "1h",
-		"time_windows.0.recurrence.0.type":        "Weekly",
-		"time_windows.0.recurrence.0.until":       500,
-		"time_windows.0.recurrence.0.value":       2,
+		"name":                              "rule-1",
+		"is_enabled":                        true,
+		"time_windows.0.time_zone":          "UTC",
+		"time_windows.0.start_time":         100,
+		"time_windows.0.end_time":           200,
+		"time_windows.0.duration":           "1h",
+		"time_windows.0.recurrence.0.type":  "Weekly",
+		"time_windows.0.recurrence.0.until": 500,
+		"time_windows.0.recurrence.0.value": 2,
 	}
 	for path, want := range checks {
 		if got := d.Get(path); got != want {

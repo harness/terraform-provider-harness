@@ -582,4 +582,3 @@ resource "harness_platform_connector_openai_model" "test" {
   }
 }`, id, name, orgID, projectID, delegateBlock, saKeyRef, gcpProjectID, region)
 }
-

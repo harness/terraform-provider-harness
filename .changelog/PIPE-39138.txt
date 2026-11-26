@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_template: fail fast with a clear error when `import_from_git` is set without required `git_import_details` fields (`connector_ref`, `repo_name`, `branch_name`, `file_path`). Values in `git_details` are ignored for import and previously produced an opaque gateway HTTP 500.
+```

@@ -140,4 +140,3 @@ data "harness_platform_delegate_default_version" "test" {
 }
 `, orgId, projectId)
 }
-
