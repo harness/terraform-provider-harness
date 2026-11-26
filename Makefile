@@ -37,6 +37,10 @@ SWEEP_DIR    ?= ./internal/sweep
 SWEEP_RUN    ?= all
 ACC_TEST_TIMEOUT ?= 120m
 UNIT_TEST_TIMEOUT ?= 10m
+# Name prefixes that hit live Harness APIs (kept out of credential-free unit runs).
+UNIT_TEST_SKIP ?= ^(TestAcc|TestOrg|TestProj|TestProject|TestOidc|TestDataSource|TestForceDelete|TestHelmRepo|TestMonitoredService|TestUnitAcc|TestUnitOrg|TestUnitProject|TestRepoResource|TestResourceAlert|TestResourceAws|TestResourceAWS|TestResourceAzure|TestResourceECS|TestResourceK8s|TestResourceRDS|TestResourceScale|TestResourceVM|TestResourceCluster|TestResourceRemote|TestResourceImport|TestResourceGitx|TestResourceProvider)
+# Packages that need credentials / don't compile in unit CI (grep -E pattern).
+UNIT_TEST_EXCLUDE_PKGS ?= /internal/service/cd/delegate$$|/internal/sweep$$
 
 # Tools
 TFPLUGINDOCS := $(GOPATH)/bin/tfplugindocs
@@ -178,17 +182,17 @@ clean-plugins: ## Remove all local Terraform plugin installations for this provi
 ##@ Testing
 
 .PHONY: test
-test: ## Run unit tests (credential-free; used by coverage CI)
+test: ## Run credential-free unit tests (no HARNESS_* / TF_ACC required)
 	$(call log_header,Running Unit Tests)
 	$(call log_info,Running tests with timeout $(UNIT_TEST_TIMEOUT)...)
 	@# -vet=off: Go 1.24+ printf vet fails many diag.Errorf(err.Error()) call sites.
-	@# -skip: Acc-style UnitTests Fatal/panic without HARNESS_* / TF_ACC; keep make testacc for those.
-	@# Exclude cd/delegate: helper_test does not compile against current docker SDK types.
-	@pkgs=$$($(GO) list $(TEST) | grep -v '/internal/service/cd/delegate$$'); \
+	@# Filters live-API tests by name / package so make testacc remains the acc path.
+	@pkgs=$$($(GO) list $(TEST) | grep -Ev '$(UNIT_TEST_EXCLUDE_PKGS)'); \
 	$(GO) test $$pkgs -count=1 $(TESTARGS) -timeout=$(UNIT_TEST_TIMEOUT) \
 		-cover -coverprofile=coverage.out -covermode=atomic -vet=off \
-		-skip '^(TestAcc|TestOrg|TestProj|TestProject)'
+		-skip '$(UNIT_TEST_SKIP)'
 	$(call log_success,Unit tests passed)
+	$(call log_info,Coverage profile: coverage.out)
 
 .PHONY: testacc
 testacc: ## Run acceptance tests (requires HARNESS_* env vars)
@@ -207,10 +211,13 @@ testacc-fme: ## Run FME (Split) acceptance tests only: ./internal/service/split/
 	$(call log_success,FME acceptance tests passed)
 
 .PHONY: test-coverage
-test-coverage: ## Run tests with coverage report
+test-coverage: ## Run credential-free unit tests with HTML coverage report
 	$(call log_header,Running Tests with Coverage)
 	$(call log_info,Generating coverage report...)
-	@$(GO) test $(TEST) -v -coverprofile=coverage.out -covermode=atomic $(TESTARGS)
+	@pkgs=$$($(GO) list $(TEST) | grep -Ev '$(UNIT_TEST_EXCLUDE_PKGS)'); \
+	$(GO) test $$pkgs -count=1 $(TESTARGS) -timeout=$(UNIT_TEST_TIMEOUT) \
+		-coverprofile=coverage.out -covermode=atomic -vet=off \
+		-skip '$(UNIT_TEST_SKIP)'
 	@$(GO) tool cover -html=coverage.out -o coverage.html
 	$(call log_success,Coverage report generated: coverage.html)
 	@$(GO) tool cover -func=coverage.out | tail -1

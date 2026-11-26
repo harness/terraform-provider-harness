@@ -42,7 +42,7 @@ func TestAccResourceServiceAccount(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),		
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 				),

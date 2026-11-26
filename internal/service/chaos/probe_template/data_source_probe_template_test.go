@@ -11,6 +11,7 @@ import (
 
 func TestAccDataSourceProbeTemplate_byIdentity(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "data.harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -18,10 +19,10 @@ func TestAccDataSourceProbeTemplate_byIdentity(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceProbeTemplate_byIdentity(name),
+				Config: testAccDataSourceProbeTemplate_byIdentity(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "identity", identity),
 					resource.TestCheckResourceAttr(resourceName, "type", "httpProbe"),
 					resource.TestCheckResourceAttrSet(resourceName, "hub_identity"),
 					resource.TestCheckResourceAttrSet(resourceName, "account_id"),
@@ -33,6 +34,7 @@ func TestAccDataSourceProbeTemplate_byIdentity(t *testing.T) {
 
 func TestAccDataSourceProbeTemplate_byName(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "data.harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -40,10 +42,10 @@ func TestAccDataSourceProbeTemplate_byName(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceProbeTemplate_byName(name),
+				Config: testAccDataSourceProbeTemplate_byName(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "identity", identity),
 					resource.TestCheckResourceAttr(resourceName, "type", "httpProbe"),
 					resource.TestCheckResourceAttrSet(resourceName, "hub_identity"),
 				),
@@ -54,6 +56,7 @@ func TestAccDataSourceProbeTemplate_byName(t *testing.T) {
 
 func TestAccDataSourceProbeTemplate_cmdProbe(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "data.harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -61,10 +64,10 @@ func TestAccDataSourceProbeTemplate_cmdProbe(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceProbeTemplate_cmdProbe(name),
+				Config: testAccDataSourceProbeTemplate_cmdProbe(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "identity", identity),
 					resource.TestCheckResourceAttr(resourceName, "type", "cmdProbe"),
 					resource.TestCheckResourceAttrSet(resourceName, "hub_identity"),
 				),
@@ -75,6 +78,7 @@ func TestAccDataSourceProbeTemplate_cmdProbe(t *testing.T) {
 
 func TestAccDataSourceProbeTemplate_k8sProbe(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "data.harness_chaos_probe_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -82,10 +86,10 @@ func TestAccDataSourceProbeTemplate_k8sProbe(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceProbeTemplate_k8sProbe(name),
+				Config: testAccDataSourceProbeTemplate_k8sProbe(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "identity", name),
+					resource.TestCheckResourceAttr(resourceName, "identity", identity),
 					resource.TestCheckResourceAttr(resourceName, "type", "k8sProbe"),
 					resource.TestCheckResourceAttrSet(resourceName, "hub_identity"),
 				),
@@ -94,7 +98,7 @@ func TestAccDataSourceProbeTemplate_k8sProbe(t *testing.T) {
 	})
 }
 
-func testAccDataSourceProbeTemplate_byIdentity(name string) string {
+func testAccDataSourceProbeTemplate_byIdentity(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -119,7 +123,7 @@ func testAccDataSourceProbeTemplate_byIdentity(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Test HTTP probe template"
 			type         = "httpProbe"
@@ -146,10 +150,10 @@ func testAccDataSourceProbeTemplate_byIdentity(name string) string {
 			hub_identity = harness_chaos_hub_v2.test.identity
 			identity     = harness_chaos_probe_template.test.identity
 		}
-	`, name)
+	`, name, identity)
 }
 
-func testAccDataSourceProbeTemplate_byName(name string) string {
+func testAccDataSourceProbeTemplate_byName(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -174,7 +178,7 @@ func testAccDataSourceProbeTemplate_byName(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Test HTTP probe template"
 			type         = "httpProbe"
@@ -201,10 +205,10 @@ func testAccDataSourceProbeTemplate_byName(name string) string {
 			hub_identity = harness_chaos_hub_v2.test.identity
 			name         = harness_chaos_probe_template.test.name
 		}
-	`, name)
+	`, name, identity)
 }
 
-func testAccDataSourceProbeTemplate_cmdProbe(name string) string {
+func testAccDataSourceProbeTemplate_cmdProbe(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -229,7 +233,7 @@ func testAccDataSourceProbeTemplate_cmdProbe(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Test CMD probe template"
 			type         = "cmdProbe"
@@ -250,10 +254,10 @@ func testAccDataSourceProbeTemplate_cmdProbe(name string) string {
 			hub_identity = harness_chaos_hub_v2.test.identity
 			identity     = harness_chaos_probe_template.test.identity
 		}
-	`, name)
+	`, name, identity)
 }
 
-func testAccDataSourceProbeTemplate_k8sProbe(name string) string {
+func testAccDataSourceProbeTemplate_k8sProbe(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -278,7 +282,7 @@ func testAccDataSourceProbeTemplate_k8sProbe(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Test K8s probe template"
 			type         = "k8sProbe"
@@ -302,5 +306,5 @@ func testAccDataSourceProbeTemplate_k8sProbe(name string) string {
 			hub_identity = harness_chaos_hub_v2.test.identity
 			identity     = harness_chaos_probe_template.test.identity
 		}
-	`, name)
+	`, name, identity)
 }

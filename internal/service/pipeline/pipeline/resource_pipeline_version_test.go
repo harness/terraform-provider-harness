@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/antihax/optional"
+	"github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/stretchr/testify/require"
 )
@@ -31,6 +33,42 @@ func TestBuildPipelineRequestSendsYamlVersion(t *testing.T) {
 	updateJSON, err := json.Marshal(updateBody)
 	require.NoError(t, err)
 	require.Contains(t, string(updateJSON), `"version":"1"`)
+}
+
+func TestReadPipelineDataSourceOmitsMissingYamlVersion(t *testing.T) {
+	d := schema.TestResourceDataRaw(t, DataSourcePipeline().Schema, map[string]interface{}{
+		"identifier": "id",
+		"org_id":     "org",
+		"project_id": "proj",
+	})
+
+	readPipeline(d, nextgen.PipelineGetResponseBody{
+		Identifier:   "id",
+		Name:         "name",
+		PipelineYaml: "pipeline: {}\n",
+	}, "org", "proj", false, optional.EmptyString(), optional.EmptyString(), optional.EmptyString(), optional.EmptyString())
+
+	require.Equal(t, "id", d.Id())
+	require.Equal(t, "pipeline: {}\n", d.Get("yaml").(string))
+	_, isString := d.Get("yaml_version").(string)
+	require.False(t, isString)
+}
+
+func TestReadPipelineResourceKeepsYamlVersion(t *testing.T) {
+	d := schema.TestResourceDataRaw(t, ResourcePipeline().Schema, map[string]interface{}{
+		"identifier":   "id",
+		"name":         "name",
+		"yaml_version": "1",
+	})
+	require.NoError(t, d.Set("tags", schema.NewSet(schema.HashString, []interface{}{})))
+
+	readPipeline(d, nextgen.PipelineGetResponseBody{
+		Identifier:   "id",
+		Name:         "name",
+		PipelineYaml: "version: 1\n",
+	}, "org", "proj", false, optional.EmptyString(), optional.EmptyString(), optional.EmptyString(), optional.EmptyString())
+
+	require.Equal(t, "1", d.Get("yaml_version").(string))
 }
 
 func TestBuildPipelineRequestDefaultsYamlVersionToZero(t *testing.T) {

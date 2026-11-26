@@ -223,6 +223,30 @@ func ResourceProject() *schema.Resource {
 											},
 										},
 									},
+									"destination_service_accounts": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: "Service accounts impersonated for application syncs to each destination. Maps to Argo CD spec.destinationServiceAccounts.",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"server": {
+													Type:        schema.TypeString,
+													Optional:    true,
+													Description: "URL of the destination cluster API server. Glob patterns are supported.",
+												},
+												"namespace": {
+													Type:        schema.TypeString,
+													Optional:    true,
+													Description: "Target namespace for the application's resources. Glob patterns are supported.",
+												},
+												"default_service_account": {
+													Type:        schema.TypeString,
+													Optional:    true,
+													Description: "Service account impersonated during the sync operation.",
+												},
+											},
+										},
+									},
 									"description": {
 										Type:        schema.TypeString,
 										Optional:    true,
@@ -876,6 +900,7 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 			}
 
 			var appprojectsApplicationDestination []nextgen.AppprojectsApplicationDestination
+			var appprojectsDestinationServiceAccounts []nextgen.AppprojectsApplicationDestinationServiceAccount
 			if dest, ok := projectData["spec"].([]interface{}); ok && len(dest) > 0 {
 				specData := dest[0].(map[string]interface{})
 
@@ -886,6 +911,16 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 							Namespace: dData["namespace"].(string),
 							Server:    dData["server"].(string),
 							Name:      dData["name"].(string),
+						})
+					}
+				}
+				if acctList, ok := specData["destination_service_accounts"].([]interface{}); ok {
+					for _, a := range acctList {
+						aData := a.(map[string]interface{})
+						appprojectsDestinationServiceAccounts = append(appprojectsDestinationServiceAccounts, nextgen.AppprojectsApplicationDestinationServiceAccount{
+							Server:                aData["server"].(string),
+							Namespace:             aData["namespace"].(string),
+							DefaultServiceAccount: aData["default_service_account"].(string),
 						})
 					}
 				}
@@ -1090,6 +1125,7 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 
 			approjectsAppProjectSpec = &nextgen.AppprojectsAppProjectSpec{
 				Destinations:                    appprojectsApplicationDestination,
+				DestinationServiceAccounts:      appprojectsDestinationServiceAccounts,
 				ClusterResourceWhitelist:        v1GroupKind,
 				ClusterResourceBlacklist:        v1GroupKindCluster,
 				NamespaceResourceBlacklist:      v1GroupKindNameSpaceBlacklist,
@@ -1267,6 +1303,7 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 			}
 
 			var appprojectsApplicationDestination []nextgen.AppprojectsApplicationDestination
+			var appprojectsDestinationServiceAccounts []nextgen.AppprojectsApplicationDestinationServiceAccount
 			if dest, ok := projectData["spec"].([]interface{}); ok && len(dest) > 0 {
 				specData := dest[0].(map[string]interface{})
 
@@ -1277,6 +1314,16 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 							Namespace: dData["namespace"].(string),
 							Server:    dData["server"].(string),
 							Name:      dData["name"].(string),
+						})
+					}
+				}
+				if acctList, ok := specData["destination_service_accounts"].([]interface{}); ok {
+					for _, a := range acctList {
+						aData := a.(map[string]interface{})
+						appprojectsDestinationServiceAccounts = append(appprojectsDestinationServiceAccounts, nextgen.AppprojectsApplicationDestinationServiceAccount{
+							Server:                aData["server"].(string),
+							Namespace:             aData["namespace"].(string),
+							DefaultServiceAccount: aData["default_service_account"].(string),
 						})
 					}
 				}
@@ -1448,6 +1495,7 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 
 			approjectsAppProjectSpec = &nextgen.AppprojectsAppProjectSpec{
 				Destinations:                    appprojectsApplicationDestination,
+				DestinationServiceAccounts:      appprojectsDestinationServiceAccounts,
 				ClusterResourceWhitelist:        v1GroupKind,
 				ClusterResourceBlacklist:        v1GroupKindCluster,
 				NamespaceResourceBlacklist:      v1GroupKindNameSpaceBlacklist,
@@ -1552,6 +1600,18 @@ func setProjectDetails(d *schema.ResourceData, account_id string, projects *next
 				}
 			}
 			spec["destinations"] = destinationList
+		}
+
+		if len(projects.Spec.DestinationServiceAccounts) > 0 {
+			accountList := make([]interface{}, len(projects.Spec.DestinationServiceAccounts))
+			for i, acct := range projects.Spec.DestinationServiceAccounts {
+				accountList[i] = map[string]interface{}{
+					"server":                  acct.Server,
+					"namespace":               acct.Namespace,
+					"default_service_account": acct.DefaultServiceAccount,
+				}
+			}
+			spec["destination_service_accounts"] = accountList
 		}
 
 		if projects.Spec.OrphanedResources != nil {

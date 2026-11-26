@@ -94,13 +94,13 @@ func HandleDBOpsApiError(err error, d *schema.ResourceData, httpResp *http.Respo
 			return diag.Errorf("Bad Request: %s", string(errorBody))
 		}
 		if httpResp.StatusCode == 401 {
-			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if token has expired or is wrong.\n" +
+			return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+				"1) Please check if token has expired or is wrong.\n"+
 				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 		}
 		if httpResp.StatusCode == 403 {
-			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if the token has required permission for this operation.\n" +
+			return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+				"1) Please check if the token has required permission for this operation.\n"+
 				"2) Please check if the token has expired or is wrong.")
 		}
 		if httpResp.StatusCode == 404 {
@@ -111,7 +111,7 @@ func HandleDBOpsApiError(err error, d *schema.ResourceData, httpResp *http.Respo
 	if isUndefinedResponseTypeError(err) {
 		return handleUndefinedResponseTypeError(httpResp)
 	}
-	return diag.Errorf(err.Error())
+	return diag.Errorf("%s", err.Error())
 }
 
 func HandlePolicyApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
@@ -129,13 +129,13 @@ func HandlePolicyApiError(err error, d *schema.ResourceData, httpResp *http.Resp
 			return diag.Errorf("Bad Request: %s", string(errorBody))
 		}
 		if httpResp.StatusCode == 401 {
-			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if token has expired or is wrong.\n" +
+			return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+				"1) Please check if token has expired or is wrong.\n"+
 				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 		}
 		if httpResp.StatusCode == 403 {
-			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if the token has required permission for this operation.\n" +
+			return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+				"1) Please check if the token has required permission for this operation.\n"+
 				"2) Please check if the token has expired or is wrong.")
 		}
 		if httpResp.StatusCode == 404 {
@@ -211,19 +211,19 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 				}
 			}
 		}
-		return diag.Errorf(errMessage)
+		return diag.Errorf("%s", errMessage)
 	}
 
 	err_openapi_client, ok := err.(openapi_client_nextgen.GenericSwaggerError)
 	if ok {
 		if httpResp != nil && httpResp.StatusCode == 401 {
-			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if token has expired or is wrong.\n" +
+			return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+				"1) Please check if token has expired or is wrong.\n"+
 				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 		}
 		if httpResp != nil && httpResp.StatusCode == 403 {
-			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if the token has required permission for this operation.\n" +
+			return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+				"1) Please check if the token has required permission for this operation.\n"+
 				"2) Please check if the token has expired or is wrong.")
 		}
 		if httpResp != nil && httpResp.StatusCode == 404 {
@@ -232,15 +232,15 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 		var jsonMap map[string]interface{}
 		err := json.Unmarshal(err_openapi_client.Body(), &jsonMap)
 		if err == nil {
-			return diag.Errorf(jsonMap["message"].(string))
+			return diag.Errorf("%s", jsonMap["message"].(string))
 		}
-		return diag.Errorf(err_openapi_client.Error())
+		return diag.Errorf("%s", err_openapi_client.Error())
 	}
 
 	if isUndefinedResponseTypeError(err) {
 		return handleUndefinedResponseTypeError(httpResp)
 	}
-	return diag.Errorf(err.Error())
+	return diag.Errorf("%s", err.Error())
 }
 
 func ParseErrorBody(err nextgen.GenericSwaggerError) (*nextgen.ModelError, error) {
@@ -277,13 +277,13 @@ func HandleDBOpsReadApiError(err error, d *schema.ResourceData, httpResp *http.R
 	_, ok := err.(dbops.GenericSwaggerError)
 	if ok && httpResp != nil {
 		if httpResp.StatusCode == 401 {
-			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if token has expired or is wrong.\n" +
+			return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+				"1) Please check if token has expired or is wrong.\n"+
 				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 		}
 		if httpResp.StatusCode == 403 {
-			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if the token has required permission for this operation.\n" +
+			return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+				"1) Please check if the token has required permission for this operation.\n"+
 				"2) Please check if the token has expired or is wrong.")
 		}
 		if httpResp.StatusCode == 404 {
@@ -295,7 +295,7 @@ func HandleDBOpsReadApiError(err error, d *schema.ResourceData, httpResp *http.R
 	if isUndefinedResponseTypeError(err) {
 		return handleUndefinedResponseTypeError(httpResp)
 	}
-	return diag.Errorf(err.Error())
+	return diag.Errorf("%s", err.Error())
 }
 
 // HandleCodeApiError Provide helpful error messages like
@@ -334,7 +334,7 @@ func handleCodeApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 		if isUndefinedResponseTypeError(err) {
 			return handleUndefinedResponseTypeError(nil)
 		}
-		return diag.Errorf(codeErr.Error())
+		return diag.Errorf("%s", codeErr.Error())
 	}
 
 	var errorMessage string
@@ -354,12 +354,12 @@ func handleCodeApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 	case 400:
 		return diag.Errorf("Bad Request: %s", errorMessage)
 	case 401:
-		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-			"1) Please check if token has expired or is wrong.\n" +
+		return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+			"1) Please check if token has expired or is wrong.\n"+
 			"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 	case 403:
-		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-			"1) Please check if the token has required permission for this operation.\n" +
+		return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+			"1) Please check if the token has required permission for this operation.\n"+
 			"2) Please check if the token has expired or is wrong.")
 	case 404:
 		if read {
@@ -393,9 +393,9 @@ func HandleChaosReadApiError(err error, d *schema.ResourceData, httpResp *http.R
 // gracefulErrorPatterns: list of error message patterns that should be treated as "not found"
 // Example: []string{"no matching infra", "at least one hub is required"}
 func HandleChaosReadApiErrorWithGracefulDestroy(err error, d *schema.ResourceData, httpResp *http.Response, gracefulErrorPatterns []string) diag.Diagnostics {
-	chaosErr, ok := err.(chaos.GenericSwaggerError)
+	chaosErr, ok := err.(swaggerError)
 	if !ok {
-		return diag.Errorf(err.Error())
+		return diag.Errorf("%s", err.Error())
 	}
 
 	// Handle 404 - resource not found
@@ -439,21 +439,28 @@ func HandleChaosReadApiErrorWithGracefulDestroy(err error, d *schema.ResourceDat
 	return handleChaosApiError(err, d, httpResp, true)
 }
 
+// swaggerError is the response error returned by generated Harness API clients.
+type swaggerError interface {
+	error
+	Body() []byte
+	Model() interface{}
+}
+
 // handleChaosApiError is the internal implementation for chaos error handling
 // It extracts detailed error messages from the error body or model
 func handleChaosApiError(err error, d *schema.ResourceData, httpResp *http.Response, read bool) diag.Diagnostics {
-	chaosErr, ok := err.(chaos.GenericSwaggerError)
+	chaosErr, ok := err.(swaggerError)
 	if !ok {
 		if isUndefinedResponseTypeError(err) {
 			return handleUndefinedResponseTypeError(httpResp)
 		}
-		return diag.Errorf(err.Error())
+		return diag.Errorf("%s", err.Error())
 	}
 	if httpResp == nil {
 		if isUndefinedResponseTypeError(err) {
 			return handleUndefinedResponseTypeError(nil)
 		}
-		return diag.Errorf(chaosErr.Error())
+		return diag.Errorf("%s", chaosErr.Error())
 	}
 
 	// Debug: Log the raw error body

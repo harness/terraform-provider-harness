@@ -1,3 +1,4 @@
+* ritek.rounak@harness.io
 internal/service/platform/connector/connector.go rathod.meetsatish@harness.io ritek.rounak@harness.io
 internal/service/cd/** ritek.rounak@harness.io
 internal/service/cd_nextgen/** ritek.rounak@harness.io
@@ -10,6 +11,12 @@ go.mod ritek.rounak@harness.io
 go.sum ritek.rounak@harness.io
 tools/** ritek.rounak@harness.io
 helpers/** ritek.rounak@harness.io
+Makefile ritek.rounak@harness.io
+main.go ritek.rounak@harness.io
+internal/acctest/** ritek.rounak@harness.io
+internal/sweep/** ritek.rounak@harness.io
+internal/provider/** ritek.rounak@harness.io
+internal/session.go ritek.rounak@harness.io
 internal/service/platform/db_instance/** abhishek.abhishek@harness.io archit.singla@harness.io hemanth.sridhar@harness.io ritek.rounak@harness.io
 internal/service/platform/db_schema/** abhishek.abhishek@harness.io archit.singla@harness.io hemanth.sridhar@harness.io ritek.rounak@harness.io
 internal/service/platform/gitops/** ashin.sabu@harness.io manish.singh@harness.io mirko.teodorovic@harness.io alexandru.casian@harness.io ritek.rounak@harness.io

@@ -272,7 +272,7 @@ func readPluginState(d *schema.ResourceData, resp idp.PluginInfoResponse) error 
 				"env_name":                  ev.EnvName,
 				"type":                      ev.Type,
 				"harness_secret_identifier": ev.HarnessSecretIdentifier,
-				"identifier":               ev.Identifier,
+				"identifier":                ev.Identifier,
 			})
 		}
 		d.Set("env_variables", envVars)

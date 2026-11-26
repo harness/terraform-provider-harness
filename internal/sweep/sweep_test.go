@@ -1,7 +1,6 @@
 package sweep_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -14,12 +13,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// Sweepers need FirstGen ApiKey. `make test` / coverage CI have no credentials —
-	// skip client setup so the package does not panic; `make testacc` sets TF_ACC=1.
-	if os.Getenv(resource.TestEnvVar) == "" {
-		os.Exit(m.Run())
-	}
-
 	client, err := cd.NewClient(cd.DefaultConfig())
 	if err != nil {
 		panic(err)
