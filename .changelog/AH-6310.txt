@@ -1,0 +1,7 @@
+```release-note:enhancement
+resource/harness_platform_har_registry: Added `scanners` and `policy_refs` fields to configure vulnerability scanners and bind OPA policy sets to an Artifact Registry. Falls back to a Modify call when the backend does not persist these fields on Create, consistent with the existing `firewall_mode` workaround.
+```
+
+```release-note:bug
+resource/harness_platform_har_registry: Fixed `scanners`/`policy_refs` causing every apply to fail on existing registries that already had either field set outside Terraform (e.g. via the UI). The fields are now `Optional` + `Computed`, so omitting them from config preserves the current server-side value instead of planning to clear it. Explicitly clearing either field (setting it to `[]`) is rejected with a clear error at plan time, since the API cannot distinguish an intentional clear from an unset field.
+```

@@ -139,7 +139,7 @@ func DataSourceConnectorSerivceNow() *schema.Resource {
 									},
 								},
 							},
-						},						
+						},
 					},
 				},
 			},

@@ -269,7 +269,7 @@ func readModule(d *schema.ResourceData, module *nextgen.ModuleResource) {
 	d.Set("system", module.System)
 	d.Set("tags", module.Tags)
 	d.Set("testing_enabled", module.TestingEnabled)
-	
+
 	// Set testing_metadata as a list with one item
 	if module.TestingMetadata != nil {
 		testingMetadataList := []interface{}{
@@ -286,7 +286,7 @@ func readModule(d *schema.ResourceData, module *nextgen.ModuleResource) {
 		}
 		d.Set("testing_metadata", testingMetadataList)
 	}
-	
+
 	d.Set("updated", module.Updated)
 	d.Set("versions", module.Versions)
 }
@@ -339,13 +339,13 @@ func buildCreateModuleRequestTestingBody(d *schema.ResourceData) (nextgen.Enable
 
 func parseError(err error, httpResp *http.Response) diag.Diagnostics {
 	if httpResp != nil && httpResp.StatusCode == 401 {
-		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-			"1) Please check if token has expired or is wrong.\n" +
+		return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+			"1) Please check if token has expired or is wrong.\n"+
 			"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 	}
 	if httpResp != nil && httpResp.StatusCode == 403 {
-		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-			"1) Please check if the token has required permission for this operation.\n" +
+		return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+			"1) Please check if the token has required permission for this operation.\n"+
 			"2) Please check if the token has expired or is wrong.")
 	}
 
@@ -358,11 +358,11 @@ func parseError(err error, httpResp *http.Response) diag.Diagnostics {
 	iacmErr := nextgen.IacmError{}
 	jsonErr := json.Unmarshal(iacmErrBody, &iacmErr)
 	if jsonErr != nil {
-		return diag.Errorf(err.Error())
+		return diag.Errorf("%s", err.Error())
 	}
 
-	return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-		"1) " + iacmErr.Message)
+	return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+		"1) "+iacmErr.Message)
 }
 
 func resourceInfraModuleTestingDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

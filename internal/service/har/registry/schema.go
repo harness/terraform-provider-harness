@@ -36,6 +36,12 @@ var upstreamSources = []string{
 	"Wolfi",
 }
 
+// scannerNames mirrors the Scanner.name enum in the Harness Artifact Registry API.
+var scannerNames = []string{
+	"AQUA_TRIVY",
+	"GRYPE",
+}
+
 const upstreamSourceDescription = "Upstream source. Every package type accepts `Custom` (which requires `config.url`). " +
 	"Package types with a built-in default source, which resolves the remote URL for you: " +
 	"`ALPINE` → `Alpine`, `CARGO` → `Crates`, `COMPOSER` → `Packagist`, `CONAN` → `ConanCenter`, " +
@@ -70,10 +76,11 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Required:    true,
 		},
 		"config": {
-			Description: "Configuration for the registry",
-			Type:        schema.TypeList,
-			Optional:    true,
-			MaxItems:    1,
+			Description: "Configuration for the registry. " +
+				"For UPSTREAM registries, authentication is **required**: provide either `auth_type` or the `auth` block. `source` is also required for UPSTREAM registries.",
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"type": {
@@ -178,7 +185,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"auth_type": {
-									Description: "Type of authentication (UserPassword, Anonymous).",
+									Description: "Type of authentication (UserPassword, Anonymous, AccessKeySecretKey).",
 									Type:        schema.TypeString,
 									Required:    true,
 									ValidateFunc: validation.StringInSlice([]string{
@@ -228,7 +235,7 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 						},
 					},
 					"auth_type": {
-						Description: "Type of authentication for UPSTREAM registry type (UserPassword, Anonymous)",
+						Description: "Type of authentication for UPSTREAM registry type (UserPassword, Anonymous, AccessKeySecretKey)",
 						Type:        schema.TypeString,
 						Optional:    true,
 						ValidateFunc: validation.StringInSlice([]string{
@@ -344,6 +351,25 @@ func resourceRegistrySchema(readOnly bool) map[string]*schema.Schema {
 			Description: "Blocked artifact patterns",
 			Type:        schema.TypeList,
 			Optional:    true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
+		"scanners": {
+			Description: "Vulnerability scanners to run against artifacts stored in this registry. Omitting this field preserves any value already set on the registry (e.g. via the Harness UI); explicitly setting it to an empty list is rejected since the API cannot distinguish an intentional clear from an unset field.",
+			Type:        schema.TypeList,
+			Optional:    true,
+			Computed:    true,
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validation.StringInSlice(scannerNames, false),
+			},
+		},
+		"policy_refs": {
+			Description: "Identifiers of policy sets (OPA) bound to this registry for firewall/governance evaluation. Omitting this field preserves any value already set on the registry (e.g. via the Harness UI); explicitly setting it to an empty list is rejected since the API cannot distinguish an intentional clear from an unset field.",
+			Type:        schema.TypeList,
+			Optional:    true,
+			Computed:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},

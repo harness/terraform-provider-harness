@@ -45,7 +45,7 @@ func DataSourceInfraProviderVersion() *schema.Resource {
 
 func dataSourceInfraProviderVersionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c, ctx := m.(*internal.Session).GetPlatformClientWithContext(ctx)
-	
+
 	providerId := d.Get("provider_id").(string)
 	version := d.Get("version").(string)
 
@@ -58,12 +58,12 @@ func dataSourceInfraProviderVersionRead(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpRes)
 	}
-	
+
 	d.SetId(fmt.Sprintf("%s/%s", providerId, version))
 	d.Set("provider_id", providerId)
 	d.Set("version", version)
 	d.Set("gpg_key_id", resp.GpgKeyId)
 	d.Set("protocols", resp.Protocols)
-	
+
 	return nil
 }

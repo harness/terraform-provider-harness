@@ -1,4 +1,4 @@
-resource "harness_platform_infra_module" "example" {
+resource "harness_platform_infra_variable_set" "example" {
   identifier  = "example"
   name        = "example"
   org_id      = harness_platform_organization.test.id

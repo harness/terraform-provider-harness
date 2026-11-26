@@ -106,4 +106,3 @@ func resourceTimeSleepDelete(ctx context.Context, d *schema.ResourceData, _ inte
 
 	return nil
 }
-

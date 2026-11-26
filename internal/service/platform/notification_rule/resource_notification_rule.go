@@ -116,7 +116,7 @@ func resourceNotificationRuleCreate(ctx context.Context, d *schema.ResourceData,
 	}
 	createNotificationRuleRequest, err := buildNotificationRuleRequest(d, identifier)
 	if err != nil {
-		return diag.Errorf(err.Error())
+		return diag.Errorf("%s", err.Error())
 	}
 	respCreate, httpRespCreate, errCreate := c.SrmNotificationApiService.SaveSrmNotification(ctx, accountIdentifier,
 		&nextgen.SrmNotificationServiceSaveSrmNotificationOpts{
@@ -180,7 +180,7 @@ func resourceNotificationRuleUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 	updateNotifRequest, err := buildNotificationRuleRequest(d, identifier)
 	if err != nil {
-		return diag.Errorf(err.Error())
+		return diag.Errorf("%s", err.Error())
 	}
 	respCreate, httpRespCreate, errCreate := c.SrmNotificationApiService.UpdateSrmNotification(ctx, accountIdentifier, orgIdentifier, projectIdentifier, identifier,
 		&nextgen.SrmNotificationApiUpdateSrmNotificationOpts{

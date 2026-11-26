@@ -48,6 +48,11 @@ func ResourcePipeline() *schema.Resource {
 				Optional:    true,
 				Default:     false,
 			},
+			"store_type": {
+				Description: "Whether the pipeline is stored in Git. INLINE pipelines have no git details. Possible values: INLINE, REMOTE.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
 				Type:        schema.TypeList,
@@ -504,9 +509,10 @@ func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBo
 
 // pipelineYamlVersion is the request version. Schema default is "0"; an empty
 // value is treated the same so create and update always send version.
+// The data source schema has no yaml_version, so a missing value is not a string.
 func pipelineYamlVersion(d *schema.ResourceData) string {
-	version := d.Get("yaml_version").(string)
-	if version == "" {
+	version, ok := d.Get("yaml_version").(string)
+	if !ok || version == "" {
 		return "0"
 	}
 	return version
@@ -521,10 +527,19 @@ func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBo
 	d.Set("project_id", project_id)
 	d.Set("tags", helpers.FlattenTags(pipeline.Tags))
 	d.Set("yaml", pipeline.PipelineYaml)
-	d.Set("yaml_version", pipelineYamlVersion(d))
+	// yaml_version exists only on the resource. The data source shares this read
+	// path, and d.Get returns nil there.
+	if _, ok := d.Get("yaml_version").(string); ok {
+		d.Set("yaml_version", pipelineYamlVersion(d))
+	}
 	d.Set("description", pipeline.Description)
 	d.Set("template_applied_pipeline_yaml", pipeline.TemplateAppliedPipelineYaml)
 	d.Set("template_applied", template_applied)
+	// Top-level store_type from the get API (INLINE entities have no git_details).
+	// Do not infer REMOTE when the field is absent (older servers).
+	if pipeline.StoreType != "" {
+		d.Set("store_type", pipeline.StoreType)
+	}
 	if pipeline.GitDetails != nil {
 		d.Set("git_details", []interface{}{readGitDetails(pipeline, store_type, base_branch, commit_message, connector_ref)})
 	}
@@ -538,8 +553,13 @@ func readGitDetails(pipeline nextgen.PipelineGetResponseBody, store_type optiona
 		"last_commit_id": pipeline.GitDetails.CommitId,
 		"last_object_id": pipeline.GitDetails.ObjectId,
 	}
+	// Prefer configured git_details.store_type on the resource. Otherwise mirror the
+	// top-level API store_type into the nested attribute so existing references to
+	// git_details.0.store_type keep working on upgrade.
 	if store_type.IsSet() {
 		git_details["store_type"] = store_type.Value()
+	} else if pipeline.StoreType != "" {
+		git_details["store_type"] = pipeline.StoreType
 	}
 	if base_branch.IsSet() {
 		git_details["base_branch"] = base_branch.Value()

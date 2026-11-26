@@ -10,6 +10,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/harness-go-sdk/harness/har"
 	"github.com/harness/harness-go-sdk/harness/idp"
+	"github.com/harness/harness-go-sdk/harness/loadtest"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/po"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
@@ -19,16 +20,17 @@ import (
 )
 
 type Session struct {
-	AccountId   string
-	Endpoint    string
-	CDClient    *cd.ApiClient
-	PLClient    *nextgen.APIClient
-	DBOpsClient *dbops.APIClient
-	Client      *openapi_client_nextgen.APIClient
-	CodeClient  *code.APIClient
-	ChaosClient *chaos.APIClient
-	SDClient    *svcdiscovery.APIClient
-	SplitClient *split.APIClient
+	AccountId      string
+	Endpoint       string
+	CDClient       *cd.ApiClient
+	PLClient       *nextgen.APIClient
+	DBOpsClient    *dbops.APIClient
+	Client         *openapi_client_nextgen.APIClient
+	CodeClient     *code.APIClient
+	ChaosClient    *chaos.APIClient
+	LoadTestClient *loadtest.APIClient
+	SDClient       *svcdiscovery.APIClient
+	SplitClient    *split.APIClient
 	// FMEAdminAPIEndpointError records why the FME admin API endpoint could not be derived during provider configuration.
 	FMEAdminAPIEndpointError error
 	// fmeWorkspaces caches Split workspace lookups by Harness org_id + project_id (see split.WorkspaceByOrganizationAndProject).
@@ -87,6 +89,13 @@ func (s *Session) GetChaosClientWithContext(ctx context.Context) (*chaos.APIClie
 		ctx = context.Background()
 	}
 	return s.ChaosClient.WithAuthContext(ctx)
+}
+
+func (s *Session) GetLoadTestClientWithContext(ctx context.Context) (*loadtest.APIClient, context.Context) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return s.LoadTestClient.WithAuthContext(ctx)
 }
 
 func (s *Session) GetServiceDiscoveryClientWithContext(ctx context.Context) (*svcdiscovery.APIClient, context.Context) {

@@ -25,6 +25,11 @@ resource "harness_platform_gitops_app_project" "test" {
         server    = "https://kubernetes.default.svc"
         name      = "in-cluster"
       }
+      destination_service_accounts {
+        server                  = "https://kubernetes.default.svc"
+        namespace               = "guestbook"
+        default_service_account = "argocd-deployer"
+      }
       roles {
         name        = "read-only"
         description = "Read-only privileges to my-project"
@@ -114,6 +119,11 @@ resource "harness_platform_gitops_app_project" "test" {
         namespace = "guestbook"
         server    = "https://kubernetes.default.svc"
         name      = "in-cluster"
+      }
+      destination_service_accounts {
+        server                  = "https://kubernetes.default.svc"
+        namespace               = "guestbook"
+        default_service_account = "argocd-deployer"
       }
       roles {
         name        = "read-only"
