@@ -10,6 +10,8 @@ description: |-
 
 Data source for retrieving a Harness trigger.
 
+The `executor_info` attribute is always populated from the Harness server when an executor has been assigned to the trigger. If no executor is set on the server, `executor_info` is empty.
+
 ## Example Usage
 
 ```terraform
@@ -18,6 +20,11 @@ data "harness_platform_triggers" "example" {
   org_id     = "org_id"
   project_id = "project_id"
   target_id  = "pipeline_id"
+}
+
+# Access executor identity if present
+output "executor_type" {
+  value = length(data.harness_platform_triggers.example.executor_info) > 0 ? data.harness_platform_triggers.example.executor_info[0].type : "none"
 }
 ```
 
@@ -39,6 +46,16 @@ data "harness_platform_triggers" "example" {
 ### Read-Only
 
 - `description` (String) Description of the resource.
+- `executor_info` (List of Object) Executor identity assigned to this trigger on the Harness server. Empty if no executor is set. (see [below for nested schema](#nestedatt--executor_info))
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
+- `webhook_url` (String) The webhook URL for the trigger.
 - `yaml` (String) trigger yaml
+
+<a id="nestedatt--executor_info"></a>
+### Nested Schema for `executor_info`
+
+- `type` (String) Type of the executor principal: `USER` or `SERVICE_ACCOUNT`.
+- `identifier` (String) Identifier of the executor principal (user UUID or service account identifier).
+- `org_id` (String) Org identifier of the service account executor. Empty for account-level service accounts or USER executors.
+- `project_id` (String) Project identifier of the service account executor. Empty for account-level or org-level service accounts or USER executors.

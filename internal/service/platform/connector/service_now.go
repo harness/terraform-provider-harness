@@ -115,7 +115,7 @@ func ResourceConnectorServiceNow() *schema.Resource {
 							Type:          schema.TypeList,
 							MaxItems:      1,
 							Optional:      true,
-							ConflictsWith: []string{"auth.0.username_password","auth.0.refresh_token"},
+							ConflictsWith: []string{"auth.0.username_password", "auth.0.refresh_token"},
 							AtLeastOneOf: []string{
 								"auth.0.username_password",
 								"auth.0.adfs",
@@ -156,7 +156,7 @@ func ResourceConnectorServiceNow() *schema.Resource {
 							Type:          schema.TypeList,
 							MaxItems:      1,
 							Optional:      true,
-							ConflictsWith: []string{"auth.0.username_password","auth.0.adfs"},
+							ConflictsWith: []string{"auth.0.username_password", "auth.0.adfs"},
 							AtLeastOneOf: []string{
 								"auth.0.username_password",
 								"auth.0.adfs",
@@ -168,7 +168,7 @@ func ResourceConnectorServiceNow() *schema.Resource {
 										Description: "Token url to use for authentication.",
 										Type:        schema.TypeString,
 										Required:    true,
-									},									
+									},
 									"refresh_token_ref": {
 										Description: "Reference to a secret containing the refresh token to use for authentication." + secret_ref_text,
 										Type:        schema.TypeString,
@@ -182,16 +182,16 @@ func ResourceConnectorServiceNow() *schema.Resource {
 									"client_secret_ref": {
 										Description: "Reference to a secret containing the client secret to use for authentication." + secret_ref_text,
 										Type:        schema.TypeString,
-										Optional:      true,
+										Optional:    true,
 									},
 									"scope": {
 										Description: "Scope string to use for authentication." + secret_ref_text,
 										Type:        schema.TypeString,
-										Optional:      true,
+										Optional:    true,
 									},
 								},
 							},
-						},						
+						},
 					},
 				},
 			},
@@ -273,7 +273,7 @@ func buildConnectorServiceNow(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			}
 			if attrAuthType.(string) == "RefreshTokenGrantType" {
 				connector.ServiceNow.Auth.Type_ = nextgen.ServiceNowAuthTypes.ServiceNowRefreshToken
-			}			
+			}
 		}
 		if config["auth_type"] == "UsernamePassword" {
 			if attrUsernamePassword, ok := config["username_password"]; ok {
@@ -344,7 +344,7 @@ func buildConnectorServiceNow(d *schema.ResourceData) *nextgen.ConnectorInfo {
 					connector.ServiceNow.Auth.ServiceNowRefreshToken.Scope = attr.(string)
 				}
 			}
-		}		
+		}
 	}
 	return connector
 }
@@ -391,15 +391,15 @@ func readConnectorServiceNow(d *schema.ResourceData, connector *nextgen.Connecto
 				"auth_type": "RefreshTokenGrantType",
 				"refresh_token": []map[string]interface{}{
 					{
-						"token_url": connector.ServiceNow.Auth.ServiceNowRefreshToken.TokenUrl,
-						"refresh_token_ref":   connector.ServiceNow.Auth.ServiceNowRefreshToken.RefreshTokenRef,
-						"client_id_ref": connector.ServiceNow.Auth.ServiceNowRefreshToken.ClientIdRef,
+						"token_url":         connector.ServiceNow.Auth.ServiceNowRefreshToken.TokenUrl,
+						"refresh_token_ref": connector.ServiceNow.Auth.ServiceNowRefreshToken.RefreshTokenRef,
+						"client_id_ref":     connector.ServiceNow.Auth.ServiceNowRefreshToken.ClientIdRef,
 						"client_secret_ref": connector.ServiceNow.Auth.ServiceNowRefreshToken.ClientSecretRef,
-						"scope":        connector.ServiceNow.Auth.ServiceNowRefreshToken.Scope,
+						"scope":             connector.ServiceNow.Auth.ServiceNowRefreshToken.Scope,
 					},
 				},
 			},
-		})		
+		})
 	}
 	return nil
 }

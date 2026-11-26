@@ -1250,8 +1250,8 @@ resource "harness_platform_template" "test" {
 - `description` (String, Deprecated) Description of the entity. Description field is deprecated
 - `force_delete` (Boolean) Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
-- `git_import_details` (Block List, Max: 1) Contains Git Information for importing entities from Git (see [below for nested schema](#nestedblock--git_import_details))
-- `import_from_git` (Boolean) Flag to set if importing from Git
+- `git_import_details` (Block List, Max: 1) Contains Git Information for importing entities from Git. Required when import_from_git is true. Values in git_details are ignored for import. (see [below for nested schema](#nestedblock--git_import_details))
+- `import_from_git` (Boolean) Flag to set if importing from Git. When true, git details must be provided in git_import_details (not git_details).
 - `is_stable` (Boolean) True if given version for template to be set as stable.
 - `org_id` (String) Organization Identifier for the Entity
 - `project_id` (String) Project Identifier for the Entity
@@ -1284,11 +1284,11 @@ Optional:
 
 Optional:
 
-- `branch_name` (String) Name of the branch.
-- `connector_ref` (String) Identifier of the Harness Connector used for importing entity from Git To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
-- `file_path` (String) File path of the Entity in the repository.
+- `branch_name` (String) Name of the branch. Required when import_from_git is true.
+- `connector_ref` (String) Identifier of the Harness Connector used for importing entity from Git. Required when import_from_git is true. To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `file_path` (String) File path of the Entity in the repository. Required when import_from_git is true.
 - `is_force_import` (Boolean)
-- `repo_name` (String) Name of the repository.
+- `repo_name` (String) Name of the repository. Required when import_from_git is true.
 
 
 <a id="nestedblock--template_import_request"></a>

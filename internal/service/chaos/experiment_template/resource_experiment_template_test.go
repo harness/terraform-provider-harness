@@ -238,6 +238,7 @@ func testAccResourceExperimentTemplate_cleanupPolicyRetain(name string) string {
 // enableDataCollection field produced a permanent "update in-place" diff.
 func TestAccResourceExperimentTemplate_nestedNoDrift(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	identity := acctest.ProbeTemplateIdentity(t.Name())
 	resourceName := "harness_chaos_experiment_template.test"
 
 	resource.Test(t, resource.TestCase{
@@ -245,7 +246,7 @@ func TestAccResourceExperimentTemplate_nestedNoDrift(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceExperimentTemplate_nested(name),
+				Config: testAccResourceExperimentTemplate_nested(name, identity),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identity", name),
 					resource.TestCheckResourceAttr(resourceName, "spec.0.probes.0.name", "latency-check"),
@@ -256,7 +257,7 @@ func TestAccResourceExperimentTemplate_nestedNoDrift(t *testing.T) {
 			},
 			{
 				// Drift check: identical config must produce an empty plan.
-				Config:   testAccResourceExperimentTemplate_nested(name),
+				Config:   testAccResourceExperimentTemplate_nested(name, identity),
 				PlanOnly: true,
 			},
 			{
@@ -312,7 +313,7 @@ func experimentTemplateShortFormImportIdFunc(resourceName string) resource.Impor
 	}
 }
 
-func testAccResourceExperimentTemplate_nested(name string) string {
+func testAccResourceExperimentTemplate_nested(name, identity string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -337,7 +338,7 @@ func testAccResourceExperimentTemplate_nested(name string) string {
 			org_id       = harness_platform_organization.test.id
 			project_id   = harness_platform_project.test.id
 			hub_identity = harness_chaos_hub_v2.test.identity
-			identity     = "%[1]s"
+			identity     = "%[2]s"
 			name         = "%[1]s"
 			description  = "Probe for nested experiment template"
 			type         = "httpProbe"
@@ -393,7 +394,7 @@ func testAccResourceExperimentTemplate_nested(name string) string {
 
 			tags = ["nested", "drift"]
 		}
-	`, name)
+	`, name, identity)
 }
 
 func testAccResourceExperimentTemplate_accountScope(name string) string {

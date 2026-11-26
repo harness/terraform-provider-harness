@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_gitops_app_project_mapping: Fixed `terraform import` losing the `block_if_referenced` attribute — `Read` now preserves the configured value and falls back to the schema default on import, since the API never returns this provider-local, delete-time-only field.
+```

@@ -157,8 +157,8 @@ func ResourceUserGroup() *schema.Resource {
 func resourceUserGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
 	if c == nil {
-    return diag.Errorf(utils.CDClientAPIKeyError)
-  }
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	input := &graphql.UserGroup{
 		Name:        d.Get("name").(string),
 		Description: d.Get("description").(string),
@@ -185,8 +185,8 @@ func resourceUserGroupCreate(ctx context.Context, d *schema.ResourceData, meta i
 func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
 	if c == nil {
-    return diag.Errorf(utils.CDClientAPIKeyError)
-  }
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	id := d.Get("id").(string)
 
 	userGroup, err := c.UserClient.GetUserGroupById(id)
@@ -232,8 +232,8 @@ func readUserGroup(d *schema.ResourceData, userGroup *graphql.UserGroup) diag.Di
 func resourceUserGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
 	if c == nil {
-    return diag.Errorf(utils.CDClientAPIKeyError)
-  }
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	input := &graphql.UserGroup{
 		Id:   d.Id(),
 		Name: d.Get("name").(string),
@@ -255,8 +255,8 @@ func resourceUserGroupUpdate(ctx context.Context, d *schema.ResourceData, meta i
 func resourceUserGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
 	if c == nil {
-    return diag.Errorf(utils.CDClientAPIKeyError)
-  }
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	if err := c.UserClient.DeleteUserGroup(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}

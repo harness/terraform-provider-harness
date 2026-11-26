@@ -267,7 +267,7 @@ func TestAccSecretSSHKey_kerberos_passwordProject(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{
 					"port",
 				},
@@ -320,7 +320,7 @@ func TestAccSecretSSHKey_kerberos_passwordOrg(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{
 					"port",
 				},
@@ -420,7 +420,7 @@ func TestAccSecretSSHKey_sshkey_sshReferenceCredentialProject(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{
 					"port",
 				},
@@ -472,7 +472,7 @@ func TestAccSecretSSHKey_sshkey_sshReferenceCredentialOrg(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{
 					"port",
 				},
@@ -503,8 +503,8 @@ func TestAccSecretSSHKey_sshkey_sshPathCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "account."+ id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "account."+ id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "account."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "account."+id+"_a"),
 				),
 			},
 			{
@@ -517,8 +517,8 @@ func TestAccSecretSSHKey_sshkey_sshPathCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "account."+ id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "account."+ id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "account."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "account."+id+"_a"),
 				),
 			},
 			{
@@ -559,7 +559,7 @@ func TestAccSecretSSHKey_sshkey_sshPathCredentialProject(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", id + "_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", id+"_a"),
 				),
 			},
 			{
@@ -573,14 +573,14 @@ func TestAccSecretSSHKey_sshkey_sshPathCredentialProject(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", id + "_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", id+"_a"),
 				),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{
 					"port",
 				},
@@ -614,8 +614,8 @@ func TestAccSecretSSHKey_sshkey_sshPathCredentialOrg(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "org."+ id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "org."+ id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "org."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "org."+id+"_a"),
 				),
 			},
 			{
@@ -628,15 +628,15 @@ func TestAccSecretSSHKey_sshkey_sshPathCredentialOrg(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "org."+ id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "org."+ id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "org."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "org."+id+"_a"),
 				),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{
 					"port",
 				},
@@ -736,7 +736,7 @@ func TestAccSecretSSHKey_sshkey_sshPasswordProject(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{
 					"port",
 				},
@@ -788,7 +788,7 @@ func TestAccSecretSSHKey_sshkey_sshPasswordOrg(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{
 					"port",
 				},
@@ -1172,7 +1172,7 @@ func testAccResourceSecret_sshkey_sshPathCredential(id string, name string) stri
 			credential_type = "KeyPath"
 		}
 	}
-`, id, name,getAbsFilePath("../../../acctest/secret_files/secret.txt"))
+`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
 
 func testAccResourceSecret_sshkey_sshPathCredentialProject(id string, name string) string {
@@ -1226,7 +1226,7 @@ func testAccResourceSecret_sshkey_sshPathCredentialProject(id string, name strin
 			depends_on = [harness_platform_secret_file.test]
 			
 		}
-`, id, name,getAbsFilePath("../../../acctest/secret_files/secret.txt"))
+`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
 
 func testAccResourceSecret_sshkey_sshPathCredentialOrg(id string, name string) string {
@@ -1272,7 +1272,7 @@ func testAccResourceSecret_sshkey_sshPathCredentialOrg(id string, name string) s
 			depends_on = [harness_platform_secret_file.test]
 			
 		}
-`, id, name,getAbsFilePath("../../../acctest/secret_files/secret.txt"))
+`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
 
 func testAccResourceSecret_sshkey_sshPassword(id string, name string) string {
