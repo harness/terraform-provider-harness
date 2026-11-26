@@ -15,12 +15,12 @@ func TestReadDelegateTokenWithNilCreatedByNgUser(t *testing.T) {
 
 	// Simulate a default token with nil CreatedByNgUser
 	delegateToken := &nextgen.DelegateTokenDetails{
-		Name:             "default_token_test",
-		AccountId:        "test_account",
-		Status:           "ACTIVE",
-		CreatedAt:        1620000000000,
-		Value:            "test_token_value",
-		CreatedByNgUser:  nil, // This is nil for default tokens
+		Name:            "default_token_test",
+		AccountId:       "test_account",
+		Status:          "ACTIVE",
+		CreatedAt:       1620000000000,
+		Value:           "test_token_value",
+		CreatedByNgUser: nil, // This is nil for default tokens
 	}
 
 	// This should not panic

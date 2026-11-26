@@ -338,7 +338,7 @@ func expandNotificationConditions(raw []interface{}) []nextgen.NotificationCondi
 				} else if directMap, ok := rawEventData.(map[string]interface{}); ok {
 					eventDataMap = directMap
 				}
-				
+
 				if eventDataMap != nil {
 					if typeStr, ok := eventDataMap["type"].(string); ok && typeStr != "" {
 						t := nextgen.ResourceTypeEnum(typeStr)
@@ -445,7 +445,7 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 		var eventConfigs []map[string]interface{}
 		for _, cfg := range cond.NotificationEventConfigs {
 			eventData := make(map[string]interface{})
-			
+
 			// Handle notification event data - it can be null when scope_identifiers is empty
 			if cfg.PipelineEventNotificationParamsDto != nil && cfg.PipelineEventNotificationParamsDto.Type_ != nil {
 				eventData["type"] = string(*cfg.PipelineEventNotificationParamsDto.Type_)
@@ -477,12 +477,12 @@ func readCentralNotificationRule(accountIdentifier string, d *schema.ResourceDat
 				"notification_event":  cfg.NotificationEvent,
 				"entity_identifiers":  entityIdentifiers,
 			}
-			
+
 			// Only set notification_event_data if we actually have data to set
 			if len(eventData) > 0 {
 				eventConfig["notification_event_data"] = eventData
 			}
-			
+
 			eventConfigs = append(eventConfigs, eventConfig)
 		}
 

@@ -61,11 +61,12 @@ func ExpandField(permissions []interface{}) []string {
 // contain Harness expressions, URLs, timestamps, or other colon-separated values.
 //
 // Examples:
-//   Input:  "ImagePush:<+condition?value1:value2>"
-//   Output: {ImagePush: "<+condition?value1:value2>"}
 //
-//   Input:  "registry:https://example.com:5000/repo"
-//   Output: {registry: "https://example.com:5000/repo"}
+//	Input:  "ImagePush:<+condition?value1:value2>"
+//	Output: {ImagePush: "<+condition?value1:value2>"}
+//
+//	Input:  "registry:https://example.com:5000/repo"
+//	Output: {registry: "https://example.com:5000/repo"}
 //
 // Fixes: PIPE-30810 - Pipeline tags with colons were being truncated
 func ExpandPipelineTags(tags []interface{}) map[string]string {

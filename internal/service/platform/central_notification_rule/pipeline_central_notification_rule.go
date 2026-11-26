@@ -82,8 +82,9 @@ func ResourcePipelineCentralNotificationRule() *schema.Resource {
 										Required: true,
 									},
 									"notification_event": {
-										Type:     schema.TypeString,
-										Required: true,
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: "The pipeline event that triggers the notification. Supported values: `PIPELINE_START`, `PIPELINE_SUCCESS`, `PIPELINE_FAILED`, `STAGE_START`, `STAGE_SUCCESS`, `STAGE_FAILED`.",
 									},
 									"entity_identifiers": {
 										Type:     schema.TypeList,

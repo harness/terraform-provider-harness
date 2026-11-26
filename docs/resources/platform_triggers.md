@@ -12,6 +12,8 @@ Resource for creating triggers in Harness.
 
 ## Example Usage
 
+### Trigger without executor identity (v1 API)
+
 ```terraform
 resource "harness_platform_triggers" "example" {
   identifier = "identifier"
@@ -54,6 +56,206 @@ resource "harness_platform_triggers" "example" {
 }
 ```
 
+### Trigger with SERVICE_ACCOUNT executor identity — project-scoped (v2 API)
+
+```terraform
+resource "harness_platform_triggers" "example_sa" {
+  identifier = "identifier"
+  org_id     = "orgIdentifier"
+  project_id = "projectIdentifier"
+  name       = "name"
+  target_id  = "pipelineIdentifier"
+
+  executor_info {
+    type       = "SERVICE_ACCOUNT"
+    identifier = "sa005"
+    org_id     = "orgIdentifier"
+    project_id = "projectIdentifier"
+  }
+
+  yaml = <<-EOT
+  trigger:
+    name: name
+    identifier: identifier
+    enabled: true
+    orgIdentifier: orgIdentifier
+    projectIdentifier: projectIdentifier
+    pipelineIdentifier: pipelineIdentifier
+    source:
+      type: Webhook
+      spec:
+        type: Github
+        spec:
+          type: Push
+          spec:
+            connectorRef: account.myConnector
+            repoName: myrepo
+            actions: []
+    EOT
+}
+```
+
+### Trigger with SERVICE_ACCOUNT executor identity — org-scoped
+
+```terraform
+resource "harness_platform_triggers" "example_sa_org" {
+  identifier = "identifier"
+  org_id     = "orgIdentifier"
+  project_id = "projectIdentifier"
+  name       = "name"
+  target_id  = "pipelineIdentifier"
+
+  executor_info {
+    type       = "SERVICE_ACCOUNT"
+    identifier = "myOrgSA"
+    org_id     = "orgIdentifier"
+    # project_id omitted — org-scoped service account
+  }
+
+  yaml = <<-EOT
+  trigger:
+    name: name
+    identifier: identifier
+    enabled: true
+    orgIdentifier: orgIdentifier
+    projectIdentifier: projectIdentifier
+    pipelineIdentifier: pipelineIdentifier
+    source:
+      type: Webhook
+      spec:
+        type: Github
+        spec:
+          type: Push
+          spec:
+            connectorRef: account.myConnector
+            repoName: myrepo
+            actions: []
+    EOT
+}
+```
+
+### Trigger with SERVICE_ACCOUNT executor identity — account-scoped
+
+```terraform
+resource "harness_platform_triggers" "example_sa_account" {
+  identifier = "identifier"
+  org_id     = "orgIdentifier"
+  project_id = "projectIdentifier"
+  name       = "name"
+  target_id  = "pipelineIdentifier"
+
+  executor_info {
+    type       = "SERVICE_ACCOUNT"
+    identifier = "myAccountSA"
+    # org_id and project_id omitted — account-scoped service account
+  }
+
+  yaml = <<-EOT
+  trigger:
+    name: name
+    identifier: identifier
+    enabled: true
+    orgIdentifier: orgIdentifier
+    projectIdentifier: projectIdentifier
+    pipelineIdentifier: pipelineIdentifier
+    source:
+      type: Webhook
+      spec:
+        type: Github
+        spec:
+          type: Push
+          spec:
+            connectorRef: account.myConnector
+            repoName: myrepo
+            actions: []
+    EOT
+}
+```
+
+### Trigger with USER executor identity (v2 API)
+
+```terraform
+resource "harness_platform_triggers" "example_user" {
+  identifier = "identifier"
+  org_id     = "orgIdentifier"
+  project_id = "projectIdentifier"
+  name       = "name"
+  target_id  = "pipelineIdentifier"
+
+  executor_info {
+    type       = "USER"
+    identifier = "user-uuid"   # obtain from POST /ng/api/user/batch
+  }
+
+  yaml = <<-EOT
+  trigger:
+    name: name
+    identifier: identifier
+    enabled: true
+    orgIdentifier: orgIdentifier
+    projectIdentifier: projectIdentifier
+    pipelineIdentifier: pipelineIdentifier
+    source:
+      type: Webhook
+      spec:
+        type: Github
+        spec:
+          type: Push
+          spec:
+            connectorRef: account.myConnector
+            repoName: myrepo
+            actions: []
+    EOT
+}
+```
+
+## Executor Identity — Behavior and Limitations
+
+The `executor_info` block controls which principal (user or service account) Harness uses to execute the pipeline when this trigger fires. It is a security-sensitive field because the principal's RBAC permissions determine what the pipeline is allowed to do.
+
+### How executor identity works
+
+- When `executor_info` is set, the provider calls the **v2 trigger API** which carries executor identity alongside the trigger YAML.
+- When `executor_info` is omitted, the provider calls the **v1 trigger API** which has no executor parameter.
+- The `executor_info` block is `Optional` and `Computed`. Once an executor is assigned to a trigger on the Harness server, it is **preserved on every subsequent update** unless you explicitly supply a new valid executor. This is intentional: YAML-only or partial updates must not accidentally wipe a security-sensitive executor identity.
+
+### Changing the executor
+
+To change the executor, update the `executor_info` block with the new principal's type and identifier and apply. The provider will call the v2 API with the new executor and Harness will replace it.
+
+### Removing the executor — not supported via update
+
+**Removing the `executor_info` block from your configuration and applying does not remove the executor from Harness.** The Harness API treats an omitted or null executor in an update request as "leave the existing executor unchanged." This applies regardless of whether the account-level `enforce_executor_identity_for_triggers` setting is on or off:
+
+- **Enforcement OFF** — executor is optional to set or change, but once set it is preserved unless a new valid executor is explicitly provided.
+- **Enforcement ON** — an executor is required for the trigger to fire; clearing it is not permitted.
+
+Because of this, `executor_info` is `Computed`: after you remove the block from your `.tf` file, Terraform state will continue to reflect what the server reports (the previously assigned executor), and subsequent `terraform plan` runs will show no diff.
+
+**To obtain a trigger with no executor**, you must destroy and recreate the trigger resource:
+
+```hcl
+# Remove the resource from config and run terraform destroy, then recreate without executor_info.
+# Or use -replace to force recreation in one apply:
+# terraform apply -replace=harness_platform_triggers.example
+```
+
+### Importing triggers with an executor
+
+When you import a trigger that already has an executor assigned on the Harness server, the executor is fully populated in Terraform state after import. Subsequent plans are clean as long as your configuration includes a matching `executor_info` block.
+
+If you import using a configuration that omits `executor_info`, Terraform state will still reflect the server's executor (because the schema is `Computed`), and the plan will remain clean — the executor is tracked but not managed by that configuration block.
+
+### Scope rules for SERVICE_ACCOUNT executors
+
+| Scope | `org_id` | `project_id` |
+|---|---|---|
+| Account-level SA | omit | omit |
+| Org-level SA | set | omit |
+| Project-level SA | set | set |
+
+Setting `project_id` without `org_id` is rejected at plan time. Setting `org_id` or `project_id` on a `USER` executor is also rejected at plan time.
+
 <!-- schema generated by tfplugindocs -->
 ## Schema
 
@@ -69,6 +271,7 @@ resource "harness_platform_triggers" "example" {
 ### Optional
 
 - `description` (String) Description of the resource.
+- `executor_info` (Block List, Max: 1) Executor identity for this trigger. When set, the v2 trigger API is used. Required when the account setting `enforce_executor_identity_for_triggers` is enabled. (see [below for nested schema](#nestedblock--executor_info))
 - `if_match` (String) if-Match
 - `ignore_error` (Boolean) ignore error default false
 - `tags` (Set of String) Tags to associate with the resource.
@@ -78,6 +281,19 @@ resource "harness_platform_triggers" "example" {
 
 - `id` (String) The ID of this resource.
 - `webhook_url` (String) The webhook URL if the trigger is type `Webhook`.
+
+<a id="nestedblock--executor_info"></a>
+### Nested Schema for `executor_info`
+
+Required:
+
+- `type` (String) Type of principal that executes the pipeline when this trigger fires. Valid values: `USER`, `SERVICE_ACCOUNT`.
+- `identifier` (String) Identifier of the executor principal. For `USER` type, this is the user's UUID (obtain from the Harness user list API). For `SERVICE_ACCOUNT` type, this is the service account identifier string (e.g. `sa005`).
+
+Optional:
+
+- `org_id` (String) Org identifier of the `SERVICE_ACCOUNT` executor. Set for org-scoped or project-scoped service accounts. Omit for account-level service accounts.
+- `project_id` (String) Project identifier of the `SERVICE_ACCOUNT` executor. Set for project-scoped service accounts. Omit for account-level or org-level service accounts.
 
 ## Import
 

@@ -1520,6 +1520,173 @@ func testAccResourceVirtualDockerRegistryWithBlockedPatterns(id string, accId st
 `, id, accId)
 }
 
+// Tests creating a virtual Docker registry with scanners configured
+func TestAccResourceVirtualDockerRegistryWithScanners(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_scanners_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualDockerRegistryWithScanners(id, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "package_type", "DOCKER"),
+					resource.TestCheckResourceAttr(resourceName, "config.0.type", "VIRTUAL"),
+					resource.TestCheckResourceAttr(resourceName, "scanners.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scanners.0", "AQUA_TRIVY"),
+				),
+			},
+			{
+				// Update: exercises the Modify (update) path, not just Create's fallback.
+				Config: testAccResourceVirtualDockerRegistryWithScannersUpdated(id, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "scanners.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scanners.0", "AQUA_TRIVY"),
+					resource.TestCheckResourceAttr(resourceName, "scanners.1", "GRYPE"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: registry.TestAccRegistryImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+// Generates Terraform config for a virtual Docker registry with scanners configured
+func testAccResourceVirtualDockerRegistryWithScanners(id string, accId string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+   scanners     = ["AQUA_TRIVY"]
+
+   config {
+		type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId)
+}
+
+// Generates Terraform config for a virtual Docker registry with an updated scanners list
+func testAccResourceVirtualDockerRegistryWithScannersUpdated(id string, accId string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+   scanners     = ["AQUA_TRIVY", "GRYPE"]
+
+   config {
+		type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId)
+}
+
+// Generates Terraform config for a virtual Docker registry with scanners explicitly cleared
+func testAccResourceVirtualDockerRegistryWithEmptyScanners(id string, accId string) string {
+	return fmt.Sprintf(`
+ resource "harness_platform_har_registry" "test" {
+   identifier   = "%[1]s"
+   space_ref    = "%[2]s"
+   package_type = "DOCKER"
+   scanners     = []
+
+   config {
+		type = "VIRTUAL"
+   }
+   parent_ref = "%[2]s"
+ }
+`, id, accId)
+}
+
+// Tests that omitting 'scanners' from config after it's been set does NOT attempt to clear
+// it (scanners/policy_refs are Optional+Computed): the existing server-side value is preserved
+// instead of producing a permanent plan diff or a validation error on every unrelated apply.
+func TestAccResourceVirtualDockerRegistryOmittedScannersPreserved(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_omitscan_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualDockerRegistryWithScanners(id, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "scanners.#", "1"),
+				),
+			},
+			{
+				Config:             testAccResourceVirtualDockerRegistry(id, accountId),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: false,
+			},
+			{
+				Config: testAccResourceVirtualDockerRegistry(id, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "scanners.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+// Tests that explicitly clearing scanners after they've been set is rejected with a clear error
+// at plan time, rather than silently producing permanent plan drift (the backend ignores empty lists).
+func TestAccResourceVirtualDockerRegistryClearScannersRejected(t *testing.T) {
+	id := fmt.Sprintf("tfauto_virt_clrscan_%s", randAlphanumeric(5))
+	resourceName := "harness_platform_har_registry.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccRegistryCheckDestroy("harness_platform_har_registry"),
+		Steps: []resource.TestStep{
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					_, _ = acctest.TestAccGetHarClientWithContext()
+				},
+				Config: testAccResourceVirtualDockerRegistryWithScanners(id, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "scanners.#", "1"),
+				),
+			},
+			{
+				Config:      testAccResourceVirtualDockerRegistryWithEmptyScanners(id, accountId),
+				ExpectError: regexp.MustCompile("clearing 'scanners' is not currently supported"),
+			},
+		},
+	})
+}
+
 // Tests creating a virtual Docker registry with allowed patterns
 func TestAccResourceVirtualDockerRegistryWithAllowedPatterns(t *testing.T) {
 	id := fmt.Sprintf("tfauto_virt_allowed_%s", randAlphanumeric(5))

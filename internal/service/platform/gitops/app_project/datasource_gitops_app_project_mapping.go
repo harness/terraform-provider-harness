@@ -47,18 +47,18 @@ func DatasourceGitopsAppProjectMapping() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-		"argo_project_name": {
-			Description: "ArgoCD Project name which is to be mapped to the Harness project.",
-			Type:        schema.TypeString,
-			Required:    true,
+			"argo_project_name": {
+				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"auto_create_service_env": {
+				Description: "Enable automated creation of service, environment and cluster-env link. Defaults to false.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
 		},
-		"auto_create_service_env": {
-			Description: "Enable automated creation of service, environment and cluster-env link. Defaults to false.",
-			Type:        schema.TypeBool,
-			Computed:    true,
-		},
-	},
-}
+	}
 	return resource
 }
 

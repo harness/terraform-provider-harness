@@ -268,4 +268,3 @@ data "harness_platform_connector_openai_model" "test" {
   project_id = "%s"
 }`, orgID, projectID)
 }
-

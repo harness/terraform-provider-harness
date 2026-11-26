@@ -78,7 +78,7 @@ func testAccResourceGitopsApplicationsetClusterGenerator(id, accountId, name, ag
 			upsert = true
 			project {
 				metadata {
-					name = "appset"
+					name = "%[1]s"
 					namespace = "%[5]s"
 				}
 				spec {
@@ -110,6 +110,7 @@ func testAccResourceGitopsApplicationsetClusterGenerator(id, accountId, name, ag
 			project_id = harness_platform_project.test.id
 			agent_id = "%[4]s"
 			argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+			block_if_referenced = false
 		}
 
 		resource "harness_platform_gitops_applicationset" "test1" {
@@ -329,7 +330,7 @@ func testAccResourceGitopsApplicationsetMatrixGitClusters(id, accountId, name, a
 			upsert = true
 			project {
 				metadata {
-					name = "appset"
+					name = "%[1]s"
 					namespace = "%[5]s"
 				}
 				spec {
@@ -361,6 +362,7 @@ func testAccResourceGitopsApplicationsetMatrixGitClusters(id, accountId, name, a
 			project_id = harness_platform_project.test.id
 			agent_id = "%[4]s"
 			argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+			block_if_referenced = false
 		}
 
 		resource "harness_platform_gitops_applicationset" "test" {
@@ -497,7 +499,7 @@ func testAccResourceGitopsApplicationsetSCMProviderGitHub(id, accountId, name, a
 		upsert = true
 		project {
 			metadata {
-				name = "appset"
+				name = "%[1]s"
 				namespace = "%[5]s"
 			}
 			spec {
@@ -529,6 +531,7 @@ func testAccResourceGitopsApplicationsetSCMProviderGitHub(id, accountId, name, a
 		project_id = harness_platform_project.test.id
 		agent_id = "%[4]s"
 		argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+		block_if_referenced = false
 	}
 
 	resource "harness_platform_gitops_applicationset" "test" {
@@ -641,7 +644,7 @@ func testAccResourceGitopsApplicationsetSCMProviderGitLab(id, accountId, name, a
 		upsert = true
 		project {
 			metadata {
-				name = "appset"
+				name = "%[1]s"
 				namespace = "%[5]s"
 			}
 			spec {
@@ -673,6 +676,7 @@ func testAccResourceGitopsApplicationsetSCMProviderGitLab(id, accountId, name, a
 		project_id = harness_platform_project.test.id
 		agent_id = "%[4]s"
 		argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+		block_if_referenced = false
 	}
 
 	resource "harness_platform_gitops_applicationset" "test" {
@@ -790,7 +794,7 @@ func testAccResourceGitopsApplicationsetMatrixSCMProviderClustersWithSelector(id
 		upsert = true
 		project {
 			metadata {
-				name = "appset"
+				name = "%[1]s"
 				namespace = "%[5]s"
 			}
 			spec {
@@ -822,6 +826,7 @@ func testAccResourceGitopsApplicationsetMatrixSCMProviderClustersWithSelector(id
 		project_id = harness_platform_project.test.id
 		agent_id = "%[4]s"
 		argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+		block_if_referenced = false
 	}
 
 	resource "harness_platform_gitops_applicationset" "test" {
@@ -981,7 +986,7 @@ func testAccResourceGitopsApplicationsetWithSyncPolicy(id, accountId, name, agen
 			upsert     = true
 			project {
 				metadata {
-					name      = "appset"
+					name      = "%[1]s"
 					namespace = "%[5]s"
 				}
 				spec {
@@ -1013,6 +1018,7 @@ func testAccResourceGitopsApplicationsetWithSyncPolicy(id, accountId, name, agen
 			project_id       = harness_platform_project.test.id
 			agent_id         = "%[4]s"
 			argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+			block_if_referenced = false
 		}
 
 		resource "harness_platform_gitops_applicationset" "test" {
@@ -1131,7 +1137,7 @@ func testAccResourceGitopsApplicationsetStrategy(id, accountId, name, agentId, n
 		upsert = true
 		project {
 			metadata {
-				name = "appset"
+				name = "%[1]s"
 				namespace = "%[5]s"
 			}
 			spec {
@@ -1163,6 +1169,7 @@ func testAccResourceGitopsApplicationsetStrategy(id, accountId, name, agentId, n
 		project_id = harness_platform_project.test.id
 		agent_id = "%[4]s"
 		argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+		block_if_referenced = false
 	}
 
 	resource "harness_platform_gitops_applicationset" "test" {
@@ -1306,7 +1313,7 @@ func testAccResourceGitopsApplicationsetIgnoreApplicationDifferences(id, account
 		upsert = true
 		project {
 			metadata {
-				name = "appset"
+				name = "%[1]s"
 				namespace = "%[5]s"
 			}
 			spec {
@@ -1338,6 +1345,7 @@ func testAccResourceGitopsApplicationsetIgnoreApplicationDifferences(id, account
 		project_id = harness_platform_project.test.id
 		agent_id = "%[4]s"
 		argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+		block_if_referenced = false
 	}
 
 	resource "harness_platform_gitops_applicationset" "test" {
@@ -1459,7 +1467,7 @@ func testAccResourceGitopsApplicationsetMultiSource(id, accountId, name, agentId
 			upsert = true
 			project {
 				metadata {
-					name = "appset"
+					name = "%[1]s"
 					namespace = "%[5]s"
 				}
 				spec {
@@ -1491,6 +1499,7 @@ func testAccResourceGitopsApplicationsetMultiSource(id, accountId, name, agentId
 			project_id = harness_platform_project.test.id
 			agent_id = "%[4]s"
 			argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+			block_if_referenced = false
 		}
 
 		resource "harness_platform_gitops_applicationset" "test" {
@@ -1609,7 +1618,7 @@ func testAccResourceGitopsApplicationsetGitGeneratorWithSelector(id, accountId, 
 		upsert = true
 		project {
 			metadata {
-				name = "appset"
+				name = "%[1]s"
 				namespace = "%[5]s"
 			}
 			spec {
@@ -1641,6 +1650,7 @@ func testAccResourceGitopsApplicationsetGitGeneratorWithSelector(id, accountId, 
 		project_id = harness_platform_project.test.id
 		agent_id = "%[4]s"
 		argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+		block_if_referenced = false
 	}
 
 	resource "harness_platform_gitops_applicationset" "test" {
@@ -1824,6 +1834,7 @@ func testAccResourceGitopsApplicationsetIgnoreDifference(id, accountId, name, ag
 			project_id = harness_platform_project.test.id
 			agent_id = "%[4]s"
 			argo_project_name = harness_platform_gitops_app_project.test.project.0.metadata.0.name
+			block_if_referenced = false
 		}
 
 		resource "harness_platform_gitops_applicationset" "test" {

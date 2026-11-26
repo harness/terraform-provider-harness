@@ -17,7 +17,8 @@ import (
 
 func ResourceRegistry() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for creating and managing Harness Registries.",
+		Description: "Resource for creating and managing Harness Registries.\n\n" +
+			"~> **Note:** In Harness Artifact Registry, a **Virtual** registry is functionally equivalent to what is commonly referred to as a **Local** registry in other systems.",
 		ReadContext:   resourceRegistryRead,
 		CreateContext: resourceRegistryCreateOrUpdate,
 		UpdateContext: resourceRegistryCreateOrUpdate,
@@ -164,6 +165,23 @@ func resourceRegistryCustomizeDiff(ctx context.Context, d *schema.ResourceDiff, 
 		}
 	}
 
+	// The har-go-sdk RegistryRequest marshals Scanners/PolicyRefs with `omitempty`, so there is no
+	// way to send an explicit empty list to clear a previously-set value - the field is simply
+	// dropped from the request and the backend keeps the old value, causing a perpetual plan diff.
+	// Until the SDK supports sending an explicit clear, reject the attempt during planning instead
+	// of silently producing state drift (or failing midway through apply). Since both fields are
+	// Optional+Computed, omitting them from config entirely does not register as a change here.
+	if d.HasChange("scanners") {
+		if _, ok := d.GetOk("scanners"); !ok {
+			return fmt.Errorf("clearing 'scanners' is not currently supported: the Harness Artifact Registry API has no way to distinguish an empty list from an unset field. Remove the registry and recreate it without scanners, or use the Harness UI/API directly.")
+		}
+	}
+	if d.HasChange("policy_refs") {
+		if _, ok := d.GetOk("policy_refs"); !ok {
+			return fmt.Errorf("clearing 'policy_refs' is not currently supported: the Harness Artifact Registry API has no way to distinguish an empty list from an unset field. Remove the registry and recreate it without policy_refs, or use the Harness UI/API directly.")
+		}
+	}
+
 	if configType == "UPSTREAM" {
 		// Source is required for UPSTREAM
 		if source, ok := d.GetOk("config.0.source"); !ok || source.(string) == "" {
@@ -264,16 +282,42 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 			return helpers.HandleApiError(err, d, httpResp)
 		}
 
+		// Track the resource immediately so a failure in the Modify/Get fallback below doesn't
+		// leave Terraform without an ID for a registry that was actually created on the backend.
+		d.SetId(d.Get("identifier").(string))
+
 		// TODO: remove once AR Create-API firewallMode persistence (AH-3528) is deployed to all regions.
 		// Old backends drop firewallMode on Create; fall back to Modify to persist it.
+		needsModifyFallback := false
 		if fm, ok := d.GetOk("config.0.firewall_mode"); ok && fm.(string) != "" {
 			if resp.Data == nil || resp.Data.Config == nil ||
 				resp.Data.Config.UpstreamConfig.FirewallMode == nil ||
 				string(*resp.Data.Config.UpstreamConfig.FirewallMode) != fm.(string) {
-				registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
-				resp, httpResp, err = c.RegistriesApi.ModifyRegistry(ctx, registryRef, &har.RegistriesApiModifyRegistryOpts{
-					Body: optional.NewInterface(registry),
-				})
+				needsModifyFallback = true
+			}
+		}
+
+		// TODO: remove once AR Create-API scanners/policyRefs persistence (AH-6310) is deployed to all regions.
+		// Old backends drop scanners/policyRefs on Create; fall back to Modify to persist them.
+		if len(registry.Scanners) > 0 && (resp.Data == nil || len(resp.Data.Scanners) != len(registry.Scanners)) {
+			needsModifyFallback = true
+		}
+		if len(registry.PolicyRefs) > 0 && (resp.Data == nil || len(resp.Data.PolicyRefs) != len(registry.PolicyRefs)) {
+			needsModifyFallback = true
+		}
+
+		if needsModifyFallback {
+			registryRef := d.Get("parent_ref").(string) + "/" + d.Get("identifier").(string)
+			resp, httpResp, err = c.RegistriesApi.ModifyRegistry(ctx, registryRef, &har.RegistriesApiModifyRegistryOpts{
+				Body: optional.NewInterface(registry),
+			})
+			if err != nil {
+				return helpers.HandleApiError(err, d, httpResp)
+			}
+
+			// The Modify response also omits scanners/policyRefs; re-fetch via Get to read the persisted values.
+			if len(registry.Scanners) > 0 || len(registry.PolicyRefs) > 0 {
+				resp, httpResp, err = c.RegistriesApi.GetRegistry(ctx, registryRef)
 				if err != nil {
 					return helpers.HandleApiError(err, d, httpResp)
 				}
@@ -286,6 +330,14 @@ func resourceRegistryCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		})
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
+		}
+
+		// The Modify response omits scanners/policyRefs; re-fetch via Get to read the persisted values.
+		if len(registry.Scanners) > 0 || len(registry.PolicyRefs) > 0 {
+			resp, httpResp, err = c.RegistriesApi.GetRegistry(ctx, registryRef)
+			if err != nil {
+				return helpers.HandleApiError(err, d, httpResp)
+			}
 		}
 	}
 
@@ -527,6 +579,16 @@ func buildRegistry(d *schema.ResourceData) *har.RegistryRequest {
 		registry.BlockedPattern = convertListToString(attr.([]interface{}))
 	}
 
+	if attr, ok := d.GetOk("scanners"); ok {
+		for _, name := range convertListToString(attr.([]interface{})) {
+			registry.Scanners = append(registry.Scanners, har.Scanner{Name: name})
+		}
+	}
+
+	if attr, ok := d.GetOk("policy_refs"); ok {
+		registry.PolicyRefs = convertListToString(attr.([]interface{}))
+	}
+
 	return registry
 }
 
@@ -540,6 +602,17 @@ func readRegistry(d *schema.ResourceData, registry *har.Registry) {
 	d.Set("allowed_pattern", registry.AllowedPattern)
 	d.Set("blocked_pattern", registry.BlockedPattern)
 	d.Set("is_public", registry.IsPublic)
+	d.Set("policy_refs", registry.PolicyRefs)
+
+	if len(registry.Scanners) > 0 {
+		names := make([]string, len(registry.Scanners))
+		for i, scanner := range registry.Scanners {
+			names[i] = scanner.Name
+		}
+		d.Set("scanners", names)
+	} else {
+		d.Set("scanners", []string{})
+	}
 
 	if registry.Config != nil {
 		configMap := map[string]interface{}{

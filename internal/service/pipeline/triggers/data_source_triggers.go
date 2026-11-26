@@ -35,6 +35,40 @@ func DataSourceTriggers() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"webhook_url": {
+				Description: "webhook url",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"executor_info": {
+				Description: "Executor identity for this trigger.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Description: "Type of principal that executes the pipeline when this trigger fires.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"identifier": {
+							Description: "Identifier of the executor principal.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"org_id": {
+							Description: "Org identifier of the SERVICE_ACCOUNT executor.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"project_id": {
+							Description: "Project identifier of the SERVICE_ACCOUNT executor.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
@@ -55,7 +89,9 @@ func dataTriggersRead(ctx context.Context, d *schema.ResourceData, meta interfac
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readTriggers(d, resp.Data)
+	if err := readTriggers(d, resp.Data); err != nil {
+		return diag.FromErr(err)
+	}
 
 	return nil
 }
