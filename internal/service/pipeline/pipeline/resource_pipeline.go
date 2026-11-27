@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -24,6 +25,7 @@ func ResourcePipeline() *schema.Resource {
 		DeleteContext: resourcePipelineDelete,
 		CreateContext: resourcePipelineCreateOrUpdate,
 		Importer:      helpers.ProjectResourceImporter,
+		CustomizeDiff: validatePipelineFieldsMatchYaml,
 
 		Schema: map[string]*schema.Schema{
 			"yaml": {
@@ -201,6 +203,36 @@ func ResourcePipeline() *schema.Resource {
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
 	resource.Schema["tags"].Description = resource.Schema["tags"].Description + " These should match the tag value passed in the YAML; if this parameter is null or not passed, the tags specified in YAML should also be null."
 	return resource
+}
+
+func validatePipelineFieldsMatchYaml(_ context.Context, d *schema.ResourceDiff, _ interface{}) error {
+	yamlString := d.Get("yaml").(string)
+	if yamlString == "" {
+		return nil
+	}
+
+	yamlFields, err := helpers.ExtractYamlResourceFields(yamlString, "pipeline")
+	if err != nil {
+		return err
+	}
+
+	fields := []struct {
+		name      string
+		yamlValue string
+	}{
+		{name: "identifier", yamlValue: yamlFields.Identifier},
+		{name: "name", yamlValue: yamlFields.Name},
+		{name: "description", yamlValue: yamlFields.Description},
+	}
+	for _, field := range fields {
+		schemaValue := d.Get(field.name).(string)
+		if schemaValue != "" && field.yamlValue != "" && schemaValue != field.yamlValue {
+			return fmt.Errorf("%s in schema (%q) does not match pipeline.%s in YAML (%q); update %s or pipeline.%s so they match",
+				field.name, schemaValue, field.name, field.yamlValue, field.name, field.name)
+		}
+	}
+
+	return nil
 }
 
 func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
