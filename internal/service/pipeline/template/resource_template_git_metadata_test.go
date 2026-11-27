@@ -52,14 +52,7 @@ func TestResourceTemplateUpdateRemoteGitMetadata(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var metadataPaths []string
 			var metadataAccounts []string
-			var metadataBodies []struct {
-				Version    string `json:"version"`
-				GitDetails struct {
-					ConnectorRef string `json:"connector_ref"`
-					RepoName     string `json:"repo_name"`
-					FilePath     string `json:"file_path"`
-				} `json:"git_details"`
-			}
+			var metadataBodies []nextgen.TemplateUpdateGitMetadataRequest
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
@@ -67,14 +60,7 @@ func TestResourceTemplateUpdateRemoteGitMetadata(t *testing.T) {
 				case r.Method == http.MethodPut && strings.Contains(r.URL.Path, "/git-metadata/"):
 					metadataPaths = append(metadataPaths, r.URL.Path)
 					metadataAccounts = append(metadataAccounts, r.Header.Get("Harness-Account"))
-					var body []struct {
-						Version    string `json:"version"`
-						GitDetails struct {
-							ConnectorRef string `json:"connector_ref"`
-							RepoName     string `json:"repo_name"`
-							FilePath     string `json:"file_path"`
-						} `json:"git_details"`
-					}
+					var body []nextgen.TemplateUpdateGitMetadataRequest
 					if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 						http.Error(w, err.Error(), http.StatusBadRequest)
 						return
@@ -122,27 +108,48 @@ func TestResourceTemplateUpdateRemoteGitMetadata(t *testing.T) {
 }
 
 func TestResourceTemplateUpdateRemoteGitMetadataError(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		if strings.Contains(r.URL.Path, "/git-metadata/") {
-			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte(`{"message":"metadata update failed"}`))
-			return
-		}
-		if r.Method == http.MethodPut {
-			_ = json.NewEncoder(w).Encode(nextgen.TemplateResponse{Identifier: "tmpl"})
-			return
-		}
-		_ = json.NewEncoder(w).Encode(nextgen.TemplateWithInputsResponse{Template: &nextgen.TemplateResponse{
-			Identifier: "tmpl", Name: "tmpl", Yaml: testRemoteTemplateYaml, VersionLabel: "v1",
-		}})
-	}))
-	t.Cleanup(server.Close)
+	tests := []struct {
+		name          string
+		status        int
+		expectedError string
+	}{
+		{
+			name:          "non-retryable API error",
+			status:        http.StatusBadRequest,
+			expectedError: "metadata update failed",
+		},
+		{
+			name:          "retryable API error",
+			status:        http.StatusInternalServerError,
+			expectedError: "giving up after 1 attempt(s)",
+		},
+	}
 
-	state, diff, session := remoteTemplateUpdate(t, "", "", server.URL)
-	_, diags := ResourceTemplate().Apply(context.Background(), state, diff, session)
-	require.True(t, diags.HasError(), "a failed Git metadata update must not be reported as a successful apply")
-	require.Contains(t, fmt.Sprint(diags), "metadata update failed")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				if strings.Contains(r.URL.Path, "/git-metadata/") {
+					w.WriteHeader(tt.status)
+					_, _ = w.Write([]byte(`{"message":"metadata update failed"}`))
+					return
+				}
+				if r.Method == http.MethodPut {
+					_ = json.NewEncoder(w).Encode(nextgen.TemplateResponse{Identifier: "tmpl"})
+					return
+				}
+				_ = json.NewEncoder(w).Encode(nextgen.TemplateWithInputsResponse{Template: &nextgen.TemplateResponse{
+					Identifier: "tmpl", Name: "tmpl", Yaml: testRemoteTemplateYaml, VersionLabel: "v1",
+				}})
+			}))
+			t.Cleanup(server.Close)
+
+			state, diff, session := remoteTemplateUpdate(t, "", "", server.URL)
+			_, diags := ResourceTemplate().Apply(context.Background(), state, diff, session)
+			require.True(t, diags.HasError(), "a failed Git metadata update must not be reported as a successful apply")
+			require.Contains(t, fmt.Sprint(diags), tt.expectedError)
+		})
+	}
 }
 
 func remoteTemplateUpdate(t *testing.T, org, project, serverURL string) (*terraform.InstanceState, *terraform.InstanceDiff, *internal.Session) {

@@ -8,7 +8,7 @@ require (
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/google/uuid v1.6.0
 	github.com/harness/harness-go-sdk v0.8.43
-	github.com/harness/harness-openapi-go-client v0.0.28
+	github.com/harness/harness-openapi-go-client v0.0.29-0.20261127062108-3fb6a4739f75
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-cty v1.5.0
 	github.com/hashicorp/go-retryablehttp v0.7.8
