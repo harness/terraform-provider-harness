@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_pipeline: Fail during `terraform plan` with an actionable error when the top-level `description` and non-empty `pipeline.description` in YAML differ, and report invalid pipeline YAML clearly.
+```

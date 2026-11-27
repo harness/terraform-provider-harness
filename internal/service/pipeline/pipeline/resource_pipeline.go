@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -10,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"gopkg.in/yaml.v3"
 
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -19,10 +21,11 @@ func ResourcePipeline() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Resource for creating a Harness pipeline.",
 
-		ReadContext:   resourcePipelineRead,
-		UpdateContext: resourcePipelineCreateOrUpdate,
-		DeleteContext: resourcePipelineDelete,
-		CreateContext: resourcePipelineCreateOrUpdate,
+		ReadContext:   resourcePipelineRead
+		UpdateContext: resourcePipelineCreateOrUpdate
+		DeleteContext: resourcePipelineDelete
+		CreateContext: resourcePipelineCreateOrUpdate
+		CustomizeDiff: validatePipelineDescriptionMatchesYaml,
 		Importer:      helpers.ProjectResourceImporter,
 
 		Schema: map[string]*schema.Schema{
@@ -89,12 +92,6 @@ func ResourcePipeline() *schema.Resource {
 							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity." + helpers.Descriptions.ConnectorRefText.String(),
 							Type:        schema.TypeString,
 							Optional:    true,
-							Computed:    true,
-						},
-						"store_type": {
-							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
-							Type:         schema.TypeString,
-							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
 							Computed:     true,
 						},
@@ -201,6 +198,32 @@ func ResourcePipeline() *schema.Resource {
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
 	resource.Schema["tags"].Description = resource.Schema["tags"].Description + " These should match the tag value passed in the YAML; if this parameter is null or not passed, the tags specified in YAML should also be null."
 	return resource
+}
+
+// validatePipelineDescriptionMatchesYaml rejects conflicting non-empty descriptions
+// during planning without rewriting either the Terraform configuration or YAML.
+func validatePipelineDescriptionMatchesYaml(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+	pipelineYAML, ok := d.Get("yaml").(string)
+	if !ok || pipelineYAML == "" {
+		return nil
+	}
+
+	var yamlData map[string]interface{}
+	if err := yaml.Unmarshal([]byte(pipelineYAML), &yamlData); err != nil {
+		return fmt.Errorf("invalid pipeline YAML: %w", err)
+	}
+
+	description, _ := d.Get("description").(string)
+	pipelineConfig, ok := yamlData["pipeline"].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+	yamlDescription, ok := pipelineConfig["description"].(string)
+	if !ok || description == "" || yamlDescription == "" || description == yamlDescription {
+		return nil
+	}
+
+	return fmt.Errorf("pipeline description mismatch: top-level description is %q but pipeline.description in YAML is %q; update either value so they match", description, yamlDescription)
 }
 
 func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
