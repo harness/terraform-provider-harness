@@ -1,10 +1,14 @@
 package template
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/antihax/optional"
@@ -442,6 +446,12 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 			}
 		}
 
+		if template.GitDetails != nil && template.GitDetails.StoreType == "REMOTE" && d.HasChange("git_details.0.connector_ref") {
+			if diags := updateTemplateGitMetadata(ctx, c, d, template.GitDetails); diags.HasError() {
+				return diags
+			}
+		}
+
 		if is_stable == true {
 			if project_id != "" {
 				_, httpResp, err = c.ProjectTemplateApi.UpdateTemplateStableProject(ctx, org_id, project_id, id, version, &nextgen.ProjectTemplateApiUpdateTemplateStableProjectOpts{
@@ -519,6 +529,63 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	readTemplate(d, respGet, comments, store_type, base_branch, commit_message, connector_ref)
+
+	return nil
+}
+
+type templateGitMetadataUpdateRequest struct {
+	Version    string                           `json:"version"`
+	GitDetails templateGitMetadataUpdateDetails `json:"git_details"`
+}
+
+type templateGitMetadataUpdateDetails struct {
+	FilePath     string `json:"file_path"`
+	RepoName     string `json:"repo_name"`
+	ConnectorRef string `json:"connector_ref"`
+}
+
+func updateTemplateGitMetadata(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData, gitDetails *nextgen.GitUpdateDetails1) diag.Diagnostics {
+	path := "/v1"
+	if projectID := d.Get("project_id").(string); projectID != "" {
+		path += "/orgs/" + url.PathEscape(d.Get("org_id").(string)) + "/projects/" + url.PathEscape(projectID)
+	} else if orgID := d.Get("org_id").(string); orgID != "" {
+		path += "/orgs/" + url.PathEscape(orgID)
+	}
+	path += "/templates/git-metadata/" + url.PathEscape(d.Id())
+
+	payload, err := json.Marshal([]templateGitMetadataUpdateRequest{{
+		Version: d.Get("version").(string),
+		GitDetails: templateGitMetadataUpdateDetails{
+			FilePath:     gitDetails.FilePath,
+			RepoName:     gitDetails.RepoName,
+			ConnectorRef: gitDetails.ConnectorRef,
+		},
+	}})
+	if err != nil {
+		return diag.Errorf("failed to encode Git metadata update for template %s: %v", d.Id(), err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, strings.TrimRight(c.Endpoint, "/")+path, bytes.NewReader(payload))
+	if err != nil {
+		return diag.Errorf("failed to create Git metadata update request for template %s: %v", d.Id(), err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Harness-Account", c.AccountId)
+	req.Header.Set("x-api-key", c.ApiKey)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return diag.Errorf("failed to update Git metadata for template %s: %v", d.Id(), err)
+	}
+	defer resp.Body.Close()
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return diag.Errorf("failed to read Git metadata update response for template %s: %v", d.Id(), err)
+	}
+	if resp.StatusCode >= http.StatusMultipleChoices {
+		return diag.Errorf("failed to update Git metadata for template %s: %s: %s", d.Id(), resp.Status, strings.TrimSpace(string(responseBody)))
+	}
 
 	return nil
 }
