@@ -349,11 +349,52 @@ func TestUpdate_RotationOnDrNodeSendsDrIdentifier(t *testing.T) {
 	require.Equal(t, "1", out.Attributes["token_generation"])
 
 	require.Equal(t, 1, f.count(http.MethodPost, "/gitops/api/v1/agents/a1/credentials"))
+	sawGet := false
 	for _, req := range f.requests {
 		if req.Path == "/gitops/api/v1/agents/a1/credentials" {
 			require.Equal(t, []string{"a1-secondary"}, req.Query["drIdentifier"])
 		}
+		// The re-fetch must request credentials, or the rotated key never reaches state for DR
+		// nodes with skip_agent_token_in_state=false (see TestUpdate_RotationOnDrNodeStoresKeyWhenSkipIsOff).
+		if req.Method == http.MethodGet && req.Path == "/gitops/api/v1/agents/a1" {
+			sawGet = true
+			require.Equal(t, []string{"true"}, req.Query["withCredentials"])
+			require.Equal(t, []string{"a1-secondary"}, req.Query["drIdentifier"])
+		}
 	}
+	require.True(t, sawGet, "expected a re-fetch Get request")
+}
+
+// A DR node's rotation re-fetch must carry the new key into state when the user has not opted
+// out via skip_agent_token_in_state — otherwise the resource keeps serving a token the server
+// just invalidated to every downstream consumer (e.g. a helm_release reading agent_token).
+func TestUpdate_RotationOnDrNodeStoresKeyWhenSkipIsOff(t *testing.T) {
+	f := newFakeGitops(t)
+	f.getBody = `{"identifier":"a1","type":"MANAGED_ARGO_PROVIDER","metadata":{"namespace":"argocd"},"credentials":{"privateKey":"GETKEY"}}`
+	r := ResourceGitopsAgent()
+	state := baseState("0", "0", false)
+	state.Attributes["disaster_recovery_identifier"] = "a1-secondary"
+	state.Attributes["disaster_recovery_type"] = "SECONDARY"
+	cfg := terraform.NewResourceConfigRaw(map[string]interface{}{
+		"identifier":                   "a1",
+		"name":                         "a1",
+		"type":                         "MANAGED_ARGO_PROVIDER",
+		"org_id":                       "default",
+		"project_id":                   "proj",
+		"skip_agent_token_in_state":    false,
+		"token_rotation":               1,
+		"disaster_recovery_identifier": "a1-secondary",
+		"disaster_recovery_type":       "SECONDARY",
+		"metadata": []interface{}{
+			map[string]interface{}{"namespace": "argocd"},
+		},
+	})
+	diff, err := r.Diff(context.Background(), state, cfg, f.session())
+	require.NoError(t, err)
+
+	out, diags := r.Apply(context.Background(), state, diff, f.session())
+	require.False(t, diags.HasError(), "%v", diags)
+	require.Equal(t, "GETKEY", out.Attributes["agent_token"])
 }
 
 // A rotation that returns no key must fail the apply and must not report the rotation as done.

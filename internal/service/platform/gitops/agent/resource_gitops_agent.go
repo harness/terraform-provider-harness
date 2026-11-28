@@ -366,6 +366,7 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		DrIdentifier:      optional.NewString(drIdentifier),
+		WithCredentials:   optional.NewBool(true),
 	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, getHttpResp)
